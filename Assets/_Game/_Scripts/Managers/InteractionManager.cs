@@ -1,5 +1,6 @@
 using UnityEngine;
 using MaouSamaTD.Grid;
+using MaouSamaTD.UI;
 
 namespace MaouSamaTD.Managers
 {
@@ -9,6 +10,12 @@ namespace MaouSamaTD.Managers
 
         public event System.Action<Tile> OnTileHovered;
         public event System.Action<Tile> OnTileClicked;
+        
+        // Placement Events
+        public bool IsDragging { get; private set; }
+        private Units.UnitData _draggedUnitData;
+        private GameObject _ghostObject;
+        private Tile _currentHoverTile;
 
         private Camera _mainCamera;
 
@@ -28,6 +35,49 @@ namespace MaouSamaTD.Managers
             HandleInput();
         }
 
+        public void StartDrag(Units.UnitData data)
+        {
+            IsDragging = true;
+            _draggedUnitData = data;
+            
+            // Create visual ghost
+            if (_ghostObject != null) Destroy(_ghostObject);
+            // Simple cube for now
+            _ghostObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Destroy(_ghostObject.GetComponent<Collider>());
+            _ghostObject.transform.localScale = Vector3.one * 0.8f; 
+        }
+
+        public void EndDrag(bool place)
+        {
+            if (place && _currentHoverTile != null)
+            {
+                // Validate placement (Currency, Tile Type)
+                bool canAfford = CurrencyManager.Instance.CanAfford(_draggedUnitData.DeploymentCost);
+                bool validTile = IsTileValidForUnit(_currentHoverTile, _draggedUnitData);
+
+                if (canAfford && validTile && !_currentHoverTile.IsOccupied)
+                {
+                    DeploymentUI.Instance.SpawnUnit(_currentHoverTile, _draggedUnitData);
+                }
+                else
+                {
+                    Debug.Log("Invalid Placement or not enough funds.");
+                }
+            }
+
+            IsDragging = false;
+            _draggedUnitData = null;
+            if (_ghostObject != null) Destroy(_ghostObject);
+            _currentHoverTile = null;
+        }
+
+        private bool IsTileValidForUnit(Tile tile, Units.UnitData unit)
+        {
+            if (unit.ViableTiles == null || unit.ViableTiles.Count == 0) return false;
+            return unit.ViableTiles.Contains(tile.Type);
+        }
+
         private void HandleInput()
         {
             if (_mainCamera == null) _mainCamera = Camera.main;
@@ -36,24 +86,33 @@ namespace MaouSamaTD.Managers
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                // Assuming Tiles have colliders and are on a layer we hit
-                // Or we can just calculate grid pos from hit.point if plane is flat.
-                // For now, let's use GridManager's WorldToGrid conversion if we hit the ground plane.
-                
-                // If we hit a Tile component directly
                 Tile tile = hit.collider.GetComponent<Tile>();
                 if (tile == null)
                 {
-                     // Fallback to world pos calculation
                      Vector2Int coord = GridManager.Instance.WorldToGridCoordinates(hit.point);
                      tile = GridManager.Instance.GetTileAt(coord);
                 }
 
                 if (tile != null)
                 {
+                    _currentHoverTile = tile;
                     OnTileHovered?.Invoke(tile);
                     
-                    if (Input.GetMouseButtonDown(0))
+                    if (IsDragging && _ghostObject != null)
+                    {
+                        // Snap ghost
+                        _ghostObject.transform.position = tile.transform.position + Vector3.up * 0.5f;
+                        
+                        // Colorize Validity
+                        bool valid = IsTileValidForUnit(tile, _draggedUnitData) && !tile.IsOccupied;
+                        var rend = _ghostObject.GetComponent<Renderer>();
+                        if (rend != null)
+                        {
+                            rend.material.color = valid ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f);
+                        }
+                    }
+
+                    if (Input.GetMouseButtonDown(0) && !IsDragging)
                     {
                         OnTileClicked?.Invoke(tile);
                     }

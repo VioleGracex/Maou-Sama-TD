@@ -20,5 +20,21 @@ namespace MaouSamaTD.Units
         public float AttackInterval = 1f;
         public float Defense = 0f;
         public float Range = 1f; // Tiles
+
+        [Header("Placement Rules")]
+        public System.Collections.Generic.List<Grid.TileType> ViableTiles;
+
+        private void OnValidate()
+        {
+            // Set defaults if empty based on class
+            if (ViableTiles == null || ViableTiles.Count == 0)
+            {
+                ViableTiles = new System.Collections.Generic.List<Grid.TileType>();
+                if (Class == UnitClass.Melee) ViableTiles.Add(Grid.TileType.Walkable);
+                else if (Class == UnitClass.Ranged) ViableTiles.Add(Grid.TileType.HighGround);
+                // Healer might go anywhere or specific? Default to HighGround for now
+                else if (Class == UnitClass.Healer) ViableTiles.Add(Grid.TileType.HighGround);
+            }
+        }
     }
 }

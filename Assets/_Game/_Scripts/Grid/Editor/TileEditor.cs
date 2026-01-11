@@ -13,29 +13,36 @@ namespace MaouSamaTD.Editor
         {
             DrawDefaultInspector();
 
-            Tile tile = (Tile)target;
-
-            GUILayout.Space(10);
-            GUILayout.Label("Map Editing", EditorStyles.boldLabel);
-
             if (GUILayout.Button("Set as Spawn Point"))
             {
-                tile.SetType(TileType.Spawn);
+                foreach (var obj in targets)
+                {
+                    ((Tile)obj).SetType(TileType.Spawn);
+                }
             }
 
             if (GUILayout.Button("Set as Exit Point"))
             {
-                tile.SetType(TileType.Exit);
+                foreach (var obj in targets)
+                {
+                    ((Tile)obj).SetType(TileType.Exit);
+                }
             }
 
             if (GUILayout.Button("Set as Walkable (Low)"))
             {
-                tile.SetType(TileType.Walkable);
+                foreach (var obj in targets)
+                {
+                    ((Tile)obj).SetType(TileType.Walkable);
+                }
             }
 
             if (GUILayout.Button("Set as High Ground"))
             {
-                tile.SetType(TileType.HighGround);
+                foreach (var obj in targets)
+                {
+                    ((Tile)obj).SetType(TileType.HighGround);
+                }
             }
         }
     }

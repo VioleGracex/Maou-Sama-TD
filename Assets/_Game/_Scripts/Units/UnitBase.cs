@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using TMPro;
 
 namespace MaouSamaTD.Units
 {
@@ -14,7 +15,7 @@ namespace MaouSamaTD.Units
 
         [Header("Visuals")]
         [SerializeField] protected SpriteRenderer _spriteRenderer;
-        [SerializeField] protected TextMesh _textFallback; // Simple 3D Text legacy or TMPro if preferred, using legacy for simplicity unless TMPro is mandated
+        [SerializeField] protected TextMeshProUGUI _textFallback; // Simple 3D Text legacy or TMPro if preferred, using legacy for simplicity unless TMPro is mandated
         
         // Data derived from UnitData
         protected UnitData _data;
@@ -40,10 +41,7 @@ namespace MaouSamaTD.Units
                 GameObject textObj = new GameObject("TextFallback");
                 textObj.transform.SetParent(transform);
                 textObj.transform.localPosition = new Vector3(0, 1, 0);
-                _textFallback = textObj.AddComponent<TextMesh>();
-                _textFallback.anchor = TextAnchor.MiddleCenter;
-                _textFallback.alignment = TextAlignment.Center;
-                _textFallback.characterSize = 0.5f;
+                _textFallback = textObj.AddComponent<TextMeshProUGUI>();
                 _textFallback.fontSize = 20;
                 _textFallback.color = Color.white;
             }

@@ -24,8 +24,7 @@ Ranged  // Deals damage from afar, placed on High Ground
         public int DeploymentCost => _deploymentCost;
 
         [Header("Visuals")]
-        [SerializeField] private SpriteRenderer _spriteRenderer;
-        [SerializeField] private TextMeshPro _textRenderer;
+        [SerializeField] private TextMeshProUGUI _textRenderer;
         [SerializeField] private Billboard _billboard;
 
         public override void Initialize(UnitData data)
@@ -41,7 +40,7 @@ Ranged  // Deals damage from afar, placed on High Ground
         {
             // Ensure components exist if not assigned
             if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-            if (_textRenderer == null) _textRenderer = GetComponentInChildren<TextMeshPro>();
+            if (_textRenderer == null) _textRenderer = GetComponentInChildren<TextMeshProUGUI>();
             if (_billboard == null) _billboard = GetComponentInChildren<Billboard>();
 
             // If still null, we might need to create them dynamically, 
@@ -82,7 +81,7 @@ Ranged  // Deals damage from afar, placed on High Ground
 
             _billboard = visualObj.AddComponent<Billboard>();
             if (_spriteRenderer == null) _spriteRenderer = visualObj.AddComponent<SpriteRenderer>();
-            if (_textRenderer == null) _textRenderer = visualObj.AddComponent<TextMeshPro>();
+            if (_textRenderer == null) _textRenderer = visualObj.AddComponent<TextMeshProUGUI>();
            
             // Default settings
             _textRenderer.rectTransform.sizeDelta = new Vector2(2, 2);

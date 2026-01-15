@@ -8,6 +8,7 @@ namespace MaouSamaTD.Units
         [Header("Identity")]
         public string UnitName;
         public Sprite UnitSprite; // Nullable, if null use Initials
+        public Sprite UnitIcon;   // Specific icon for UI buttons
 
         [Header("Class & Rules")]
         public UnitClass Class;
@@ -19,6 +20,7 @@ namespace MaouSamaTD.Units
         public float AttackPower = 10f;
         public float AttackInterval = 1f;
         public float Defense = 0f;
+        public float RespawnTime = 5f; // Seconds
         public float Range = 1f; // Tiles
 
         [Header("Placement Rules")]

@@ -5,18 +5,31 @@ using MaouSamaTD.Units;
 
 namespace MaouSamaTD.UI
 {
-    public class UnitDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class UnitDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
     {
         private UnitData _data;
+        private bool _isInteractable = true;
 
         public void Initialize(UnitData data)
         {
             _data = data;
         }
 
+        public void SetInteractable(bool interactable)
+        {
+            _isInteractable = interactable;
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (!_isInteractable || _data == null) return;
+            // Toggle selection mode
+            InteractionManager.Instance.SelectUnit(_data);
+        }
+
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (_data == null) return;
+            if (!_isInteractable || _data == null) return;
             
             // Tell Manager we are dragging this unit
             Grid.GridManager.Instance.GenerateTestMap(); // Ensure grid is ready if needed, mostly redundant safe-guard

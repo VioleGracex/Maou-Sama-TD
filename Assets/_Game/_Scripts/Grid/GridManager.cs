@@ -94,6 +94,11 @@ namespace MaouSamaTD.Grid
             return null;
         }
 
+        public IEnumerable<Tile> GetAllTiles()
+        {
+            return _grid.Values;
+        }
+
         // Helper to modify grid after generation
         public void SetTileType(Vector2Int coord, TileType type)
         {

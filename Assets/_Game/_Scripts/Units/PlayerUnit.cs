@@ -24,7 +24,7 @@ Ranged  // Deals damage from afar, placed on High Ground
         public int DeploymentCost => _deploymentCost;
 
         [Header("Visuals")]
-        [SerializeField] private TextMeshProUGUI _textRenderer;
+        [SerializeField] private UnityEngine.UI.Image _hpBarFill; // World Space Canvas Image
         [SerializeField] private Billboard _billboard;
 
         public override void Initialize(UnitData data)
@@ -32,23 +32,35 @@ Ranged  // Deals damage from afar, placed on High Ground
             base.Initialize(data);
             _unitClass = data.Class;
             _deploymentCost = data.DeploymentCost;
+            
+            // Listen to health changes
+            OnHealthChanged += UpdateHealthBar;
 
             UpdateVisuals(data);
+        }
+        
+        private void OnDestroy()
+        {
+            OnHealthChanged -= UpdateHealthBar;
+        }
+
+        private void UpdateHealthBar(float pct)
+        {
+            if (_hpBarFill != null)
+                _hpBarFill.fillAmount = pct;
         }
 
         private void UpdateVisuals(UnitData data)
         {
             // Ensure components exist if not assigned
             if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-            if (_textRenderer == null) _textRenderer = GetComponentInChildren<TextMeshProUGUI>();
+            
+            // We expect _hpBarFill to be assigned via Prefab or created in a specific Canvas hierarchy
+            // If it's null, we might be in trouble since creating a canvas from scratch here is verbose.
+            // But we can try to find it.
+            if (_hpBarFill == null) _hpBarFill = GetComponentInChildren<UnityEngine.UI.Image>();
+            
             if (_billboard == null) _billboard = GetComponentInChildren<Billboard>();
-
-            // If still null, we might need to create them dynamically, 
-            // but for now let's assume Prefab has them or we create a child object.
-            if (_spriteRenderer == null || _textRenderer == null)
-            {
-                CreateVisualContainer();
-            }
 
             if (data.UnitSprite != null)
             {
@@ -57,35 +69,10 @@ Ranged  // Deals damage from afar, placed on High Ground
                     _spriteRenderer.enabled = true;
                     _spriteRenderer.sprite = data.UnitSprite;
                 }
-                if (_textRenderer != null) _textRenderer.enabled = false;
-            }
-            else
-            {
-                if (_spriteRenderer != null) _spriteRenderer.enabled = false;
-                if (_textRenderer != null) 
-                {
-                    _textRenderer.enabled = true;
-                    _textRenderer.text = !string.IsNullOrEmpty(data.UnitName) ? data.UnitName.Substring(0, 1) : "?";
-                    _textRenderer.fontSize = 5;
-                    _textRenderer.alignment = TextAlignmentOptions.Center;
-                }
             }
         }
 
-        private void CreateVisualContainer()
-        {
-            // Create a child object for visuals if it doesn't exist
-            GameObject visualObj = new GameObject("Visuals");
-            visualObj.transform.SetParent(transform);
-            visualObj.transform.localPosition = Vector3.up * 1f; // Raise slightly above pivot
 
-            _billboard = visualObj.AddComponent<Billboard>();
-            if (_spriteRenderer == null) _spriteRenderer = visualObj.AddComponent<SpriteRenderer>();
-            if (_textRenderer == null) _textRenderer = visualObj.AddComponent<TextMeshProUGUI>();
-           
-            // Default settings
-            _textRenderer.rectTransform.sizeDelta = new Vector2(2, 2);
-        }
 
 
         protected override void UpdateInternal()

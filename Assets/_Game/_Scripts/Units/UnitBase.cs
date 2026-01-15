@@ -65,34 +65,12 @@ namespace MaouSamaTD.Units
 
         protected virtual void UpdateInternal()
         {
-            Billboard();
+            // Billboard handled by component on Visuals
         }
         
         private void Update()
         {
             UpdateInternal();
-        }
-
-        private void Billboard()
-        {
-            if (_camTransform == null) 
-            {
-                _camTransform = Camera.main?.transform;
-                if (_camTransform == null) return;
-            }
-
-            // Simple billboard: Look at camera
-            // We rotate the visual part, or the whole object if movement is handled separately
-            // Since this is a 3D world with 2D sprites, we usually want the sprite to face the camera.
-            // Let's assume the SpriteRenderer is on a child object or we rotate this object's Y.
-            // For now, let's rotate the whole object to face camera but keep upright? 
-            // Or just rotate the Sprite/Text children. 
-            
-            // Let's rotate the Sprite and Text objects to face camera
-            if (_spriteRenderer != null) 
-                _spriteRenderer.transform.forward = _camTransform.forward;
-            if (_textFallback != null)
-                _textFallback.transform.forward = _camTransform.forward;
         }
 
         protected void UpdateVisuals()
@@ -103,17 +81,20 @@ namespace MaouSamaTD.Units
             {
                 _spriteRenderer.sprite = _data.UnitSprite;
                 _spriteRenderer.enabled = true;
-                _textFallback.gameObject.SetActive(false);
+                if (_textFallback != null) _textFallback.gameObject.SetActive(false);
             }
             else
             {
                 _spriteRenderer.enabled = false;
-                _textFallback.gameObject.SetActive(true);
-                // Use first letter
-                if (!string.IsNullOrEmpty(_data.UnitName))
-                    _textFallback.text = _data.UnitName.Substring(0, 1).ToUpper();
-                else
-                    _textFallback.text = "?";
+                if (_textFallback != null)
+                {
+                    _textFallback.gameObject.SetActive(true);
+                    // Use first letter
+                    if (!string.IsNullOrEmpty(_data.UnitName))
+                        _textFallback.text = _data.UnitName.Substring(0, 1).ToUpper();
+                    else
+                        _textFallback.text = "?";
+                }
             }
         }
 
@@ -133,16 +114,6 @@ namespace MaouSamaTD.Units
         {
             OnDeath?.Invoke();
             Destroy(gameObject);
-        }
-
-        // Basic visual debug for HP
-        protected virtual void OnGUI()
-        {
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position + Vector3.up * 1.5f);
-            if (screenPos.z > 0)
-            {
-                GUI.Label(new Rect(screenPos.x - 20, Screen.height - screenPos.y, 100, 20), $"{_currentHp}/{_maxHp}");
-            }
         }
     }
 }

@@ -30,6 +30,10 @@ namespace MaouSamaTD.UI
              else Instance = this;
         }
 
+        private HashSet<UnitData> _deployedUnits = new HashSet<UnitData>();
+        private Dictionary<UnitData, float> _cooldownTimers = new Dictionary<UnitData, float>();
+        private List<UnitButtonUI> _unitButtons = new List<UnitButtonUI>();
+
         private void OnEnable()
         {
             if (CurrencyManager.Instance != null)
@@ -42,10 +46,61 @@ namespace MaouSamaTD.UI
                 CurrencyManager.Instance.OnSealsChanged -= UpdateSealsUI;
         }
 
+        private void Update()
+        {
+            if (_cooldownTimers.Count > 0)
+            {
+                List<UnitData> finishedCooldowns = new List<UnitData>();
+                
+                // create a copy of keys to iterate safely if simple loop
+                // But we need to update dictionary values.
+                
+                // To avoid "collection modified" errors, we can use a separate list of keys or just iterate keys
+                List<UnitData> keys = new List<UnitData>(_cooldownTimers.Keys);
+
+                foreach (var unit in keys)
+                {
+                    _cooldownTimers[unit] -= Time.deltaTime;
+                    
+                    // Update UI immediately for smooth visual
+                    UpdateButtonCooldownVisual(unit);
+
+                    if (_cooldownTimers[unit] <= 0)
+                    {
+                        finishedCooldowns.Add(unit);
+                    }
+                }
+
+                foreach (var unit in finishedCooldowns)
+                {
+                    _cooldownTimers.Remove(unit);
+                    UpdateButtonCooldownVisual(unit); // Final clear
+                    RefreshButtonsState(); // Check if can afford etc
+                }
+            }
+        }
+
+        private void UpdateButtonCooldownVisual(UnitData unit)
+        {
+            UnitButtonUI btn = _unitButtons.Find(b => b.Data == unit);
+            if (btn != null)
+            {
+                float currentCooldown = _cooldownTimers.ContainsKey(unit) ? _cooldownTimers[unit] : 0;
+                float totalCooldown = unit.RespawnTime;
+                
+                // Avoid div by zero
+                float progress = (totalCooldown > 0) ? (currentCooldown / totalCooldown) : 0;
+                
+                btn.UpdateCooldown(progress);
+            }
+        }
+
         private void UpdateSealsUI(int amount)
         {
             if (_authoritySealsText != null)
                 _authoritySealsText.text = $"AUTHORITY SEALS\n<size=40>{amount}</size>";
+            
+            RefreshButtonsState();
         }
 
         public void Initialize()
@@ -74,44 +129,80 @@ namespace MaouSamaTD.UI
         {
             // Clear existing
             foreach(Transform child in _barContainer) Destroy(child.gameObject);
+            _unitButtons.Clear();
+            _deployedUnits.Clear();
+            _cooldownTimers.Clear();
 
             foreach (var unit in _availableUnits)
             {
                 GameObject btnObj = Instantiate(_buttonPrefab, _barContainer);
-                Button btn = btnObj.GetComponent<Button>();
-                TextMeshProUGUI btnText = btnObj.GetComponentInChildren<TextMeshProUGUI>();
                 
-                // Better Text Format
-                if (btnText != null) 
-                {
-                    btnText.text = $"<b>{unit.UnitName}</b>\n<color=yellow>{unit.DeploymentCost}</color>";
-                    btnText.alignment = TextAlignmentOptions.Center;
-                }
+                // Add UnitButtonUI if missing (for legacy prefabs)
+                UnitButtonUI btnUI = btnObj.GetComponent<UnitButtonUI>();
+                if (btnUI == null) btnUI = btnObj.AddComponent<UnitButtonUI>();
+
+                btnUI.Initialize(unit);
+                _unitButtons.Add(btnUI);
+            }
+        }
+
+        private void RefreshButtonsState()
+        {
+            if (CurrencyManager.Instance == null) return;
+            int currentSeals = CurrencyManager.Instance.CurrentSeals;
+
+            foreach (var btnUI in _unitButtons)
+            {
+                if (btnUI == null) continue;
                 
-                // Colorize button based on class?
-                Image img = btnObj.GetComponent<Image>();
-                if (img != null)
-                {
-                    if (unit.Class == UnitClass.Melee) img.color = new Color(0.8f, 0.4f, 0.4f); // Reddish
-                    else if (unit.Class == UnitClass.Ranged) img.color = new Color(0.4f, 0.4f, 0.8f); // Bluish
-                    else if (unit.Class == UnitClass.Healer) img.color = new Color(0.4f, 0.8f, 0.4f); // Greenish
-                }
+                UnitData unit = btnUI.Data;
+                if (unit == null) continue;
                 
-                // Add Drag Handler logic
-                UnitDragHandler dragHandler = btnObj.AddComponent<UnitDragHandler>();
-                dragHandler.Initialize(unit);
+                bool isDeployed = _deployedUnits.Contains(unit);
+                bool canAfford = currentSeals >= unit.DeploymentCost;
+                bool isCoolingDown = _cooldownTimers.ContainsKey(unit);
+                
+                btnUI.UpdateState(canAfford, isDeployed, isCoolingDown);
             }
         }
 
         public void SpawnUnit(Tile tile, UnitData unitData)
         {
+            if (_deployedUnits.Contains(unitData))
+            {
+                Debug.LogWarning($"Unit {unitData.UnitName} already deployed!");
+                return;
+            }
+            if (_cooldownTimers.ContainsKey(unitData))
+            {
+                Debug.LogWarning($"Unit {unitData.UnitName} is on cooling down!");
+                return;
+            }
+
             CurrencyManager.Instance.TrySpendSeals(unitData.DeploymentCost);
             PlayerUnit newUnit = Instantiate(_unitPrefab, tile.transform.position, Quaternion.identity);
             newUnit.Initialize(unitData);
             
+            _deployedUnits.Add(unitData);
             tile.SetOccupied(true);
             
+            RefreshButtonsState();
+            
             Debug.Log($"Deployed {unitData.UnitName}!");
+        }
+
+        public void OnUnitRetreated(UnitData unitData)
+        {
+            if (_deployedUnits.Contains(unitData))
+            {
+                _deployedUnits.Remove(unitData);
+                
+                // Start Cooldown
+                _cooldownTimers[unitData] = unitData.RespawnTime;
+                
+                RefreshButtonsState();
+                Debug.Log($"Unit {unitData.UnitName} retreated/defeated. Cooldown started: {unitData.RespawnTime}s");
+            }
         }
     }
 }

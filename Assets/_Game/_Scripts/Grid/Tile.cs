@@ -37,6 +37,36 @@ namespace MaouSamaTD.Grid
             _isOccupied = occupied;
         }
 
+        // Visuals
+        private Renderer _renderer;
+        private MaterialPropertyBlock _propBlock;
+        private static readonly int GlowColorId = Shader.PropertyToID("_GlowColor");
+        private static readonly int GlowIntensityId = Shader.PropertyToID("_GlowIntensity");
+
+        private void Awake()
+        {
+            _renderer = GetComponent<Renderer>();
+            _propBlock = new MaterialPropertyBlock();
+        }
+
+        public void SetHighlight(bool active, Color color)
+        {
+            if (_renderer == null) return;
+
+            _renderer.GetPropertyBlock(_propBlock);
+            if (active)
+            {
+                _propBlock.SetColor(GlowColorId, color);
+                _propBlock.SetFloat(GlowIntensityId, 1.5f); // Intensity
+            }
+            else
+            {
+                _propBlock.SetColor(GlowColorId, Color.black);
+                _propBlock.SetFloat(GlowIntensityId, 0f);
+            }
+            _renderer.SetPropertyBlock(_propBlock);
+        }
+
         // Visual debug to see tile type easily in Editor
         private void OnDrawGizmos()
         {

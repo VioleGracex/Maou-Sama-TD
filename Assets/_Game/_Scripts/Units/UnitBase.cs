@@ -4,7 +4,7 @@ using TMPro;
 using DG.Tweening; // To handle Flash
 using MaouSamaTD.Managers;
 
-using MaouSamaTD.Managers; // Added namespace for Manager
+
 
 namespace MaouSamaTD.Units
 {
@@ -30,16 +30,6 @@ namespace MaouSamaTD.Units
         
         [Header("Effects")]
         [SerializeField] protected ParticleSystem _healParticle;
-
-        [Header("Debug")]
-        [SerializeField] private float _debugDamageVal = 10f;
-        [SerializeField] private float _debugHealVal = 10f;
-
-        [ContextMenu("Debug Damage")]
-        private void DebugTakeDamage() => TakeDamage(_debugDamageVal);
-
-        [ContextMenu("Debug Heal")]
-        private void DebugHeal() => Heal(_debugHealVal);
         
         // Data derived from UnitData
         protected UnitData _data;
@@ -51,8 +41,15 @@ namespace MaouSamaTD.Units
         protected float _lastAttackTime;
         private Transform _camTransform;
 
+        // Outline Logic
+        private MaterialPropertyBlock _mpb;
+        private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
+        private static readonly int OutlineEnabledId = Shader.PropertyToID("_OutlineEnabled");
+
         protected virtual void Awake()
         {
+            _mpb = new MaterialPropertyBlock();
+
             // Ensure we have visual components if not assigned
             if (_spriteRenderer == null)
             {
@@ -123,6 +120,19 @@ namespace MaouSamaTD.Units
             }
         }
 
+        public void SetHighlight(bool active, Color color)
+        {
+            if (_spriteRenderer == null) return;
+
+            _spriteRenderer.GetPropertyBlock(_mpb);
+            _mpb.SetFloat(OutlineEnabledId, active ? 1f : 0f);
+            if (active)
+            {
+                _mpb.SetColor(OutlineColorId, color);
+            }
+            _spriteRenderer.SetPropertyBlock(_mpb);
+        }
+
         public virtual void TakeDamage(float amount)
         {
             float damageTaken = Mathf.Max(1, amount - _defense); // Minimum 1 damage
@@ -153,19 +163,23 @@ namespace MaouSamaTD.Units
 
         public virtual void Heal(float amount)
         {
-            if (_currentHp >= _maxHp || amount <= 0) return;
+            if (amount <= 0) return;
 
-            _currentHp = Mathf.Min(_currentHp + amount, _maxHp);
-            
-            // Visuals
-            if (FloatingTextManager.Instance != null)
-            {
-                FloatingTextManager.Instance.ShowHeal(transform.position, amount);
-            }
-
+            // Always play particle if assigned
             if (_healParticle != null)
             {
                 _healParticle.Play();
+            }
+
+            // If already at max HP, skip actual healing and text
+            if(_currentHp >= _maxHp) return;
+
+            _currentHp = Mathf.Min(_currentHp + amount, _maxHp);
+            
+            // Visuals: Only show text if we actually healed
+            if (FloatingTextManager.Instance != null)
+            {
+                FloatingTextManager.Instance.ShowHeal(transform.position, amount);
             }
             
             OnHealthChanged?.Invoke(_currentHp / _maxHp);

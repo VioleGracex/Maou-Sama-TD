@@ -64,16 +64,23 @@ namespace MaouSamaTD.UI
 
         public void Show(PlayerUnit unit)
         {
-            if (unit == null) return;
+            if (_selectedUnit != null) _selectedUnit.SetHighlight(false, Color.white); // Clear old
+
             _selectedUnit = unit;
-            
-            if (_panel != null)
+            if (_selectedUnit != null)
             {
-                _panel.SetActive(true);
-                _panel.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
-            } 
-            
-            UpdateVisuals();
+                _selectedUnit.SetHighlight(true, Color.yellow); // Highlight new
+                UpdateVisuals();
+                if (_panel != null)
+                {
+                    _panel.SetActive(true);
+                    _panel.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack); // Animate In
+                }
+            }
+            else
+            {
+                Hide(); // If unit is null, hide the inspector
+            }
         }
 
         public void Hide()
@@ -83,11 +90,13 @@ namespace MaouSamaTD.UI
                 _panel.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).OnComplete(() => 
                 {
                     _panel.SetActive(false);
+                    if (_selectedUnit != null) _selectedUnit.SetHighlight(false, Color.white); // Clear highlight
                     _selectedUnit = null;
                 });
             }
             else
             {
+                if (_selectedUnit != null) _selectedUnit.SetHighlight(false, Color.white); // Clear highlight
                 _selectedUnit = null;
             }
         }

@@ -21,6 +21,7 @@ namespace MaouSamaTD.Managers
         
         private GameObject _ghostObject;
         private Tile _currentHoverTile;
+        private Units.UnitBase _currentHoverUnit; // Track unit for outline
 
         private Camera _mainCamera;
 
@@ -302,10 +303,55 @@ namespace MaouSamaTD.Managers
                             OnTileClicked?.Invoke(tile);
                         }
                     }
+                    else
+                    {
+                        // Hover Logic
+                        var occupant = tile.Occupant;
+                        
+                        // If we moved to a new unit or null
+                        if (occupant != _currentHoverUnit)
+                        {
+                            // Clear old
+                            if (_currentHoverUnit != null)
+                            {
+                                // Only clear if it's NOT the selected unit (Selection overrides hover)
+                                bool isSelected = (_selectedUnitData != null) && false; // Wait, selected data is DATA, not Instance.
+                                // We don't track selected INSTANCE easily unless we search.
+                                // But wait! InteractionManager selects DATA for placement, usually.
+                                // Inspecting a DEPLOYED unit is different.
+                                
+                                // Let's check UnitInspectorUI for selected unit?
+                                // Ideally InteractionManager should know about the specific selected UNIT instance if we want highlight persistence.
+                                // But currently `StartDrag` and `SelectUnit` use `UnitData` for PLACEMENT.
+                                // `UnitInspectorUI` handles DEPLOYED unit selection.
+                                
+                                // Simple approach: Just clear highlight.
+                                // If UnitInspectorUI keeps it highlighted, that's separate.
+                                // Let's try to just handle HOVER for now.
+                                
+                                _currentHoverUnit.SetHighlight(false, Color.white);
+                            }
+                            
+                            _currentHoverUnit = occupant;
+                            
+                            // Highlight new (Hover = White)
+                            if (_currentHoverUnit != null)
+                            {
+                                _currentHoverUnit.SetHighlight(true, Color.white);
+                            }
+                        }
+                    }
                 }
             }
             else
             {
+                // Off-map, clear hover
+                if (_currentHoverUnit != null)
+                {
+                    _currentHoverUnit.SetHighlight(false, Color.white);
+                    _currentHoverUnit = null;
+                }
+
                 // Clicked nowhere/off-map
                 if (isPressDown && !IsDragging && _selectedUnitData != null)
                 {

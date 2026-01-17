@@ -21,6 +21,11 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _dmgText; // Inside Stats_Dmg_BG
         [SerializeField] private TextMeshProUGUI _rangeText; // Inside Stats_Range_BG
         
+        [Header("Ultimate Charge")]
+        [SerializeField] private Image _ultChargeParent; // New: Fill Image for charging
+        [SerializeField] private Image _ultChargeFill; // New: Fill Image for charging
+        [SerializeField] private TextMeshProUGUI _ultChargeLabel; // New: Text for charging %
+        
         [Header("Buttons")]
         [SerializeField] private Button _ultButton; // Ult_Btn
         [SerializeField] private Button _retreatButton; // Keeps existing functionality
@@ -33,7 +38,7 @@ namespace MaouSamaTD.UI
         
         [Inject] private DeploymentUI _deploymentUI;
 
-        private void Awake()
+        public void Init()
         {
 
             if (_panel != null) 
@@ -91,8 +96,51 @@ namespace MaouSamaTD.UI
         {
             if (_selectedUnit != null && _panel.activeSelf)
             {
-                // Update dynamic stats if needed (like current HP)
-                // For now, static update on Show is mostly enough, unless HP changes visibly here.
+                // Dynamic updates per frame using 500ms equivalent or just frame update
+                // For charge bars, frame update is smoother
+                UpdateChargeVisuals();
+            }
+        }
+        
+        private void UpdateChargeVisuals()
+        {
+            if (_selectedUnit == null || _selectedUnit.Data == null) return;
+            
+            float current = _selectedUnit.CurrentCharge;
+            float max = _selectedUnit.MaxCharge;
+            bool isFull = current >= max;
+
+            // Toggle Button vs Charge Display
+            if (_ultButton)
+            {
+                // If we want to hide the button object entirely or just disable it?
+                // User said: "if full charge we show button... if empty we show image fill and label"
+                // Assuming "show button" means the interactable part.
+                
+                // Let's assume the Button Object contains the button interaction. 
+                // And we have a separate "Charging" value object (Fill + Label).
+                // Or maybe they overlap. 
+                
+                // If they are separate:
+                _ultButton.gameObject.SetActive(isFull);
+            }
+            
+            if (_ultChargeParent)
+            {
+                _ultChargeParent.gameObject.SetActive(!isFull);
+                if (!isFull && max > 0)
+                {
+                    _ultChargeFill.fillAmount = current / max;
+                }
+            }
+            
+            if (_ultChargeLabel)
+            {
+                _ultChargeLabel.gameObject.SetActive(!isFull);
+                if (!isFull && max > 0)
+                {
+                    _ultChargeLabel.text = $"{(current/max):P0} Charging Skill";
+                }
             }
         }
 

@@ -55,20 +55,33 @@ public class DeploymentSceneSetup : Editor
             Image img = panel.AddComponent<Image>();
             img.color = new Color(0, 0, 0, 0.8f);
 
-            GameObject textObj = new GameObject("SealsText");
+            GameObject textObj = new GameObject("SealsTitle");
             textObj.transform.SetParent(panel.transform, false);
             TextMeshProUGUI txt = textObj.AddComponent<TextMeshProUGUI>();
-            txt.fontSize = 28;
+            txt.fontSize = 20; // Slightly smaller title
             txt.color = Color.white;
-            txt.text = "AUTHORITY SEALS\n30";
-            txt.alignment = TextAlignmentOptions.Center;
-            txt.rectTransform.anchorMin = Vector2.zero;
+            txt.text = "AUTHORITY SEALS";
+            txt.rectTransform.anchorMin = new Vector2(0, 0.5f);
             txt.rectTransform.anchorMax = Vector2.one;
             txt.rectTransform.sizeDelta = Vector2.zero;
+            txt.rectTransform.offsetMin = new Vector2(0, 0); 
+            txt.rectTransform.offsetMax = new Vector2(0, -10);
+
+            // Value Text (The one we update)
+            GameObject valObj = new GameObject("SealsValue");
+            valObj.transform.SetParent(panel.transform, false);
+            TextMeshProUGUI valTxt = valObj.AddComponent<TextMeshProUGUI>();
+            valTxt.fontSize = 32; // Bigger number
+            valTxt.color = Color.yellow;
+            valTxt.text = "30";
+            valTxt.alignment = TextAlignmentOptions.Center;
+            valTxt.rectTransform.anchorMin = Vector2.zero;
+            valTxt.rectTransform.anchorMax = new Vector2(1, 0.6f);
+            valTxt.rectTransform.sizeDelta = Vector2.zero;
             
             // Assign to Manager via SerializedObject to avoid dirty scene issues
             SerializedObject so = new SerializedObject(uiManager);
-            so.FindProperty("_authoritySealsText").objectReferenceValue = txt;
+            so.FindProperty("_authoritySealsText").objectReferenceValue = valTxt;
             so.ApplyModifiedProperties();
         }
 
@@ -269,6 +282,32 @@ public class DeploymentSceneSetup : Editor
             ultIconRect.offsetMax = new Vector2(-5,-5);
             ultIcon.preserveAspect = true;
 
+            // 7b. Charge Fill (Overlay/Replacement when not ready)
+            GameObject ultChargeObj = new GameObject("Ult_Charge_Fill");
+            ultChargeObj.transform.SetParent(panel.transform, false); // Same parent as Button
+            Image ultChargeImg = ultChargeObj.AddComponent<Image>();
+            ultChargeImg.color = new Color(1f, 1f, 0f, 0.5f); // Yellowish semi-transparent
+            ultChargeImg.type = Image.Type.Filled;
+            ultChargeImg.fillMethod = Image.FillMethod.Radial360; 
+            RectTransform ultChargeRect = ultChargeObj.GetComponent<RectTransform>();
+            // Copy Ult Button Rect
+            ultChargeRect.anchorMin = new Vector2(0.3f, 0.05f);
+            ultChargeRect.anchorMax = new Vector2(0.7f, 0.25f);
+            ultChargeRect.offsetMin = Vector2.zero;
+            ultChargeRect.offsetMax = Vector2.zero;
+
+            // 7c. Charge Label
+            GameObject ultLabelObj = new GameObject("Ult_Charge_Label");
+            ultLabelObj.transform.SetParent(ultChargeObj.transform, false);
+            TextMeshProUGUI ultLabel = ultLabelObj.AddComponent<TextMeshProUGUI>();
+            ultLabel.text = "0%";
+            ultLabel.alignment = TextAlignmentOptions.Center;
+            ultLabel.fontSize = 20;
+            ultLabel.color = Color.black;
+            ultLabel.rectTransform.anchorMin = Vector2.zero;
+            ultLabel.rectTransform.anchorMax = Vector2.one;
+            ultLabel.rectTransform.sizeDelta = Vector2.zero;
+
             // Keep Retreat Button (Not in hierarchy image but needed)
             GameObject retreatBtnObj = new GameObject("RetreatButton");
             retreatBtnObj.transform.SetParent(panel.transform, false);
@@ -329,6 +368,9 @@ public class DeploymentSceneSetup : Editor
             so.FindProperty("_rangeText").objectReferenceValue = rngTxt;
             
             so.FindProperty("_ultButton").objectReferenceValue = ultBtn;
+            so.FindProperty("_ultChargeFill").objectReferenceValue = ultChargeImg;
+            so.FindProperty("_ultChargeLabel").objectReferenceValue = ultLabel;
+            
             so.FindProperty("_retreatButton").objectReferenceValue = retBtn;
             so.FindProperty("_closeButton").objectReferenceValue = closeBtn;
             so.ApplyModifiedProperties();
@@ -496,6 +538,10 @@ public class DeploymentSceneSetup : Editor
         so.FindProperty("_costText").objectReferenceValue = costTxt;
         so.FindProperty("_cooldownOverlay").objectReferenceValue = cdImg;
         so.FindProperty("_button").objectReferenceValue = btn;
+        
+        // Add DragHandler
+        btnObj.AddComponent<UnitDragHandler>();
+        
         so.ApplyModifiedProperties();
 
         Selection.activeGameObject = btnObj;

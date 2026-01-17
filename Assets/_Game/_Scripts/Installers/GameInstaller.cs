@@ -14,6 +14,7 @@ namespace MaouSamaTD.Installers
         [SerializeField] private InteractionManager _interactionManager;
         [SerializeField] private CurrencyManager _currencyManager;
         [SerializeField] private GridManager _gridManager;
+        [SerializeField] private GameManager _gameManager;
 
         public override void InstallBindings()
         {
@@ -23,6 +24,12 @@ namespace MaouSamaTD.Installers
             if (_interactionManager) Container.Bind<InteractionManager>().FromInstance(_interactionManager).AsSingle();
             if (_currencyManager) Container.Bind<CurrencyManager>().FromInstance(_currencyManager).AsSingle();
             if (_gridManager) Container.Bind<GridManager>().FromInstance(_gridManager).AsSingle();
+            
+            if (_gameManager) 
+            {
+                Container.Bind<GameManager>().FromInstance(_gameManager).AsSingle();
+                Container.QueueForInject(_gameManager); // Ensure it gets injected
+            }
             
             // If they can be null and we want to find them automatically:
             // Container.Bind<UnitInspectorUI>().FromComponentInHierarchy().AsSingle();

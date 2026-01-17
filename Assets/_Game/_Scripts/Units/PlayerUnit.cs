@@ -25,13 +25,33 @@ Ranged  // Deals damage from afar, placed on High Ground
         
         public Grid.Tile CurrentTile { get; set; }
 
+        private float _currentCharge;
+        public float CurrentCharge => _currentCharge;
+        public float MaxCharge => _data != null ? _data.MaxCharge : 100f;
+
         public void UseSkill()
         {
             if (_data != null)
             {
-                Debug.Log($"Used Skill: {_data.SkillName}!");
-                // Implement skill logic here later
+                if (_currentCharge >= MaxCharge)
+                {
+                    Debug.Log($"Used Skill: {_data.SkillName}!");
+                    // Implement skill logic here later
+                    
+                    // Consume Charge
+                    _currentCharge = 0f;
+                }
+                else
+                {
+                    Debug.Log($"Not enough charge! ({_currentCharge}/{MaxCharge})");
+                }
             }
+        }
+        
+        public void AddCharge(float amount)
+        {
+            if (_data == null) return;
+            _currentCharge = Mathf.Min(_currentCharge + amount, MaxCharge);
         }
 
         [Header("Visuals")]
@@ -89,7 +109,13 @@ Ranged  // Deals damage from afar, placed on High Ground
         protected override void UpdateInternal()
         {
              base.UpdateInternal();
-             // Additional Player Unit logic
+             
+             // Passive Charge Generation
+             if (_data != null && _currentCharge < MaxCharge)
+             {
+                 _currentCharge += _data.ChargePerSecond * Time.deltaTime;
+                 if (_currentCharge > MaxCharge) _currentCharge = MaxCharge;
+             }
         }
 
         // Color coding for debug

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using MaouSamaTD.Units;
+using Zenject;
 
 namespace MaouSamaTD.UI
 {
@@ -18,6 +19,7 @@ namespace MaouSamaTD.UI
 
         private UnitDragHandler _dragHandler;
         private UnitData _data;
+        [Inject] private DiContainer _container;
 
         public UnitData Data => _data;
 
@@ -29,8 +31,25 @@ namespace MaouSamaTD.UI
             _background = GetComponent<Image>();
 
             // Ensure DragHandler exists and init it
-            if (_dragHandler == null) _dragHandler = gameObject.AddComponent<UnitDragHandler>();
+            if (_dragHandler == null)
+            {
+                _dragHandler = gameObject.AddComponent<UnitDragHandler>();
+                // Dynamic AddComponent needs manual injection!
+                 if (_container != null) _container.Inject(_dragHandler);
+            }
+            // If it existed, it was already injected by InstantiatePrefab
+            
             _dragHandler.Initialize(data);
+            
+            // Wire Button Click to DragHandler (since Button consumes clicks)
+            if (_button != null)
+            {
+                _button.onClick.RemoveAllListeners();
+                _button.onClick.AddListener(() => 
+                {
+                    if (_dragHandler != null) _dragHandler.OnPointerClick(null);
+                });
+            }
 
             // Auto-find components if missing (helper for upgrading prefabs)
             if (_nameText == null)

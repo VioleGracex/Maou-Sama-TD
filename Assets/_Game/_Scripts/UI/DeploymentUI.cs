@@ -14,6 +14,7 @@ namespace MaouSamaTD.UI
         // public static DeploymentUI Instance { get; private set; } // Removed for Zenject
         
         [Inject] private CurrencyManager _currencyManager;
+        [Inject] private DiContainer _container; // For instantiating prefabs with injection
 
         [Header("Config")]
         [SerializeField] private List<UnitData> _availableUnits;
@@ -26,12 +27,6 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _authoritySealsText; 
 
         [SerializeField] private int _maxCohortSize = 13; // 12 + 1 Friend/Support
-        
-        private void Awake()
-        {
-             // if (Instance != null && Instance != this) Destroy(gameObject);
-             // else Instance = this;
-        }
 
         private HashSet<UnitData> _deployedUnits = new HashSet<UnitData>();
         private Dictionary<UnitData, float> _cooldownTimers = new Dictionary<UnitData, float>();
@@ -101,12 +96,12 @@ namespace MaouSamaTD.UI
         private void UpdateSealsUI(int amount)
         {
             if (_authoritySealsText != null)
-                _authoritySealsText.text = $"AUTHORITY SEALS\n<size=40>{amount}</size>";
+                _authoritySealsText.text = $"{amount}";
             
             RefreshButtonsState();
         }
 
-        public void Initialize()
+        public void Init()
         {
             // Setup Ignis if not in list
             if (_ignisData != null && !_availableUnits.Contains(_ignisData))
@@ -121,6 +116,7 @@ namespace MaouSamaTD.UI
                 _availableUnits = _availableUnits.GetRange(0, _maxCohortSize);
             }
             
+            // Generate Buttons
             GenerateButtons();
             
             // Initial UI Update
@@ -138,7 +134,8 @@ namespace MaouSamaTD.UI
 
             foreach (var unit in _availableUnits)
             {
-                GameObject btnObj = Instantiate(_buttonPrefab, _barContainer);
+                // Use Zenject to instantiate so Button's UnitDragHandler gets injected
+                GameObject btnObj = _container.InstantiatePrefab(_buttonPrefab, _barContainer);
                 
                 // Add UnitButtonUI if missing (for legacy prefabs)
                 UnitButtonUI btnUI = btnObj.GetComponent<UnitButtonUI>();

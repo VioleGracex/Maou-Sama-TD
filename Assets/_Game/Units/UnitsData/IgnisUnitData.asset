@@ -22,5 +22,12 @@ MonoBehaviour:
   AttackPower: 10
   AttackInterval: 1
   Defense: 5
+  RespawnTime: 5
   Range: 2
+  MaxCharge: 100
+  ChargePerSecond: 1
+  ChargePerAttack: 2
+  SkillName: Ultimate
+  SkillIcon: {fileID: 0}
+  SkillDescription: Does something cool.
   ViableTiles: 00000000

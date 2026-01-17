@@ -6,7 +6,7 @@ namespace MaouSamaTD.Grid
 {
     public class GridManager : MonoBehaviour
     {
-        public static GridManager Instance { get; private set; }
+        // public static GridManager Instance { get; private set; } // Removed for Zenject
 
         [Header("Grid Settings")]
         [SerializeField] private int _width = 10;
@@ -25,35 +25,24 @@ namespace MaouSamaTD.Grid
         public int Height => _height;
         public float CellSize => _cellSize;
 
-                private void Awake()
+        public void Init()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
-
-            if (_gridContainer == null)
+             if (_gridContainer == null)
             {
                 var container = GameObject.Find("GridContainer");
                 if (container == null) container = new GameObject("GridContainer");
                 _gridContainer = container.transform;
             }
-        }
-
-        private void Start()
-        {
+            
             if (_grid.Count == 0 && Application.isPlaying)
             {
-                // GenerateProceduralMap(); // Removed
+                 GenerateTestMap();
             }
         }
         
         public void GenerateTestMap()
         {
-             // ... (Keep existing if needed, or replace)
-             // GenerateProceduralMap(); // Removed
+             // ...
         }
 
         public void CreateTile(Vector2Int coord, TileType type)

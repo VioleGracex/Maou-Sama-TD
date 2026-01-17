@@ -5,7 +5,7 @@ namespace MaouSamaTD.Managers
 {
     public class CurrencyManager : MonoBehaviour
     {
-        public static CurrencyManager Instance { get; private set; }
+        // public static CurrencyManager Instance { get; private set; }
 
         public event Action<int> OnSealsChanged;
 
@@ -20,22 +20,10 @@ namespace MaouSamaTD.Managers
 
         private float _regenTimer;
 
-        private void Awake()
+        public void Init()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
-            
             CurrentSeals = _startingSeals;
-        }
-
-        private void Start()
-        {
-             // Initial notify
-             OnSealsChanged?.Invoke(CurrentSeals);
+            OnSealsChanged?.Invoke(CurrentSeals);
         }
 
         private void Update()

@@ -114,8 +114,7 @@ namespace MaouSamaTD.Grid
                      // If just changing to Walkable/HighGround, generator doesn't track these lists explicitly
                      // but we should re-generate to update paths if we created an obstacle
                      // Use SetTileType on manager to ensure data consistency
-                     var manager = GridManager.Instance;
-                     if (manager == null) manager = FindObjectOfType<GridManager>();
+                     var manager = FindObjectOfType<GridManager>();
                      
                      if (manager != null) manager.SetTileType(_coordinate, newType);
                  }

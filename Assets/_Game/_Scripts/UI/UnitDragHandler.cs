@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using MaouSamaTD.Managers;
 using MaouSamaTD.Units;
+using Zenject;
 
 namespace MaouSamaTD.UI
 {
@@ -9,6 +10,9 @@ namespace MaouSamaTD.UI
     {
         private UnitData _data;
         private bool _isInteractable = true;
+
+        [Inject] private InteractionManager _interactionManager;
+        [Inject] private Grid.GridManager _gridManager;
 
         public void Initialize(UnitData data)
         {
@@ -24,7 +28,7 @@ namespace MaouSamaTD.UI
         {
             if (!_isInteractable || _data == null) return;
             // Toggle selection mode
-            InteractionManager.Instance.SelectUnit(_data);
+            if (_interactionManager != null) _interactionManager.SelectUnit(_data);
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -32,8 +36,10 @@ namespace MaouSamaTD.UI
             if (!_isInteractable || _data == null) return;
             
             // Tell Manager we are dragging this unit
-            Grid.GridManager.Instance.GenerateTestMap(); // Ensure grid is ready if needed, mostly redundant safe-guard
-            InteractionManager.Instance.StartDrag(_data);
+            // Grid.GridManager.Instance.GenerateTestMap(); // Removed redundant call or needs injection if strictly needed
+            if (_gridManager != null) _gridManager.GenerateTestMap(); 
+            
+            if (_interactionManager != null) _interactionManager.StartDrag(_data);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -44,7 +50,7 @@ namespace MaouSamaTD.UI
         public void OnEndDrag(PointerEventData eventData)
         {
              // Check if we dropped on map (Manager handles "place" logic if mouse is over map)
-             InteractionManager.Instance.EndDrag(true);
+             if (_interactionManager != null) _interactionManager.EndDrag(true);
         }
     }
 }

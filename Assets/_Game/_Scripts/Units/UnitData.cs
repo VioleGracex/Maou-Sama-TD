@@ -22,6 +22,9 @@ namespace MaouSamaTD.Units
         public float Defense = 0f;
         public float RespawnTime = 5f; // Seconds
         public float Range = 1f; // Tiles
+        public float MaxCharge = 100f;
+        public float ChargePerSecond = 5f;
+        public float ChargePerAttack = 10f;
 
         [Header("Skill")]
         public string SkillName = "Ultimate";

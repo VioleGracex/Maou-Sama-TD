@@ -1,23 +1,18 @@
-using UnityEngine;
-using MaouSamaTD.UI;
 using MaouSamaTD.Grid;
+using MaouSamaTD.UI;
+using UnityEngine;
+using Zenject;
 
 namespace MaouSamaTD.Managers
 {
     public class GameManager : MonoBehaviour
     {
-        public static GameManager Instance { get; private set; }
-
-        [Header("References")]
-        [SerializeField] private DeploymentUI _deploymentUI;
-        [SerializeField] private GridManager _gridManager;
-        [SerializeField] private InteractionManager _interactionManager;
-        [SerializeField] private CurrencyManager _currencyManager;
-
-        private void Awake()
-        {
-            Instance = this;
-        }
+        // [Inject] references instead of manual SerializeField
+        [Inject] private DeploymentUI _deploymentUI;
+        [Inject] private GridManager _gridManager;
+        [Inject] private InteractionManager _interactionManager;
+        [Inject] private CurrencyManager _currencyManager;
+        [Inject] private UnitInspectorUI _unitInspectorUI;
 
         private void Start()
         {
@@ -31,20 +26,31 @@ namespace MaouSamaTD.Managers
             // 1. Init Grid
             if (_gridManager != null) 
             {
-                // Grid might auto-init in Start if map exists, or we call it here
-                _gridManager.GenerateTestMap(); 
+                _gridManager.Init(); 
             }
 
-            // 2. Init UI
-            if (_deploymentUI != null)
-            {
-                _deploymentUI.Initialize();
-            }
-
-            // 3. Init Currency (Start with some cash)
+            // 2. Init Currency (Start with some cash)
             if (_currencyManager != null)
             {
-                _currencyManager.AddSeals(50); // Starting cash
+                _currencyManager.Init();
+            }
+
+            // 3. Init UI (Needs Currency & Grid ready potentially)
+            if (_deploymentUI != null)
+            {
+                _deploymentUI.Init();
+            }
+            
+            // 4. Init Interaction (Needs UI & Grid)
+            if (_interactionManager != null)
+            {
+                _interactionManager.Init();
+            }
+
+            // 5. Init Unit Inspector
+            if (_unitInspectorUI != null)
+            {
+                _unitInspectorUI.Init();
             }
 
             Debug.Log("GameManager: Initialization Complete.");

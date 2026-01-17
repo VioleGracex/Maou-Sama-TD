@@ -82,7 +82,8 @@ namespace MaouSamaTD.Units
             _isMoving = false;
             // Deal damage to "Player" (Base HP)
             Debug.Log("Enemy reached exit! Dealing damage.");
-            GridManager.Instance?.SetTileType(_targetTile.Coordinate, TileType.Exit); // Just to verify we are at exit?
+            GridManager gm = FindObjectOfType<GridManager>();
+            if (gm != null) gm.SetTileType(_targetTile.Coordinate, TileType.Exit);
             Destroy(gameObject);
         }
 

@@ -7,7 +7,9 @@ namespace MaouSamaTD.Managers
 {
     public class InteractionManager : MonoBehaviour
     {
-        public static InteractionManager Instance { get; private set; }
+        // Singleton removed
+        
+        [Inject] private GridManager _gridManager;
 
         public event System.Action<Tile> OnTileHovered;
         public event System.Action<Tile> OnTileClicked;
@@ -31,14 +33,8 @@ namespace MaouSamaTD.Managers
         [Inject] private CurrencyManager _currencyManager; // Injecting explicitly to fix NRE potential
         [Inject] private DeploymentUI _deploymentUI; // Injecting explicitly
 
-        private void Awake()
+        public void Init()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
             _mainCamera = Camera.main;
         }
 
@@ -138,8 +134,7 @@ namespace MaouSamaTD.Managers
 
         private void UpdateTileVisuals()
         {
-            var grid = GridManager.Instance;
-            if (grid == null) return;
+            if (_gridManager == null) return;
 
             Units.UnitData activeUnit = IsDragging ? _draggedUnitData : _selectedUnitData;
             bool isActive = activeUnit != null;
@@ -147,7 +142,7 @@ namespace MaouSamaTD.Managers
             // Center of range calculation (Ghost or Cursor)
             Tile rangeCenterTile = _currentHoverTile;
 
-            foreach (var tile in grid.GetAllTiles())
+            foreach (var tile in _gridManager.GetAllTiles())
             {
                 if (isActive)
                 {
@@ -253,10 +248,10 @@ namespace MaouSamaTD.Managers
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 Tile tile = hit.collider.GetComponent<Tile>();
-                if (tile == null)
+                if (tile == null && _gridManager != null)
                 {
-                     Vector2Int coord = GridManager.Instance.WorldToGridCoordinates(hit.point);
-                     tile = GridManager.Instance.GetTileAt(coord);
+                     Vector2Int coord = _gridManager.WorldToGridCoordinates(hit.point);
+                     tile = _gridManager.GetTileAt(coord);
                 }
 
                 if (tile != null)

@@ -13,6 +13,8 @@ Ranged  // Deals damage from afar, placed on High Ground
 
     public class PlayerUnit : UnitBase
     {
+        public event System.Action<PlayerUnit> OnRetreat;
+
         [Header("Player Unit Stats")]
         [SerializeField] private UnitClass _unitClass;
         [SerializeField] private int _deploymentCost = 10;
@@ -123,6 +125,27 @@ Ranged  // Deals damage from afar, placed on High Ground
         {
             Gizmos.color = _unitClass == UnitClass.Melee ? Color.blue : Color.yellow;
             Gizmos.DrawSphere(transform.position + Vector3.up * 1f, 0.3f);
+        }
+
+        public void Retreat()
+        {
+            // 1. Clear Tile Occupancy
+            if (CurrentTile != null)
+            {
+                CurrentTile.SetOccupant(null); 
+                CurrentTile = null;
+            }
+
+            // 2. Trigger Death Event (so Manager knows) or separate OnRetreat?
+            // For now, OnDeath handles removal from lists if any.
+            // If we have a specific "OnRetreat" event, we can add it.
+            // But usually destroying the object is enough for unity checks.
+            
+            // 2. Trigger Event
+            OnRetreat?.Invoke(this);
+            
+            // 3. Destroy
+            Destroy(gameObject);
         }
     }
 }

@@ -3,7 +3,8 @@ using UnityEditor;
 using UnityEngine.UI;
 using MaouSamaTD.UI;
 using MaouSamaTD.Managers;
-using TMPro;
+using TMPro; // Ensure TMPro usage
+using DG.Tweening; // Ensure DOTween usage if referenced, though scripts handle it. Editor script just assigns.
 
 public class DeploymentSceneSetup : Editor
 {
@@ -113,8 +114,8 @@ public class DeploymentSceneSetup : Editor
         if (gm != null)
         {
              SerializedObject so = new SerializedObject(gm);
-             so.FindProperty("_deploymentUI").objectReferenceValue = uiManager;
-             so.ApplyModifiedProperties();
+            /*  so.FindProperty("_deploymentUI").objectReferenceValue = uiManager;
+             so.ApplyModifiedProperties(); */
         }
 
         // 6. Unit Inspector UI
@@ -125,6 +126,11 @@ public class DeploymentSceneSetup : Editor
             inspObj.transform.SetParent(canvas.transform, false);
             inspector = inspObj.AddComponent<UnitInspectorUI>();
         }
+
+        // 7. Floating Text Manager (Extracted below)
+        SetupFloatingTextManager();
+        
+        // Ensure Inspector Panel visuals
         
         // Ensure Inspector Panel visuals
         if (inspector.transform.Find("InspectorPanel") == null)
@@ -388,7 +394,7 @@ public class DeploymentSceneSetup : Editor
         BoxCollider box = unitObj.AddComponent<BoxCollider>();
         box.isTrigger = true;
         box.center = new Vector3(0, 1, 0);
-        box.size = new Vector3(1, 2, 1);
+        box.size = new Vector3(2, 3, 1); // Increased from 1x2 to 2x3 for easier clicking
 
         GameObject visuals = new GameObject("Visuals");
         visuals.transform.SetParent(unitObj.transform, false);
@@ -546,5 +552,51 @@ public class DeploymentSceneSetup : Editor
 
         Selection.activeGameObject = btnObj;
         Debug.Log("Created Unit Button Prefab Structure (Icon, Name, Cost, Class, Cooldown).");
+    }
+
+    [MenuItem("Tools/MaouSamaTD/Setup Floating Text Manager")]
+    public static void SetupFloatingTextManager()
+    {
+        FloatingTextManager floatMgr = FindObjectOfType<FloatingTextManager>();
+        if (floatMgr == null)
+        {
+            GameObject floatObj = new GameObject("FloatingTextManager");
+            floatMgr = floatObj.AddComponent<FloatingTextManager>();
+        }
+
+        // 8. Debug Manager
+        DebugManager debugMgr = FindObjectOfType<DebugManager>();
+        if (debugMgr == null)
+        {
+            GameObject debugObj = new GameObject("DebugManager");
+            debugMgr = debugObj.AddComponent<DebugManager>();
+        }
+        
+        if (floatMgr != null)
+        {
+            // Setup Prefab Template
+            Transform templateTr = floatMgr.transform.Find("DamageTextTemplate");
+            GameObject templateObj;
+            if (templateTr == null)
+            {
+                templateObj = new GameObject("DamageTextTemplate");
+                templateObj.transform.SetParent(floatMgr.transform);
+                templateObj.AddComponent<MaouSamaTD.UI.FloatingText>();
+                TextMeshPro tm = templateObj.AddComponent<TextMeshPro>();
+                tm.alignment = TextAlignmentOptions.Center;
+                tm.fontSize = 6;
+                templateObj.SetActive(false); // Hide template
+            }
+            else
+            {
+                templateObj = templateTr.gameObject;
+            }
+            
+            SerializedObject so = new SerializedObject(floatMgr);
+            so.FindProperty("_textPrefab").objectReferenceValue = templateObj;
+            so.ApplyModifiedProperties();
+        }
+
+        Debug.Log("FloatingTextManager Configured!");
     }
 }

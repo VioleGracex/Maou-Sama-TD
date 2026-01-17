@@ -186,6 +186,9 @@ namespace MaouSamaTD.UI
             // Link Unit and Tile
             newUnit.CurrentTile = tile;
             tile.SetOccupant(newUnit);
+
+            // Subscribe to Retreat/Death
+            newUnit.OnRetreat += (u) => OnUnitRetreated(u.Data);
             
             _deployedUnits.Add(unitData);
             
@@ -202,25 +205,6 @@ namespace MaouSamaTD.UI
                 
                 // Start Cooldown
                 _cooldownTimers[unitData] = unitData.RespawnTime;
-                
-                // We need to find the specific instance to clear the tile?
-                // Currently OnUnitRetreated takes UnitData... this assumes we triggered it from UI?
-                // But the deployed unit instance is in the world.
-                // DeploymentUI tracks DATA, not instances directly in _deployedUnits.
-                // We need to find the instance or the instance calls this?
-                // For now, if we call this, we might not have the instance reference readily available in this method
-                // unless we change how we track it.
-                // But wait! If we click the "Retreat" button on the Inspector, we can pass the Instance or Data.
-                // If we pass Data, we must find the Instance. OR the Inspector holds the Instance.
-                // Let's assume the Inspector calls a method "RetreatUnit(PlayerUnit unit)" instead.
-                
-                // But keeping compatibility with existing code: 
-                // We need to clear the tile occupancy.
-                // The Unit instance will be destroyed. Unit should clear tile on Destroy?
-                // Or we find it via Grid?
-                
-                // Let's Rely on the Unit to clear its tile on Death/Destroy?
-                // But we need to ensure the Cooldown starts.
                 
                 RefreshButtonsState();
                 Debug.Log($"Unit {unitData.UnitName} retreated/defeated. Cooldown started: {unitData.RespawnTime}s");

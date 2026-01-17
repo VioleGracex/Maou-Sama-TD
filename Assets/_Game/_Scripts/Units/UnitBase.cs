@@ -1,6 +1,10 @@
 using UnityEngine;
 using System;
 using TMPro;
+using DG.Tweening; // To handle Flash
+using MaouSamaTD.Managers;
+
+using MaouSamaTD.Managers; // Added namespace for Manager
 
 namespace MaouSamaTD.Units
 {
@@ -23,6 +27,19 @@ namespace MaouSamaTD.Units
         [Header("Visuals")]
         [SerializeField] protected SpriteRenderer _spriteRenderer;
         [SerializeField] protected TextMeshProUGUI _textFallback; // Simple 3D Text legacy or TMPro if preferred, using legacy for simplicity unless TMPro is mandated
+        
+        [Header("Effects")]
+        [SerializeField] protected GameObject _healParticlePrefab;
+
+        [Header("Debug")]
+        [SerializeField] private float _debugDamageVal = 10f;
+        [SerializeField] private float _debugHealVal = 10f;
+
+        [ContextMenu("Debug Damage")]
+        private void DebugTakeDamage() => TakeDamage(_debugDamageVal);
+
+        [ContextMenu("Debug Heal")]
+        private void DebugHeal() => Heal(_debugHealVal);
         
         // Data derived from UnitData
         protected UnitData _data;
@@ -110,12 +127,48 @@ namespace MaouSamaTD.Units
         {
             float damageTaken = Mathf.Max(1, amount - _defense); // Minimum 1 damage
             _currentHp -= damageTaken;
+            
+            // Visuals: Flash Red
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.DOColor(Color.red, 0.1f).OnComplete(() => _spriteRenderer.DOColor(Color.white, 0.1f));
+            }
+
+            // Show Floating Text
+            if (FloatingTextManager.Instance != null)
+            {
+                // Simple logic: if damage > attackPower * 1.5 (arbitrary) -> Crit? 
+                // Or just pass false for now unless we have crit logic.
+                bool isCrit = damageTaken > _attackPower * 1.5f; 
+                FloatingTextManager.Instance.ShowDamage(transform.position, damageTaken, isCrit);
+            }
+
             OnHealthChanged?.Invoke(_currentHp / _maxHp);
 
             if (_currentHp <= 0)
             {
                 Die();
             }
+        }
+
+        public virtual void Heal(float amount)
+        {
+            if (_currentHp >= _maxHp || amount <= 0) return;
+
+            _currentHp = Mathf.Min(_currentHp + amount, _maxHp);
+            
+            // Visuals
+            if (FloatingTextManager.Instance != null)
+            {
+                FloatingTextManager.Instance.ShowHeal(transform.position, amount);
+            }
+
+            if (_healParticlePrefab != null)
+            {
+                Instantiate(_healParticlePrefab, transform.position, Quaternion.identity);
+            }
+            
+            OnHealthChanged?.Invoke(_currentHp / _maxHp);
         }
 
         protected virtual void Die()

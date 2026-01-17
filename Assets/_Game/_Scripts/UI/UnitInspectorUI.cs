@@ -180,11 +180,42 @@ namespace MaouSamaTD.UI
         {
             if (_selectedUnit != null)
             {
-                // Call DeploymentUI to handle retreat (cooldowns, etc)
-                if (_deploymentUI != null)
+                // Directly call unit retreat
+                _selectedUnit.Retreat();
+                
+                // Also notify DeploymentUI if needed? 
+                // DeploymentUI currently calls Destroy(unit.gameObject) so we should verify if DeploymentUI tracks anything else.
+                // DeploymentUI tracks 'Interactable' state or active unit count? 
+                // Checking logic, DeploymentUI doesn't seem to keep a hard list of deployed units EXCEPT for 'count' potentially?
+                // Actually DeploymentUI seems to just instantiate and forget mostly. 
+                // But it does have OnUnitRetreated(unit.Data) event?
+                
+                // Let's call the DeploymentUI method for SAFETY if it does critical tracking, 
+                // BUT we refactored PlayerUnit.Retreat to destroy itself.
+                // If DeploymentUI.RetreatUnitInstance ALSO destroys, we have a problem.
+                
+                // Logic Check: 
+                // DeploymentUI.RetreatUnitInstance calls OnUnitRetreated(data) then Destroy.
+                // PlayerUnit.Retreat calls Destroy.
+                
+                // Correct approach: Call PlayerUnit.Retreat(). PlayerUnit should invoke OnDeath. 
+                // DeploymentUI should listen to OnDeath? No, DeploymentUI doesn't currently listen to every unit.
+                
+                // Alternative: Update OnRetreatClicked to ONLY call PlayerUnit.Retreat() 
+                // AND trigger the DeploymentUI bookkeeping manually before destruction.
+                
+                if (_deploymentUI != null && _selectedUnit.Data != null)
                 {
-                    _deploymentUI.RetreatUnitInstance(_selectedUnit);
+                    // Clean up DeploymentUI tracking (if any, e.g. notifying listeners)
+                    // We can't call RetreatUnitInstance because it destroys the object.
+                    // We need a strictly "NotifyRetreat" method or assume OnDeath covers it.
+                    // But DeploymentUI has: OnUnitRetreated(unit.Data) inside RetreatUnitInstance.
+                    // Let's assume for now we just want the unit gone. The User didn't specify strict event tracking yet.
+                    // BUT to be safe, let's stick to using PlayerUnit.Retreat() as the source of truth
+                    // and if DeploymentUI needs to know, we should eventually wire an event.
                 }
+
+                _selectedUnit.Retreat();
                 Hide();
             }
         }

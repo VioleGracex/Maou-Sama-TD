@@ -166,17 +166,16 @@ namespace MaouSamaTD.UI
             {
                 Color baseColor = GetClassColor(_data.Class);
 
-                if (isDeployed)
+                if (isCoolingDown)
+                {
+                     // Cooldown takes priority: Show base color (maybe slightly tinted) so overlay is visible
+                     _background.color = baseColor; 
+                     if (_unitIcon != null) _unitIcon.color = Color.gray; 
+                }
+                else if (isDeployed)
                 {
                     _background.color = Color.gray;
                     if (_unitIcon != null) _unitIcon.color = Color.gray; 
-                }
-                else if (isCoolingDown)
-                {
-                     // Maybe distinct visual for cooldown? 
-                     // Or just rely on overlay + disabled state
-                     _background.color = baseColor * 0.7f; 
-                     if (_unitIcon != null) _unitIcon.color = Color.gray; 
                 }
                 else if (!canAfford)
                 {

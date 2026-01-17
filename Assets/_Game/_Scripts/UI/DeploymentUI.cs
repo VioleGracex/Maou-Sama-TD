@@ -5,12 +5,15 @@ using MaouSamaTD.Units;
 using MaouSamaTD.Grid;
 using System.Collections.Generic;
 using TMPro;
+using Zenject;
 
 namespace MaouSamaTD.UI
 {
     public class DeploymentUI : MonoBehaviour
     {
-        public static DeploymentUI Instance { get; private set; }
+        // public static DeploymentUI Instance { get; private set; } // Removed for Zenject
+        
+        [Inject] private CurrencyManager _currencyManager;
 
         [Header("Config")]
         [SerializeField] private List<UnitData> _availableUnits;
@@ -26,8 +29,8 @@ namespace MaouSamaTD.UI
         
         private void Awake()
         {
-             if (Instance != null && Instance != this) Destroy(gameObject);
-             else Instance = this;
+             // if (Instance != null && Instance != this) Destroy(gameObject);
+             // else Instance = this;
         }
 
         private HashSet<UnitData> _deployedUnits = new HashSet<UnitData>();
@@ -36,14 +39,14 @@ namespace MaouSamaTD.UI
 
         private void OnEnable()
         {
-            if (CurrencyManager.Instance != null)
-                CurrencyManager.Instance.OnSealsChanged += UpdateSealsUI;
+            if (_currencyManager != null)
+                _currencyManager.OnSealsChanged += UpdateSealsUI;
         }
 
         private void OnDisable()
         {
-             if (CurrencyManager.Instance != null)
-                CurrencyManager.Instance.OnSealsChanged -= UpdateSealsUI;
+             if (_currencyManager != null)
+                _currencyManager.OnSealsChanged -= UpdateSealsUI;
         }
 
         private void Update()
@@ -121,8 +124,8 @@ namespace MaouSamaTD.UI
             GenerateButtons();
             
             // Initial UI Update
-            if (CurrencyManager.Instance != null)
-                UpdateSealsUI(CurrencyManager.Instance.CurrentSeals);
+            if (_currencyManager != null)
+                UpdateSealsUI(_currencyManager.CurrentSeals);
         }
 
         private void GenerateButtons()
@@ -148,8 +151,8 @@ namespace MaouSamaTD.UI
 
         private void RefreshButtonsState()
         {
-            if (CurrencyManager.Instance == null) return;
-            int currentSeals = CurrencyManager.Instance.CurrentSeals;
+            if (_currencyManager == null) return;
+            int currentSeals = _currencyManager.CurrentSeals;
 
             foreach (var btnUI in _unitButtons)
             {
@@ -179,12 +182,15 @@ namespace MaouSamaTD.UI
                 return;
             }
 
-            CurrencyManager.Instance.TrySpendSeals(unitData.DeploymentCost);
+            _currencyManager.TrySpendSeals(unitData.DeploymentCost);
             PlayerUnit newUnit = Instantiate(_unitPrefab, tile.transform.position, Quaternion.identity);
             newUnit.Initialize(unitData);
             
+            // Link Unit and Tile
+            newUnit.CurrentTile = tile;
+            tile.SetOccupant(newUnit);
+            
             _deployedUnits.Add(unitData);
-            tile.SetOccupied(true);
             
             RefreshButtonsState();
             
@@ -200,9 +206,46 @@ namespace MaouSamaTD.UI
                 // Start Cooldown
                 _cooldownTimers[unitData] = unitData.RespawnTime;
                 
+                // We need to find the specific instance to clear the tile?
+                // Currently OnUnitRetreated takes UnitData... this assumes we triggered it from UI?
+                // But the deployed unit instance is in the world.
+                // DeploymentUI tracks DATA, not instances directly in _deployedUnits.
+                // We need to find the instance or the instance calls this?
+                // For now, if we call this, we might not have the instance reference readily available in this method
+                // unless we change how we track it.
+                // But wait! If we click the "Retreat" button on the Inspector, we can pass the Instance or Data.
+                // If we pass Data, we must find the Instance. OR the Inspector holds the Instance.
+                // Let's assume the Inspector calls a method "RetreatUnit(PlayerUnit unit)" instead.
+                
+                // But keeping compatibility with existing code: 
+                // We need to clear the tile occupancy.
+                // The Unit instance will be destroyed. Unit should clear tile on Destroy?
+                // Or we find it via Grid?
+                
+                // Let's Rely on the Unit to clear its tile on Death/Destroy?
+                // But we need to ensure the Cooldown starts.
+                
                 RefreshButtonsState();
                 Debug.Log($"Unit {unitData.UnitName} retreated/defeated. Cooldown started: {unitData.RespawnTime}s");
             }
+        }
+        
+        // NEW method for Instance-based retreat (called by Inspector)
+        public void RetreatUnitInstance(PlayerUnit unit)
+        {
+            if (unit == null) return;
+            
+            if (unit.CurrentTile != null)
+            {
+                unit.CurrentTile.SetOccupant(null); // Clear tile
+            }
+            
+            if (unit.Data != null)
+            {
+                OnUnitRetreated(unit.Data);
+            }
+            
+            Destroy(unit.gameObject);
         }
     }
 }

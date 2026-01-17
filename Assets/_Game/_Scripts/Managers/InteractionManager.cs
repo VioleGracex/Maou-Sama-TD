@@ -1,6 +1,7 @@
 using UnityEngine;
 using MaouSamaTD.Grid;
 using MaouSamaTD.UI;
+using Zenject;
 
 namespace MaouSamaTD.Managers
 {
@@ -25,6 +26,10 @@ namespace MaouSamaTD.Managers
         [SerializeField] private Color _validGlowColor = Color.green;
         [SerializeField] private Color _invalidGlowColor = Color.red;
         [SerializeField] private Color _rangeIndicatorColor = new Color(0, 0, 1, 0.3f); // Blueish
+        
+        [Inject] private UnitInspectorUI _unitInspectorUI;
+        [Inject] private CurrencyManager _currencyManager; // Injecting explicitly to fix NRE potential
+        [Inject] private DeploymentUI _deploymentUI; // Injecting explicitly
 
         private void Awake()
         {
@@ -93,24 +98,24 @@ namespace MaouSamaTD.Managers
         private void TryPlaceUnit(Tile tile, Units.UnitData unitData)
         {
             // Safety Checks (Fix for NRE)
-            if (CurrencyManager.Instance == null)
+            if (_currencyManager == null)
             {
                 Debug.LogError("CurrencyManager Instance is null!");
                 return;
             }
-            if (DeploymentUI.Instance == null)
+            if (_deploymentUI == null)
             {
                 Debug.LogError("DeploymentUI Instance is null!");
                 return;
             }
 
             // Validate placement (Currency, Tile Type)
-            bool canAfford = CurrencyManager.Instance.CanAfford(unitData.DeploymentCost);
+            bool canAfford = _currencyManager.CanAfford(unitData.DeploymentCost);
             bool validTile = IsTileValidForUnit(tile, unitData);
 
             if (canAfford && validTile && !tile.IsOccupied)
             {
-                DeploymentUI.Instance.SpawnUnit(tile, unitData);
+                _deploymentUI.SpawnUnit(tile, unitData);
                 // Optionally deselect after placement? 
                 // User said "while toggled logic", implied single placement? 
                 // Usually TD games allow multi-placement or single. Let's default to single for now.
@@ -288,6 +293,14 @@ namespace MaouSamaTD.Managers
                             // Click to Place
                             TryPlaceUnit(tile, _selectedUnitData);
                             OnTileClicked?.Invoke(tile); // Trigger event too
+                        }
+                        else if (tile.IsOccupied && tile.Occupant != null && tile.Occupant is Units.PlayerUnit playerUnit)
+                        {
+                            // Select Deployed Unit
+                            Debug.Log($"Selected Deployed Unit: {playerUnit.name}");
+                            
+                            if (_unitInspectorUI != null)
+                                _unitInspectorUI.Show(playerUnit);
                         }
                         else
                         {

@@ -19,11 +19,12 @@ namespace MaouSamaTD.Grid
         [SerializeField] private TileType _type;
 
         [Header("State")]
-        [SerializeField] private bool _isOccupied;
+        [SerializeField] private MaouSamaTD.Units.UnitBase _occupant;
 
         public Vector2Int Coordinate => _coordinate;
         public TileType Type => _type;
-        public bool IsOccupied => _isOccupied;
+        public bool IsOccupied => _occupant != null;
+        public MaouSamaTD.Units.UnitBase Occupant => _occupant;
 
         public void Initialize(Vector2Int coordinate, TileType type)
         {
@@ -32,9 +33,9 @@ namespace MaouSamaTD.Grid
             name = $"Tile_{coordinate.x}_{coordinate.y}";
         }
 
-        public void SetOccupied(bool occupied)
+        public void SetOccupant(MaouSamaTD.Units.UnitBase unit)
         {
-            _isOccupied = occupied;
+            _occupant = unit;
         }
 
         // Visuals

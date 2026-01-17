@@ -104,7 +104,237 @@ public class DeploymentSceneSetup : Editor
              so.ApplyModifiedProperties();
         }
 
-        Debug.Log("Deployment UI Configured (TMP + Images).");
+        // 6. Unit Inspector UI
+        UnitInspectorUI inspector = FindObjectOfType<UnitInspectorUI>();
+        if (inspector == null)
+        {
+            GameObject inspObj = new GameObject("UnitInspector");
+            inspObj.transform.SetParent(canvas.transform, false);
+            inspector = inspObj.AddComponent<UnitInspectorUI>();
+        }
+        
+        // Ensure Inspector Panel visuals
+        if (inspector.transform.Find("InspectorPanel") == null)
+        {
+            GameObject panel = new GameObject("InspectorPanel");
+            panel.transform.SetParent(inspector.transform, false);
+            RectTransform rect = panel.AddComponent<RectTransform>();
+            rect.anchorMin = new Vector2(1, 0); // Bottom Right
+            rect.anchorMax = new Vector2(1, 0);
+            rect.pivot = new Vector2(1, 0);
+            rect.anchoredPosition = new Vector2(-20, 180); // Above unit bar? Or side?
+            // Unit bar is at bottom center. Let's put inspector at Right Side? 
+            rect.sizeDelta = new Vector2(300, 450);
+
+            // BG
+            Image img = panel.AddComponent<Image>();
+            img.color = new Color(0.1f, 0.1f, 0.15f, 0.95f);
+
+            // 1. Stats_Unit_Name_Txt
+            GameObject nameObj = new GameObject("Stats_Unit_Name_Txt");
+            nameObj.transform.SetParent(panel.transform, false);
+            TextMeshProUGUI nameTxt = nameObj.AddComponent<TextMeshProUGUI>();
+            nameTxt.text = "Unit Name";
+            nameTxt.fontSize = 24;
+            nameTxt.fontStyle = FontStyles.Bold;
+            nameTxt.alignment = TextAlignmentOptions.Center;
+            RectTransform nameRect = nameObj.GetComponent<RectTransform>();
+            nameRect.anchorMin = new Vector2(0, 0.9f);
+            nameRect.anchorMax = new Vector2(1, 1);
+            nameRect.offsetMin = Vector2.zero;
+            nameRect.offsetMax = new Vector2(0, -10);
+
+            // 2. Vassal_Stats_Txt
+            GameObject vassalStatsObj = new GameObject("Vassal_Stats_Txt");
+            vassalStatsObj.transform.SetParent(panel.transform, false);
+            TextMeshProUGUI vassalStatsTxt = vassalStatsObj.AddComponent<TextMeshProUGUI>();
+            vassalStatsTxt.text = "Stats Summary";
+            vassalStatsTxt.fontSize = 18;
+            vassalStatsTxt.alignment = TextAlignmentOptions.TopLeft;
+            RectTransform vsRect = vassalStatsObj.GetComponent<RectTransform>();
+            vsRect.anchorMin = new Vector2(0.05f, 0.65f);
+            vsRect.anchorMax = new Vector2(0.95f, 0.85f);
+            vsRect.offsetMin = Vector2.zero;
+            vsRect.offsetMax = Vector2.zero;
+
+            // 3. Stats_Vitality_Txt (Label)
+            GameObject vitObj = new GameObject("Stats_Vitality_Txt");
+            vitObj.transform.SetParent(panel.transform, false);
+            TextMeshProUGUI vitTxt = vitObj.AddComponent<TextMeshProUGUI>();
+            vitTxt.text = "Vitality";
+            vitTxt.fontSize = 16;
+            vitTxt.color = Color.green;
+            RectTransform vitRect = vitObj.GetComponent<RectTransform>();
+            vitRect.anchorMin = new Vector2(0.05f, 0.6f);
+            vitRect.anchorMax = new Vector2(0.5f, 0.65f);
+            vitRect.offsetMin = Vector2.zero;
+            vitRect.offsetMax = Vector2.zero;
+
+            // 4. Stats_HPBar
+            GameObject hpBarObj = new GameObject("Stats_HPBar");
+            hpBarObj.transform.SetParent(panel.transform, false);
+            Image hpBarBg = hpBarObj.AddComponent<Image>(); // BG for bar
+            hpBarBg.color = Color.gray;
+            RectTransform hpBarRect = hpBarObj.GetComponent<RectTransform>();
+            hpBarRect.anchorMin = new Vector2(0.05f, 0.55f);
+            hpBarRect.anchorMax = new Vector2(0.95f, 0.58f);
+            hpBarRect.offsetMin = Vector2.zero;
+            hpBarRect.offsetMax = Vector2.zero;
+            
+            // Should contain Fill Child, but for now we use this image as fill or bg?
+            // Usually Bar has BG + Fill. Assume this is the Fill for simplicity based on naming?
+            // "Stats_HPBar" sounds like the object itself. Let's make it the Fill Image directly
+            // or add a child. Let's make it the Fill Image.
+            hpBarBg.type = Image.Type.Filled;
+            hpBarBg.fillMethod = Image.FillMethod.Horizontal;
+            hpBarBg.color = Color.green;
+
+            // 5. Stats_HP_Number_Txt
+            GameObject hpNumObj = new GameObject("Stats_HP_Number_Txt");
+            hpNumObj.transform.SetParent(panel.transform, false);
+            TextMeshProUGUI hpNumTxt = hpNumObj.AddComponent<TextMeshProUGUI>();
+            hpNumTxt.text = "100/100";
+            hpNumTxt.fontSize = 16;
+            hpNumTxt.alignment = TextAlignmentOptions.Right;
+            RectTransform hpNumRect = hpNumObj.GetComponent<RectTransform>();
+            hpNumRect.anchorMin = new Vector2(0.5f, 0.6f);
+            hpNumRect.anchorMax = new Vector2(0.95f, 0.65f);
+            hpNumRect.offsetMin = Vector2.zero;
+            hpNumRect.offsetMax = Vector2.zero;
+
+            // 6. LayoutStats (Container)
+            GameObject layoutObj = new GameObject("LayoutStats");
+            layoutObj.transform.SetParent(panel.transform, false);
+            RectTransform layoutRect = layoutObj.AddComponent<RectTransform>();
+            layoutRect.anchorMin = new Vector2(0.05f, 0.35f);
+            layoutRect.anchorMax = new Vector2(0.95f, 0.5f);
+            layoutRect.offsetMin = Vector2.zero;
+            layoutRect.offsetMax = Vector2.zero;
+            // Add Vertical Layout
+            VerticalLayoutGroup vlg = layoutObj.AddComponent<VerticalLayoutGroup>();
+            vlg.childControlHeight = true;
+            vlg.childControlWidth = true;
+            vlg.spacing = 5;
+
+            // 6a. Stats_Dmg_BG
+            GameObject dmgBgObj = new GameObject("Stats_Dmg_BG");
+            dmgBgObj.transform.SetParent(layoutObj.transform, false);
+            Image dmgBg = dmgBgObj.AddComponent<Image>();
+            dmgBg.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+            GameObject dmgTxtObj = new GameObject("Text");
+            dmgTxtObj.transform.SetParent(dmgBgObj.transform, false);
+            TextMeshProUGUI dmgTxt = dmgTxtObj.AddComponent<TextMeshProUGUI>();
+            dmgTxt.text = "ATK: 10";
+            dmgTxt.alignment = TextAlignmentOptions.Center;
+            dmgTxt.fontSize = 18;
+            dmgTxt.rectTransform.anchorMin = Vector2.zero;
+            dmgTxt.rectTransform.anchorMax = Vector2.one;
+            dmgTxt.rectTransform.sizeDelta = Vector2.zero;
+
+            // 6b. Stats_Range_BG
+            GameObject rngBgObj = new GameObject("Stats_Range_BG");
+            rngBgObj.transform.SetParent(layoutObj.transform, false);
+            Image rngBg = rngBgObj.AddComponent<Image>();
+            rngBg.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+            GameObject rngTxtObj = new GameObject("Text");
+            rngTxtObj.transform.SetParent(rngBgObj.transform, false);
+            TextMeshProUGUI rngTxt = rngTxtObj.AddComponent<TextMeshProUGUI>();
+            rngTxt.text = "RNG: 1";
+            rngTxt.alignment = TextAlignmentOptions.Center;
+            rngTxt.fontSize = 18;
+            rngTxt.rectTransform.anchorMin = Vector2.zero;
+            rngTxt.rectTransform.anchorMax = Vector2.one;
+            rngTxt.rectTransform.sizeDelta = Vector2.zero;
+
+            // 7. Ult_Btn
+            GameObject ultBtnObj = new GameObject("Ult_Btn");
+            ultBtnObj.transform.SetParent(panel.transform, false);
+            Image ultBg = ultBtnObj.AddComponent<Image>();
+            ultBg.color = Color.cyan;
+            Button ultBtn = ultBtnObj.AddComponent<Button>();
+            RectTransform ultRect = ultBtnObj.GetComponent<RectTransform>();
+            ultRect.anchorMin = new Vector2(0.3f, 0.05f);
+            ultRect.anchorMax = new Vector2(0.7f, 0.25f);
+            ultRect.offsetMin = Vector2.zero;
+            ultRect.offsetMax = Vector2.zero;
+
+            // Ult Icon child
+            GameObject ultIconObj = new GameObject("Icon");
+            ultIconObj.transform.SetParent(ultBtnObj.transform, false);
+            Image ultIcon = ultIconObj.AddComponent<Image>();
+            RectTransform ultIconRect = ultIconObj.GetComponent<RectTransform>();
+            ultIconRect.anchorMin = Vector2.zero;
+            ultIconRect.anchorMax = Vector2.one;
+            ultIconRect.offsetMin = new Vector2(5,5);
+            ultIconRect.offsetMax = new Vector2(-5,-5);
+            ultIcon.preserveAspect = true;
+
+            // Keep Retreat Button (Not in hierarchy image but needed)
+            GameObject retreatBtnObj = new GameObject("RetreatButton");
+            retreatBtnObj.transform.SetParent(panel.transform, false);
+            Image retBg = retreatBtnObj.AddComponent<Image>();
+            retBg.color = Color.red;
+            Button retBtn = retreatBtnObj.AddComponent<Button>();
+            RectTransform retRect = retreatBtnObj.GetComponent<RectTransform>();
+            retRect.anchorMin = new Vector2(0.75f, 0.05f);
+            retRect.anchorMax = new Vector2(0.95f, 0.15f); // Bottom right corner small?
+            retRect.offsetMin = Vector2.zero;
+            retRect.offsetMax = Vector2.zero;
+             
+            GameObject retTxtObj = new GameObject("Text");
+            retTxtObj.transform.SetParent(retreatBtnObj.transform, false);
+            TextMeshProUGUI retTxt = retTxtObj.AddComponent<TextMeshProUGUI>();
+            retTxt.text = "R";
+            retTxt.alignment = TextAlignmentOptions.Center;
+            retTxt.rectTransform.anchorMin = Vector2.zero;
+            retTxt.rectTransform.anchorMax = Vector2.one;
+            retTxt.rectTransform.sizeDelta = Vector2.zero;
+
+
+            // Close Button (Overlay on Panel)
+            GameObject closeBtnObj = new GameObject("CloseButton");
+            closeBtnObj.transform.SetParent(panel.transform, false);
+            Image closeBg = closeBtnObj.AddComponent<Image>();
+            closeBg.color = Color.black; 
+            Button closeBtn = closeBtnObj.AddComponent<Button>();
+            RectTransform closeRect = closeBtnObj.GetComponent<RectTransform>();
+            closeRect.anchorMin = new Vector2(1, 1);
+            closeRect.anchorMax = new Vector2(1, 1);
+            closeRect.pivot = new Vector2(1, 1);
+            closeRect.sizeDelta = new Vector2(30, 30);
+            closeRect.anchoredPosition = new Vector2(-5, -5);
+            
+            GameObject closeTxtObj = new GameObject("Text");
+            closeTxtObj.transform.SetParent(closeBtnObj.transform, false);
+            TextMeshProUGUI closeTxt = closeTxtObj.AddComponent<TextMeshProUGUI>();
+            closeTxt.text = "X";
+            closeTxt.color = Color.white;
+            closeTxt.alignment = TextAlignmentOptions.Center;
+            closeTxt.rectTransform.anchorMin = Vector2.zero;
+            closeTxt.rectTransform.anchorMax = Vector2.one;
+            closeTxt.rectTransform.sizeDelta = Vector2.zero;
+
+
+            // Assign Refs
+            SerializedObject so = new SerializedObject(inspector);
+            so.FindProperty("_panel").objectReferenceValue = panel;
+            so.FindProperty("_unitNameText").objectReferenceValue = nameTxt;
+            so.FindProperty("_vassalStatsText").objectReferenceValue = vassalStatsTxt;
+            so.FindProperty("_vitalityLabelText").objectReferenceValue = vitTxt;
+            so.FindProperty("_hpNumberText").objectReferenceValue = hpNumTxt;
+            so.FindProperty("_hpBarImage").objectReferenceValue = hpBarBg;
+            
+            // New fields
+            so.FindProperty("_dmgText").objectReferenceValue = dmgTxt;
+            so.FindProperty("_rangeText").objectReferenceValue = rngTxt;
+            
+            so.FindProperty("_ultButton").objectReferenceValue = ultBtn;
+            so.FindProperty("_retreatButton").objectReferenceValue = retBtn;
+            so.FindProperty("_closeButton").objectReferenceValue = closeBtn;
+            so.ApplyModifiedProperties();
+        }
+
+        Debug.Log("Deployment UI Configured (TMP + Images + Inspector).");
     }
 
     [MenuItem("Tools/MaouSamaTD/Create Unit Prefab")]

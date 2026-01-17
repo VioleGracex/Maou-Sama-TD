@@ -22,6 +22,17 @@ Ranged  // Deals damage from afar, placed on High Ground
         public UnitClass UnitClass => _unitClass;
         public int BlockCount => _data != null ? _data.BlockCount : 1;
         public int DeploymentCost => _deploymentCost;
+        
+        public Grid.Tile CurrentTile { get; set; }
+
+        public void UseSkill()
+        {
+            if (_data != null)
+            {
+                Debug.Log($"Used Skill: {_data.SkillName}!");
+                // Implement skill logic here later
+            }
+        }
 
         [Header("Visuals")]
         [SerializeField] private UnityEngine.UI.Image _hpBarFill; // World Space Canvas Image

@@ -23,6 +23,11 @@ namespace MaouSamaTD.Units
         public float RespawnTime = 5f; // Seconds
         public float Range = 1f; // Tiles
 
+        [Header("Skill")]
+        public string SkillName = "Ultimate";
+        public Sprite SkillIcon;
+        public string SkillDescription = "Does something cool.";
+
         [Header("Placement Rules")]
         public System.Collections.Generic.List<Grid.TileType> ViableTiles;
 

@@ -12,6 +12,13 @@ namespace MaouSamaTD.Units
         [SerializeField] protected float _attackPower = 10f;
         [SerializeField] protected float _attackInterval = 1f;
         [SerializeField] protected float _defense = 0f;
+        
+        // Public Accessors
+        public float MaxHp => _maxHp;
+        public float CurrentHp => _currentHp;
+        public float AttackPower => _attackPower;
+        public float Defense => _defense;
+        public virtual float Range => _data != null ? _data.Range : 0f; // Default linkage to data, can be overridden
 
         [Header("Visuals")]
         [SerializeField] protected SpriteRenderer _spriteRenderer;
@@ -19,6 +26,7 @@ namespace MaouSamaTD.Units
         
         // Data derived from UnitData
         protected UnitData _data;
+        public UnitData Data => _data;
 
         public event Action OnDeath;
         public event Action<float> OnHealthChanged;

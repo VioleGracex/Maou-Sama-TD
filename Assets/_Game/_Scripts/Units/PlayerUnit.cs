@@ -121,11 +121,11 @@ Ranged  // Deals damage from afar, placed on High Ground
         }
 
         // Color coding for debug
-        private void OnDrawGizmos()
+        /* private void OnDrawGizmos()
         {
             Gizmos.color = _unitClass == UnitClass.Melee ? Color.blue : Color.yellow;
             Gizmos.DrawSphere(transform.position + Vector3.up * 1f, 0.3f);
-        }
+        } */
 
         public void Retreat()
         {

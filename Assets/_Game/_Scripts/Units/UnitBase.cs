@@ -29,7 +29,7 @@ namespace MaouSamaTD.Units
         [SerializeField] protected TextMeshProUGUI _textFallback; // Simple 3D Text legacy or TMPro if preferred, using legacy for simplicity unless TMPro is mandated
         
         [Header("Effects")]
-        [SerializeField] protected GameObject _healParticlePrefab;
+        [SerializeField] protected ParticleSystem _healParticle;
 
         [Header("Debug")]
         [SerializeField] private float _debugDamageVal = 10f;
@@ -163,9 +163,9 @@ namespace MaouSamaTD.Units
                 FloatingTextManager.Instance.ShowHeal(transform.position, amount);
             }
 
-            if (_healParticlePrefab != null)
+            if (_healParticle != null)
             {
-                Instantiate(_healParticlePrefab, transform.position, Quaternion.identity);
+                _healParticle.Play();
             }
             
             OnHealthChanged?.Invoke(_currentHp / _maxHp);

@@ -50,8 +50,8 @@ namespace MaouSamaTD.Grid
             Vector3 position = new Vector3(coord.x * _cellSize, 0, coord.y * _cellSize);
             Tile tile = Instantiate(_tilePrefab, position, Quaternion.identity, _gridContainer);
             
-            // Scale tile to match cell size
-            tile.transform.localScale = Vector3.one * _cellSize;
+            // Scale tile to match cell size with slight padding for visual separation
+            tile.transform.localScale = Vector3.one * _cellSize * 0.95f;
             
             tile.Initialize(coord, type);
             _grid[coord] = tile;

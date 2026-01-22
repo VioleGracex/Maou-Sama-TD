@@ -15,6 +15,7 @@ namespace MaouSamaTD.Installers
         [SerializeField] private CurrencyManager _currencyManager;
         [SerializeField] private GridManager _gridManager;
         [SerializeField] private GameManager _gameManager;
+        [SerializeField] private CameraController _cameraController;
 
         public override void InstallBindings()
         {
@@ -30,6 +31,8 @@ namespace MaouSamaTD.Installers
                 Container.Bind<GameManager>().FromInstance(_gameManager).AsSingle();
                 Container.QueueForInject(_gameManager); // Ensure it gets injected
             }
+            
+            if (_cameraController) Container.Bind<CameraController>().FromInstance(_cameraController).AsSingle();
             
             // If they can be null and we want to find them automatically:
             // Container.Bind<UnitInspectorUI>().FromComponentInHierarchy().AsSingle();

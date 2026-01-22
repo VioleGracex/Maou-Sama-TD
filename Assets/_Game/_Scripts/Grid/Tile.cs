@@ -47,6 +47,13 @@ namespace MaouSamaTD.Grid
         private void Awake()
         {
             _renderer = GetComponent<Renderer>();
+            if (_renderer == null) _renderer = GetComponentInChildren<Renderer>(); // Robust check
+            
+            if (_renderer == null)
+            {
+                Debug.LogError($"Tile {name} has no Renderer! Highlight will fail.");
+            }
+            
             _propBlock = new MaterialPropertyBlock();
         }
 
@@ -58,12 +65,14 @@ namespace MaouSamaTD.Grid
             if (active)
             {
                 _propBlock.SetColor(GlowColorId, color);
-                _propBlock.SetFloat(GlowIntensityId, 1.5f); // Intensity
+                _propBlock.SetFloat(GlowIntensityId, 30f); // High intensity as requested
+                _propBlock.SetFloat(Shader.PropertyToID("_BorderWidth"), 0.1f); // Thinner border
             }
             else
             {
                 _propBlock.SetColor(GlowColorId, Color.black);
                 _propBlock.SetFloat(GlowIntensityId, 0f);
+                _propBlock.SetFloat(Shader.PropertyToID("_BorderWidth"), 0.0f); // Reset
             }
             _renderer.SetPropertyBlock(_propBlock);
         }

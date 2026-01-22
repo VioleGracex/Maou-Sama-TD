@@ -149,6 +149,14 @@ namespace MaouSamaTD.UI
             }
         }
 
+        public void SetSelected(bool isSelected)
+        {
+            if (_background != null)
+            {
+                _background.color = isSelected ? Color.green : Color.white; // Simple feedback
+            }
+        }
+
         public void UpdateState(bool canAfford, bool isDeployed, bool isCoolingDown)
         {
             // Interactable condition

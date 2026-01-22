@@ -1,6 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 using Zenject;
+using UnityEngine.InputSystem;
 
 namespace MaouSamaTD.Managers
 {
@@ -14,6 +15,7 @@ namespace MaouSamaTD.Managers
 
         [Header("State")]
         public bool IsLocked = true;
+        public bool CenterOnMap = false;
         public ViewMode CurrentMode = ViewMode.Isometric;
 
         [Header("Settings")]
@@ -26,29 +28,21 @@ namespace MaouSamaTD.Managers
         [SerializeField] private Vector3 _isometricRotation = new Vector3(50f, 90f, 0f);
         [SerializeField] private float _isometricZoom = 15f;
         
-        [SerializeField] private Vector3 _topDownRotation = new Vector3(90f, 0f, 0f);
+        [SerializeField] private Vector3 _topDownRotation = new Vector3(90f, 90f, 0f);
         [SerializeField] private float _topDownZoom = 20f;
 
         private Camera _cam;
-        private Transform _targetTransform; // Center or pivot?
-        
-        // For simple orbit, we rotate the Camera's parent or the Camera itself if it has a pivot.
-        // Assuming Camera is independent or we rotate around a point.
-        // Let's implement a Pivot-based system or direct transform manipulation.
-        // Direct transform manipulation around world center or current focus is easiest for a TD game.
-        
         private Vector3 _targetPosition;
-        private Quaternion _targetRotation;
-        private float _targetZoom;
-
+        [Inject] private Grid.GridManager _gridManager;
+        
         private void Start()
         {
             _cam = GetComponent<Camera>();
             if (_cam == null) _cam = Camera.main;
+
+            if (_gridManager == null) _gridManager = FindObjectOfType<Grid.GridManager>();
             
             _targetPosition = transform.position;
-            _targetRotation = transform.rotation;
-            _targetZoom = _cam.orthographic ? _cam.orthographicSize : _cam.fieldOfView; // Assuming Ortho for Iso usually, but Perspective works too.
 
             // Set initial state
             SetView(CurrentMode, true);
@@ -57,7 +51,15 @@ namespace MaouSamaTD.Managers
         private void Update()
         {
             HandleInput();
-            UpdateCameraTransform();
+            if (IsLocked && CenterOnMap)
+            {
+                CenterCameraOnMap();
+            }
+            else
+            {
+                // Only running this when NOT centering
+                UpdateManualCoords();
+            }
         }
 
         [Inject] private InteractionManager _interactionManager;
@@ -65,7 +67,7 @@ namespace MaouSamaTD.Managers
         private void HandleInput()
         {
             // Toggle Lock
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
                 IsLocked = !IsLocked;
                 if (IsLocked)
@@ -76,100 +78,57 @@ namespace MaouSamaTD.Managers
             }
 
             // View Switching (Only when Locked)
-            if (IsLocked && Input.GetKeyDown(KeyCode.Tab))
+            if (IsLocked && Keyboard.current.tabKey.wasPressedThisFrame)
             {
                 CurrentMode = (CurrentMode == ViewMode.Isometric) ? ViewMode.TopDown : ViewMode.Isometric;
                 SetView(CurrentMode);
             }
 
             // Ignore input if Interacting with UI or Units
-            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
+            if (UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
             if (_interactionManager != null && _interactionManager.IsDragging) return;
-            // Check touch pointer over UI
-            if (Input.touchCount > 0 && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
 
-
-            // Mobile Touch Logic
-            if (Input.touchCount > 0)
-            {
-                HandleTouchInput();
-            }
-            else
-            {
-               HandleMouseInput();
-            }
+             // Handle Inputs
+             HandleMovement();
+             HandleRotation();
+             HandleZoom();
         }
 
-        private void HandleTouchInput()
+        private void HandleMovement()
         {
-             if (Input.touchCount == 1) // Pan
-             {
-                 if (IsLocked) // Allow Panning even if locked? Usually Camera is locked to center.
-                 {
-                    // If "Locked" means "Follow Focus", we shouldn't pan. 
-                    // If "Locked" just means "Fixed Angle", we CAN pan. 
-                    // Based on previous logic, Locked allowed limited interaction? 
-                    // User said "lock unlock camera to allow rotation". So position might be free?
-                    // Let's assume Panning is allowed always unless specifically disabled.
-                 }
-                 
-                 Touch touch = Input.GetTouch(0);
-                 if (touch.phase == TouchPhase.Moved)
-                 {
-                     Vector2 delta = touch.deltaPosition;
-                     MoveCamera(-delta.x, -delta.y, 0.1f * _moveSpeed * Time.deltaTime); // Scale for touch sensitivity
-                 }
-             }
-             else if (Input.touchCount == 2) // Zoom
-             {
-                 Touch touch0 = Input.GetTouch(0);
-                 Touch touch1 = Input.GetTouch(1);
-                 
-                 Vector2 touch0PrevPos = touch0.position - touch0.deltaPosition;
-                 Vector2 touch1PrevPos = touch1.position - touch1.deltaPosition;
-                 
-                 float prevTouchDeltaMag = (touch0PrevPos - touch1PrevPos).magnitude;
-                 float touchDeltaMag = (touch0.position - touch1.position).magnitude;
-                 
-                 float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
-                 
-                 ZoomCamera(deltaMagnitudeDiff * _zoomSpeed * 0.01f * Time.deltaTime);
+            if (IsLocked && CenterOnMap) return;
 
-                 // Optional: Twist (Rotation) if Unlocked
-                 if (!IsLocked)
-                 {
-                    // Calculate angle delta?
-                    // For simplicity, let's keep it to Pan/Zoom first. Twist is complex to separate from Pinch.
-                 }
-             }
+            Vector2 input = Vector2.zero;
+            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) input.y += 1;
+            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) input.y -= 1;
+            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) input.x -= 1;
+            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) input.x += 1;
+
+            if (input.sqrMagnitude > 0.01f)
+            {
+                MoveCamera(input.x, input.y, _moveSpeed * Time.deltaTime);
+            }
         }
         
-        private void HandleMouseInput()
+        private void HandleRotation()
         {
-             // Unlocked: Rotation
-            if (!IsLocked)
+            // Unlocked: Rotation
+            if (!IsLocked && Mouse.current.rightButton.isPressed)
             {
-                if (Input.GetMouseButton(1)) // Right Click Drag
-                {
-                    float mouseX = Input.GetAxis("Mouse X");
-                    RotateCamera(mouseX);
-                }
+                float mouseX = Mouse.current.delta.x.ReadValue() * 0.1f; // Adjust sensitivity
+                RotateCamera(mouseX);
             }
-            
-            // Pan
-            float h = Input.GetAxis("Horizontal"); // A/D
-            float v = Input.GetAxis("Vertical");   // W/S
-            
-            if (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f)
-            {
-                MoveCamera(h, v, _moveSpeed * Time.deltaTime);
-            }
-            
-            // Scroll Zoom
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
+        }
+
+        private void HandleZoom()
+        {
+             // Scroll Zoom
+            float scroll = Mouse.current.scroll.y.ReadValue();
             if (Mathf.Abs(scroll) > 0.01f)
             {
-                ZoomCamera(-scroll * _zoomSpeed * 10f * Time.deltaTime);
+                // Scroll values can be large, normalize/clamp slightly
+                float zoomFactor = Mathf.Clamp(scroll, -1f, 1f); 
+                ZoomCamera(-zoomFactor * _zoomSpeed * Time.deltaTime * 50f);
             }
         }
 
@@ -194,6 +153,15 @@ namespace MaouSamaTD.Managers
              eulers.y += inputX * _rotateSpeed * Time.deltaTime;
              transform.rotation = Quaternion.Euler(eulers); 
         }
+
+        private void CenterCameraOnMap()
+        {
+            if (_gridManager == null) return;
+            Vector3 center = _gridManager.GetGridCenter();
+            FrameGrid(center.x, center.z);
+        }
+
+
         
         private void ZoomCamera(float delta)
         {
@@ -227,25 +195,13 @@ namespace MaouSamaTD.Managers
             }
         }
 
-        private void UpdateCameraTransform()
-        {
-            // Smooth transitions handled by DOTween or Lerp
-            // If using DOTween for transitions, we might not need manual Lerp in Update, 
-            // but for "MoveTo" functionality it's good.
-        }
-
         public void SetView(ViewMode mode, bool instant = false)
         {
             Vector3 targetRot = (mode == ViewMode.Isometric) ? _isometricRotation : _topDownRotation;
             
-            // Adjust Zoom? 
-            // If Orthographic
-            
             if (instant)
             {
                 transform.eulerAngles = targetRot;
-                // Keep position? Or Reset position? 
-                // Usually keep position but change Angle.
             }
             else
             {
@@ -254,16 +210,101 @@ namespace MaouSamaTD.Managers
         }
 
 
+        private void AdjustCameraSize()
+        {
+            if (_cam == null) return;
+            // Simple aspect ratio logic: If screen is "tall" (Portrait), increase size to show same width
+            // If screen is "wide" (Landscape), we usually cover enough width.
+            
+            float targetAspect = 16f/9f; // Base design aspect
+            float currentAspect = (float)Screen.width / Screen.height;
+            
+            if (currentAspect < targetAspect)
+            {
+                 // We are thinner than expected (e.g. mobile portrait). Scale up size.
+                 // This ensures grid width fits
+                 // (Not implemented continuously to save perf? Update is fine for now)
+            }
+        }
+
         public void FrameGrid(float centerX, float centerZ)
         {
-            // Center the camera on the board
-            _targetPosition = new Vector3(centerX, transform.position.y, centerZ);
+            // Use current rotation settings to determine offset
+            Vector3 rot = (CurrentMode == ViewMode.Isometric) ? _isometricRotation : _topDownRotation;
             
-            // Apply instant move
+            float height = transform.position.y;
+            if (height < 10f) height = 20f; // Ensure height
+            if (height > 40f) height = 40f; 
+
+            // Calculate offset based on Rotation X (Pitch)
+            // Pitch 90 = TopDown (Tan is infinite, dist is 0)
+            // Pitch 50 = Iso (Tan is ~1.2, dist exists)
+            
+            float pitchRad = rot.x * Mathf.Deg2Rad;
+            // Dist on Ground Plane from Target to CameraXZ
+            float dist = height / Mathf.Tan(pitchRad);
+            
+            // If TopDown (90 deg), dist is nearly 0.
+            
+            // But we also need to account for Y-Rotation (Yaw).
+            // _isometricRotation default was (50, 90, 0) -> Yaw 90 means Facing +X?
+            // If Yaw is 0, we face +Z.
+            
+            float yawRad = rot.y * Mathf.Deg2Rad;
+            
+            // Camera Pos = Target - (Forward * dist_hypotenuse)? 
+            // Simple Trig:
+            // DeltaZ = -cos(Yaw) * dist
+            // DeltaX = -sin(Yaw) * dist
+            
+            float offsetX = -Mathf.Sin(yawRad) * dist;
+            float offsetZ = -Mathf.Cos(yawRad) * dist;
+            
+            _targetPosition = new Vector3(centerX + offsetX, height, centerZ + offsetZ);
+            
+            // Apply immediately to avoid "drift" feeling when snapping
             transform.position = _targetPosition;
-            
-            // Ideally we also adjust zoom to fit, but centering is primary request
-            // If we wanted to fit, we'd need width/height and extensive calcs.
+            if (IsLocked) transform.eulerAngles = rot;
+        }
+
+        public void SetPosition(float x, float z)
+        {
+            // Allow manual override only if CenterOnMap is false (or forced by UI)
+            if (!CenterOnMap)
+            {
+                _targetPosition = new Vector3(x, transform.position.y, z);
+                transform.position = _targetPosition;
+            }
+        }
+        
+        // Inspector Helper
+        [Header("Inspector Controls")]
+        [Tooltip("X = World X, Y = World Height, Z = World Z")]
+        [SerializeField] private Vector3 _manualPosition;
+        
+        private Vector3 _lastManualPos;
+        private void UpdateManualCoords()
+        {
+             if (CenterOnMap) return;
+             
+             // Detect Inspector Change
+             if (_manualPosition != _lastManualPos)
+             {
+                 // Apply all 3: X, Y (Height), Z
+                 _targetPosition = _manualPosition;
+                 transform.position = _targetPosition;
+                 _lastManualPos = _manualPosition;
+             }
+             else
+             {
+                 // Update inspector fields to match current pos
+                 if (Vector3.Distance(_manualPosition, transform.position) > 0.1f)
+                 {
+                     _manualPosition = transform.position;
+                     _lastManualPos = _manualPosition;
+                 }
+             }
         }
     }
 }
+

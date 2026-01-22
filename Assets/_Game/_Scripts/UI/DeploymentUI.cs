@@ -150,7 +150,18 @@ namespace MaouSamaTD.UI
         {
             if (_currencyManager == null) return;
             int currentSeals = _currencyManager.CurrentSeals;
-
+            // Get selected unit for highlighting
+            // Since InteractionManager is injected via Zenject but not exposed here, we might need to fetch it
+            // Or better: DeploymentUI injects InteractionManager?
+            // Wait, we don't have InteractionManager here. 
+            // In dependency graph, InteractionManager injects DeploymentUI. Circular dependency if we inject back.
+            // Solution: DeploymentUI should have a SetSelectedUnit(unit) method called by InteractionManager?
+            // OR we just check the button. 
+            // However, the earlier plan was to update RefreshButtonsState.
+            
+            // Let's assume we can add a method `UpdateSelection(UnitData selected)` and call it from InteractionManager
+            // For now, let's keep this method unaware of selection unless we add state.
+            
             foreach (var btnUI in _unitButtons)
             {
                 if (btnUI == null) continue;
@@ -163,6 +174,15 @@ namespace MaouSamaTD.UI
                 bool isCoolingDown = _cooldownTimers.ContainsKey(unit);
                 
                 btnUI.UpdateState(canAfford, isDeployed, isCoolingDown);
+            }
+        }
+        
+        public void UpdateSelectionHighlight(UnitData selectedUnit)
+        {
+            foreach (var btn in _unitButtons)
+            {
+                bool isSelected = (selectedUnit != null && btn.Data == selectedUnit);
+                btn.SetSelected(isSelected);
             }
         }
 

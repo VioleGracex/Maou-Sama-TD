@@ -15,7 +15,10 @@ namespace MaouSamaTD.Utils
         {
             if (_mainCamera != null)
             {
-                transform.forward = _mainCamera.transform.forward;
+                // transform.forward = _mainCamera.transform.forward; 
+                // Using rotation copies the camera's full orientation (including Up vector), 
+                // which is better for 2D sprites in 3D space to prevent flipping in Top-Down.
+                transform.rotation = _mainCamera.transform.rotation;
             }
         }
     }

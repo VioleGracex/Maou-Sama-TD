@@ -30,7 +30,10 @@ namespace MaouSamaTD.Managers
         // Placement State
         public bool IsDragging { get; private set; }
         private Units.UnitData _draggedUnitData;
-        private Units.UnitData _selectedUnitData; // For click-toggle mode (Placement)
+        
+        private Units.UnitData _selectedUnitData; 
+        public Units.UnitData SelectedUnitData => _selectedUnitData;
+
 
         // Hover/Selection Tracking
         private Tile _currentHoverTile;
@@ -96,33 +99,34 @@ namespace MaouSamaTD.Managers
             // 4. Update Ghost (if dragging)
             UpdateGhost(hitTile);
 
-            // 5. Handle Clicks / Actions
+        // 5. Handle Clicks / Actions
             if (isPressDown)
             {
                 if (IsDragging)
                 {
-                    // Dragging typically ends on release, not press down.
-                    // Implementation depends on if drag is "Active Hold" or "Click-Move-Click".
-                    // Assuming Hold based on EndDrag being external usually.
+                    // Dragging typically ends on release.
                 }
                 else if (_selectedUnitData != null && hitTile != null)
                 {
-                    // Placement Click
                     HandlePlacementInput(hitTile);
                 }
                 else
                 {
-                    // Selection / Inspection Click
                     HandleSelectionInput(ray, hitTile);
                 }
             }
-            else
+            
+            // Right Click Cancel (New)
+            if (UnityEngine.InputSystem.Mouse.current.rightButton.wasPressedThisFrame)
             {
-                // Clear state if clicked off-map?
-                if (isPressDown && hitTile == null && _selectedUnitData != null)
-                {
-                    DeselectUnit();
-                }
+                if (_selectedUnitData != null) DeselectUnit();
+                else if (_currentHoverUnit != null) _unitInspectorUI.Hide();
+            }
+            // Left Click on Empty Space outside range/unit -> Cancel?
+            // If we clicked and hitTile is null, it means we clicked off-grid.
+            else if (isPressDown && hitTile == null)
+            {
+                 if (_selectedUnitData != null) DeselectUnit();
             }
         }
         #endregion
@@ -158,6 +162,7 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Logic Handlers
+        #region Logic Handlers
         private void HandleHover(Tile tile)
         {
             // Tile Event
@@ -165,6 +170,7 @@ namespace MaouSamaTD.Managers
             {
                 _currentHoverTile = tile;
                 if (tile != null) OnTileHovered?.Invoke(tile);
+                UpdateTileVisuals();
             }
 
             // Unit Outline Hover Logic
@@ -191,8 +197,24 @@ namespace MaouSamaTD.Managers
         private void HandlePlacementInput(Tile tile)
         {
              // Try to place the unit we have selected from UI
-             TryPlaceUnit(tile, _selectedUnitData);
-             OnTileClicked?.Invoke(tile);
+             if (_selectedUnitData != null)
+             {
+                 if (tile.Occupant != null)
+                 {
+                     // User clicked a unit while in placement mode -> Cancel?
+                     // Or maybe they want to inspect? 
+                     // Requirement: "cant click on unit again or empty space to cancel placement unit mode"
+                     
+                     // If clicking same tile twice? or just any occupied tile?
+                     // Let's cancel if invalid placement anyway.
+                     DeselectUnit();
+                 }
+                 else
+                 {
+                     TryPlaceUnit(tile, _selectedUnitData);
+                 }
+                 OnTileClicked?.Invoke(tile);
+             }
         }
 
         private void HandleSelectionInput(Ray ray, Tile hitTile)
@@ -214,26 +236,15 @@ namespace MaouSamaTD.Managers
                     break;
 
                 case SelectionMode.ClickUnit:
-                    // Strict Raycast for Unit Layer/Collider
-                    // Assuming units have colliders and are on a layer suitable for Raycast.
-                    // If Raycast hit the Tile first (which it likely did in GetTileFromRay), we might need to check Occupant or verify layers.
-                    // Using hitTile.Occupant is cleaner if the Grid is the single source of truth.
-                    
-                    // But if user wants "Click on Sprite", we might raycast for Sprites specifically?
-                    // Let's stick to Tile Occupant for reliability, OR add a secondary Raycast for "UnitLayer".
-                    
                     if (Physics.Raycast(ray, out RaycastHit unitHit, 100f, LayerMask.GetMask("Units", "Default")))
                     {
                         var hitUnit = unitHit.collider.GetComponent<Units.PlayerUnit>();
-                        // Also check parent as collider might be on child
                         if (hitUnit == null) hitUnit = unitHit.collider.GetComponentInParent<Units.PlayerUnit>();
-                        
                         targetUnit = hitUnit;
                     }
                     break;
 
                 case SelectionMode.ClosestInRange:
-                    // Find closest unit to the Ray hit point
                     if (Physics.Raycast(ray, out RaycastHit groundHit))
                     {
                         targetUnit = FindClosestUnit(groundHit.point, _selectionRange);
@@ -246,19 +257,18 @@ namespace MaouSamaTD.Managers
                 Debug.Log($"Selected Unit via {_selectionMode}: {targetUnit.name}");
                 if (_unitInspectorUI != null) _unitInspectorUI.Show(targetUnit);
             }
+            else
+            {
+                // Clicked Empty Space/Non-Unit
+                // Ensure inspector closes if we click nothing
+                if (_unitInspectorUI != null) _unitInspectorUI.Hide();
+            }
         }
         
         private Units.PlayerUnit FindClosestUnit(Vector3 point, float range)
         {
             float closestDist = range * range; // Sqr check
             Units.PlayerUnit closest = null;
-            
-            // Inefficient? Iterate all tiles? Or Deployed List?
-            // DeploymentUI tracks Deployed Units. But InteractionManager dependency direction?
-            // DeploymentUI depends on InteractionManager? (No, InteractionManager injects DeploymentUI).
-            // But we can't easily access the list unless public.
-            // Safer: Iterate Grid Tiles (if grid isn't massive). Or FindObjectsOfType (Slow).
-            // Grid iteration is safest if sparse.
             
             foreach(var tile in _gridManager.GetAllTiles())
             {
@@ -272,7 +282,6 @@ namespace MaouSamaTD.Managers
                     }
                 }
             }
-            
             return closest;
         }
         #endregion
@@ -280,15 +289,30 @@ namespace MaouSamaTD.Managers
         #region Placement Logic
         public void SelectUnit(Units.UnitData data)
         {
+            // Toggle off if same unit selected
+            if (_selectedUnitData == data)
+            {
+                DeselectUnit();
+                return;
+            }
+
             if (IsDragging) return;
             _selectedUnitData = data;
             IsDragging = false; 
+            
+            // Create Ghost Immediately for "Click-Place" mode
+            CreateGhost(data);
+            
+            if (_deploymentUI != null) _deploymentUI.UpdateSelectionHighlight(data);
+            
             UpdateTileVisuals();
         }
 
         public void DeselectUnit()
         {
             _selectedUnitData = null;
+            if (_ghostObject != null) Destroy(_ghostObject);
+            if (_deploymentUI != null) _deploymentUI.UpdateSelectionHighlight(null);
             UpdateTileVisuals();
         }
 
@@ -299,32 +323,27 @@ namespace MaouSamaTD.Managers
             _selectedUnitData = null;
 
             if (_ghostObject != null) Destroy(_ghostObject);
-            
-            // Create Ghost with Sprite instead of Cube
-            // User requirement: "not a blue box but off colored so we understand this unit is what we dragging"
-            
-            // 1. Create a Unit Container (mimicking Unit Prefab structure loosely or just a billboard)
-            _ghostObject = new GameObject("DragGhost");
-            
-            // 2. Add Visuals Child (Billboard behavior if needed, or just flat if TopDown/Iso logic allows)
-            GameObject visuals = new GameObject("Visuals");
-            visuals.transform.SetParent(_ghostObject.transform, false);
-            visuals.transform.localPosition = Vector3.up * 1f; // Lift slightly to match Unit height (center)
-
-            // 3. Add SpriteRenderer
-            SpriteRenderer sr = visuals.AddComponent<SpriteRenderer>();
-            sr.sprite = data.UnitSprite; // Use unit sprite
-            
-            // Optional: Billboard script if camera rotates? 
-            // For now, assuming fixed perspective or billboard script added. 
-            // Let's rely on modifying transform.rotation in UpdateGhost if needed or add Billboard component if we can find it.
-            // Since we can't easily find "Utils.Billboard" dynamically reliably without knowing namespace (we know it: MaouSamaTD.Utils.Billboard)
-            visuals.AddComponent<MaouSamaTD.Utils.Billboard>(); 
-
-            // Initialize Color (Ghostly)
-            sr.color = new Color(1f, 1f, 1f, 0.6f); 
+            CreateGhost(data);
 
             UpdateTileVisuals();
+        }
+        
+        private void CreateGhost(Units.UnitData data)
+        {
+            _ghostObject = new GameObject("DragGhost");
+            
+            GameObject visuals = new GameObject("Visuals");
+            visuals.transform.SetParent(_ghostObject.transform, false);
+            // Lift HIGHER to avoid Z-Overdraw with TileGlow/HighGround
+            // Original was 1f, increasing to 2f for safety against 0.5f/1f high ground + Shader offset
+            visuals.transform.localPosition = Vector3.up * 2f; 
+
+            SpriteRenderer sr = visuals.AddComponent<SpriteRenderer>();
+            sr.sprite = data.UnitSprite; 
+            
+            visuals.AddComponent<MaouSamaTD.Utils.Billboard>(); 
+
+            sr.color = new Color(1f, 1f, 1f, 0.6f); 
         }
 
         public void EndDrag(bool place)
@@ -345,6 +364,7 @@ namespace MaouSamaTD.Managers
         private void TryPlaceUnit(Tile tile, Units.UnitData unitData)
         {
             if (_currencyManager == null || _deploymentUI == null) return;
+            if (unitData == null) return;
 
             bool canAfford = _currencyManager.CanAfford(unitData.DeploymentCost);
             bool validTile = IsTileValidForUnit(tile, unitData);
@@ -352,12 +372,15 @@ namespace MaouSamaTD.Managers
             if (canAfford && validTile && !tile.IsOccupied)
             {
                 _deploymentUI.SpawnUnit(tile, unitData);
+                // Keep selected for multi-placement? Or Deselect? 
+                // User said "cant click on unit again... to cancel", implying they stay in mode until cancel.
+                // But usually TD games select once. Let's Deselect to be safe, easy to re-click.
                 DeselectUnit();
             }
             else
             {
                 Debug.Log("Invalid Placement or not enough funds.");
-                if (_selectedUnitData != null) DeselectUnit();
+                // Provide feedback?
             }
         }
         #endregion
@@ -365,29 +388,26 @@ namespace MaouSamaTD.Managers
         #region Helpers & Visuals
         private void UpdateGhost(Tile tile)
         {
-            if (IsDragging && _ghostObject != null) // Allow dragging even off-tile to keep tracking mouse?
+            // Works for both Dragging AND Selected state now
+            if ((IsDragging || _selectedUnitData != null) && _ghostObject != null) 
             {
-                // Raycast again to get ground point if tile is null?
-                // For now, if tile is null, we can try to track mouse on Plane(Vector3.up, 0)
-                
                 Vector3 targetPos = Vector3.zero;
                 bool validPosition = false;
+                Units.UnitData activeData = IsDragging ? _draggedUnitData : _selectedUnitData;
 
                 if (tile != null)
                 {
                     targetPos = tile.transform.position;
-                    validPosition = IsTileValidForUnit(tile, _draggedUnitData) && !tile.IsOccupied;
+                    validPosition = IsTileValidForUnit(tile, activeData) && !tile.IsOccupied;
                 }
                 else
                 {
-                    // Fallback raycast to ground plane
+                    // Float off-grid
                     Ray ray = _mainCamera.ScreenPointToRay(UnityEngine.InputSystem.Pointer.current.position.ReadValue());
                     Plane ground = new Plane(Vector3.up, 0);
                     if (ground.Raycast(ray, out float enter))
                     {
                         targetPos = ray.GetPoint(enter);
-                        // Snap logic? Or smooth? 
-                        // If off-grid, it's invalid
                         validPosition = false; 
                     }
                 }
@@ -398,7 +418,6 @@ namespace MaouSamaTD.Managers
                 if (sr != null)
                 {
                     Color targetColor = validPosition ? _validGlowColor : _invalidGlowColor;
-                    // Keep Alpha
                     targetColor.a = 0.6f; 
                     sr.color = targetColor;
                 }
@@ -429,9 +448,14 @@ namespace MaouSamaTD.Managers
                     bool isValidPlacement = isValidType && !isOccupied;
 
                     bool isInRange = false;
-                    if (rangeCenterTile != null)
+                    
+                    // Show Range from Hover Tile
+                    if (rangeCenterTile != null && activeUnit.Range > 0)
                     {
-                         float dist = Vector2Int.Distance(tile.Coordinate, rangeCenterTile.Coordinate);
+                         float dist = Vector2.Distance(
+                             new Vector2(tile.Coordinate.x, tile.Coordinate.y), 
+                             new Vector2(rangeCenterTile.Coordinate.x, rangeCenterTile.Coordinate.y));
+                         
                          if (dist <= activeUnit.Range) isInRange = true;
                     }
 
@@ -440,20 +464,18 @@ namespace MaouSamaTD.Managers
                          Color color = isValidPlacement ? _validGlowColor : _invalidGlowColor;
                          tile.SetHighlight(true, color);
                     }
+                    else if (isInRange)
+                    {
+                        // Range Indicator Override
+                        tile.SetHighlight(true, _rangeIndicatorColor);
+                    }
                     else if (isValidPlacement)
                     {
-                        if (isInRange)
-                        {
-                            tile.SetHighlight(true, _rangeIndicatorColor);
-                        }
-                        else
-                        {
-                            tile.SetHighlight(true, _validGlowColor * 0.5f);
-                        }
+                        tile.SetHighlight(true, _validGlowColor * 0.4f);
                     }
                     else
                     {
-                        tile.SetHighlight(true, _invalidGlowColor);
+                        tile.SetHighlight(false, Color.black);
                     }
                 }
                 else
@@ -464,4 +486,5 @@ namespace MaouSamaTD.Managers
         }
         #endregion
     }
+#endregion
 }

@@ -11,6 +11,7 @@ namespace MaouSamaTD.UI
         [Header("Buttons")]
         [SerializeField] private Button _lockButton;
         [SerializeField] private Button _viewButton;
+        [SerializeField] private Toggle _centerToggle;
 
         [Header("Icons")]
         [SerializeField] private Image _lockIconImage;
@@ -36,6 +37,12 @@ namespace MaouSamaTD.UI
             if (_viewButton != null)
                 _viewButton.onClick.AddListener(OnViewClicked);
 
+            if (_centerToggle != null)
+            {
+                _centerToggle.isOn = _cameraController != null && _cameraController.CenterOnMap;
+                _centerToggle.onValueChanged.AddListener(OnCenterToggleChanged);
+            }
+            
             UpdateUI();
         }
 
@@ -46,7 +53,7 @@ namespace MaouSamaTD.UI
                 UpdateUI();
             }
         }
-
+        
         private void OnLockClicked()
         {
             if (_cameraController == null) return;
@@ -58,6 +65,13 @@ namespace MaouSamaTD.UI
         {
             if (_cameraController == null) return;
             _cameraController.ToggleView();
+            UpdateUI();
+        }
+
+        private void OnCenterToggleChanged(bool isOn)
+        {
+            if (_cameraController == null) return;
+            _cameraController.CenterOnMap = isOn;
             UpdateUI();
         }
 
@@ -90,6 +104,18 @@ namespace MaouSamaTD.UI
             if (_viewText != null)
             {
                 _viewText.text = _cameraController.CurrentMode == CameraController.ViewMode.Isometric ? "Isometric" : "Top Down";
+            }
+            
+            // Update Center Toggle State
+            if (_centerToggle != null)
+            {
+                _centerToggle.interactable = _cameraController.IsLocked;
+                 // Don't set isOn here every frame to avoid loop, though .isOn check probably handles it.
+                 // Better to only set if different
+                 if (_centerToggle.isOn != _cameraController.CenterOnMap)
+                 {
+                     _centerToggle.isOn = _cameraController.CenterOnMap;
+                 }
             }
         }
     }

@@ -24,6 +24,29 @@ namespace MaouSamaTD.Grid
         [SerializeField] private List<Vector2Int> _spawnPoints = new List<Vector2Int>();
         [SerializeField] private List<Vector2Int> _exitPoints = new List<Vector2Int>();
 
+        [Header("Visuals")]
+        [SerializeField] private GameObject _startPrefab;
+        [SerializeField] private GameObject _endPrefab;
+        [SerializeField] private GameObject _wallPrefab;
+
+        [Header("Generation Settings")]
+        [SerializeField] private bool _generateMapOnStart = true;
+        [SerializeField] private bool _generateWalls = true;
+        
+        [Header("Wall Configuration")]
+        [SerializeField] private bool _wallNorth = true;
+        [SerializeField] private bool _wallSouth = true;
+        [SerializeField] private bool _wallEast = true;
+        [SerializeField] private bool _wallWest = true;
+        
+        [Header("Primitive Wall Settings")]
+        [Tooltip("Width (Thickness) of the wall relative to cell size")]
+        [SerializeField] private float _wallWidth = 1.0f;
+        [Tooltip("Height of the wall relative to cell size")]
+        [SerializeField] private float _wallHeight = 1.0f;
+
+        private List<GameObject> _generatedWalls = new List<GameObject>();
+
         private void Awake()
         {
             if (_gridManager == null) _gridManager = GetComponent<GridManager>();
@@ -31,7 +54,7 @@ namespace MaouSamaTD.Grid
 
         private void Start()
         {
-            if (Application.isPlaying)
+            if (Application.isPlaying && _generateMapOnStart)
             {
                 GenerateMap();
             }
@@ -54,8 +77,7 @@ namespace MaouSamaTD.Grid
             }
 
             _gridManager.ClearGrid();
-            // In a real scenario, we might want to resize the grid data structure in Manager
-            // For now, we will just tell Manager to create tiles at specific coordinates.
+            ClearWalls();
 
             // 1. Generate Base Grid (All Walkable temporarily)
             for (int x = 0; x < _width; x++)
@@ -76,7 +98,114 @@ namespace MaouSamaTD.Grid
 
             // 2. Generate Lanes (Paths from Spawns to Exits)
             GenerateLanes();
+
+            // 3. Generate Walls (if enabled)
+            if (_generateWalls)
+            {
+                GenerateWalls();
+            }
         }
+
+        private void GenerateWalls()
+        {
+            float cellSize = _gridManager.CellSize;
+            // Center yPos based on height. 
+            // Standard cube is 1 unit high centered at 0.5. 
+            // We scale Y by _wallHeight.
+            // If _wallHeight=1, RealHeight=cellSize. Center is cellSize/2.
+            float wallRealHeight = cellSize * _wallHeight;
+            float yPos = wallRealHeight / 2f; 
+
+            Transform wallContainer = _gridManager.transform.Find("Walls");
+            if (wallContainer == null)
+            {
+                wallContainer = new GameObject("Walls").transform;
+                wallContainer.SetParent(_gridManager.transform);
+                wallContainer.localPosition = Vector3.zero;
+            }
+
+            // Helper for creation
+            void CreateWallBlock(int x, int y, Vector3 scaleMultiplier)
+            {
+                Vector3 pos = new Vector3(x * cellSize, yPos, y * cellSize);
+                GameObject wall;
+                
+                if (_wallPrefab != null)
+                {
+                    wall = Instantiate(_wallPrefab, wallContainer);
+                    wall.transform.position = pos;
+                }
+                else
+                {
+                    wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    wall.transform.SetParent(wallContainer, false);
+                    wall.transform.position = pos;
+                    wall.name = $"Wall_{x}_{y}";
+                    // Scale based on cell size and multipliers
+                    wall.transform.localScale = Vector3.Scale(new Vector3(cellSize, cellSize, cellSize), scaleMultiplier);
+                }
+                _generatedWalls.Add(wall);
+            }
+
+            // South (-1 y) - Runs along X, so thickness is Z
+            if (_wallSouth)
+            {
+                Vector3 scale = new Vector3(1f, _wallHeight, _wallWidth);
+                for (int x = -1; x <= _width; x++) CreateWallBlock(x, -1, scale);
+            }
+            
+            // North (_height y) - Runs along X
+            if (_wallNorth)
+            {
+                Vector3 scale = new Vector3(1f, _wallHeight, _wallWidth);
+                for (int x = -1; x <= _width; x++) CreateWallBlock(x, _height, scale);
+            }
+
+            // West (-1 x) - Runs along Z, so thickness is X
+            if (_wallWest)
+            {
+                Vector3 scale = new Vector3(_wallWidth, _wallHeight, 1f);
+                for (int y = 0; y < _height; y++) CreateWallBlock(-1, y, scale);
+            }
+
+            // East (_width x) - Runs along Z
+            if (_wallEast)
+            {
+                Vector3 scale = new Vector3(_wallWidth, _wallHeight, 1f);
+                for (int y = 0; y < _height; y++) CreateWallBlock(_width, y, scale);
+            }
+        }
+
+        private void ClearWalls()
+        {
+            // Destroy tracked walls
+            foreach (var wall in _generatedWalls)
+            {
+                if (wall != null)
+                {
+                    if (Application.isPlaying) Destroy(wall);
+                    else DestroyImmediate(wall);
+                }
+            }
+            _generatedWalls.Clear();
+
+            // Also clean up container children just in case
+            if (_gridManager != null)
+            {
+                Transform wallContainer = _gridManager.transform.Find("Walls");
+                if (wallContainer != null)
+                {
+                    // Loop backwards to destroy
+                    for (int i = wallContainer.childCount - 1; i >= 0; i--)
+                    {
+                         GameObject go = wallContainer.GetChild(i).gameObject;
+                         if (Application.isPlaying) Destroy(go);
+                         else DestroyImmediate(go);
+                    }
+                }
+            }
+        }
+
 
         private void GenerateLanes()
         {
@@ -109,7 +238,46 @@ namespace MaouSamaTD.Grid
                 // Set Start/End visuals LAST to override walkable
                 _gridManager.SetTileType(start, TileType.Spawn);
                 _gridManager.SetTileType(closestExit, TileType.Exit);
+                
+                // Add Visual Markers (Cylinders/Cubes)
+                // Add Visual Markers (Cylinders/Cubes)
+                CreateMarker(start, _startPrefab, "StartMarker", PrimitiveType.Cylinder, Color.green);
+                CreateMarker(closestExit, _endPrefab, "EndMarker", PrimitiveType.Cube, Color.red);
             }
+        }
+        
+
+        
+        private void CreateMarker(Vector2Int coord, GameObject prefab, string name, PrimitiveType fallbackShape, Color fallbackColor)
+        {
+             Tile t = _gridManager.GetTileAt(coord);
+             if (t != null)
+             {
+                 // Clear existing markers on this tile if any
+                 // (In case multiple calls stack, or if tile reused)
+                 foreach(Transform child in t.transform)
+                 {
+                     if (child.name == "StartMarker" || child.name == "EndMarker")
+                         DestroyImmediate(child.gameObject);
+                 }
+
+                 GameObject marker;
+                 if (prefab != null)
+                 {
+                     marker = Instantiate(prefab, t.transform);
+                 }
+                 else
+                 {
+                     marker = GameObject.CreatePrimitive(fallbackShape);
+                     marker.transform.SetParent(t.transform, false);
+                     marker.transform.localScale = new Vector3(0.8f, (fallbackShape == PrimitiveType.Cylinder ? 0.1f : 0.8f), 0.8f);
+                     marker.GetComponent<Renderer>().material.color = fallbackColor;
+                     DestroyImmediate(marker.GetComponent<Collider>());
+                 }
+                 
+                 marker.name = name;
+                 if (prefab == null) marker.transform.localPosition = Vector3.up * 0.5f;
+             }
         }
         
         private Vector2Int GetClosestExit(Vector2Int start, List<Vector2Int> exits)
@@ -202,7 +370,6 @@ namespace MaouSamaTD.Grid
                 _exitPoints.Add(coord);
                 // Force update tile visual
                 _gridManager.SetTileType(coord, TileType.Exit);
-                Debug.Log($"Added Exit Point at {coord}");
                 Debug.Log($"Added Exit Point at {coord}");
                 GenerateMap(); // Auto-regenerate
             }

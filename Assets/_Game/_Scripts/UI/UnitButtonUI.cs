@@ -19,6 +19,7 @@ namespace MaouSamaTD.UI
 
         private UnitDragHandler _dragHandler;
         private UnitData _data;
+        private bool _isSelected; // Track selection state locally
         [Inject] private DiContainer _container;
 
         public UnitData Data => _data;
@@ -151,9 +152,26 @@ namespace MaouSamaTD.UI
 
         public void SetSelected(bool isSelected)
         {
+            _isSelected = isSelected;
+            
+            // Force visual refresh immediately
+            // We need to re-evaluate based on current state (cooldown etc might still apply)
+            // But usually SetSelected comes from user action so we assume state is valid for interaction
+            
             if (_background != null)
             {
-                _background.color = isSelected ? Color.green : Color.white; // Simple feedback
+                _background.color = isSelected ? Color.green : Color.white; 
+            }
+            
+            // We also want to tint the ICON as requested
+            if (_unitIcon != null)
+            {
+               // If selected -> Yellow. Else -> handled by UpdateState (White/Gray)
+               // But UpdateState might overwrite this next frame. 
+               // So we should rely on UpdateState logic which we will modify below.
+               // However, for instant feedback:
+               if (isSelected) _unitIcon.color = Color.yellow;
+               else _unitIcon.color = Color.white; // Default fallback, UpdateState will correct if CD/Deployed
             }
         }
 
@@ -185,15 +203,24 @@ namespace MaouSamaTD.UI
                     _background.color = Color.gray;
                     if (_unitIcon != null) _unitIcon.color = Color.gray; 
                 }
-                else if (!canAfford)
-                {
-                    _background.color = baseColor * 0.5f; // Dimmed
-                    if (_unitIcon != null) _unitIcon.color = Color.white; 
-                }
                 else
                 {
-                    _background.color = baseColor; // Normal
-                    if (_unitIcon != null) _unitIcon.color = Color.white;
+                    if (!canAfford)
+                    {
+                        _background.color = baseColor * 0.5f; // Dimmed
+                    }
+                    else
+                    {
+                        _background.color = baseColor; // Normal
+                    }
+
+                    // Icon Logic: Checked Selected first interaction-wise
+                    if (_unitIcon != null)
+                    {
+                        if (_isSelected) _unitIcon.color = Color.yellow;
+                        else if (!canAfford) _unitIcon.color = Color.white; // or dimmed? Left white as per request
+                        else _unitIcon.color = Color.white;
+                    }
                 }
             }
         }

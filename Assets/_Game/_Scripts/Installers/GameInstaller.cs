@@ -3,6 +3,7 @@ using Zenject;
 using MaouSamaTD.Managers;
 using MaouSamaTD.UI;
 using MaouSamaTD.Grid;
+using MaouSamaTD.Skills;
 
 namespace MaouSamaTD.Installers
 {
@@ -16,6 +17,7 @@ namespace MaouSamaTD.Installers
         [SerializeField] private GridManager _gridManager;
         [SerializeField] private GameManager _gameManager;
         [SerializeField] private CameraController _cameraController;
+        [SerializeField] private SkillManager _skillManager;
 
         public override void InstallBindings()
         {
@@ -25,6 +27,7 @@ namespace MaouSamaTD.Installers
             if (_interactionManager) Container.Bind<InteractionManager>().FromInstance(_interactionManager).AsSingle();
             if (_currencyManager) Container.Bind<CurrencyManager>().FromInstance(_currencyManager).AsSingle();
             if (_gridManager) Container.Bind<GridManager>().FromInstance(_gridManager).AsSingle();
+            if (_skillManager) Container.Bind<SkillManager>().FromInstance(_skillManager).AsSingle();
             
             if (_gameManager) 
             {

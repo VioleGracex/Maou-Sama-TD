@@ -95,7 +95,7 @@ namespace MaouSamaTD.Units
             UpdateInternal();
         }
 
-        protected void UpdateVisuals()
+        protected virtual void UpdateVisuals()
         {
             if (_data == null) return;
 

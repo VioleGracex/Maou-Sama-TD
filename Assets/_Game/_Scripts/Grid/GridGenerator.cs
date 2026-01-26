@@ -6,6 +6,7 @@ namespace MaouSamaTD.Grid
 {
     public class GridGenerator : MonoBehaviour
     {
+        #region Settings
         [Header("Target")]
         [SerializeField] private GridManager _gridManager;
 
@@ -46,7 +47,9 @@ namespace MaouSamaTD.Grid
         [SerializeField] private float _wallHeight = 1.0f;
 
         private List<GameObject> _generatedWalls = new List<GameObject>();
+        #endregion
 
+        #region Lifecycle
         private void Awake()
         {
             if (_gridManager == null) _gridManager = GetComponent<GridManager>();
@@ -59,7 +62,9 @@ namespace MaouSamaTD.Grid
                 GenerateMap();
             }
         }
+        #endregion
 
+        #region Map Generation
         [ContextMenu("Generate Map")]
         public void GenerateMap()
         {
@@ -79,16 +84,13 @@ namespace MaouSamaTD.Grid
             _gridManager.ClearGrid();
             ClearWalls();
 
-            // 1. Generate Base Grid (All Walkable temporarily)
             for (int x = 0; x < _width; x++)
             {
                 for (int y = 0; y < _height; y++)
                 {
                     Vector2Int coord = new Vector2Int(x, y);
-                    // Determine High Ground Randomly
                     bool isHighGround = Random.value < _highGroundChance;
                     
-                    // Simple "Edge" logic for variation
                     if (y == 0 || y == _height - 1) isHighGround = true;
 
                     TileType type = isHighGround ? TileType.HighGround : TileType.Walkable;
@@ -96,35 +98,29 @@ namespace MaouSamaTD.Grid
                 }
             }
 
-            // 2. Generate Lanes (Paths from Spawns to Exits)
             GenerateLanes();
 
-            // 3. Generate Walls (if enabled)
             if (_generateWalls)
             {
                 GenerateWalls();
             }
         }
+        #endregion
 
+        #region Walls
         private void GenerateWalls()
         {
             float cellSize = _gridManager.CellSize;
-            // Center yPos based on height. 
-            // Standard cube is 1 unit high centered at 0.5. 
-            // We scale Y by _wallHeight.
-            // If _wallHeight=1, RealHeight=cellSize. Center is cellSize/2.
             float wallRealHeight = cellSize * _wallHeight;
             float yPos = wallRealHeight / 2f; 
 
-            Transform wallContainer = _gridManager.transform.Find("Walls");
+            Transform wallContainer = _gridManager.WallContainer;
             if (wallContainer == null)
             {
-                wallContainer = new GameObject("Walls").transform;
-                wallContainer.SetParent(_gridManager.transform);
-                wallContainer.localPosition = Vector3.zero;
+                 _gridManager.Init();
+                 wallContainer = _gridManager.WallContainer;
             }
 
-            // Helper for creation
             void CreateWallBlock(int x, int y, Vector3 scaleMultiplier)
             {
                 Vector3 pos = new Vector3(x * cellSize, yPos, y * cellSize);
@@ -139,36 +135,31 @@ namespace MaouSamaTD.Grid
                 {
                     wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     wall.transform.SetParent(wallContainer, false);
-                    wall.transform.position = pos;
+                    wall.transform.localPosition = pos;
                     wall.name = $"Wall_{x}_{y}";
-                    // Scale based on cell size and multipliers
                     wall.transform.localScale = Vector3.Scale(new Vector3(cellSize, cellSize, cellSize), scaleMultiplier);
                 }
                 _generatedWalls.Add(wall);
             }
 
-            // South (-1 y) - Runs along X, so thickness is Z
             if (_wallSouth)
             {
                 Vector3 scale = new Vector3(1f, _wallHeight, _wallWidth);
                 for (int x = -1; x <= _width; x++) CreateWallBlock(x, -1, scale);
             }
             
-            // North (_height y) - Runs along X
             if (_wallNorth)
             {
                 Vector3 scale = new Vector3(1f, _wallHeight, _wallWidth);
                 for (int x = -1; x <= _width; x++) CreateWallBlock(x, _height, scale);
             }
 
-            // West (-1 x) - Runs along Z, so thickness is X
             if (_wallWest)
             {
                 Vector3 scale = new Vector3(_wallWidth, _wallHeight, 1f);
                 for (int y = 0; y < _height; y++) CreateWallBlock(-1, y, scale);
             }
 
-            // East (_width x) - Runs along Z
             if (_wallEast)
             {
                 Vector3 scale = new Vector3(_wallWidth, _wallHeight, 1f);
@@ -178,7 +169,6 @@ namespace MaouSamaTD.Grid
 
         private void ClearWalls()
         {
-            // Destroy tracked walls
             foreach (var wall in _generatedWalls)
             {
                 if (wall != null)
@@ -188,73 +178,45 @@ namespace MaouSamaTD.Grid
                 }
             }
             _generatedWalls.Clear();
-
-            // Also clean up container children just in case
-            if (_gridManager != null)
-            {
-                Transform wallContainer = _gridManager.transform.Find("Walls");
-                if (wallContainer != null)
-                {
-                    // Loop backwards to destroy
-                    for (int i = wallContainer.childCount - 1; i >= 0; i--)
-                    {
-                         GameObject go = wallContainer.GetChild(i).gameObject;
-                         if (Application.isPlaying) Destroy(go);
-                         else DestroyImmediate(go);
-                    }
-                }
-            }
         }
+        #endregion
 
-
+        #region Lanes & Pathing
         private void GenerateLanes()
         {
-            // Use temporary lists to avoid dirtying the Inspector lists with auto-gen data
             List<Vector2Int> currentSpawns = new List<Vector2Int>(_spawnPoints);
             List<Vector2Int> currentExits = new List<Vector2Int>(_exitPoints);
 
-            // Default setup if no points defined
             if (currentSpawns.Count == 0) currentSpawns.Add(new Vector2Int(0, _height / 2));
             if (currentExits.Count == 0) currentExits.Add(new Vector2Int(_width - 1, _height / 2));
 
-            // Create paths for each spawn to the nearest exit
-            // Create paths for each spawn to the nearest exit
             foreach (var start in currentSpawns)
             {
                 Vector2Int closestExit = GetClosestExit(start, currentExits);
                 
-                // Generate multiple lanes if requested
                 for (int i = 0; i < _lanesPerConnection; i++)
                 {
                     List<Vector2Int> path = GeneratePath(start, closestExit);
-
-                    // Apply path to grid (Force Walkable on path)
+                    
                     foreach (var p in path)
                     {
-                         _gridManager.SetTileType(p, TileType.Walkable); // Carve path through mountains
+                         _gridManager.SetTileType(p, TileType.Walkable);
                     }
                 }
 
-                // Set Start/End visuals LAST to override walkable
                 _gridManager.SetTileType(start, TileType.Spawn);
                 _gridManager.SetTileType(closestExit, TileType.Exit);
                 
-                // Add Visual Markers (Cylinders/Cubes)
-                // Add Visual Markers (Cylinders/Cubes)
                 CreateMarker(start, _startPrefab, "StartMarker", PrimitiveType.Cylinder, Color.green);
                 CreateMarker(closestExit, _endPrefab, "EndMarker", PrimitiveType.Cube, Color.red);
             }
         }
-        
-
         
         private void CreateMarker(Vector2Int coord, GameObject prefab, string name, PrimitiveType fallbackShape, Color fallbackColor)
         {
              Tile t = _gridManager.GetTileAt(coord);
              if (t != null)
              {
-                 // Clear existing markers on this tile if any
-                 // (In case multiple calls stack, or if tile reused)
                  foreach(Transform child in t.transform)
                  {
                      if (child.name == "StartMarker" || child.name == "EndMarker")
@@ -279,10 +241,10 @@ namespace MaouSamaTD.Grid
                  if (prefab == null) marker.transform.localPosition = Vector3.up * 0.5f;
              }
         }
-        
+
         private Vector2Int GetClosestExit(Vector2Int start, List<Vector2Int> exits)
         {
-            if (exits.Count == 0) return start; // Fallback
+            if (exits.Count == 0) return start;
 
             Vector2Int best = exits[0];
             float minDist = Vector2Int.Distance(start, best);
@@ -299,20 +261,14 @@ namespace MaouSamaTD.Grid
             return best;
         }
 
-
-
         private List<Vector2Int> GeneratePath(Vector2Int start, Vector2Int end)
         {
             List<Vector2Int> path = new List<Vector2Int>();
             Vector2Int current = start;
             path.Add(current);
-
-            // Robust "Random Walker" that always moves closer to target but with some wiggle
-            // but guarantees arrival
             
             while (current != end)
             {
-                // Determine direction
                 int diffX = end.x - current.x;
                 int diffY = end.y - current.y;
 
@@ -320,7 +276,6 @@ namespace MaouSamaTD.Grid
 
                 if (diffX != 0 && diffY != 0)
                 {
-                    // Randomly choose axis, but favor the longer one?
                     moveX = Random.value > 0.5f; 
                 }
                 else if (diffX != 0) moveX = true;
@@ -337,29 +292,27 @@ namespace MaouSamaTD.Grid
                 
                 if (!path.Contains(current)) path.Add(current);
                 
-                // Safety break
                 if (path.Count > _width * _height) break;
             }
             return path;
         }
+        #endregion
 
+        #region Interaction
         [ContextMenu("Clear Map")]
         public void ClearMap()
         {
             if (_gridManager != null) _gridManager.ClearGrid();
         }
 
-        // --- Interaction API for Tiles ---
-
         public void AddSpawnPoint(Vector2Int coord)
         {
             if (!_spawnPoints.Contains(coord))
             {
                 _spawnPoints.Add(coord);
-                // Force update tile visual
                 _gridManager.SetTileType(coord, TileType.Spawn);
                 Debug.Log($"Added Spawn Point at {coord}");
-                GenerateMap(); // Auto-regenerate
+                GenerateMap();
             }
         }
 
@@ -368,10 +321,9 @@ namespace MaouSamaTD.Grid
             if (!_exitPoints.Contains(coord))
             {
                 _exitPoints.Add(coord);
-                // Force update tile visual
                 _gridManager.SetTileType(coord, TileType.Exit);
                 Debug.Log($"Added Exit Point at {coord}");
-                GenerateMap(); // Auto-regenerate
+                GenerateMap();
             }
         }
 
@@ -394,5 +346,6 @@ namespace MaouSamaTD.Grid
                 GenerateMap();
             }
         }
+        #endregion
     }
 }

@@ -1,7 +1,9 @@
 using UnityEngine;
 using MaouSamaTD.Grid;
 using MaouSamaTD.UI;
+using UnityEngine.EventSystems;
 using Zenject;
+using MaouSamaTD.Skills;
 
 namespace MaouSamaTD.Managers
 {
@@ -31,6 +33,10 @@ namespace MaouSamaTD.Managers
         public bool IsDragging { get; private set; }
         private Units.UnitData _draggedUnitData;
         
+        // Skill State
+        private Skills.SkillData _selectedSkill;
+        private bool _isSkillTargeting;
+        
         private Units.UnitData _selectedUnitData; 
         public Units.UnitData SelectedUnitData => _selectedUnitData;
 
@@ -46,6 +52,8 @@ namespace MaouSamaTD.Managers
         [SerializeField] private Color _validGlowColor = Color.green;
         [SerializeField] private Color _invalidGlowColor = Color.red;
         [SerializeField] private Color _rangeIndicatorColor = new Color(0, 0, 1, 0.3f);
+        private GameObject _rangeIndicator; 
+        private GameObject _aoeIndicator; // New Indicator for Skills
         #endregion
 
         #region Dependencies
@@ -54,6 +62,7 @@ namespace MaouSamaTD.Managers
         [Inject] private UnitInspectorUI _unitInspectorUI;
         [Inject] private CurrencyManager _currencyManager;
         [Inject] private DeploymentUI _deploymentUI;
+        [Inject] private SkillManager _skillManager;
         #endregion
 
         #region Initialization
@@ -93,40 +102,46 @@ namespace MaouSamaTD.Managers
             Ray ray = _mainCamera.ScreenPointToRay(screenPos);
             Tile hitTile = GetTileFromRay(ray);
 
-            // 3. Update Hover State
+            // 3. Update Hover & Visuals
             HandleHover(hitTile);
-
-            // 4. Update Ghost (if dragging)
             UpdateGhost(hitTile);
+            
 
-        // 5. Handle Clicks / Actions
+
+            // 4. Handle Actions
             if (isPressDown)
             {
-                if (IsDragging)
-                {
-                    // Dragging typically ends on release.
-                }
-                else if (_selectedUnitData != null && hitTile != null)
-                {
-                    HandlePlacementInput(hitTile);
-                }
-                else
-                {
-                    HandleSelectionInput(ray, hitTile);
-                }
+                 // Ignore click if over UI (let UI handle its own buttons)
+                 if (EventSystem.current.IsPointerOverGameObject()) return;
+
+                 if (IsDragging)
+                 {
+                     // Dragging typically ends on release.
+                 }
+                 else if (_isSkillTargeting)
+                 {
+                     HandleSkillInput(ray, hitTile);
+                 }
+                 else if (_selectedUnitData != null && hitTile != null)
+                 {
+                     HandlePlacementInput(hitTile);
+                 }
+                 else if (hitTile != null)
+                 {
+                     HandleSelectionInput(ray, hitTile);
+                 }
+                 else
+                 {
+                     // Clicked Empty Space / Off-Grid -> Cancel selection
+                     if (_selectedUnitData != null) DeselectUnit();
+                 }
             }
             
-            // Right Click Cancel (New)
-            if (UnityEngine.InputSystem.Mouse.current.rightButton.wasPressedThisFrame)
+            // Right Click to Cancel
+            if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.rightButton.wasPressedThisFrame)
             {
-                if (_selectedUnitData != null) DeselectUnit();
-                else if (_currentHoverUnit != null) _unitInspectorUI.Hide();
-            }
-            // Left Click on Empty Space outside range/unit -> Cancel?
-            // If we clicked and hitTile is null, it means we clicked off-grid.
-            else if (isPressDown && hitTile == null)
-            {
-                 if (_selectedUnitData != null) DeselectUnit();
+                DeselectUnit();
+                DeselectSkill();
             }
         }
         #endregion
@@ -161,7 +176,6 @@ namespace MaouSamaTD.Managers
         }
         #endregion
 
-        #region Logic Handlers
         #region Logic Handlers
         private void HandleHover(Tile tile)
         {
@@ -335,8 +349,9 @@ namespace MaouSamaTD.Managers
             GameObject visuals = new GameObject("Visuals");
             visuals.transform.SetParent(_ghostObject.transform, false);
             // Lift HIGHER to avoid Z-Overdraw with TileGlow/HighGround
-            // Original was 1f, increasing to 2f for safety against 0.5f/1f high ground + Shader offset
-            visuals.transform.localPosition = Vector3.up * 2f; 
+            // Lift HIGHER to avoid Z-Overdraw with TileGlow/HighGround
+            // 0.75f covers HighGround(0.5f) with margin
+            visuals.transform.localPosition = Vector3.up * 1f; 
 
             SpriteRenderer sr = visuals.AddComponent<SpriteRenderer>();
             sr.sprite = data.UnitSprite; 
@@ -344,6 +359,7 @@ namespace MaouSamaTD.Managers
             visuals.AddComponent<MaouSamaTD.Utils.Billboard>(); 
 
             sr.color = new Color(1f, 1f, 1f, 0.6f); 
+            sr.sortingOrder = 100; // Force draw on top of everything map-related 
         }
 
         public void EndDrag(bool place)
@@ -412,7 +428,8 @@ namespace MaouSamaTD.Managers
                     }
                 }
 
-                _ghostObject.transform.position = Vector3.Lerp(_ghostObject.transform.position, targetPos, Time.deltaTime * 20f); 
+                // Instant follow
+                _ghostObject.transform.position = targetPos; 
 
                 var sr = _ghostObject.GetComponentInChildren<SpriteRenderer>();
                 if (sr != null)
@@ -436,55 +453,139 @@ namespace MaouSamaTD.Managers
             if (_gridManager == null) return;
 
             Units.UnitData activeUnit = IsDragging ? _draggedUnitData : _selectedUnitData;
-            bool isActive = activeUnit != null;
-            Tile rangeCenterTile = _currentHoverTile;
+            bool isUnitActive = activeUnit != null;
+            bool isSkillActive = _isSkillTargeting && _selectedSkill != null;
+            
+            Tile centerTile = _currentHoverTile;
 
             foreach (var tile in _gridManager.GetAllTiles())
             {
-                if (isActive)
+                bool shouldHighlight = false;
+                Color highlightColor = Color.black;
+
+                if (isUnitActive)
                 {
                     bool isValidType = IsTileValidForUnit(tile, activeUnit);
                     bool isOccupied = tile.IsOccupied;
                     bool isValidPlacement = isValidType && !isOccupied;
-
                     bool isInRange = false;
-                    
-                    // Show Range from Hover Tile
-                    if (rangeCenterTile != null && activeUnit.Range > 0)
+
+                    if (centerTile != null && activeUnit.Range > 0)
                     {
                          float dist = Vector2.Distance(
                              new Vector2(tile.Coordinate.x, tile.Coordinate.y), 
-                             new Vector2(rangeCenterTile.Coordinate.x, rangeCenterTile.Coordinate.y));
-                         
+                             new Vector2(centerTile.Coordinate.x, centerTile.Coordinate.y));
                          if (dist <= activeUnit.Range) isInRange = true;
                     }
 
-                    if (tile == rangeCenterTile)
+                    if (tile == centerTile)
                     {
-                         Color color = isValidPlacement ? _validGlowColor : _invalidGlowColor;
-                         tile.SetHighlight(true, color);
+                         shouldHighlight = true;
+                         highlightColor = isValidPlacement ? _validGlowColor : _invalidGlowColor;
                     }
                     else if (isInRange)
                     {
-                        // Range Indicator Override
-                        tile.SetHighlight(true, _rangeIndicatorColor);
+                        shouldHighlight = true;
+                        highlightColor = _rangeIndicatorColor;
                     }
                     else if (isValidPlacement)
                     {
-                        tile.SetHighlight(true, _validGlowColor * 0.4f);
+                        shouldHighlight = true;
+                        highlightColor = _validGlowColor * 0.7f;
+                    }
+                }
+                else if (isSkillActive && centerTile != null)
+                {
+                    // Skill Logic
+                    // 1. Check Radius
+                    float dist = Vector2.Distance(
+                         new Vector2(tile.Coordinate.x, tile.Coordinate.y), 
+                         new Vector2(centerTile.Coordinate.x, centerTile.Coordinate.y));
+                    
+                    bool inRadius = dist <= _selectedSkill.Radius;
+
+                    // 2. Determine Color
+                    // If radius is 0 (Single Target), only highlight hover tile
+                    if (_selectedSkill.Radius <= 0)
+                    {
+                        if (tile == centerTile)
+                        {
+                            shouldHighlight = true;
+                            highlightColor = _selectedSkill.RangeIndicatorColor;
+                        }
                     }
                     else
                     {
-                        tile.SetHighlight(false, Color.black);
+                        if (inRadius)
+                        {
+                            shouldHighlight = true;
+                            highlightColor = _selectedSkill.RangeIndicatorColor;
+                            // Maybe dim edges?
+                            highlightColor.a = 0.5f; 
+                            if (tile == centerTile) highlightColor.a = 0.8f;
+                        }
                     }
                 }
-                else
-                {
-                    tile.SetHighlight(false, Color.black);
-                }
+
+                // Apply
+                tile.SetHighlight(shouldHighlight, highlightColor);
             }
         }
         #endregion
+        // Skill Logic
+        public void SelectSkill(Skills.SkillData skill)
+        {
+            if (_selectedSkill == skill && _isSkillTargeting)
+            {
+                DeselectSkill();
+                return;
+            }
+
+            DeselectUnit(); 
+            
+            _selectedSkill = skill;
+            _isSkillTargeting = true;
+            
+            UpdateTileVisuals();
+        }
+
+        public void DeselectSkill()
+        {
+            _isSkillTargeting = false;
+            _selectedSkill = null;
+            UpdateTileVisuals();
+        }
+
+        private void HandleSkillInput(Ray ray, Tile hitTile)
+        {
+            if (_selectedSkill == null) return;
+            
+            Vector3 targetPos = Vector3.zero;
+            Units.UnitBase targetUnit = null;
+            
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            {
+                targetUnit = hit.collider.GetComponent<Units.UnitBase>();
+                targetPos = hit.point;
+            }
+            
+            if (targetUnit == null)
+            {
+                 Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+                 if (groundPlane.Raycast(ray, out float enter))
+                 {
+                     targetPos = ray.GetPoint(enter);
+                 }
+            }
+
+            if (_skillManager != null)
+            {
+                bool success = _skillManager.TryExecuteSkill(_selectedSkill, targetPos, targetUnit);
+                if (success)
+                {
+                    DeselectSkill();
+                }
+            }
+        }
     }
-#endregion
 }

@@ -11,6 +11,15 @@ namespace MaouSamaTD.Units
 Ranged  // Deals damage from afar, placed on High Ground
     }
 
+    public enum AttackPattern
+    {
+        Vertical,       // |
+        Horizontal,     // -
+        Diagonal,       // X
+        Cross,          // + (Vertical + Horizontal)
+        All             // * (Surrounding 8 tiles)
+    }
+
     public class PlayerUnit : UnitBase
     {
         public event System.Action<PlayerUnit> OnRetreat;
@@ -108,6 +117,9 @@ Ranged  // Deals damage from afar, placed on High Ground
 
 
 
+        // Cache cachedGrid for Update loop
+        private Grid.GridManager _gridManager;
+
         protected override void UpdateInternal()
         {
              base.UpdateInternal();
@@ -118,6 +130,82 @@ Ranged  // Deals damage from afar, placed on High Ground
                  _currentCharge += _data.ChargePerSecond * Time.deltaTime;
                  if (_currentCharge > MaxCharge) _currentCharge = MaxCharge;
              }
+
+             // Attack Logic
+             if (Time.time >= _lastAttackTime + _attackInterval)
+             {
+                 Attack();
+             }
+        }
+
+        private void Attack()
+        {
+            if (_gridManager == null) _gridManager = FindObjectOfType<Grid.GridManager>();
+            if (_gridManager == null) return;
+
+            Vector2Int myPos;
+            if (CurrentTile != null) myPos = CurrentTile.Coordinate;
+            else myPos = _gridManager.WorldToGridCoordinates(transform.position);
+
+            // Fetch attack pattern and range
+            AttackPattern pattern = _data != null ? _data.AttackPattern : AttackPattern.All;
+            float range = Range;
+
+            // Find valid targets
+            // Optimization: In a real game, usage of spatial hash or quadtree is preferred.
+            // Here we iterate all active enemies since count is low (TD usually < 100)
+            
+            foreach (var enemy in EnemyUnit.ActiveEnemies)
+            {
+                if (enemy == null || enemy.CurrentHp <= 0) continue;
+
+                Vector2Int enemyPos = _gridManager.WorldToGridCoordinates(enemy.transform.position);
+                
+                if (IsTargetInPattern(myPos, enemyPos, pattern, range))
+                {
+                    // Hit the enemy
+                     enemy.TakeDamage(AttackPower);
+                     _lastAttackTime = Time.time;
+                     
+                     // If we want single target vs multi target, we break here.
+                     // Assuming splash/multi-target for now based on "Pattern" implies area?
+                     // Or just "Range of validity"?
+                     // Usually TD units attack 1 target within range unless "AoE".
+                     // However, "Beam" patterns often hit all. 
+                     // Let's assume Single Target (First found) for standard, or All for AOE?
+                     // The prompt didn't specify. I will assume Single Target for now to be safe, unless "All" pattern?
+                     // Actually, "AttackPattern" usually defines "Range Shape".
+                     // Let's hit the CLOSEST one within logic?
+                     // Or just hit one.
+                     return; // Single target attack per interval
+                }
+            }
+        }
+
+        private bool IsTargetInPattern(Vector2Int origin, Vector2Int target, AttackPattern pattern, float range)
+        {
+            int dx = Mathf.Abs(origin.x - target.x);
+            int dy = Mathf.Abs(origin.y - target.y);
+            int iRange = Mathf.CeilToInt(range);
+
+            if (dx > iRange || dy > iRange) return false;
+
+            switch (pattern)
+            {
+                case AttackPattern.Vertical:
+                    return dx == 0 && dy <= iRange;
+                case AttackPattern.Horizontal:
+                    return dy == 0 && dx <= iRange;
+                case AttackPattern.Cross:
+                    return (dx == 0 && dy <= iRange) || (dy == 0 && dx <= iRange);
+                case AttackPattern.Diagonal:
+                    return dx == dy && dx <= iRange;
+                case AttackPattern.All:
+                    // Using Chebyshev distance (Square) for "All Surroundings"
+                    return dx <= iRange && dy <= iRange; 
+                default:
+                    return false;
+            }
         }
 
         // Color coding for debug

@@ -23,6 +23,8 @@ namespace MaouSamaTD.Managers
         [SerializeField] private float _rotateSpeed = 100f;
         [SerializeField] private float _zoomSpeed = 10f;
         [SerializeField] private float _transitionDuration = 0.5f;
+        [Tooltip("Additional padding around the grid when centering.")]
+        [SerializeField] private float _padding = 2f;
 
         [Header("View Profiles")]
         [SerializeField] private Vector3 _isometricRotation = new Vector3(50f, 90f, 0f);
@@ -158,7 +160,37 @@ namespace MaouSamaTD.Managers
         {
             if (_gridManager == null) return;
             Vector3 center = _gridManager.GetGridCenter();
+            
+            // Calculate optimal size to fit grid
+            float optimalSize = CalculateTargetOrthoSize();
+            if (_cam.orthographic)
+            {
+                 // Smoothly interpolate if needed, or snap if instant
+                 // For "CenterOnMap" state updates, generally we want it to stick (snap or fast lerp)
+                 // But since this is called every frame in Update if Locked && CenterOnMap,
+                 // we can use a lerp for smoothness if window resizes, or just snap
+                 _cam.orthographicSize = Mathf.Lerp(_cam.orthographicSize, optimalSize, Time.deltaTime * 5f);
+            }
+
             FrameGrid(center.x, center.z);
+        }
+
+        private float CalculateTargetOrthoSize()
+        {
+            if (_gridManager == null) return _isometricZoom;
+
+            float gridW = _gridManager.Width * _gridManager.CellSize;
+            float gridH = _gridManager.Height * _gridManager.CellSize;
+
+            float screenRatio = (float)Screen.width / (float)Screen.height;
+            float targetRatio = gridW / gridH;
+
+            // Orthographic Size is Half Visual Height
+            float sizeBasedOnHeight = (gridH / 2f) + _padding;
+            float sizeBasedOnWidth = (gridW / 2f / screenRatio) + _padding;
+
+            // We need the larger one to ensure everything fits
+            return Mathf.Max(sizeBasedOnHeight, sizeBasedOnWidth);
         }
 
 

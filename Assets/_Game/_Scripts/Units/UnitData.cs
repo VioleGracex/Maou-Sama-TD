@@ -12,6 +12,7 @@ namespace MaouSamaTD.Units
 
         [Header("Class & Rules")]
         public UnitClass Class;
+        public AttackPattern AttackPattern;
         public int DeploymentCost = 10;
         public int BlockCount = 1;
 

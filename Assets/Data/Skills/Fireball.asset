@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73136369cd15dfb418701e320cfd0df5, type: 3}
+  m_Name: Fireball
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.SovereignRiteData
+  SkillName: Fireball
+  Description: Explodes in an area, damaging all enemies.
+  Icon: {fileID: 0}
+  CastVFX: {fileID: 0}
+  HitVFX: {fileID: 0}
+  RangeIndicatorColor: {r: 1, g: 0, b: 0, a: 1}
+  AnimationTriggerName: CastSkill
+  CastSFX: {fileID: 0}
+  HitSFX: {fileID: 0}
+  TargetType: 1
+  Range: 100
+  Radius: 3
+  EffectType: 0
+  Value: 40
+  Duration: 0
+  SealCost: 30
+  Cooldown: 10

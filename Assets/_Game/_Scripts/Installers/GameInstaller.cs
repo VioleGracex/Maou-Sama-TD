@@ -35,7 +35,11 @@ namespace MaouSamaTD.Installers
                 Container.QueueForInject(_gameManager); // Ensure it gets injected
             }
             
+            
             if (_cameraController) Container.Bind<CameraController>().FromInstance(_cameraController).AsSingle();
+
+            // Bind GridGenerator using hierarchy search since it's not explicitly referenced in various installers
+            Container.Bind<GridGenerator>().FromComponentInHierarchy().AsSingle();
             
             // If they can be null and we want to find them automatically:
             // Container.Bind<UnitInspectorUI>().FromComponentInHierarchy().AsSingle();

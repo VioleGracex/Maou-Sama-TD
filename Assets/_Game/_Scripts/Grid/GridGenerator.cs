@@ -10,9 +10,8 @@ namespace MaouSamaTD.Grid
         [Header("Target")]
         [SerializeField] private GridManager _gridManager;
 
-        [Header("Dimensions")]
-        [SerializeField] private int _width = 15;
-        [SerializeField] private int _height = 10;
+        // Dimensions are now taken from GridManager to avoid duplication
+
 
         [Header("Procedural Settings")]
         [SerializeField] private bool _useSeed = true;
@@ -84,14 +83,17 @@ namespace MaouSamaTD.Grid
             _gridManager.ClearGrid();
             ClearWalls();
 
-            for (int x = 0; x < _width; x++)
+            int width = _gridManager.Width;
+            int height = _gridManager.Height;
+
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < _height; y++)
+                for (int y = 0; y < height; y++)
                 {
                     Vector2Int coord = new Vector2Int(x, y);
                     bool isHighGround = Random.value < _highGroundChance;
                     
-                    if (y == 0 || y == _height - 1) isHighGround = true;
+                    if (y == 0 || y == height - 1) isHighGround = true;
 
                     TileType type = isHighGround ? TileType.HighGround : TileType.Walkable;
                     _gridManager.CreateTile(coord, type);
@@ -145,25 +147,25 @@ namespace MaouSamaTD.Grid
             if (_wallSouth)
             {
                 Vector3 scale = new Vector3(1f, _wallHeight, _wallWidth);
-                for (int x = -1; x <= _width; x++) CreateWallBlock(x, -1, scale);
+                for (int x = -1; x <= _gridManager.Width; x++) CreateWallBlock(x, -1, scale);
             }
             
             if (_wallNorth)
             {
                 Vector3 scale = new Vector3(1f, _wallHeight, _wallWidth);
-                for (int x = -1; x <= _width; x++) CreateWallBlock(x, _height, scale);
+                for (int x = -1; x <= _gridManager.Width; x++) CreateWallBlock(x, _gridManager.Height, scale);
             }
 
             if (_wallWest)
             {
                 Vector3 scale = new Vector3(_wallWidth, _wallHeight, 1f);
-                for (int y = 0; y < _height; y++) CreateWallBlock(-1, y, scale);
+                for (int y = 0; y < _gridManager.Height; y++) CreateWallBlock(-1, y, scale);
             }
 
             if (_wallEast)
             {
                 Vector3 scale = new Vector3(_wallWidth, _wallHeight, 1f);
-                for (int y = 0; y < _height; y++) CreateWallBlock(_width, y, scale);
+                for (int y = 0; y < _gridManager.Height; y++) CreateWallBlock(_gridManager.Width, y, scale);
             }
         }
 
@@ -187,8 +189,8 @@ namespace MaouSamaTD.Grid
             List<Vector2Int> currentSpawns = new List<Vector2Int>(_spawnPoints);
             List<Vector2Int> currentExits = new List<Vector2Int>(_exitPoints);
 
-            if (currentSpawns.Count == 0) currentSpawns.Add(new Vector2Int(0, _height / 2));
-            if (currentExits.Count == 0) currentExits.Add(new Vector2Int(_width - 1, _height / 2));
+            if (currentSpawns.Count == 0) currentSpawns.Add(new Vector2Int(0, _gridManager.Height / 2));
+            if (currentExits.Count == 0) currentExits.Add(new Vector2Int(_gridManager.Width - 1, _gridManager.Height / 2));
 
             foreach (var start in currentSpawns)
             {
@@ -292,7 +294,7 @@ namespace MaouSamaTD.Grid
                 
                 if (!path.Contains(current)) path.Add(current);
                 
-                if (path.Count > _width * _height) break;
+                if (path.Count > _gridManager.Width * _gridManager.Height) break;
             }
             return path;
         }

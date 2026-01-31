@@ -13,14 +13,14 @@ namespace MaouSamaTD.UI.Skills
         [SerializeField] private Image _iconImage;
         [SerializeField] private Image _cooldownOverlay;
         [SerializeField] private TextMeshProUGUI _costText;
-        [SerializeField] private TextMeshProUGUI _cooldownTimerText;
-        [SerializeField] private GameObject _lockOverlay; // Cost check visual
+        [SerializeField] private TextMeshProUGUI _skillNameText;
+        [SerializeField] private GameObject _lockOverlay;
 
-        private SkillData _data;
+        private SovereignRiteData _data;
         private SkillManager _manager;
         private InteractionManager _interactionManager;
 
-        public void Initialize(SkillData data, SkillManager manager, InteractionManager interactionManager)
+        public void Initialize(SovereignRiteData data, SkillManager manager, InteractionManager interactionManager)
         {
             _data = data;
             _manager = manager;
@@ -29,7 +29,8 @@ namespace MaouSamaTD.UI.Skills
             if (_data != null)
             {
                 if (_iconImage != null) _iconImage.sprite = _data.Icon;
-                if (_costText != null) _costText.text = _data.Cost.ToString();
+                if (_costText != null) _costText.text = _data.SealCost.ToString();
+                if (_skillNameText != null) _skillNameText.text = _data.SkillName;
             }
         }
 
@@ -42,20 +43,6 @@ namespace MaouSamaTD.UI.Skills
             if (_cooldownOverlay != null)
             {
                 _cooldownOverlay.fillAmount = progress;
-            }
-
-            if (_cooldownTimerText != null)
-            {
-                if (progress > 0)
-                {
-                    float remaining = progress * _data.Cooldown;
-                     if (remaining > 60) _cooldownTimerText.text = Mathf.CeilToInt(remaining/60) + "m";
-                     else _cooldownTimerText.text = Mathf.CeilToInt(remaining).ToString();
-                }
-                else
-                {
-                    _cooldownTimerText.text = "";
-                }
             }
 
             // 2. Cost Check

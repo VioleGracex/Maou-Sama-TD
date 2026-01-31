@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using Zenject;
 
 namespace MaouSamaTD.Grid
 {
@@ -20,6 +20,31 @@ namespace MaouSamaTD.Grid
 
         [Header("State")]
         [SerializeField] private MaouSamaTD.Units.UnitBase _occupant;
+        
+        // Zenject Injections
+        [Inject] private GridGenerator _gridGenerator;
+        [Inject] private GridManager _gridManager;
+        
+        // Fallback properties for Editor usage where injection doesn't run
+        private GridGenerator Generator 
+        {
+            get
+            {
+                if (_gridGenerator != null) return _gridGenerator;
+                _gridGenerator = FindObjectOfType<GridGenerator>();
+                return _gridGenerator;
+            }
+        }
+
+        private GridManager Manager
+        {
+            get
+            {
+                if (_gridManager != null) return _gridManager;
+                _gridManager = FindObjectOfType<GridManager>();
+                return _gridManager;
+            }
+        }
 
         public Vector2Int Coordinate => _coordinate;
         public TileType Type => _type;
@@ -109,7 +134,7 @@ namespace MaouSamaTD.Grid
             if (_type == newType) return;
 
             // Handle cleanup of old type
-            var generator = FindObjectOfType<GridGenerator>();
+            var generator = Generator; // Use property for fallback
             if (generator != null)
             {
                  if (_type == TileType.Spawn && newType != TileType.Spawn) generator.RemoveSpawnPoint(_coordinate);
@@ -123,7 +148,7 @@ namespace MaouSamaTD.Grid
                      // If just changing to Walkable/HighGround, generator doesn't track these lists explicitly
                      // but we should re-generate to update paths if we created an obstacle
                      // Use SetTileType on manager to ensure data consistency
-                     var manager = FindObjectOfType<GridManager>();
+                     var manager = Manager; // Use property for fallback
                      
                      if (manager != null) manager.SetTileType(_coordinate, newType);
                  }

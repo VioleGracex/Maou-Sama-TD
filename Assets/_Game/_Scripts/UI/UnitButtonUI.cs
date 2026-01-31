@@ -9,17 +9,17 @@ namespace MaouSamaTD.UI
     public class UnitButtonUI : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private Image _unitIcon;       // The sprite of the unit
-        [SerializeField] private Image _classIcon;      // The icon for the class
-        [SerializeField] private Image _background;     // The button background
-        [SerializeField] private Image _cooldownOverlay;// Displays cooldown progress (Fill 1 -> 0)
+        [SerializeField] private Image _unitIcon;       
+        [SerializeField] private Image _classIcon;      
+        [SerializeField] private Image _background;     
+        [SerializeField] private Image _cooldownOverlay;
         [SerializeField] private TextMeshProUGUI _nameText; 
         [SerializeField] private TextMeshProUGUI _costText;
         [SerializeField] private Button _button;
-
+        
         private UnitDragHandler _dragHandler;
         private UnitData _data;
-        private bool _isSelected; // Track selection state locally
+        private bool _isSelected; 
         [Inject] private DiContainer _container;
 
         public UnitData Data => _data;
@@ -31,18 +31,14 @@ namespace MaouSamaTD.UI
             _button = GetComponent<Button>();
             _background = GetComponent<Image>();
 
-            // Ensure DragHandler exists and init it
             if (_dragHandler == null)
             {
                 _dragHandler = gameObject.AddComponent<UnitDragHandler>();
-                // Dynamic AddComponent needs manual injection!
                  if (_container != null) _container.Inject(_dragHandler);
             }
-            // If it existed, it was already injected by InstantiatePrefab
             
             _dragHandler.Initialize(data);
             
-            // Wire Button Click to DragHandler (since Button consumes clicks)
             if (_button != null)
             {
                 _button.onClick.RemoveAllListeners();
@@ -52,63 +48,25 @@ namespace MaouSamaTD.UI
                 });
             }
 
-            // Auto-find components if missing (helper for upgrading prefabs)
-            if (_nameText == null)
-            {
-                var t = transform.Find("NameText");
-                if (t != null) _nameText = t.GetComponent<TextMeshProUGUI>();
-            }
-            if (_costText == null)
-            {
-                var t = transform.Find("CostText");
-                if (t != null) _costText = t.GetComponent<TextMeshProUGUI>();
-            }
-            if (_unitIcon == null)
-            {
-                var t = transform.Find("UnitIcon");
-                if (t != null) _unitIcon = t.GetComponent<Image>();
-            }
-            if (_classIcon == null)
-            {
-                var t = transform.Find("ClassIcon");
-                if (t != null) _classIcon = t.GetComponent<Image>();
-            }
-            if (_cooldownOverlay == null)
-            {
-                var t = transform.Find("CooldownOverlay");
-                if (t != null) _cooldownOverlay = t.GetComponent<Image>();
-            }
-
-            // Fallback for legacy "InfoText"
-            if (_nameText == null && _costText == null)
-            {
-                 var oldText = GetComponentInChildren<TextMeshProUGUI>();
-                 if (oldText != null) _nameText = oldText; // Reuse as name/combo fallback
-            }
-            
-            // Assume the main Image component is the background
             if (_background == null) _background = GetComponent<Image>();
 
             UpdateVisuals();
-            UpdateCooldown(0); // Init hidden
+            UpdateCooldown(0); 
         }
 
         private void UpdateVisuals()
         {
             if (_data == null) return;
 
-            // Update Text
             if (_nameText != null) _nameText.text = _data.UnitName;
             if (_costText != null) _costText.text = _data.DeploymentCost.ToString();
 
-            // Legacy fallback if only one text field exists
             if (_nameText != null && _costText == null)
             {
                  _nameText.text = $"<b>{_data.UnitName}</b>\n<color=yellow>{_data.DeploymentCost}</color>";
                  _nameText.alignment = TextAlignmentOptions.Center;
             }
 
-            // Update Unit Icon
             if (_unitIcon != null)
             {
                 if (_data.UnitIcon != null)
@@ -123,16 +81,11 @@ namespace MaouSamaTD.UI
                 }
             }
 
-            // Update Class Icon (Placeholder logic for now, or could load from Resources/AssetDatabase if we had a manager)
-            // For now, enable if sprite is manually assigned, otherwise disable
             if (_classIcon != null)
             {
-                 // Logic to set sprite based on class would go here
-                 // _classIcon.sprite = ...
-                 // _classIcon.enabled = _classIcon.sprite != null;
+//
             }
 
-            // Update Background Color based on Class
             if (_background != null)
             {
                 if (_data.Class == UnitClass.Melee) _background.color = new Color(0.8f, 0.4f, 0.4f);
@@ -154,47 +107,32 @@ namespace MaouSamaTD.UI
         {
             _isSelected = isSelected;
             
-            // Force visual refresh immediately
-            // We need to re-evaluate based on current state (cooldown etc might still apply)
-            // But usually SetSelected comes from user action so we assume state is valid for interaction
-            
             if (_background != null)
             {
                 _background.color = isSelected ? Color.green : Color.white; 
             }
             
-            // We also want to tint the ICON as requested
             if (_unitIcon != null)
             {
-               // If selected -> Yellow. Else -> handled by UpdateState (White/Gray)
-               // But UpdateState might overwrite this next frame. 
-               // So we should rely on UpdateState logic which we will modify below.
-               // However, for instant feedback:
                if (isSelected) _unitIcon.color = Color.yellow;
-               else _unitIcon.color = Color.white; // Default fallback, UpdateState will correct if CD/Deployed
+               else _unitIcon.color = Color.white;
             }
         }
 
         public void UpdateState(bool canAfford, bool isDeployed, bool isCoolingDown)
         {
-            // Interactable condition
-            // Cannot interact if: Deployed OR Cooldown active
-            // Afford check matters for visual dimming, but interactability is blocked by cooldown too.
-            
             bool isBusy = isDeployed || isCoolingDown;
             bool isInteractable = !isBusy && canAfford;
 
             if (_button != null) _button.interactable = isInteractable;
             if (_dragHandler != null) _dragHandler.SetInteractable(isInteractable);
 
-            // Visual Feedback
             if (_background != null)
             {
                 Color baseColor = GetClassColor(_data.Class);
 
                 if (isCoolingDown)
                 {
-                     // Cooldown takes priority: Show base color (maybe slightly tinted) so overlay is visible
                      _background.color = baseColor; 
                      if (_unitIcon != null) _unitIcon.color = Color.gray; 
                 }
@@ -207,18 +145,17 @@ namespace MaouSamaTD.UI
                 {
                     if (!canAfford)
                     {
-                        _background.color = baseColor * 0.5f; // Dimmed
+                        _background.color = baseColor * 0.5f; 
                     }
                     else
                     {
-                        _background.color = baseColor; // Normal
+                        _background.color = baseColor; 
                     }
 
-                    // Icon Logic: Checked Selected first interaction-wise
                     if (_unitIcon != null)
                     {
                         if (_isSelected) _unitIcon.color = Color.yellow;
-                        else if (!canAfford) _unitIcon.color = Color.white; // or dimmed? Left white as per request
+                        else if (!canAfford) _unitIcon.color = Color.white; 
                         else _unitIcon.color = Color.white;
                     }
                 }

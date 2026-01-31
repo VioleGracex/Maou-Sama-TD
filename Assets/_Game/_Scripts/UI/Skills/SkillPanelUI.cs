@@ -12,20 +12,40 @@ namespace MaouSamaTD.UI.Skills
         [Header("Configuration")]
         [SerializeField] private Transform _buttonContainer;
         [SerializeField] private SkillButtonUI _buttonPrefab;
-        [SerializeField] private List<SkillData> _skillsToDisplay; // Could be dynamic later
+        [SerializeField] private List<SovereignRiteData> _skillsToDisplay; // Could be dynamic later
 
         [Header("Animation")]
         [SerializeField] private RectTransform _panelRect;
-        [SerializeField] private bool _isDockedOnRight = true;
+        [SerializeField] private UnityEngine.UI.Button _toggleButton;
+        [SerializeField] private float _hideOffset = 300f; // Distance to move right
         
         [Inject] private SkillManager _skillManager;
         [Inject] private InteractionManager _interactionManager;
         
         private List<SkillButtonUI> _spawnedButtons = new List<SkillButtonUI>();
-        private bool _isVisible = true;
+        private bool _isVisible = false; // Default: Docked/Hidden
+        private Vector2 _visiblePos;
+
+        private void OnEnable()
+        {
+            if (_toggleButton != null)
+                _toggleButton.onClick.AddListener(ToggleVisibility);
+        }
+
+        private void OnDisable()
+        {
+            if (_toggleButton != null)
+                _toggleButton.onClick.RemoveListener(ToggleVisibility);
+        }
 
         private void Start()
         {
+            if (_panelRect != null) 
+            {
+                _visiblePos = _panelRect.anchoredPosition;
+                // Force initial position to Hidden (Docked)
+                _panelRect.anchoredPosition = _visiblePos + new Vector2(_hideOffset, 0); 
+            }
             Refresh();
         }
 
@@ -48,10 +68,14 @@ namespace MaouSamaTD.UI.Skills
 
         public void ToggleVisibility()
         {
-            _isVisible = !_isVisible;
-            float targetX = _isVisible ? 0 : (_isDockedOnRight ? _panelRect.rect.width : -_panelRect.rect.width);
+            if (_panelRect == null) return;
             
-            _panelRect.DOAnchorPosX(targetX, 0.3f).SetEase(Ease.OutBack);
+            _isVisible = !_isVisible;
+            
+            // Move Right on Hide
+            Vector2 targetPos = _isVisible ? _visiblePos : _visiblePos + new Vector2(_hideOffset, 0);
+            
+            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack);
         }
     }
 }

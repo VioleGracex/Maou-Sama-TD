@@ -42,20 +42,28 @@ Ranged  // Deals damage from afar, placed on High Ground
 
         public void UseSkill()
         {
-            if (_data != null)
+            if (_data != null && _data.Skill != null)
             {
-                if (_currentCharge >= MaxCharge)
+                // Use Skill.ChargeCost
+                float cost = _data.Skill.ChargeCost;
+                
+                if (_currentCharge >= cost)
                 {
-                    Debug.Log($"Used Skill: {_data.SkillName}!");
-                    // Implement skill logic here later
+                    Debug.Log($"Used Skill: {_data.Skill.SkillName}!");
                     
                     // Consume Charge
-                    _currentCharge = 0f;
+                    _currentCharge -= cost;
+                    
+                    // TODO: Actual effect execution using _data.Skill properties
                 }
                 else
                 {
-                    Debug.Log($"Not enough charge! ({_currentCharge}/{MaxCharge})");
+                    Debug.Log($"Not enough charge! ({_currentCharge}/{cost})");
                 }
+            }
+            else
+            {
+                 Debug.LogWarning("Cannot use skill: No UnitData or SkillData assigned.");
             }
         }
         

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using Zenject;
 
 namespace MaouSamaTD.Grid
 {
@@ -18,14 +18,22 @@ namespace MaouSamaTD.Grid
         [SerializeField] private Transform _wallContainer;
 
         private Dictionary<Vector2Int, Tile> _grid = new Dictionary<Vector2Int, Tile>();
+        
+        [Inject] private DiContainer _container;
 
         public int Width => _width;
         public int Height => _height;
         public float CellSize => _cellSize;
         public Transform WallContainer => _wallContainer;
+        public Transform CameraAnchor { get; private set; }
         #endregion
 
         #region Initialization
+        public void Start()
+        {
+            Init();
+        }
+
         public void Init()
         {
              if (_gridContainer == null)
@@ -51,9 +59,19 @@ namespace MaouSamaTD.Grid
                 var existingTiles = _gridContainer.GetComponentsInChildren<Tile>();
                 foreach (var tile in existingTiles)
                 {
-                    if (!_grid.ContainsKey(tile.Coordinate))
+                    // For existing tiles (pre-placed), we might need to queue injection if not auto-injected by context
+                    // But typically InstantiatePrefabForComponent handles new ones.
+                    // Existing ones might need manual injection if they weren't part of scene context initial inject
+                    if (_container != null) _container.Inject(tile);
+                    
+                    // Recalculate coordinate based on actual position
+                    Vector2Int realCoord = WorldToGridCoordinates(tile.transform.position);
+                    
+                    tile.Initialize(realCoord, tile.Type);
+
+                if (!_grid.ContainsKey(realCoord))
                     {
-                        _grid[tile.Coordinate] = tile;
+                        _grid[realCoord] = tile;
                     }
                 }
             }
@@ -62,19 +80,41 @@ namespace MaouSamaTD.Grid
             {
                  GenerateTestMap();
             }
+
+            EnsureCameraAnchor(); // Ensure logic created
+            
+            // Sync settings with actual found tiles (Runs after load OR generation)
+            RecalculateBounds();
         }
         #endregion
         
         #region Core
         public void GenerateTestMap()
         {
-             // ...
+            // Simple 10x5 loop if needed, or leave empty if map is pre-made
+            for (int x = 0; x < _width; x++)
+            {
+                for (int y = 0; y < _height; y++)
+                {
+                    CreateTile(new Vector2Int(x, y), TileType.Walkable);
+                }
+            }
         }
 
         public void CreateTile(Vector2Int coord, TileType type)
         {
             Vector3 position = new Vector3(coord.x * _cellSize, 0, coord.y * _cellSize);
-            Tile tile = Instantiate(_tilePrefab, position, Quaternion.identity, _gridContainer);
+            
+            Tile tile;
+            if (_container != null)
+            {
+                tile = _container.InstantiatePrefabForComponent<Tile>(_tilePrefab, position, Quaternion.identity, _gridContainer);
+            }
+            else
+            {
+                // Fallback for non-Zenject usage (e.g. Editor tests outside runtime if needed)
+                 tile = Instantiate(_tilePrefab, position, Quaternion.identity, _gridContainer);
+            }
             
             tile.transform.localScale = Vector3.one * _cellSize * 0.95f;
             
@@ -108,6 +148,22 @@ namespace MaouSamaTD.Grid
                     else DestroyImmediate(child);
                 }
             }
+        }
+        #endregion
+
+        #region Camera Anchor
+        public void EnsureCameraAnchor()
+        {
+            if (CameraAnchor == null)
+            {
+                var anchor = GameObject.Find("CameraAnchor");
+                if (anchor == null) anchor = new GameObject("CameraAnchor");
+                
+                CameraAnchor = anchor.transform;
+            }
+            
+            // Always update position when this is called, to ensure it matches current grid
+            CameraAnchor.position = GetGridCenter();
         }
         #endregion
 
@@ -156,9 +212,129 @@ namespace MaouSamaTD.Grid
 
         public Vector3 GetGridCenter()
         {
-            float centerX = (_width * _cellSize) / 2f - (_cellSize / 2f); 
-            float centerY = (_height * _cellSize) / 2f - (_cellSize / 2f);
+            if (_grid.Count == 0)
+            {
+                // Fallback if no tiles
+                float cx = (_width - 1) * _cellSize / 2f; 
+                float cy = (_height - 1) * _cellSize / 2f;
+                return new Vector3(cx, 0, cy);
+            }
+
+            int minX = int.MaxValue;
+            int maxX = int.MinValue;
+            int minY = int.MaxValue;
+            int maxY = int.MinValue;
+
+            foreach (var coord in _grid.Keys)
+            {
+                if (coord.x < minX) minX = coord.x;
+                if (coord.x > maxX) maxX = coord.x;
+                if (coord.y < minY) minY = coord.y;
+                if (coord.y > maxY) maxY = coord.y;
+            }
+
+            // Center is average of min and max extent
+            float centerX = (minX + maxX) * _cellSize / 2f;
+            float centerY = (minY + maxY) * _cellSize / 2f;
+            
             return new Vector3(centerX, 0, centerY);
+        }
+
+        [ContextMenu("Recalculate Bounds from Children")]
+        public void RecalculateBounds()
+        {
+            // If called from editor context menu, we might need to find tiles manually if _grid is empty
+            if (_grid.Count == 0)
+            {
+                var tiles = GetComponentsInChildren<Tile>();
+                foreach (var t in tiles)
+                {
+                    Vector2Int c = WorldToGridCoordinates(t.transform.position);
+                     if (!_grid.ContainsKey(c)) _grid[c] = t;
+                }
+            }
+
+            if (_grid.Count == 0) return;
+
+            int minX = int.MaxValue;
+            int maxX = int.MinValue;
+            int minY = int.MaxValue;
+            int maxY = int.MinValue;
+
+            foreach (var coord in _grid.Keys)
+            {
+                if (coord.x < minX) minX = coord.x;
+                if (coord.x > maxX) maxX = coord.x;
+                if (coord.y < minY) minY = coord.y;
+                if (coord.y > maxY) maxY = coord.y;
+            }
+
+            // Update Width/Height to match the extent (approximate)
+            int newWidth = (maxX - minX) + 1;
+            int newHeight = (maxY - minY) + 1;
+            
+            // Only update if larger? Or strictly match?
+            // Strictly match is better for "Sync".
+            _width = newWidth;
+            _height = newHeight;
+            
+            Debug.Log($"Grid Bounds Recalculated: {_width}x{_height}");
+        }
+        
+        private void OnDrawGizmos()
+        {
+            // 1. Configured Bounds (Yellow)
+            // Based on Width/Height settings, assuming generation starts at (0,0) world space (current implementation)
+            float configW = _width * _cellSize;
+            float configH = _height * _cellSize;
+            float configCX = (_width - 1) * _cellSize / 2f;
+            float configCY = (_height - 1) * _cellSize / 2f;
+            Vector3 configCenter = new Vector3(configCX, 0, configCY);
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(configCenter, new Vector3(configW, 0.1f, configH));
+            Gizmos.DrawSphere(configCenter, 0.3f);
+
+            #if UNITY_EDITOR
+            UnityEditor.Handles.Label(configCenter + Vector3.up * 2f, $"Config: {_width}x{_height}\nCenter: {configCenter}");
+            #endif
+
+            // 2. Actual Bounds (Cyan) from Tiles
+            if (_grid.Count > 0)
+            {
+                int minX = int.MaxValue;
+                int maxX = int.MinValue;
+                int minY = int.MaxValue;
+                int maxY = int.MinValue;
+
+                foreach (var coord in _grid.Keys)
+                {
+                    if (coord.x < minX) minX = coord.x;
+                    if (coord.x > maxX) maxX = coord.x;
+                    if (coord.y < minY) minY = coord.y;
+                    if (coord.y > maxY) maxY = coord.y;
+                }
+
+                // Calculate geometry center of the present tiles
+                float actualCX = (minX + maxX) * _cellSize / 2f;
+                float actualCY = (minY + maxY) * _cellSize / 2f;
+                Vector3 actualCenter = new Vector3(actualCX, 0, actualCY);
+
+                // Calculate total size based on extent
+                float actualW = (maxX - minX + 1) * _cellSize;
+                float actualH = (maxY - minY + 1) * _cellSize;
+
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawWireCube(actualCenter, new Vector3(actualW, 0.2f, actualH));
+                Gizmos.DrawSphere(actualCenter, 0.2f);
+
+                Gizmos.color = Color.red;
+                Gizmos.DrawRay(actualCenter, Vector3.up * 5f); // Show center clearly
+
+                #if UNITY_EDITOR
+                UnityEditor.Handles.Label(actualCenter + Vector3.up * 3f, $"Actual: {actualW:F1}x{actualH:F1}\nCenter: {actualCenter}");
+                #endif
+            }
         }
         public Queue<Tile> GetPath(Vector2Int start, Vector2Int end, MaouSamaTD.Units.EnemyMovementType moveType)
         {

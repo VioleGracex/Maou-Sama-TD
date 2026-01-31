@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using Zenject;
 using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
 namespace MaouSamaTD.Managers
 {
@@ -15,92 +16,107 @@ namespace MaouSamaTD.Managers
 
         [Header("State")]
         public bool IsLocked = true;
-        public bool CenterOnMap = false;
+        public bool CenterOnMap = true; 
         public ViewMode CurrentMode = ViewMode.Isometric;
 
-        [Header("Settings")]
-        [SerializeField] private float _moveSpeed = 20f;
-        [SerializeField] private float _rotateSpeed = 100f;
-        [SerializeField] private float _zoomSpeed = 10f;
+        [Header("Cinemachine Integration")]
+        [SerializeField] private CinemachineCamera _battleCamera;
+        
+        [Header("View Settings - Isometric")]
+        [SerializeField] private float _isoRadius = 25f;
+        [SerializeField] private float _isoVerticalAngle = 45f;
+        [SerializeField] private bool _forceIsoHeading = false;
+        [SerializeField] private float _isoHeading = 90f;
+
+        [Header("View Settings - TopDown")]
+        [SerializeField] private float _topDownRadius = 30f;
+        [SerializeField] private float _topDownVerticalAngle = 90f;
+        [SerializeField] private bool _forceTopDownHeading = false;
+        [SerializeField] private float _topDownHeading = 90f; 
+
+        [Header("Transition")]
         [SerializeField] private float _transitionDuration = 0.5f;
-        [Tooltip("Additional padding around the grid when centering.")]
-        [SerializeField] private float _padding = 2f;
 
-        [Header("View Profiles")]
-        [SerializeField] private Vector3 _isometricRotation = new Vector3(50f, 90f, 0f);
-        [SerializeField] private float _isometricZoom = 15f;
-        
-        [SerializeField] private Vector3 _topDownRotation = new Vector3(90f, 90f, 0f);
-        [SerializeField] private float _topDownZoom = 20f;
+        [Header("Controls")]
+        [SerializeField] private float _moveSpeed = 20f;
+        [SerializeField] private float _rotateSpeed = 100f; 
 
-        private Camera _cam;
-        private Vector3 _targetPosition;
         [Inject] private Grid.GridManager _gridManager;
+        [Inject] private InteractionManager _interactionManager;
         
+        private Transform _cameraAnchor;
+        private CinemachineOrbitalFollow _cmOrbital;
+        private Sequence _viewSequence;
+
         private void Start()
-        {
-            _cam = GetComponent<Camera>();
-            if (_cam == null) _cam = Camera.main;
+        {  
+            if (_gridManager != null)
+            {
+                _gridManager.EnsureCameraAnchor();
+                _cameraAnchor = _gridManager.CameraAnchor;
+            }
 
-            if (_gridManager == null) _gridManager = FindObjectOfType<Grid.GridManager>();
-            
-            _targetPosition = transform.position;
+            // Get Components
+            _cmOrbital = _battleCamera.GetComponent<CinemachineOrbitalFollow>();
 
-            // Set initial state
+            // Assign Targets
+            if (_cameraAnchor != null)
+            {
+                _battleCamera.Follow = _cameraAnchor;
+                _battleCamera.LookAt = _cameraAnchor;
+            }
+            else
+            {
+                 Debug.LogError("CameraAnchor is still null after EnsureCameraAnchor call!");
+            }
+
+            // Initial State
             SetView(CurrentMode, true);
+            
+            if (CenterOnMap && IsLocked)
+            {
+                ResetToCenter();
+            }
         }
 
         private void Update()
         {
+            if (!Application.isFocused) return;
             HandleInput();
-            if (IsLocked && CenterOnMap)
-            {
-                CenterCameraOnMap();
-            }
-            else
-            {
-                // Only running this when NOT centering
-                UpdateManualCoords();
-            }
         }
-
-        [Inject] private InteractionManager _interactionManager;
 
         private void HandleInput()
         {
-            // Toggle Lock
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
-                IsLocked = !IsLocked;
-                if (IsLocked)
-                {
-                    // Return to current mode view
-                    SetView(CurrentMode);
-                }
+                ToggleLock();
             }
 
-            // View Switching (Only when Locked)
-            if (IsLocked && Keyboard.current.tabKey.wasPressedThisFrame)
+            if (Keyboard.current.tabKey.wasPressedThisFrame)
             {
-                CurrentMode = (CurrentMode == ViewMode.Isometric) ? ViewMode.TopDown : ViewMode.Isometric;
-                SetView(CurrentMode);
+                ToggleView();
+            }
+            
+            // Mouse Rotation (Right Click)
+            if (!IsLocked && Mouse.current.rightButton.isPressed)
+            {
+                float mouseX = Mouse.current.delta.x.ReadValue() * 0.1f;
+                RotateCamera(mouseX);
             }
 
-            // Ignore input if Interacting with UI or Units
             if (UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
             if (_interactionManager != null && _interactionManager.IsDragging) return;
 
-             // Handle Inputs
              HandleMovement();
-             HandleRotation();
-             HandleZoom();
         }
 
         private void HandleMovement()
         {
-            if (IsLocked && CenterOnMap) return;
+            if (IsLocked || CenterOnMap) return;
+            if (_cameraAnchor == null) return;
 
             Vector2 input = Vector2.zero;
+            // Use W/S/A/D or Arrows
             if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) input.y += 1;
             if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) input.y -= 1;
             if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) input.x -= 1;
@@ -108,235 +124,111 @@ namespace MaouSamaTD.Managers
 
             if (input.sqrMagnitude > 0.01f)
             {
-                MoveCamera(input.x, input.y, _moveSpeed * Time.deltaTime);
+                // Move relative to the camera's orbital rotation
+                float yaw = 0f;
+                if (_cmOrbital != null)
+                {
+                    yaw = _cmOrbital.HorizontalAxis.Value;
+                }
+                else if (Camera.main != null)
+                {
+                     yaw = Camera.main.transform.eulerAngles.y;
+                }
+                
+                Quaternion q = Quaternion.Euler(0, yaw, 0);
+                Vector3 move = q * new Vector3(input.x, 0, input.y);
+                move.Normalize(); 
+                
+                _cameraAnchor.position += move * _moveSpeed * Time.deltaTime;
             }
         }
         
-        private void HandleRotation()
+        private void RotateCamera(float delta)
         {
-            // Unlocked: Rotation
-            if (!IsLocked && Mouse.current.rightButton.isPressed)
-            {
-                float mouseX = Mouse.current.delta.x.ReadValue() * 0.1f; // Adjust sensitivity
-                RotateCamera(mouseX);
-            }
-        }
-
-        private void HandleZoom()
-        {
-             // Scroll Zoom
-            float scroll = Mouse.current.scroll.y.ReadValue();
-            if (Mathf.Abs(scroll) > 0.01f)
-            {
-                // Scroll values can be large, normalize/clamp slightly
-                float zoomFactor = Mathf.Clamp(scroll, -1f, 1f); 
-                ZoomCamera(-zoomFactor * _zoomSpeed * Time.deltaTime * 50f);
-            }
-        }
-
-        private void MoveCamera(float x, float z, float speed)
-        {
-            Vector3 forward = transform.forward;
-            Vector3 right = transform.right;
+            if (_cmOrbital == null) return;
             
-            forward.y = 0;
-            right.y = 0;
-            forward.Normalize();
-            right.Normalize();
+            // Kill any active tween if we take manual control
+            if (_viewSequence != null && _viewSequence.IsActive()) _viewSequence.Kill();
             
-            Vector3 move = (forward * z + right * x) * speed;
-            transform.position += move; 
-            _targetPosition = transform.position;
+            _cmOrbital.HorizontalAxis.Value += delta * _rotateSpeed * Time.deltaTime;
         }
 
-        private void RotateCamera(float inputX)
-        {
-             Vector3 eulers = transform.eulerAngles;
-             eulers.y += inputX * _rotateSpeed * Time.deltaTime;
-             transform.rotation = Quaternion.Euler(eulers); 
-        }
-
-        private void CenterCameraOnMap()
-        {
-            if (_gridManager == null) return;
-            Vector3 center = _gridManager.GetGridCenter();
-            
-            // Calculate optimal size to fit grid
-            float optimalSize = CalculateTargetOrthoSize();
-            if (_cam.orthographic)
-            {
-                 // Smoothly interpolate if needed, or snap if instant
-                 // For "CenterOnMap" state updates, generally we want it to stick (snap or fast lerp)
-                 // But since this is called every frame in Update if Locked && CenterOnMap,
-                 // we can use a lerp for smoothness if window resizes, or just snap
-                 _cam.orthographicSize = Mathf.Lerp(_cam.orthographicSize, optimalSize, Time.deltaTime * 5f);
-            }
-
-            FrameGrid(center.x, center.z);
-        }
-
-        private float CalculateTargetOrthoSize()
-        {
-            if (_gridManager == null) return _isometricZoom;
-
-            float gridW = _gridManager.Width * _gridManager.CellSize;
-            float gridH = _gridManager.Height * _gridManager.CellSize;
-
-            float screenRatio = (float)Screen.width / (float)Screen.height;
-            float targetRatio = gridW / gridH;
-
-            // Orthographic Size is Half Visual Height
-            float sizeBasedOnHeight = (gridH / 2f) + _padding;
-            float sizeBasedOnWidth = (gridW / 2f / screenRatio) + _padding;
-
-            // We need the larger one to ensure everything fits
-            return Mathf.Max(sizeBasedOnHeight, sizeBasedOnWidth);
-        }
-
-
-        
-        private void ZoomCamera(float delta)
-        {
-            if (_cam.orthographic)
-            {
-                _cam.orthographicSize += delta;
-                _cam.orthographicSize = Mathf.Clamp(_cam.orthographicSize, 5f, 50f);
-            }
-            else
-            {
-                _cam.fieldOfView += delta;
-                _cam.fieldOfView = Mathf.Clamp(_cam.fieldOfView, 10f, 90f);
-            }
-        }
+        // API Methods
 
         public void ToggleLock()
         {
             IsLocked = !IsLocked;
             if (IsLocked)
             {
-                SetView(CurrentMode);
+                ResetToCenter();
             }
         }
 
         public void ToggleView()
         {
-            if (IsLocked)
-            {
-                CurrentMode = (CurrentMode == ViewMode.Isometric) ? ViewMode.TopDown : ViewMode.Isometric;
-                SetView(CurrentMode);
-            }
+            CurrentMode = (CurrentMode == ViewMode.Isometric) ? ViewMode.TopDown : ViewMode.Isometric;
+            SetView(CurrentMode);
         }
 
-        public void SetView(ViewMode mode, bool instant = false)
+        public void SetView(ViewMode mode, bool immediate = false)
         {
-            Vector3 targetRot = (mode == ViewMode.Isometric) ? _isometricRotation : _topDownRotation;
+            CurrentMode = mode;
+            if (_cmOrbital == null) return;
+
+            float targetRadius = (mode == ViewMode.Isometric) ? _isoRadius : _topDownRadius;
+            float targetVertical = (mode == ViewMode.Isometric) ? _isoVerticalAngle : _topDownVerticalAngle;
             
-            if (instant)
+            bool forceHeading = (mode == ViewMode.Isometric) ? _forceIsoHeading : _forceTopDownHeading;
+            float targetHeading = (mode == ViewMode.Isometric) ? _isoHeading : _topDownHeading;
+
+            if (_viewSequence != null && _viewSequence.IsActive()) _viewSequence.Kill();
+
+            if (immediate)
             {
-                transform.eulerAngles = targetRot;
+                _cmOrbital.Radius = targetRadius;
+                _cmOrbital.VerticalAxis.Value = targetVertical;
+                if (forceHeading) _cmOrbital.HorizontalAxis.Value = targetHeading;
             }
             else
             {
-                transform.DORotate(targetRot, _transitionDuration);
+                _viewSequence = DOTween.Sequence();
+                
+                _viewSequence.Join(DOTween.To(() => _cmOrbital.Radius, x => _cmOrbital.Radius = x, targetRadius, _transitionDuration));
+                _viewSequence.Join(DOTween.To(() => _cmOrbital.VerticalAxis.Value, x => _cmOrbital.VerticalAxis.Value = x, targetVertical, _transitionDuration));
+                
+                if (forceHeading)
+                {
+                    // Calculate shortest path
+                    float currentHeading = _cmOrbital.HorizontalAxis.Value;
+                    float delta = Mathf.DeltaAngle(currentHeading, targetHeading);
+                    float shortestTarget = currentHeading + delta;
+                    
+                    _viewSequence.Join(DOTween.To(() => _cmOrbital.HorizontalAxis.Value, x => _cmOrbital.HorizontalAxis.Value = x, shortestTarget, _transitionDuration));
+                }
             }
         }
-
-
-        private void AdjustCameraSize()
-        {
-            if (_cam == null) return;
-            // Simple aspect ratio logic: If screen is "tall" (Portrait), increase size to show same width
-            // If screen is "wide" (Landscape), we usually cover enough width.
-            
-            float targetAspect = 16f/9f; // Base design aspect
-            float currentAspect = (float)Screen.width / Screen.height;
-            
-            if (currentAspect < targetAspect)
-            {
-                 // We are thinner than expected (e.g. mobile portrait). Scale up size.
-                 // This ensures grid width fits
-                 // (Not implemented continuously to save perf? Update is fine for now)
-            }
-        }
-
+        
         public void FrameGrid(float centerX, float centerZ)
         {
-            // Use current rotation settings to determine offset
-            Vector3 rot = (CurrentMode == ViewMode.Isometric) ? _isometricRotation : _topDownRotation;
-            
-            float height = transform.position.y;
-            if (height < 10f) height = 20f; // Ensure height
-            if (height > 40f) height = 40f; 
-
-            // Calculate offset based on Rotation X (Pitch)
-            // Pitch 90 = TopDown (Tan is infinite, dist is 0)
-            // Pitch 50 = Iso (Tan is ~1.2, dist exists)
-            
-            float pitchRad = rot.x * Mathf.Deg2Rad;
-            // Dist on Ground Plane from Target to CameraXZ
-            float dist = height / Mathf.Tan(pitchRad);
-            
-            // If TopDown (90 deg), dist is nearly 0.
-            
-            // But we also need to account for Y-Rotation (Yaw).
-            // _isometricRotation default was (50, 90, 0) -> Yaw 90 means Facing +X?
-            // If Yaw is 0, we face +Z.
-            
-            float yawRad = rot.y * Mathf.Deg2Rad;
-            
-            // Camera Pos = Target - (Forward * dist_hypotenuse)? 
-            // Simple Trig:
-            // DeltaZ = -cos(Yaw) * dist
-            // DeltaX = -sin(Yaw) * dist
-            
-            float offsetX = -Mathf.Sin(yawRad) * dist;
-            float offsetZ = -Mathf.Cos(yawRad) * dist;
-            
-            _targetPosition = new Vector3(centerX + offsetX, height, centerZ + offsetZ);
-            
-            // Apply immediately to avoid "drift" feeling when snapping
-            transform.position = _targetPosition;
-            if (IsLocked) transform.eulerAngles = rot;
+             if (_cameraAnchor != null)
+             {
+                 _cameraAnchor.position = new Vector3(centerX, 0, centerZ);
+                 IsLocked = true;
+                 CenterOnMap = true;
+             }
         }
 
-        public void SetPosition(float x, float z)
+        public void CenterCameraOnMap(bool immediate = true)
         {
-            // Allow manual override only if CenterOnMap is false (or forced by UI)
-            if (!CenterOnMap)
+            ResetToCenter();
+        }
+
+        public void ResetToCenter()
+        {
+            if (_gridManager != null && _cameraAnchor != null)
             {
-                _targetPosition = new Vector3(x, transform.position.y, z);
-                transform.position = _targetPosition;
+                _cameraAnchor.position = _gridManager.GetGridCenter();
             }
-        }
-        
-        // Inspector Helper
-        [Header("Inspector Controls")]
-        [Tooltip("X = World X, Y = World Height, Z = World Z")]
-        [SerializeField] private Vector3 _manualPosition;
-        
-        private Vector3 _lastManualPos;
-        private void UpdateManualCoords()
-        {
-             if (CenterOnMap) return;
-             
-             // Detect Inspector Change
-             if (_manualPosition != _lastManualPos)
-             {
-                 // Apply all 3: X, Y (Height), Z
-                 _targetPosition = _manualPosition;
-                 transform.position = _targetPosition;
-                 _lastManualPos = _manualPosition;
-             }
-             else
-             {
-                 // Update inspector fields to match current pos
-                 if (Vector3.Distance(_manualPosition, transform.position) > 0.1f)
-                 {
-                     _manualPosition = transform.position;
-                     _lastManualPos = _manualPosition;
-                 }
-             }
         }
     }
 }
-

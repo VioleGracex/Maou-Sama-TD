@@ -34,7 +34,7 @@ namespace MaouSamaTD.Managers
         private Units.UnitData _draggedUnitData;
         
         // Skill State
-        private Skills.SkillData _selectedSkill;
+        private Skills.SovereignRiteData _selectedSkill;
         private bool _isSkillTargeting;
         
         private Units.UnitData _selectedUnitData; 
@@ -533,7 +533,8 @@ namespace MaouSamaTD.Managers
         }
         #endregion
         // Skill Logic
-        public void SelectSkill(Skills.SkillData skill)
+        // Skill Logic
+        public void SelectSkill(Skills.SovereignRiteData skill)
         {
             if (_selectedSkill == skill && _isSkillTargeting)
             {
@@ -580,7 +581,7 @@ namespace MaouSamaTD.Managers
 
             if (_skillManager != null)
             {
-                bool success = _skillManager.TryExecuteSkill(_selectedSkill, targetPos, targetUnit);
+                bool success = _skillManager.TryExecuteRite(_selectedSkill, targetPos, targetUnit);
                 if (success)
                 {
                     DeselectSkill();

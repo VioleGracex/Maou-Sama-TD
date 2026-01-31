@@ -28,9 +28,7 @@ namespace MaouSamaTD.Units
         public float ChargePerAttack = 10f;
 
         [Header("Skill")]
-        public string SkillName = "Ultimate";
-        public Sprite SkillIcon;
-        public string SkillDescription = "Does something cool.";
+        public MaouSamaTD.Skills.UnitSkillData Skill;
 
         [Header("Placement Rules")]
         public System.Collections.Generic.List<Grid.TileType> ViableTiles;

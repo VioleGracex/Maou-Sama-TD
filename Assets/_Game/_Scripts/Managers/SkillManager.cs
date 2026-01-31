@@ -8,10 +8,10 @@ namespace MaouSamaTD.Skills
     public class SkillManager : MonoBehaviour
     {
         [Header("Config")]
-        [SerializeField] private List<SkillData> _availableSkills;
+        [SerializeField] private List<SovereignRiteData> _availableSkills;
 
         // Runtime State
-        private Dictionary<SkillData, float> _cooldowns = new Dictionary<SkillData, float>();
+        private Dictionary<SovereignRiteData, float> _cooldowns = new Dictionary<SovereignRiteData, float>();
         
         [Zenject.Inject] private CurrencyManager _currencyManager;
 
@@ -20,7 +20,7 @@ namespace MaouSamaTD.Skills
             // Optional: Tick active buffs?
         }
 
-        public bool IsSkillReady(SkillData skill)
+        public bool IsSkillReady(SovereignRiteData skill)
         {
             if (skill == null) return false;
             
@@ -33,13 +33,13 @@ namespace MaouSamaTD.Skills
             // Check Cost
             if (_currencyManager != null)
             {
-                if (_currencyManager.CurrentSeals < skill.Cost) return false;
+                if (_currencyManager.CurrentSeals < skill.SealCost) return false;
             }
 
             return true;
         }
 
-        public float GetCooldownProgress(SkillData skill)
+        public float GetCooldownProgress(SovereignRiteData skill)
         {
             if (skill == null || !_cooldowns.ContainsKey(skill)) return 0f;
             
@@ -50,14 +50,22 @@ namespace MaouSamaTD.Skills
             return remaining / skill.Cooldown;
         }
 
-        public bool TryExecuteSkill(SkillData skill, Vector3 targetPosition, UnitBase targetUnit)
+        // Renamed/Reloaded for SovereignRites specific
+        public bool TryExecuteRite(SovereignRiteData skill, Vector3 targetPosition, UnitBase targetUnit)
         {
             if (!IsSkillReady(skill)) return false;
 
-            // Consume Cost (Assuming atomic check/spend in TrySpendSeals, but we double check)
+            // Validate Target
+            if (!IsTargetValid(skill, targetUnit))
+            {
+                Debug.Log($"Target Invalid for skill {skill.SkillName}");
+                return false;
+            }
+
+            // Consume Cost
             if (_currencyManager != null)
             {
-                if (!_currencyManager.TrySpendSeals(skill.Cost)) return false;
+                if (!_currencyManager.TrySpendSeals(skill.SealCost)) return false;
             }
 
             // Apply Cooldown
@@ -69,7 +77,33 @@ namespace MaouSamaTD.Skills
             return true;
         }
 
-        private void ApplySkillEffect(SkillData skill, Vector3 pos, UnitBase unit)
+        private bool IsTargetValid(SkillBase skill, UnitBase targetUnit)
+        {
+            // AOE is usually ground target or unit center, always valid if clicked in bounds (handled by raycast)
+            // But if we want to enforce "AOE must hit something", we'd check overlap, but user said "if aoe just anywhere"
+            if (skill.Radius > 0) return true;
+
+            // Single Target Logic
+            if (skill.Radius <= 0)
+            {
+                if (targetUnit == null) return false; // Must have a unit
+
+                if (skill.EffectType == SkillEffectType.Buff)
+                {
+                    // Buffs only on Player/Friends
+                    return targetUnit is PlayerUnit;
+                }
+                else if (skill.EffectType == SkillEffectType.Damage)
+                {
+                    // Damage only on Enemies
+                    return targetUnit is EnemyUnit;
+                }
+            }
+            
+            return true;
+        }
+
+        private void ApplySkillEffect(SkillBase skill, Vector3 pos, UnitBase unit)
         {
             // Spawn VFX
             if (skill.HitVFX != null)
@@ -91,24 +125,19 @@ namespace MaouSamaTD.Skills
                 }
                 else if (skill.TargetType == SkillTargetType.Ground)
                 {
-                    // Ground effect? E.g. Trap? For now just visual if no logic.
+                    // Ground effect
                 }
             }
             
-            Debug.Log($"Executed Skill: {skill.SkillName}");
+            Debug.Log($"Executed Skill/Rite: {skill.SkillName}");
         }
 
-        private void ApplyAreaEffect(SkillData skill, Vector3 center)
+        private void ApplyAreaEffect(SkillBase skill, Vector3 center)
         {
-            // Find targets in radius
-            // For simplicity, checking all units. Optimization: Spatial Hash or Physics.OverlapSphere
-            
             Collider[] hits = Physics.OverlapSphere(center, skill.Radius);
             foreach (var hit in hits)
             {
                 UnitBase u = hit.GetComponent<UnitBase>();
-                // Only specific layers?
-                // Currently all UnitBase have colliders usually.
                 if (u != null)
                 {
                     ApplyEffectToUnit(skill, u);
@@ -116,20 +145,13 @@ namespace MaouSamaTD.Skills
             }
         }
 
-        private void ApplyEffectToUnit(SkillData skill, UnitBase unit)
+        private void ApplyEffectToUnit(SkillBase skill, UnitBase unit)
         {
             if (unit == null) return;
 
-            // Friendly Fire check?
             bool isEnemy = unit is EnemyUnit;
             bool isPlayer = unit is PlayerUnit;
 
-            // Logic matrix based on EffectType?
-            // "Lightning" -> Damage -> Target Enemy?
-            // "Empower" -> Buff -> Target Ally?
-            
-            // Allow explicit target filtering in Data eventually, but for now:
-            
             if (skill.EffectType == SkillEffectType.Damage)
             {
                 if (isEnemy)
@@ -141,8 +163,7 @@ namespace MaouSamaTD.Skills
             {
                 if (isPlayer)
                 {
-                    unit.Heal(skill.Value); // Placeholder for Buff, treating as Heal or we need BuffSystem
-                    // Todo: Implement temporary stats buff
+                    unit.Heal(skill.Value); 
                 }
             }
         }

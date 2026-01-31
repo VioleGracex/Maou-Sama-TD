@@ -6,42 +6,62 @@ using MaouSamaTD.Grid;
 using System.Collections.Generic;
 using TMPro;
 using Zenject;
+using DG.Tweening;
 
 namespace MaouSamaTD.UI
 {
     public class DeploymentUI : MonoBehaviour
     {
-        // public static DeploymentUI Instance { get; private set; } // Removed for Zenject
         
         [Inject] private CurrencyManager _currencyManager;
-        [Inject] private DiContainer _container; // For instantiating prefabs with injection
+        [Inject] private DiContainer _container;
 
         [Header("Config")]
         [SerializeField] private List<UnitData> _availableUnits;
-        [SerializeField] private UnitData _ignisData; // Special ref for testing
+        [SerializeField] private UnitData _ignisData;
         [SerializeField] private GameObject _buttonPrefab;
         [SerializeField] private Transform _barContainer;
-        [SerializeField] private PlayerUnit _unitPrefab; // The actual prefab to spawn
+        [SerializeField] private PlayerUnit _unitPrefab; 
 
         [Header("UI References")]
         [SerializeField] private TextMeshProUGUI _authoritySealsText; 
 
-        [SerializeField] private int _maxCohortSize = 13; // 12 + 1 Friend/Support
+        [SerializeField] private int _maxCohortSize = 13; 
+        
+        [Header("Animation")]
+        [SerializeField] private RectTransform _panelRect; 
+        [SerializeField] private Button _toggleButton;
+        [SerializeField] private float _hideOffset = 200f; 
+        private bool _isVisible = true;
+        private Vector2 _visiblePos;
 
         private HashSet<UnitData> _deployedUnits = new HashSet<UnitData>();
         private Dictionary<UnitData, float> _cooldownTimers = new Dictionary<UnitData, float>();
         private List<UnitButtonUI> _unitButtons = new List<UnitButtonUI>();
 
+        private void Awake()
+        {
+            if (_panelRect != null) _visiblePos = _panelRect.anchoredPosition;
+        }
+
         private void OnEnable()
         {
             if (_currencyManager != null)
                 _currencyManager.OnSealsChanged += UpdateSealsUI;
+            
+            if (_toggleButton != null)
+                _toggleButton.onClick.AddListener(ToggleVisibility);
         }
+
+
 
         private void OnDisable()
         {
              if (_currencyManager != null)
                 _currencyManager.OnSealsChanged -= UpdateSealsUI;
+             
+             if (_toggleButton != null)
+                _toggleButton.onClick.RemoveListener(ToggleVisibility);
         }
 
         private void Update()
@@ -50,10 +70,6 @@ namespace MaouSamaTD.UI
             {
                 List<UnitData> finishedCooldowns = new List<UnitData>();
                 
-                // create a copy of keys to iterate safely if simple loop
-                // But we need to update dictionary values.
-                
-                // To avoid "collection modified" errors, we can use a separate list of keys or just iterate keys
                 List<UnitData> keys = new List<UnitData>(_cooldownTimers.Keys);
 
                 foreach (var unit in keys)
@@ -72,8 +88,8 @@ namespace MaouSamaTD.UI
                 foreach (var unit in finishedCooldowns)
                 {
                     _cooldownTimers.Remove(unit);
-                    UpdateButtonCooldownVisual(unit); // Final clear
-                    RefreshButtonsState(); // Check if can afford etc
+                    UpdateButtonCooldownVisual(unit); 
+                    RefreshButtonsState(); 
                 }
             }
         }
@@ -86,7 +102,6 @@ namespace MaouSamaTD.UI
                 float currentCooldown = _cooldownTimers.ContainsKey(unit) ? _cooldownTimers[unit] : 0;
                 float totalCooldown = unit.RespawnTime;
                 
-                // Avoid div by zero
                 float progress = (totalCooldown > 0) ? (currentCooldown / totalCooldown) : 0;
                 
                 btn.UpdateCooldown(progress);
@@ -103,30 +118,25 @@ namespace MaouSamaTD.UI
 
         public void Init()
         {
-            // Setup Ignis if not in list
             if (_ignisData != null && !_availableUnits.Contains(_ignisData))
             {
                 _availableUnits.Insert(0, _ignisData);
             }
             
-            // Limit Cohort Size
             if (_availableUnits.Count > _maxCohortSize)
             {
                 Debug.LogWarning($"Cohort size exceeded limit of {_maxCohortSize}. Truncating.");
                 _availableUnits = _availableUnits.GetRange(0, _maxCohortSize);
             }
             
-            // Generate Buttons
             GenerateButtons();
             
-            // Initial UI Update
             if (_currencyManager != null)
                 UpdateSealsUI(_currencyManager.CurrentSeals);
         }
 
         private void GenerateButtons()
         {
-            // Clear existing
             foreach(Transform child in _barContainer) Destroy(child.gameObject);
             _unitButtons.Clear();
             _deployedUnits.Clear();
@@ -134,10 +144,8 @@ namespace MaouSamaTD.UI
 
             foreach (var unit in _availableUnits)
             {
-                // Use Zenject to instantiate so Button's UnitDragHandler gets injected
                 GameObject btnObj = _container.InstantiatePrefab(_buttonPrefab, _barContainer);
                 
-                // Add UnitButtonUI if missing (for legacy prefabs)
                 UnitButtonUI btnUI = btnObj.GetComponent<UnitButtonUI>();
                 if (btnUI == null) btnUI = btnObj.AddComponent<UnitButtonUI>();
 
@@ -150,17 +158,6 @@ namespace MaouSamaTD.UI
         {
             if (_currencyManager == null) return;
             int currentSeals = _currencyManager.CurrentSeals;
-            // Get selected unit for highlighting
-            // Since InteractionManager is injected via Zenject but not exposed here, we might need to fetch it
-            // Or better: DeploymentUI injects InteractionManager?
-            // Wait, we don't have InteractionManager here. 
-            // In dependency graph, InteractionManager injects DeploymentUI. Circular dependency if we inject back.
-            // Solution: DeploymentUI should have a SetSelectedUnit(unit) method called by InteractionManager?
-            // OR we just check the button. 
-            // However, the earlier plan was to update RefreshButtonsState.
-            
-            // Let's assume we can add a method `UpdateSelection(UnitData selected)` and call it from InteractionManager
-            // For now, let's keep this method unaware of selection unless we add state.
             
             foreach (var btnUI in _unitButtons)
             {
@@ -203,11 +200,9 @@ namespace MaouSamaTD.UI
             PlayerUnit newUnit = Instantiate(_unitPrefab, tile.transform.position, Quaternion.identity);
             newUnit.Initialize(unitData);
             
-            // Link Unit and Tile
             newUnit.CurrentTile = tile;
             tile.SetOccupant(newUnit);
 
-            // Subscribe to Retreat/Death
             newUnit.OnRetreat += (u) => OnUnitRetreated(u.Data);
             
             _deployedUnits.Add(unitData);
@@ -231,7 +226,6 @@ namespace MaouSamaTD.UI
             }
         }
         
-        // NEW method for Instance-based retreat (called by Inspector)
         public void RetreatUnitInstance(PlayerUnit unit)
         {
             if (unit == null) return;
@@ -247,6 +241,18 @@ namespace MaouSamaTD.UI
             }
             
             Destroy(unit.gameObject);
+        }
+
+        public void ToggleVisibility()
+        {
+            if (_panelRect == null) return;
+
+            _isVisible = !_isVisible;
+            
+            // Move Down on Hide (Standard Bottom Dock)
+            Vector2 targetPos = _isVisible ? _visiblePos : _visiblePos + new Vector2(0, -_hideOffset);
+            
+            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack);
         }
     }
 }

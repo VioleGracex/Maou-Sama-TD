@@ -25,4 +25,4 @@ MonoBehaviour:
   Duration: 0
   CastVFX: {fileID: 0}
   HitVFX: {fileID: 0}
-  RangeIndicatorColor: {r: 1, g: 0, b: 0, a: 1}
+  RangeIndicatorColor: {r: 1, g: 0.9975273, b: 0, a: 1}

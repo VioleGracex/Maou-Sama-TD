@@ -48,10 +48,6 @@ namespace MaouSamaTD.UI
             // Store state before Drag clears it
             _wasSelectedOnStart = (_interactionManager != null && _interactionManager.SelectedUnitData == _data);
 
-            // Tell Manager we are dragging this unit
-            // Grid.GridManager.Instance.GenerateTestMap(); // Removed redundant call or needs injection if strictly needed
-            if (_gridManager != null) _gridManager.GenerateTestMap(); 
-            
             if (_interactionManager != null) _interactionManager.StartDrag(_data);
         }
 

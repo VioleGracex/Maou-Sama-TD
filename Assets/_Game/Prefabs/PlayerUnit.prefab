@@ -4871,10 +4871,10 @@ RectTransform:
   - {fileID: 6301083884183057651}
   m_Father: {fileID: 2719841674285652171}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.003, y: 1.129}
-  m_SizeDelta: {x: 0.4656, y: 0.0557}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0.0000000060535967, y: -0.027850032}
+  m_SizeDelta: {x: 0.4656, y: 0.055700004}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &366704659266001463
 CanvasRenderer:
@@ -5309,8 +5309,8 @@ RectTransform:
   m_GameObject: {fileID: 7102920789647123861}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.3333334, y: 1.3333334, z: 1.3333334}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3365087724722563662}
   - {fileID: 7701784885549079820}
@@ -5318,7 +5318,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 1}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6798752115690588308
@@ -5440,8 +5440,6 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 3551728292620865165}
   _textFallback: {fileID: 2958040010651701506}
   _healParticle: {fileID: 4384362147522370408}
-  _debugDamageVal: 10
-  _debugHealVal: 10
   _unitClass: 0
   _deploymentCost: 10
   _hpBarFill: {fileID: 1312120414639121609}

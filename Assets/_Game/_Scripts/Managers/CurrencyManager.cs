@@ -5,7 +5,6 @@ namespace MaouSamaTD.Managers
 {
     public class CurrencyManager : MonoBehaviour
     {
-        // public static CurrencyManager Instance { get; private set; }
 
         public event Action<int> OnSealsChanged;
 

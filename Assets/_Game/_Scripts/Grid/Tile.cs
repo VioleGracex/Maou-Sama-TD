@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using UnityEngine;
 using Zenject;
 
@@ -20,6 +21,8 @@ namespace MaouSamaTD.Grid
 
         [Header("State")]
         [SerializeField] private MaouSamaTD.Units.UnitBase _occupant;
+        
+        private GameObject _markerObject;
         
         // Zenject Injections
         [Inject] private GridGenerator _gridGenerator;
@@ -56,11 +59,13 @@ namespace MaouSamaTD.Grid
             _coordinate = coordinate;
             _type = type;
             name = $"Tile_{coordinate.x}_{coordinate.y}";
+            UpdateTypeVisuals();
         }
 
         public void SetOccupant(MaouSamaTD.Units.UnitBase unit)
         {
             _occupant = unit;
+            if (Manager != null) Manager.NotifyGridStateChanged();
         }
 
         // Visuals
@@ -154,29 +159,132 @@ namespace MaouSamaTD.Grid
                  }
             }
             
-            // Apply locally (GridManager.SetTileType usually calls Initialize which sets this, but let's be safe)
+            // Apply locally
             _type = newType;
+            UpdateTypeVisuals();
         }
 
-        [ContextMenu("Set as Spawn Point")]
+        private void UpdateTypeVisuals()
+        {
+            // 1. Reset Base Renderer (if we modified it previously, let's reset to white/default)
+            if (_renderer != null)
+            {
+                _renderer.GetPropertyBlock(_propBlock);
+                _propBlock.SetColor("_BaseColor", Color.white);
+                _propBlock.SetColor("_Color", Color.white);
+                _renderer.SetPropertyBlock(_propBlock);
+            }
+
+            // 2. Clear Existing Marker
+            if (_markerObject != null)
+            {
+                if (Application.isPlaying) Destroy(_markerObject);
+                else DestroyImmediate(_markerObject);
+                _markerObject = null;
+            }
+
+            // 3. Create Marker based on Type
+            if (_type == TileType.Spawn || _type == TileType.Exit)
+            {
+                 // Create Container
+                 _markerObject = new GameObject($"{_type}_Marker");
+                 _markerObject.transform.SetParent(transform);
+                 _markerObject.transform.localPosition = Vector3.zero;
+                 _markerObject.transform.localRotation = Quaternion.identity;
+                 _markerObject.transform.localScale = Vector3.one;
+
+                 // Settings
+                 float height = 1.5f; 
+                 float thickness = 0.05f; // Thin lines
+                 float size = 0.9f; 
+                 
+                 Color markerColor = Color.white;
+                 if (_type == TileType.Spawn)
+                 {
+                     markerColor = Color.red; 
+                 }
+                 else if (_type == TileType.Exit)
+                 {
+                     if (ColorUtility.TryParseHtmlString("#00D2D3", out Color c))
+                     {
+                         markerColor = c;
+                         markerColor.a = 0.5f; 
+                     }
+                     else markerColor = Color.cyan;
+                 }
+                 
+                 Material mat = new Material(Shader.Find("Sprites/Default"));
+                 mat.color = markerColor;
+
+                 // Build Wireframe Box (12 Edges)
+                 float halfSize = size / 2f;
+                 float halfThickness = thickness / 2f; // Not used directly in pos usually
+                 
+                 // 4 Vertical Pillars
+                 // Corners: (+-half, centerH, +-half)
+                 CreateEdge(new Vector3(halfSize, height/2, halfSize), new Vector3(thickness, height, thickness), mat);
+                 CreateEdge(new Vector3(-halfSize, height/2, halfSize), new Vector3(thickness, height, thickness), mat);
+                 CreateEdge(new Vector3(halfSize, height/2, -halfSize), new Vector3(thickness, height, thickness), mat);
+                 CreateEdge(new Vector3(-halfSize, height/2, -halfSize), new Vector3(thickness, height, thickness), mat);
+                 
+                 // 4 Top Rims (y = height)
+                 // X-Aligned
+                 CreateEdge(new Vector3(0, height, halfSize), new Vector3(size, thickness, thickness), mat);
+                 CreateEdge(new Vector3(0, height, -halfSize), new Vector3(size, thickness, thickness), mat);
+                 // Z-Aligned
+                 CreateEdge(new Vector3(halfSize, height, 0), new Vector3(thickness, thickness, size), mat);
+                 CreateEdge(new Vector3(-halfSize, height, 0), new Vector3(thickness, thickness, size), mat);
+                 
+                 // 4 Bottom Rims (y = 0) - Optional, but "Outline" usually implies full box
+                 /*
+                 CreateEdge(new Vector3(0, 0, halfSize), new Vector3(size, thickness, thickness), mat);
+                 CreateEdge(new Vector3(0, 0, -halfSize), new Vector3(size, thickness, thickness), mat);
+                 CreateEdge(new Vector3(halfSize, 0, 0), new Vector3(thickness, thickness, size), mat);
+                 CreateEdge(new Vector3(-halfSize, 0, 0), new Vector3(thickness, thickness, size), mat);
+                 */
+                 // User said "higher squares", maybe they want it to look like a volume?
+                 // Let's include bottom for completeness as "Edges only".
+                 CreateEdge(new Vector3(0, thickness/2, halfSize), new Vector3(size, thickness, thickness), mat);
+                 CreateEdge(new Vector3(0, thickness/2, -halfSize), new Vector3(size, thickness, thickness), mat);
+                 CreateEdge(new Vector3(halfSize, thickness/2, 0), new Vector3(thickness, thickness, size), mat);
+                 CreateEdge(new Vector3(-halfSize, thickness/2, 0), new Vector3(thickness, thickness, size), mat);
+            }
+        }
+
+        private void CreateEdge(Vector3 localPos, Vector3 scale, Material mat)
+        {
+            GameObject edge = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            edge.name = "Edge";
+            edge.transform.SetParent(_markerObject.transform);
+            edge.transform.localPosition = localPos;
+            edge.transform.localScale = scale;
+            
+            if (Application.isPlaying) Destroy(edge.GetComponent<Collider>());
+            else DestroyImmediate(edge.GetComponent<Collider>());
+            
+            var mr = edge.GetComponent<Renderer>();
+            if (mr != null) mr.sharedMaterial = mat;
+        }
+
+        [Button("Set as Spawn Point")]
         private void SetAsSpawn()
         {
             SetType(TileType.Spawn);
         }
 
-        [ContextMenu("Set as Exit Point")]
+        [Button("Set as Exit Point")]
         private void SetAsExit()
         {
             SetType(TileType.Exit);
         }
 
-        [ContextMenu("Set as Walkable")]
+        [Button("Set as Walkable")]
         private void SetAsWalkable()
         {
             SetType(TileType.Walkable);
         }
 
-        [ContextMenu("Set as HighGround")]
+        [Button("Set as HighGround")]
         private void SetAsHighGround()
         {
             SetType(TileType.HighGround);

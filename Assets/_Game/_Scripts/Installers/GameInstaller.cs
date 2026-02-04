@@ -12,12 +12,14 @@ namespace MaouSamaTD.Installers
         [Header("Scene References")]
         [SerializeField] private UnitInspectorUI _unitInspectorUI;
         [SerializeField] private DeploymentUI _deploymentUI;
+        [SerializeField] private CameraControlUI _cameraControlUI;
         [SerializeField] private InteractionManager _interactionManager;
         [SerializeField] private CurrencyManager _currencyManager;
         [SerializeField] private GridManager _gridManager;
         [SerializeField] private GameManager _gameManager;
-        [SerializeField] private CameraController _cameraController;
+        [SerializeField] private CameraManager _cameraManager;
         [SerializeField] private SkillManager _skillManager;
+        [SerializeField] private EnemyManager _enemyManager;
 
         public override void InstallBindings()
         {
@@ -36,10 +38,15 @@ namespace MaouSamaTD.Installers
             }
             
             
-            if (_cameraController) Container.Bind<CameraController>().FromInstance(_cameraController).AsSingle();
+            if (_cameraManager) Container.Bind<CameraManager>().FromInstance(_cameraManager).AsSingle();
+            if (_enemyManager) Container.Bind<EnemyManager>().FromInstance(_enemyManager).AsSingle();
+            if (_cameraControlUI) Container.Bind<CameraControlUI>().FromInstance(_cameraControlUI).AsSingle();
 
             // Bind GridGenerator using hierarchy search since it's not explicitly referenced in various installers
             Container.Bind<GridGenerator>().FromComponentInHierarchy().AsSingle();
+            
+            // Bind PathVisualizer
+            Container.Bind<MaouSamaTD.Utils.PathVisualizer>().FromNewComponentOnNewGameObject().AsSingle();
             
             // If they can be null and we want to find them automatically:
             // Container.Bind<UnitInspectorUI>().FromComponentInHierarchy().AsSingle();

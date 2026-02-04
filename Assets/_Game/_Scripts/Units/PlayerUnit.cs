@@ -20,6 +20,12 @@ Ranged  // Deals damage from afar, placed on High Ground
         All             // * (Surrounding 8 tiles)
     }
 
+    public enum AttackType
+    {
+        SingleTarget,
+        AreaOfEffect
+    }
+
     public class PlayerUnit : UnitBase
     {
         public event System.Action<PlayerUnit> OnRetreat;
@@ -28,8 +34,6 @@ Ranged  // Deals damage from afar, placed on High Ground
         [SerializeField] private UnitClass _unitClass;
         [SerializeField] private int _deploymentCost = 10;
         
-        // Blocked Enemies tracking could go here
-
         public UnitClass UnitClass => _unitClass;
         public int BlockCount => _data != null ? _data.BlockCount : 1;
         public int DeploymentCost => _deploymentCost;
@@ -44,17 +48,12 @@ Ranged  // Deals damage from afar, placed on High Ground
         {
             if (_data != null && _data.Skill != null)
             {
-                // Use Skill.ChargeCost
                 float cost = _data.Skill.ChargeCost;
                 
                 if (_currentCharge >= cost)
                 {
                     Debug.Log($"Used Skill: {_data.Skill.SkillName}!");
-                    
-                    // Consume Charge
                     _currentCharge -= cost;
-                    
-                    // TODO: Actual effect execution using _data.Skill properties
                 }
                 else
                 {
@@ -74,7 +73,6 @@ Ranged  // Deals damage from afar, placed on High Ground
         }
 
         [Header("Visuals")]
-        [SerializeField] private UnityEngine.UI.Image _hpBarFill; // World Space Canvas Image
         [SerializeField] private Billboard _billboard;
 
         public override void Initialize(UnitData data)
@@ -82,33 +80,17 @@ Ranged  // Deals damage from afar, placed on High Ground
             base.Initialize(data);
             _unitClass = data.Class;
             _deploymentCost = data.DeploymentCost;
-            
-            // Listen to health changes
-            OnHealthChanged += UpdateHealthBar;
-
             UpdateVisuals(data);
         }
         
         private void OnDestroy()
         {
-            OnHealthChanged -= UpdateHealthBar;
-        }
-
-        private void UpdateHealthBar(float pct)
-        {
-            if (_hpBarFill != null)
-                _hpBarFill.fillAmount = pct;
+            
         }
 
         private void UpdateVisuals(UnitData data)
         {
-            // Ensure components exist if not assigned
             if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-            
-            // We expect _hpBarFill to be assigned via Prefab or created in a specific Canvas hierarchy
-            // If it's null, we might be in trouble since creating a canvas from scratch here is verbose.
-            // But we can try to find it.
-            if (_hpBarFill == null) _hpBarFill = GetComponentInChildren<UnityEngine.UI.Image>();
             
             if (_billboard == null) _billboard = GetComponentInChildren<Billboard>();
 
@@ -122,24 +104,18 @@ Ranged  // Deals damage from afar, placed on High Ground
             }
         }
 
-
-
-
-        // Cache cachedGrid for Update loop
         private Grid.GridManager _gridManager;
 
         protected override void UpdateInternal()
         {
              base.UpdateInternal();
              
-             // Passive Charge Generation
              if (_data != null && _currentCharge < MaxCharge)
              {
                  _currentCharge += _data.ChargePerSecond * Time.deltaTime;
                  if (_currentCharge > MaxCharge) _currentCharge = MaxCharge;
              }
 
-             // Attack Logic
              if (Time.time >= _lastAttackTime + _attackInterval)
              {
                  Attack();
@@ -155,15 +131,15 @@ Ranged  // Deals damage from afar, placed on High Ground
             if (CurrentTile != null) myPos = CurrentTile.Coordinate;
             else myPos = _gridManager.WorldToGridCoordinates(transform.position);
 
-            // Fetch attack pattern and range
             AttackPattern pattern = _data != null ? _data.AttackPattern : AttackPattern.All;
+            AttackType type = _data != null ? _data.AttackType : AttackType.SingleTarget;
             float range = Range;
 
-            // Find valid targets
-            // Optimization: In a real game, usage of spatial hash or quadtree is preferred.
-            // Here we iterate all active enemies since count is low (TD usually < 100)
-            
-            foreach (var enemy in EnemyUnit.ActiveEnemies)
+            bool attacked = false;
+
+            var enemies = EnemyUnit.ActiveEnemies.ToArray();
+
+            foreach (var enemy in enemies)
             {
                 if (enemy == null || enemy.CurrentHp <= 0) continue;
 
@@ -171,23 +147,28 @@ Ranged  // Deals damage from afar, placed on High Ground
                 
                 if (IsTargetInPattern(myPos, enemyPos, pattern, range))
                 {
-                    // Hit the enemy
                      enemy.TakeDamage(AttackPower);
-                     _lastAttackTime = Time.time;
-                     
-                     // If we want single target vs multi target, we break here.
-                     // Assuming splash/multi-target for now based on "Pattern" implies area?
-                     // Or just "Range of validity"?
-                     // Usually TD units attack 1 target within range unless "AoE".
-                     // However, "Beam" patterns often hit all. 
-                     // Let's assume Single Target (First found) for standard, or All for AOE?
-                     // The prompt didn't specify. I will assume Single Target for now to be safe, unless "All" pattern?
-                     // Actually, "AttackPattern" usually defines "Range Shape".
-                     // Let's hit the CLOSEST one within logic?
-                     // Or just hit one.
-                     return; // Single target attack per interval
+                     attacked = true;
+                     FaceTarget(enemy.transform.position);
+
+                     if (type == AttackType.SingleTarget)
+                     {
+                         break;
+                     }
                 }
             }
+
+            if (attacked)
+            {
+                _lastAttackTime = Time.time;
+            }
+        }
+
+        private void FaceTarget(Vector3 targetPos)
+        {
+             if (_spriteRenderer == null) return;
+             bool isTargetRight = targetPos.x > transform.position.x;
+             _spriteRenderer.flipX = !isTargetRight; 
         }
 
         private bool IsTargetInPattern(Vector2Int origin, Vector2Int target, AttackPattern pattern, float range)
@@ -209,39 +190,35 @@ Ranged  // Deals damage from afar, placed on High Ground
                 case AttackPattern.Diagonal:
                     return dx == dy && dx <= iRange;
                 case AttackPattern.All:
-                    // Using Chebyshev distance (Square) for "All Surroundings"
                     return dx <= iRange && dy <= iRange; 
                 default:
                     return false;
             }
         }
 
-        // Color coding for debug
-        /* private void OnDrawGizmos()
-        {
-            Gizmos.color = _unitClass == UnitClass.Melee ? Color.blue : Color.yellow;
-            Gizmos.DrawSphere(transform.position + Vector3.up * 1f, 0.3f);
-        } */
-
         public void Retreat()
         {
-            // 1. Clear Tile Occupancy
+            _currentHp = 0;
+            
             if (CurrentTile != null)
             {
                 CurrentTile.SetOccupant(null); 
                 CurrentTile = null;
             }
 
-            // 2. Trigger Death Event (so Manager knows) or separate OnRetreat?
-            // For now, OnDeath handles removal from lists if any.
-            // If we have a specific "OnRetreat" event, we can add it.
-            // But usually destroying the object is enough for unity checks.
-            
-            // 2. Trigger Event
             OnRetreat?.Invoke(this);
             
-            // 3. Destroy
             Destroy(gameObject);
+        }
+
+        protected override void Die()
+        {
+            if (CurrentTile != null)
+            {
+                CurrentTile.SetOccupant(null);
+                CurrentTile = null;
+            }
+            base.Die();
         }
     }
 }

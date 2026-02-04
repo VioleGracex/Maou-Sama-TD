@@ -39,10 +39,7 @@ namespace MaouSamaTD.UI
         private Dictionary<UnitData, float> _cooldownTimers = new Dictionary<UnitData, float>();
         private List<UnitButtonUI> _unitButtons = new List<UnitButtonUI>();
 
-        private void Awake()
-        {
-            if (_panelRect != null) _visiblePos = _panelRect.anchoredPosition;
-        }
+
 
         private void OnEnable()
         {
@@ -118,6 +115,8 @@ namespace MaouSamaTD.UI
 
         public void Init()
         {
+            if (_panelRect != null) _visiblePos = _panelRect.anchoredPosition;
+
             if (_ignisData != null && !_availableUnits.Contains(_ignisData))
             {
                 _availableUnits.Insert(0, _ignisData);

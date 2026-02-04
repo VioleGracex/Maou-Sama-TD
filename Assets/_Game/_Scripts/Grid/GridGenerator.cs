@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 
 
@@ -9,6 +10,9 @@ namespace MaouSamaTD.Grid
         #region Settings
         [Header("Target")]
         [SerializeField] private GridManager _gridManager;
+        [Header("Extraction Settings")]
+        [SerializeField] private string _extractPath = "Assets/_Game/Data/Maps/";
+        [SerializeField] private string _extractFileName = "NewMapData";
 
         // Dimensions are now taken from GridManager to avoid duplication
 
@@ -64,7 +68,7 @@ namespace MaouSamaTD.Grid
         #endregion
 
         #region Map Generation
-        [ContextMenu("Generate Map")]
+        [Button("Generate Map")]
         public void GenerateMap()
         {
             if (_gridManager == null)
@@ -209,39 +213,8 @@ namespace MaouSamaTD.Grid
                 _gridManager.SetTileType(start, TileType.Spawn);
                 _gridManager.SetTileType(closestExit, TileType.Exit);
                 
-                CreateMarker(start, _startPrefab, "StartMarker", PrimitiveType.Cylinder, Color.green);
-                CreateMarker(closestExit, _endPrefab, "EndMarker", PrimitiveType.Cube, Color.red);
+                // Markers are now handled by Tile.cs UpdateTypeVisuals
             }
-        }
-        
-        private void CreateMarker(Vector2Int coord, GameObject prefab, string name, PrimitiveType fallbackShape, Color fallbackColor)
-        {
-             Tile t = _gridManager.GetTileAt(coord);
-             if (t != null)
-             {
-                 foreach(Transform child in t.transform)
-                 {
-                     if (child.name == "StartMarker" || child.name == "EndMarker")
-                         DestroyImmediate(child.gameObject);
-                 }
-
-                 GameObject marker;
-                 if (prefab != null)
-                 {
-                     marker = Instantiate(prefab, t.transform);
-                 }
-                 else
-                 {
-                     marker = GameObject.CreatePrimitive(fallbackShape);
-                     marker.transform.SetParent(t.transform, false);
-                     marker.transform.localScale = new Vector3(0.8f, (fallbackShape == PrimitiveType.Cylinder ? 0.1f : 0.8f), 0.8f);
-                     marker.GetComponent<Renderer>().material.color = fallbackColor;
-                     DestroyImmediate(marker.GetComponent<Collider>());
-                 }
-                 
-                 marker.name = name;
-                 if (prefab == null) marker.transform.localPosition = Vector3.up * 0.5f;
-             }
         }
 
         private Vector2Int GetClosestExit(Vector2Int start, List<Vector2Int> exits)
@@ -301,11 +274,11 @@ namespace MaouSamaTD.Grid
         #endregion
 
         #region Interaction
-        [ContextMenu("Clear Map")]
-        public void ClearMap()
-        {
-            if (_gridManager != null) _gridManager.ClearGrid();
-        }
+        [Button("Clear Map")]
+         public void ClearMap()
+         {
+             if (_gridManager != null) _gridManager.ClearGrid();
+         }
 
         public void AddSpawnPoint(Vector2Int coord)
         {
@@ -339,6 +312,24 @@ namespace MaouSamaTD.Grid
             }
         }
 
+        public void LoadMapData(MaouSamaTD.Levels.MapData data)
+        {
+            if (data == null) return;
+            
+            _seed = data.MapSeed;
+            _highGroundChance = data.HighGroundChance;
+            _spawnPoints = new List<Vector2Int>(data.SpawnPoints);
+            _exitPoints = new List<Vector2Int>(data.ExitPoints);
+            
+            if (_gridManager != null)
+            {
+                _gridManager.Width = data.Width;
+                _gridManager.Height = data.Height;
+            }
+            
+            GenerateMap();
+        }
+
         public void RemoveExitPoint(Vector2Int coord)
         {
             if (_exitPoints.Contains(coord))
@@ -347,6 +338,54 @@ namespace MaouSamaTD.Grid
                 Debug.Log($"Removed Exit Point at {coord}");
                 GenerateMap();
             }
+        }
+        #endregion
+
+        #region Tools
+        [Button("Extract New Map Data")]
+        public void ExtractMapData()
+        {
+#if UNITY_EDITOR
+            if (_gridManager == null)
+            {
+                Debug.LogError("GridManager is missing!");
+                return;
+            }
+
+            // Create Instance
+            var newData = ScriptableObject.CreateInstance<MaouSamaTD.Levels.MapData>();
+            
+            // Copy Settings
+            newData.Width = _gridManager.Width;
+            newData.Height = _gridManager.Height;
+            newData.MapSeed = _seed;
+            newData.HighGroundChance = _highGroundChance;
+            newData.SpawnPoints = new List<Vector2Int>(_spawnPoints);
+            newData.ExitPoints = new List<Vector2Int>(_exitPoints);
+
+            // Ensure Path
+            string folderPath = _extractPath;
+            if (folderPath.EndsWith("/")) folderPath = folderPath.Substring(0, folderPath.Length - 1);
+            
+            if (!System.IO.Directory.Exists(folderPath))
+            {
+                System.IO.Directory.CreateDirectory(folderPath);
+            }
+
+            string fullPath = $"{folderPath}/{_extractFileName}.asset";
+            
+            // Generate unique path if exists
+            fullPath = UnityEditor.AssetDatabase.GenerateUniqueAssetPath(fullPath);
+
+            UnityEditor.AssetDatabase.CreateAsset(newData, fullPath);
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.Refresh();
+
+            Debug.Log($"Successfully extracted MapData to: {fullPath}");
+            
+            // Ping it
+            UnityEditor.EditorGUIUtility.PingObject(newData);
+#endif
         }
         #endregion
     }

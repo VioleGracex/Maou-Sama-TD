@@ -1,10 +1,9 @@
 using UnityEngine;
 using System;
 using TMPro;
-using DG.Tweening; // To handle Flash
+using UnityEngine.UI;
+using DG.Tweening;
 using MaouSamaTD.Managers;
-
-
 
 namespace MaouSamaTD.Units
 {
@@ -17,21 +16,20 @@ namespace MaouSamaTD.Units
         [SerializeField] protected float _attackInterval = 1f;
         [SerializeField] protected float _defense = 0f;
         
-        // Public Accessors
         public float MaxHp => _maxHp;
         public float CurrentHp => _currentHp;
         public float AttackPower => _attackPower;
         public float Defense => _defense;
-        public virtual float Range => _data != null ? _data.Range : 0f; // Default linkage to data, can be overridden
+        public virtual float Range => _data != null ? _data.Range : 0f;
 
         [Header("Visuals")]
         [SerializeField] protected SpriteRenderer _spriteRenderer;
-        [SerializeField] protected TextMeshProUGUI _textFallback; // Simple 3D Text legacy or TMPro if preferred, using legacy for simplicity unless TMPro is mandated
+        [SerializeField] protected TextMeshProUGUI _textFallback; 
+        [SerializeField] protected Image _hpFillImage;
         
         [Header("Effects")]
         [SerializeField] protected ParticleSystem _healParticle;
         
-        // Data derived from UnitData
         protected UnitData _data;
         public UnitData Data => _data;
 
@@ -41,7 +39,6 @@ namespace MaouSamaTD.Units
         protected float _lastAttackTime;
         private Transform _camTransform;
 
-        // Outline Logic
         private MaterialPropertyBlock _mpb;
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
         private static readonly int OutlineEnabledId = Shader.PropertyToID("_OutlineEnabled");
@@ -50,12 +47,11 @@ namespace MaouSamaTD.Units
         {
             _mpb = new MaterialPropertyBlock();
 
-            // Ensure we have visual components if not assigned
             if (_spriteRenderer == null)
             {
                 GameObject spriteObj = new GameObject("Sprite");
                 spriteObj.transform.SetParent(transform);
-                spriteObj.transform.localPosition = new Vector3(0, 1, 0); // Raised up
+                spriteObj.transform.localPosition = new Vector3(0, 1, 0); 
                 _spriteRenderer = spriteObj.AddComponent<SpriteRenderer>();
             }
             if (_textFallback == null)
@@ -82,12 +78,30 @@ namespace MaouSamaTD.Units
             
             name = data.UnitName;
 
+            if (_hpFillImage != null) _hpFillImage.fillAmount = 1f;
+
             UpdateVisuals();
         }
 
         protected virtual void UpdateInternal()
         {
-            // Billboard handled by component on Visuals
+            if (_camTransform != null)
+            {
+                if (_spriteRenderer != null && _spriteRenderer.transform != transform)
+                {
+                    _spriteRenderer.transform.rotation = _camTransform.rotation;
+                }
+                
+                if (_textFallback != null && _textFallback.transform != transform)
+                {
+                    _textFallback.transform.rotation = _camTransform.rotation;
+                }
+
+                if (_hpFillImage != null && _hpFillImage.canvas != null && _hpFillImage.canvas.renderMode == RenderMode.WorldSpace)
+                {
+                     _hpFillImage.canvas.transform.rotation = _camTransform.rotation;
+                }
+            }
         }
         
         private void Update()
@@ -111,7 +125,6 @@ namespace MaouSamaTD.Units
                 if (_textFallback != null)
                 {
                     _textFallback.gameObject.SetActive(true);
-                    // Use first letter
                     if (!string.IsNullOrEmpty(_data.UnitName))
                         _textFallback.text = _data.UnitName.Substring(0, 1).ToUpper();
                     else
@@ -135,20 +148,22 @@ namespace MaouSamaTD.Units
 
         public virtual void TakeDamage(float amount)
         {
-            float damageTaken = Mathf.Max(1, amount - _defense); // Minimum 1 damage
+            float damageTaken = Mathf.Max(1, amount - _defense); 
             _currentHp -= damageTaken;
             
-            // Visuals: Flash Red
+            if (_hpFillImage != null)
+            {
+                 _hpFillImage.fillAmount = _currentHp / _maxHp;
+            }
+
             if (_spriteRenderer != null)
             {
                 _spriteRenderer.DOColor(Color.red, 0.1f).OnComplete(() => _spriteRenderer.DOColor(Color.white, 0.1f));
+                _spriteRenderer.transform.DOShakePosition(0.2f, 0.1f, 10, 90f, false, true);
             }
 
-            // Show Floating Text
             if (FloatingTextManager.Instance != null)
             {
-                // Simple logic: if damage > attackPower * 1.5 (arbitrary) -> Crit? 
-                // Or just pass false for now unless we have crit logic.
                 bool isCrit = damageTaken > _attackPower * 1.5f; 
                 FloatingTextManager.Instance.ShowDamage(transform.position, damageTaken, isCrit);
             }
@@ -165,18 +180,20 @@ namespace MaouSamaTD.Units
         {
             if (amount <= 0) return;
 
-            // Always play particle if assigned
             if (_healParticle != null)
             {
                 _healParticle.Play();
             }
 
-            // If already at max HP, skip actual healing and text
             if(_currentHp >= _maxHp) return;
 
             _currentHp = Mathf.Min(_currentHp + amount, _maxHp);
             
-            // Visuals: Only show text if we actually healed
+            if (_hpFillImage != null)
+            {
+                 _hpFillImage.fillAmount = _currentHp / _maxHp;
+            }
+            
             if (FloatingTextManager.Instance != null)
             {
                 FloatingTextManager.Instance.ShowHeal(transform.position, amount);

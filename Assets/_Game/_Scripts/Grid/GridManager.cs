@@ -21,37 +21,31 @@ namespace MaouSamaTD.Grid
         
         [Inject] private DiContainer _container;
 
-        public int Width => _width;
-        public int Height => _height;
+        public int Width { get => _width; set => _width = value; }
+        public int Height { get => _height; set => _height = value; }
         public float CellSize => _cellSize;
         public Transform WallContainer => _wallContainer;
         public Transform CameraAnchor { get; private set; }
+        
+        // Spawn/Exit Points
+        public Vector2Int SpawnPoint { get; private set; }
+        public Vector2Int ExitPoint { get; private set; }
         #endregion
 
         #region Initialization
-        public void Start()
-        {
-            Init();
-        }
 
         public void Init()
         {
-             if (_gridContainer == null)
+            if (_gridContainer == null)
             {
-                var container = GameObject.Find("GridContainer");
-                if (container == null) container = new GameObject("GridContainer");
-                _gridContainer = container.transform;
+                // Fallback or Error? User said: "add in inspector i will assign grid container and wall container dont find them"
+                // So we do nothing if null, maybe log warning if critical?
+                Debug.LogWarning("GridManager: GridContainer is not assigned in Inspector!");
             }
 
             if (_wallContainer == null)
             {
-                var walls = transform.Find("Walls");
-                if (walls == null) 
-                {
-                    walls = new GameObject("Walls").transform;
-                    walls.SetParent(transform); 
-                }
-                _wallContainer = walls;
+                Debug.LogWarning("GridManager: WallContainer is not assigned in Inspector!");
             }
 
             if (_gridContainer.childCount > 0)
@@ -84,7 +78,28 @@ namespace MaouSamaTD.Grid
             EnsureCameraAnchor(); // Ensure logic created
             
             // Sync settings with actual found tiles (Runs after load OR generation)
+            // Sync settings with actual found tiles (Runs after load OR generation)
             RecalculateBounds();
+            
+            // Find Spawn/Exit
+            FindSpawnAndExit();
+        }
+
+        private void FindSpawnAndExit()
+        {
+            // Default Fallback
+            SpawnPoint = new Vector2Int(0, 0);
+            ExitPoint = new Vector2Int(_width - 1, _height - 1);
+
+            if (_grid.Count > 0)
+            {
+                foreach (var kvp in _grid)
+                {
+                    if (kvp.Value.Type == TileType.Spawn) SpawnPoint = kvp.Key;
+                    if (kvp.Value.Type == TileType.Exit) ExitPoint = kvp.Key;
+                }
+            }
+            Debug.Log($"GridManager: Spawn {SpawnPoint}, Exit {ExitPoint}");
         }
         #endregion
         
@@ -336,7 +351,10 @@ namespace MaouSamaTD.Grid
                 #endif
             }
         }
-        public Queue<Tile> GetPath(Vector2Int start, Vector2Int end, MaouSamaTD.Units.EnemyMovementType moveType)
+        public event System.Action OnGridStateChanged;
+        public void NotifyGridStateChanged() => OnGridStateChanged?.Invoke();
+
+        public Queue<Tile> GetPath(Vector2Int start, Vector2Int end, MaouSamaTD.Units.EnemyMovementType moveType, bool ignoreOccupants = false)
         {
             if (!_grid.ContainsKey(start) || !_grid.ContainsKey(end)) return null;
 
@@ -361,7 +379,7 @@ namespace MaouSamaTD.Grid
                     break;
                 }
 
-                foreach (Vector2Int next in GetNeighbors(current, moveType))
+                foreach (Vector2Int next in GetNeighbors(current, moveType, ignoreOccupants))
                 {
                     if (!cameFrom.ContainsKey(next))
                     {
@@ -390,7 +408,7 @@ namespace MaouSamaTD.Grid
             return path;
         }
 
-        private IEnumerable<Vector2Int> GetNeighbors(Vector2Int current, MaouSamaTD.Units.EnemyMovementType moveType)
+        private IEnumerable<Vector2Int> GetNeighbors(Vector2Int current, MaouSamaTD.Units.EnemyMovementType moveType, bool ignoreOccupants)
         {
             // Manhattan neighbors (4 directions)
             Vector2Int[] dirs = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
@@ -409,12 +427,8 @@ namespace MaouSamaTD.Grid
                         if (tile.Type == TileType.Unwalkable || tile.Type == TileType.HighGround) 
                             isWalkable = false;
                             
-                        // If blocked by building?
-                        // Usually pathfinding accounts for static walls (Unwalkable).
-                        // Dynamic units (Towers) -> usually Towers are on HighGround or Walkable.
-                        // If implementing mazing, we must check IsOccupied by Tower.
-                        // Assuming Towers block path if placed on Walkable ground.
-                        if (tile.IsOccupied && tile.Occupant is MaouSamaTD.Units.PlayerUnit)
+                        // Check occupancy logic
+                        if (!ignoreOccupants && tile.IsOccupied && tile.Occupant is MaouSamaTD.Units.PlayerUnit)
                         {
                             // If tower is blocking?
                             // For now, assume yes if it's a "Melee" or "Blocker" tower? 

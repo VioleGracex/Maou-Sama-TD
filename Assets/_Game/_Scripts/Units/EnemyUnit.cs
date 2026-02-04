@@ -9,8 +9,6 @@ namespace MaouSamaTD.Units
         private EnemyData _enemyData;
         public EnemyData EnemyData => _enemyData;
 
-        // Runtime stats override if needed, otherwise use base
-        
         private Queue<Tile> _path;
         private Tile _targetTile;
         private bool _isMoving = false;
@@ -32,7 +30,6 @@ namespace MaouSamaTD.Units
         {
             _enemyData = data;
             
-            // Set Base Stats
             _maxHp = data.MaxHp;
             _currentHp = _maxHp;
             _attackPower = data.AttackPower;
@@ -67,9 +64,16 @@ namespace MaouSamaTD.Units
                     _textFallback.color = Color.red; 
                 }
             }
+
+            if (_spriteRenderer != null && _spriteRenderer.transform != transform)
+            {
+                float baseHeight = _enemyData.BaseVisualHeight; 
+                float finalY = baseHeight + _enemyData.VisualYOffset;
+                _spriteRenderer.transform.localPosition = new Vector3(0, finalY, 0);
+            }
         }
 
-        public override float Range => 0.5f; 
+        public override float Range => _enemyData != null ? _enemyData.AttackRange : 1f; 
 
         public void SetPath(Queue<Tile> path)
         {
@@ -81,13 +85,33 @@ namespace MaouSamaTD.Units
             }
         }
 
+        public void RecalculatePath()
+        {
+            var gridMgr = FindObjectOfType<GridManager>();
+            if (gridMgr == null || _enemyData == null) return;
+
+            Vector2Int startValues = gridMgr.WorldToGridCoordinates(transform.position);
+
+            Queue<Tile> newPath = gridMgr.GetPath(startValues, gridMgr.ExitPoint, _enemyData.MovementType);
+            
+            if (newPath != null && newPath.Count > 0)
+            {
+               _path = newPath;
+               if (_path.Count > 0)
+               {
+                   _targetTile = _path.Dequeue();
+                   _isMoving = true;
+               }
+            }
+        }
+
         protected override void UpdateInternal()
         {
             base.UpdateInternal();
             
             if (_blockedBy != null)
             {
-                if (_blockedBy == null || _blockedBy.CurrentHp <= 0) // Blocker died
+                if (_blockedBy == null || _blockedBy.CurrentHp <= 0)
                 {
                     ReleaseBlock();
                 }
@@ -100,8 +124,35 @@ namespace MaouSamaTD.Units
 
             if (_isMoving && _targetTile != null)
             {
-                MoveTowardsTarget();
+                 MoveTowardsTarget();
             }
+        }
+
+        private bool ScanForTarget()
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, Range);
+            foreach (var hit in hits)
+            {
+                var unit = hit.GetComponent<PlayerUnit>();
+                if (unit != null && unit.CurrentHp > 0)
+                {
+                    HandleAttack(unit);
+                    FaceTarget(unit.transform.position);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void FaceTarget(Vector3 targetPos)
+        {
+             if (_spriteRenderer == null) return;
+
+             float diff = targetPos.x - transform.position.x;
+             if (Mathf.Abs(diff) < 0.05f) return;
+
+             bool isTargetRight = diff > 0;
+             _spriteRenderer.flipX = isTargetRight;
         }
 
         private void HandleAttack(UnitBase target)
@@ -117,35 +168,36 @@ namespace MaouSamaTD.Units
         {
             if (_enemyData == null) return;
 
-            // Collision / Blocking Logic
+            if (_blockedBy == null)
+            {
+               if (ScanForTarget()) 
+               {
+                   return; 
+               }
+            }
+
             if (_enemyData.MovementType != EnemyMovementType.Flying && 
                 _enemyData.CollisionType == EnemyCollisionType.BlockedByPlayer)
             {
-                // Check if we are about to enter a tile with a blocker
                 if (_targetTile != null && _targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
                 {
-                    // Check distance
-                    float distToBlocker = Vector3.Distance(transform.position, player.transform.position);
-                    if (distToBlocker < 0.8f) // Slightly larger than range to stop "before" passing through? Or at overlapping.
-                    {
-                        // Check if player can block
-                        // For simply logic: if Occupied, it blocks. 
-                        // Advanced: Use player.BlockCount vs enemies blocked.
-                        
-                        SetBlockedBy(player);
-                        return;
-                    }
+                    SetBlockedBy(player);
+                    return;
                 }
             }
 
             Vector3 targetPos = _targetTile.transform.position;
-            Vector3 currentPos = transform.position;
-            Vector3 dir = (targetPos - currentPos).normalized;
-            dir.y = 0; 
+            
+            float step = _enemyData.MoveSpeed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
 
-            transform.position += dir * _enemyData.MoveSpeed * Time.deltaTime;
+            Vector3 dir = (targetPos - transform.position);
+            if (Mathf.Abs(dir.x) > 0.05f)
+            {
+                 FaceTarget(transform.position + dir);
+            }
 
-            if (Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetPos.x, 0, targetPos.z)) < 0.1f)
+            if (Vector3.Distance(transform.position, targetPos) < 0.01f)
             {
                 if (_path.Count > 0)
                 {
@@ -161,9 +213,16 @@ namespace MaouSamaTD.Units
         private void ReachedExit()
         {
             _isMoving = false;
-            Debug.Log($"Enemy reached exit! Dealing {_enemyData.DamageToPlayerBase} damage.");
-            GridManager gm = FindObjectOfType<GridManager>(); 
-            if (gm != null) gm.SetTileType(_targetTile.Coordinate, TileType.Exit); 
+            Debug.Log($"Enemy reached exit! Dealing {(int)_enemyData.DamageToPlayerBase} damage.");
+            
+            Managers.GameManager gm = FindObjectOfType<Managers.GameManager>();
+            if (gm != null)
+            {
+                gm.TakeBaseDamage(Mathf.RoundToInt(_enemyData.DamageToPlayerBase));
+            }
+
+            GridManager gridMgr = FindObjectOfType<GridManager>(); 
+            if (gridMgr != null) gridMgr.SetTileType(_targetTile.Coordinate, TileType.Exit); 
             
             Destroy(gameObject);
         }

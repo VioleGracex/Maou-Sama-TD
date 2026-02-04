@@ -1,27 +1,22 @@
 using UnityEngine;
 using MaouSamaTD.Units;
 using System.Collections.Generic;
+using NaughtyAttributes;
+using MaouSamaTD.Levels; // Added
 
 namespace MaouSamaTD.Managers
 {
     public class DebugManager : MonoBehaviour
     {
-        public static DebugManager Instance { get; private set; }
-
         [Header("Global Test Values")]
         [SerializeField] private float _globalDamageAmount = 50f;
         [SerializeField] private float _globalHealAmount = 50f;
+        [field: SerializeField] public EnemyData TestEnemyData { get; private set; }
 
-        private void Awake()
-        {
-            if (Instance != null && Instance != this) Destroy(gameObject);
-            else Instance = this;
-        }
-
-        [ContextMenu("Damage All Units")]
+        [Button("Damage All Units")]
         public void DamageAllUnits()
         {
-            PlayerUnit[] units = FindObjectsOfType<PlayerUnit>();
+            PlayerUnit[] units = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
                 if (unit != null)
@@ -32,10 +27,10 @@ namespace MaouSamaTD.Managers
             Debug.Log($"Damaged {units.Length} units for {_globalDamageAmount} HP.");
         }
 
-        [ContextMenu("Heal All Units")]
+        [Button("Heal All Units")]
         public void HealAllUnits()
         {
-            PlayerUnit[] units = FindObjectsOfType<PlayerUnit>();
+            PlayerUnit[] units = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None);
             foreach (var unit in units)
             {
                 if (unit != null)
@@ -46,10 +41,10 @@ namespace MaouSamaTD.Managers
             Debug.Log($"Healed {units.Length} units for {_globalHealAmount} HP.");
         }
 
-        [ContextMenu("Retreat All Units")]
+        [Button("Retreat All Units")]
         public void RetreatAllUnits()
         {
-            PlayerUnit[] units = FindObjectsOfType<PlayerUnit>();
+            PlayerUnit[] units = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None);
             int count = units.Length;
             foreach (var unit in units)
             {
@@ -59,6 +54,26 @@ namespace MaouSamaTD.Managers
                 }
             }
             Debug.Log($"Retreated {count} units.");
+        }
+
+        [Button("Spawn Test Unit")]
+        public void SpawnTestUnit()
+        {
+            if (TestEnemyData == null)
+            {
+                Debug.LogWarning("DebugManager: No TestEnemyData assigned!");
+                return;
+            }
+
+            var enemyManager = FindAnyObjectByType<EnemyManager>();
+            if (enemyManager != null)
+            {
+                enemyManager.SpawnEnemy(TestEnemyData);
+            }
+            else
+            {
+                Debug.LogError("DebugManager: No EnemyManager found!");
+            }
         }
     }
 }

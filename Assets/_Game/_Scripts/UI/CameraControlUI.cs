@@ -21,16 +21,10 @@ namespace MaouSamaTD.UI
         [Header("Text")]
         [SerializeField] private TextMeshProUGUI _viewText; // "Isometric" or "Top Down"
         
-        [Inject] private CameraController _cameraController;
+        [Inject] private CameraManager _cameraManager;
 
-        private void Start()
+        public void Init()
         {
-            // Fallback find if not injected
-            if (_cameraController == null)
-            {
-                _cameraController = FindObjectOfType<CameraController>();
-            }
-
             if (_lockButton != null)
                 _lockButton.onClick.AddListener(OnLockClicked);
             
@@ -39,7 +33,7 @@ namespace MaouSamaTD.UI
 
             if (_centerToggle != null)
             {
-                _centerToggle.isOn = _cameraController != null && _cameraController.CenterOnMap;
+                _centerToggle.isOn = _cameraManager != null && _cameraManager.CenterOnMap;
                 _centerToggle.onValueChanged.AddListener(OnCenterToggleChanged);
             }
             
@@ -48,7 +42,7 @@ namespace MaouSamaTD.UI
 
         private void Update()
         {
-            if (_cameraController != null)
+            if (_cameraManager != null)
             {
                 UpdateUI();
             }
@@ -56,33 +50,33 @@ namespace MaouSamaTD.UI
         
         private void OnLockClicked()
         {
-            if (_cameraController == null) return;
-            _cameraController.ToggleLock();
+            if (_cameraManager == null) return;
+            _cameraManager.ToggleLock();
             UpdateUI();
         }
 
         private void OnViewClicked()
         {
-            if (_cameraController == null) return;
-            _cameraController.ToggleView();
+            if (_cameraManager == null) return;
+            _cameraManager.ToggleView();
             UpdateUI();
         }
 
         private void OnCenterToggleChanged(bool isOn)
         {
-            if (_cameraController == null) return;
-            _cameraController.CenterOnMap = isOn;
+            if (_cameraManager == null) return;
+            _cameraManager.CenterOnMap = isOn;
             UpdateUI();
         }
 
         private void UpdateUI()
         {
-            if (_cameraController == null) return;
+            if (_cameraManager == null) return;
 
             // Update Lock Icon
             if (_lockIconImage != null)
             {
-                if (_cameraController.IsLocked)
+                if (_cameraManager.IsLocked)
                 {
                     if (_lockedIcon != null) _lockIconImage.sprite = _lockedIcon;
                     _lockIconImage.color = _lockedIcon != null ? Color.white : Color.green; // Fallback color
@@ -97,24 +91,24 @@ namespace MaouSamaTD.UI
             // Update View Button State
             if (_viewButton != null)
             {
-                _viewButton.interactable = _cameraController.IsLocked;
+                _viewButton.interactable = _cameraManager.IsLocked;
             }
 
             // Update View Text
             if (_viewText != null)
             {
-                _viewText.text = _cameraController.CurrentMode == CameraController.ViewMode.Isometric ? "Isometric" : "Top Down";
+                _viewText.text = _cameraManager.CurrentMode == CameraManager.ViewMode.Isometric ? "Isometric" : "Top Down";
             }
             
             // Update Center Toggle State
             if (_centerToggle != null)
             {
-                _centerToggle.interactable = _cameraController.IsLocked;
+                _centerToggle.interactable = _cameraManager.IsLocked;
                  // Don't set isOn here every frame to avoid loop, though .isOn check probably handles it.
                  // Better to only set if different
-                 if (_centerToggle.isOn != _cameraController.CenterOnMap)
+                 if (_centerToggle.isOn != _cameraManager.CenterOnMap)
                  {
-                     _centerToggle.isOn = _cameraController.CenterOnMap;
+                     _centerToggle.isOn = _cameraManager.CenterOnMap;
                  }
             }
         }

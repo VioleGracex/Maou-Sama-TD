@@ -179,7 +179,7 @@ namespace MaouSamaTD.Managers
         #region Logic Handlers
         private void HandleHover(Tile tile)
         {
-            // Tile Event
+            // Tile Event - Updates the tile highlight primarily
             if (tile != _currentHoverTile)
             {
                 _currentHoverTile = tile;
@@ -188,7 +188,30 @@ namespace MaouSamaTD.Managers
             }
 
             // Unit Outline Hover Logic
-            Units.UnitBase newHoverUnit = (tile != null) ? tile.Occupant : null;
+            // 1. Try Direct Raycast for Unit (Visual Match)
+            Units.UnitBase newHoverUnit = null;
+            
+            // Re-use current pointer position logic
+            if (UnityEngine.InputSystem.Pointer.current != null)
+            {
+                Vector2 screenPos = UnityEngine.InputSystem.Pointer.current.position.ReadValue();
+                Ray ray = _mainCamera.ScreenPointToRay(screenPos);
+                
+                // Prioritize Units layer
+                if (Physics.Raycast(ray, out RaycastHit unitHit, 100f, LayerMask.GetMask("Units", "Default")))
+                {
+                    var hitUnit = unitHit.collider.GetComponent<Units.UnitBase>();
+                    if (hitUnit == null) hitUnit = unitHit.collider.GetComponentInParent<Units.UnitBase>();
+                    
+                    if (hitUnit != null) newHoverUnit = hitUnit;
+                }
+            }
+
+            // 2. Fallback to Tile Occupant if no direct visual hit (feet check)
+            if (newHoverUnit == null && tile != null)
+            {
+                newHoverUnit = tile.Occupant;
+            }
 
             if (newHoverUnit != _currentHoverUnit)
             {

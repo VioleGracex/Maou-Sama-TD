@@ -33,6 +33,10 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _losePanel;
         [SerializeField] private Button _winRestartButton;
         [SerializeField] private Button _loseRestartButton;
+        [Header("New Navigation")]
+        [SerializeField] private Button _winReturnButton;
+        [SerializeField] private Button _loseReturnButton;
+
 
         [Inject] private GameManager _gameManager;
 
@@ -51,6 +55,9 @@ namespace MaouSamaTD.UI
             
             if (_winRestartButton != null) _winRestartButton.onClick.AddListener(ReloadScene);
             if (_loseRestartButton != null) _loseRestartButton.onClick.AddListener(ReloadScene);
+            if (_winReturnButton != null) _winReturnButton.onClick.AddListener(ReturnToMenu);
+            if (_loseReturnButton != null) _loseReturnButton.onClick.AddListener(ReturnToMenu);
+
 
             if (_gameManager != null)
             {
@@ -98,8 +105,16 @@ namespace MaouSamaTD.UI
         private void OnConfirmRetreat()
         {
             // Reload current scene or load Main Menu
-            // For now, Reload Scene 0 or current
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            // Retreat = Go back to Menu
+            ReturnToMenu();
+        }
+        
+        private void ReturnToMenu()
+        {
+             // Resume time just in case
+             Time.timeScale = 1f;
+             // Load Scene 0 (Home/Menu)
+             SceneManager.LoadScene(0);
         }
 
         private void OnCancelRetreat()

@@ -9,16 +9,29 @@ namespace MaouSamaTD.Managers
         [SerializeField] private LevelData _levelData;
         
         [Inject] private GameManager _gameManager;
+        [Inject] private GameSelectionState _gameSelectionState;
 
         private void Start()
         {
-            if (_levelData != null && _gameManager != null)
+            if (_gameManager == null) return;
+
+            LevelData dataToLoad = _levelData;
+
+            // Prioritize GameSelectionState if valid
+            if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
             {
-                _gameManager.LoadLevelData(_levelData);
+                dataToLoad = _gameSelectionState.SelectedLevel;
+                // Debug update
+                _levelData = dataToLoad;
+            }
+
+            if (dataToLoad != null)
+            {
+                _gameManager.LoadLevelData(dataToLoad);
             }
             else
             {
-                Debug.LogWarning("LevelManager: LevelData or GameManager is missing!");
+                Debug.LogWarning("LevelManager: No LevelData found!");
             }
         }
     }

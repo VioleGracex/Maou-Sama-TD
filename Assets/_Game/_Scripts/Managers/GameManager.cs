@@ -19,7 +19,15 @@ namespace MaouSamaTD.Managers
         [Inject] private CameraManager _cameraManager;
         [Inject] private EnemyManager _enemyManager;
         [Inject] private GridGenerator _gridGenerator;
-        [Inject] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer; // Injected visualizer
+
+        [Inject] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer; 
+
+        // New Injects for Logic
+        [Inject] private SaveManager _saveManager;
+        [Inject] private GameSelectionState _gameSelectionState;
+        
+        private LevelData _currentLevelData; // Track current level
+
 
         public void LoadLevelData(LevelData levelData)
         {
@@ -28,6 +36,7 @@ namespace MaouSamaTD.Managers
 
         private void InitializeGame(LevelData levelData)
         {
+            _currentLevelData = levelData;
             Debug.Log("GameManager: Initializing Game...");
 
             // 0. Setup Map (Before Grid Init)
@@ -215,6 +224,19 @@ namespace MaouSamaTD.Managers
             if (IsGameEnded) return;
             IsGameEnded = true;
             Debug.Log("Victory!");
+            
+            // Calculate Stars (Simple Logic: 20 lives = 3 stars, >10 = 2 stars, >0 = 1 star)
+            int stars = 1;
+            if (PlayerLives >= 20) stars = 3;
+            else if (PlayerLives >= 10) stars = 2;
+            
+            if (_saveManager != null && _currentLevelData != null)
+            {
+                _saveManager.LevelComplete(_currentLevelData.LevelID, stars);
+                _saveManager.AddCurrency(_currentLevelData.RewardCurrency);
+                Debug.Log($"[GameManager] Progress Saved. Level: {_currentLevelData.LevelID}, Stars: {stars}");
+            }
+
             OnVictory?.Invoke();
             SetSpeed(0);
         }

@@ -14,6 +14,13 @@ namespace MaouSamaTD.Levels
         [Tooltip("Time in seconds before the first wave starts")]
         public float GracePeriod = 5f;
 
+        [Header("Campaign Settings")]
+        public string LevelID = "1-1";
+        public int RewardCurrency = 100;
+        [Tooltip("If populated, forces the player to use this specific cohort. Existing cohort selection is ignored.")]
+        public List<MaouSamaTD.Units.UnitData> PremadeCohort;
+
+
         [Header("Map Settings")]
         public MapData MapData;
 

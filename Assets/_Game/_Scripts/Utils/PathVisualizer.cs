@@ -14,10 +14,15 @@ namespace MaouSamaTD.Utils
 
         private LineRenderer _lineRenderer;
 
+        [SerializeField] private Material _sourceMaterial;
+
+        private Material _materialInstance;
         private Coroutine _fadeRoutine;
 
-        public void Init()
+        public void Init(Material overrideMaterial = null)
         {
+            if (overrideMaterial != null) _sourceMaterial = overrideMaterial;
+
             _lineRenderer = GetComponent<LineRenderer>();
             if (_lineRenderer == null)
             {
@@ -48,17 +53,24 @@ namespace MaouSamaTD.Utils
 
         private void ConfigureMaterial()
         {
-            Shader shader = Shader.Find("Mobile/Particles/Additive");
-            if (shader == null) shader = Shader.Find("Particles/Additive");
-            if (shader == null) shader = Shader.Find("Sprites/Default"); // Fallback
-
-            if (_lineRenderer.sharedMaterial == null || _lineRenderer.sharedMaterial.shader != shader)
+            if (_sourceMaterial != null)
             {
-                _lineRenderer.material = new Material(shader);
+                // Source material (from Assets) ensures shader is included in build
+                _materialInstance = new Material(_sourceMaterial);
             }
+            else
+            {
+                // Fallback for Editor (might fail in Build)
+                Shader shader = Shader.Find("Mobile/Particles/Additive");
+                if (shader == null) shader = Shader.Find("Particles/Additive");
+                if (shader == null) shader = Shader.Find("Sprites/Default"); 
+                _materialInstance = new Material(shader);
+            }
+
+            _lineRenderer.material = _materialInstance;
             
             // Generate and Assign Arrow Texture
-            _lineRenderer.material.mainTexture = GenerateArrowTexture();
+            _materialInstance.mainTexture = GenerateArrowTexture();
         }
 
         private Texture2D GenerateArrowTexture()
@@ -220,14 +232,10 @@ namespace MaouSamaTD.Utils
 
         private void Update()
         {
-            if (_lineRenderer != null && _lineRenderer.enabled)
+            if (_lineRenderer != null && _lineRenderer.enabled && _materialInstance != null)
             {
-                // Scroll LEFT (negative x) to make arrows pointing RIGHT move forward?
-                // Visual check: If texture is ">", moving texture coordinate usually moves "content" opposite to offset?
-                // Let's guess: offset -= delta means texture moves Right? 
-                
-                float offset = Time.time * -2.0f; // Faster scroll
-                _lineRenderer.material.mainTextureOffset = new Vector2(offset, 0);
+                float offset = Time.time * -2.0f; 
+                _materialInstance.mainTextureOffset = new Vector2(offset, 0);
             }
         }
     }

@@ -107,7 +107,10 @@ namespace MaouSamaTD.UI
             {
                 // Dynamic updates per frame using 500ms equivalent or just frame update
                 // For charge bars, frame update is smoother
+                // Dynamic updates per frame using 500ms equivalent or just frame update
+                // For charge bars, frame update is smoother
                 UpdateChargeVisuals();
+                UpdateVisuals(); // Fix: Update HP and other stats live
             }
         }
         
@@ -186,49 +189,14 @@ namespace MaouSamaTD.UI
             }
         }
 
-        [Header("Confirmation")]
-        [SerializeField] private GameObject _confirmationPanel;
-        [SerializeField] private Button _confirmYesButton;
-        [SerializeField] private Button _confirmNoButton;
+       
 
         private void OnRetreatClicked()
         {
             if (_selectedUnit != null)
             {
-                // Show Confirmation
-                if (_confirmationPanel != null)
-                {
-                    _confirmationPanel.SetActive(true);
-                    
-                    // Setup listeners fresh or ensure they are set
-                    _confirmYesButton.onClick.RemoveAllListeners();
-                    _confirmYesButton.onClick.AddListener(OnConfirmRetreat);
-                    
-                    _confirmNoButton.onClick.RemoveAllListeners();
-                    _confirmNoButton.onClick.AddListener(OnCancelRetreat);
-                }
-                else
-                {
-                    // Fallback if no panel setup
-                    OnConfirmRetreat();
-                }
-            }
-        }
-
-        private void OnConfirmRetreat()
-        {
-            if (_confirmationPanel != null) _confirmationPanel.SetActive(false);
-
-            if (_selectedUnit != null)
-            {
                 _selectedUnit.Retreat();
-                Hide();
             }
-        }
-
-        private void OnCancelRetreat()
-        {
-            if (_confirmationPanel != null) _confirmationPanel.SetActive(false);
         }
 
         private void OnSkillClicked()

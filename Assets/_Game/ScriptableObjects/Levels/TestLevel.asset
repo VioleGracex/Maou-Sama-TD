@@ -15,14 +15,18 @@ MonoBehaviour:
   LevelName: TestLevel
   Description: The Test.
   GracePeriod: 5
+  LevelID: 1-1
+  RewardCurrency: 100
+  PremadeCohort:
+  - {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
   MapData: {fileID: 11400000, guid: 359e79aee670d244cbc164c4119a73b6, type: 2}
   StartingAuthoritySeals: 10
   AuthoritySealsPerSecond: 1
   Waves:
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 2
-      SpawnInterval: 2
+      Count: 10
+      SpawnInterval: 3
       InitialDelay: 0
       SpawnPointIndex: 0
     DelayBeforeNextWave: 10

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 using TMPro;
@@ -112,3 +113,4 @@ public class TMProFontAssetCreator : EditorWindow
         Debug.Log($"Created TMPro Font Asset: {fontAssetPath}");
     }
 }
+#endif

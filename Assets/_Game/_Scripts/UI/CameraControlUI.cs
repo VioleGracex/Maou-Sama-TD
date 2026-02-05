@@ -91,7 +91,8 @@ namespace MaouSamaTD.UI
             // Update View Button State
             if (_viewButton != null)
             {
-                _viewButton.interactable = _cameraManager.IsLocked;
+                // _viewButton.interactable = _cameraManager.IsLocked; // User requested fix: Always enabled
+                _viewButton.interactable = true;
             }
 
             // Update View Text

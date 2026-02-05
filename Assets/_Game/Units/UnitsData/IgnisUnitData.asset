@@ -15,8 +15,10 @@ MonoBehaviour:
   UnitName: Ignis
   UnitSprite: {fileID: 21300000, guid: 74d8fc5cc8ac2294aa50b3b462b3a05a, type: 3}
   UnitIcon: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
+  Rarity: 3
   Class: 0
   AttackPattern: 3
+  AttackType: 0
   DeploymentCost: 10
   BlockCount: 1
   MaxHp: 100
@@ -28,7 +30,5 @@ MonoBehaviour:
   MaxCharge: 100
   ChargePerSecond: 1
   ChargePerAttack: 2
-  SkillName: Ultimate
-  SkillIcon: {fileID: 0}
-  SkillDescription: Does something cool.
+  Skill: {fileID: 0}
   ViableTiles: 00000000

@@ -32,6 +32,7 @@ namespace MaouSamaTD.Grid
         [SerializeField] private GameObject _startPrefab;
         [SerializeField] private GameObject _endPrefab;
         [SerializeField] private GameObject _wallPrefab;
+        [SerializeField] private Material _wallMaterial; // Override Material
 
         [Header("Generation Settings")]
         [SerializeField] private bool _generateMapOnStart = true;
@@ -145,6 +146,13 @@ namespace MaouSamaTD.Grid
                     wall.name = $"Wall_{x}_{y}";
                     wall.transform.localScale = Vector3.Scale(new Vector3(cellSize, cellSize, cellSize), scaleMultiplier);
                 }
+
+                if (_wallMaterial != null)
+                {
+                    var renderer = wall.GetComponentInChildren<Renderer>();
+                    if (renderer != null) renderer.material = _wallMaterial;
+                }
+
                 _generatedWalls.Add(wall);
             }
 

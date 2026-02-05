@@ -2,6 +2,16 @@ using UnityEngine;
 
 namespace MaouSamaTD.Units
 {
+    public enum UnitRarity
+    {
+        Common, // 1 Star
+        Uncommon, // 2 Star
+        Rare, // 3 Star
+        Elite, // 4 Star
+        Master, // 5 Star
+        Legendary // 6 Star
+    }
+
     [CreateAssetMenu(fileName = "NewUnitData", menuName = "MaouSamaTD/Unit Data")]
     public class UnitData : ScriptableObject
     {
@@ -11,6 +21,7 @@ namespace MaouSamaTD.Units
         public Sprite UnitIcon;   // Specific icon for UI buttons
 
         [Header("Class & Rules")]
+        public UnitRarity Rarity;
         public UnitClass Class;
         public AttackPattern AttackPattern;
         public AttackType AttackType;

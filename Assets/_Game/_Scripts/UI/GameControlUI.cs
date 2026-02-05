@@ -22,6 +22,8 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _pauseOverlay; 
         [SerializeField] private Button _resumeButton;
         [SerializeField] private Button _retreatButton;
+        [SerializeField] private Button _restartButton; // New Restart Button
+
         
         [Header("Confirmation")]
         [SerializeField] private GameObject _confirmationPanel;
@@ -49,6 +51,8 @@ namespace MaouSamaTD.UI
             
             if (_resumeButton != null) _resumeButton.onClick.AddListener(OnPauseClicked); // Resume is just TogglePause
             if (_retreatButton != null) _retreatButton.onClick.AddListener(OnRetreatClicked);
+            if (_restartButton != null) _restartButton.onClick.AddListener(ReloadScene); // Use existing ReloadScene method
+
             
             if (_confirmYesButton != null) _confirmYesButton.onClick.AddListener(OnConfirmRetreat);
             if (_confirmNoButton != null) _confirmNoButton.onClick.AddListener(OnCancelRetreat);

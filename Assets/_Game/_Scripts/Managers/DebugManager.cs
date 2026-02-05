@@ -1,78 +1,108 @@
 using UnityEngine;
+using UnityEngine.UI;
+using Zenject;
+using NaughtyAttributes;
+using MaouSamaTD.Levels;
 using MaouSamaTD.Units;
 using System.Collections.Generic;
-using NaughtyAttributes;
-using MaouSamaTD.Levels; // Added
 
 namespace MaouSamaTD.Managers
 {
     public class DebugManager : MonoBehaviour
     {
-        [Header("Global Test Values")]
-        [SerializeField] private float _globalDamageAmount = 50f;
-        [SerializeField] private float _globalHealAmount = 50f;
-        [field: SerializeField] public EnemyData TestEnemyData { get; private set; }
+        [Header("Debug UI")]
+        [SerializeField] private Button _spawnEnemyButton;
+        [SerializeField] private Button _addSealsButton;
+        [SerializeField] private EnemyData _testEnemyData; 
 
-        [Button("Damage All Units")]
-        public void DamageAllUnits()
+        [Inject] private EnemyManager _enemyManager; 
+        [Inject] private GameManager _gameManager;
+        [Inject] private Grid.GridManager _gridManager;
+        [Inject] private CurrencyManager _currencyManager;
+
+        private void Start()
         {
-            PlayerUnit[] units = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None);
-            foreach (var unit in units)
+            if (_spawnEnemyButton != null)
             {
-                if (unit != null)
-                {
-                    unit.TakeDamage(_globalDamageAmount);
-                }
+                _spawnEnemyButton.onClick.AddListener(OnSpawnEnemyClicked);
             }
-            Debug.Log($"Damaged {units.Length} units for {_globalDamageAmount} HP.");
+            if (_addSealsButton != null)
+            {
+                _addSealsButton.onClick.AddListener(AddAuthSeal);
+            }
         }
 
-        [Button("Heal All Units")]
-        public void HealAllUnits()
+        [Button("Spawn Test Enemy")] 
+        private void OnSpawnEnemyClicked()
         {
-            PlayerUnit[] units = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None);
-            foreach (var unit in units)
+            Debug.Log("Debug: Spawn Enemy Clicked");
+            if (_enemyManager != null && _testEnemyData != null)
             {
-                if (unit != null)
-                {
-                    unit.Heal(_globalHealAmount);
-                }
-            }
-            Debug.Log($"Healed {units.Length} units for {_globalHealAmount} HP.");
-        }
-
-        [Button("Retreat All Units")]
-        public void RetreatAllUnits()
-        {
-            PlayerUnit[] units = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None);
-            int count = units.Length;
-            foreach (var unit in units)
-            {
-                if (unit != null)
-                {
-                    unit.Retreat();
-                }
-            }
-            Debug.Log($"Retreated {count} units.");
-        }
-
-        [Button("Spawn Test Unit")]
-        public void SpawnTestUnit()
-        {
-            if (TestEnemyData == null)
-            {
-                Debug.LogWarning("DebugManager: No TestEnemyData assigned!");
-                return;
-            }
-
-            var enemyManager = FindAnyObjectByType<EnemyManager>();
-            if (enemyManager != null)
-            {
-                enemyManager.SpawnEnemy(TestEnemyData);
+                _enemyManager.SpawnEnemy(_testEnemyData);
             }
             else
             {
-                Debug.LogError("DebugManager: No EnemyManager found!");
+                if (_enemyManager == null) Debug.LogError("DebugManager: EnemyManager is missing!");
+                if (_testEnemyData == null) Debug.LogWarning("DebugManager: No Test Enemy Data assigned in Inspector!");
+            }
+        }
+
+        [Button("Global Heal (Base +999)")]
+        private void GlobalHeal()
+        {
+             Debug.Log("Debug: Global Heal Triggered");
+             if (_gameManager != null)
+             {
+                 _gameManager.TakeBaseDamage(-999);
+             }
+        }
+
+        [Button("Global Damage (Kill All Enemies)")]
+        private void GlobalDamageEnemy()
+        {
+            Debug.Log("Debug: Global Damage Triggered");
+            // Iterating copy to avoid collection modified exception
+            var enemies = new List<EnemyUnit>(EnemyUnit.ActiveEnemies);
+            foreach (var enemy in enemies)
+            {
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(99999);
+                }
+            }
+        }
+
+        [Button("Retreat All Units")]
+        private void RetreatAllUnits()
+        {
+            Debug.Log("Debug: Retreat All Units Triggered");
+            if (_gridManager != null)
+            {
+                // Create list to avoid modification during iteration if Retreat modifies the collection used by GetAllTiles (unlikely as it iterates dictionary values, but safe practice)
+                List<PlayerUnit> unitsToRetreat = new List<PlayerUnit>();
+                
+                foreach (var tile in _gridManager.GetAllTiles())
+                {
+                    if (tile.IsOccupied && tile.Occupant is PlayerUnit pUnit)
+                    {
+                        unitsToRetreat.Add(pUnit);
+                    }
+                }
+
+                foreach (var unit in unitsToRetreat)
+                {
+                    if (unit != null) unit.Retreat();
+                }
+            }
+        }
+
+        [Button("Add Auth Seal (+5)")]
+        private void AddAuthSeal()
+        {
+            if (_currencyManager != null)
+            {
+                _currencyManager.AddSeals(5);
+                Debug.Log("Debug: Added 5 Auth Seals");
             }
         }
     }

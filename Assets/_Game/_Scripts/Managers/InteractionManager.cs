@@ -371,6 +371,12 @@ namespace MaouSamaTD.Managers
             
             GameObject visuals = new GameObject("Visuals");
             visuals.transform.SetParent(_ghostObject.transform, false);
+            
+            // Fix: Set Layer to IgnoreRaycast (2) so it doesn't block clicks
+            _ghostObject.layer = 2; 
+            visuals.layer = 2;
+            
+            // Lift HIGHER to avoid Z-Overdraw with TileGlow/HighGround
             // Lift HIGHER to avoid Z-Overdraw with TileGlow/HighGround
             // Lift HIGHER to avoid Z-Overdraw with TileGlow/HighGround
             // 0.75f covers HighGround(0.5f) with margin
@@ -587,10 +593,11 @@ namespace MaouSamaTD.Managers
             Vector3 targetPos = Vector3.zero;
             Units.UnitBase targetUnit = null;
             
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f, ~LayerMask.GetMask("Ignore Raycast")))
             {
                 targetUnit = hit.collider.GetComponent<Units.UnitBase>();
-                targetPos = hit.point;
+                // Fix: Project to y=0 to ensure consistent ground targeting even if hitting a unit
+                targetPos = new Vector3(hit.point.x, 0, hit.point.z);
             }
             
             if (targetUnit == null)

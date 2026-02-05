@@ -5439,10 +5439,10 @@ MonoBehaviour:
   _defense: 0
   _spriteRenderer: {fileID: 3551728292620865165}
   _textFallback: {fileID: 2958040010651701506}
+  _hpFillImage: {fileID: 1312120414639121609}
   _healParticle: {fileID: 4384362147522370408}
   _unitClass: 0
   _deploymentCost: 10
-  _hpBarFill: {fileID: 1312120414639121609}
   _billboard: {fileID: 2857023423370468552}
 --- !u!65 &3164790360447657451
 BoxCollider:

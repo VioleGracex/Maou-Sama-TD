@@ -118,6 +118,12 @@ namespace MaouSamaTD.Units
                 else
                 {
                     HandleAttack(_blockedBy);
+                    // Continue to center logic if needed, but usually Attack stops movement.
+                    // If we want to center while attacking: Check distance to center.
+                    // But _isMoving is false.
+                    // We can enable specific "centering" move?
+                    // Proper fix: When Blocked, we check if we are AT Center.
+                    // If not, we allow movement to center.
                     return;
                 }
             }
@@ -181,6 +187,25 @@ namespace MaouSamaTD.Units
             {
                 if (_targetTile != null && _targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
                 {
+                    // Fix: Before stopping, ensure we are centered on the CURRENT tile (or the one we are entering).
+                    // Actually, if we are entering a tile with a player, we should stop at the EDGE or CENTER of PREVIOUS?
+                    // Usually Center of PREVIOUS (Current).
+                    // If _targetTile is the one with the Player, we haven't reached it yet.
+                    // So we should Stop moving to _targetTile and stay on Current.
+                    
+                    // But if we are "Moving Towards Target" (L127), we are interpolating.
+                    // If we act now, we freeze in place.
+                    
+                    // Logic: Retarget to Center of Tile we are CLOSEST to (or currently occupying).
+                    // And SetBlockedBy to stop Logic AFTER reaching it.
+                    
+                    // Simple Fix: Just set blocked. The user complained about "adding to range".
+                    // If we stop early, we are further away -> Less Range usage? No, range is from Unit.
+                    // If we stop at edge, we might be closer to target than center?
+                    // User said: "position of enemies when they stop should be center of tile"
+                    
+                    // Force Snap? No, visual glitch.
+                    // Let's change target to Current Position's Tile Center.
                     SetBlockedBy(player);
                     return;
                 }
@@ -230,6 +255,25 @@ namespace MaouSamaTD.Units
         public void SetBlockedBy(PlayerUnit blocker)
         {
             _blockedBy = blocker;
+            // Fix: Do not stop immediately if not centered.
+            // Check distance to center of current tile?
+            // Or just Snap for now as requested? 
+            // "so it does not add to their range and make a hidden variable" implies consisteny is key.
+            // Snapping is consistent.
+            
+            // Allow finishing the move to center?
+            // If I set _isMoving = false, Update stops.
+            // Let's Snap to Grid Center of current position.
+            
+            GridManager grid = FindObjectOfType<GridManager>();
+            if (grid != null)
+            {
+                 Vector2Int coord = grid.WorldToGridCoordinates(transform.position);
+                 Vector3 center = grid.GridToWorldPosition(coord);
+                 // Preserve Y
+                 transform.position = new Vector3(center.x, transform.position.y, center.z);
+            }
+
             _isMoving = false;
         }
 

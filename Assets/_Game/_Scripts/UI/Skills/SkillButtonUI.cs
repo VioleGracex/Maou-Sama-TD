@@ -18,13 +18,15 @@ namespace MaouSamaTD.UI.Skills
 
         private SovereignRiteData _data;
         private SkillManager _manager;
+        private CurrencyManager _currencyManager;
         private InteractionManager _interactionManager;
 
-        public void Initialize(SovereignRiteData data, SkillManager manager, InteractionManager interactionManager)
+        public void Initialize(SovereignRiteData data, SkillManager manager, InteractionManager interactionManager, CurrencyManager currencyManager)
         {
             _data = data;
             _manager = manager;
             _interactionManager = interactionManager;
+            _currencyManager = currencyManager;
 
             if (_data != null)
             {
@@ -38,16 +40,45 @@ namespace MaouSamaTD.UI.Skills
         {
             if (_data == null || _manager == null) return;
 
-            // 1. Cooldown Update
-            float progress = _manager.GetCooldownProgress(_data);
-            if (_cooldownOverlay != null)
+            // 1. Cooldown & Cost Overlay Logic
+            float cooldownProgress = _manager.GetCooldownProgress(_data);
+            float fillAmount = 0f;
+
+            if (cooldownProgress > 0)
             {
-                _cooldownOverlay.fillAmount = progress;
+                // User Request Interpretation:
+                // "Empties after being used as form of showing cooldown" -> 1.0 to 0.0
+                // "Fills up only after cooldown finished" -> Energy Logic takes over after CD
+                
+                // GetCooldownProgress returns (Remaining / Total), so 1.0 -> 0.0
+                fillAmount = cooldownProgress;
+                
+                if (_lockOverlay != null) _lockOverlay.SetActive(true);
+            }
+            else
+            {
+                // Ready / Energy Phase
+                int currentSeals = _currencyManager != null ? _currencyManager.CurrentSeals : 999;
+                
+                // User Request: "if skill is not in cooldown and affordable make it full"
+                if (currentSeals >= _data.SealCost)
+                    fillAmount = 1f;
+                else if (_data.SealCost > 0)
+                    fillAmount = (float)currentSeals / _data.SealCost; // Show progress
+                else
+                    fillAmount = 1f; // Free cost
+
+                // Lock only if not fully affordable
+                bool canAfford = currentSeals >= _data.SealCost;
+                if (_lockOverlay != null) _lockOverlay.SetActive(!canAfford); 
             }
 
-            // 2. Cost Check
-            bool isReady = _manager.IsSkillReady(_data);
-            // ... Visual updates
+            if (_cooldownOverlay != null)
+            {
+                _cooldownOverlay.fillAmount = fillAmount;
+            }
+
+            // Update Cost Text Color? (Optional polish)
         }
 
         public void OnPointerClick(PointerEventData eventData)

@@ -21,6 +21,7 @@ namespace MaouSamaTD.UI.Skills
         
         [Inject] private SkillManager _skillManager;
         [Inject] private InteractionManager _interactionManager;
+        [Inject] private CurrencyManager _currencyManager;
         
         private List<SkillButtonUI> _spawnedButtons = new List<SkillButtonUI>();
         private bool _isVisible = false; // Default: Docked/Hidden
@@ -44,7 +45,13 @@ namespace MaouSamaTD.UI.Skills
             {
                 _visiblePos = _panelRect.anchoredPosition;
                 // Force initial position to Hidden (Docked)
+                // Force initial position to Hidden (Docked)
                 _panelRect.anchoredPosition = _visiblePos + new Vector2(_hideOffset, 0); 
+            }
+            if (_toggleButton != null)
+            {
+                 var txt = _toggleButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                 if (txt != null) txt.text = "Show"; // Initial state is Hidden, so button says "Show"
             }
             Refresh();
         }
@@ -61,7 +68,7 @@ namespace MaouSamaTD.UI.Skills
                 if (skill == null) continue;
                 
                 var btn = Instantiate(_buttonPrefab, _buttonContainer);
-                btn.Initialize(skill, _skillManager, _interactionManager);
+                btn.Initialize(skill, _skillManager, _interactionManager, _currencyManager);
                 _spawnedButtons.Add(btn);
             }
         }
@@ -76,6 +83,21 @@ namespace MaouSamaTD.UI.Skills
             Vector2 targetPos = _isVisible ? _visiblePos : _visiblePos + new Vector2(_hideOffset, 0);
             
             _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack);
+            
+            // Fix: Update Text
+            if (_toggleButton != null)
+            {
+                var txt = _toggleButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (txt != null)
+                {
+                    // If IS Visible, we want to Hide -> Button says "Hide" ?? 
+                    // Or Button says what it DOES?
+                    // Usually button says action.
+                    // If Visible, Action is Hide.
+                    // If Hidden, Action is Show.
+                    txt.text = _isVisible ? "Hide" : "Show"; 
+                }
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ namespace MaouSamaTD.Editor
         public static void GeneratePanels()
         {
 
-            GameControlUI gameUI = FindObjectOfType<GameControlUI>();
+            GameControlUI gameUI = FindFirstObjectByType<GameControlUI>();
             if (gameUI == null)
             {
                 Debug.LogError("Could not find GameControlUI in the scene!");
@@ -23,7 +23,7 @@ namespace MaouSamaTD.Editor
             Canvas canvas = gameUI.GetComponentInParent<Canvas>();
             if (canvas == null)
             {
-                canvas = FindObjectOfType<Canvas>();
+                canvas = FindFirstObjectByType<Canvas>();
             }
             
             if (canvas == null)
@@ -118,7 +118,7 @@ namespace MaouSamaTD.Editor
         [MenuItem("Tools/MaouSamaTD/Generate Cohort & Menu UI")]
         public static void GenerateMenuUI()
         {
-             Canvas canvas = FindObjectOfType<Canvas>();
+             Canvas canvas = FindFirstObjectByType<Canvas>();
              if (canvas == null)
              {
                  Debug.LogError("No Canvas found!");
@@ -203,6 +203,88 @@ namespace MaouSamaTD.Editor
              Debug.Log("Generated Menu UI Structures.");
         }
 
+        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Unit Card Prefab")]
+        public static void GenerateUnitCardPrefab()
+        {
+            Canvas canvas = FindFirstObjectByType<Canvas>();
+            GameObject cardRoot = new GameObject("UnitCard_Prefab");
+            if (canvas) cardRoot.transform.SetParent(canvas.transform, false);
+
+            RectTransform rootRt = cardRoot.AddComponent<RectTransform>();
+            rootRt.sizeDelta = new Vector2(120, 180); // Portrait size
+
+            Image bg = cardRoot.AddComponent<Image>();
+            bg.color = new Color(0.15f, 0.15f, 0.15f);
+
+            Button btn = cardRoot.AddComponent<Button>();
+            bg.raycastTarget = true;
+
+            // 1. Portrait (Fill)
+            GameObject portrait = new GameObject("Portrait");
+            portrait.transform.SetParent(cardRoot.transform, false);
+            RectTransform pRt = portrait.AddComponent<RectTransform>();
+            pRt.anchorMin = Vector2.zero;
+            pRt.anchorMax = Vector2.one;
+            pRt.offsetMin = new Vector2(5, 5);
+            pRt.offsetMax = new Vector2(-5, -40); // Leave room for name at bottom
+            
+            Image pImg = portrait.AddComponent<Image>();
+            pImg.color = Color.gray;
+            pImg.preserveAspect = true;
+
+            // 2. Name Bar
+            GameObject nameBar = new GameObject("NameBar");
+            nameBar.transform.SetParent(cardRoot.transform, false);
+            RectTransform nRt = nameBar.AddComponent<RectTransform>();
+            nRt.anchorMin = new Vector2(0, 0); // Bottom
+            nRt.anchorMax = new Vector2(1, 0.2f); // Bottom 20%
+            nRt.offsetMin = Vector2.zero;
+            nRt.offsetMax = Vector2.zero;
+            
+            Image nBg = nameBar.AddComponent<Image>();
+            nBg.color = new Color(0,0,0,0.8f);
+
+            GameObject nameTextObj = new GameObject("NameText");
+            nameTextObj.transform.SetParent(nameBar.transform, false);
+            TextMeshProUGUI nameTmp = nameTextObj.AddComponent<TextMeshProUGUI>();
+            nameTmp.text = "Unit Name";
+            nameTmp.fontSize = 18;
+            nameTmp.alignment = TextAlignmentOptions.Center;
+            nameTmp.color = Color.white;
+            
+            // 3. Selection Overlay (Hidden by default)
+            GameObject overlay = new GameObject("SelectionOverlay");
+            overlay.transform.SetParent(cardRoot.transform, false);
+            RectTransform oRt = overlay.AddComponent<RectTransform>();
+            oRt.anchorMin = Vector2.zero;
+            oRt.anchorMax = Vector2.one;
+            
+            Image oImg = overlay.AddComponent<Image>();
+            oImg.color = new Color(0, 0.5f, 1f, 0.3f); // Blue tint
+            
+            GameObject numberObj = new GameObject("OrderNumber");
+            numberObj.transform.SetParent(overlay.transform, false);
+            TextMeshProUGUI numTmp = numberObj.AddComponent<TextMeshProUGUI>();
+            numTmp.text = "1";
+            numTmp.fontSize = 64;
+            numTmp.fontStyle = FontStyles.Bold;
+            numTmp.alignment = TextAlignmentOptions.Center;
+            numTmp.color = Color.cyan;
+            
+            overlay.SetActive(false); // Hide initially
+
+            // 4. Component
+            UnitCardUI cardUI = cardRoot.AddComponent<UnitCardUI>();
+            SerializedObject so = new SerializedObject(cardUI);
+            SetProperty(so, "_portraitImage", pImg);
+            SetProperty(so, "_nameText", nameTmp);
+            SetProperty(so, "_selectedOverlay", overlay);
+            SetProperty(so, "_selectionOrderText", numTmp);
+            so.ApplyModifiedProperties();
+
+            Debug.Log("Generated Unit Card Prefab Structure in Scene. Drag to Prefabs folder!");
+        }
+
         private static void CreateText(Transform parent, string name, string content, float x, float y)
 
         {
@@ -220,6 +302,150 @@ namespace MaouSamaTD.Editor
             tmp.fontSize = 48;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = Color.white;
+        }
+
+        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Squad Panel (12 Slots)")]
+        public static void GenerateSquadPanel()
+        {
+            Canvas canvas = FindFirstObjectByType<Canvas>();
+            if (!canvas) return;
+
+            GameObject panel = GetOrCreatePanel(canvas.transform, "Squad_Panel", new Color(0.1f, 0.1f, 0.1f, 0.8f));
+            RectTransform rt = panel.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 0.8f);
+            rt.anchorMax = new Vector2(1, 1); // Top 20%
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            GameObject gridObj = new GameObject("SquadSlots_Grid");
+            gridObj.transform.SetParent(panel.transform, false);
+            RectTransform gridRt = gridObj.AddComponent<RectTransform>();
+            gridRt.anchorMin = new Vector2(0.05f, 0.1f);
+            gridRt.anchorMax = new Vector2(0.95f, 0.9f);
+            
+            GridLayoutGroup glg = gridObj.AddComponent<GridLayoutGroup>();
+            glg.cellSize = new Vector2(80, 80);
+            glg.spacing = new Vector2(10, 0);
+            glg.childAlignment = TextAnchor.MiddleCenter;
+            
+            Debug.Log("Generated Squad Panel.");
+        }
+
+        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Unit Inventory (Scroll)")]
+        public static void GenerateInventoryPanel()
+        {
+            Canvas canvas = FindFirstObjectByType<Canvas>();
+            if (!canvas) return;
+
+            GameObject scrollObj = GetOrCreatePanel(canvas.transform, "Unit_Inventory_Scroll", new Color(0.2f, 0.2f, 0.2f, 0.5f));
+            RectTransform rt = scrollObj.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.3f, 0); // Right side 70%
+            rt.anchorMax = new Vector2(1, 0.8f);
+            
+            ScrollRect sr = scrollObj.AddComponent<ScrollRect>();
+            sr.horizontal = false;
+            sr.vertical = true;
+            
+            // Viewport
+            GameObject viewport = new GameObject("Viewport");
+            viewport.transform.SetParent(scrollObj.transform, false);
+            viewport.AddComponent<RectMask2D>();
+            RectTransform vRt = viewport.AddComponent<RectTransform>();
+            vRt.anchorMin = Vector2.zero;
+            vRt.anchorMax = Vector2.one;
+            vRt.sizeDelta = Vector2.zero;
+            
+            // Content
+            GameObject content = new GameObject("Content");
+            content.transform.SetParent(viewport.transform, false);
+            RectTransform cRt = content.AddComponent<RectTransform>();
+            cRt.anchorMin = new Vector2(0, 1);
+            cRt.anchorMax = new Vector2(1, 1);
+            cRt.pivot = new Vector2(0.5f, 1);
+            
+            GridLayoutGroup glg = content.AddComponent<GridLayoutGroup>();
+            glg.cellSize = new Vector2(100, 150); // Portrait aspect
+            glg.spacing = new Vector2(10, 10);
+            glg.constraint = GridLayoutGroup.Constraint.Flexible;
+
+            ContentSizeFitter csf = content.AddComponent<ContentSizeFitter>();
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            sr.content = cRt;
+            sr.viewport = vRt;
+
+            Debug.Log("Generated Inventory Scroll View.");
+        }
+
+        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Stats Panel (Sidebar)")]
+        public static void GenerateStatsPanel()
+        {
+            Canvas canvas = FindFirstObjectByType<Canvas>();
+            if (!canvas) return;
+
+            GameObject panel = GetOrCreatePanel(canvas.transform, "Unit_Stats_Panel", new Color(0.1f, 0.15f, 0.2f, 0.95f));
+            RectTransform rt = panel.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 0);
+            rt.anchorMax = new Vector2(0.3f, 0.8f); // Left Sidebar
+            
+            UnitStatsPanel stats = panel.AddComponent<UnitStatsPanel>();
+
+            VerticalLayoutGroup vlg = panel.AddComponent<VerticalLayoutGroup>();
+            vlg.padding = new RectOffset(20, 20, 20, 20);
+            vlg.spacing = 5;
+            vlg.childControlHeight = false;
+            vlg.childControlWidth = true;
+            vlg.childAlignment = TextAnchor.UpperLeft;
+
+            // Generate & Link
+            SerializedObject so = new SerializedObject(stats);
+
+            // Helper local func
+            TextMeshProUGUI AddStatText(string objName, string defaultText)
+            {
+                CreateText(panel.transform, objName, defaultText, 0, 0);
+                return panel.transform.Find(objName).GetComponent<TextMeshProUGUI>();
+            }
+
+            SetProperty(so, "_unitNameText", AddStatText("NameText", "UNIT NAME"));
+            SetProperty(so, "_levelText", AddStatText("LevelText", "Lv. 1"));
+            
+            // Stats Block
+            SetProperty(so, "_hpText", AddStatText("HP_Text", "HP: 100"));
+            SetProperty(so, "_atkText", AddStatText("ATK_Text", "ATK: 50"));
+            SetProperty(so, "_defText", AddStatText("DEF_Text", "DEF: 10"));
+            SetProperty(so, "_costText", AddStatText("Cost_Text", "Cost: 15"));
+            SetProperty(so, "_blockText", AddStatText("Block_Text", "Block: 1"));
+            SetProperty(so, "_respawnText", AddStatText("Respawn_Text", "Respawn: 10s"));
+            
+            SetProperty(so, "_skillNameText", AddStatText("SkillName", "Skill: None"));
+            SetProperty(so, "_skillDescText", AddStatText("SkillDesc", "Description..."));
+
+            so.ApplyModifiedProperties();
+
+            Debug.Log("Generated Stats Sidebar with linked references.");
+        }
+
+        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Filter Bar")]
+        public static void GenerateFilterBar()
+        {
+             Canvas canvas = FindFirstObjectByType<Canvas>();
+             if (!canvas) return;
+             
+             GameObject bar = GetOrCreatePanel(canvas.transform, "Filter_Bar", new Color(0,0,0,0.8f));
+             RectTransform rt = bar.GetComponent<RectTransform>();
+             rt.anchorMin = new Vector2(0.3f, 0.8f); // Below Squad, Above Inventory
+             rt.anchorMax = new Vector2(1, 0.9f);
+             
+             HorizontalLayoutGroup hlg = bar.AddComponent<HorizontalLayoutGroup>();
+             hlg.spacing = 20;
+             hlg.childAlignment = TextAnchor.MiddleLeft;
+             hlg.padding = new RectOffset(20,0,0,0);
+             
+             CreateButton(bar.transform, "Filter_Rarity", "Rarity", 0, 0);
+             CreateButton(bar.transform, "Filter_Class", "Class", 0, 0);
+             
+             Debug.Log("Generated Filter Bar.");
         }
 
         private static Button CreateButton(Transform parent, string name, string label, float x, float y)
@@ -264,6 +490,55 @@ namespace MaouSamaTD.Editor
             {
                 prop.objectReferenceValue = value;
             }
+        }
+        [MenuItem("Tools/MaouSamaTD/Create Wall Material", false, 52)]
+        public static void CreateWallMaterial()
+        {
+            string path = "Assets/_Game/Art/Materials/GeneratedWall.mat";
+            
+            // Ensure directory
+            System.IO.Directory.CreateDirectory("Assets/_Game/Art/Materials");
+            
+            // Find a standard shader (URP or Standard)
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) shader = Shader.Find("Standard");
+            
+            Material mat = new Material(shader);
+            mat.color = Color.gray;
+            
+            // Check if exists
+            AssetDatabase.CreateAsset(mat, path);
+            AssetDatabase.SaveAssets();
+            
+            Selection.activeObject = mat;
+            EditorGUIUtility.PingObject(mat);
+            
+            Debug.Log($"Created Wall Material at {path}. Please assign this to your GridGenerator.");
+        }
+
+        [MenuItem("Tools/MaouSamaTD/Create Path Material", false, 53)]
+        public static void CreatePathMaterial()
+        {
+            string path = "Assets/_Game/Art/Materials/GeneratedPath.mat";
+            
+            // Ensure directory
+            System.IO.Directory.CreateDirectory("Assets/_Game/Art/Materials");
+            
+            // Find Particles/Additive
+            Shader shader = Shader.Find("Mobile/Particles/Additive");
+            if (shader == null) shader = Shader.Find("Particles/Additive");
+            if (shader == null) shader = Shader.Find("Sprites/Default");
+            
+            Material mat = new Material(shader);
+            
+            // Check if exists
+            AssetDatabase.CreateAsset(mat, path);
+            AssetDatabase.SaveAssets();
+            
+            Selection.activeObject = mat;
+            EditorGUIUtility.PingObject(mat);
+            
+            Debug.Log($"Created Path Material at {path}. Please assign this to your PathVisualizer.");
         }
     }
 }

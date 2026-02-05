@@ -9,6 +9,8 @@ namespace MaouSamaTD.Units
         private EnemyData _enemyData;
         public EnemyData EnemyData => _enemyData;
 
+        private GridManager _gridManager;
+
         private Queue<Tile> _path;
         private Tile _targetTile;
         private bool _isMoving = false;
@@ -136,15 +138,24 @@ namespace MaouSamaTD.Units
 
         private bool ScanForTarget()
         {
+            if (_gridManager == null) _gridManager = FindObjectOfType<GridManager>();
+            if (_gridManager == null) return false;
+
             Collider[] hits = Physics.OverlapSphere(transform.position, Range);
             foreach (var hit in hits)
             {
                 var unit = hit.GetComponent<PlayerUnit>();
                 if (unit != null && unit.CurrentHp > 0)
                 {
-                    HandleAttack(unit);
-                    FaceTarget(unit.transform.position);
-                    return true;
+                    Vector2Int myPos = _gridManager.WorldToGridCoordinates(transform.position);
+                    Vector2Int targetPos = _gridManager.WorldToGridCoordinates(unit.transform.position);
+
+                    if (IsTargetInPattern(myPos, targetPos, _enemyData != null ? _enemyData.AttackPattern : AttackPattern.All, Range))
+                    {
+                        HandleAttack(unit);
+                        FaceTarget(unit.transform.position);
+                        return true;
+                    }
                 }
             }
             return false;

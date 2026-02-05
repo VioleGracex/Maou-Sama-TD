@@ -207,5 +207,30 @@ namespace MaouSamaTD.Units
             OnDeath?.Invoke();
             Destroy(gameObject);
         }
+
+        protected bool IsTargetInPattern(Vector2Int origin, Vector2Int target, AttackPattern pattern, float range)
+        {
+            int dx = Mathf.Abs(origin.x - target.x);
+            int dy = Mathf.Abs(origin.y - target.y);
+            int iRange = Mathf.CeilToInt(range);
+
+            if (dx > iRange || dy > iRange) return false;
+
+            switch (pattern)
+            {
+                case AttackPattern.Vertical:
+                    return dx == 0 && dy <= iRange;
+                case AttackPattern.Horizontal:
+                    return dy == 0 && dx <= iRange;
+                case AttackPattern.Cross:
+                    return (dx == 0 && dy <= iRange) || (dy == 0 && dx <= iRange);
+                case AttackPattern.Diagonal:
+                    return dx == dy && dx <= iRange;
+                case AttackPattern.All:
+                    return dx <= iRange && dy <= iRange; 
+                default:
+                    return false;
+            }
+        }
     }
 }

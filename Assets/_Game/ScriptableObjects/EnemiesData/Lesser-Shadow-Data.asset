@@ -20,6 +20,7 @@ MonoBehaviour:
   AttackInterval: 1.5
   AttackRange: 1
   DamageToPlayerBase: 1
+  AttackPattern: 3
   MovementType: 0
   CollisionType: 0
   CurrencyReward: 10

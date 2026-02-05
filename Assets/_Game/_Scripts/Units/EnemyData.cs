@@ -29,6 +29,9 @@ namespace MaouSamaTD.Units
         public float AttackRange = 0.5f;
         public float DamageToPlayerBase = 1f;
 
+        [Header("Combat Pattern")]
+        public AttackPattern AttackPattern = AttackPattern.All;
+
         [Header("Behavior")]
         public EnemyMovementType MovementType;
         public EnemyCollisionType CollisionType;

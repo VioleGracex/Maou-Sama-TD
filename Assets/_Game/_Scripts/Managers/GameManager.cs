@@ -29,6 +29,7 @@ namespace MaouSamaTD.Managers
         [SerializeField] private LevelData _testLevelData;
         
         [Header("References")]
+        public MaouSamaTD.Data.UnitDatabase UnitDatabase; // Public for easy access
         [SerializeField] private Material _pathMaterial;
 
         private LevelData _currentLevelData;

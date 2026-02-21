@@ -1,0 +1,45 @@
+# Game Documentation Task List
+
+- [x] Research existing codebase and story elements <!-- id: 0 -->
+    - [x] Explore `Assets/_Game` for context <!-- id: 1 -->
+    - [x] Analyze `Assets/_Game/Scripts/Units` and `Assets/_Game/Scripts/UI` <!-- id: 2 -->
+    - [x] Analyze `Assets/_Game/Scripts/Managers` <!-- id: 3 -->
+- [x] Create Core Documentation <!-- id: 4 -->
+    - [x] Write `Game_Design_Document.md` <!-- id: 5 -->
+    - [x] Write `Theme_and_Atmosphere.md` <!-- id: 6 -->
+    - [x] Write `UI_Design.md` <!-- id: 7 -->
+- [x] Rewrite Narrative and Levels (V2) <!-- id: 18 -->
+    - [x] Rewrite `Storyline.md` (13th Maou Premise) <!-- id: 19 -->
+    - [x] Update `Game_Design_Document.md` (Character Choice) <!-- id: 20 -->
+    - [x] Update `Act1_Levels.md` <!-- id: 21 -->
+    - [x] Update `Act2_Levels.md` <!-- id: 22 -->
+    - [x] Update `Act3_Levels.md` <!-- id: 23 -->
+- [x] Create Development Roadmap <!-- id: 13 -->
+    - [x] Write `Development_Roadmap.md` <!-- id: 14 -->
+- [x] Create Presentation Materials (NotebookLLM) <!-- id: 15 -->
+    - [x] Write `NotebookLLM_UI_Scenes.md` <!-- id: 16 -->
+    - [x] Write `Game_Pitch_Slides.md` <!-- id: 17 -->
+- [x] Refine Naming Conventions <!-- id: 24 -->
+    - [x] Update `Game_Design_Document.md` <!-- id: 25 -->
+    - [x] Update `UI_Design.md` <!-- id: 26 -->
+    - [x] Update `NotebookLLM_UI_Scenes.md` <!-- id: 27 -->
+    - [x] Update `Development_Roadmap.md` & `Game_Pitch_Slides.md` <!-- id: 28 -->
+- [x] Implement "Pact with the World" Lore <!-- id: 29 -->
+    - [x] Update `Storyline.md` (Remove Immune System, Add Pact) <!-- id: 30 -->
+    - [x] Update `Game_Design_Document.md` (Background Story) <!-- id: 31 -->
+    - [x] Update `Act1_Levels.md` (Consistency Check) <!-- id: 32 -->
+- [x] Implement Ignis & Inverse World Twist <!-- id: 33 -->
+    - [x] Update `Storyline.md` (Ignis Backstory, Act 3 Twist) <!-- id: 34 -->
+    - [x] Update `Game_Design_Document.md` (Ignis Character Profile) <!-- id: 35 -->
+    - [x] Update `Act1_Levels.md` (Ignis Dialogue/Intro) <!-- id: 36 -->
+    - [x] Update `Act3_Levels.md` (Inverse World Boss & Ending) <!-- id: 37 -->
+    - [x] Update `Act2_Levels.md` (Foreshadowing) <!-- id: 38 -->
+    - [x] Update `Game_Pitch_Slides.md` (USP Update) <!-- id: 39 -->
+- [x] Define Unit Classes <!-- id: 40 -->
+    - [x] Update `Game_Design_Document.md` (Replace Archetypes with Class Table) <!-- id: 41 -->
+    - [x] Update `Act1_Levels.md` (Align Unit Introductions with new Classes) <!-- id: 42 -->
+- [x] Correct UI Documentation <!-- id: 43 -->
+    - [x] Analyze `MissionReadiness` scripts <!-- id: 45 -->
+    - [x] Rewrite `Campaign_Page_UI_Spec.md` to match codebase <!-- id: 44 -->
+- [ ] Detailed Unit Card Documentation <!-- id: 46 -->
+    - [ ] Create `Unit_Card_UI_Spec.md` <!-- id: 47 -->

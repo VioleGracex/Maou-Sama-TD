@@ -38,6 +38,22 @@ namespace MaouSamaTD.UI.MainMenu
             _data = unit;
             _onClickCallback = onClick;
 
+            if (unit == null)
+            {
+                // Empty Slot State
+                if (_nameText) _nameText.text = "";
+                if (_portraitImage) 
+                {
+                    _portraitImage.sprite = null;
+                    _portraitImage.gameObject.SetActive(false);
+                }
+                if (_classIconImage) _classIconImage.gameObject.SetActive(false);
+                if (_levelText) _levelText.gameObject.SetActive(false);
+                
+                SetSelectionState(-1);
+                return;
+            }
+
             // Visuals
             if (_nameText) _nameText.text = unit.UnitName;
             if (_portraitImage) 
@@ -46,6 +62,9 @@ namespace MaouSamaTD.UI.MainMenu
                 _portraitImage.gameObject.SetActive(unit.UnitIcon != null);
             }
             // If you have class icons, set them here
+            if (_classIconImage) _classIconImage.gameObject.SetActive(true); // Re-enable if disabled
+            if (_levelText) _levelText.gameObject.SetActive(true); // Re-enable
+            
             // if (_classIconImage) _classIconImage.sprite = ...
             
             // Default State

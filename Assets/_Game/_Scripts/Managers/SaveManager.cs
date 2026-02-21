@@ -175,6 +175,37 @@ namespace MaouSamaTD.Managers
             }
         }
         
+        public List<string> GetCohort(int index)
+        {
+            if (CurrentData == null) return new List<string>();
+            
+            // Ensure Cohorts list is initialized
+            if (CurrentData.Cohorts == null) CurrentData.Cohorts = new List<CohortData>();
+            
+            // Ensure specific cohort exists
+            if (index < 0) index = 0;
+            while (CurrentData.Cohorts.Count <= index)
+            {
+                CurrentData.Cohorts.Add(new CohortData($"Cohort {CurrentData.Cohorts.Count + 1}"));
+            }
+            
+            return CurrentData.Cohorts[index].UnitIDs;
+        }
+
+        public void SetCohort(int index, List<string> unitIDs)
+        {
+             if (CurrentData == null) return;
+             // Ensure exists (reuse logic or simplify)
+             GetCohort(index); 
+             
+             CurrentData.Cohorts[index] = new CohortData
+             {
+                 CohortName = CurrentData.Cohorts[index].CohortName,
+                 UnitIDs = unitIDs
+             };
+             Save();
+        }
+
         #endregion
     }
 }

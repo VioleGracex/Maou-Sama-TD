@@ -14,6 +14,24 @@ namespace MaouSamaTD.Data
         
         // Anti-cheat activity log
         public List<ActivityEntry> Activities = new List<ActivityEntry>();
+
+        // Cohort / Squad Data
+        public List<CohortData> Cohorts = new List<CohortData>();
+        public int CurrentCohortIndex = 0;
+    }
+
+    [Serializable]
+    public struct CohortData
+    {
+        public string CohortName;
+        // 12 slots for unit IDs (matching UnitData.UnitID or name)
+        public List<string> UnitIDs; 
+
+        public CohortData(string name)
+        {
+            CohortName = name;
+            UnitIDs = new List<string>(new string[12]); // Initialize with 12 empty slots
+        }
     }
 
     [Serializable]

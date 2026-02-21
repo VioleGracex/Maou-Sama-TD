@@ -19,13 +19,6 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Setup(LevelData data, int index, bool isLocked, int starCount, Action<LevelData> onClick)
         {
-            // If locked, hide completely (per user request)
-            if (isLocked)
-            {
-                gameObject.SetActive(false);
-                return;
-            }
-            
             gameObject.SetActive(true);
             _data = data;
             _onClick = onClick;
@@ -37,7 +30,7 @@ namespace MaouSamaTD.UI.MainMenu
                 _levelNumberText.text = (index + 1).ToString("D2"); // "01", "02"
             
             if (_lockedOverlay != null) 
-                _lockedOverlay.SetActive(false); // We hide the button anyway if locked, but just in case
+                _lockedOverlay.SetActive(isLocked);
             
             if (_button != null)
             {

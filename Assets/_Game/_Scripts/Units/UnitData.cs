@@ -16,9 +16,14 @@ namespace MaouSamaTD.Units
     public class UnitData : ScriptableObject
     {
         [Header("Identity")]
+        public string UnitID; // Unique Identifier
         public string UnitName;
         public Sprite UnitSprite; // Nullable, if null use Initials
         public Sprite UnitIcon;   // Specific icon for UI buttons
+
+        [Header("Progression")]
+        public int Level = 1;
+        public long AcquisitionDate; // Tick for sorting by age
 
         [Header("Class & Rules")]
         public UnitRarity Rarity;

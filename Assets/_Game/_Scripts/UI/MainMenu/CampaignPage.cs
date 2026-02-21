@@ -103,10 +103,11 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnLevelClicked(LevelData level)
         {
-            // Open Briefing Panel first
+            // Open Briefing as a popup window
             if (_briefingPanel != null)
             {
                 _briefingPanel.Setup(level, OnBriefingEngage);
+                MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_briefingPanel);
             }
             else
             {
@@ -121,6 +122,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_missionReadinessUI != null)
             {
                 _missionReadinessUI.Open(level);
+                MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_missionReadinessUI);
                 // gameObject.SetActive(false); // Optional hide CampaignPage
             }
             else

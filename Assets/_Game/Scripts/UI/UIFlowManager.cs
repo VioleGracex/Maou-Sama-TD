@@ -9,45 +9,66 @@ namespace MaouSamaTD.UI
     /// </summary>
     public class UIFlowManager : MonoBehaviour
     {
-        public static UIFlowManager Instance { get; private set; }
-
-        // The History Stack
-        private Stack<IUIController> _panelStack = new Stack<IUIController>();
-
-        private void Awake()
-        {
-            if (Instance == null)
+        #region  Singleton
+        private static UIFlowManager _instance;
+        public static UIFlowManager Instance 
+        { 
+            get
             {
-                Instance = this;
-                // Optionally DontDestroyOnLoad if this persists across all scenes, 
-                // but usually better per-scene if UI setups differ heavily.
-            }
-            else
-            {
-                Destroy(gameObject);
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<UIFlowManager>();
+                    if (_instance == null)
+                    {
+                        var go = new GameObject("UIFlowManager_AutoInstance");
+                        _instance = go.AddComponent<UIFlowManager>();
+                    }
+                }
+                return _instance;
             }
         }
+        #endregion
+
+        #region State
+        private Stack<IUIController> _panelStack = new Stack<IUIController>();
+        #endregion
+
+        #region Initialization
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            _instance = this;
+        }
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
-        /// Pushes a new panel to the front and hides the previous one (if any).
+        /// Attempts to open a new panel. If it AddsToHistory, the previous panel is hidden 
+        /// and it gets pushed to the stack. If not, it simply opens as an overlay.
         /// </summary>
         public void OpenPanel(IUIController newPanel)
         {
             if (newPanel == null) return;
 
-            // Pause/Hide current top panel
-            if (_panelStack.Count > 0)
+            if (newPanel.AddsToHistory)
             {
-                var currentTop = _panelStack.Peek();
-                // Technically we just close it, but it stays in history
-                if (currentTop != null)
+                if (_panelStack.Count > 0)
                 {
-                    currentTop.Close(); 
+                    var currentTop = _panelStack.Peek();
+                    if (currentTop != null)
+                    {
+                        currentTop.Close(); 
+                    }
                 }
+
+                _panelStack.Push(newPanel);
             }
 
-            // Push and open new panel
-            _panelStack.Push(newPanel);
             newPanel.Open();
         }
 
@@ -59,17 +80,15 @@ namespace MaouSamaTD.UI
             if (_panelStack.Count <= 1)
             {
                 Debug.LogWarning("[UIFlowManager] No more history to go back to. Ignoring.");
-                return; // Nothing to go back to, or we don't want to close the absolute root
+                return;
             }
 
-            // Pop and fully close current
             var closingPanel = _panelStack.Pop();
             if (closingPanel != null)
             {
                 closingPanel.Close();
             }
 
-            // Restore the previous panel
             var previousPanel = _panelStack.Peek();
             if (previousPanel != null)
             {
@@ -89,5 +108,6 @@ namespace MaouSamaTD.UI
             }
             _panelStack.Clear();
         }
+        #endregion
     }
 }

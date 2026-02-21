@@ -136,9 +136,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.UnitCardSlot
   _emptyVisual: {fileID: 1469214116517798134}
+  _unitCardView: {fileID: 7027248416961718040}
   _button: {fileID: 5499819212148203361}
-  _indexText: {fileID: 0}
-  _cardVisualPrefab: {fileID: 4525293537770509177}
 --- !u!1 &1469214116517798134
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,13 +434,19 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c68130ef933f5204b9958d680384eb85, type: 3}
---- !u!1 &4525293537770509177 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6493978348501521702, guid: c68130ef933f5204b9958d680384eb85, type: 3}
-  m_PrefabInstance: {fileID: 7264918188279481951}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &4682606768474736237 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2605854181074567218, guid: c68130ef933f5204b9958d680384eb85, type: 3}
   m_PrefabInstance: {fileID: 7264918188279481951}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7027248416961718040 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 385024429928849735, guid: c68130ef933f5204b9958d680384eb85, type: 3}
+  m_PrefabInstance: {fileID: 7264918188279481951}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19a4425aaee2aa044b6d26aa89cc1c09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.UnitCardView

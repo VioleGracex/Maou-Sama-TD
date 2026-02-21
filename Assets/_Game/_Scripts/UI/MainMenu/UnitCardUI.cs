@@ -8,18 +8,22 @@ namespace MaouSamaTD.UI.MainMenu
 {
     public class UnitCardUI : MonoBehaviour
     {
+        [Header("General")]
+        [SerializeField] private GameObject _visualRoot;
+        [SerializeField] private UnitData _data;
+
         [Header("Data")]
         [SerializeField] private Image _portraitImage;
         [SerializeField] private TextMeshProUGUI _nameText;
         [SerializeField] private Image _classIconImage;
         [SerializeField] private TextMeshProUGUI _levelText;
+        [SerializeField] private RectTransform _starsContainer;
 
         [Header("Selection Visuals")]
         [SerializeField] private GameObject _selectedOverlay; // The dark overlay when selected
         [SerializeField] private TextMeshProUGUI _selectionOrderText; // "1", "2", "3"
         [SerializeField] private GameObject _checkMarkIcon; // Optional checkmark
 
-        private UnitData _data;
         private Action<UnitCardUI> _onClickCallback;
 
         public UnitData Data => _data;
@@ -33,22 +37,23 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
-        public void Setup(UnitData unit, Action<UnitCardUI> onClick)
+        public void Setup(UnitData unit, Action<UnitCardUI> onClick = null)
         {
             _data = unit;
-            _onClickCallback = onClick;
+            if (onClick != null) _onClickCallback = onClick;
+
+            if (_visualRoot != null)
+            {
+                _visualRoot.SetActive(unit != null);
+            }
 
             if (unit == null)
             {
-                // Empty Slot State
-                if (_nameText) _nameText.text = "";
-                if (_portraitImage) 
+                if (_starsContainer != null)
                 {
-                    _portraitImage.sprite = null;
-                    _portraitImage.gameObject.SetActive(false);
+                    for (int i = 0; i < _starsContainer.childCount; i++)
+                        _starsContainer.GetChild(i).gameObject.SetActive(false);
                 }
-                if (_classIconImage) _classIconImage.gameObject.SetActive(false);
-                if (_levelText) _levelText.gameObject.SetActive(false);
                 
                 SetSelectionState(-1);
                 return;
@@ -58,14 +63,20 @@ namespace MaouSamaTD.UI.MainMenu
             if (_nameText) _nameText.text = unit.UnitName;
             if (_portraitImage) 
             {
-                _portraitImage.sprite = unit.UnitIcon; // Or UnitSprite if you prefer full body
-                _portraitImage.gameObject.SetActive(unit.UnitIcon != null);
+                _portraitImage.sprite = unit.UnitIcon != null ? unit.UnitIcon : unit.UnitSprite;
+                _portraitImage.gameObject.SetActive(_portraitImage.sprite != null);
             }
-            // If you have class icons, set them here
-            if (_classIconImage) _classIconImage.gameObject.SetActive(true); // Re-enable if disabled
-            if (_levelText) _levelText.gameObject.SetActive(true); // Re-enable
+            if (_classIconImage) _classIconImage.gameObject.SetActive(true); // Disable if unused
+            if (_levelText) _levelText.gameObject.SetActive(true);
             
-            // if (_classIconImage) _classIconImage.sprite = ...
+            if (_starsContainer != null)
+            {
+                int starCount = (int)unit.Rarity + 1; // Rarity is 0-indexed enum
+                for (int i = 0; i < _starsContainer.childCount; i++)
+                {
+                    _starsContainer.GetChild(i).gameObject.SetActive(i < starCount);
+                }
+            }
             
             // Default State
             SetSelectionState(-1);

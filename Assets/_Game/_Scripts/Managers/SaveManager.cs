@@ -93,7 +93,13 @@ namespace MaouSamaTD.Managers
             CurrentData = new PlayerData();
             // Initial New Game State
             CurrentData.Currency = 0;
-            CurrentData.UnlockedUnits = new List<string>(); // IDs of starter units if any
+            CurrentData.UnlockedUnits = new List<string>()
+            {
+                "Ignis", // Default Starter Unit
+                
+            }; 
+            
+            Debug.Log($"[SaveManager] Created New Save Data. Granted Default Units: {string.Join(", ", CurrentData.UnlockedUnits)}");
             Save();
         }
 

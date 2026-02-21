@@ -9,7 +9,7 @@ namespace MaouSamaTD.Editor
 {
     public class GameSetupTools : EditorWindow
     {
-        [MenuItem("Tools/MaouSamaTD/Generate UI Panels (InGame)")]
+        [MenuItem("Tools/Maou Sama TD/Generate UI Panels (InGame)")]
         public static void GeneratePanels()
         {
 
@@ -115,7 +115,7 @@ namespace MaouSamaTD.Editor
             return panel;
         }
 
-        [MenuItem("Tools/MaouSamaTD/Generate Cohort & Menu UI")]
+        [MenuItem("Tools/Maou Sama TD/Generate Cohort & Menu UI")]
         public static void GenerateMenuUI()
         {
              Canvas canvas = FindFirstObjectByType<Canvas>();
@@ -203,7 +203,7 @@ namespace MaouSamaTD.Editor
              Debug.Log("Generated Menu UI Structures.");
         }
 
-        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Unit Card Prefab")]
+        [MenuItem("Tools/Maou Sama TD/UI Components/Generate Unit Card Prefab")]
         public static void GenerateUnitCardPrefab()
         {
             Canvas canvas = FindFirstObjectByType<Canvas>();
@@ -304,7 +304,7 @@ namespace MaouSamaTD.Editor
             tmp.color = Color.white;
         }
 
-        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Squad Panel (12 Slots)")]
+        [MenuItem("Tools/Maou Sama TD/UI Components/Generate Squad Panel (12 Slots)")]
         public static void GenerateSquadPanel()
         {
             Canvas canvas = FindFirstObjectByType<Canvas>();
@@ -331,7 +331,7 @@ namespace MaouSamaTD.Editor
             Debug.Log("Generated Squad Panel.");
         }
 
-        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Unit Inventory (Scroll)")]
+        [MenuItem("Tools/Maou Sama TD/UI Components/Generate Unit Inventory (Scroll)")]
         public static void GenerateInventoryPanel()
         {
             Canvas canvas = FindFirstObjectByType<Canvas>();
@@ -377,7 +377,7 @@ namespace MaouSamaTD.Editor
             Debug.Log("Generated Inventory Scroll View.");
         }
 
-        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Stats Panel (Sidebar)")]
+        [MenuItem("Tools/Maou Sama TD/UI Components/Generate Stats Panel (Sidebar)")]
         public static void GenerateStatsPanel()
         {
             Canvas canvas = FindFirstObjectByType<Canvas>();
@@ -426,7 +426,7 @@ namespace MaouSamaTD.Editor
             Debug.Log("Generated Stats Sidebar with linked references.");
         }
 
-        [MenuItem("Tools/MaouSamaTD/UI Components/Generate Filter Bar")]
+        [MenuItem("Tools/Maou Sama TD/UI Components/Generate Filter Bar")]
         public static void GenerateFilterBar()
         {
              Canvas canvas = FindFirstObjectByType<Canvas>();
@@ -491,7 +491,7 @@ namespace MaouSamaTD.Editor
                 prop.objectReferenceValue = value;
             }
         }
-        [MenuItem("Tools/MaouSamaTD/Create Wall Material", false, 52)]
+        [MenuItem("Tools/Maou Sama TD/Create Wall Material", false, 52)]
         public static void CreateWallMaterial()
         {
             string path = "Assets/_Game/Art/Materials/GeneratedWall.mat";
@@ -516,7 +516,7 @@ namespace MaouSamaTD.Editor
             Debug.Log($"Created Wall Material at {path}. Please assign this to your GridGenerator.");
         }
 
-        [MenuItem("Tools/MaouSamaTD/Create Path Material", false, 53)]
+        [MenuItem("Tools/Maou Sama TD/Create Path Material", false, 53)]
         public static void CreatePathMaterial()
         {
             string path = "Assets/_Game/Art/Materials/GeneratedPath.mat";

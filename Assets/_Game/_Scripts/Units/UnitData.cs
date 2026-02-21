@@ -52,6 +52,9 @@ namespace MaouSamaTD.Units
 
         private void OnValidate()
         {
+            // Auto-fill UnitID if empty to prevent lookup errors
+            if (string.IsNullOrEmpty(UnitID)) UnitID = name;
+
             // Set defaults if empty based on class
             if (ViableTiles == null || ViableTiles.Count == 0)
             {

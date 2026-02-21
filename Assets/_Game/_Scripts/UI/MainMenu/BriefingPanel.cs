@@ -9,9 +9,11 @@ namespace MaouSamaTD.UI.MainMenu
 {
     public class BriefingPanel : MonoBehaviour, IUIController
     {
+        #region Variables
         [Header("UI Components")]
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
+        public bool AddsToHistory => false;
         [SerializeField] private TextMeshProUGUI _titleText;
         [SerializeField] private TextMeshProUGUI _descriptionText;
         [SerializeField] private TextMeshProUGUI _rewardValueText;
@@ -23,7 +25,9 @@ namespace MaouSamaTD.UI.MainMenu
 
         private LevelData _currentLevel;
         private Action<LevelData> _onEngageClicked;
+        #endregion
 
+        #region Unity Methods
         private void Start()
         {
             if (_engageButton != null)
@@ -31,36 +35,32 @@ namespace MaouSamaTD.UI.MainMenu
                 _engageButton.onClick.AddListener(OnEngage);
             }
         }
+        #endregion
 
+        #region Public Methods
         public void Setup(LevelData level, Action<LevelData> onEngageCallback)
         {
             _currentLevel = level;
             _onEngageClicked = onEngageCallback;
 
-            if (_titleText != null) _titleText.text = level.LevelName; // Or use "1-1 THE OBSIDIAN..." format if preferred
+            if (_titleText != null) _titleText.text = level.LevelName;
             if (_descriptionText != null) _descriptionText.text = level.Description;
             if (_rewardValueText != null) _rewardValueText.text = level.RewardCurrency.ToString();
-
-            // We do not call Open() here, we let the external system (like CampaignPage) 
-            // call UIFlowManager.Instance.OpenPanel(this) later, which then calls Open().
         }
 
         public void Open()
         {
-            if (_visualRoot == null) return;
+            if (_visualRoot == null)
+            {
+                Debug.LogError($"[UIFlow] {gameObject.name} (BriefingPanel) cannot open! _visualRoot is not assigned in the Inspector.");
+                return;
+            }
             _visualRoot.SetActive(true);
             
-            // DOTween pop-up animation
             _visualRoot.transform.localScale = Vector3.zero;
             _visualRoot.transform.DOScale(Vector3.one, _animDuration).SetEase(_animEase).SetUpdate(true);
         }
 
-        private void OnEngage()
-        {
-            _onEngageClicked?.Invoke(_currentLevel);
-            // Let the callback (usually MissionReadinessManager open) handle what comes next!
-        }
-        
         public void Close()
         {
             if (_visualRoot == null || !_visualRoot.activeSelf) return;
@@ -69,5 +69,14 @@ namespace MaouSamaTD.UI.MainMenu
                 _visualRoot.SetActive(false);
             });
         }
+        #endregion
+
+        #region Private Methods
+        private void OnEngage()
+        {
+            Close();
+            _onEngageClicked?.Invoke(_currentLevel);
+        }
+        #endregion
     }
 }

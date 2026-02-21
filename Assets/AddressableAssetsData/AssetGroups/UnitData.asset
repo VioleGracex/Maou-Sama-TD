@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UnitData
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: UnitData
+  m_GUID: 04cd9117d50264444baef4519d7d9bf4
+  m_SerializeEntries:
+  - m_GUID: 30760c1cf17c6a84ea8f3d9493c5ca88
+    m_Address: UnitDatabase
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc288bac2fbb05147ae9f01dd64f25a7
+    m_Address: Ignis
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 19b417a427e1a474d9e81fbe4eae59a7, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: f031dc22d6807924aab9cfd9db39697c, type: 2}
+    - {fileID: 11400000, guid: 422864c090bc0f14bbc7fb5ebaecd67b, type: 2}

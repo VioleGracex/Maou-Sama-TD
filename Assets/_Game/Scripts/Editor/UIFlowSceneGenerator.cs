@@ -11,7 +11,7 @@ namespace MaouSamaTD.EditorTools
 {
     public class UIFlowSceneGenerator : EditorWindow
     {
-        [MenuItem("Maou Sama TD/Generate UI Flow Sandbox")]
+        [MenuItem("Tools/Maou Sama TD/Generate UI Flow Sandbox")]
         public static void GenerateScene()
         {
             // 1. Create a new empty scene
@@ -170,9 +170,9 @@ namespace MaouSamaTD.EditorTools
             GetComponent<Button>().onClick.AddListener(() => 
             {
                 if (ActionName.Contains("Back")) UIFlowManager.Instance.GoBack();
-                else if (ActionName.Contains("START")) FindObjectOfType<BriefingPanel>().Open();
-                else if (ActionName.Contains("Readiness")) UIFlowManager.Instance.OpenPanel(FindObjectOfType<MissionReadinessPanel>());
-                else if (ActionName.Contains("Barracks")) UIFlowManager.Instance.OpenPanel(FindObjectOfType<UnitSelectionPanel>());
+                else if (ActionName.Contains("START")) FindFirstObjectByType<BriefingPanel>().Open();
+                else if (ActionName.Contains("Readiness")) UIFlowManager.Instance.OpenPanel(FindFirstObjectByType<MissionReadinessPanel>());
+                else if (ActionName.Contains("Barracks")) UIFlowManager.Instance.OpenPanel(FindFirstObjectByType<UnitSelectionPanel>());
             });
         }
     }

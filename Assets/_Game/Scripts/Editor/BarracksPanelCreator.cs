@@ -11,7 +11,7 @@ namespace MaouSamaTD.EditorTools
         [MenuItem("Tools/Maou Sama TD/Create Barracks Panel")]
         public static void CreateBarracksPanel()
         {
-            Canvas canvas = GameObject.FindObjectOfType<Canvas>();
+            Canvas canvas = GameObject.FindFirstObjectByType<Canvas>();
             if (canvas == null)
             {
                 GameObject canvasObject = new GameObject("Canvas");
@@ -129,7 +129,7 @@ namespace MaouSamaTD.EditorTools
                 var dTmp = skillDescs[i].GetComponent<TextMeshProUGUI>();
                 dTmp.text = "Skill description...";
                 dTmp.fontSize = 18;
-                dTmp.enableWordWrapping = true;
+                dTmp.textWrappingMode  = TextWrappingModes.Normal;
             }
 
             // 2. Scroll View (Middle)

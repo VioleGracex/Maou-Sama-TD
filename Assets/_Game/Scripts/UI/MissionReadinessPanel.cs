@@ -7,9 +7,12 @@ namespace MaouSamaTD.UI
 {
     public class MissionReadinessPanel : MonoBehaviour, IUIController
     {
+        #region Variables
         [Header("UI Controller Architecture")]
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
+        public bool AddsToHistory => true;
+        [SerializeField] private TMPro.TextMeshProUGUI _titleText;
         [SerializeField] private UnitSelectionPanel _unitSelectionController;
 
         [Header("Preassigned Cohort Slots")]
@@ -21,20 +24,21 @@ namespace MaouSamaTD.UI
         
         [Header("Actions")]
         [SerializeField] private Button _startBattleButton;
-        [SerializeField] private Button _backButton; // Optional return to briefing/campaign
+        [SerializeField] private Button _backButton;
         [SerializeField] private Button _removeAllButton;
-        [SerializeField] private Button _barracksButton; // Multi-Select
+        [SerializeField] private Button _barracksButton;
 
-        [Inject] private MaouSamaTD.Managers.GameManager _gameManager; 
+
         [Inject] private MaouSamaTD.Managers.GameSelectionState _selectionState;
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
 
-        // Temporary local reference until injection is sorted
         private MaouSamaTD.Data.PlayerData _playerData;  
         private MaouSamaTD.Levels.LevelData _currentLevel;
         private bool _isLockedMode = false;
         private List<string> _lockedUnitIDs = new List<string>();
+        #endregion
 
+        #region Unity Methods
         private void Start()
         {
             if (_startBattleButton != null) _startBattleButton.onClick.AddListener(OnStartBattle);
@@ -42,7 +46,6 @@ namespace MaouSamaTD.UI
             if (_removeAllButton != null) _removeAllButton.onClick.AddListener(OnRemoveAllClicked);
             if (_barracksButton != null) _barracksButton.onClick.AddListener(OnBarracksClicked);
 
-            // Mock PlayerData if not found (for testing)
             if (_playerData == null)
             {
                  _playerData = new MaouSamaTD.Data.PlayerData(); 
@@ -56,40 +59,69 @@ namespace MaouSamaTD.UI
             SetupCohortButtons();
             RefreshUI();
         }
+        #endregion
 
+        #region Public Methods
         public void Open()
         {
-            if (_visualRoot != null) _visualRoot.SetActive(true);
+            if (_visualRoot == null)
+            {
+                Debug.LogError($"[UIFlow] {gameObject.name} (MissionReadinessPanel) cannot open! _visualRoot is not assigned in the Inspector.");
+                return;
+            }
+            _visualRoot.SetActive(true);
             RefreshUI();
         }
 
         public void Open(MaouSamaTD.Levels.LevelData level)
         {
+            if (_visualRoot == null)
+            {
+                Debug.LogError($"[UIFlow] {gameObject.name} (MissionReadinessPanel) cannot open! _visualRoot is not assigned in the Inspector.");
+                return;
+            }
+            _visualRoot.SetActive(true);
+
             _currentLevel = level;
             
             _isLockedMode = false;
             _lockedUnitIDs.Clear();
             
+            if (_titleText != null)
+            {
+                _titleText.text = level != null ? level.LevelName : "MISSION READINESS";
+            }
+            
             if (_currentLevel != null)
             {
-                _isLockedMode = _currentLevel.IsCohortLocked;
+                _isLockedMode = _currentLevel.IsCohortLocked || (_currentLevel.PremadeCohort != null && _currentLevel.PremadeCohort.Count > 0);
+                Debug.Log($"[MissionReadinessPanel] Opening level '{_currentLevel.LevelName}'. IsLockedMode: {_isLockedMode}");
                 
-                if (_currentLevel.PremadeCohort != null)
+                if (_currentLevel.PremadeCohort != null && _currentLevel.PremadeCohort.Count > 0)
                 {
+                    Debug.Log($"[MissionReadinessPanel] Premade cohort found. Units count: {_currentLevel.PremadeCohort.Count}");
                     foreach (var unit in _currentLevel.PremadeCohort)
                     {
-                        _lockedUnitIDs.Add(unit != null ? unit.UnitID : "");
+                        string idToUse = "";
+                        if (unit != null) 
+                        {
+                            idToUse = string.IsNullOrEmpty(unit.UnitID) ? unit.name : unit.UnitID;
+                            Debug.Log($"[MissionReadinessPanel] Processing Cohort Unit: SO_Name={unit.name}, ID={unit.UnitID}, IDToUse={idToUse}, Name={unit.UnitName}");
+                        }
+                        _lockedUnitIDs.Add(idToUse);
                     }
                 }
+                else
+                {
+                    Debug.Log($"[MissionReadinessPanel] Free cohort mode.");
+                }
                 
-                // Pad squad to 10
                 int squadSize = 10;
                 while (_lockedUnitIDs.Count < squadSize) _lockedUnitIDs.Add(""); 
                 
                 if (!_isLockedMode && _playerData != null && _playerData.Cohorts.Count > 0)
                 {
                     var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-                    // Overwrite cohort with premade up to 10 slots
                     for(int i = 0; i < squadSize; i++)
                     {
                         if (cohort.UnitIDs.Count > i) cohort.UnitIDs[i] = _lockedUnitIDs[i];
@@ -98,11 +130,16 @@ namespace MaouSamaTD.UI
                 }
             }
 
-            // Let the external caller (BriefingManager) push this to Flow Manager
-            // which will call Open() manually.
             SetUIState();
         }
 
+        public void Close()
+        {
+            if (_visualRoot != null) _visualRoot.SetActive(false);
+        }
+        #endregion
+
+        #region Private Methods
         private void SetUIState()
         {
             bool interactable = !_isLockedMode;
@@ -117,11 +154,8 @@ namespace MaouSamaTD.UI
             
             if (_removeAllButton != null) _removeAllButton.interactable = interactable;
             if (_barracksButton != null) _barracksButton.interactable = interactable;
-        }
-
-        public void Close()
-        {
-            if (_visualRoot != null) _visualRoot.SetActive(false);
+            
+            // Slots interactivity is handled per-slot in RefreshUI based on locked assignments
         }
 
         private void SetupSlots()
@@ -132,7 +166,6 @@ namespace MaouSamaTD.UI
                 if (slot != null)
                 {
                     slot.SetIndex(i);
-                    // Remove listener to prevent duplicates in case this is called twice somehow
                     slot.OnClick -= OnSlotClicked;
                     slot.OnClick += OnSlotClicked;
                 }
@@ -159,10 +192,9 @@ namespace MaouSamaTD.UI
 
         private void OnSlotClicked(int index)
         {
-            if (index < 10 && _isLockedMode) return; // Disable interaction in locked mode for squad
-            if (index == 10 && _currentLevel != null && _currentLevel.IsAssistantLocked) return; // Disable for locked assistant
+            if (index < 10 && _isLockedMode) return;
+            if (index == 10 && _currentLevel != null && _currentLevel.IsAssistantLocked) return;
 
-            // Open Unit Selection Panel via Flow Manager
             if (_unitSelectionController != null)
             {
                 _unitSelectionController.Open(index, OnUnitSelected); 
@@ -192,12 +224,17 @@ namespace MaouSamaTD.UI
                 if (slot == null) continue;
 
                 string unitID = "";
+                bool isSlotLocked = false;
 
-                if (i < 10) // Squad slot
+                if (i < 10)
                 {
-                    if (_isLockedMode && _lockedUnitIDs.Count > i)
+                    if (_isLockedMode)
                     {
-                        unitID = _lockedUnitIDs[i];
+                        isSlotLocked = true;
+                        if (_lockedUnitIDs.Count > i && !string.IsNullOrEmpty(_lockedUnitIDs[i]))
+                        {
+                            unitID = _lockedUnitIDs[i];
+                        }
                     }
                     else if (_playerData.Cohorts.Count > 0)
                     {
@@ -205,15 +242,17 @@ namespace MaouSamaTD.UI
                         unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
                     }
                 }
-                else if (i == 10) // Assistant slot
+                else if (i == 10) // Assistant Slot
                 {
                     if (_currentLevel != null && _currentLevel.IsAssistantLocked)
                     {
                         unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UnitID : "";
+                        isSlotLocked = true;
                     }
                     else if (_playerData.Cohorts.Count > 0)
                     {
                         var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
+                        // Assuming 11th slot in cohort data, or handle independently if it doesn't exist
                         unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
                     }
                 }
@@ -221,13 +260,28 @@ namespace MaouSamaTD.UI
                 if (string.IsNullOrEmpty(unitID))
                 {
                     slot.SetEmpty();
+                    
+                    Button slotBtn = slot.GetComponent<Button>();
+                    if (slotBtn != null) slotBtn.interactable = !isSlotLocked;
                 }
                 else
                 {
-                    if (_gameManager != null && _gameManager.UnitDatabase != null)
+                    if (MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null)
                     {
-                        var unitData = _gameManager.UnitDatabase.GetUnitByID(unitID);
-                        slot.SetUnit(unitData);
+                        var unitData = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(unitID);
+                        if (unitData != null)
+                        {
+                            slot.SetUnit(unitData);
+                            // Debug.Log($"[MissionReadinessPanel] Slot {i} populated with unit: {unitData.UnitName}");
+                        }
+                        else
+                        {
+                            Debug.LogError($"[MissionReadinessPanel] Slot {i} requested unitID '{unitID}' but it was not found in UnitDatabase.");
+                            slot.SetEmpty();
+                        }
+                        
+                        Button slotBtn = slot.GetComponent<Button>();
+                        if (slotBtn != null) slotBtn.interactable = !isSlotLocked;
                     }
                 }
             }
@@ -241,14 +295,13 @@ namespace MaouSamaTD.UI
                 return;
             }
 
-             // Gather units from current cohort or locked list
              List<MaouSamaTD.Units.UnitData> selectedUnits = new List<MaouSamaTD.Units.UnitData>();
              
              for (int i = 0; i < _preassignedSlots.Count; i++)
              {
                  string unitID = "";
 
-                 if (i < 10) // Squad slot
+                 if (i < 10)
                  {
                      if (_isLockedMode && _lockedUnitIDs.Count > i)
                      {
@@ -260,7 +313,7 @@ namespace MaouSamaTD.UI
                          unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
                      }
                  }
-                 else if (i == 10) // Assistant slot
+                 else if (i == 10)
                  {
                      if (_currentLevel != null && _currentLevel.IsAssistantLocked)
                      {
@@ -273,9 +326,9 @@ namespace MaouSamaTD.UI
                      }
                  }
 
-                 if (!string.IsNullOrEmpty(unitID) && _gameManager != null)
+                 if (!string.IsNullOrEmpty(unitID) && MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null)
                  {
-                     var unitData = _gameManager.UnitDatabase.GetUnitByID(unitID);
+                     var unitData = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(unitID);
                      if (unitData != null) selectedUnits.Add(unitData);
                  }
              }
@@ -283,7 +336,6 @@ namespace MaouSamaTD.UI
              if (selectedUnits.Count == 0)
              {
                  Debug.LogWarning("Starting battle with 0 units!");
-                 // Return or allow?
              }
 
              if (_selectionState != null)
@@ -312,13 +364,10 @@ namespace MaouSamaTD.UI
              {
                  var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
                  
-                 
-                 // Multi-select only operates on the 10 squad slots, not the assistant!
                  int squadSize = Mathf.Min(10, _preassignedSlots.Count);
 
                  _unitSelectionController.OpenMultiSelect(cohort.UnitIDs, squadSize, (selectedIds) => 
                  {
-                     // Apply ordered selection strictly up to squad size
                      for(int i = 0; i < squadSize; i++)
                      {
                          if(i < selectedIds.Count)
@@ -341,5 +390,6 @@ namespace MaouSamaTD.UI
                  Debug.LogError("UnitSelectionController reference not assigned!");
              }
         }
+        #endregion
     }
 }

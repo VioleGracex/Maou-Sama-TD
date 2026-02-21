@@ -9,7 +9,7 @@ public class TMProFontAssetCreator : EditorWindow
     private DefaultAsset sourceFolder;
     private DefaultAsset targetFolder;
 
-    [MenuItem("Tools/Create TMPro Font Assets")]
+    [MenuItem("Tools/Maou Sama TD/Create TMPro Font Assets")]
     public static void ShowWindow()
     {
         GetWindow<TMProFontAssetCreator>("TMPro Font Creator");

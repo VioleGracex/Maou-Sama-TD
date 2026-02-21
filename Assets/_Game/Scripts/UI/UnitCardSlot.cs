@@ -8,7 +8,7 @@ namespace MaouSamaTD.UI
     public class UnitCardSlot : MonoBehaviour
     {
         [SerializeField] private GameObject _emptyVisual; // Visual graphic representing empty state ("+")
-        [SerializeField] private UnitCardView _unitCardView; // The pre-placed unit card child object
+        [SerializeField] private MaouSamaTD.UI.MainMenu.UnitCardUI _unitCardUI; // The pre-placed unit card child object
         [SerializeField] private Button _button;
         
         public event System.Action<int> OnClick;
@@ -29,10 +29,9 @@ namespace MaouSamaTD.UI
         {
             if (_emptyVisual != null) _emptyVisual.SetActive(false);
 
-            if (_unitCardView != null)
+            if (_unitCardUI != null)
             {
-                _unitCardView.gameObject.SetActive(true);
-                _unitCardView.SetData(unitData);
+                _unitCardUI.Setup(unitData);
             }
         }
 
@@ -40,9 +39,9 @@ namespace MaouSamaTD.UI
         {
             if (_emptyVisual != null) _emptyVisual.SetActive(true);
 
-            if (_unitCardView != null)
+            if (_unitCardUI != null)
             {
-                _unitCardView.gameObject.SetActive(false);
+                _unitCardUI.Setup(null);
             }
         }
 

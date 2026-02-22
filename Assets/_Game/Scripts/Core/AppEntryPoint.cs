@@ -12,6 +12,8 @@ namespace MaouSamaTD.Core
     {
         [Header("UI Blocking")]
         [SerializeField] private GameObject _loadingScreenRoot;
+        [SerializeField] private GameObject _homeScreenRoot;
+        [SerializeField] private MaouSamaTD.UI.MainMenu.AscensionPanel _ascensionPanel;
 
         [Inject] private SaveManager _saveManager;
         
@@ -60,6 +62,18 @@ namespace MaouSamaTD.Core
 
             Debug.Log("[AppEntryPoint] App Initialization Complete. Enabling UI...");
             if (_loadingScreenRoot != null) _loadingScreenRoot.SetActive(false);
+            
+            // Check if this is a fresh new save
+            if (_saveManager.CurrentData.PlayerName == "Mephisto" && _ascensionPanel != null)
+            {
+                Debug.Log("[AppEntryPoint] Fresh save detected. Triggering Ascension Sequence.");
+                _ascensionPanel.Open();
+                if (_homeScreenRoot != null) _homeScreenRoot.SetActive(false);
+            }
+            else
+            {
+                if (_homeScreenRoot != null) _homeScreenRoot.SetActive(true);
+            }
             
             // You can optionally fire a global event here if other scripts are waiting for init
         }

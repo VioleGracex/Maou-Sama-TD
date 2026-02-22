@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace MaouSamaTD.Data
 {
@@ -11,6 +12,11 @@ namespace MaouSamaTD.Data
         public List<LevelStarData> LevelStars = new List<LevelStarData>();
         public List<string> UnlockedUnits = new List<string>();
         public int Currency;
+
+        [Header("Ascension Identity")]
+        public string PlayerName = "Mephisto"; // Custom input
+        public string TrueName = "Tyrant"; // e.g. "Tyrant" or "Sovereign"
+        public MaouGender Gender = MaouGender.Male; // e.g. Male(Force) / Female(Guile)
         
         // Anti-cheat activity log
         public List<ActivityEntry> Activities = new List<ActivityEntry>();
@@ -58,5 +64,12 @@ namespace MaouSamaTD.Data
             ActivityName = activityName;
             Count = count;
         }
+    }
+
+    [Serializable]
+    public enum MaouGender
+    {
+        Male = 0,   // Force / Sovereign
+        Female = 1  // Guile / Sovereign
     }
 }

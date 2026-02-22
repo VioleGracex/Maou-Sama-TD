@@ -137,6 +137,13 @@ namespace MaouSamaTD.UI
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
         }
+
+        public void ResetState()
+        {
+            _currentLevel = null;
+            _isLockedMode = false;
+            if (_lockedUnitIDs != null) _lockedUnitIDs.Clear();
+        }
         #endregion
 
         #region Private Methods

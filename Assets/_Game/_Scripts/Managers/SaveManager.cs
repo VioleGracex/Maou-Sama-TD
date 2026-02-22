@@ -115,6 +115,23 @@ namespace MaouSamaTD.Managers
         
         #region Public API
         
+        public void DeleteSaveData()
+        {
+            if (File.Exists(SavePath))
+            {
+                try
+                {
+                    File.Delete(SavePath);
+                    Debug.Log("[SaveManager] Save Data Deleted successfully.");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[SaveManager] Failed to delete save data: {e.Message}");
+                }
+            }
+            CurrentData = null;
+        }
+
         public void AddCurrency(int amount)
         {
             if (CurrentData == null) return;

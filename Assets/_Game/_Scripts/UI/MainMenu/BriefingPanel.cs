@@ -69,6 +69,13 @@ namespace MaouSamaTD.UI.MainMenu
                 _visualRoot.SetActive(false);
             });
         }
+
+        public void ResetState()
+        {
+            // Reset state for Briefing Panel if needed
+            _currentLevel = null;
+            _onEngageClicked = null;
+        }
         #endregion
 
         #region Private Methods

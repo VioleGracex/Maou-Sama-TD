@@ -6,8 +6,14 @@ using Zenject;
 
 namespace MaouSamaTD.UI.MainMenu
 {
-    public class CampaignPage : MonoBehaviour
+    public class CampaignPage : MonoBehaviour, IUIController
     {
+        [Header("UI Controller Architecture")]
+        [SerializeField] private GameObject _visualRoot;
+        public GameObject VisualRoot => _visualRoot;
+        public bool AddsToHistory => true;
+
+        [Header("References")]
         [SerializeField] private Transform _levelContainer;
         [SerializeField] private LevelButton _levelButtonPrefab;
         [SerializeField] private List<LevelData> _allLevels; 
@@ -26,6 +32,27 @@ namespace MaouSamaTD.UI.MainMenu
         {
             Debug.Log("[CampaignPage]start");
             Refresh();
+        }
+
+        public void Open()
+        {
+            if (_visualRoot != null) _visualRoot.SetActive(true);
+            Refresh();
+        }
+
+        public void Close()
+        {
+            if (_visualRoot != null) _visualRoot.SetActive(false);
+        }
+
+        public void ResetState()
+        {
+            // The user wanted pages to look fresh. For the Campaign Page, that means maybe clearing the briefing if it was open.
+            if (_briefingPanel != null)
+            {
+                // Call hide/close on briefing if needed, but UIFlowManager handles full-screen pages.
+                // Resetting scrollbars or similar visual states can go here in the future.
+            }
         }
 
         public void Refresh()

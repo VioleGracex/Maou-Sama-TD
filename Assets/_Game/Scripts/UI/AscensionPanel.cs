@@ -103,8 +103,6 @@ namespace MaouSamaTD.UI.MainMenu
         {
             _selectedGender = gender;
             _selectedTrueName = trueName;
-            
-            RefreshHighlights();
 
             if (!_hasSelectedClass)
             {
@@ -118,6 +116,7 @@ namespace MaouSamaTD.UI.MainMenu
                 }
             }
             
+            RefreshHighlights();
             ValidateInput();
         }
 

@@ -173,15 +173,11 @@ namespace MaouSamaTD.Editor
              BriefingPanel bp = briefingPanel.GetComponent<BriefingPanel>();
              if (bp == null) bp = briefingPanel.AddComponent<BriefingPanel>();
              
-             // Add CohortSelectionUI
-             CohortSelectionUI cs = cohortPanel.GetComponent<CohortSelectionUI>();
-             if (cs == null) cs = cohortPanel.AddComponent<CohortSelectionUI>();
-             
              // Link References using SerializedObject
              SerializedObject cpSo = new SerializedObject(cp);
              SetProperty(cpSo, "_levelContainer", levelGrid.transform);
              SetProperty(cpSo, "_briefingPanel", bp);
-             SetProperty(cpSo, "_cohortSelectionUI", cs);
+             // Removed CohortSelectionUI reference
              cpSo.ApplyModifiedProperties();
              
              SerializedObject bpSo = new SerializedObject(bp);
@@ -191,15 +187,8 @@ namespace MaouSamaTD.Editor
              SetProperty(bpSo, "_engageButton", engageBtn);
              bpSo.ApplyModifiedProperties();
              
-             SerializedObject csSo = new SerializedObject(cs);
-             SetProperty(csSo, "_panel", cohortPanel);
-             SetProperty(csSo, "_unitSlotsContainer", slotsContainer.transform);
-             SetProperty(csSo, "_startBattleButton", startBattleBtn);
-             SetProperty(csSo, "_backButton", backBtn);
-             SetProperty(csSo, "_campaignPageObject", campaignPage);
-             // csSo.ApplyModifiedProperties(); // Requires _unitSlotPrefab which we can't generate easily, user needs to assign.
-             csSo.ApplyModifiedProperties();
-
+             // CohortSelection properties removed
+             
              Debug.Log("Generated Menu UI Structures.");
         }
 

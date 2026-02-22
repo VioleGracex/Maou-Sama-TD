@@ -5,14 +5,14 @@ using MaouSamaTD.Data;
 using MaouSamaTD.Managers;
 using Zenject;
 using System.Collections;
+using System;
 
 namespace MaouSamaTD.Core
 {
     public class AppEntryPoint : MonoBehaviour
     {
-        [Header("UI Blocking")]
-        [SerializeField] private GameObject _loadingScreenRoot;
-        [SerializeField] private GameObject _homeScreenRoot;
+        [Header("UI Routing")]
+        [SerializeField] private MaouSamaTD.UI.MainMenu.HomeUIManager _homeUIManager;
         [SerializeField] private MaouSamaTD.UI.MainMenu.AscensionPanel _ascensionPanel;
 
         [Inject] private SaveManager _saveManager;
@@ -20,28 +20,28 @@ namespace MaouSamaTD.Core
         // This is a static reference we can use universally since it will be loaded from Addressables
         public static UnitDatabase LoadedUnitDatabase { get; private set; }
 
-        private void Awake()
+        public void StartBootSequence(Action<float> onProgress, Action onComplete)
         {
-            // Activate the loading screen instantly on frame 1
-            if (_loadingScreenRoot != null) _loadingScreenRoot.SetActive(true);
+            StartCoroutine(InitializeGameDataCoroutine(onProgress, onComplete));
         }
 
-        private void Start()
-        {
-            // Wait until Start() to run the coroutine, because Zenject processes [Inject] AFTER Awake()
-            StartCoroutine(InitializeGameDataCoroutine());
-        }
-
-        private IEnumerator InitializeGameDataCoroutine()
+        private IEnumerator InitializeGameDataCoroutine(Action<float> onProgress, Action onComplete)
         {
             Debug.Log("[AppEntryPoint] Bootstrapping Addressables...");
             var initHandle = Addressables.InitializeAsync();
-            yield return initHandle;
+            while (!initHandle.IsDone)
+            {
+                onProgress?.Invoke(initHandle.PercentComplete * 0.2f);
+                yield return null;
+            }
 
             Debug.Log("[AppEntryPoint] Loading UnitDatabase from Addressables...");
-            // Notice we load using the exact address we assigned via MCP ("UnitDatabase")
             var dbHandle = Addressables.LoadAssetAsync<UnitDatabase>("UnitDatabase");
-            yield return dbHandle;
+            while (!dbHandle.IsDone)
+            {
+                onProgress?.Invoke(0.2f + dbHandle.PercentComplete * 0.7f);
+                yield return null;
+            }
 
             if (dbHandle.Status == AsyncOperationStatus.Succeeded)
             {
@@ -60,22 +60,26 @@ namespace MaouSamaTD.Core
                  _saveManager.Load();
             }
 
-            Debug.Log("[AppEntryPoint] App Initialization Complete. Enabling UI...");
-            if (_loadingScreenRoot != null) _loadingScreenRoot.SetActive(false);
+            onProgress?.Invoke(1.0f);
+            onComplete?.Invoke();
+        }
+
+        public void ProceedToGame()
+        {
+            Debug.Log("[AppEntryPoint] App Initialization Complete. Proceeding to destination...");
             
             // Check if this is a fresh new save
-            if (_saveManager.CurrentData.PlayerName == "Mephisto" && _ascensionPanel != null)
+            if (_saveManager.CurrentData != null && _saveManager.CurrentData.PlayerName == "Mephisto" && _ascensionPanel != null)
             {
                 Debug.Log("[AppEntryPoint] Fresh save detected. Triggering Ascension Sequence.");
                 _ascensionPanel.Open();
-                if (_homeScreenRoot != null) _homeScreenRoot.SetActive(false);
+                if (_homeUIManager != null) _homeUIManager.Close();
             }
             else
             {
-                if (_homeScreenRoot != null) _homeScreenRoot.SetActive(true);
+                if (_homeUIManager != null) _homeUIManager.Open();
             }
-            
-            // You can optionally fire a global event here if other scripts are waiting for init
         }
     }
 }
+

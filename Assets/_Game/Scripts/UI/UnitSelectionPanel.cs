@@ -112,13 +112,7 @@ namespace MaouSamaTD.UI
         public void Close()
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
-            _isMultiSelectMode = false;
-            
-            if (_detailsPanel != null) _detailsPanel.Hide();
-            _isDetailsOpen = false;
-            _lastClickedCard = null;
-            
-            UpdateScrollRectLayout(false);
+            ResetState();
         }
 
         public void OpenMultiSelect(List<string> currentIds, int maxLimit, System.Action<List<string>> onConfirmed)
@@ -136,6 +130,17 @@ namespace MaouSamaTD.UI
             RefreshInventory();
             UpdateInventorySelectionVisuals();
             UpdateCountText();
+        }
+
+        public void ResetState()
+        {
+            _isMultiSelectMode = false;
+            _lastClickedCard = null;
+            
+            if (_detailsPanel != null) _detailsPanel.Hide();
+            _isDetailsOpen = false;
+            
+            UpdateScrollRectLayout(false);
         }
 
         #endregion

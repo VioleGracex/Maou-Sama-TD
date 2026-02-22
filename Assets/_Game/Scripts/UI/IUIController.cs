@@ -15,5 +15,10 @@ namespace MaouSamaTD.UI
         
         void Open();
         void Close();
+        
+        /// <summary>
+        /// Resets the panel to its default, original state. Handled automatically by HomeUIManager/UIFlowManager.
+        /// </summary>
+        void ResetState();
     }
 }

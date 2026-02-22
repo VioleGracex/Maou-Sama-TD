@@ -69,6 +69,7 @@ namespace MaouSamaTD.UI
                 _panelStack.Push(newPanel);
             }
 
+            newPanel.ResetState();
             newPanel.Open();
         }
 

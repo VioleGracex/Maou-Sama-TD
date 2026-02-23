@@ -201,7 +201,25 @@ namespace MaouSamaTD.Managers
             if (_saveManager != null && _currentLevelData != null)
             {
                 _saveManager.LevelComplete(_currentLevelData.LevelID, stars);
-                _saveManager.AddCurrency(_currentLevelData.RewardCurrency);
+                
+                // Process all rewards for winning the level
+                if (_currentLevelData.WinRewards != null)
+                {
+                    foreach (var reward in _currentLevelData.WinRewards)
+                    {
+                        if (reward.Type == MaouSamaTD.Levels.RewardType.GoldCoins)
+                        {
+                            _saveManager.AddCurrency(reward.Amount);
+                        }
+                        else if (reward.Type == MaouSamaTD.Levels.RewardType.BloodCrests)
+                        {
+                            // Expand SaveManager later to handle Blood Crests natively
+                            // For now, logging to ensure logic hooks up
+                            Debug.Log($"[GameManager] Earned {reward.Amount} Blood Crests!");
+                        }
+                    }
+                }
+
                 Debug.Log($"[GameManager] Progress Saved. Level: {_currentLevelData.LevelID}, Stars: {stars}");
             }
 

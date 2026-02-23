@@ -7,6 +7,12 @@ namespace MaouSamaTD.Levels
     [CreateAssetMenu(fileName = "NewLevelData", menuName = "MaouSamaTD/Level Data")]
     public class LevelData : ScriptableObject
     {
+        [HideInInspector] public bool useDefaultInspector = false;
+
+        [Header("Identity")]
+        [Tooltip("Unique integer ID for Addressables and easier logic (e.g., 1, 2, 3...)")]
+        public int LevelIndex;
+
         [Header("Level Info")]
         public string LevelName = "Level 1";
         [TextArea] public string Description = "The first battle.";
@@ -16,7 +22,9 @@ namespace MaouSamaTD.Levels
 
         [Header("Campaign Settings")]
         public string LevelID = "1-1";
-        public int RewardCurrency = 100;
+
+        [Tooltip("List of rewards granted upon clearing the level for the first time or repeatedly (depending on logic).")]
+        public List<LevelReward> WinRewards = new List<LevelReward>();
         
         [Tooltip("If populated, forces the player to use this specific cohort for the first 10 slots. Existing cohort selection is ignored.")]
         public List<MaouSamaTD.Units.UnitData> PremadeCohort;
@@ -39,5 +47,18 @@ namespace MaouSamaTD.Levels
 
         [Header("Waves")]
         public List<WaveData> Waves = new List<WaveData>();
+    }
+
+    public enum RewardType
+    {
+        GoldCoins,
+        BloodCrests // Currency used for gacha/rituals
+    }
+
+    [System.Serializable]
+    public struct LevelReward
+    {
+        public RewardType Type;
+        public int Amount;
     }
 }

@@ -46,7 +46,14 @@ namespace MaouSamaTD.UI.MainMenu
 
             if (_titleText != null) _titleText.text = level.LevelName;
             if (_descriptionText != null) _descriptionText.text = level.Description;
-            if (_rewardValueText != null) _rewardValueText.text = level.RewardCurrency.ToString();
+            if (_rewardValueText != null) 
+            {
+                // Simple placeholder: display the first reward amount, or 0 if none.
+                // You can expand this later to instantiate a prefab per reward!
+                _rewardValueText.text = level.WinRewards != null && level.WinRewards.Count > 0 
+                    ? level.WinRewards[0].Amount.ToString() 
+                    : "0";
+            }
         }
 
         public void Open()

@@ -12,13 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd8e99080aa85214c9d7d8ee3ade7292, type: 3}
   m_Name: TestLevel
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
+  useDefaultInspector: 0
+  LevelIndex: 0
   LevelName: TestLevel
   Description: The Test.
   GracePeriod: 5
   LevelID: 1-1
-  RewardCurrency: 100
+  WinRewards:
+  - Type: 0
+    Amount: 300
+  - Type: 1
+    Amount: 300
   PremadeCohort:
   - {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
+  IsCohortLocked: 1
+  SupportAssistant: {fileID: 0}
+  IsAssistantLocked: 1
   MapData: {fileID: 11400000, guid: 359e79aee670d244cbc164c4119a73b6, type: 2}
   StartingAuthoritySeals: 10
   AuthoritySealsPerSecond: 1

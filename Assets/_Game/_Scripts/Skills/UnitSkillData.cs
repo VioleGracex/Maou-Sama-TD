@@ -7,5 +7,10 @@ namespace MaouSamaTD.Skills
     {
         [Header("Unit Costs")]
         public float ChargeCost = 100f; // SP/Charge needed
+
+        [Header("Stat Upgrades (Per Unit Level)")]
+        public float BonusHpPerLevel = 0f;
+        public float BonusAtkPerLevel = 0f;
+        public float BonusDefPerLevel = 0f;
     }
 }

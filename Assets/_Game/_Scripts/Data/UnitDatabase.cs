@@ -10,7 +10,7 @@ namespace MaouSamaTD.Data
 
         public MaouSamaTD.Units.UnitData GetUnitByID(string id)
         {
-            return AllUnits.Find(u => (string.IsNullOrEmpty(u.UnitID) ? u.name : u.UnitID) == id);
+            return AllUnits.Find(u => (string.IsNullOrEmpty(u.UniqueID) ? u.name : u.UniqueID) == id);
         }
     }
 }

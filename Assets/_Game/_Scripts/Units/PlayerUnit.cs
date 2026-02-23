@@ -4,12 +4,7 @@ using UnityEngine;
 
 namespace MaouSamaTD.Units
 {
-    public enum UnitClass
-    {
-        Melee,  // Blocks enemies, placed on Low Ground
-                Healer,   // Restores health
-Ranged  // Deals damage from afar, placed on High Ground
-    }
+    // Enums are now in their own files (UnitClass.cs)
 
     public enum AttackPattern
     {

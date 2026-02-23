@@ -105,8 +105,8 @@ namespace MaouSamaTD.UI
                         string idToUse = "";
                         if (unit != null) 
                         {
-                            idToUse = string.IsNullOrEmpty(unit.UnitID) ? unit.name : unit.UnitID;
-                            Debug.Log($"[MissionReadinessPanel] Processing Cohort Unit: SO_Name={unit.name}, ID={unit.UnitID}, IDToUse={idToUse}, Name={unit.UnitName}");
+                            idToUse = string.IsNullOrEmpty(unit.UniqueID) ? unit.name : unit.UniqueID;
+                            Debug.Log($"[MissionReadinessPanel] Processing Cohort Unit: SO_Name={unit.name}, ID={unit.UniqueID}, IDToUse={idToUse}, Name={unit.UnitName}");
                         }
                         _lockedUnitIDs.Add(idToUse);
                     }
@@ -255,7 +255,7 @@ namespace MaouSamaTD.UI
                 {
                     if (_currentLevel != null && _currentLevel.IsAssistantLocked)
                     {
-                        unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UnitID : "";
+                        unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UniqueID : "";
                         isSlotLocked = true;
                     }
                     else if (_playerData.Cohorts.Count > 0)
@@ -326,7 +326,7 @@ namespace MaouSamaTD.UI
                  {
                      if (_currentLevel != null && _currentLevel.IsAssistantLocked)
                      {
-                         unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UnitID : "";
+                         unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UniqueID : "";
                      }
                      else if (_playerData != null && _playerData.Cohorts.Count > 0)
                      {

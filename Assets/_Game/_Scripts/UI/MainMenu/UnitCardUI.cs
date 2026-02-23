@@ -13,6 +13,7 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private UnitData _data;
 
         [Header("Data")]
+        [SerializeField] private ClassScalingData _classScalingData;
         [SerializeField] private Image _portraitImage;
         [SerializeField] private TextMeshProUGUI _nameText;
         [SerializeField] private Image _classIconImage;
@@ -67,7 +68,28 @@ namespace MaouSamaTD.UI.MainMenu
                 _portraitImage.sprite = unit.UnitIcon != null ? unit.UnitIcon : unit.UnitSprite;
                 _portraitImage.gameObject.SetActive(_portraitImage.sprite != null);
             }
-            if (_classIconImage) _classIconImage.gameObject.SetActive(true); // Disable if unused
+            if (_classIconImage)
+            {
+                if (_classScalingData == null)
+                    _classScalingData = Resources.Load<ClassScalingData>("ClassScalingData");
+
+                if (_classScalingData != null && _classScalingData.TryGetMultipliers(unit.Class, out var multipliers))
+                {
+                    if (multipliers.ClassIcon != null)
+                    {
+                        _classIconImage.sprite = multipliers.ClassIcon;
+                        _classIconImage.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        _classIconImage.gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    _classIconImage.gameObject.SetActive(false);
+                }
+            }
             if (_levelText) _levelText.gameObject.SetActive(true);
             
             if (_starsContainer != null)

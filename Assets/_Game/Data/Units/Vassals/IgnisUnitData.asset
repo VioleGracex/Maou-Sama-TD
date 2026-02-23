@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
+  m_Name: IgnisUnitData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
+  useDefaultInspector: 0
+  UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
+  UnitName: Ignis
+  UnitSprite: {fileID: 21300000, guid: 74d8fc5cc8ac2294aa50b3b462b3a05a, type: 3}
+  UnitIcon: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
+  Level: 1
+  AcquisitionDate: 0
+  Rarity: 3
+  Class: 0
+  AttackPattern: 3
+  AttackType: 0
+  DeploymentCost: 10
+  BlockCount: 1
+  MaxHp: 100
+  AttackPower: 10
+  AttackInterval: 1
+  Defense: 5
+  RespawnTime: 5
+  Range: 1
+  MaxCharge: 100
+  ChargePerSecond: 1
+  ChargePerAttack: 2
+  Skill: {fileID: 0}
+  ViableTiles: 00000000

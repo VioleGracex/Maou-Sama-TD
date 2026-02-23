@@ -18,7 +18,7 @@ namespace MaouSamaTD.Skills
     }
 
     // Base class for all skills/rites
-    public abstract class SkillBase : ScriptableObject
+    public abstract class SkillBase : MaouSamaTD.Core.GameDataSO
     {
         [Header("Display")]
         public string SkillName;

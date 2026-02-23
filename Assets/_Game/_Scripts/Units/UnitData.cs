@@ -13,10 +13,9 @@ namespace MaouSamaTD.Units
     }
 
     [CreateAssetMenu(fileName = "NewUnitData", menuName = "MaouSamaTD/Unit Data")]
-    public class UnitData : ScriptableObject
+    public class UnitData : MaouSamaTD.Core.GameDataSO
     {
-        [Header("Identity")]
-        public string UnitID; // Unique Identifier
+        [Header("Identity (Data)")]
         public string UnitName;
         public Sprite UnitSprite; // Nullable, if null use Initials
         public Sprite UnitIcon;   // Specific icon for UI buttons
@@ -33,7 +32,7 @@ namespace MaouSamaTD.Units
         public int DeploymentCost = 10;
         public int BlockCount = 1;
 
-        [Header("Stats")]
+        [Header("Stats Base")]
         public float MaxHp = 100f;
         public float AttackPower = 10f;
         public float AttackInterval = 1f;
@@ -50,19 +49,23 @@ namespace MaouSamaTD.Units
         [Header("Placement Rules")]
         public System.Collections.Generic.List<Grid.TileType> ViableTiles;
 
-        private void OnValidate()
+        protected override void OnValidate()
         {
-            // Auto-fill UnitID if empty to prevent lookup errors
-            if (string.IsNullOrEmpty(UnitID)) UnitID = name;
+            base.OnValidate();
 
-            // Set defaults if empty based on class
+            // Set defaults if empty based on class logic (expanded for new 11 classes)
             if (ViableTiles == null || ViableTiles.Count == 0)
             {
                 ViableTiles = new System.Collections.Generic.List<Grid.TileType>();
-                if (Class == UnitClass.Melee) ViableTiles.Add(Grid.TileType.Walkable);
-                else if (Class == UnitClass.Ranged) ViableTiles.Add(Grid.TileType.HighGround);
-                // Healer might go anywhere or specific? Default to HighGround for now
-                else if (Class == UnitClass.Healer) ViableTiles.Add(Grid.TileType.HighGround);
+                if (Class == UnitClass.Ranger || Class == UnitClass.Warlock || Class == UnitClass.Sage || Class == UnitClass.Support)
+                {
+                    ViableTiles.Add(Grid.TileType.HighGround);
+                }
+                else
+                {
+                    // Bastion, Vanguard, Executioner, etc.
+                    ViableTiles.Add(Grid.TileType.Walkable);
+                }
             }
         }
     }

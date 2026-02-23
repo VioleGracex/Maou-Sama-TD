@@ -15,7 +15,7 @@ namespace MaouSamaTD.Units
     }
 
     [CreateAssetMenu(fileName = "NewEnemyData", menuName = "MaouSamaTD/Enemy Data")]
-    public class EnemyData : ScriptableObject
+    public class EnemyData : MaouSamaTD.Core.GameDataSO
     {
         [Header("Identity")]
         public string EnemyName;

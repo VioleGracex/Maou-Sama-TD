@@ -16,6 +16,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _nameText; 
         [SerializeField] private TextMeshProUGUI _costText;
         [SerializeField] private Button _button;
+        [SerializeField] private ClassScalingData _classScalingData; // Fallbacks to Resources if null
         
         private UnitDragHandler _dragHandler;
         private UnitData _data;
@@ -83,14 +84,30 @@ namespace MaouSamaTD.UI
 
             if (_classIcon != null)
             {
-//
+                if (_classScalingData == null)
+                    _classScalingData = Resources.Load<ClassScalingData>("ClassScalingData");
+
+                if (_classScalingData != null && _classScalingData.TryGetMultipliers(_data.Class, out var multipliers))
+                {
+                    if (multipliers.ClassIcon != null)
+                    {
+                        _classIcon.sprite = multipliers.ClassIcon;
+                        _classIcon.enabled = true;
+                    }
+                    else
+                    {
+                        _classIcon.enabled = false;
+                    }
+                }
+                else
+                {
+                    _classIcon.enabled = false;
+                }
             }
 
             if (_background != null)
             {
-                if (_data.Class == UnitClass.Melee) _background.color = new Color(0.8f, 0.4f, 0.4f);
-                else if (_data.Class == UnitClass.Ranged) _background.color = new Color(0.4f, 0.4f, 0.8f);
-                else if (_data.Class == UnitClass.Healer) _background.color = new Color(0.4f, 0.8f, 0.4f);
+                _background.color = GetClassColor(_data.Class);
             }
         }
 
@@ -166,9 +183,21 @@ namespace MaouSamaTD.UI
         {
             switch (unitClass)
             {
-                case UnitClass.Melee: return new Color(0.8f, 0.4f, 0.4f);
-                case UnitClass.Ranged: return new Color(0.4f, 0.4f, 0.8f);
-                case UnitClass.Healer: return new Color(0.4f, 0.8f, 0.4f);
+                case UnitClass.Bastion:
+                case UnitClass.Vanguard:
+                case UnitClass.Executioner:
+                    return new Color(0.8f, 0.4f, 0.4f); // Reddish for Melee/Physical
+                case UnitClass.Ranger:
+                case UnitClass.Warlock:
+                case UnitClass.Gunner:
+                    return new Color(0.4f, 0.4f, 0.8f); // Bluish for Ranged/Magic
+                case UnitClass.Sage:
+                case UnitClass.Support:
+                    return new Color(0.4f, 0.8f, 0.4f); // Greenish for Casters/Support
+                case UnitClass.Architect:
+                case UnitClass.Necromancer:
+                case UnitClass.Assassin:
+                    return new Color(0.6f, 0.4f, 0.8f); // Purplish for Utility/Special
                 default: return Color.white;
             }
         }

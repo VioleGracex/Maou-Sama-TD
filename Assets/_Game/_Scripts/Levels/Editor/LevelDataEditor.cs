@@ -40,8 +40,18 @@ namespace MaouSamaTD.Levels.Editor
 
             if (_target.useDefaultInspector)
             {
-                // Draw the default inspector if toggled, but ignore the internal toggle
-                DrawDefaultInspector();
+                // Draw all properties like default inspector, but explicitly make UniqueID read-only
+                SerializedProperty iter = serializedObject.GetIterator();
+                bool enterChildren = true;
+                while (iter.NextVisible(enterChildren))
+                {
+                    using (new EditorGUI.DisabledScope(iter.name == "UniqueID" || iter.name == "m_Script"))
+                    {
+                        EditorGUILayout.PropertyField(iter, true);
+                    }
+                    enterChildren = false;
+                }
+                serializedObject.ApplyModifiedProperties();
                 return;
             }
 
@@ -72,6 +82,12 @@ namespace MaouSamaTD.Levels.Editor
             if (_showIdentity)
             {
                 EditorGUILayout.Space(2);
+                
+                using (new EditorGUI.DisabledScope(true))
+                {
+                    DrawProperty("UniqueID", "Unique ID", "Permanent generic GUID for this scriptable object.");
+                }
+
                 DrawProperty("LevelIndex", "Integer Index", "Numeric index used for Addressables or logic (e.g., 1, 2, 3)");
                 DrawProperty("LevelID", "String ID", "String identifier. Naming convention: [Chapter]-[Level] (e.g., 1-1, 1-2, 2-1)");
                 DrawProperty("LevelName", "Level Name");

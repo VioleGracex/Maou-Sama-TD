@@ -1,0 +1,451 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e45ee955a40c7b4aa029f08d6eec349, type: 3}
+  m_Name: ClassScalingData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.ClassScalingData
+  useDefaultInspector: 0
+  UniqueID: 71823ec1-d662-46ba-9048-c91c445b754d
+  ClassScalings:
+  - ClassType: 0
+    OverrideClassName: Bastion
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    BaseHpMultiplier: 1.5
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1.5
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 1
+    OverrideClassName: Vanguard
+    ClassIcon: {fileID: 21300000, guid: 33b39977cf7fa404194b18d31210c071, type: 3}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 2
+    OverrideClassName: Executioner
+    ClassIcon: {fileID: 21300000, guid: e85a8a925d512b340b4cd0c78f377c71, type: 3}
+    BaseHpMultiplier: 0.8
+    BaseAtkMultiplier: 1.4
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 3
+    OverrideClassName: Ranger
+    ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 4
+    OverrideClassName: Warlock
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 5
+    OverrideClassName: Sage
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 6
+    OverrideClassName: Architect
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 7
+    OverrideClassName: Necromancer
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 8
+    OverrideClassName: Support
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 9
+    OverrideClassName: Gunner
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 0.7
+    BaseAtkMultiplier: 1.3
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 10
+    OverrideClassName: Assassin
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 11
+    OverrideClassName: EnemyMelee
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 12
+    OverrideClassName: EnemyRanged
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 1
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5
+  - ClassType: 13
+    OverrideClassName: EnemyBoss
+    ClassIcon: {fileID: 0}
+    BaseHpMultiplier: 5
+    BaseAtkMultiplier: 2
+    BaseDefMultiplier: 2
+    RarityGrowths:
+    - Rarity: 0
+      HpGrowthPerLevel: 10
+      AtkGrowthPerLevel: 1
+      DefGrowthPerLevel: 0
+    - Rarity: 1
+      HpGrowthPerLevel: 25
+      AtkGrowthPerLevel: 2
+      DefGrowthPerLevel: 1
+    - Rarity: 2
+      HpGrowthPerLevel: 50
+      AtkGrowthPerLevel: 4
+      DefGrowthPerLevel: 2
+    - Rarity: 3
+      HpGrowthPerLevel: 80
+      AtkGrowthPerLevel: 6
+      DefGrowthPerLevel: 3
+    - Rarity: 4
+      HpGrowthPerLevel: 120
+      AtkGrowthPerLevel: 8
+      DefGrowthPerLevel: 4
+    - Rarity: 5
+      HpGrowthPerLevel: 180
+      AtkGrowthPerLevel: 12
+      DefGrowthPerLevel: 5

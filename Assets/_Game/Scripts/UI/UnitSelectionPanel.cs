@@ -157,7 +157,7 @@ namespace MaouSamaTD.UI
             {
                 if (_lastClickedCard != null && OnUnitSelected != null)
                 {
-                    OnUnitSelected.Invoke(_currentSlotIndex, _lastClickedCard.Data.UnitID);
+                    OnUnitSelected.Invoke(_currentSlotIndex, _lastClickedCard.Data.UniqueID);
                     Close();
                 }
             }
@@ -269,9 +269,9 @@ namespace MaouSamaTD.UI
                      int index = -1;
                      if (_isMultiSelectMode)
                      {
-                         if (_tempSelectedIds.Contains(card.Data.UnitID))
+                         if (_tempSelectedIds.Contains(card.Data.UniqueID))
                          {
-                             index = _tempSelectedIds.IndexOf(card.Data.UnitID);
+                             index = _tempSelectedIds.IndexOf(card.Data.UniqueID);
                          }
                      }
                      card.SetSelectionState(index);
@@ -285,7 +285,7 @@ namespace MaouSamaTD.UI
             {
                 if (OnUnitSelected != null)
                 {
-                    OnUnitSelected.Invoke(_currentSlotIndex, card.Data.UnitID);
+                    OnUnitSelected.Invoke(_currentSlotIndex, card.Data.UniqueID);
                     UIFlowManager.Instance.GoBack();
                 }
             }
@@ -304,7 +304,7 @@ namespace MaouSamaTD.UI
         {
              if (_lastClickedCard == card && Time.unscaledTime - _lastClickTime < 0.3f)
              {
-                 string id = card.Data.UnitID;
+                 string id = card.Data.UniqueID;
                  if (_tempSelectedIds.Contains(id))
                  {
                      _tempSelectedIds.Remove(id);

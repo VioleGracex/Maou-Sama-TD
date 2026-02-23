@@ -4,7 +4,7 @@ using UnityEngine;
 namespace MaouSamaTD.Levels
 {
     [CreateAssetMenu(fileName = "NewMapData", menuName = "MaouSamaTD/Map Data")]
-    public class MapData : ScriptableObject
+    public class MapData : MaouSamaTD.Core.GameDataSO
     {
         [Header("Map Settings")]
         [Tooltip("Seed for procedural generation")]

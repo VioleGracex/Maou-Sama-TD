@@ -5,10 +5,8 @@ using NaughtyAttributes; // For better list display if available, or just standa
 namespace MaouSamaTD.Levels
 {
     [CreateAssetMenu(fileName = "NewLevelData", menuName = "MaouSamaTD/Level Data")]
-    public class LevelData : ScriptableObject
+    public class LevelData : MaouSamaTD.Core.GameDataSO
     {
-        [HideInInspector] public bool useDefaultInspector = false;
-
         [Header("Identity")]
         [Tooltip("Unique integer ID for Addressables and easier logic (e.g., 1, 2, 3...)")]
         public int LevelIndex;

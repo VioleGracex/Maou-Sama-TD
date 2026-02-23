@@ -88,6 +88,13 @@ namespace MaouSamaTD.Editor
              verRt.anchoredPosition = new Vector2(-100, 30);
              verRt.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.BottomRight;
              
+             // Confirm Popup Window
+             GameObject confirmRoot = GetOrCreatePanel(loadingObj.transform, "ConfirmPopup_Root", new Color(0f, 0f, 0f, 0.8f));
+             confirmRoot.SetActive(false);
+             CreateText(confirmRoot.transform, "ConfirmText", "Are you sure you want to clear all data?", 0, 80);
+             Button confirmYesBtn = CreateButton(confirmRoot.transform, "YesButton", "YES", -100, -50);
+             Button confirmNoBtn = CreateButton(confirmRoot.transform, "NoButton", "NO", 100, -50);
+             
              Button startBtn = CreateButton(loadingObj.transform, "StartButton", "START GAME", 0, 0);
              RectTransform stRt = startBtn.GetComponent<RectTransform>();
              stRt.anchorMin = new Vector2(0.5f, 0.2f);
@@ -105,6 +112,9 @@ namespace MaouSamaTD.Editor
              SetProperty(lspSo, "_startButton", startBtn);
              SetProperty(lspSo, "_visualRoot", loadingObj);
              SetProperty(lspSo, "_backgroundImage", bgImg);
+             SetProperty(lspSo, "_confirmWindowRoot", confirmRoot);
+             SetProperty(lspSo, "_confirmYesButton", confirmYesBtn);
+             SetProperty(lspSo, "_confirmNoButton", confirmNoBtn);
              lspSo.ApplyModifiedProperties();
              
              Debug.Log("Generated Standalone Loading Screen UI Panel.");

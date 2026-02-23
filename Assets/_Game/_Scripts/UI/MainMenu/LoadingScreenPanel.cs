@@ -30,6 +30,11 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private Button _startButton;
         [SerializeField] private GameObject _visualRoot;
 
+        [Header("Cache Confirmation")]
+        [SerializeField] private GameObject _confirmWindowRoot;
+        [SerializeField] private Button _confirmYesButton;
+        [SerializeField] private Button _confirmNoButton;
+
         [Header("Settings")]
         [TextArea] 
         [SerializeField] private string[] _loreLines = new string[] 
@@ -52,12 +57,20 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void Start()
         {
-            if (_clearCacheButton != null) _clearCacheButton.onClick.AddListener(OnClearCacheClicked);
+            if (_clearCacheButton != null) 
+            {
+                _clearCacheButton.onClick.AddListener(OnClearCacheClicked);
+                _clearCacheButton.gameObject.SetActive(_appEntryPoint != null);
+            }
             if (_startButton != null)
             {
                 _startButton.onClick.AddListener(OnStartClicked);
                 _startButton.gameObject.SetActive(false);
             }
+
+            if (_confirmYesButton != null) _confirmYesButton.onClick.AddListener(ExecuteClearCache);
+            if (_confirmNoButton != null) _confirmNoButton.onClick.AddListener(() => { if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false); });
+            if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false);
 
             if (_progressBar != null) _progressBar.value = 0f;
             if (_versionText != null) _versionText.text = $"Ver: {Application.version}";
@@ -169,6 +182,18 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnClearCacheClicked()
         {
+            if (_confirmWindowRoot != null)
+            {
+                _confirmWindowRoot.SetActive(true);
+            }
+            else
+            {
+                ExecuteClearCache();
+            }
+        }
+
+        private void ExecuteClearCache()
+        {
             Debug.Log("[LoadingScreenPanel] Clearing Cache...");
             
             // 1. Delete Save Data
@@ -187,6 +212,44 @@ namespace MaouSamaTD.UI.MainMenu
             Debug.Log("[LoadingScreenPanel] Cache cleared. Restarting Scene...");
             // Reload the active scene
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        public void LoadSceneTransition(string sceneName)
+        {
+            gameObject.SetActive(true);
+            if (_visualRoot != null) _visualRoot.SetActive(true);
+            if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false);
+            if (_clearCacheButton != null) _clearCacheButton.gameObject.SetActive(false);
+            if (_startButton != null) _startButton.gameObject.SetActive(false);
+            if (_progressBar != null)
+            {
+                _progressBar.gameObject.SetActive(true);
+                _progressBar.value = 0f;
+            }
+
+            StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
+        }
+
+        private System.Collections.IEnumerator LoadSceneAsyncCoroutine(string sceneName)
+        {
+            AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
+            op.allowSceneActivation = false;
+
+            while (op.progress < 0.9f)
+            {
+                UpdateProgress(op.progress);
+                yield return null;
+            }
+
+            UpdateProgress(0.95f);
+            
+            yield return new WaitForEndOfFrame();
+            Shader.WarmupAllShaders();
+            yield return new WaitForEndOfFrame();
+
+            UpdateProgress(1.0f);
+            
+            op.allowSceneActivation = true;
         }
     }
 }

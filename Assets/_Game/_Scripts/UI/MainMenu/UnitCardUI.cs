@@ -39,6 +39,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Setup(UnitData unit, Action<UnitCardUI> onClick = null)
         {
+            Debug.Log($"[UnitCardUI] Setup called for unit: {(unit != null ? unit.UnitName : "NULL")}. VisualRoot assigned: {(_visualRoot != null)}");
             _data = unit;
             if (onClick != null) _onClickCallback = onClick;
 

@@ -31,7 +31,12 @@ namespace MaouSamaTD.UI
 
             if (_unitCardUI != null)
             {
+                Debug.Log($"[UnitCardSlot] Slot {Index} setting unit: {(unitData != null ? unitData.UnitName : "NULL")}");
                 _unitCardUI.Setup(unitData);
+            }
+            else
+            {
+                Debug.LogError($"[UnitCardSlot] Slot {Index} missing _unitCardUI reference!");
             }
         }
 
@@ -41,6 +46,7 @@ namespace MaouSamaTD.UI
 
             if (_unitCardUI != null)
             {
+                Debug.Log($"[UnitCardSlot] Slot {Index} setting empty.");
                 _unitCardUI.Setup(null);
             }
         }

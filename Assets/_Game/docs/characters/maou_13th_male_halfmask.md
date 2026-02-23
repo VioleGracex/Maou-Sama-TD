@@ -6,7 +6,7 @@
 
 ## Visual Identity: Core Design
 - **Height**: 6'3" (190cm)
-- **Build**: Tall, slender, and impossibly elegant (a highly imposing bishounen/ikemen archetype). While he lacks the bulky muscle of a brute, his perfect posture and dominating presence make him tower over others. He moves with a predatory, effortless grace.
+- **Build**: Tall and impossibly elegant with a lean, defined musculature (a highly imposing bishounen/ikemen archetype). While he lacks the broad-shouldered, bulky mass of a brute, his athletic, wiry strength and perfect posture make him tower over others. He moves with a predatory, effortless grace.
 - **Hair**: Silky, silver-white hair that falls in soft, slightly messy layers just past his jawline, framing his face perfectly.
 - **Eyes**: Striking, intense crimson with long, delicate eyelashes that offer a piercing, highly condescending gaze.
 - **Attire**: High-fashion, tailored dark regalia that accentuates his slender, imposing frame. A sleek, midnight-blue fitted coat with silver embroidery, layered gracefully over an immaculate dress shirt with a popped collar. He wears elegant dark gloves and a flowing, asymmetrical half-cape.

@@ -131,6 +131,7 @@ namespace MaouSamaTD.UI
             }
 
             SetUIState();
+            RefreshUI();
         }
 
         public void Close()
@@ -140,9 +141,10 @@ namespace MaouSamaTD.UI
 
         public void ResetState()
         {
-            _currentLevel = null;
-            _isLockedMode = false;
-            if (_lockedUnitIDs != null) _lockedUnitIDs.Clear();
+            // Specifically requested to not wipe the loaded data when re-opening
+            // _currentLevel = null;
+            // _isLockedMode = false;
+            // if (_lockedUnitIDs != null) _lockedUnitIDs.Clear();
         }
         #endregion
 
@@ -351,7 +353,15 @@ namespace MaouSamaTD.UI
                  _selectionState.SetCohort(selectedUnits);
              }
 
-             UnityEngine.SceneManagement.SceneManager.LoadScene("BattleScene");
+             var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+             if (loader != null)
+             {
+                 loader.LoadSceneTransition("BattleScene");
+             }
+             else
+             {
+                 UnityEngine.SceneManagement.SceneManager.LoadScene("BattleScene");
+             }
         }
 
         private void OnRemoveAllClicked()

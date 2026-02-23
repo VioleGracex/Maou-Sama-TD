@@ -40,6 +40,7 @@ namespace MaouSamaTD.UI.MainMenu
         #region Public Methods
         public void Setup(LevelData level, Action<LevelData> onEngageCallback)
         {
+            Debug.Log($"[BriefingPanel] Setup called for level: {(level != null ? level.LevelName : "NULL")}");
             _currentLevel = level;
             _onEngageClicked = onEngageCallback;
 
@@ -50,6 +51,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Open()
         {
+            Debug.Log($"[BriefingPanel] Open called.");
             if (_visualRoot == null)
             {
                 Debug.LogError($"[UIFlow] {gameObject.name} (BriefingPanel) cannot open! _visualRoot is not assigned in the Inspector.");
@@ -63,6 +65,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Close()
         {
+            Debug.Log($"[BriefingPanel] Close called. activeSelf: {(_visualRoot != null && _visualRoot.activeSelf)}");
             if (_visualRoot == null || !_visualRoot.activeSelf) return;
 
             _visualRoot.transform.DOScale(Vector3.zero, _animDuration / 2f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() => {
@@ -81,6 +84,7 @@ namespace MaouSamaTD.UI.MainMenu
         #region Private Methods
         private void OnEngage()
         {
+            Debug.Log($"[BriefingPanel] OnEngage clicked! Launching level: {(_currentLevel != null ? _currentLevel.LevelName : "NULL")}");
             Close();
             _onEngageClicked?.Invoke(_currentLevel);
         }

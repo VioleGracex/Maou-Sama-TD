@@ -133,8 +133,8 @@ namespace MaouSamaTD.UI.MainMenu
             // Open Briefing as a popup window
             if (_briefingPanel != null)
             {
-                _briefingPanel.Setup(level, OnBriefingEngage);
                 MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_briefingPanel);
+                _briefingPanel.Setup(level, OnBriefingEngage);
             }
             else
             {
@@ -148,9 +148,20 @@ namespace MaouSamaTD.UI.MainMenu
         {
             if (_missionReadinessUI != null)
             {
-                _missionReadinessUI.Open(level);
+                // Give missionReadinessUI history priority so it hides campaign
                 MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_missionReadinessUI);
-                // gameObject.SetActive(false); // Optional hide CampaignPage
+
+                // Unparent to ensure it survives Campaign Page deactivation
+                if (_missionReadinessUI.VisualRoot != null)
+                {
+                    if (_missionReadinessUI.VisualRoot.transform.parent == _visualRoot.transform)
+                    {
+                        _missionReadinessUI.VisualRoot.transform.SetParent(_visualRoot.transform.parent, false);
+                    }
+                }
+
+                // The ResetState in OpenPanel wiped variables, so call Open(level) AFTER
+                _missionReadinessUI.Open(level);
             }
             else
             {

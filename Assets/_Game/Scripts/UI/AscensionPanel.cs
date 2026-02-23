@@ -11,18 +11,23 @@ namespace MaouSamaTD.UI.MainMenu
 {
     public class AscensionPanel : MonoBehaviour
     {
+        #region References
         [Header("Roots")]
         [SerializeField] private GameObject _visualRoot;
-        [SerializeField] private GameObject _homeScreenRoot; // To turn back on after Ascension
+        [SerializeField] private GameObject _homeScreenRoot;
 
         [Header("Selections")]
-        [SerializeField] private Button _tyrantButton; // Male / Force
-        [SerializeField] private Button _sovereignButton; // Female / Guile
+        [SerializeField] private Button _tyrantButton;
+        [SerializeField] private Button _sovereignButton;
         [SerializeField] private GameObject _tyrantSelectedHighlight;
         [SerializeField] private GameObject _sovereignSelectedHighlight;
 
+        [Header("Character Visuals")]
+        [SerializeField] private Image _tyrantVisual;
+        [SerializeField] private Image _sovereignVisual;
+
         [Header("Identity Input")]
-        [SerializeField] private CanvasGroup _inputRootCanvasGroup; // For fade in
+        [SerializeField] private CanvasGroup _inputRootCanvasGroup;
         [SerializeField] private TMP_InputField _nameInputField;
         [SerializeField] private Button _diceButton; 
         [SerializeField] private Button _ariseButton;
@@ -30,13 +35,19 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private TextMeshProUGUI _ariseText;
         [SerializeField] private Color _ariseTextNormalColor = Color.black;
         [SerializeField] private Color _ariseTextHoverColor = Color.white;
+        #endregion
 
+        #region Dependencies
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
+        #endregion
 
+        #region State
         private MaouGender _selectedGender = MaouGender.Male;
         private string _selectedTrueName = "Tyrant";
         private bool _hasSelectedClass = false;
+        #endregion
 
+        #region Unity Methods
         private void Start()
         {
             if (_tyrantButton != null) _tyrantButton.onClick.AddListener(() => OnClassSelected(MaouGender.Male, "Sovereign of Force"));
@@ -49,7 +60,6 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 _ariseButton.onClick.AddListener(OnAriseClicked);
                 
-                // Add Hover Listeners Dynamically
                 UnityEngine.EventSystems.EventTrigger trigger = _ariseButton.gameObject.GetComponent<UnityEngine.EventSystems.EventTrigger>();
                 if (trigger == null) trigger = _ariseButton.gameObject.AddComponent<UnityEngine.EventSystems.EventTrigger>();
                 
@@ -62,7 +72,6 @@ namespace MaouSamaTD.UI.MainMenu
                 trigger.triggers.Add(pointerExit);
             }
 
-            // Hide input initially
             if (_inputRootCanvasGroup != null) 
             {
                 _inputRootCanvasGroup.alpha = 0f;
@@ -74,23 +83,23 @@ namespace MaouSamaTD.UI.MainMenu
 
             RefreshHighlights();
         }
+        #endregion
 
+        #region Public Methods
         public void Open()
         {
             if (_visualRoot != null) _visualRoot.SetActive(true);
-            if (_homeScreenRoot != null) _homeScreenRoot.SetActive(false); // Hide the rest of the game
+            if (_homeScreenRoot != null) _homeScreenRoot.SetActive(false);
             
             _hasSelectedClass = false;
             
             if (_nameInputField != null) _nameInputField.text = "";
             
-            // Reset Arise Button visuals
             if (_ariseFillImage != null) _ariseFillImage.fillAmount = 0f;
             if (_ariseText != null) _ariseText.color = _ariseTextNormalColor;
 
             RefreshHighlights();
 
-            // Make sure the input field is re-hidden if they closed and reopened it
             if (_inputRootCanvasGroup != null) 
             {
                 _inputRootCanvasGroup.alpha = 0f;
@@ -98,7 +107,9 @@ namespace MaouSamaTD.UI.MainMenu
                 _inputRootCanvasGroup.blocksRaycasts = false;
             }
         }
+        #endregion
 
+        #region Private Methods
         private void OnClassSelected(MaouGender gender, string trueName)
         {
             _selectedGender = gender;
@@ -107,7 +118,6 @@ namespace MaouSamaTD.UI.MainMenu
             if (!_hasSelectedClass)
             {
                 _hasSelectedClass = true;
-                // Animate the input field showing up
                 if (_inputRootCanvasGroup != null)
                 {
                     _inputRootCanvasGroup.DOFade(1f, 0.5f).SetEase(Ease.OutQuad);
@@ -122,8 +132,31 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void RefreshHighlights()
         {
-            if (_tyrantSelectedHighlight != null) _tyrantSelectedHighlight.SetActive(_selectedGender == MaouGender.Male && _hasSelectedClass);
-            if (_sovereignSelectedHighlight != null) _sovereignSelectedHighlight.SetActive(_selectedGender == MaouGender.Female && _hasSelectedClass);
+            bool isTyrantChosen = _hasSelectedClass && _selectedGender == MaouGender.Male;
+            bool isSovereignChosen = _hasSelectedClass && _selectedGender == MaouGender.Female;
+
+            if (_tyrantSelectedHighlight != null) _tyrantSelectedHighlight.SetActive(isTyrantChosen);
+            if (_sovereignSelectedHighlight != null) _sovereignSelectedHighlight.SetActive(isSovereignChosen);
+
+            UpdateCardVisual(_tyrantButton, _tyrantVisual, isTyrantChosen, _hasSelectedClass);
+            UpdateCardVisual(_sovereignButton, _sovereignVisual, isSovereignChosen, _hasSelectedClass);
+        }
+
+        private void UpdateCardVisual(Button cardButton, Image targetImage, bool isChosen, bool hasSelection)
+        {
+            if (cardButton == null) return;
+            
+            // If no selection has been made, we want them both greyed out by default
+            bool fullyVisible = hasSelection && isChosen;
+            Color targetColor = fullyVisible ? Color.white : new Color(0.4f, 0.4f, 0.4f, 1f);
+
+            if (targetImage != null)
+            {
+                targetImage.DOColor(targetColor, 0.3f);
+            }
+            
+            Vector3 targetScale = isChosen ? new Vector3(1.05f, 1.05f, 1.05f) : Vector3.one;
+            cardButton.transform.DOScale(targetScale, 0.3f).SetEase(Ease.OutQuad);
         }
 
         private void OnNameChanged(string newName)
@@ -175,22 +208,18 @@ namespace MaouSamaTD.UI.MainMenu
                 return;
             }
 
-            // Apply choices to Save Data
             _saveManager.CurrentData.PlayerName = _nameInputField.text.Trim();
             _saveManager.CurrentData.Gender = _selectedGender;
             _saveManager.CurrentData.TrueName = _selectedTrueName;
             
-            // Generate standard starting units like Ignis for new saves
             if (_saveManager.CurrentData.UnlockedUnits == null) _saveManager.CurrentData.UnlockedUnits = new System.Collections.Generic.List<string>();
             if (!_saveManager.CurrentData.UnlockedUnits.Contains("Ignis")) _saveManager.CurrentData.UnlockedUnits.Add("Ignis");
 
             _saveManager.Save();
             
-            Debug.Log($"[AscensionPanel] Arise! Welcome {_saveManager.CurrentData.TrueName} {_saveManager.CurrentData.PlayerName}.");
-
-            // Close Ascension and enter Home
             if (_visualRoot != null) _visualRoot.SetActive(false);
             if (_homeScreenRoot != null) _homeScreenRoot.SetActive(true);
         }
+        #endregion
     }
 }

@@ -17,8 +17,6 @@ namespace MaouSamaTD.UI
         [Inject] private DiContainer _container;
 
         [Header("Config")]
-        [SerializeField] private List<UnitData> _availableUnits;
-        [SerializeField] private UnitData _ignisData;
         [SerializeField] private GameObject _buttonPrefab;
         [SerializeField] private Transform _barContainer;
         [SerializeField] private PlayerUnit _unitPrefab; 
@@ -26,7 +24,8 @@ namespace MaouSamaTD.UI
         [Header("UI References")]
         [SerializeField] private TextMeshProUGUI _authoritySealsText; 
 
-        [SerializeField] private int _maxCohortSize = 13; 
+        // Dynamic State
+        private List<UnitData> _availableUnits = new List<UnitData>();
         
         [Header("Animation")]
         [SerializeField] private RectTransform _panelRect; 
@@ -113,19 +112,19 @@ namespace MaouSamaTD.UI
             RefreshButtonsState();
         }
 
-        public void Init()
+        public void Init(List<UnitData> cohort, UnitData supportAssistant)
         {
             if (_panelRect != null) _visiblePos = _panelRect.anchoredPosition;
 
-            if (_ignisData != null && !_availableUnits.Contains(_ignisData))
+            _availableUnits.Clear();
+            if (cohort != null)
             {
-                _availableUnits.Insert(0, _ignisData);
+                _availableUnits.AddRange(cohort);
             }
-            
-            if (_availableUnits.Count > _maxCohortSize)
+
+            if (supportAssistant != null && !_availableUnits.Contains(supportAssistant))
             {
-                Debug.LogWarning($"Cohort size exceeded limit of {_maxCohortSize}. Truncating.");
-                _availableUnits = _availableUnits.GetRange(0, _maxCohortSize);
+                _availableUnits.Add(supportAssistant);
             }
             
             GenerateButtons();

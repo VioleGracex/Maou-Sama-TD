@@ -18,18 +18,15 @@ namespace MaouSamaTD.Managers
         [Inject] private CameraManager _cameraManager;
         [Inject] private EnemyManager _enemyManager;
         [Inject] private GridGenerator _gridGenerator;
+        [InjectOptional] private MaouSamaTD.Skills.SkillManager _skillManager;
+        [InjectOptional] private MaouSamaTD.UI.Skills.SkillPanelUI _skillPanelUI;
 
         [Inject] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer; 
 
         [Inject] private SaveManager _saveManager;
         [Inject] private GameSelectionState _gameSelectionState;
         
-        [Header("Test Mode")]
-        [SerializeField] private bool _testMode = false;
-        [SerializeField] private LevelData _testLevelData;
-        
         [Header("References")]
-        public MaouSamaTD.Data.UnitDatabase UnitDatabase; // Public for easy access
         [SerializeField] private Material _pathMaterial;
 
         private LevelData _currentLevelData;
@@ -113,12 +110,36 @@ namespace MaouSamaTD.Managers
 
             if (_deploymentUI != null)
             {
-                _deploymentUI.Init();
+                _deploymentUI.Init(levelData.PremadeCohort, levelData.SupportAssistant);
                 Debug.Log("GameManager: DeploymentUI Initialized.");
             }
             else
             {
                  Debug.Log("GameManager: DeploymentUI is NULL (or not injected).");
+            }
+
+            System.Collections.Generic.List<MaouSamaTD.Skills.SovereignRiteData> ritesToLoad = new System.Collections.Generic.List<MaouSamaTD.Skills.SovereignRiteData>();
+            if (_saveManager != null && _saveManager.CurrentData != null)
+            {
+                ritesToLoad = _saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male 
+                    ? levelData.MaleSovereignRites 
+                    : levelData.FemaleSovereignRites;
+            }
+            else
+            {
+                ritesToLoad = levelData.MaleSovereignRites;
+            }
+
+            if (_skillManager != null)
+            {
+                _skillManager.Init(ritesToLoad);
+                Debug.Log("GameManager: SkillManager Initialized.");
+            }
+
+            if (_skillPanelUI != null)
+            {
+                _skillPanelUI.Init(ritesToLoad);
+                Debug.Log("GameManager: SkillPanelUI Initialized.");
             }
             
             if (_interactionManager != null)
@@ -251,23 +272,6 @@ namespace MaouSamaTD.Managers
             else
             {
                 Time.timeScale = CurrentSpeed;
-            }
-        }
-        private void Start()
-        {
-            if (_testMode && _testLevelData != null)
-            {
-                Debug.LogWarning($"GameManager: Test Mode Active! Loading Test Level: {_testLevelData.LevelName}");
-                InitializeGame(_testLevelData);
-            }
-            else if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
-            {
-                Debug.Log($"GameManager: Loading Selected Level: {_gameSelectionState.SelectedLevel.LevelName}");
-                InitializeGame(_gameSelectionState.SelectedLevel);
-            }
-            else
-            {
-                Debug.LogError("GameManager: No Level Data found! (Nor Test Mode active)");
             }
         }
     }

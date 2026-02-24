@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73136369cd15dfb418701e320cfd0df5, type: 3}
+  m_Name: AbyssalGuillotine
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.SovereignRiteData
+  useDefaultInspector: 0
+  UniqueID: 5558965b-1d97-43f4-8afc-3fefb6fca1ef
+  SkillName: Abyssal Guillotine
+  Description: A focused, high-speed execution strike. The Maou vanishes into a burst
+    of red mist and instantly reappears behind the highest-threat target... Deals
+    massive burst Magic Damage.
+  Icon: {fileID: 0}
+  CastVFX: {fileID: 0}
+  HitVFX: {fileID: 0}
+  RangeIndicatorColor: {r: 1, g: 0, b: 0, a: 1}
+  AnimationTriggerName: CastSkill
+  CastSFX: {fileID: 0}
+  HitSFX: {fileID: 0}
+  TargetType: 0
+  Range: 100
+  Radius: 0
+  EffectType: 0
+  Value: 150
+  Duration: 5
+  SealCost: 50
+  Cooldown: 30

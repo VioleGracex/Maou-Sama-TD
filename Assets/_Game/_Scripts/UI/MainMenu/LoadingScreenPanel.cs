@@ -54,6 +54,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         private IList<Sprite> _splashScreens;
         private int _currentSplashIndex = -1;
+        private bool _isTransitioning = false;
 
         private void Start()
         {
@@ -82,13 +83,16 @@ namespace MaouSamaTD.UI.MainMenu
             }
 
             // Start Boot Sequence
-            if (_appEntryPoint != null)
+            if (!_isTransitioning)
             {
-                _appEntryPoint.StartBootSequence(UpdateProgress, OnLoadComplete);
-            }
-            else
-            {
-                Debug.LogError("[LoadingScreenPanel] AppEntryPoint reference is missing!");
+                if (_appEntryPoint != null)
+                {
+                    _appEntryPoint.StartBootSequence(UpdateProgress, OnLoadComplete);
+                }
+                else
+                {
+                    Debug.LogError("[LoadingScreenPanel] AppEntryPoint reference is missing!");
+                }
             }
 
             if (_backgroundImage != null)
@@ -216,6 +220,29 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void LoadSceneTransition(string sceneName)
         {
+            _isTransitioning = true;
+            
+            // Unparent and persist
+            transform.SetParent(null);
+            Canvas canvas = gameObject.GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                canvas = gameObject.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.sortingOrder = 999;
+                
+                UnityEngine.UI.CanvasScaler scaler = gameObject.AddComponent<UnityEngine.UI.CanvasScaler>();
+                scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920, 1080);
+                
+                gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            }
+            else
+            {
+                canvas.sortingOrder = 999;
+            }
+            DontDestroyOnLoad(gameObject);
+
             gameObject.SetActive(true);
             if (_visualRoot != null) _visualRoot.SetActive(true);
             if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false);
@@ -244,12 +271,26 @@ namespace MaouSamaTD.UI.MainMenu
             UpdateProgress(0.95f);
             
             yield return new WaitForEndOfFrame();
-            Shader.WarmupAllShaders();
-            yield return new WaitForEndOfFrame();
+            // Shader.WarmupAllShaders(); // Removed due to URP "incompatible keyword space" errors
+            yield return null;
 
             UpdateProgress(1.0f);
             
             op.allowSceneActivation = true;
+
+            // Wait until done
+            while (!op.isDone)
+            {
+                yield return null;
+            }
+
+            CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();
+            if (cg == null) cg = gameObject.AddComponent<CanvasGroup>();
+
+            cg.DOFade(0f, 0.5f).SetId(this).OnComplete(() =>
+            {
+                Destroy(gameObject);
+            });
         }
     }
 }

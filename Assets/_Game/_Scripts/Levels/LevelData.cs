@@ -35,6 +35,14 @@ namespace MaouSamaTD.Levels
         [Tooltip("If true, the player cannot swap out the support assistant.")]
         public bool IsAssistantLocked = true;
 
+        [Header("Sovereign Rites")]
+        [Tooltip("The rites available for the Male Maou in this level.")]
+        public List<MaouSamaTD.Skills.SovereignRiteData> MaleSovereignRites = new List<MaouSamaTD.Skills.SovereignRiteData>();
+        [Tooltip("The rites available for the Female Maou in this level.")]
+        public List<MaouSamaTD.Skills.SovereignRiteData> FemaleSovereignRites = new List<MaouSamaTD.Skills.SovereignRiteData>();
+        [Tooltip("If true, the player cannot change these rites.")]
+        public bool IsRitesLocked = true;
+
 
         [Header("Map Settings")]
         public MapData MapData;

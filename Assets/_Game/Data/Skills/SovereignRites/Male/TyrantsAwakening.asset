@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73136369cd15dfb418701e320cfd0df5, type: 3}
+  m_Name: TyrantsAwakening
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.SovereignRiteData
+  useDefaultInspector: 0
+  UniqueID: 295d53ff-4ff2-47e0-b84f-2ab5074a2037
+  SkillName: Tyrant's Awakening
+  Description: The Maou channels pure, concentrated crimson mana into his Odachi,
+    wreathing the blade in dark, magical flames. Significantly increases his own
+    ATK and Attack Speed... drains his own HP.
+  Icon: {fileID: 0}
+  CastVFX: {fileID: 0}
+  HitVFX: {fileID: 0}
+  RangeIndicatorColor: {r: 1, g: 0, b: 0, a: 1}
+  AnimationTriggerName: CastSkill
+  CastSFX: {fileID: 0}
+  HitSFX: {fileID: 0}
+  TargetType: 2
+  Range: 100
+  Radius: 0
+  EffectType: 1
+  Value: 1.5
+  Duration: 5
+  SealCost: 50
+  Cooldown: 30

@@ -12,7 +12,7 @@ namespace MaouSamaTD.UI.Skills
         [Header("Configuration")]
         [SerializeField] private Transform _buttonContainer;
         [SerializeField] private SkillButtonUI _buttonPrefab;
-        [SerializeField] private List<SovereignRiteData> _skillsToDisplay; // Could be dynamic later
+        private List<SovereignRiteData> _skillsToDisplay = new List<SovereignRiteData>();
 
         [Header("Animation")]
         [SerializeField] private RectTransform _panelRect;
@@ -45,13 +45,21 @@ namespace MaouSamaTD.UI.Skills
             {
                 _visiblePos = _panelRect.anchoredPosition;
                 // Force initial position to Hidden (Docked)
-                // Force initial position to Hidden (Docked)
                 _panelRect.anchoredPosition = _visiblePos + new Vector2(_hideOffset, 0); 
             }
             if (_toggleButton != null)
             {
                  var txt = _toggleButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                  if (txt != null) txt.text = "Show"; // Initial state is Hidden, so button says "Show"
+            }
+        }
+
+        public void Init(List<SovereignRiteData> skills)
+        {
+            _skillsToDisplay.Clear();
+            if (skills != null)
+            {
+                _skillsToDisplay.AddRange(skills);
             }
             Refresh();
         }

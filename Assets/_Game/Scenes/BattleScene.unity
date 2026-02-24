@@ -2973,14 +2973,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9bacb8b17b9aba4ca4fbec33dd6304a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.DeploymentUI
-  _availableUnits:
-  - {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
-  _ignisData: {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
   _buttonPrefab: {fileID: 3308514314420927811, guid: a08df585f0ba0524084bb697c3705d82, type: 3}
   _barContainer: {fileID: 1826008399}
   _unitPrefab: {fileID: 2157212707429424134, guid: 13d761ed403f4f641b826fb00798c3cd, type: 3}
   _authoritySealsText: {fileID: 1994094327}
-  _maxCohortSize: 13
   _panelRect: {fileID: 441839275}
   _toggleButton: {fileID: 2070373309}
   _hideOffset: 160
@@ -5047,10 +5043,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d68164b64dcc24f40b7fb81cc3598a7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.SkillManager
-  _availableSkills:
-  - {fileID: 11400000, guid: 0f97d5874ae93c549aabc99e96e322d8, type: 2}
-  - {fileID: 11400000, guid: 7f5edbc6fc476e14db41792b36fba572, type: 2}
-  - {fileID: 11400000, guid: 4108dc1907e7c494f9247d64df238033, type: 2}
 --- !u!114 &1000020735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5065,10 +5057,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.Skills.SkillPanelUI
   _buttonContainer: {fileID: 991535438}
   _buttonPrefab: {fileID: 5685250029251268784, guid: 1050c5549d4a13e4f8d3bddb6c4721be, type: 3}
-  _skillsToDisplay:
-  - {fileID: 11400000, guid: 0f97d5874ae93c549aabc99e96e322d8, type: 2}
-  - {fileID: 11400000, guid: 7f5edbc6fc476e14db41792b36fba572, type: 2}
-  - {fileID: 11400000, guid: 4108dc1907e7c494f9247d64df238033, type: 2}
   _panelRect: {fileID: 999395979}
   _toggleButton: {fileID: 2088858336}
   _hideOffset: 360
@@ -8233,7 +8221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26fc15bbedbd66a42bf891196517a76e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.GameManager
-  _testMode: 1
+  _testMode: 0
   _testLevelData: {fileID: 11400000, guid: c8ff7eeb06602374398876e91503a50f, type: 2}
   _pathMaterial: {fileID: 2100000, guid: f2ab26e68c6b9a14eb1e3fc6689fddbe, type: 2}
 --- !u!114 &1491943335

@@ -7,13 +7,22 @@ namespace MaouSamaTD.Skills
 {
     public class SkillManager : MonoBehaviour
     {
-        [Header("Config")]
-        [SerializeField] private List<SovereignRiteData> _availableSkills;
-
         // Runtime State
+        private List<SovereignRiteData> _availableSkills = new List<SovereignRiteData>();
         private Dictionary<SovereignRiteData, float> _cooldowns = new Dictionary<SovereignRiteData, float>();
         
         [Zenject.Inject] private CurrencyManager _currencyManager;
+
+        public void Init(List<SovereignRiteData> skills)
+        {
+            _availableSkills.Clear();
+            _cooldowns.Clear();
+
+            if (skills != null)
+            {
+                _availableSkills.AddRange(skills);
+            }
+        }
 
         private void Update()
         {

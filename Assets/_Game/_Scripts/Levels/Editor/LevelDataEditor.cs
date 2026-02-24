@@ -132,6 +132,10 @@ namespace MaouSamaTD.Levels.Editor
                 EditorGUILayout.Space(5);
                 DrawProperty("SupportAssistant", "Support Assistant (11th Unit)", "Additional helper unit.");
                 DrawProperty("IsAssistantLocked", "Lock Assistant Unit");
+                EditorGUILayout.Space(5);
+                DrawProperty("MaleSovereignRites", "Male Rites", "The rites available for Male Maou.");
+                DrawProperty("FemaleSovereignRites", "Female Rites", "The rites available for Female Maou.");
+                DrawProperty("IsRitesLocked", "Lock Sovereign Rites");
             }
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();

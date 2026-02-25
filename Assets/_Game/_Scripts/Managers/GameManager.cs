@@ -119,15 +119,25 @@ namespace MaouSamaTD.Managers
             }
 
             System.Collections.Generic.List<MaouSamaTD.Skills.SovereignRiteData> ritesToLoad = new System.Collections.Generic.List<MaouSamaTD.Skills.SovereignRiteData>();
-            if (_saveManager != null && _saveManager.CurrentData != null)
+            
+            // Priority 1: Hand-picked rites from selection state
+            if (_gameSelectionState != null && _gameSelectionState.SelectedRites != null && _gameSelectionState.SelectedRites.Count > 0)
+            {
+                ritesToLoad = _gameSelectionState.SelectedRites;
+                Debug.Log($"GameManager: Using {_gameSelectionState.SelectedRites.Count} rites from Selection State.");
+            }
+            // Priority 2: Fallback to LevelData defaults based on gender
+            else if (_saveManager != null && _saveManager.CurrentData != null)
             {
                 ritesToLoad = _saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male 
                     ? levelData.MaleSovereignRites 
                     : levelData.FemaleSovereignRites;
+                Debug.Log($"GameManager: No selection state rites found. Falling back to {(_saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male ? "Male" : "Female")} rites from LevelData.");
             }
             else
             {
                 ritesToLoad = levelData.MaleSovereignRites;
+                Debug.Log("GameManager: No selection state or save data found. Falling back to default Male rites from LevelData.");
             }
 
             if (_skillManager != null)

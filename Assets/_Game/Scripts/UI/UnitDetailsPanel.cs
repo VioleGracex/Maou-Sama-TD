@@ -70,7 +70,7 @@ namespace MaouSamaTD.UI
             if (_hpText) _hpText.text = unitData.MaxHp.ToString("0");
             if (_atkText) _atkText.text = unitData.AttackPower.ToString("0");
             if (_defText) _defText.text = unitData.Defense.ToString("0");
-            if (_rangeText) _rangeText.text = unitData.Range.ToString("0.0");
+            if (_rangeText) _rangeText.text = unitData.Range.ToString("0.0") + " Tiles";
             if (_blockText) _blockText.text = unitData.BlockCount.ToString();
             if (_costText) _costText.text = unitData.DeploymentCost.ToString();
             

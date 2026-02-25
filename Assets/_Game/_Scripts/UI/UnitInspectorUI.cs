@@ -33,8 +33,8 @@ namespace MaouSamaTD.UI
         
         // Helper to access skill icon if it's on the button
         private Image _skillIcon;
-
         private PlayerUnit _selectedUnit;
+        public event System.Action OnPanelHidden;
         
         [Inject] private DeploymentUI _deploymentUI;
 
@@ -85,6 +85,8 @@ namespace MaouSamaTD.UI
 
         public void Hide()
         {
+            OnPanelHidden?.Invoke();
+
             if (_panel != null && _panel.activeSelf)
             {
                 _panel.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).OnComplete(() => 
@@ -178,7 +180,7 @@ namespace MaouSamaTD.UI
             }
             
             if (_dmgText != null) _dmgText.text = $"ATK: {_selectedUnit.AttackPower}";
-            if (_rangeText != null) _rangeText.text = $"RNG: {_selectedUnit.Range}";
+            if (_rangeText != null) _rangeText.text = $"RNG: {data.Range} Tiles";
 
             // Ult Button Icon
             if (_skillIcon != null)

@@ -96,7 +96,7 @@ namespace MaouSamaTD.Grid
             {
                 _propBlock.SetColor(GlowColorId, color);
                 _propBlock.SetFloat(GlowIntensityId, 30f); // High intensity as requested
-                _propBlock.SetFloat(Shader.PropertyToID("_BorderWidth"), 0.1f); // Thinner border
+                _propBlock.SetFloat(Shader.PropertyToID("_BorderWidth"), 0.1f); // Reverted to thin border
             }
             else
             {

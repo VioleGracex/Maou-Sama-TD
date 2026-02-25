@@ -10,14 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: LevelData
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Default Local Group
-  m_GUID: 120de0bf40785dc4580a92dd7760eca0
-  m_SerializeEntries: []
+  m_GroupName: LevelData
+  m_GUID: ba7060186f858e8478f8b8cf2ea25320
+  m_SerializeEntries:
+  - m_GUID: c8ff7eeb06602374398876e91503a50f
+    m_Address: Assets/_Game/Data/Levels/Tutorial/TestLevel.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 19b417a427e1a474d9e81fbe4eae59a7, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: dc06a4223d28fcb4a9c9df44e9fefd7b, type: 2}
-    - {fileID: 11400000, guid: ae44a4cbc1ca7fa47a179b25b07a88da, type: 2}
+    - {fileID: 11400000, guid: 9c30986d3490231459f04e4cc974cf69, type: 2}
+    - {fileID: 11400000, guid: 32f36722d05c3fa4a85ab8be6f96afd9, type: 2}

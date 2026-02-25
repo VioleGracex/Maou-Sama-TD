@@ -12,6 +12,7 @@ namespace MaouSamaTD.Managers
     {
         public LevelData SelectedLevel { get; private set; }
         public List<UnitData> SelectedCohort { get; private set; } = new List<UnitData>();
+        public List<MaouSamaTD.Skills.SovereignRiteData> SelectedRites { get; private set; } = new List<MaouSamaTD.Skills.SovereignRiteData>();
 
         // Optional: Difficulty, Modifiers, etc.
 

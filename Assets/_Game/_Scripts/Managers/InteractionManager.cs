@@ -44,6 +44,7 @@ namespace MaouSamaTD.Managers
         // Hover/Selection Tracking
         private Tile _currentHoverTile;
         private Units.UnitBase _currentHoverUnit;
+        private Units.PlayerUnit _inspectedPlayerUnit; // Track which unit is in the inspector
         private GameObject _ghostObject;
         #endregion
 
@@ -69,6 +70,14 @@ namespace MaouSamaTD.Managers
         public void Init()
         {
             _mainCamera = Camera.main;
+            if (_unitInspectorUI != null)
+            {
+                _unitInspectorUI.OnPanelHidden += () => 
+                {
+                    _inspectedPlayerUnit = null;
+                    UpdateTileVisuals();
+                };
+            }
         }
 
         private void OnEnable()
@@ -292,13 +301,17 @@ namespace MaouSamaTD.Managers
             if (targetUnit != null)
             {
                 Debug.Log($"Selected Unit via {_selectionMode}: {targetUnit.name}");
+                _inspectedPlayerUnit = targetUnit;
                 if (_unitInspectorUI != null) _unitInspectorUI.Show(targetUnit);
+                UpdateTileVisuals(); // Instant update
             }
             else
             {
                 // Clicked Empty Space/Non-Unit
                 // Ensure inspector closes if we click nothing
+                _inspectedPlayerUnit = null;
                 if (_unitInspectorUI != null) _unitInspectorUI.Hide();
+                UpdateTileVisuals(); // Instant update
             }
         }
         
@@ -337,6 +350,10 @@ namespace MaouSamaTD.Managers
             _selectedUnitData = data;
             IsDragging = false; 
             
+            // Close inspector if it's open (avoids bugs/overlap)
+            if (_unitInspectorUI != null) _unitInspectorUI.Hide();
+            _inspectedPlayerUnit = null;
+
             // Create Ghost Immediately for "Click-Place" mode
             CreateGhost(data);
             
@@ -358,6 +375,10 @@ namespace MaouSamaTD.Managers
             IsDragging = true;
             _draggedUnitData = data;
             _selectedUnitData = null;
+
+            // Close inspector if it's open 
+            if (_unitInspectorUI != null) _unitInspectorUI.Hide();
+            _inspectedPlayerUnit = null;
 
             if (_ghostObject != null) Destroy(_ghostObject);
             CreateGhost(data);
@@ -521,6 +542,21 @@ namespace MaouSamaTD.Managers
                     {
                         shouldHighlight = true;
                         highlightColor = _validGlowColor * 0.7f;
+                    }
+                }
+                else if (_inspectedPlayerUnit != null && _inspectedPlayerUnit.Data != null)
+                {
+                    // Show range for the unit currently in inspector
+                    float dist = Vector2.Distance(
+                        new Vector2(tile.Coordinate.x, tile.Coordinate.y), 
+                        new Vector2(_inspectedPlayerUnit.CurrentTile.Coordinate.x, _inspectedPlayerUnit.CurrentTile.Coordinate.y));
+                    
+                    if (dist <= _inspectedPlayerUnit.Range)
+                    {
+                        shouldHighlight = true;
+                        // Use higher alpha/intensity to appear "right away" (punchier)
+                        highlightColor = _rangeIndicatorColor;
+                        highlightColor.a = 0.8f; 
                     }
                 }
                 else if (isSkillActive && centerTile != null)

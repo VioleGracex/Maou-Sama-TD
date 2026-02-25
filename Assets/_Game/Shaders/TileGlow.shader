@@ -8,6 +8,7 @@ Shader "MaouSamaTD/TileGlow"
         _GlowColor ("Glow Color", Color) = (0,1,0,1)
         _GlowIntensity ("Glow Intensity", Float) = 1
         _BorderWidth ("Border Width", Range(0,0.5)) = 0.05
+        [Toggle(_USE_FULL_FILL)] _UseFullFill ("Use Full Fill", Float) = 0
     }
     SubShader
     {
@@ -54,6 +55,7 @@ Shader "MaouSamaTD/TileGlow"
                 float4 _GlowColor;
                 float _GlowIntensity;
                 float _BorderWidth;
+                float _UseFullFill;
                 float4 _BaseMap_ST; 
             CBUFFER_END
 
@@ -100,10 +102,11 @@ Shader "MaouSamaTD/TileGlow"
                     float2 centeredUV = abs(input.uv - 0.5) * 2.0;
                     float maxDist = max(centeredUV.x, centeredUV.y);
                     
-                    if (maxDist > (1.0 - _BorderWidth))
-                    {
-                        finalRGB += (_GlowColor.rgb * _GlowIntensity);
-                    }
+                    float isBorder = (maxDist > (1.0 - _BorderWidth)) ? 1.0 : 0.0;
+                    // _UseFullFill is 1.0 for full tile, 0.0 for outline
+                    float glowFactor = lerp(isBorder, 1.0, _UseFullFill);
+                    
+                    finalRGB += (_GlowColor.rgb * _GlowIntensity * glowFactor);
                 }
 
                 return half4(finalRGB, texColor.a);

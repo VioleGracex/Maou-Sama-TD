@@ -73,6 +73,13 @@ namespace MaouSamaTD.Grid
         private MaterialPropertyBlock _propBlock;
         private static readonly int GlowColorId = Shader.PropertyToID("_GlowColor");
         private static readonly int GlowIntensityId = Shader.PropertyToID("_GlowIntensity");
+        private static readonly int BorderWidthId = Shader.PropertyToID("_BorderWidth");
+        private static readonly int UseFullFillId = Shader.PropertyToID("_UseFullFill");
+
+        // Cache for optimization
+        private bool _isHighlighted;
+        private Color _lastColor;
+        private bool _lastUseFullFill;
 
         private void Awake()
         {
@@ -87,22 +94,33 @@ namespace MaouSamaTD.Grid
             _propBlock = new MaterialPropertyBlock();
         }
 
-        public void SetHighlight(bool active, Color color)
+        public void SetHighlight(bool active, Color color, bool useFullFill = false)
         {
             if (_renderer == null) return;
 
+            // Dirty check to avoid redundant and taxing SetPropertyBlock calls
+            if (_isHighlighted == active && _lastColor == color && _lastUseFullFill == useFullFill)
+                return;
+
             _renderer.GetPropertyBlock(_propBlock);
+            
+            _isHighlighted = active;
+            _lastColor = color;
+            _lastUseFullFill = useFullFill;
+
             if (active)
             {
                 _propBlock.SetColor(GlowColorId, color);
-                _propBlock.SetFloat(GlowIntensityId, 30f); // High intensity as requested
-                _propBlock.SetFloat(Shader.PropertyToID("_BorderWidth"), 0.1f); // Reverted to thin border
+                _propBlock.SetFloat(GlowIntensityId, 30f); 
+                _propBlock.SetFloat(BorderWidthId, useFullFill ? 0.5f : 0.1f);
+                _propBlock.SetFloat(UseFullFillId, useFullFill ? 1f : 0f);
             }
             else
             {
                 _propBlock.SetColor(GlowColorId, Color.black);
                 _propBlock.SetFloat(GlowIntensityId, 0f);
-                _propBlock.SetFloat(Shader.PropertyToID("_BorderWidth"), 0.0f); // Reset
+                _propBlock.SetFloat(BorderWidthId, 0.0f);
+                _propBlock.SetFloat(UseFullFillId, 0f);
             }
             _renderer.SetPropertyBlock(_propBlock);
         }

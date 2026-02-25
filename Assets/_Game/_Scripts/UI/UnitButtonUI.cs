@@ -43,10 +43,7 @@ namespace MaouSamaTD.UI
             if (_button != null)
             {
                 _button.onClick.RemoveAllListeners();
-                _button.onClick.AddListener(() => 
-                {
-                    if (_dragHandler != null) _dragHandler.OnPointerClick(null);
-                });
+                // Handled by UnitDragHandler
             }
 
             if (_background == null) _background = GetComponent<Image>();

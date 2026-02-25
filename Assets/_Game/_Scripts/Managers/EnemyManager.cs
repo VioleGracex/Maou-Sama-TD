@@ -11,9 +11,7 @@ namespace MaouSamaTD.Managers
 {
     public class EnemyManager : MonoBehaviour
     {
-        [Header("Settings")]
-        // [SerializeField] private EnemyData _enemyData; // Legacy single data
-        
+        #region Fields
         [Header("References")]
         [SerializeField] private MaouSamaTD.Units.EnemyUnit _enemyPrefab;
         [Inject] private GameManager _gameManager; 
@@ -25,7 +23,9 @@ namespace MaouSamaTD.Managers
         private bool _allWavesFinished = false;
         private bool _victoryTriggered = false;
         private List<WaveData> _waves;
+        #endregion
 
+        #region Lifecycle
         private void Start()
         {
             if (_enemyContainer == null)
@@ -43,7 +43,7 @@ namespace MaouSamaTD.Managers
                 if (EnemyUnit.ActiveEnemies.Count == 0)
                 {
                     _victoryTriggered = true;
-                    Debug.Log("EnemyManager: All enemies defeated. Victory!");
+                    Debug.Log("[EnemyManager] All enemies defeated. Victory!");
                     if (_gameManager != null)
                     {
                         _gameManager.Victory();
@@ -59,7 +59,9 @@ namespace MaouSamaTD.Managers
                 _gridManager.OnGridStateChanged -= OnGridChanged;
             }
         }
+        #endregion
 
+        #region Public API
         public void Initialize(List<WaveData> waves, float gracePeriod = 0f)
         {
             _waves = waves;
@@ -78,18 +80,56 @@ namespace MaouSamaTD.Managers
             }
             else
             {
-                 Debug.LogWarning("EnemySpawner initialized with empty waves.");
-                 // If no waves, is it instant victory? Let's assume yes or wait.
-                 // For safety, if empty waves, maybe just trigger finish?
+                 Debug.LogWarning("[EnemyManager] EnemySpawner initialized with empty waves.");
                  _allWavesFinished = true;
             }
         }
-        
+
+        public void SpawnEnemy(EnemyData data, int spawnPointIndex = 0)
+        {
+            if (_gridManager == null || _enemyPrefab == null || data == null) return;
+
+            // 1. Get Path (Normal)
+            Queue<Tile> path = _gridManager.GetPath(_gridManager.SpawnPoint, _gridManager.ExitPoint, data.MovementType, false);
+            
+            // Fallback: If blocked, path ignoring occupants (so they spawn and fight)
+            if (path == null || path.Count == 0)
+            {
+                Debug.Log("[EnemyManager] Spawn Path Blocked! Attempting fallback (Ignore Occupants)...");
+                path = _gridManager.GetPath(_gridManager.SpawnPoint, _gridManager.ExitPoint, data.MovementType, true);
+            }
+
+            if (path == null || path.Count == 0)
+            {
+                Debug.LogWarning("[EnemyManager] No path found even ignoring occupants!");
+                return;
+            }
+
+            // 2. Instantiate
+            Vector3 startPos = _gridManager.GridToWorldPosition(_gridManager.SpawnPoint);
+            
+            MaouSamaTD.Units.EnemyUnit enemy = Instantiate(_enemyPrefab, startPos, Quaternion.identity, _enemyContainer);
+            
+            // 3. Initialize
+            enemy.gameObject.SetActive(true); // Ensure active
+            enemy.Initialize(data);
+            enemy.SetPath(path);
+        }
+
+        public void SetSpawnState(bool active, float initialDelay = 0f)
+        {
+            _isSpawning = active;
+            StopAllCoroutines();
+            if (active) 
+            {
+                StartCoroutine(SpawnRoutine(initialDelay));
+            }
+        }
+        #endregion
+
+        #region Internal Logic
         private void OnGridChanged()
         {
-            // Grid changed (Unit placed or died). Recalculate paths for active enemies.
-            // Using Static list from EnemyUnit to access all.
-            // Create a copy to handle modification safety.
             var enemies = new List<EnemyUnit>(EnemyUnit.ActiveEnemies);
             foreach (var enemy in enemies)
             {
@@ -104,12 +144,12 @@ namespace MaouSamaTD.Managers
         {
             if (initialDelay > 0)
             {
-                Debug.Log($"EnemySpawner: Waiting for Grace Period: {initialDelay}s");
-                if (_pathVisualizer != null) _pathVisualizer.Show(); // Show path during wait
+                Debug.Log($"[EnemyManager] Waiting for Grace Period: {initialDelay}s");
+                if (_pathVisualizer != null) _pathVisualizer.Show(); 
                 yield return new WaitForSeconds(initialDelay);
             }
 
-            if (_pathVisualizer != null) _pathVisualizer.Hide(); // Hide when action starts
+            if (_pathVisualizer != null) _pathVisualizer.Hide(); 
             _isSpawning = true;
             
             if (_waves == null) yield break;
@@ -120,7 +160,7 @@ namespace MaouSamaTD.Managers
 
                 if (!string.IsNullOrEmpty(wave.WaveMessage))
                 {
-                    Debug.Log($"Starting Wave: {wave.WaveMessage}");
+                    Debug.Log($"[EnemyManager] Starting Wave: {wave.WaveMessage}");
                 }
                 
                 foreach (var group in wave.Groups)
@@ -147,48 +187,8 @@ namespace MaouSamaTD.Managers
             
             _isSpawning = false;
             _allWavesFinished = true; 
-            Debug.Log("EnemySpawner: All waves finished.");
+            Debug.Log("[EnemyManager] All waves finished.");
         }
-
-        public void SpawnEnemy(EnemyData data, int spawnPointIndex = 0)
-        {
-            if (_gridManager == null || _enemyPrefab == null || data == null) return;
-
-            // 1. Get Path (Normal)
-            Queue<Tile> path = _gridManager.GetPath(_gridManager.SpawnPoint, _gridManager.ExitPoint, data.MovementType, false);
-            
-            // Fallback: If blocked, path ignoring occupants (so they spawn and fight)
-            if (path == null || path.Count == 0)
-            {
-                Debug.Log("Spawn Path Blocked! Attempting fallback (Ignore Occupants)...");
-                path = _gridManager.GetPath(_gridManager.SpawnPoint, _gridManager.ExitPoint, data.MovementType, true);
-            }
-
-            if (path == null || path.Count == 0)
-            {
-                Debug.LogWarning("EnemySpawner: No path found even ignoring occupants!");
-                return;
-            }
-
-            // 2. Instantiate
-            Vector3 startPos = _gridManager.GridToWorldPosition(_gridManager.SpawnPoint);
-            
-            MaouSamaTD.Units.EnemyUnit enemy = Instantiate(_enemyPrefab, startPos, Quaternion.identity, _enemyContainer);
-            
-            // 3. Initialize
-            enemy.gameObject.SetActive(true); // Ensure active
-            enemy.Initialize(data);
-            enemy.SetPath(path);
-        }
-
-        public void SetSpawnState(bool active, float initialDelay = 0f)
-        {
-            _isSpawning = active;
-            StopAllCoroutines();
-            if (active) 
-            {
-                StartCoroutine(SpawnRoutine(initialDelay));
-            }
-        }
+        #endregion
     }
 }

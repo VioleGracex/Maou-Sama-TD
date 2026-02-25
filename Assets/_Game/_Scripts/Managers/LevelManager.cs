@@ -11,6 +11,7 @@ namespace MaouSamaTD.Managers
         [Inject] private GameManager _gameManager;
         [Inject] private GameSelectionState _gameSelectionState;
 
+        #region Lifecycle
         private void Start()
         {
             if (_gameManager == null) return;
@@ -21,7 +22,6 @@ namespace MaouSamaTD.Managers
             if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
             {
                 dataToLoad = _gameSelectionState.SelectedLevel;
-                // Debug update
                 _levelData = dataToLoad;
             }
 
@@ -31,8 +31,9 @@ namespace MaouSamaTD.Managers
             }
             else
             {
-                Debug.LogWarning("LevelManager: No LevelData found!");
+                Debug.LogWarning("[LevelManager] No LevelData found!");
             }
         }
+        #endregion
     }
 }

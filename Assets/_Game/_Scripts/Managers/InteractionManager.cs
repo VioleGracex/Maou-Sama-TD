@@ -58,6 +58,7 @@ namespace MaouSamaTD.Managers
         [Inject] private SkillManager _skillManager;
         #endregion
 
+        #region Lifecycle
         public void Init()
         {
             Camera mainCam = Camera.main;
@@ -76,6 +77,7 @@ namespace MaouSamaTD.Managers
                     UpdateTileVisuals();
                 };
             }
+            Debug.Log("[InteractionManager] Initialized.");
         }
 
         private void OnEnable() => _inputHandler?.Enable();
@@ -103,7 +105,87 @@ namespace MaouSamaTD.Managers
                 }
             }
         }
+        #endregion
 
+        #region Public API
+        public void SelectUnit(UnitData data)
+        {
+            if (_activeUnitData == data) 
+            { 
+                DeselectUnit(); 
+                return; 
+            }
+            _activeUnitData = data;
+            IsDragging = false;
+            _unitInspectorUI.Hide();
+            _inspectedPlayerUnit = null;
+            _placementHandler.CreateGhost(data);
+            _deploymentUI.UpdateSelectionHighlight(data);
+            UpdateTileVisuals();
+        }
+
+        public void DeselectUnit()
+        {
+            _activeUnitData = null;
+            IsDragging = false;
+            _placementHandler.DestroyGhost();
+            _deploymentUI.UpdateSelectionHighlight(null);
+            UpdateTileVisuals();
+        }
+
+        public void StartDrag(UnitData data)
+        {
+            _activeUnitData = data;
+            IsDragging = true;
+            _unitInspectorUI.Hide();
+            _inspectedPlayerUnit = null;
+            _placementHandler.CreateGhost(data);
+            UpdateTileVisuals();
+        }
+
+        public void EndDrag(bool place)
+        {
+            if (place && _currentHoverTile != null)
+            {
+                _placementHandler.TryPlaceUnit(_currentHoverTile, _activeUnitData);
+            }
+            DeselectUnit();
+        }
+
+        public void SelectSkill(SovereignRiteData skill)
+        {
+            if (_selectedSkill == skill && _isSkillTargeting) { DeselectSkill(); return; }
+            DeselectUnit();
+            _selectedSkill = skill;
+            _isSkillTargeting = true;
+            UpdateTileVisuals();
+        }
+
+        public void DeselectSkill()
+        {
+            _isSkillTargeting = false;
+            _selectedSkill = null;
+            UpdateTileVisuals();
+        }
+
+        public void UpdateTileVisuals()
+        {
+            SyncVisualSettings();
+            _tileVisualsHandler.UpdateVisuals(_activeUnitData, IsDragging, _isSkillTargeting, _selectedSkill, _currentHoverTile, _inspectedPlayerUnit);
+        }
+
+        public void NotifyUnitRemoved(PlayerUnit unit)
+        {
+            if (_inspectedPlayerUnit == unit)
+            {
+                _inspectedPlayerUnit = null;
+                _unitInspectorUI?.Hide();
+                UpdateTileVisuals();
+            }
+        }
+        #endregion
+
+        #region Internal Logic
         private void HandleHover(Tile tile)
         {
             if (tile != _currentHoverTile)
@@ -172,62 +254,6 @@ namespace MaouSamaTD.Managers
             }
         }
 
-        public void SelectUnit(UnitData data)
-        {
-            if (_activeUnitData == data) { DeselectUnit(); return; }
-            _activeUnitData = data;
-            IsDragging = false;
-            _unitInspectorUI.Hide();
-            _inspectedPlayerUnit = null;
-            _placementHandler.CreateGhost(data);
-            _deploymentUI.UpdateSelectionHighlight(data);
-            UpdateTileVisuals();
-        }
-
-        public void DeselectUnit()
-        {
-            _activeUnitData = null;
-            IsDragging = false;
-            _placementHandler.DestroyGhost();
-            _deploymentUI.UpdateSelectionHighlight(null);
-            UpdateTileVisuals();
-        }
-
-        public void StartDrag(UnitData data)
-        {
-            _activeUnitData = data;
-            IsDragging = true;
-            _unitInspectorUI.Hide();
-            _inspectedPlayerUnit = null;
-            _placementHandler.CreateGhost(data);
-            UpdateTileVisuals();
-        }
-
-        public void EndDrag(bool place)
-        {
-            if (place && _currentHoverTile != null)
-            {
-                _placementHandler.TryPlaceUnit(_currentHoverTile, _activeUnitData);
-            }
-            DeselectUnit();
-        }
-
-        public void SelectSkill(SovereignRiteData skill)
-        {
-            if (_selectedSkill == skill && _isSkillTargeting) { DeselectSkill(); return; }
-            DeselectUnit();
-            _selectedSkill = skill;
-            _isSkillTargeting = true;
-            UpdateTileVisuals();
-        }
-
-        public void DeselectSkill()
-        {
-            _isSkillTargeting = false;
-            _selectedSkill = null;
-            UpdateTileVisuals();
-        }
-
         private void HandleSkillInput(Ray ray)
         {
             if (_selectedSkill == null) return;
@@ -262,12 +288,6 @@ namespace MaouSamaTD.Managers
             UpdateTileVisuals();
         }
 
-        public void UpdateTileVisuals()
-        {
-            SyncVisualSettings();
-            _tileVisualsHandler.UpdateVisuals(_activeUnitData, IsDragging, _isSkillTargeting, _selectedSkill, _currentHoverTile, _inspectedPlayerUnit);
-        }
-
         private void SyncVisualSettings()
         {
             if (_tileVisualsHandler == null) return;
@@ -278,5 +298,6 @@ namespace MaouSamaTD.Managers
             _tileVisualsHandler.UseFullFillPlacement = _useFullFillForPlacement;
             _tileVisualsHandler.UseFullFillSkills = _useFullFillForSkills;
         }
+        #endregion
     }
 }

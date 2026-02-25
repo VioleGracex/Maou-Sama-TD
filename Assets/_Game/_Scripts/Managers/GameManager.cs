@@ -9,6 +9,7 @@ namespace MaouSamaTD.Managers
 {
     public class GameManager : MonoBehaviour
     {
+        #region Fields
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private GridManager _gridManager;
         [Inject] private InteractionManager _interactionManager;
@@ -31,6 +32,17 @@ namespace MaouSamaTD.Managers
 
         private LevelData _currentLevelData;
 
+        public int PlayerLives { get; private set; }
+        public System.Action<int> OnLivesChanged;
+        public event System.Action OnVictory;
+        public event System.Action OnGameOver;
+
+        public bool IsGameEnded { get; private set; } = false;
+        public float CurrentSpeed { get; private set; } = 1f;
+        public bool IsPaused { get; private set; } = false;
+        #endregion
+
+        #region Initialization
         public void LoadLevelData(LevelData levelData)
         {
             InitializeGame(levelData);
@@ -39,24 +51,23 @@ namespace MaouSamaTD.Managers
         private void InitializeGame(LevelData levelData)
         {
             _currentLevelData = levelData;
-            _currentLevelData = levelData;
-            Debug.Log("GameManager: Initializing Game...");
+            Debug.Log("[GameManager] Initializing Game...");
             SetSpeed(1f); // Reset TimeScale on Restart
 
             if (_gridGenerator != null && levelData.MapData != null)
             {
-                Debug.Log($"GameManager: Loading MapData from {levelData.LevelName}");
+                Debug.Log($"[GameManager] Loading MapData from {levelData.LevelName}");
                 _gridGenerator.LoadMapData(levelData.MapData);
             }
 
             if (_gridManager != null) 
             {
                 _gridManager.Init();
-                Debug.Log("GameManager: GridManager Initialized.");
+                Debug.Log("[GameManager] GridManager Initialized.");
             }
             else
             {
-                Debug.LogError("GameManager: GridManager is NULL!");
+                Debug.LogError("[GameManager] GridManager is NULL!");
             }
 
             if (_cameraManager != null)
@@ -76,21 +87,21 @@ namespace MaouSamaTD.Managers
                     float centerZ = (_gridManager.Height - 1) * _gridManager.CellSize / 2f;
                     _cameraManager.FrameGrid(centerX, centerZ);
                  }
-                 Debug.Log("GameManager: CameraManager Initialized.");
+                 Debug.Log("[GameManager] CameraManager Initialized.");
                  
                  if (_cameraControlUI != null)
                  {
                      _cameraControlUI.Init();
-                     Debug.Log("GameManager: CameraControlUI Initialized.");
+                     Debug.Log("[GameManager] CameraControlUI Initialized.");
                  }
                  else
                  {
-                     Debug.LogWarning("GameManager: CameraControlUI is NULL (or not injected).");
+                     Debug.LogWarning("[GameManager] CameraControlUI is NULL (or not injected).");
                  }
             }
             else
             {
-                Debug.LogError("GameManager: CameraManager is NULL!");
+                Debug.LogError("[GameManager] CameraManager is NULL!");
             }
 
             if (_pathVisualizer != null)
@@ -101,98 +112,113 @@ namespace MaouSamaTD.Managers
             if (_currencyManager != null)
             {
                 _currencyManager.Init();
-                Debug.Log("GameManager: CurrencyManager Initialized.");
+                Debug.Log("[GameManager] CurrencyManager Initialized.");
             }
             else
             {
-                Debug.LogError("GameManager: CurrencyManager is NULL!");
+                Debug.LogError("[GameManager] CurrencyManager is NULL!");
             }
 
             if (_deploymentUI != null)
             {
                 _deploymentUI.Init(levelData.PremadeCohort, levelData.SupportAssistant);
-                Debug.Log("GameManager: DeploymentUI Initialized.");
+                Debug.Log("[GameManager] DeploymentUI Initialized.");
             }
             else
             {
-                 Debug.Log("GameManager: DeploymentUI is NULL (or not injected).");
+                 Debug.Log("[GameManager] DeploymentUI is NULL (or not injected).");
             }
 
             System.Collections.Generic.List<MaouSamaTD.Skills.SovereignRiteData> ritesToLoad = new System.Collections.Generic.List<MaouSamaTD.Skills.SovereignRiteData>();
             
-            // Priority 1: Hand-picked rites from selection state
+            // Priority 1: Hand-picked rites from selection state (Normal Flow)
             if (_gameSelectionState != null && _gameSelectionState.SelectedRites != null && _gameSelectionState.SelectedRites.Count > 0)
             {
                 ritesToLoad = _gameSelectionState.SelectedRites;
-                Debug.Log($"GameManager: Using {_gameSelectionState.SelectedRites.Count} rites from Selection State.");
+                Debug.Log($"[GameManager] Using {_gameSelectionState.SelectedRites.Count} rites from Selection State.");
             }
-            // Priority 2: Fallback to LevelData defaults based on gender
+            // Priority 2: Fallback to LevelData defaults based on gender (Direct Scene Play with Save Data)
             else if (_saveManager != null && _saveManager.CurrentData != null)
             {
                 ritesToLoad = _saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male 
                     ? levelData.MaleSovereignRites 
                     : levelData.FemaleSovereignRites;
-                Debug.Log($"GameManager: No selection state rites found. Falling back to {(_saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male ? "Male" : "Female")} rites from LevelData.");
+                
+                // Wide Fallback for Editor (if gender-specific list is empty but the other isn't)
+                if ((ritesToLoad == null || ritesToLoad.Count == 0) && Application.isEditor)
+                {
+                    var otherRites = _saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male 
+                        ? levelData.FemaleSovereignRites 
+                        : levelData.MaleSovereignRites;
+                    
+                    if (otherRites != null && otherRites.Count > 0)
+                    {
+                        ritesToLoad = otherRites;
+                        Debug.Log("[GameManager] Active gender's rite list was empty. Using 'Wide Fallback' to other gender's list for testing.");
+                    }
+                }
+                Debug.Log($"[GameManager] Loaded {ritesToLoad.Count} rites using Save Data Gender fallback.");
             }
+            // Priority 3: Hard Fallback (Direct Scene Play, No Save Data/Selection)
             else
             {
-                ritesToLoad = levelData.MaleSovereignRites;
-                Debug.Log("GameManager: No selection state or save data found. Falling back to default Male rites from LevelData.");
+                // Default to Male if unknown or if Male list is available
+                ritesToLoad = (levelData.MaleSovereignRites != null && levelData.MaleSovereignRites.Count > 0) 
+                    ? levelData.MaleSovereignRites 
+                    : levelData.FemaleSovereignRites;
+                
+                string source = (levelData.MaleSovereignRites != null && levelData.MaleSovereignRites.Count > 0) ? "Male" : "Female";
+                Debug.Log($"[GameManager] No selection state or save data found. Using 'Hard Fallback' (Defaulting to {source} rites). Loaded: {ritesToLoad?.Count ?? 0}");
             }
 
             if (_skillManager != null)
             {
                 _skillManager.Init(ritesToLoad);
-                Debug.Log("GameManager: SkillManager Initialized.");
+                Debug.Log("[GameManager] SkillManager Initialized.");
             }
 
             if (_skillPanelUI != null)
             {
                 _skillPanelUI.Init(ritesToLoad);
-                Debug.Log("GameManager: SkillPanelUI Initialized.");
+                Debug.Log("[GameManager] SkillPanelUI Initialized.");
             }
             
             if (_interactionManager != null)
             {
                 _interactionManager.Init();
-                Debug.Log("GameManager: InteractionManager Initialized.");
+                Debug.Log("[GameManager] InteractionManager Initialized.");
             }
             else
             {
-                Debug.LogError("GameManager: InteractionManager is NULL!");
+                Debug.LogError("[GameManager] InteractionManager is NULL!");
             }
 
             if (_unitInspectorUI != null)
             {
                 _unitInspectorUI.Init();
-                Debug.Log("GameManager: UnitInspectorUI Initialized.");
+                Debug.Log("[GameManager] UnitInspectorUI Initialized.");
             }
             
-            Debug.Log("GameManager: All Systems Initialized. Level Ready.");
+            Debug.Log("[GameManager] All Systems Initialized. Level Ready.");
             
             if (_enemyManager != null && levelData != null)
             {
                 float gracePeriod = levelData.GracePeriod;
-                Debug.Log($"GameManager: Starting Enemy Manager with Grace Period: {gracePeriod}s");
+                Debug.Log($"[GameManager] Starting Enemy Manager with Grace Period: {gracePeriod}s");
                 _enemyManager.Initialize(levelData.Waves, gracePeriod);
             }
             else
             {
-                if (_enemyManager == null) Debug.LogError("GameManager: EnemyManager is NULL!");
-                if (levelData == null) Debug.LogError("GameManager: LevelData is NULL!");
+                if (_enemyManager == null) Debug.LogError("[GameManager] EnemyManager is NULL!");
+                if (levelData == null) Debug.LogError("[GameManager] LevelData is NULL!");
             }
 
             PlayerLives = 20;
             OnLivesChanged?.Invoke(PlayerLives);
         }
+        #endregion
 
-        public int PlayerLives { get; private set; }
-        public System.Action<int> OnLivesChanged;
-        public event System.Action OnVictory;
-        public event System.Action OnGameOver;
-
-        public bool IsGameEnded { get; private set; } = false;
-
+        #region Public API
         public void TakeBaseDamage(int amount)
         {
             if (IsGameEnded) return;
@@ -202,7 +228,7 @@ namespace MaouSamaTD.Managers
             
             OnLivesChanged?.Invoke(PlayerLives);
             
-            Debug.Log($"Base taking damage! Lives remaining: {PlayerLives}");
+            Debug.Log($"[GameManager] Base taking damage! Lives remaining: {PlayerLives}");
 
             if (PlayerLives <= 0)
             {
@@ -210,20 +236,11 @@ namespace MaouSamaTD.Managers
             }
         }
 
-        private void GameOver()
-        {
-            if (IsGameEnded) return;
-            IsGameEnded = true;
-            Debug.Log("Game Over!");
-            OnGameOver?.Invoke();
-            SetSpeed(0);
-        }
-
         public void Victory()
         {
             if (IsGameEnded) return;
             IsGameEnded = true;
-            Debug.Log("Victory!");
+            Debug.Log("[GameManager] Victory!");
             
             int stars = 1;
             if (PlayerLives >= 20) stars = 3;
@@ -244,8 +261,6 @@ namespace MaouSamaTD.Managers
                         }
                         else if (reward.Type == MaouSamaTD.Levels.RewardType.BloodCrests)
                         {
-                            // Expand SaveManager later to handle Blood Crests natively
-                            // For now, logging to ensure logic hooks up
                             Debug.Log($"[GameManager] Earned {reward.Amount} Blood Crests!");
                         }
                     }
@@ -257,9 +272,6 @@ namespace MaouSamaTD.Managers
             OnVictory?.Invoke();
             SetSpeed(0);
         }
-
-        public float CurrentSpeed { get; private set; } = 1f;
-        public bool IsPaused { get; private set; } = false;
 
         public void SetSpeed(float speed)
         {
@@ -284,5 +296,17 @@ namespace MaouSamaTD.Managers
                 Time.timeScale = CurrentSpeed;
             }
         }
+        #endregion
+
+        #region Internal Logic
+        private void GameOver()
+        {
+            if (IsGameEnded) return;
+            IsGameEnded = true;
+            Debug.Log("[GameManager] Game Over!");
+            OnGameOver?.Invoke();
+            SetSpeed(0);
+        }
+        #endregion
     }
 }

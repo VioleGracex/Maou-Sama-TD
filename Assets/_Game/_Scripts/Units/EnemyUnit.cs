@@ -14,7 +14,9 @@ namespace MaouSamaTD.Units
         private Queue<Tile> _path;
         private Tile _targetTile;
         private bool _isMoving = false;
+        private bool _isCentering = false;
         private PlayerUnit _blockedBy = null;
+        private PlayerUnit _attackTarget = null;
 
         public static System.Collections.Generic.List<EnemyUnit> ActiveEnemies = new System.Collections.Generic.List<EnemyUnit>();
 
@@ -84,6 +86,7 @@ namespace MaouSamaTD.Units
             {
                 _targetTile = _path.Dequeue();
                 _isMoving = true;
+                _isCentering = false;
             }
         }
 
@@ -103,6 +106,7 @@ namespace MaouSamaTD.Units
                {
                    _targetTile = _path.Dequeue();
                    _isMoving = true;
+                   _isCentering = false;
                }
             }
         }
@@ -111,33 +115,57 @@ namespace MaouSamaTD.Units
         {
             base.UpdateInternal();
             
-            if (_blockedBy != null)
+            // Re-evaluating blockers/targets while moving vs while stopped
+            if (!_isMoving)
             {
-                if (_blockedBy == null || _blockedBy.CurrentHp <= 0)
+                if (_blockedBy != null)
                 {
-                    ReleaseBlock();
-                }
-                else
-                {
-                    HandleAttack(_blockedBy);
-                    // Continue to center logic if needed, but usually Attack stops movement.
-                    // If we want to center while attacking: Check distance to center.
-                    // But _isMoving is false.
-                    // We can enable specific "centering" move?
-                    // Proper fix: When Blocked, we check if we are AT Center.
-                    // If not, we allow movement to center.
+                    if (_blockedBy == null || _blockedBy.CurrentHp <= 0)
+                    {
+                        ReleaseBlock();
+                    }
+                    else
+                    {
+                        HandleAttack(_blockedBy);
+                        FaceTarget(_blockedBy.transform.position);
+                    }
                     return;
                 }
+
+                if (_attackTarget != null)
+                {
+                    if (_attackTarget == null || _attackTarget.CurrentHp <= 0)
+                    {
+                        _attackTarget = null;
+                        _isMoving = true;
+                    }
+                    else
+                    {
+                        HandleAttack(_attackTarget);
+                        FaceTarget(_attackTarget.transform.position);
+                        
+                        // Periodic re-scan while attacking to ensure they are still in pattern/range
+                        if (!ScanForTarget(out PlayerUnit nextTarget) || nextTarget != _attackTarget)
+                        {
+                            _attackTarget = nextTarget;
+                        }
+                    }
+                    return;
+                }
+
+                // If stopped but not blocked/targeting, resume move
+                _isMoving = true;
             }
 
-            if (_isMoving && _targetTile != null)
+            if (_isMoving)
             {
                  MoveTowardsTarget();
             }
         }
 
-        private bool ScanForTarget()
+        private bool ScanForTarget(out PlayerUnit target)
         {
+            target = null;
             if (_gridManager == null) _gridManager = FindObjectOfType<GridManager>();
             if (_gridManager == null) return false;
 
@@ -152,8 +180,7 @@ namespace MaouSamaTD.Units
 
                     if (IsTargetInPattern(myPos, targetPos, _enemyData != null ? _enemyData.AttackPattern : AttackPattern.All, Range))
                     {
-                        HandleAttack(unit);
-                        FaceTarget(unit.transform.position);
+                        target = unit;
                         return true;
                     }
                 }
@@ -169,11 +196,12 @@ namespace MaouSamaTD.Units
              if (Mathf.Abs(diff) < 0.05f) return;
 
              bool isTargetRight = diff > 0;
-             _spriteRenderer.flipX = isTargetRight;
+             _spriteRenderer.flipX = !isTargetRight; // Corrected flip for orientation
         }
 
         private void HandleAttack(UnitBase target)
         {
+            if (target == null) return;
             if (Time.time >= _lastAttackTime + _attackInterval)
             {
                 _lastAttackTime = Time.time;
@@ -183,47 +211,32 @@ namespace MaouSamaTD.Units
 
         private void MoveTowardsTarget()
         {
-            if (_enemyData == null) return;
+            if (_enemyData == null || _targetTile == null) return;
 
-            if (_blockedBy == null)
+            // 1. Check for range-based targets if not already centering/blocked
+            if (!_isCentering && _blockedBy == null)
             {
-               if (ScanForTarget()) 
-               {
-                   return; 
-               }
+                if (ScanForTarget(out PlayerUnit target))
+                {
+                    _attackTarget = target;
+                    InitiateCentering();
+                    return;
+                }
             }
 
-            if (_enemyData.MovementType != EnemyMovementType.Flying && 
+            // 2. Check for blockers in moving path
+            if (!_isCentering && _enemyData.MovementType != EnemyMovementType.Flying && 
                 _enemyData.CollisionType == EnemyCollisionType.BlockedByPlayer)
             {
-                if (_targetTile != null && _targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
+                if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
                 {
-                    // Fix: Before stopping, ensure we are centered on the CURRENT tile (or the one we are entering).
-                    // Actually, if we are entering a tile with a player, we should stop at the EDGE or CENTER of PREVIOUS?
-                    // Usually Center of PREVIOUS (Current).
-                    // If _targetTile is the one with the Player, we haven't reached it yet.
-                    // So we should Stop moving to _targetTile and stay on Current.
-                    
-                    // But if we are "Moving Towards Target" (L127), we are interpolating.
-                    // If we act now, we freeze in place.
-                    
-                    // Logic: Retarget to Center of Tile we are CLOSEST to (or currently occupying).
-                    // And SetBlockedBy to stop Logic AFTER reaching it.
-                    
-                    // Simple Fix: Just set blocked. The user complained about "adding to range".
-                    // If we stop early, we are further away -> Less Range usage? No, range is from Unit.
-                    // If we stop at edge, we might be closer to target than center?
-                    // User said: "position of enemies when they stop should be center of tile"
-                    
-                    // Force Snap? No, visual glitch.
-                    // Let's change target to Current Position's Tile Center.
-                    SetBlockedBy(player);
+                    _blockedBy = player;
+                    InitiateCentering();
                     return;
                 }
             }
 
             Vector3 targetPos = _targetTile.transform.position;
-            
             float step = _enemyData.MoveSpeed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
 
@@ -233,8 +246,17 @@ namespace MaouSamaTD.Units
                  FaceTarget(transform.position + dir);
             }
 
-            if (Vector3.Distance(transform.position, targetPos) < 0.01f)
+            if (Vector3.Distance(transform.position, targetPos) < 0.005f)
             {
+                transform.position = targetPos; // Final snap
+
+                if (_isCentering)
+                {
+                    _isMoving = false;
+                    _isCentering = false;
+                    return;
+                }
+
                 if (_path.Count > 0)
                 {
                     _targetTile = _path.Dequeue();
@@ -243,6 +265,21 @@ namespace MaouSamaTD.Units
                 {
                     ReachedExit();
                 }
+            }
+        }
+
+        private void InitiateCentering()
+        {
+            if (_gridManager == null) _gridManager = FindObjectOfType<GridManager>();
+            if (_gridManager != null)
+            {
+                Vector2Int coord = _gridManager.WorldToGridCoordinates(transform.position);
+                _targetTile = _gridManager.GetTileAt(coord);
+                _isCentering = true;
+            }
+            else
+            {
+                _isMoving = false;
             }
         }
 
@@ -266,26 +303,7 @@ namespace MaouSamaTD.Units
         public void SetBlockedBy(PlayerUnit blocker)
         {
             _blockedBy = blocker;
-            // Fix: Do not stop immediately if not centered.
-            // Check distance to center of current tile?
-            // Or just Snap for now as requested? 
-            // "so it does not add to their range and make a hidden variable" implies consisteny is key.
-            // Snapping is consistent.
-            
-            // Allow finishing the move to center?
-            // If I set _isMoving = false, Update stops.
-            // Let's Snap to Grid Center of current position.
-            
-            GridManager grid = FindObjectOfType<GridManager>();
-            if (grid != null)
-            {
-                 Vector2Int coord = grid.WorldToGridCoordinates(transform.position);
-                 Vector3 center = grid.GridToWorldPosition(coord);
-                 // Preserve Y
-                 transform.position = new Vector3(center.x, transform.position.y, center.z);
-            }
-
-            _isMoving = false;
+            InitiateCentering();
         }
 
         public void ReleaseBlock()

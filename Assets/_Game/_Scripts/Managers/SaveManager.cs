@@ -10,19 +10,24 @@ namespace MaouSamaTD.Managers
 {
     public class SaveManager : MonoBehaviour
     {
+        #region Fields
         private const string SaveFileName = "player_save.json";
         private const string HashKey = "MaouSamaTD_Sylvan_Secret"; // Basic obfuscation key
 
         public PlayerData CurrentData { get; private set; }
         
         private string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
+        #endregion
 
+        #region Lifecycle
         [Inject]
         public void Construct()
         {
             Load();
         }
+        #endregion
 
+        #region Public API
         public void Save()
         {
             if (CurrentData == null) CurrentData = new PlayerData();
@@ -88,33 +93,6 @@ namespace MaouSamaTD.Managers
             }
         }
 
-        private void CreateNewSave()
-        {
-            CurrentData = new PlayerData();
-            // Initial New Game State
-            CurrentData.Currency = 0;
-            CurrentData.UnlockedUnits = new List<string>()
-            {
-                "Ignis", // Default Starter Unit
-                
-            }; 
-            
-            Debug.Log($"[SaveManager] Created New Save Data. Granted Default Units: {string.Join(", ", CurrentData.UnlockedUnits)}");
-            Save();
-        }
-
-        private string GenerateHash(string input)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(input + HashKey);
-                byte[] hashBytes = sha256.ComputeHash(bytes);
-                return System.Convert.ToBase64String(hashBytes);
-            }
-        }
-        
-        #region Public API
-        
         public void DeleteSaveData()
         {
             if (File.Exists(SavePath))
@@ -228,7 +206,33 @@ namespace MaouSamaTD.Managers
              };
              Save();
         }
+        #endregion
 
+        #region Internal Logic
+        private void CreateNewSave()
+        {
+            CurrentData = new PlayerData();
+            // Initial New Game State
+            CurrentData.Currency = 0;
+            CurrentData.UnlockedUnits = new List<string>()
+            {
+                "Ignis", // Default Starter Unit
+                
+            }; 
+            
+            Debug.Log($"[SaveManager] Created New Save Data. Granted Default Units: {string.Join(", ", CurrentData.UnlockedUnits)}");
+            Save();
+        }
+
+        private string GenerateHash(string input)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(input + HashKey);
+                byte[] hashBytes = sha256.ComputeHash(bytes);
+                return System.Convert.ToBase64String(hashBytes);
+            }
+        }
         #endregion
     }
 }

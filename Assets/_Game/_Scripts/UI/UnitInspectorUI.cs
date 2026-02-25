@@ -21,10 +21,13 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _dmgText; // Inside Stats_Dmg_BG
         [SerializeField] private TextMeshProUGUI _rangeText; // Inside Stats_Range_BG
         
+        [Header("Range Shape")]
+        [SerializeField] private RangePatternUI _rangePatternUI;
+
         [Header("Ultimate Charge")]
-        [SerializeField] private Image _ultChargeParent; // New: Fill Image for charging
-        [SerializeField] private Image _ultChargeFill; // New: Fill Image for charging
-        [SerializeField] private TextMeshProUGUI _ultChargeLabel; // New: Text for charging %
+        [SerializeField] private Image _ultChargeParent;
+        [SerializeField] private Image _ultChargeFill;
+        [SerializeField] private TextMeshProUGUI _ultChargeLabel;
         
         [Header("Buttons")]
         [SerializeField] private Button _ultButton; // Ult_Btn
@@ -180,7 +183,12 @@ namespace MaouSamaTD.UI
             }
             
             if (_dmgText != null) _dmgText.text = $"ATK: {_selectedUnit.AttackPower}";
-            if (_rangeText != null) _rangeText.text = $"RNG: {data.Range} Tiles";
+            if (_rangeText != null) _rangeText.text = $"{data.Range}";
+
+            if (_rangePatternUI != null)
+            {
+                _rangePatternUI.SetPattern(data.AttackPattern, (int)data.Range);
+            }
 
             // Ult Button Icon
             if (_skillIcon != null)
@@ -198,6 +206,7 @@ namespace MaouSamaTD.UI
             if (_selectedUnit != null)
             {
                 _selectedUnit.Retreat();
+                Hide();
             }
         }
 

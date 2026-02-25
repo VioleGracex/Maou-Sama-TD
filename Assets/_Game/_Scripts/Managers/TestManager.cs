@@ -1,62 +1,94 @@
 using UnityEngine;
 using MaouSamaTD.Levels;
 using MaouSamaTD.Units;
+using MaouSamaTD.Skills;
+using MaouSamaTD.UI.Skills;
 using System.Collections.Generic;
 using NaughtyAttributes;
-// using Zenject; // If needed later
+using Zenject;
 
 namespace MaouSamaTD.Managers
 {
     public class TestManager : MonoBehaviour
     {
+        #region Fields
         [Header("Test Configuration")]
-        public EnemyData TestEnemyData;
+        [SerializeField] private LevelData _levelData;
+        
+        [Inject] private GameManager _gameManager;
+        [Inject] private SkillManager _skillManager;
+        [Inject] private CurrencyManager _currencyManager;
+        [InjectOptional] private SkillPanelUI _skillPanelUI;
+        #endregion
+
+        #region Public API
+        [Button("Ready All Skills")]
+        public void ReadyAllSkills()
+        {
+            if (_skillManager != null) _skillManager.ResetAllCooldowns();
+        }
+
+        [Button("Maximize Seals (99)")]
+        public void MaximizeSeals()
+        {
+            if (_currencyManager != null) _currencyManager.SetSeals(99);
+        }
 
         [Button("Start Test Level")]
         public void StartTestLevel()
         {
-            var gameManager = FindAnyObjectByType<GameManager>();
-            if (gameManager == null)
+            if (_gameManager == null)
             {
-                Debug.LogError("TestManager: No GameManager found!");
+                Debug.LogError("[TestManager] GameManager not injected!");
                 return;
             }
 
-            if (TestEnemyData == null)
+            if (_levelData == null)
             {
-                Debug.LogWarning("TestManager: No TestEnemyData assigned!");
+                Debug.LogWarning("[TestManager] No LevelData assigned for re-init!");
                 return;
             }
 
-            // Create dummy MapData
-            MapData testMap = ScriptableObject.CreateInstance<MapData>();
-            testMap.Width = 10;
-            testMap.Height = 10;
-            testMap.MapSeed = 12345;
-            testMap.SpawnPoints = new List<Vector2Int>{ new Vector2Int(0, 5) };
-            testMap.ExitPoints = new List<Vector2Int>{ new Vector2Int(9, 5) };
-
-            // Create dummy LevelData
-            LevelData testLevel = ScriptableObject.CreateInstance<LevelData>();
-            testLevel.LevelName = "Test Level";
-            testLevel.GracePeriod = 2f; 
-            testLevel.MapData = testMap; // Assign MapData
-            testLevel.Waves = new List<WaveData>();
-
-            WaveData wave = new WaveData();
-            wave.WaveMessage = "Test Wave";
-            wave.Groups = new List<WaveGroup>();
-
-            WaveGroup group = new WaveGroup();
-            group.EnemyType = TestEnemyData;
-            group.Count = 5;
-            group.SpawnInterval = 1f;
-
-            wave.Groups.Add(group);
-            testLevel.Waves.Add(wave);
-
-            gameManager.LoadLevelData(testLevel);
-            Debug.Log("TestManager: Started Test Level via GameManager.");
+            _gameManager.LoadLevelData(_levelData);
+            Debug.Log($"[TestManager] Re-initialized Level: {_levelData.LevelName}");
         }
+
+        [Button("Spawn Male Rites")]
+        public void SpawnMaleRites()
+        {
+            if (_levelData == null) return;
+            UpdateRites(_levelData.MaleSovereignRites);
+            Debug.Log("[TestManager] Spawned Male Rites.");
+        }
+
+        [Button("Spawn Female Rites")]
+        public void SpawnFemaleRites()
+        {
+            if (_levelData == null) return;
+            UpdateRites(_levelData.FemaleSovereignRites);
+            Debug.Log("[TestManager] Spawned Female Rites.");
+        }
+
+        [Button("Spawn Both Rites")]
+        public void SpawnBothRites()
+        {
+            if (_levelData == null) return;
+            
+            List<SovereignRiteData> allRites = new List<SovereignRiteData>();
+            if (_levelData.MaleSovereignRites != null) allRites.AddRange(_levelData.MaleSovereignRites);
+            if (_levelData.FemaleSovereignRites != null) allRites.AddRange(_levelData.FemaleSovereignRites);
+            
+            UpdateRites(allRites);
+            Debug.Log("[TestManager] Spawned Both Rites.");
+        }
+        #endregion
+
+        #region Internal Logic
+        private void UpdateRites(List<SovereignRiteData> rites)
+        {
+            if (_skillManager != null) _skillManager.Init(rites);
+            if (_skillPanelUI != null) _skillPanelUI.Init(rites);
+        }
+        #endregion
     }
 }

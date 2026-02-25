@@ -6,14 +6,13 @@ using Zenject;
 
 namespace MaouSamaTD.UI
 {
-    public class UnitDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerDownHandler
+    public class UnitDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerClickHandler
     {
         private UnitData _data;
         private bool _isInteractable = true;
         private bool _wasSelectedOnStart; 
         private float _pointerDownTime;
         private const float DragThreshold = 0.2f;
-        // We use this because OnBeginDrag fires on jittery clicks, killing selection.
 
         [Inject] private InteractionManager _interactionManager;
         [Inject] private Grid.GridManager _gridManager;
@@ -37,15 +36,31 @@ namespace MaouSamaTD.UI
         public void OnPointerClick(PointerEventData eventData)
         {
             if (!_isInteractable || _data == null) return;
-            // Toggle selection mode
-            if (_interactionManager != null) _interactionManager.SelectUnit(_data);
+
+            // Enter placement mode only on Double Click
+            if (eventData.clickCount >= 2)
+            {
+                // Ensure any active drag visuals are cleared if they haven't been
+                _interactionManager?.EndDrag(false);
+
+                // Toggle placement mode
+                bool isCurrentlySelected = (_interactionManager != null && _interactionManager.SelectedUnitData == _data);
+                if (isCurrentlySelected)
+                {
+                    _interactionManager?.DeselectUnit();
+                }
+                else
+                {
+                    _interactionManager?.SelectUnit(_data);
+                }
+            }
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!_isInteractable || _data == null) return;
             
-            // Store state before Drag clears it
+            // Store state before Drag potentially changes it
             _wasSelectedOnStart = (_interactionManager != null && _interactionManager.SelectedUnitData == _data);
 
             if (_interactionManager != null) _interactionManager.StartDrag(_data);
@@ -53,34 +68,21 @@ namespace MaouSamaTD.UI
 
         public void OnDrag(PointerEventData eventData)
         {
-            // Just required interface for EndDrag to work properly in Unity UI
+            // Required for IEndDragHandler
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
              if (!_isInteractable) return;
              
-             float duration = Time.unscaledTime - _pointerDownTime;
-             
-             // Treat as Click/Toggle if:
-             // 1. Released back on button (Safe check)
-             // 2. OR Duration was very short (Fast Flick)
-             if (eventData.pointerEnter == gameObject || duration < DragThreshold)
-             {
-                 // FIRST: Cancel the Drag in Manager so IsDragging = false
-                 if (_interactionManager != null) _interactionManager.EndDrag(false);
+             // If we released on the button, it was likely a click (handled by OnPointerClick)
+             // or a jittery start of a drag that should be canceled.
+             bool releasedOnButton = eventData.pointerEnter == gameObject;
 
-                 // Treat as Click/Toggle
-                 if (_wasSelectedOnStart)
-                 {
-                     // Was selected -> Now Toggle Off
-                     if (_interactionManager != null) _interactionManager.DeselectUnit();
-                 }
-                 else
-                 {
-                     // Was NOT selected -> Now Toggle On (Restore selection)
-                     if (_interactionManager != null) _interactionManager.SelectUnit(_data);
-                 }
+             if (releasedOnButton)
+             {
+                 // Cancel the Drag visuals
+                 if (_interactionManager != null) _interactionManager.EndDrag(false);
              }
              else
              {

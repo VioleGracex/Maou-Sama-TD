@@ -99,6 +99,7 @@ namespace MaouSamaTD.Units
             }
         }
 
+        [Zenject.Inject] private Managers.InteractionManager _interactionManager;
         private Grid.GridManager _gridManager;
 
         protected override void UpdateInternal()
@@ -179,6 +180,7 @@ namespace MaouSamaTD.Units
             }
 
             OnRetreat?.Invoke(this);
+            if (_interactionManager != null) _interactionManager.NotifyUnitRemoved(this);
             
             Destroy(gameObject);
         }
@@ -190,6 +192,8 @@ namespace MaouSamaTD.Units
                 CurrentTile.SetOccupant(null);
                 CurrentTile = null;
             }
+
+            if (_interactionManager != null) _interactionManager.NotifyUnitRemoved(this);
             base.Die();
         }
     }

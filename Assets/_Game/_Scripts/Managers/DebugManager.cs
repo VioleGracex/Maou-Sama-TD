@@ -10,6 +10,7 @@ namespace MaouSamaTD.Managers
 {
     public class DebugManager : MonoBehaviour
     {
+        #region Fields
         [Header("Debug UI")]
         [SerializeField] private Button _spawnEnemyButton;
         [SerializeField] private Button _addSealsButton;
@@ -19,7 +20,9 @@ namespace MaouSamaTD.Managers
         [Inject] private GameManager _gameManager;
         [Inject] private Grid.GridManager _gridManager;
         [Inject] private CurrencyManager _currencyManager;
+        #endregion
 
+        #region Lifecycle
         private void Start()
         {
             if (_spawnEnemyButton != null)
@@ -31,26 +34,28 @@ namespace MaouSamaTD.Managers
                 _addSealsButton.onClick.AddListener(AddAuthSeal);
             }
         }
+        #endregion
 
+        #region Private Methods
         [Button("Spawn Test Enemy")] 
         private void OnSpawnEnemyClicked()
         {
-            Debug.Log("Debug: Spawn Enemy Clicked");
+            Debug.Log("[DebugManager] Spawn Enemy Clicked");
             if (_enemyManager != null && _testEnemyData != null)
             {
                 _enemyManager.SpawnEnemy(_testEnemyData);
             }
             else
             {
-                if (_enemyManager == null) Debug.LogError("DebugManager: EnemyManager is missing!");
-                if (_testEnemyData == null) Debug.LogWarning("DebugManager: No Test Enemy Data assigned in Inspector!");
+                if (_enemyManager == null) Debug.LogError("[DebugManager] EnemyManager is missing!");
+                if (_testEnemyData == null) Debug.LogWarning("[DebugManager] No Test Enemy Data assigned in Inspector!");
             }
         }
 
         [Button("Global Heal (Base +999)")]
         private void GlobalHeal()
         {
-             Debug.Log("Debug: Global Heal Triggered");
+             Debug.Log("[DebugManager] Global Heal Triggered");
              if (_gameManager != null)
              {
                  _gameManager.TakeBaseDamage(-999);
@@ -60,7 +65,7 @@ namespace MaouSamaTD.Managers
         [Button("Global Damage (Kill All Enemies)")]
         private void GlobalDamageEnemy()
         {
-            Debug.Log("Debug: Global Damage Triggered");
+            Debug.Log("[DebugManager] Global Damage Triggered");
             // Iterating copy to avoid collection modified exception
             var enemies = new List<EnemyUnit>(EnemyUnit.ActiveEnemies);
             foreach (var enemy in enemies)
@@ -75,7 +80,7 @@ namespace MaouSamaTD.Managers
         [Button("Retreat All Units")]
         private void RetreatAllUnits()
         {
-            Debug.Log("Debug: Retreat All Units Triggered");
+            Debug.Log("[DebugManager] Retreat All Units Triggered");
             if (_gridManager != null)
             {
                 // Create list to avoid modification during iteration if Retreat modifies the collection used by GetAllTiles (unlikely as it iterates dictionary values, but safe practice)
@@ -102,8 +107,9 @@ namespace MaouSamaTD.Managers
             if (_currencyManager != null)
             {
                 _currencyManager.AddSeals(5);
-                Debug.Log("Debug: Added 5 Auth Seals");
+                Debug.Log("[DebugManager] Added 5 Auth Seals");
             }
         }
+        #endregion
     }
 }

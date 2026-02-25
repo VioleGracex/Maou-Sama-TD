@@ -7,12 +7,15 @@ namespace MaouSamaTD.Skills
 {
     public class SkillManager : MonoBehaviour
     {
+        #region Fields
         // Runtime State
         private List<SovereignRiteData> _availableSkills = new List<SovereignRiteData>();
         private Dictionary<SovereignRiteData, float> _cooldowns = new Dictionary<SovereignRiteData, float>();
         
         [Zenject.Inject] private CurrencyManager _currencyManager;
+        #endregion
 
+        #region Public API
         public void Init(List<SovereignRiteData> skills)
         {
             _availableSkills.Clear();
@@ -22,11 +25,13 @@ namespace MaouSamaTD.Skills
             {
                 _availableSkills.AddRange(skills);
             }
+            Debug.Log($"[SkillManager] Initialized with {_availableSkills.Count} rites.");
         }
 
-        private void Update()
+        public void ResetAllCooldowns()
         {
-            // Optional: Tick active buffs?
+            _cooldowns.Clear();
+            Debug.Log("[SkillManager] All cooldowns reset.");
         }
 
         public bool IsSkillReady(SovereignRiteData skill)
@@ -67,7 +72,7 @@ namespace MaouSamaTD.Skills
             // Validate Target
             if (!IsTargetValid(skill, targetUnit))
             {
-                Debug.Log($"Target Invalid for skill {skill.SkillName}");
+                Debug.Log($"[SkillManager] Target Invalid for skill {skill.SkillName}");
                 return false;
             }
 
@@ -84,6 +89,13 @@ namespace MaouSamaTD.Skills
             ApplySkillEffect(skill, targetPosition, targetUnit);
 
             return true;
+        }
+        #endregion
+
+        #region Internal Logic
+        private void Update()
+        {
+            // Optional: Tick active buffs?
         }
 
         private bool IsTargetValid(SkillBase skill, UnitBase targetUnit)
@@ -138,7 +150,7 @@ namespace MaouSamaTD.Skills
                 }
             }
             
-            Debug.Log($"Executed Skill/Rite: {skill.SkillName}");
+            Debug.Log($"[SkillManager] Executed Skill/Rite: {skill.SkillName}");
         }
 
         private void ApplyAreaEffect(SkillBase skill, Vector3 center)
@@ -176,5 +188,6 @@ namespace MaouSamaTD.Skills
                 }
             }
         }
+        #endregion
     }
 }

@@ -4,11 +4,11 @@ namespace MaouSamaTD.Managers
 {
     public class FloatingTextManager : MonoBehaviour
     {
+        #region Fields
         public static FloatingTextManager Instance { get; private set; }
 
         [SerializeField] private GameObject _textPrefab;
         
-        // Colors & Tiers
         [Header("Damage Colors")]
         [SerializeField] private Color _smallDmgColor = Color.white;
         [SerializeField] private Color _mediumDmgColor = new Color(1f, 0.5f, 0f); // Orange
@@ -22,21 +22,24 @@ namespace MaouSamaTD.Managers
         
         [Header("Spawn Settings")]
         [SerializeField] private float _positionRandomness = 0.5f;
+        #endregion
 
+        #region Lifecycle
         private void Awake()
         {
             if (Instance != null && Instance != this) Destroy(gameObject);
             else Instance = this;
         }
+        #endregion
 
+        #region Public API
         public void ShowDamage(Vector3 position, float amount, bool isCrit)
         {
             if (_textPrefab == null) return;
 
             // Spawn slightly above with random offset
             Vector3 randomOffset = Random.insideUnitSphere * _positionRandomness;
-            randomOffset.z = 0; // Keep flat if 2D, but for 3D billboard it's fine. 
-                                // Ideally we want separation on X/Y mainly.
+            randomOffset.z = 0; 
             
             Vector3 spawnPos = position + Vector3.up * 1.5f + randomOffset;
             
@@ -65,7 +68,9 @@ namespace MaouSamaTD.Managers
                 textScript.Init(amount, false, _healColor);
             }
         }
+        #endregion
 
+        #region Internal Logic
         private Color GetDamageColor(float amount, bool isCrit)
         {
             if (isCrit) return _critDmgColor;
@@ -73,5 +78,6 @@ namespace MaouSamaTD.Managers
             if (amount >= _mediumThreshold) return _mediumDmgColor;
             return _smallDmgColor;
         }
+        #endregion
     }
 }

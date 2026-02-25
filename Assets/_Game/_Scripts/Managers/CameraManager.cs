@@ -8,12 +8,15 @@ namespace MaouSamaTD.Managers
 {
     public class CameraManager : MonoBehaviour
     {
+        #region Enums
         public enum ViewMode
         {
             Isometric,
             TopDown
         }
+        #endregion
 
+        #region Fields
         [Header("State")]
         public bool IsLocked = true;
         public bool CenterOnMap = true; 
@@ -47,7 +50,9 @@ namespace MaouSamaTD.Managers
         private Transform _cameraAnchor;
         private CinemachineOrbitalFollow _cmOrbital;
         private Sequence _viewSequence;
+        #endregion
 
+        #region Lifecycle
         public void Init()
         {  
             if (_gridManager != null)
@@ -67,7 +72,7 @@ namespace MaouSamaTD.Managers
             }
             else
             {
-                Debug.LogError("CameraAnchor is still null after EnsureCameraAnchor call!");
+                Debug.LogError("[CameraManager] CameraAnchor is still null after EnsureCameraAnchor call!");
             }
 
             // Initial State
@@ -78,7 +83,7 @@ namespace MaouSamaTD.Managers
                 ResetToCenter();
             }
             
-            Debug.Log("CameraController: Initialized.");
+            Debug.Log("[CameraManager] Initialized.");
         }
 
         private void Update()
@@ -86,7 +91,9 @@ namespace MaouSamaTD.Managers
             if (!Application.isFocused) return;
             HandleInput();
         }
+        #endregion
 
+        #region Internal Logic
         private void HandleInput()
         {
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
@@ -154,9 +161,9 @@ namespace MaouSamaTD.Managers
             
             _cmOrbital.HorizontalAxis.Value += delta * _rotateSpeed * Time.deltaTime;
         }
+        #endregion
 
-        // API Methods
-
+        #region Public API
         public void ToggleLock()
         {
             IsLocked = !IsLocked;
@@ -232,5 +239,6 @@ namespace MaouSamaTD.Managers
                 _cameraAnchor.position = _gridManager.GetGridCenter();
             }
         }
+        #endregion
     }
 }

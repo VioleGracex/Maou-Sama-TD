@@ -13,6 +13,7 @@ namespace MaouSamaTD.Installers
         [SerializeField] private UnitInspectorUI _unitInspectorUI;
         [SerializeField] private DeploymentUI _deploymentUI;
         [SerializeField] private CameraControlUI _cameraControlUI;
+        [SerializeField] private MaouSamaTD.UI.Skills.SkillPanelUI _skillPanelUI;
         [SerializeField] private InteractionManager _interactionManager;
         [SerializeField] private CurrencyManager _currencyManager;
         [SerializeField] private GridManager _gridManager;
@@ -26,6 +27,7 @@ namespace MaouSamaTD.Installers
             // Bind Instances from Scene
             if (_unitInspectorUI) Container.Bind<UnitInspectorUI>().FromInstance(_unitInspectorUI).AsSingle();
             if (_deploymentUI) Container.Bind<DeploymentUI>().FromInstance(_deploymentUI).AsSingle();
+            if (_skillPanelUI) Container.Bind<MaouSamaTD.UI.Skills.SkillPanelUI>().FromInstance(_skillPanelUI).AsSingle();
             if (_interactionManager) Container.Bind<InteractionManager>().FromInstance(_interactionManager).AsSingle();
             if (_currencyManager) Container.Bind<CurrencyManager>().FromInstance(_currencyManager).AsSingle();
             if (_gridManager) Container.Bind<GridManager>().FromInstance(_gridManager).AsSingle();

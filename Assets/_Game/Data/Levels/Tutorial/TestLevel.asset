@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd8e99080aa85214c9d7d8ee3ade7292, type: 3}
   m_Name: TestLevel
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
-  useDefaultInspector: 1
+  useDefaultInspector: 0
   UniqueID: 143fa408-12e7-4de8-8602-6c43f896a1e4
   LevelIndex: 0
   LevelName: TestLevel
@@ -50,3 +50,5 @@ MonoBehaviour:
       SpawnPointIndex: 0
     DelayBeforeNextWave: 10
     WaveMessage: 
+  HasTutorial: 0
+  TutorialData: {fileID: 0}

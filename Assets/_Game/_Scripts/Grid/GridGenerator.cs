@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NaughtyAttributes;
 using UnityEngine;
+using MaouSamaTD.Levels;
 
 
 namespace MaouSamaTD.Grid
@@ -18,6 +19,7 @@ namespace MaouSamaTD.Grid
 
 
         [Header("Procedural Settings")]
+        [SerializeField] private MapData _mapData;
         [SerializeField] private bool _useSeed = true;
         [SerializeField] private int _seed = 12345;
         [Range(0f, 1f)] [SerializeField] private float _highGroundChance = 0.3f;
@@ -96,21 +98,48 @@ namespace MaouSamaTD.Grid
                 for (int y = 0; y < height; y++)
                 {
                     Vector2Int coord = new Vector2Int(x, y);
-                    bool isHighGround = Random.value < _highGroundChance;
-                    
-                    if (y == 0 || y == height - 1) isHighGround = true;
+                    TileType type = TileType.Walkable;
 
-                    TileType type = isHighGround ? TileType.HighGround : TileType.Walkable;
+                    if (_mapData != null && _mapData.UseManualLayout)
+                    {
+                        if (_mapData.ManualHighGround.Contains(coord)) type = TileType.HighGround;
+                        else if (_mapData.DecoratedWalkable.Contains(coord)) type = TileType.DecoratedWalkable;
+                        else if (_mapData.DecoratedHighGround.Contains(coord)) type = TileType.DecoratedHighGround;
+                    }
+                    else
+                    {
+                        bool isHighGround = Random.value < _highGroundChance;
+                        if (y == 0 || y == height - 1) isHighGround = true;
+                        type = isHighGround ? TileType.HighGround : TileType.Walkable;
+                    }
+
                     _gridManager.CreateTile(coord, type);
                 }
             }
 
-            GenerateLanes();
+            if (_mapData != null && _mapData.UseManualLayout)
+            {
+                // Skip random lane generation, rely on manual layout.
+                // But we still want to mark Spawn and Exit points from MapData.
+                foreach (var spawn in _mapData.SpawnPoints) _gridManager.SetTileType(spawn, TileType.Spawn);
+                foreach (var exit in _mapData.ExitPoints) _gridManager.SetTileType(exit, TileType.Exit);
+            }
+            else
+            {
+                GenerateLanes();
+            }
 
             if (_generateWalls)
             {
                 GenerateWalls();
             }
+        }
+
+        [Button("Generate From Map Data")]
+        public void GenerateFromMapData()
+        {
+            if (_mapData != null) LoadMapData(_mapData);
+            else Debug.LogWarning("No MapData assigned to GridGenerator.");
         }
         #endregion
 
@@ -370,6 +399,13 @@ namespace MaouSamaTD.Grid
             newData.HighGroundChance = _highGroundChance;
             newData.SpawnPoints = new List<Vector2Int>(_spawnPoints);
             newData.ExitPoints = new List<Vector2Int>(_exitPoints);
+
+            // Populate from current Grid if available
+            foreach (var tile in _gridManager.GetAllTiles())
+            {
+                if (tile.Type == TileType.DecoratedWalkable) newData.DecoratedWalkable.Add(tile.Coordinate);
+                else if (tile.Type == TileType.DecoratedHighGround) newData.DecoratedHighGround.Add(tile.Coordinate);
+            }
 
             // Ensure Path
             string folderPath = _extractPath;

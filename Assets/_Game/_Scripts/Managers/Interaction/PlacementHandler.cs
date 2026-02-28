@@ -100,9 +100,23 @@ namespace MaouSamaTD.Managers.Interaction
             return false;
         }
 
+        private System.Collections.Generic.List<Vector2Int> _allowedTiles = new System.Collections.Generic.List<Vector2Int>();
+
+        public void SetAllowedTiles(System.Collections.Generic.List<Vector2Int> allowedTiles)
+        {
+            _allowedTiles = allowedTiles ?? new System.Collections.Generic.List<Vector2Int>();
+        }
+
         public bool IsTileValidForUnit(Tile tile, UnitData unit)
         {
             if (unit == null || tile == null) return false;
+            
+            // Tutorial Lock
+            if (_allowedTiles.Count > 0)
+            {
+                if (!_allowedTiles.Contains(tile.Coordinate)) return false;
+            }
+
             if (unit.ViableTiles == null || unit.ViableTiles.Count == 0) return false;
             return unit.ViableTiles.Contains(tile.Type);
         }

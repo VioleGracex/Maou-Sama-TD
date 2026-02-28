@@ -18,6 +18,12 @@ namespace MaouSamaTD.Levels
         [Range(0f, 1f)]
         public float HighGroundChance = 0.3f;
 
+        [Header("Manual Layout")]
+        public bool UseManualLayout;
+        public List<Vector2Int> ManualHighGround = new List<Vector2Int>();
+        public List<Vector2Int> DecoratedWalkable = new List<Vector2Int>();
+        public List<Vector2Int> DecoratedHighGround = new List<Vector2Int>();
+
         public List<Vector2Int> SpawnPoints = new List<Vector2Int>();
         public List<Vector2Int> ExitPoints = new List<Vector2Int>();
     }

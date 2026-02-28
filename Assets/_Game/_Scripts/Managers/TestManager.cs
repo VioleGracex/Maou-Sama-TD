@@ -14,6 +14,8 @@ namespace MaouSamaTD.Managers
         #region Fields
         [Header("Test Configuration")]
         [SerializeField] private LevelData _levelData;
+        [SerializeField] private List<MaouSamaTD.Tutorial.TutorialDataSO> _testTutorials = new List<MaouSamaTD.Tutorial.TutorialDataSO>();
+        [SerializeField] private int _tutorialIndex = 0;
         
         [Inject] private GameManager _gameManager;
         [Inject] private SkillManager _skillManager;
@@ -80,6 +82,40 @@ namespace MaouSamaTD.Managers
             
             UpdateRites(allRites);
             Debug.Log("[TestManager] Spawned Both Rites.");
+        }
+
+        [Button("Trigger Tutorial From Level")]
+        public void TriggerTutorial()
+        {
+            if (_levelData == null || !_levelData.HasTutorial)
+            {
+                Debug.LogWarning("[TestManager] Current LevelData has no Tutorial.");
+                return;
+            }
+
+            var tutorialManager = FindObjectOfType<TutorialManager>();
+            if (tutorialManager != null)
+            {
+                tutorialManager.StartTutorial(_levelData.TutorialData);
+                Debug.Log($"[TestManager] Triggered Tutorial for: {_levelData.LevelName}");
+            }
+        }
+
+        [Button("Run Tutorial By Index")]
+        public void RunTutorialByIndex()
+        {
+            if (_testTutorials == null || _tutorialIndex < 0 || _tutorialIndex >= _testTutorials.Count)
+            {
+                Debug.LogWarning("[TestManager] Invalid tutorial index or list is empty.");
+                return;
+            }
+
+            var tutorialManager = FindObjectOfType<TutorialManager>();
+            if (tutorialManager != null)
+            {
+                tutorialManager.StartTutorial(_testTutorials[_tutorialIndex]);
+                Debug.Log($"[TestManager] Triggered Tutorial at Index: {_tutorialIndex}");
+            }
         }
         #endregion
 

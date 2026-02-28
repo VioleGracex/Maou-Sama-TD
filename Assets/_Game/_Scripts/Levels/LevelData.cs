@@ -53,6 +53,11 @@ namespace MaouSamaTD.Levels
 
         [Header("Waves")]
         public List<WaveData> Waves = new List<WaveData>();
+
+        [Header("Tutorial")]
+        public bool HasTutorial;
+        [ShowIf("HasTutorial")]
+        public MaouSamaTD.Tutorial.TutorialDataSO TutorialData;
     }
 
     public enum RewardType

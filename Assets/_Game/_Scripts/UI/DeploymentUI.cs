@@ -15,6 +15,7 @@ namespace MaouSamaTD.UI
         
         [Inject] private CurrencyManager _currencyManager;
         [Inject] private DiContainer _container;
+        [Inject] private TutorialManager _tutorialManager;
 
         [Header("Config")]
         [SerializeField] private GameObject _buttonPrefab;
@@ -207,6 +208,7 @@ namespace MaouSamaTD.UI
             
             RefreshButtonsState();
             
+            if (_tutorialManager != null) _tutorialManager.OnActionTriggered("UnitPlaced");
             Debug.Log($"Deployed {unitData.UnitName}!");
         }
 

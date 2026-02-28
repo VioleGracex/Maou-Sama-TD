@@ -155,6 +155,25 @@ namespace MaouSamaTD.Levels.Editor
             }
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
+
+            EditorGUILayout.Space();
+
+            // Tutorial
+            GUILayout.BeginVertical("helpbox");
+            EditorGUI.indentLevel++;
+            SerializedProperty hasTutorialProp = serializedObject.FindProperty("HasTutorial");
+            bool showTutorial = EditorGUILayout.Foldout(hasTutorialProp.boolValue, "Tutorial Settings", true, foldoutStyle);
+            
+            // Sync foldout with the bool if we want, or just use the bool
+            EditorGUILayout.PropertyField(hasTutorialProp, new GUIContent("Has Tutorial"));
+            
+            if (hasTutorialProp.boolValue)
+            {
+                EditorGUILayout.Space(2);
+                DrawProperty("TutorialData", "Tutorial Sequence");
+            }
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
         }
 
         private void DrawProperty(string propName, string customLabel = null, string tooltip = null)

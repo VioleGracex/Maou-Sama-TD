@@ -4,6 +4,7 @@ using MaouSamaTD.Managers;
 using MaouSamaTD.UI;
 using MaouSamaTD.Grid;
 using MaouSamaTD.Skills;
+using MaouSamaTD.UI.Tutorial;
 
 namespace MaouSamaTD.Installers
 {
@@ -22,9 +23,17 @@ namespace MaouSamaTD.Installers
         [SerializeField] private SkillManager _skillManager;
         [SerializeField] private EnemyManager _enemyManager;
 
+        [Header("Tutorial & Dialogue")]
+        [SerializeField] private DialogueUI _dialogueUI;
+        [SerializeField] private MaouSamaTD.UI.Tutorial.TutorialHandUI _tutorialHandUI;
+        [SerializeField] private TutorialManager _tutorialManager;
+        [SerializeField] private DialogueManager _dialogueManager;
+        [SerializeField] private UIPopupBlocker _uiPopupBlocker;
+
         public override void InstallBindings()
         {
-            // Bind Instances from Scene
+            // ... existing bindings ...
+            
             if (_unitInspectorUI) Container.Bind<UnitInspectorUI>().FromInstance(_unitInspectorUI).AsSingle();
             if (_deploymentUI) Container.Bind<DeploymentUI>().FromInstance(_deploymentUI).AsSingle();
             if (_skillPanelUI) Container.Bind<MaouSamaTD.UI.Skills.SkillPanelUI>().FromInstance(_skillPanelUI).AsSingle();
@@ -43,6 +52,21 @@ namespace MaouSamaTD.Installers
             if (_cameraManager) Container.Bind<CameraManager>().FromInstance(_cameraManager).AsSingle();
             if (_enemyManager) Container.Bind<EnemyManager>().FromInstance(_enemyManager).AsSingle();
             if (_cameraControlUI) Container.Bind<CameraControlUI>().FromInstance(_cameraControlUI).AsSingle();
+
+            // Tutorial & Dialogue
+            if (_uiPopupBlocker) Container.Bind<UIPopupBlocker>().FromInstance(_uiPopupBlocker).AsSingle();
+            else Container.Bind<UIPopupBlocker>().FromComponentInHierarchy().AsSingle();
+
+            if (_dialogueUI) Container.Bind<DialogueUI>().FromInstance(_dialogueUI).AsSingle();
+            else Container.Bind<DialogueUI>().FromComponentInHierarchy().AsSingle();
+
+            if (_tutorialHandUI) Container.Bind<MaouSamaTD.UI.Tutorial.TutorialHandUI>().FromInstance(_tutorialHandUI).AsSingle();
+            
+            if (_dialogueManager) Container.Bind<DialogueManager>().FromInstance(_dialogueManager).AsSingle();
+            else Container.Bind<DialogueManager>().FromComponentInHierarchy().AsSingle();
+
+            if (_tutorialManager) Container.Bind<TutorialManager>().FromInstance(_tutorialManager).AsSingle();
+            else Container.Bind<TutorialManager>().FromComponentInHierarchy().AsSingle();
 
             // Bind GridGenerator using hierarchy search since it's not explicitly referenced in various installers
             Container.Bind<GridGenerator>().FromComponentInHierarchy().AsSingle();

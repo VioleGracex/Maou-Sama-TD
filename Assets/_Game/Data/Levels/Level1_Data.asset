@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd8e99080aa85214c9d7d8ee3ade7292, type: 3}
+  m_Name: Level1_Data
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
+  useDefaultInspector: 1
+  LevelIndex: 1
+  LevelName: "Chapter 1: The Awakening"
+  Description: "The Maou awakens from a long slumber. Re-establish your authority."
+  GracePeriod: 10
+  LevelID: 1-1
+  WinRewards:
+  - Type: 0
+    Amount: 500
+  - Type: 1
+    Amount: 100
+  MapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
+  StartingAuthoritySeals: 20
+  AuthoritySealsPerSecond: 1.5
+  Waves:
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
+      Count: 5
+      SpawnInterval: 2
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 10
+    WaveMessage: "Wave 1: Shadows approaching!"
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
+      Count: 10
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 0
+    WaveMessage: "Final Wave: Darkness erupts!"
+  HasTutorial: 1
+  TutorialData: {fileID: 11400000, guid: 82c6c0a664a64034e81cbd9127cb1407, type: 2}

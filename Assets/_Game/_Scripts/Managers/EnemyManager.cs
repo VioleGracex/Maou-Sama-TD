@@ -62,7 +62,7 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Public API
-        public void Initialize(List<WaveData> waves, float gracePeriod = 0f)
+        public void Initialize(List<WaveData> waves, float gracePeriod = 0f, bool startImmediately = true)
         {
             _waves = waves;
             _allWavesFinished = false;
@@ -76,7 +76,8 @@ namespace MaouSamaTD.Managers
             
             if (_waves != null && _waves.Count > 0)
             {
-                SetSpawnState(true, gracePeriod);
+                if (startImmediately)
+                    SetSpawnState(true, gracePeriod);
             }
             else
             {
@@ -84,6 +85,39 @@ namespace MaouSamaTD.Managers
                  _allWavesFinished = true;
             }
         }
+
+        public void StartSpecificWave(int waveIndex)
+        {
+            if (_waves == null || waveIndex < 0 || waveIndex >= _waves.Count) return;
+            
+            StopAllCoroutines();
+            StartCoroutine(SpawnSingleWaveRoutine(_waves[waveIndex]));
+        }
+
+        private IEnumerator SpawnSingleWaveRoutine(WaveData wave)
+        {
+            _isSpawning = true;
+            if (!string.IsNullOrEmpty(wave.WaveMessage))
+            {
+                Debug.Log($"[EnemyManager] Tutorial Wave: {wave.WaveMessage}");
+            }
+            
+            foreach (var group in wave.Groups)
+            {
+                if (group.InitialDelay > 0)
+                    yield return new WaitForSeconds(group.InitialDelay);
+
+                for (int i = 0; i < group.Count; i++)
+                {
+                    SpawnEnemy(group.EnemyType, group.SpawnPointIndex);
+                    
+                    if (group.SpawnInterval > 0)
+                        yield return new WaitForSeconds(group.SpawnInterval);
+                }
+            }
+            _isSpawning = false;
+        }
+
 
         public void SpawnEnemy(EnemyData data, int spawnPointIndex = 0)
         {

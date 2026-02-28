@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c6c0a664a64034e81cbd9127cb1407, type: 3}
+  m_Name: TutorialData_Level1
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.TutorialDataSO
+  Steps:
+  - StepName: Intro Dialogue
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: 5882e3395e2c03d43ba2159cb27420f8, type: 2}
+    TargetUIName: 
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 0.5
+    Duration: 0
+    ActionKey: 
+    ShowHand: 0
+  - StepName: Highlight Deployment
+    Type: 1
+    Dialogue: {fileID: 11400000, guid: 5882e3395e2c03d43ba2159cb27420f8, type: 2}
+    TargetUIName: DeploymentPanel
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 0
+    Duration: 0
+    ActionKey: 
+    ShowHand: 1
+    DragShowHand: 0
+  - StepName: Drag Ignis to Field
+    Type: 1
+    Dialogue: {fileID: 11400000, guid: 5882e3395e2c03d43ba2159cb27420f8, type: 2}
+    TargetUIName: Slot_Ignis
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 0
+    Duration: 0
+    ActionKey: UnitPlaced
+    ShowHand: 1
+    DragShowHand: 1
+    HandDragTargetUIName: 
+    HandDragTargetTile: {x: 5, y: 5}
+  - StepName: Ending Dialogue
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: 5882e3395e2c03d43ba2159cb27420f8, type: 2}
+    TargetUIName: 
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 1
+    Duration: 0
+    ActionKey: 
+    ShowHand: 0
+    DragShowHand: 0

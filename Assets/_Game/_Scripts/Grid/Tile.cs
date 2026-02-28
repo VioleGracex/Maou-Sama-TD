@@ -8,9 +8,11 @@ namespace MaouSamaTD.Grid
     {
         Walkable,   // Low ground, enemies walk here, melee units placed here
         HighGround, // Ranged units placed here, enemies cannot walk
-        Spawn,      // Enemy spawn point
-        Exit,       // Enemy target point
-        Unwalkable  // Obstacle
+        Spawn,              // Enemy spawn point
+        Exit,               // Enemy target point
+        Unwalkable,         // Obstacle
+        DecoratedWalkable,  // Flat but unusable
+        DecoratedHighGround // High ground but unusable
     }
 
     public class Tile : MonoBehaviour
@@ -141,6 +143,8 @@ namespace MaouSamaTD.Grid
                 case TileType.Spawn: return Color.red;
                 case TileType.Exit: return Color.green;
                 case TileType.Unwalkable: return Color.black;
+                case TileType.DecoratedWalkable: return new Color(0.7f, 0.7f, 1f); // Light Blue-ish
+                case TileType.DecoratedHighGround: return new Color(0.3f, 0.3f, 0.3f); // Dark Gray
                 default: return Color.gray;
             }
         }

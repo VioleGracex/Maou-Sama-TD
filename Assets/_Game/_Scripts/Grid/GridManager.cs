@@ -206,7 +206,8 @@ namespace MaouSamaTD.Grid
             {
                 tile.Initialize(coord, type);
                 
-                float yOffset = type == TileType.HighGround ? 0.5f : 0f;
+                bool isHigh = type == TileType.HighGround || type == TileType.DecoratedHighGround;
+                float yOffset = isHigh ? 0.5f : 0f;
                 tile.transform.position = new Vector3(coord.x * _cellSize, yOffset, coord.y * _cellSize);
             }
         }
@@ -422,9 +423,9 @@ namespace MaouSamaTD.Grid
                     
                     if (moveType == MaouSamaTD.Units.EnemyMovementType.Ground)
                     {
-                        // Ground can walk on Walkable, Spawn, Exit.
-                        // Cannot walk on Unwalkable, HighGround?
-                        if (tile.Type == TileType.Unwalkable || tile.Type == TileType.HighGround) 
+                        // Ground cannot walk on Unwalkable, HighGround, or Decorated variants
+                        if (tile.Type == TileType.Unwalkable || tile.Type == TileType.HighGround || 
+                            tile.Type == TileType.DecoratedWalkable || tile.Type == TileType.DecoratedHighGround) 
                             isWalkable = false;
                             
                         // Check occupancy logic

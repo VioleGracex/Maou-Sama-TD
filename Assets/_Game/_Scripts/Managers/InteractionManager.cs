@@ -174,6 +174,11 @@ namespace MaouSamaTD.Managers
             _tileVisualsHandler.UpdateVisuals(_activeUnitData, IsDragging, _isSkillTargeting, _selectedSkill, _currentHoverTile, _inspectedPlayerUnit);
         }
 
+        public void SetPlacementRestriction(System.Collections.Generic.List<Vector2Int> allowedTiles)
+        {
+            _placementHandler.SetAllowedTiles(allowedTiles);
+        }
+
         public void NotifyUnitRemoved(PlayerUnit unit)
         {
             if (_inspectedPlayerUnit == unit)

@@ -15,9 +15,13 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 1cfd77be-12b4-4479-bd13-930e5599502c
   MapSeed: 12345
-  Width: 5
-  Height: 10
+  Width: 10
+  Height: 5
   HighGroundChance: 0.3
+  UseManualLayout: 0
+  ManualHighGround: []
+  DecoratedWalkable: []
+  DecoratedHighGround: []
   SpawnPoints:
   - {x: 1, y: 0}
   ExitPoints:

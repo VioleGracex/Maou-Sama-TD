@@ -34,6 +34,13 @@ namespace MaouSamaTD.Skills
             Debug.Log("[SkillManager] All cooldowns reset.");
         }
 
+        public void ForceSetReady(SovereignRiteData skill)
+        {
+            if (skill == null) return;
+            _cooldowns.Remove(skill);
+            Debug.Log($"[SkillManager] Forced skill {skill.SkillName} to be ready.");
+        }
+
         public bool IsSkillReady(SovereignRiteData skill)
         {
             if (skill == null) return false;

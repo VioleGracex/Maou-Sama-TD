@@ -15,6 +15,7 @@ namespace MaouSamaTD.Managers.Interaction
         {
             _mainCamera = camera;
             _gridManager = gridManager;
+            EnhancedTouchSupport.Enable();
         }
 
         public void Enable()

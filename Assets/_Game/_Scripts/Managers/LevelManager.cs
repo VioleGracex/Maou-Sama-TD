@@ -11,6 +11,7 @@ namespace MaouSamaTD.Managers
         [Inject] private GameManager _gameManager;
         [Inject] private GameSelectionState _gameSelectionState;
         [Inject] private TutorialManager _tutorialManager;
+        [Inject] private EnemyManager _enemyManager;
 
         #region Lifecycle
         private void Start()
@@ -37,15 +38,21 @@ namespace MaouSamaTD.Managers
                 Debug.Log($"[LevelManager] Loading LevelData: {dataToLoad.LevelName}");
                 _gameManager.LoadLevelData(dataToLoad);
                 
+                bool hasTutorial = dataToLoad.HasTutorial && dataToLoad.TutorialData != null;
+
+                if (_enemyManager != null && dataToLoad != null)
+                {
+                    float gracePeriod = dataToLoad.GracePeriod;
+                    Debug.Log($"[LevelManager] Initializing Enemy Manager. Tutorial Active: {hasTutorial}");
+                    // If tutorial is active, DON'T start immediately. TutorialManager will trigger waves.
+                    _enemyManager.Initialize(dataToLoad.Waves, gracePeriod, !hasTutorial);
+                }
+
                 // Trigger tutorial if enabled for this level
-                if (dataToLoad.HasTutorial && dataToLoad.TutorialData != null)
+                if (hasTutorial)
                 {
                     Debug.Log($"[LevelManager] Level has tutorial: {dataToLoad.TutorialData.name}. Starting...");
                     _tutorialManager.StartTutorial(dataToLoad.TutorialData);
-                }
-                else
-                {
-                    Debug.Log($"[LevelManager] No tutorial for this level. HasTutorial: {dataToLoad.HasTutorial}, Data: {dataToLoad.TutorialData}");
                 }
             }
             else

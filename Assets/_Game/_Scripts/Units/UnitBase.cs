@@ -146,7 +146,7 @@ namespace MaouSamaTD.Units
             _spriteRenderer.SetPropertyBlock(_mpb);
         }
 
-        public virtual void TakeDamage(float amount)
+        public virtual void TakeDamage(float amount, UnitBase attacker = null)
         {
             float damageTaken = Mathf.Max(1, amount - _defense); 
             _currentHp -= damageTaken;
@@ -172,6 +172,7 @@ namespace MaouSamaTD.Units
 
             if (_currentHp <= 0)
             {
+                if (attacker is PlayerUnit player) player.IncrementKillCount();
                 Die();
             }
         }

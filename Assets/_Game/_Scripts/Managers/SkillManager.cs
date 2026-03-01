@@ -13,6 +13,7 @@ namespace MaouSamaTD.Skills
         private Dictionary<SovereignRiteData, float> _cooldowns = new Dictionary<SovereignRiteData, float>();
         
         [Zenject.Inject] private CurrencyManager _currencyManager;
+        [Zenject.Inject] private TutorialManager _tutorialManager;
         #endregion
 
         #region Public API
@@ -94,6 +95,7 @@ namespace MaouSamaTD.Skills
 
             // Execute Logic
             ApplySkillEffect(skill, targetPosition, targetUnit);
+            _tutorialManager?.OnActionTriggered("SkillUsed");
 
             return true;
         }

@@ -56,6 +56,7 @@ namespace MaouSamaTD.Managers
         [Inject] private CurrencyManager _currencyManager;
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private SkillManager _skillManager;
+        [Inject] private TutorialManager _tutorialManager;
         #endregion
 
         #region Lifecycle
@@ -147,7 +148,10 @@ namespace MaouSamaTD.Managers
         {
             if (place && _currentHoverTile != null)
             {
-                _placementHandler.TryPlaceUnit(_currentHoverTile, _activeUnitData);
+                if (_placementHandler.TryPlaceUnit(_currentHoverTile, _activeUnitData))
+                {
+                    _tutorialManager?.OnActionTriggered("UnitPlaced");
+                }
             }
             DeselectUnit();
         }
@@ -233,6 +237,7 @@ namespace MaouSamaTD.Managers
             {
                 if (_placementHandler.TryPlaceUnit(hitTile, _activeUnitData))
                 {
+                    _tutorialManager?.OnActionTriggered("UnitPlaced");
                     DeselectUnit();
                 }
                 OnTileClicked?.Invoke(hitTile);
@@ -244,6 +249,7 @@ namespace MaouSamaTD.Managers
                 {
                     _inspectedPlayerUnit = target;
                     _unitInspectorUI.Show(target);
+                    _tutorialManager?.OnActionTriggered("UnitSelected");
                 }
                 else
                 {

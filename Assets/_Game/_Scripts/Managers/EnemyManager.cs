@@ -22,7 +22,12 @@ namespace MaouSamaTD.Managers
         private bool _isSpawning = false;
         private bool _allWavesFinished = false;
         private bool _victoryTriggered = false;
+        
         private List<WaveData> _waves;
+
+        public bool IsSpawning => _isSpawning;
+        public bool AllWavesFinished => _allWavesFinished;
+        public int ActiveEnemyCount => EnemyUnit.ActiveEnemies.Count;
         #endregion
 
         #region Lifecycle

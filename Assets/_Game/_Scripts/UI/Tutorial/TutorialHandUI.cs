@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 
 namespace MaouSamaTD.UI.Tutorial
@@ -10,11 +11,21 @@ namespace MaouSamaTD.UI.Tutorial
 
         private void Awake()
         {
+            // Ensure hand is always on top-most overlay
+            Canvas canvas = GetComponent<Canvas>();
+            if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
+            
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 1010;
+
+            if (GetComponent<GraphicRaycaster>() == null) gameObject.AddComponent<GraphicRaycaster>();
+            
             if (_panel != null) _panel.SetActive(false);
         }
 
-        public void ShowAt(Vector2 screenPosition)
+                public void ShowAt(Vector2 screenPosition)
         {
+            Debug.Log($"[tutorial] Hand ShowAt: {screenPosition}");
             gameObject.SetActive(true);
             _panel.SetActive(true);
             _handTransform.position = screenPosition;
@@ -26,6 +37,7 @@ namespace MaouSamaTD.UI.Tutorial
 
         public void MoveHand(Vector2 start, Vector2 end)
         {
+            Debug.Log($"[tutorial] Hand MoveHand: from {start} to {end}");
             gameObject.SetActive(true);
             _panel.SetActive(true);
             _handTransform.DOKill();
@@ -35,6 +47,7 @@ namespace MaouSamaTD.UI.Tutorial
                 .SetEase(Ease.InOutSine)
                 .SetUpdate(true);
         }
+
 
         public void Hide()
         {

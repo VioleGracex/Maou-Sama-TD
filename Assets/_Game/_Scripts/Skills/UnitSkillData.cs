@@ -12,5 +12,9 @@ namespace MaouSamaTD.Skills
         public float BonusHpPerLevel = 0f;
         public float BonusAtkPerLevel = 0f;
         public float BonusDefPerLevel = 0f;
+
+        [Header("Assets")]
+        public GameObject UltimatePrefab;
+        public Color UltimateColor = Color.red;
     }
 }

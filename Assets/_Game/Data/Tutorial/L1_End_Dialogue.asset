@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
   m_Name: L1_End_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
+  Style: 0
+  Background: 1
+  CharactersPerSecond: 30
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}

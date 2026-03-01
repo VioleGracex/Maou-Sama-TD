@@ -11,7 +11,10 @@ namespace MaouSamaTD.Tutorial
         HighlightTile,
         WaitForAction,
         WaitTime,
-        CustomCommand
+        CustomCommand,
+        StartWave,
+        WaitForWave,
+        WaitForCondition // New
     }
 
     [System.Serializable]
@@ -26,6 +29,7 @@ namespace MaouSamaTD.Tutorial
         [Header("Targeting")]
         [Tooltip("Name of the UI object or path to highlight")]
         public string TargetUIName;
+        public List<string> AdditionalTargetUINames = new List<string>();
         public Vector2Int TargetTile;
         
         [Header("Parameters")]
@@ -39,6 +43,14 @@ namespace MaouSamaTD.Tutorial
         public bool DragShowHand = false;
         public string HandDragTargetUIName;
         public Vector2Int HandDragTargetTile;
+
+        [Header("Wave Interaction")]
+        [Tooltip("The index of the wave to start or wait for")]
+        public int WaveIndex = -1;
+
+        [Header("Conditions")]
+        public int RequiredCount;
+        public float HandDragTargetRadius = 1.0f;
     }
 
     [CreateAssetMenu(fileName = "NewTutorialData", menuName = "MaouSamaTD/Tutorial Data")]

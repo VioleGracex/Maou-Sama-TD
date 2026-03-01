@@ -252,7 +252,7 @@ namespace MaouSamaTD.UI
             // Move Down on Hide (Standard Bottom Dock)
             Vector2 targetPos = _isVisible ? _visiblePos : _visiblePos + new Vector2(0, -_hideOffset);
             
-            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack);
+            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
         }
     }
 }

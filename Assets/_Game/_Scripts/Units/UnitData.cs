@@ -17,6 +17,7 @@ namespace MaouSamaTD.Units
     {
         [Header("Identity (Data)")]
         public string UnitName;
+        public string UnitTitle;
         public Sprite UnitSprite; // Nullable, if null use Initials
         public Sprite UnitIcon;   // Specific icon for UI buttons
 

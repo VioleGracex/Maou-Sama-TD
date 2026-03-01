@@ -28,6 +28,8 @@ namespace MaouSamaTD.UI
         public void Initialize(UnitData data)
         {
             _data = data;
+            gameObject.name = $"UnitButton_{data.UnitName}";
+            
             _dragHandler = GetComponent<UnitDragHandler>();
             _button = GetComponent<Button>();
             _background = GetComponent<Image>();

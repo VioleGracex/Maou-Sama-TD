@@ -10,24 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: L1_Start_Dialogue
+  m_Name: L1_MidWave_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
+  Style: 0
+  Background: 1
+  CharactersPerSecond: 30
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: My Lord! You've awakened... The ritual was... intense. But there is no
-      time for rest.
+    Text: Wait! A larger cluster is manifesting! They are overwhelming the corridor.
     PortraitOnLeft: 0
     EventID: 
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Lesser shadows have breached the outer corridor. They sense your weakened
-      state.
-    PortraitOnLeft: 0
-    EventID: 
-  - SpeakerName: Hecatina
-    SpeakerPortrait: {fileID: 0}
-    Text: You are still recovering, but you can still guide your vassals. Send Ignis
-      forth to hold the line.
+    Text: Lord, use your authority! Select Ignis and activate her [Obsidian Aegis]
+      to incinerate these vermin.
     PortraitOnLeft: 0
     EventID: 

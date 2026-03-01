@@ -77,7 +77,10 @@ namespace MaouSamaTD.UI
                 if (_panel != null)
                 {
                     _panel.SetActive(true);
-                    _panel.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack); // Animate In
+                    _panel.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack).SetUpdate(true); // Animate In
+                    
+                    Managers.TutorialManager tm = FindObjectOfType<Managers.TutorialManager>();
+                    if (tm != null) tm.OnActionTriggered("UnitStatsOpened");
                 }
             }
             else
@@ -92,7 +95,7 @@ namespace MaouSamaTD.UI
 
             if (_panel != null && _panel.activeSelf)
             {
-                _panel.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).OnComplete(() => 
+                _panel.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() => 
                 {
                     _panel.SetActive(false);
                     if (_selectedUnit != null) _selectedUnit.SetHighlight(false, Color.white); // Clear highlight

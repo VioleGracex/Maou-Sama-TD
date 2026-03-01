@@ -13,29 +13,23 @@ MonoBehaviour:
   m_Name: TutorialData_Level1
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.TutorialDataSO
   Steps:
-  - StepName: Intro Dialogue
-    Type: 0
-    Dialogue: {fileID: 11400000, guid: 5882e3395e2c03d43ba2159cb27420f8, type: 2}
-    TargetUIName: 
+  - StepName: Intro Dialogue (Highlight Deployment)
+    Type: 1
+    Dialogue: {fileID: 11400000, guid: 4232a08ce1431974dab61fac5db1447e, type: 2}
+    TargetUIName: DeploymentPanel
     TargetTile: {x: 0, y: 0}
     DelayBefore: 0.5
     Duration: 0
     ActionKey: 
-    ShowHand: 0
-  - StepName: Highlight Deployment
-    Type: 1
-    Dialogue: {fileID: 11400000, guid: 5882e3395e2c03d43ba2159cb27420f8, type: 2}
-    TargetUIName: DeploymentPanel
-    TargetTile: {x: 0, y: 0}
-    DelayBefore: 0
-    Duration: 0
-    ActionKey: 
     ShowHand: 1
     DragShowHand: 0
+    HandDragTargetUIName: 
+    HandDragTargetTile: {x: 0, y: 0}
+    WaveIndex: -1
   - StepName: Drag Ignis to Field
-    Type: 1
-    Dialogue: {fileID: 11400000, guid: 5882e3395e2c03d43ba2159cb27420f8, type: 2}
-    TargetUIName: Slot_Ignis
+    Type: 3
+    Dialogue: {fileID: 0}
+    TargetUIName: UnitButton_Ignis
     TargetTile: {x: 0, y: 0}
     DelayBefore: 0
     Duration: 0
@@ -44,13 +38,82 @@ MonoBehaviour:
     DragShowHand: 1
     HandDragTargetUIName: 
     HandDragTargetTile: {x: 5, y: 5}
-  - StepName: Ending Dialogue
+    WaveIndex: -1
+  - StepName: Post Placement
     Type: 0
-    Dialogue: {fileID: 11400000, guid: 5882e3395e2c03d43ba2159cb27420f8, type: 2}
+    Dialogue: {fileID: 11400000, guid: 2de51bdc33e6ac04faaffdd62d18e024, type: 2}
     TargetUIName: 
     TargetTile: {x: 0, y: 0}
-    DelayBefore: 1
+    DelayBefore: 0
     Duration: 0
     ActionKey: 
     ShowHand: 0
     DragShowHand: 0
+    HandDragTargetUIName: 
+    HandDragTargetTile: {x: 0, y: 0}
+    WaveIndex: -1
+  - StepName: Start Wave 1
+    Type: 6
+    Dialogue: {fileID: 0}
+    TargetUIName: 
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 0.5
+    Duration: 0
+    ActionKey: 
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUIName: 
+    HandDragTargetTile: {x: 0, y: 0}
+    WaveIndex: 0
+  - StepName: Mid Wave Skill Prompt
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: a3034f72b4714f94d870862c3abaac68, type: 2}
+    TargetUIName: 
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 5.0
+    Duration: 0
+    ActionKey: 
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUIName: 
+    HandDragTargetTile: {x: 0, y: 0}
+    WaveIndex: -1
+  - StepName: Activate Skill
+    Type: 3
+    Dialogue: {fileID: 0}
+    TargetUIName: SkillPanel_Container
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 0
+    Duration: 0
+    ActionKey: SkillUsed
+    ShowHand: 1
+    DragShowHand: 0
+    HandDragTargetUIName: 
+    HandDragTargetTile: {x: 0, y: 0}
+    WaveIndex: -1
+  - StepName: Wait for Wave 1 Finish
+    Type: 7
+    Dialogue: {fileID: 0}
+    TargetUIName: 
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 0
+    Duration: 0
+    ActionKey: 
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUIName: 
+    HandDragTargetTile: {x: 0, y: 0}
+    WaveIndex: 0
+  - StepName: Victory Dialogue
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: 01ff824919311584790b7fdb247a2667, type: 2}
+    TargetUIName: 
+    TargetTile: {x: 0, y: 0}
+    DelayBefore: 1.5
+    Duration: 0
+    ActionKey: 
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUIName: 
+    HandDragTargetTile: {x: 0, y: 0}
+    WaveIndex: -1

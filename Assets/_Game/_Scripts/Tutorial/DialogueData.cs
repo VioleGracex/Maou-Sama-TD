@@ -4,11 +4,14 @@ using System.Collections.Generic;
 namespace MaouSamaTD.Tutorial
 {
     public enum DialogueStyle { FullScreen, MiniTop }
+    public enum DialogueBackground { None, UIBlocker, FullScreenDim }
 
     [CreateAssetMenu(fileName = "NewDialogueData", menuName = "MaouSamaTD/Tutorial/Dialogue Data")]
     public class DialogueData : ScriptableObject
     {
         public DialogueStyle Style = DialogueStyle.FullScreen;
+        public DialogueBackground Background = DialogueBackground.None;
+        public float CharactersPerSecond = 30f;
         public List<DialogueLine> Lines;
     }
 

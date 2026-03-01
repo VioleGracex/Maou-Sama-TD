@@ -15,7 +15,7 @@ namespace MaouSamaTD.UI
     {
         [Header("Overlay Settings")]
         [SerializeField] private Material overlayMaterial;
-        [SerializeField] private Color overlayColor = new Color(0, 0, 0, 0.7f);
+        [SerializeField] private Color overlayColor = new Color(0, 0, 0, 0.85f);
         [SerializeField] private int maskSize = 1024;
         [SerializeField] private float transitionDuration = 0.3f;
 
@@ -36,34 +36,95 @@ namespace MaouSamaTD.UI
         {
             canvasGroup = GetComponent<CanvasGroup>();
             if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            
+            // Ensure Canvas is set up correctly for full-screen overlay
+            Canvas canvas = GetComponent<Canvas>();
+            if (canvas != null)
+            {
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.sortingOrder = 999; 
+            }
+
+            gameObject.SetActive(true);
             canvasGroup.alpha = 0;
-            gameObject.SetActive(false);
+            canvasGroup.blocksRaycasts = false;
+            isActive = false;
+        }
+
+        public void ShowBlockerWithTargets(List<RectTransform> targets, Vector3? worldPos = null, float worldRadius = 1.0f)
+        {
+            if (!isActive)
+            {
+                targetElements.Clear();
+            }
+            
+            if (targets != null) 
+            {
+                foreach(var t in targets)
+                {
+                    if (!targetElements.Contains(t)) targetElements.Add(t);
+                }
+            }
+            
+            if (worldPos.HasValue)
+            {
+                isWorldHighlight = true;
+                worldHighlightPos = worldPos.Value;
+                worldHighlightRadius = worldRadius;
+            }
+            // Don't reset isWorldHighlight if we are just adding UI targets
+            
+            Show();
+        }
+
+        public void RemoveTarget(RectTransform target)
+        {
+            if (target == null) return;
+            if (targetElements.Contains(target))
+            {
+                targetElements.Remove(target);
+                if (isActive)
+                {
+                    UpdateOverlayMask();
+                    overlayRaycaster.SetTargets(targetElements);
+                }
+            }
+        }
+
+        public void ClearTargets()
+        {
+            targetElements.Clear();
+            isWorldHighlight = false;
+            if (isActive)
+            {
+                UpdateOverlayMask();
+                overlayRaycaster.SetTargets(targetElements);
+                overlayRaycaster.SetWorldHighlight(false, Vector3.zero, 0);
+            }
         }
 
         public void ShowBlockerWithTarget(RectTransform target)
         {
-            targetElements.Clear();
-            if (target != null) targetElements.Add(target);
-            isWorldHighlight = false;
-            Show();
+            List<RectTransform> list = new List<RectTransform>();
+            if (target != null) list.Add(target);
+            ShowBlockerWithTargets(list);
         }
 
         public void ShowBlockerWithWorldHighlight(Vector3 worldPos, float radius = 1.0f)
         {
-            targetElements.Clear();
-            isWorldHighlight = true;
-            worldHighlightPos = worldPos;
-            worldHighlightRadius = radius;
-            Show();
+            ShowBlockerWithTargets(null, worldPos, radius);
         }
 
         public void HideBlocker()
         {
             if (!isActive) return;
-            canvasGroup.DOFade(0, transitionDuration).OnComplete(() =>
+            canvasGroup.DOKill();
+            canvasGroup.DOFade(0, transitionDuration).SetUpdate(true).OnComplete(() =>
             {
-                gameObject.SetActive(false);
+                canvasGroup.blocksRaycasts = false;
                 isActive = false;
+                targetElements.Clear(); // Cleanup targets on hide
+                isWorldHighlight = false;
             });
         }
 
@@ -71,20 +132,45 @@ namespace MaouSamaTD.UI
         {
             if (overlayGO == null) CreateOverlay();
             
+            // Sync current inspector color to material
+            if (overlayImage != null)
+            {
+                overlayImage.color = Color.white; // Identity for multiplication
+                if (overlayImage.material != null)
+                {
+                    overlayImage.material.SetColor("_Color", overlayColor);
+                }
+            }
+
+            if (overlayGO != null)
+            {
+                var rect = overlayGO.GetComponent<RectTransform>();
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+                rect.localScale = Vector3.one;
+            }
+
+            Debug.Log($"[tutorial] Showing blocker. Color: {overlayColor}, UI Targets: {targetElements.Count}, World Highlight: {isWorldHighlight}");
+            
             gameObject.SetActive(true);
+            canvasGroup.blocksRaycasts = true;
             isActive = true;
             
             UpdateOverlayMask();
             overlayRaycaster.SetTargets(targetElements);
+            overlayRaycaster.SetWorldHighlight(isWorldHighlight, worldHighlightPos, worldHighlightRadius);
             
             canvasGroup.DOKill();
-            canvasGroup.DOFade(1, transitionDuration);
+            canvasGroup.alpha = 1; // Force opaque immediately as per user request
+            // canvasGroup.DOFade(1, transitionDuration).SetUpdate(true); // Disable fade for now to guarantee visibility
         }
 
         private void CreateOverlay()
         {
             Canvas parentCanvas = GetComponent<Canvas>();
-            overlayGO = new GameObject("Overlay_Image", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(HoleRaycaster));
+            overlayGO = new GameObject("Overlay_Image", typeof(RectTransform), typeof(CanvasRenderer));
             overlayGO.transform.SetParent(parentCanvas.transform, false);
             
             var rect = overlayGO.GetComponent<RectTransform>();
@@ -93,11 +179,16 @@ namespace MaouSamaTD.UI
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
 
-            overlayImage = overlayGO.GetComponent<Image>();
-            overlayImage.material = new Material(overlayMaterial);
-            overlayImage.color = overlayColor;
-            
-            overlayRaycaster = overlayGO.GetComponent<HoleRaycaster>();
+            // HoleRaycaster inherits from Image, so adding it adds the Image component automatically
+            overlayRaycaster = overlayGO.AddComponent<HoleRaycaster>();
+            overlayImage = overlayRaycaster;
+
+            if (overlayMaterial != null)
+            {
+                overlayImage.material = new Material(overlayMaterial);
+            }
+            overlayImage.color = Color.white;
+            overlayImage.raycastTarget = true;
         }
 
         private void LateUpdate()
@@ -127,13 +218,11 @@ namespace MaouSamaTD.UI
             {
                 DrawWorldHole(pixels, overlayRect);
             }
-            else
+            
+            foreach (var rt in targetElements)
             {
-                foreach (var rt in targetElements)
-                {
-                    if (rt == null) continue;
-                    DrawUIHole(rt, pixels, overlayRect);
-                }
+                if (rt == null) continue;
+                DrawUIHole(rt, pixels, overlayRect);
             }
 
             maskTex.SetPixels32(pixels);
@@ -156,16 +245,18 @@ namespace MaouSamaTD.UI
             float maxX = Mathf.InverseLerp(overlayPixelRect.xMin, overlayPixelRect.xMax, localTR.x);
             float maxY = Mathf.InverseLerp(overlayPixelRect.yMin, overlayPixelRect.yMax, localTR.y);
 
-            int pxMinX = Mathf.RoundToInt(minX * maskSize);
-            int pxMinY = Mathf.RoundToInt(minY * maskSize);
-            int pxMaxX = Mathf.RoundToInt(maxX * maskSize);
-            int pxMaxY = Mathf.RoundToInt(maxY * maskSize);
+            int pxMinX = Mathf.Clamp(Mathf.RoundToInt(minX * maskSize), 0, maskSize);
+            int pxMinY = Mathf.Clamp(Mathf.RoundToInt(minY * maskSize), 0, maskSize);
+            int pxMaxX = Mathf.Clamp(Mathf.RoundToInt(maxX * maskSize), 0, maskSize);
+            int pxMaxY = Mathf.Clamp(Mathf.RoundToInt(maxY * maskSize), 0, maskSize);
 
             for (int y = pxMinY; y < pxMaxY; y++)
-            for (int x = pxMinX; x < pxMaxX; x++)
             {
-                int idx = y * maskSize + x;
-                if (idx >= 0 && idx < pixels.Length) pixels[idx] = new Color32(255, 255, 255, 0);
+                for (int x = pxMinX; x < pxMaxX; x++)
+                {
+                    int idx = y * maskSize + x;
+                    if (idx >= 0 && idx < pixels.Length) pixels[idx] = new Color32(255, 255, 255, 0);
+                }
             }
         }
 
@@ -184,14 +275,20 @@ namespace MaouSamaTD.UI
             
             float screenRadius = (Camera.main.WorldToScreenPoint(worldHighlightPos + Vector3.right * worldHighlightRadius) - (Vector3)screenPos).magnitude;
             float uvRadius = screenRadius / Screen.width; 
-            int pixelRadius = Mathf.RoundToInt(uvRadius * maskSize);
+            int pixelRadiusX = Mathf.RoundToInt(uvRadius * maskSize);
+            // Apply isometric squish factor (approx 0.6 is common for 60deg/isometric tilts)
+            int pixelRadiusY = Mathf.RoundToInt(pixelRadiusX * 0.6f); 
 
-            for (int y = centerY - pixelRadius; y <= centerY + pixelRadius; y++)
-            for (int x = centerX - pixelRadius; x <= centerX + pixelRadius; x++)
+            for (int y = centerY - pixelRadiusY; y <= centerY + pixelRadiusY; y++)
+            for (int x = centerX - pixelRadiusX; x <= centerX + pixelRadiusX; x++)
             {
                 if (x < 0 || x >= maskSize || y < 0 || y >= maskSize) continue;
-                float dist = Vector2.Distance(new Vector2(x, y), new Vector2(centerX, centerY));
-                if (dist <= pixelRadius)
+                
+                // Ellipse distance formula: (x^2 / a^2) + (y^2 / b^2) <= 1
+                float dx = (x - centerX) / (float)pixelRadiusX;
+                float dy = (y - centerY) / (float)pixelRadiusY;
+                
+                if (dx * dx + dy * dy <= 1.0f)
                 {
                     int idx = y * maskSize + x;
                     pixels[idx] = new Color32(255, 255, 255, 0);
@@ -202,19 +299,58 @@ namespace MaouSamaTD.UI
         public class HoleRaycaster : Image
         {
             private List<RectTransform> targets = new List<RectTransform>();
+            private bool isWorldHighlight;
+            private Vector3 worldPos;
+            private float worldRadius;
+
             public void SetTargets(List<RectTransform> rects)
             {
                 targets.Clear();
                 if (rects != null) targets.AddRange(rects);
             }
+
+            public void SetWorldHighlight(bool active, Vector3 pos, float radius)
+            {
+                isWorldHighlight = active;
+                worldPos = pos;
+                worldRadius = radius;
+            }
+
             public override bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
             {
+                // 1. Check UI Targets
                 foreach (var target in targets)
                 {
                     if (target != null && RectTransformUtility.RectangleContainsScreenPoint(target, screenPoint, eventCamera))
-                        return false;
+                    {
+                        // Debug.Log($"[UIPopupBlocker] Raycast VALID (UI Target: {target.name})");
+                        return false; 
+                    }
                 }
-                return true;
+
+                // 2. Check World Highlight (Projected to screen)
+                if (isWorldHighlight)
+                {
+                    Camera mainCam = Camera.main;
+                    if (mainCam != null)
+                    {
+                        Vector2 screenHolePos = mainCam.WorldToScreenPoint(worldPos);
+                        float screenRadiusX = (mainCam.WorldToScreenPoint(worldPos + Vector3.right * worldRadius) - (Vector3)screenHolePos).magnitude;
+                        float screenRadiusY = screenRadiusX * 0.6f; // Isometric squish
+                        
+                        Vector2 diff = screenPoint - screenHolePos;
+                        float dx = diff.x / screenRadiusX;
+                        float dy = diff.y / screenRadiusY;
+                        
+                        if (dx * dx + dy * dy <= 1.0f)
+                        {
+                            return false; 
+                        }
+                    }
+                }
+
+                // 3. Block
+                return true; 
             }
         }
     }

@@ -1,25 +1,41 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using NaughtyAttributes;
 using DG.Tweening;
 
 namespace MaouSamaTD.UI
 {
     /// <summary>
     /// Black transparent overlay that blocks raycasts everywhere EXCEPT for the area(s) of the target UI element(s).
-    /// Now supports world-space highlights (tiles) by projecting them to UI space.
+    /// Supports both UI RectTransforms and world-space highlights (tiles).
     /// </summary>
     [RequireComponent(typeof(Canvas))]
     public class UIPopupBlocker : MonoBehaviour
     {
+        public struct WorldHighlightData
+        {
+            public Vector3 Position;
+            public Vector2 Size;
+            public float Height;
+        }
+
+        [System.Serializable]
+        public struct UIHighlightData
+        {
+            public RectTransform Target;
+            public Vector2 Size; // Multiplier, 1 = original size
+        }
+
         [Header("Overlay Settings")]
         [SerializeField] private Material overlayMaterial;
         [SerializeField] private Color overlayColor = new Color(0, 0, 0, 0.85f);
         [SerializeField] private int maskSize = 1024;
         [SerializeField] private float transitionDuration = 0.3f;
 
-        private List<RectTransform> targetElements = new List<RectTransform>();
+        private List<UIHighlightData> uiHighlights = new List<UIHighlightData>();
+        private List<WorldHighlightData> worldHighlights = new List<WorldHighlightData>();
+        private bool isWorldHighlight = false;
+        
         private GameObject overlayGO;
         private Image overlayImage;
         private HoleRaycaster overlayRaycaster;
@@ -27,17 +43,11 @@ namespace MaouSamaTD.UI
         private Texture2D maskTex;
         private CanvasGroup canvasGroup;
 
-        // For World Highlights
-        private bool isWorldHighlight = false;
-        private Vector3 worldHighlightPos;
-        private float worldHighlightRadius;
-
         private void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
             if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
             
-            // Ensure Canvas is set up correctly for full-screen overlay
             Canvas canvas = GetComponent<Canvas>();
             if (canvas != null)
             {
@@ -46,73 +56,145 @@ namespace MaouSamaTD.UI
             }
 
             gameObject.SetActive(true);
+            
+            RectTransform tr = GetComponent<RectTransform>();
+            if (tr != null)
+            {
+                tr.anchorMin = Vector2.zero;
+                tr.anchorMax = Vector2.one;
+                tr.offsetMin = Vector2.zero;
+                tr.offsetMax = Vector2.zero;
+                tr.pivot = new Vector2(0.5f, 0.5f);
+            }
+
             canvasGroup.alpha = 0;
             canvasGroup.blocksRaycasts = false;
             isActive = false;
         }
 
-        public void ShowBlockerWithTargets(List<RectTransform> targets, Vector3? worldPos = null, float worldRadius = 1.0f)
+        public void ShowBlockerWithDetailedTargets(List<UIHighlightData> uiHits, List<WorldHighlightData> worldHits)
         {
-            if (!isActive)
+            uiHighlights.Clear();
+            if (uiHits != null) uiHighlights.AddRange(uiHits);
+
+            isWorldHighlight = worldHits != null && worldHits.Count > 0;
+            worldHighlights.Clear();
+            if (worldHits != null) worldHighlights.AddRange(worldHits);
+            Show();
+        }
+
+        public void ShowBlockerWithWorldHighlightData(List<RectTransform> targets, List<WorldHighlightData> highlights)
+        {
+            uiHighlights.Clear();
+            if (targets != null)
             {
-                targetElements.Clear();
+                foreach (var t in targets) uiHighlights.Add(new UIHighlightData { Target = t, Size = Vector2.one });
             }
             
-            if (targets != null) 
+            isWorldHighlight = highlights != null && highlights.Count > 0;
+            worldHighlights.Clear();
+            if (highlights != null) worldHighlights.AddRange(highlights);
+            Show();
+        }
+
+        public void ShowBlockerWithTarget(RectTransform target)
+        {
+            if (target == null) return;
+            // Add if not exists
+            if (!uiHighlights.Exists(h => h.Target == target))
             {
-                foreach(var t in targets)
-                {
-                    if (!targetElements.Contains(t)) targetElements.Add(t);
-                }
+                uiHighlights.Add(new UIHighlightData { Target = target, Size = Vector2.one });
             }
-            
-            if (worldPos.HasValue)
-            {
-                isWorldHighlight = true;
-                worldHighlightPos = worldPos.Value;
-                worldHighlightRadius = worldRadius;
-            }
-            // Don't reset isWorldHighlight if we are just adding UI targets
-            
             Show();
         }
 
         public void RemoveTarget(RectTransform target)
         {
             if (target == null) return;
-            if (targetElements.Contains(target))
-            {
-                targetElements.Remove(target);
-                if (isActive)
-                {
-                    UpdateOverlayMask();
-                    overlayRaycaster.SetTargets(targetElements);
-                }
-            }
+            uiHighlights.RemoveAll(h => h.Target == target);
+            if (isActive) UpdateOverlayMask();
         }
 
         public void ClearTargets()
         {
-            targetElements.Clear();
+            uiHighlights.Clear();
+            worldHighlights.Clear();
             isWorldHighlight = false;
-            if (isActive)
+            
+            if (overlayRaycaster != null)
             {
                 UpdateOverlayMask();
-                overlayRaycaster.SetTargets(targetElements);
-                overlayRaycaster.SetWorldHighlight(false, Vector3.zero, 0);
+                overlayRaycaster.SetUITargets(uiHighlights);
+                overlayRaycaster.SetWorldHighlights(false, worldHighlights);
             }
         }
 
-        public void ShowBlockerWithTarget(RectTransform target)
+        public bool IsPointerInHole(Vector2 screenPoint)
         {
-            List<RectTransform> list = new List<RectTransform>();
-            if (target != null) list.Add(target);
-            ShowBlockerWithTargets(list);
-        }
+            if (!this.gameObject.activeInHierarchy || !isActive) return false;
+            
+            foreach (var h in uiHighlights)
+            {
+                if (h.Target == null) continue;
+                
+                Camera targetCam = GetTargetCamera(h.Target);
+                Vector3[] corners = new Vector3[4];
+                h.Target.GetWorldCorners(corners);
+                Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                Vector3 size = corners[2] - corners[0];
+                size.x *= h.Size.x;
+                size.y *= h.Size.y;
 
-        public void ShowBlockerWithWorldHighlight(Vector3 worldPos, float radius = 1.0f)
-        {
-            ShowBlockerWithTargets(null, worldPos, radius);
+                Vector2 sMin = RectTransformUtility.WorldToScreenPoint(targetCam, center - size * 0.5f);
+                Vector2 sMax = RectTransformUtility.WorldToScreenPoint(targetCam, center + size * 0.5f);
+
+                if (screenPoint.x >= Mathf.Min(sMin.x, sMax.x) && screenPoint.x <= Mathf.Max(sMin.x, sMax.x) && 
+                    screenPoint.y >= Mathf.Min(sMin.y, sMax.y) && screenPoint.y <= Mathf.Max(sMin.y, sMax.y))
+                {
+                    return true;
+                }
+            }
+
+            if (isWorldHighlight)
+            {
+                Camera mainCam = Camera.main;
+                if (mainCam != null)
+                {
+                    foreach (var h in worldHighlights)
+                    {
+                        float hsX = h.Size.x * 0.5f;
+                        float hsZ = h.Size.y * 0.5f;
+                        float vhs = h.Height * 0.5f;
+
+                        Vector3[] corners = new Vector3[]
+                        {
+                            h.Position + new Vector3(-hsX, -vhs, -hsZ),
+                            h.Position + new Vector3(hsX, -vhs, -hsZ),
+                            h.Position + new Vector3(hsX, -vhs, hsZ),
+                            h.Position + new Vector3(-hsX, -vhs, hsZ),
+                            h.Position + new Vector3(-hsX, vhs, -hsZ),
+                            h.Position + new Vector3(hsX, vhs, -hsZ),
+                            h.Position + new Vector3(hsX, vhs, hsZ),
+                            h.Position + new Vector3(-hsX, vhs, hsZ)
+                        };
+
+                        float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+                        foreach (var corner in corners)
+                        {
+                            Vector2 sPos = mainCam.WorldToScreenPoint(corner);
+                            minX = Mathf.Min(minX, sPos.x);
+                            minY = Mathf.Min(minY, sPos.y);
+                            maxX = Mathf.Max(maxX, sPos.x);
+                            maxY = Mathf.Max(maxY, sPos.y);
+                        }
+
+                        if (screenPoint.x >= minX && screenPoint.x <= maxX && screenPoint.y >= minY && screenPoint.y <= maxY)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public void HideBlocker()
@@ -123,7 +205,8 @@ namespace MaouSamaTD.UI
             {
                 canvasGroup.blocksRaycasts = false;
                 isActive = false;
-                targetElements.Clear(); // Cleanup targets on hide
+                uiHighlights.Clear();
+                worldHighlights.Clear();
                 isWorldHighlight = false;
             });
         }
@@ -132,10 +215,9 @@ namespace MaouSamaTD.UI
         {
             if (overlayGO == null) CreateOverlay();
             
-            // Sync current inspector color to material
             if (overlayImage != null)
             {
-                overlayImage.color = Color.white; // Identity for multiplication
+                overlayImage.color = Color.white;
                 if (overlayImage.material != null)
                 {
                     overlayImage.material.SetColor("_Color", overlayColor);
@@ -152,19 +234,16 @@ namespace MaouSamaTD.UI
                 rect.localScale = Vector3.one;
             }
 
-            Debug.Log($"[tutorial] Showing blocker. Color: {overlayColor}, UI Targets: {targetElements.Count}, World Highlight: {isWorldHighlight}");
-            
             gameObject.SetActive(true);
             canvasGroup.blocksRaycasts = true;
             isActive = true;
             
             UpdateOverlayMask();
-            overlayRaycaster.SetTargets(targetElements);
-            overlayRaycaster.SetWorldHighlight(isWorldHighlight, worldHighlightPos, worldHighlightRadius);
+            overlayRaycaster.SetUITargets(uiHighlights);
+            overlayRaycaster.SetWorldHighlights(isWorldHighlight, worldHighlights);
             
             canvasGroup.DOKill();
-            canvasGroup.alpha = 1; // Force opaque immediately as per user request
-            // canvasGroup.DOFade(1, transitionDuration).SetUpdate(true); // Disable fade for now to guarantee visibility
+            canvasGroup.alpha = 1; 
         }
 
         private void CreateOverlay()
@@ -179,7 +258,6 @@ namespace MaouSamaTD.UI
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
 
-            // HoleRaycaster inherits from Image, so adding it adds the Image component automatically
             overlayRaycaster = overlayGO.AddComponent<HoleRaycaster>();
             overlayImage = overlayRaycaster;
 
@@ -219,10 +297,10 @@ namespace MaouSamaTD.UI
                 DrawWorldHole(pixels, overlayRect);
             }
             
-            foreach (var rt in targetElements)
+            foreach (var h in uiHighlights)
             {
-                if (rt == null) continue;
-                DrawUIHole(rt, pixels, overlayRect);
+                if (h.Target == null) continue;
+                DrawUIHole(h, pixels, overlayRect);
             }
 
             maskTex.SetPixels32(pixels);
@@ -230,14 +308,24 @@ namespace MaouSamaTD.UI
             overlayImage.material.SetTexture("_MaskTex", maskTex);
         }
 
-        private void DrawUIHole(RectTransform rt, Color32[] pixels, RectTransform overlayRect)
+        private void DrawUIHole(UIHighlightData data, Color32[] pixels, RectTransform overlayRect)
         {
-            Vector3[] worldCorners = new Vector3[4];
-            rt.GetWorldCorners(worldCorners);
+            RectTransform rt = data.Target;
+            Vector3[] corners = new Vector3[4];
+            rt.GetWorldCorners(corners);
+
+            Vector3 center = (corners[0] + corners[2]) * 0.5f;
+            Vector3 size = corners[2] - corners[0];
+            Vector3 scaledSize = new Vector3(size.x * data.Size.x, size.y * data.Size.y, size.z);
+            
+            Vector3[] scaledCorners = new Vector3[4];
+            scaledCorners[0] = center + new Vector3(-scaledSize.x * 0.5f, -scaledSize.y * 0.5f, 0);
+            scaledCorners[2] = center + new Vector3(scaledSize.x * 0.5f, scaledSize.y * 0.5f, 0);
 
             Vector2 localBL, localTR;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(null, worldCorners[0]), null, out localBL);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(null, worldCorners[2]), null, out localTR);
+            Camera targetCam = GetTargetCamera(rt);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[0]), null, out localBL);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[2]), null, out localTR);
 
             Rect overlayPixelRect = overlayRect.rect;
             float minX = Mathf.InverseLerp(overlayPixelRect.xMin, overlayPixelRect.xMax, localBL.x);
@@ -262,94 +350,154 @@ namespace MaouSamaTD.UI
 
         private void DrawWorldHole(Color32[] pixels, RectTransform overlayRect)
         {
-            Vector2 screenPos = Camera.main.WorldToScreenPoint(worldHighlightPos);
-            Vector2 localPos;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, screenPos, null, out localPos);
+            if (Camera.main == null) return;
 
-            Rect overlayPixelRect = overlayRect.rect;
-            float uvX = Mathf.InverseLerp(overlayPixelRect.xMin, overlayPixelRect.xMax, localPos.x);
-            float uvY = Mathf.InverseLerp(overlayPixelRect.yMin, overlayPixelRect.yMax, localPos.y);
-
-            int centerX = Mathf.RoundToInt(uvX * maskSize);
-            int centerY = Mathf.RoundToInt(uvY * maskSize);
-            
-            float screenRadius = (Camera.main.WorldToScreenPoint(worldHighlightPos + Vector3.right * worldHighlightRadius) - (Vector3)screenPos).magnitude;
-            float uvRadius = screenRadius / Screen.width; 
-            int pixelRadiusX = Mathf.RoundToInt(uvRadius * maskSize);
-            // Apply isometric squish factor (approx 0.6 is common for 60deg/isometric tilts)
-            int pixelRadiusY = Mathf.RoundToInt(pixelRadiusX * 0.6f); 
-
-            for (int y = centerY - pixelRadiusY; y <= centerY + pixelRadiusY; y++)
-            for (int x = centerX - pixelRadiusX; x <= centerX + pixelRadiusX; x++)
+            foreach (var h in worldHighlights)
             {
-                if (x < 0 || x >= maskSize || y < 0 || y >= maskSize) continue;
-                
-                // Ellipse distance formula: (x^2 / a^2) + (y^2 / b^2) <= 1
-                float dx = (x - centerX) / (float)pixelRadiusX;
-                float dy = (y - centerY) / (float)pixelRadiusY;
-                
-                if (dx * dx + dy * dy <= 1.0f)
+                float hsX = h.Size.x * 0.5f;
+                float hsZ = h.Size.y * 0.5f;
+                float vhs = h.Height * 0.5f;
+
+                Vector3[] corners = new Vector3[]
                 {
-                    int idx = y * maskSize + x;
-                    pixels[idx] = new Color32(255, 255, 255, 0);
+                    h.Position + new Vector3(-hsX, -vhs, -hsZ),
+                    h.Position + new Vector3(hsX, -vhs, -hsZ),
+                    h.Position + new Vector3(hsX, -vhs, hsZ),
+                    h.Position + new Vector3(-hsX, -vhs, hsZ),
+                    h.Position + new Vector3(-hsX, vhs, -hsZ),
+                    h.Position + new Vector3(hsX, vhs, -hsZ),
+                    h.Position + new Vector3(hsX, vhs, hsZ),
+                    h.Position + new Vector3(-hsX, vhs, hsZ)
+                };
+
+                Vector2 minP = new Vector2(float.MaxValue, float.MaxValue);
+                Vector2 maxP = new Vector2(float.MinValue, float.MinValue);
+
+                foreach (var worldCorner in corners)
+                {
+                    Vector2 screenPos = Camera.main.WorldToScreenPoint(worldCorner);
+                    Vector2 localPos;
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, screenPos, null, out localPos);
+                    
+                    minP = Vector2.Min(minP, localPos);
+                    maxP = Vector2.Max(maxP, localPos);
+                }
+
+                Rect overlayPixelRect = overlayRect.rect;
+                float minXIdx = Mathf.InverseLerp(overlayPixelRect.xMin, overlayPixelRect.xMax, minP.x);
+                float minYIdx = Mathf.InverseLerp(overlayPixelRect.yMin, overlayPixelRect.yMax, minP.y);
+                float maxXIdx = Mathf.InverseLerp(overlayPixelRect.xMin, overlayPixelRect.xMax, maxP.x);
+                float maxYIdx = Mathf.InverseLerp(overlayPixelRect.yMin, overlayPixelRect.yMax, maxP.y);
+
+                int pxMinX = Mathf.Clamp(Mathf.RoundToInt(minXIdx * maskSize), 0, maskSize);
+                int pxMinY = Mathf.Clamp(Mathf.RoundToInt(minYIdx * maskSize), 0, maskSize);
+                int pxMaxX = Mathf.Clamp(Mathf.RoundToInt(maxXIdx * maskSize), 0, maskSize);
+                int pxMaxY = Mathf.Clamp(Mathf.RoundToInt(maxYIdx * maskSize), 0, maskSize);
+
+                for (int y = pxMinY; y < pxMaxY; y++)
+                {
+                    for (int x = pxMinX; x < pxMaxX; x++)
+                    {
+                        int idx = y * maskSize + x;
+                        if (idx >= 0 && idx < pixels.Length) pixels[idx] = new Color32(255, 255, 255, 0);
+                    }
                 }
             }
         }
 
+        private Camera GetTargetCamera(RectTransform rt)
+        {
+            if (rt == null) return null;
+            Canvas canvas = rt.GetComponentInParent<Canvas>();
+            if (canvas == null) return null;
+            return canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : Camera.main;
+        }
+
         public class HoleRaycaster : Image
         {
-            private List<RectTransform> targets = new List<RectTransform>();
+            private List<UIHighlightData> uiHighlights = new List<UIHighlightData>();
             private bool isWorldHighlight;
-            private Vector3 worldPos;
-            private float worldRadius;
+            private List<WorldHighlightData> worldHighlights = new List<WorldHighlightData>();
 
-            public void SetTargets(List<RectTransform> rects)
+            public void SetUITargets(List<UIHighlightData> rects)
             {
-                targets.Clear();
-                if (rects != null) targets.AddRange(rects);
+                uiHighlights.Clear();
+                if (rects != null) uiHighlights.AddRange(rects);
             }
 
-            public void SetWorldHighlight(bool active, Vector3 pos, float radius)
+            public void SetWorldHighlights(bool active, List<WorldHighlightData> highlights)
             {
                 isWorldHighlight = active;
-                worldPos = pos;
-                worldRadius = radius;
+                worldHighlights.Clear();
+                if (highlights != null) worldHighlights.AddRange(highlights);
             }
 
             public override bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
             {
-                // 1. Check UI Targets
-                foreach (var target in targets)
+                foreach (var h in uiHighlights)
                 {
-                    if (target != null && RectTransformUtility.RectangleContainsScreenPoint(target, screenPoint, eventCamera))
+                    if (h.Target == null) continue;
+                    
+                    Camera targetCam = null;
+                    Canvas canvas = h.Target.GetComponentInParent<Canvas>();
+                    if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay) targetCam = Camera.main;
+
+                    Vector3[] corners = new Vector3[4];
+                    h.Target.GetWorldCorners(corners);
+                    Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                    Vector3 size = (corners[2] - corners[0]);
+                    size.x *= h.Size.x;
+                    size.y *= h.Size.y;
+
+                    Vector2 sMin = RectTransformUtility.WorldToScreenPoint(targetCam, center - size * 0.5f);
+                    Vector2 sMax = RectTransformUtility.WorldToScreenPoint(targetCam, center + size * 0.5f);
+                    
+                    if (screenPoint.x >= Mathf.Min(sMin.x, sMax.x) && screenPoint.x <= Mathf.Max(sMin.x, sMax.x) && 
+                        screenPoint.y >= Mathf.Min(sMin.y, sMax.y) && screenPoint.y <= Mathf.Max(sMin.y, sMax.y))
                     {
-                        // Debug.Log($"[UIPopupBlocker] Raycast VALID (UI Target: {target.name})");
-                        return false; 
+                        return false;
                     }
                 }
 
-                // 2. Check World Highlight (Projected to screen)
                 if (isWorldHighlight)
                 {
                     Camera mainCam = Camera.main;
                     if (mainCam != null)
                     {
-                        Vector2 screenHolePos = mainCam.WorldToScreenPoint(worldPos);
-                        float screenRadiusX = (mainCam.WorldToScreenPoint(worldPos + Vector3.right * worldRadius) - (Vector3)screenHolePos).magnitude;
-                        float screenRadiusY = screenRadiusX * 0.6f; // Isometric squish
-                        
-                        Vector2 diff = screenPoint - screenHolePos;
-                        float dx = diff.x / screenRadiusX;
-                        float dy = diff.y / screenRadiusY;
-                        
-                        if (dx * dx + dy * dy <= 1.0f)
+                        foreach (var h in worldHighlights)
                         {
-                            return false; 
+                            float hsX = h.Size.x * 0.5f;
+                            float hsZ = h.Size.y * 0.5f;
+                            float vhs = h.Height * 0.5f;
+
+                            Vector3[] corners = new Vector3[]
+                            {
+                                h.Position + new Vector3(-hsX, -vhs, -hsZ),
+                                h.Position + new Vector3(hsX, -vhs, -hsZ),
+                                h.Position + new Vector3(hsX, -vhs, hsZ),
+                                h.Position + new Vector3(-hsX, -vhs, hsZ),
+                                h.Position + new Vector3(-hsX, vhs, -hsZ),
+                                h.Position + new Vector3(hsX, vhs, -hsZ),
+                                h.Position + new Vector3(hsX, vhs, hsZ),
+                                h.Position + new Vector3(-hsX, vhs, hsZ)
+                            };
+
+                            float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+                            foreach (var corner in corners)
+                            {
+                                Vector2 sPos = mainCam.WorldToScreenPoint(corner);
+                                minX = Mathf.Min(minX, sPos.x);
+                                minY = Mathf.Min(minY, sPos.y);
+                                maxX = Mathf.Max(maxX, sPos.x);
+                                maxY = Mathf.Max(maxY, sPos.y);
+                            }
+
+                            if (screenPoint.x >= minX && screenPoint.x <= maxX && screenPoint.y >= minY && screenPoint.y <= maxY)
+                                return false;
                         }
                     }
                 }
 
-                // 3. Block
                 return true; 
             }
         }

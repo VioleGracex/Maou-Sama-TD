@@ -44,16 +44,16 @@ MonoBehaviour:
   Waves:
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 5
+      Count: 2
       SpawnInterval: 2
       InitialDelay: 0
       SpawnPointIndex: 0
-    DelayBeforeNextWave: 10
+    DelayBeforeNextWave: 5
     WaveMessage: 'Wave 1: Shadows approaching!'
   - Groups:
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 10
-      SpawnInterval: 1.5
+    - EnemyType: {fileID: 11400000, guid: b3dd7b36f3b6dd84d8872428f11fdf20, type: 2}
+      Count: 5
+      SpawnInterval: 0.1
       InitialDelay: 0
       SpawnPointIndex: 0
     DelayBeforeNextWave: 0

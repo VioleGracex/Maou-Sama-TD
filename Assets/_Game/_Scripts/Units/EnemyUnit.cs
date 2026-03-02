@@ -30,7 +30,7 @@ namespace MaouSamaTD.Units
             ActiveEnemies.Remove(this);
         }
 
-        public void Initialize(EnemyData data)
+        public void Initialize(EnemyData data, int waveIndex, int enemyIndex)
         {
             _enemyData = data;
             
@@ -39,7 +39,7 @@ namespace MaouSamaTD.Units
             _attackPower = data.AttackPower;
             _attackInterval = data.AttackInterval;
             
-            name = data.EnemyName;
+            gameObject.name = $"Enemy_{data.EnemyName}_W{waveIndex}_O{enemyIndex}";
             
             UpdateVisuals();
         }
@@ -92,7 +92,7 @@ namespace MaouSamaTD.Units
 
         public void RecalculatePath()
         {
-            var gridMgr = FindObjectOfType<GridManager>();
+            var gridMgr = FindFirstObjectByType<GridManager>();
             if (gridMgr == null || _enemyData == null) return;
 
             Vector2Int startValues = gridMgr.WorldToGridCoordinates(transform.position);
@@ -166,7 +166,7 @@ namespace MaouSamaTD.Units
         private bool ScanForTarget(out PlayerUnit target)
         {
             target = null;
-            if (_gridManager == null) _gridManager = FindObjectOfType<GridManager>();
+            if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
             if (_gridManager == null) return false;
 
             Collider[] hits = Physics.OverlapSphere(transform.position, Range);
@@ -231,6 +231,7 @@ namespace MaouSamaTD.Units
                 if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
                 {
                     _blockedBy = player;
+                    player.NotifyEncounter(); // Trigger reach tutorial logic
                     InitiateCentering();
                     return;
                 }
@@ -270,7 +271,7 @@ namespace MaouSamaTD.Units
 
         private void InitiateCentering()
         {
-            if (_gridManager == null) _gridManager = FindObjectOfType<GridManager>();
+            if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
             if (_gridManager != null)
             {
                 Vector2Int coord = _gridManager.WorldToGridCoordinates(transform.position);
@@ -288,13 +289,13 @@ namespace MaouSamaTD.Units
             _isMoving = false;
             Debug.Log($"Enemy reached exit! Dealing {(int)_enemyData.DamageToPlayerBase} damage.");
             
-            Managers.GameManager gm = FindObjectOfType<Managers.GameManager>();
+            Managers.GameManager gm = FindFirstObjectByType<Managers.GameManager>();
             if (gm != null)
             {
                 gm.TakeBaseDamage(Mathf.RoundToInt(_enemyData.DamageToPlayerBase));
             }
 
-            GridManager gridMgr = FindObjectOfType<GridManager>(); 
+            GridManager gridMgr = FindFirstObjectByType<GridManager>(); 
             if (gridMgr != null) gridMgr.SetTileType(_targetTile.Coordinate, TileType.Exit); 
             
             Destroy(gameObject);

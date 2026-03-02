@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Zenject;
 using MaouSamaTD.Levels;
 using MaouSamaTD.UI;
@@ -12,6 +13,7 @@ namespace MaouSamaTD.Managers
 {
     public class TutorialManager : MonoBehaviour
     {
+        #region Dependencies
         [Inject] private DialogueManager _dialogueManager;
         [Inject] private GameManager _gameManager;
         [Inject] private Grid.GridManager _gridManager;
@@ -19,13 +21,28 @@ namespace MaouSamaTD.Managers
         [Inject] private TutorialHandUI _handUI;
         [Inject] private UIPopupBlocker _uiBlocker;
         [Inject] private EnemyManager _enemyManager;
+        #endregion
 
+        #region Serialized Settings
+        [Header("Tutorial Visual Config")]
+        [SerializeField] private Vector3 _tileHighlightOffset = new Vector3(0, -0.4f, 0);
+        
+        [Header("World Hole Settings")]
+        [SerializeField] private Vector2 _unitWorldHoleSizeDefault = Vector2.one;
+        [SerializeField] private float _unitWorldHoleYOffset = 1.0f;
+        #endregion
+        
+        #region State
         public bool IsInTutorial { get; private set; }
         private TutorialDataSO _activeTutorial;
         private int _currentStepIndex = -1;
         private bool _waitingForAction = false;
         private string _waitingActionKey;
+        private HashSet<string> _triggeredActionsBuffer = new HashSet<string>();
+        private TutorialStep currentStep => (_activeTutorial != null && _currentStepIndex >= 0 && _currentStepIndex < _activeTutorial.Steps.Count) ? _activeTutorial.Steps[_currentStepIndex] : null;
+        #endregion
 
+        #region Public API
         public void StartTutorial(TutorialDataSO data)
         {
             Debug.Log($"[tutorial] StartTutorial called for: {data?.name}");
@@ -49,14 +66,18 @@ namespace MaouSamaTD.Managers
             Debug.Log($"[tutorial] Starting Tutorial Routine with {data.Steps.Count} steps.");
             StartCoroutine(TutorialRoutine());
         }
+        #endregion
 
+        #region Lifecycle
         private void EnsureUIComponentsActive()
         {
             if (_dialogueManager != null) _dialogueManager.gameObject.SetActive(true);
             if (_handUI != null) _handUI.gameObject.SetActive(true);
             if (_uiBlocker != null) _uiBlocker.gameObject.SetActive(true);
         }
+        #endregion
 
+        #region Core Tutorial Loop
         private IEnumerator TutorialRoutine()
         {
             while (_currentStepIndex < _activeTutorial.Steps.Count)
@@ -111,9 +132,12 @@ namespace MaouSamaTD.Managers
 
                     case TutorialStepType.HighlightTile:
                         _gameManager.SetSpeed(0);
-                        _uiBlocker.ShowBlockerWithWorldHighlight(GetWorldPosForTile(step.TargetTile), 1.0f);
-                        _handUI.ShowAt(GetScreenPosForTile(step.TargetTile));
+                        HandleUIHighlight(step);
                         HighlightTile(step.TargetTile);
+                        if (step.AdditionalTargetTiles != null)
+                        {
+                            foreach (var tile in step.AdditionalTargetTiles) HighlightTile(tile);
+                        }
                         
                         bool tileDialogueDone = false;
                         _dialogueManager.StartDialogue(step.Dialogue, () => 
@@ -133,10 +157,9 @@ namespace MaouSamaTD.Managers
                         
                         HandleUIHighlight(step);
                         
-                        if (step.ActionKey == "UnitPlaced")
-                        {
-                             HighlightTile(step.HandDragTargetTile);
-                        }
+                        // Set waiting state BEFORE dialogue so InteractionManager can unlock selection if needed
+                        _waitingForAction = true;
+                        _waitingActionKey = step.ActionKey;
 
                         if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                         {
@@ -145,14 +168,25 @@ namespace MaouSamaTD.Managers
                             yield return new WaitUntil(() => actionDialogueDone);
                         }
 
-                        _waitingForAction = true;
-                        _waitingActionKey = step.ActionKey;
-                        yield return new WaitUntil(() => !_waitingForAction);
+                        // Check buffer first (for fast sequential actions)
+                        if (_triggeredActionsBuffer.Contains(step.ActionKey))
+                        {
+                            Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer, proceeding.");
+                            _waitingForAction = false; // Received during dialogue
+                            _triggeredActionsBuffer.Remove(step.ActionKey);
+                        }
+                        else
+                        {
+                            // Already set to true above, just wait
+                            yield return new WaitUntil(() => !_waitingForAction);
+                            _triggeredActionsBuffer.Remove(step.ActionKey); // Clean up
+                        }
                         
                         _handUI.Hide(); 
                         _uiBlocker.HideBlocker();
                         ClearAllTileHighlights();
-                        _gameManager.SetSpeed(1); 
+                        
+                        if (step.ResumeTime) _gameManager.SetSpeed(1); 
                         Debug.Log($"[tutorial] Action {step.ActionKey} received.");
                         break;
 
@@ -182,6 +216,32 @@ namespace MaouSamaTD.Managers
                         yield return new WaitUntil(() => CheckCondition(step));
                         _gameManager.SetSpeed(0);
                         break;
+
+                    case TutorialStepType.CustomCommand:
+                        Debug.Log($"[tutorial] Executing Custom Command: {step.ActionKey} for {step.TargetUIName}");
+                        if (step.ActionKey == "ChargeUnitUlt")
+                        {
+                            var unit = PlayerUnit.ActiveUnits.Find(u => u.Data != null && u.Data.UnitName == step.TargetUIName);
+                            if (unit == null) unit = PlayerUnit.ActiveUnits.Find(u => u.gameObject.name.Contains(step.TargetUIName));
+                            
+                            if (unit != null)
+                            {
+                                unit.ForceChargeUltimate();
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"[tutorial] CustomCommand ChargeUnitUlt: Could not find unit {step.TargetUIName}");
+                            }
+                        }
+                        else if (step.ActionKey == "UnlockSelection")
+                        {
+                            if (_interactionManager != null)
+                            {
+                                _interactionManager.IsSelectionLocked = false;
+                                Debug.Log("[tutorial] CustomCommand: Unit Selection UNLOCKED.");
+                            }
+                        }
+                        break;
                 }
 
                 Debug.Log($"[tutorial] <<< Finished Step [{_currentStepIndex}]: {step.StepName}");
@@ -192,78 +252,179 @@ namespace MaouSamaTD.Managers
             _activeTutorial = null;
             _gameManager.SetSpeed(1);
             Debug.Log("[tutorial] Tutorial Sequence Completed.");
+            _uiBlocker.HideBlocker();
+            _handUI.Hide();
         }
+        #endregion
 
+        #region Visuals & Highlighting
         private void HandleUIHighlight(TutorialStep step)
         {
-            List<RectTransform> targets = new List<RectTransform>();
+            if (step == null) return;
 
-            // Main Target
-            if (!string.IsNullOrEmpty(step.TargetUIName))
+            // 1. Reset Logic
+            if (step.ResetBlocker)
             {
-                Debug.Log($"[tutorial] HandleUIHighlight searching for main target: {step.TargetUIName}");
-                GameObject mainTarget = GameObject.Find(step.TargetUIName);
-                if (mainTarget != null)
-                {
-                    Debug.Log($"[tutorial] Found main target: {mainTarget.name}");
-                    RectTransform rt = mainTarget.GetComponent<RectTransform>();
-                    if (rt != null) targets.Add(rt);
-                }
-                else
-                {
-                    Debug.LogWarning($"[tutorial] Could not find main UI target: {step.TargetUIName}");
-                }
+                _uiBlocker.ClearTargets();
+                _handUI.Hide();
             }
 
-            // Additional Targets
+            // 2. Use Blocker Toggle
+            if (!step.UseBlocker)
+            {
+                _uiBlocker.HideBlocker();
+                if (!step.ShowHand && !step.DragShowHand) _handUI.Hide();
+                return;
+            }
+
+            List<UIPopupBlocker.UIHighlightData> uiHits = new List<UIPopupBlocker.UIHighlightData>();
+            List<UIPopupBlocker.WorldHighlightData> worldHighlights = new List<UIPopupBlocker.WorldHighlightData>();
+
+            // 3. Collect UI Targets
+            List<UITarget> uiTargets = new List<UITarget>();
+            if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
+            if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
+
+            // Legacy UI Fallback
+            if (uiTargets.Count == 0 && !string.IsNullOrEmpty(step.TargetUIName))
+            {
+                uiTargets.Add(new UITarget { Name = step.TargetUIName, Size = step.HoleSize });
+            }
             if (step.AdditionalTargetUINames != null)
             {
                 foreach (var name in step.AdditionalTargetUINames)
                 {
-                    if (string.IsNullOrEmpty(name)) continue;
-                    GameObject extraTarget = GameObject.Find(name);
-                    if (extraTarget != null)
+                    if (!string.IsNullOrEmpty(name)) uiTargets.Add(new UITarget { Name = name, Size = step.HoleSize });
+                }
+            }
+
+            foreach (var ut in uiTargets)
+            {
+                RectTransform rt = FindTargetRect(ut.Name);
+                if (rt != null) 
+                {
+                    uiHits.Add(new UIPopupBlocker.UIHighlightData 
+                    { 
+                         Target = rt, 
+                         Size = (ut.Size != Vector2.zero) ? ut.Size : Vector2.one 
+                    });
+                }
+            }
+
+            // 4. Collect World Targets
+            if (step.TargetTiles != null && step.TargetTiles.Count > 0)
+            {
+                foreach (var wt in step.TargetTiles)
+                {
+                    worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
                     {
-                        RectTransform rt = extraTarget.GetComponent<RectTransform>();
-                        if (rt != null && !targets.Contains(rt)) targets.Add(rt);
+                        Position = GetWorldPosForTile(wt.Coordinate) + wt.Offset,
+                        Size = wt.Size,
+                        Height = wt.Height
+                    });
+                }
+            }
+            else
+            {
+                // Legacy Tile Fallback
+                if (step.TargetTile != Vector2Int.zero)
+                {
+                    worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
+                    {
+                        Position = GetWorldPosForTile(step.TargetTile),
+                        Size = step.HoleSize,
+                        Height = step.HoleHeight
+                    });
+                }
+                if (step.AdditionalTargetTiles != null)
+                {
+                    foreach (var tile in step.AdditionalTargetTiles)
+                    {
+                        worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
+                        {
+                            Position = GetWorldPosForTile(tile),
+                            Size = step.HoleSize,
+                            Height = step.HoleHeight
+                        });
                     }
                 }
             }
 
-            if (targets.Count > 0)
+            // 5. Apply to Blocker
+            _uiBlocker.ShowBlockerWithDetailedTargets(uiHits, worldHighlights);
+
+            // 6. Hand UI Logic
+            if (step.DragShowHand && (uiHits.Count > 0 || worldHighlights.Count > 0))
             {
-                if (step.DragShowHand)
+                Vector2 startPos = Vector2.zero;
+                if (uiHits.Count > 0) startPos = uiHits[0].Target.position;
+                else if (worldHighlights.Count > 0) startPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
+
+                // Find drag target
+                if (step.HandDragTargetUI != null && !string.IsNullOrEmpty(step.HandDragTargetUI.Name))
                 {
-                    RectTransform mainRT = targets[0];
-                    Vector3 worldTarget = GetWorldPosForTile(step.HandDragTargetTile);
-                    _uiBlocker.ShowBlockerWithTargets(targets, worldTarget, 1.0f);
-                    
-                    GameObject dragTargetGO = GameObject.Find(step.HandDragTargetUIName);
-                    if (dragTargetGO != null)
-                    {
-                        Vector2 targetPos = dragTargetGO.transform.position;
-                        if (dragTargetGO.GetComponent<RectTransform>() != null) {
-                            targetPos = dragTargetGO.GetComponent<RectTransform>().position;
-                        }
-                        _handUI.MoveHand(mainRT.position, targetPos);
-                    }
-                    else
-                    {
-                        Vector2 screenTarget = GetScreenPosForTile(step.HandDragTargetTile);
-                        _handUI.MoveHand(mainRT.position, screenTarget);
-                    }
+                    RectTransform drt = FindTargetRect(step.HandDragTargetUI.Name);
+                    if (drt != null) _handUI.MoveHand(startPos, drt.position);
+                    else _handUI.MoveHand(startPos, Vector2.zero); // Or hide?
                 }
                 else
                 {
-                    _uiBlocker.ShowBlockerWithTargets(targets);
-                    if (step.ShowHand)
-                    {
-                        _handUI.ShowAt(targets[0].position);
-                    }
+                    Vector3 worldTarget = GetWorldPosForTile(step.HandDragTargetTile) + step.HandDragTargetTileOffset;
+                    Vector2 screenTarget = Camera.main.WorldToScreenPoint(worldTarget);
+                    _handUI.MoveHand(startPos, screenTarget);
                 }
+            }
+            else if (step.ShowHand)
+            {
+                Vector2 handPos = Vector2.zero;
+                if (worldHighlights.Count > 0) 
+                    handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
+                else if (uiHits.Count > 0) 
+                    handPos = uiHits[0].Target.position;
+
+                if (handPos != Vector2.zero) _handUI.ShowAt(handPos);
             }
         }
 
+        private RectTransform FindTargetRect(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+
+            GameObject go = GameObject.Find(name);
+            if (go != null)
+            {
+                RectTransform rt = go.GetComponent<RectTransform>();
+                if (rt != null) return rt;
+                
+                // If found but no RT, it's a world object, check for unit canvas
+                Canvas canvas = go.GetComponentInChildren<Canvas>(true);
+                if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
+            }
+
+            // Fallback for units by name
+            string unitName = name;
+            if (unitName.StartsWith("Enemy_")) unitName = unitName.Replace("Enemy_", "");
+            else if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
+
+            PlayerUnit pu = PlayerUnit.ActiveUnits.FirstOrDefault(u => u.name == unitName || u.name.Contains(unitName));
+            if (pu != null)
+            {
+                Canvas canvas = pu.GetComponentInChildren<Canvas>(true);
+                if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
+            }
+
+            EnemyUnit eu = EnemyUnit.ActiveEnemies.FirstOrDefault(u => u.name == name || u.name.Contains(unitName));
+            if (eu != null)
+            {
+                Canvas canvas = eu.GetComponentInChildren<Canvas>(true);
+                if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
+            }
+
+            return null;
+        }
+        #endregion
+
+        #region Tile Helpers
         private List<Vector2Int> _highlightedTiles = new List<Vector2Int>();
         private void HighlightTile(Vector2Int coord)
         {
@@ -291,21 +452,66 @@ namespace MaouSamaTD.Managers
             return Camera.main.WorldToScreenPoint(GetWorldPosForTile(tile));
         }
 
-        private Vector3 GetWorldPosForTile(Vector2Int tile)
+        private Vector3 GetWorldPosForTile(Vector2Int tileCoord)
         {
             if (_gridManager != null)
             {
-                return _gridManager.GridToWorldPosition(tile);
-            }
-            return new Vector3(tile.x, 0, tile.y);
-        }
+                var tile = _gridManager.GetTileAt(tileCoord);
+                Vector3 pos;
+                
+                if (tile != null)
+                {
+                    // Use actual transform position which includes HighGround Y offset
+                    pos = tile.transform.position;
+                }
+                else
+                {
+                    pos = _gridManager.GridToWorldPosition(tileCoord);
+                }
 
+                // Apply a serialized offset to align with the tile footprint visually
+                // in isometric perspective
+                return pos + _tileHighlightOffset;
+            }
+            return new Vector3(tileCoord.x, -0.2f, tileCoord.y) + _tileHighlightOffset;
+        }
+        #endregion
+
+        #region Actions & Conditions
         public void OnActionTriggered(string actionKey)
         {
+            _triggeredActionsBuffer.Add(actionKey);
+
             if (_waitingForAction && _waitingActionKey == actionKey)
             {
                 _waitingForAction = false;
+                if (currentStep != null && currentStep.ResumeTime)
+                {
+                    _gameManager.SetSpeed(1); // Resume time only if step allows
+                }
             }
+        }
+
+        public bool IsWaitingForAction(string actionKey)
+        {
+            return _waitingForAction && _waitingActionKey == actionKey;
+        }
+
+        public Vector2Int GetRequiredPlacementTile()
+        {
+            if (currentStep == null) return new Vector2Int(-1, -1);
+
+            if (currentStep.ActionKey == "UnitPlaced")
+                return currentStep.HandDragTargetTile;
+
+            if (currentStep.TargetTiles != null && currentStep.TargetTiles.Count > 0)
+                return currentStep.TargetTiles[0].Coordinate;
+            
+            // Legacy fallback
+            if (currentStep.TargetTile != Vector2Int.zero)
+                return currentStep.TargetTile;
+
+            return new Vector2Int(-1, -1);
         }
 
         private bool CheckCondition(TutorialStep step)
@@ -313,34 +519,111 @@ namespace MaouSamaTD.Managers
             switch (step.ActionKey)
             {
                 case "UnitKills":
-                    GameObject unitGO = GameObject.Find(step.TargetUIName); // Reuse target name for unit name
-                    if (unitGO != null)
+                {
+                    PlayerUnit targetUnit = null;
+                    string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : step.TargetUIName;
+                    string killsTarget = targetName.Contains("_") ? targetName.Substring(targetName.IndexOf('_') + 1) : targetName;
+                    
+                    foreach(var u in PlayerUnit.ActiveUnits)
                     {
-                        PlayerUnit unit = unitGO.GetComponent<PlayerUnit>();
-                        if (unit != null) return unit.KillCount >= step.RequiredCount;
+                        if (u != null && u.Data != null && (u.Data.UnitName == killsTarget || u.gameObject.name == targetName))
+                        {
+                            targetUnit = u;
+                            break;
+                        }
+                    }
+
+                    if (targetUnit != null)
+                    {
+                        bool met = targetUnit.KillCount >= step.RequiredCount && step.RequiredCount > 0;
+                        if (met) Debug.Log($"[tutorial] Condition MET: {step.ActionKey} ({targetUnit.KillCount}/{step.RequiredCount})");
+                        return met;
                     }
                     return false;
+                }
 
                 case "EnemiesInRange":
-                    GameObject centerGO = GameObject.Find(step.TargetUIName);
-                    if (centerGO != null)
+                {
+                    Vector3 centerPos = Vector3.zero;
+                    bool foundCenter = false;
+                    
+                    if (step.TargetTiles != null && step.TargetTiles.Count > 0)
                     {
-                        int count = 0;
-                        float worldRadius = step.HandDragTargetRadius > 0 ? step.HandDragTargetRadius : 2.5f; // Approx
-                        foreach(var enemy in EnemyUnit.ActiveEnemies)
+                        centerPos = GetWorldPosForTile(step.TargetTiles[0].Coordinate);
+                        foundCenter = true;
+                    }
+                    else if (step.TargetTile != Vector2Int.zero)
+                    {
+                        centerPos = GetWorldPosForTile(step.TargetTile);
+                        foundCenter = true;
+                    }
+                    else
+                    {
+                        string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : step.TargetUIName;
+                        string rangeTarget = targetName.Contains("_") ? targetName.Substring(targetName.IndexOf('_') + 1) : targetName;
+                        foreach(var u in PlayerUnit.ActiveUnits)
                         {
-                            if (Vector3.Distance(centerGO.transform.position, enemy.transform.position) <= worldRadius * 2.0f) // Isometric 2 tiles is approx 4 units
+                            if (u != null && u.Data != null && (u.Data.UnitName == rangeTarget || u.gameObject.name == targetName))
                             {
-                                count++;
+                                centerPos = u.transform.position;
+                                foundCenter = true;
+                                break;
                             }
                         }
-                        return count >= step.RequiredCount;
+                    }
+
+                    if (foundCenter)
+                    {
+                        int count = 0;
+                        float threshold = 2.0f;
+                        if (step.TargetTiles != null && step.TargetTiles.Count > 0) threshold = step.TargetTiles[0].Size.x;
+                        else if (step.HoleSize.x > 0) threshold = step.HoleSize.x;
+
+                        foreach(var enemy in EnemyUnit.ActiveEnemies)
+                        {
+                            if (enemy == null) continue;
+                            float dist = Vector3.Distance(centerPos, enemy.transform.position);
+                            if (dist <= threshold) count++;
+                        }
+                        bool met = count >= step.RequiredCount && step.RequiredCount > 0;
+                        if (met) Debug.Log($"[tutorial] Condition MET: {step.ActionKey} ({count}/{step.RequiredCount})");
+                        return met;
                     }
                     return false;
+                }
+
+                case "WaveFinishedSpawning":
+                    // If enemy manager is null or not spawning, and we are at or past the wave index?
+                    // Actually, StartWave sets _isSpawning. We wait for it to become false after it was true.
+                    // But simpler: just check if enemy manager reports it is no longer spawning.
+                    if (_enemyManager != null)
+                    {
+                        bool met = !_enemyManager.IsSpawning;
+                        if (met) Debug.Log($"[tutorial] Condition MET: WaveFinishedSpawning");
+                        return met;
+                    }
+                    return false;
+                
+                case "UnitReach":
+                {
+                    string reachName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : step.TargetUIName;
+                    string reachTarget = reachName.Contains("_") ? reachName.Substring(reachName.IndexOf('_') + 1) : reachName;
+                    foreach(var u in PlayerUnit.ActiveUnits)
+                    {
+                        if (u != null && (u.gameObject.name == reachName || (u.Data != null && u.Data.UnitName == reachTarget)))
+                        {
+                            bool met = u.ReachCount >= step.RequiredCount && step.RequiredCount > 0;
+                            if (met) Debug.Log($"[tutorial] Condition MET: UnitReach ({u.ReachCount}/{step.RequiredCount})");
+                            return met;
+                        }
+                    }
+                    return false;
+                }
 
                 default:
                     return false;
             }
         }
+        #endregion
     }
 }

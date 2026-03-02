@@ -16,104 +16,414 @@ MonoBehaviour:
   - StepName: Intro Dialogue (Highlight Deployment)
     Type: 1
     Dialogue: {fileID: 11400000, guid: 4232a08ce1431974dab61fac5db1447e, type: 2}
-    TargetUIName: DeploymentPanel
+    TargetUIName: 
+    AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: DeploymentPanel
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
     DelayBefore: 0.5
     Duration: 0
     ActionKey: 
     ShowHand: 1
     DragShowHand: 0
-    HandDragTargetUIName: 
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
     HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
     WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
   - StepName: Drag Ignis to Field
     Type: 3
     Dialogue: {fileID: 0}
-    TargetUIName: UnitButton_Ignis
+    TargetUIName: 
+    AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: UnitButton_Ignis
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles:
+    - Coordinate: {x: 2, y: 5}
+      Size: {x: 1, y: 1}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Height: 0.4
     DelayBefore: 0
     Duration: 0
     ActionKey: UnitPlaced
     ShowHand: 1
     DragShowHand: 1
-    HandDragTargetUIName: 
-    HandDragTargetTile: {x: 5, y: 5}
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandDragTargetTile: {x: 2, y: 5}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
     WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 2, y: 2}
+    HoleHeight: 2
   - StepName: Post Placement
     Type: 0
     Dialogue: {fileID: 11400000, guid: 2de51bdc33e6ac04faaffdd62d18e024, type: 2}
     TargetUIName: 
+    AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
     DelayBefore: 0
     Duration: 0
     ActionKey: 
     ShowHand: 0
     DragShowHand: 0
-    HandDragTargetUIName: 
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
     HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
     WaveIndex: -1
-  - StepName: Start Wave 1
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 1
+  - StepName: Start Skirmish Wave (0)
     Type: 6
     Dialogue: {fileID: 0}
     TargetUIName: 
+    AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
     DelayBefore: 0.5
     Duration: 0
     ActionKey: 
     ShowHand: 0
     DragShowHand: 0
-    HandDragTargetUIName: 
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
     HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
     WaveIndex: 0
-  - StepName: Mid Wave Skill Prompt
-    Type: 0
-    Dialogue: {fileID: 11400000, guid: a3034f72b4714f94d870862c3abaac68, type: 2}
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+  - StepName: Wait for 2 Kills
+    Type: 8
+    Dialogue: {fileID: 0}
     TargetUIName: 
+    AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
-    DelayBefore: 5.0
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: Unit_Ignis
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0.5
+    Duration: 0
+    ActionKey: UnitKills
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 2
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+  - StepName: Start Cluster Wave (1)
+    Type: 6
+    Dialogue: {fileID: 0}
+    TargetUIName: 
+    AdditionalTargetUINames: []
+    TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
     Duration: 0
     ActionKey: 
     ShowHand: 0
     DragShowHand: 0
-    HandDragTargetUIName: 
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
     HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    WaveIndex: 1
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+  - StepName: Wait for Cluster Proximity
+    Type: 8
+    Dialogue: {fileID: 0}
+    TargetUIName: 
+    AdditionalTargetUINames: []
+    TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: Unit_Ignis
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 0
+    ActionKey: EnemiesInRange
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    WaveIndex: 1
+    RequiredCount: 5
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 4, y: 1}
+    HoleHeight: 2
+  - StepName: Charge Ignis Ultimate
+    Type: 5
+    Dialogue: {fileID: 0}
+    TargetUIName: 
+    AdditionalTargetUINames: []
+    TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: Unit_Ignis
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 0
+    ActionKey: ChargeUnitUlt
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
     WaveIndex: -1
-  - StepName: Activate Skill
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+  - StepName: Select Ignis Prompt
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: a3034f72b4714f94d870862c3abaac68, type: 2}
+    TargetUIName: 
+    AdditionalTargetUINames: []
+    TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: Unit_Ignis
+      Size: {x: 1.2, y: 1.2}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 0
+    ActionKey: UnitSelected
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 0
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+  - StepName: Wait For Ignis Stats
     Type: 3
     Dialogue: {fileID: 0}
-    TargetUIName: SkillPanel_Container
+    TargetUIName: 
+    AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
-    DelayBefore: 0
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: Ult_Btn
+      Size: {x: 2, y: 2}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI:
+    - Name: Ult_Btn
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    TargetTiles:
+    - Coordinate: {x: 2, y: 5}
+      Size: {x: 1, y: 1}
+      Offset: {x: 0, y: 0, z: 0}
+      Height: 1
+    DelayBefore: 0.5
+    Duration: 0
+    ActionKey: UnitStatsOpened
+    ShowHand: 1
+    DragShowHand: 0
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandDragTargetTile: {x: 2, y: 5}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 0
+    ResumeTime: 0
+    HoleSize: {x: 0, y: 0}
+    HoleHeight: 0
+  - StepName: Activate Ignis Skill
+    Type: 3
+    Dialogue: {fileID: 0}
+    TargetUIName: 
+    AdditionalTargetUINames: []
+    TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: Ult_Btn
+      Size: {x: 2, y: 2}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0.5
     Duration: 0
     ActionKey: SkillUsed
     ShowHand: 1
     DragShowHand: 0
-    HandDragTargetUIName: 
+    HandDragTargetUI:
+      Name: Ult_Btn
+      Size: {x: 0.5, y: 0.5}
+      SizeOffset: {x: 0, y: 0}
     HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
     WaveIndex: -1
-  - StepName: Wait for Wave 1 Finish
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 0, y: 0}
+    HoleHeight: 0
+  - StepName: Wait for Wave 1 Clear
     Type: 7
     Dialogue: {fileID: 0}
     TargetUIName: 
+    AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
     DelayBefore: 0
     Duration: 0
     ActionKey: 
     ShowHand: 0
     DragShowHand: 0
-    HandDragTargetUIName: 
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
     HandDragTargetTile: {x: 0, y: 0}
-    WaveIndex: 0
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    WaveIndex: 1
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 0, y: 0}
+    HoleHeight: 0
   - StepName: Victory Dialogue
     Type: 0
     Dialogue: {fileID: 11400000, guid: 01ff824919311584790b7fdb247a2667, type: 2}
     TargetUIName: 
+    AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
     DelayBefore: 1.5
     Duration: 0
     ActionKey: 
     ShowHand: 0
     DragShowHand: 0
-    HandDragTargetUIName: 
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
     HandDragTargetTile: {x: 0, y: 0}
-    WaveIndex: -1
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    WaveIndex: 1
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2

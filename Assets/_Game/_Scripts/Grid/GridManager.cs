@@ -29,6 +29,7 @@ namespace MaouSamaTD.Grid
         
         // Spawn/Exit Points
         public Vector2Int SpawnPoint { get; private set; }
+        public List<Vector2Int> SpawnPoints { get; private set; } = new List<Vector2Int>();
         public Vector2Int ExitPoint { get; private set; }
         #endregion
 
@@ -89,17 +90,25 @@ namespace MaouSamaTD.Grid
         {
             // Default Fallback
             SpawnPoint = new Vector2Int(0, 0);
+            SpawnPoints.Clear();
             ExitPoint = new Vector2Int(_width - 1, _height - 1);
 
             if (_grid.Count > 0)
             {
                 foreach (var kvp in _grid)
                 {
-                    if (kvp.Value.Type == TileType.Spawn) SpawnPoint = kvp.Key;
+                    if (kvp.Value.Type == TileType.Spawn)
+                    {
+                        if (SpawnPoints.Count == 0) SpawnPoint = kvp.Key;
+                        SpawnPoints.Add(kvp.Key);
+                    }
                     if (kvp.Value.Type == TileType.Exit) ExitPoint = kvp.Key;
                 }
             }
-            Debug.Log($"GridManager: Spawn {SpawnPoint}, Exit {ExitPoint}");
+            
+            if (SpawnPoints.Count == 0) SpawnPoints.Add(SpawnPoint);
+
+            Debug.Log($"GridManager: Found {SpawnPoints.Count} Spawns, Exit {ExitPoint}");
         }
         #endregion
         

@@ -41,6 +41,9 @@ namespace MaouSamaTD.Managers
         private UnitBase _currentHoverUnit;
         private PlayerUnit _inspectedPlayerUnit;
         public UnitData SelectedUnitData => _activeUnitData;
+        
+        private bool _isSelectionLocked = true; // Locked by default for tutorial levels
+        public bool IsSelectionLocked { get => _isSelectionLocked; set => _isSelectionLocked = value; }
         #endregion
 
         #region Handlers
@@ -57,6 +60,7 @@ namespace MaouSamaTD.Managers
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private SkillManager _skillManager;
         [Inject] private TutorialManager _tutorialManager;
+        [Inject] private UIPopupBlocker _uiBlocker;
         #endregion
 
         #region Lifecycle
@@ -97,12 +101,32 @@ namespace MaouSamaTD.Managers
                 }
 
                 Tile hitTile = _inputHandler.GetTileFromScreenPos(screenPos);
+                
+                // Tutorial placement restriction override
+                if (IsDragging && _tutorialManager != null)
+                {
+                    Vector2Int reqTile = _tutorialManager.GetRequiredPlacementTile();
+                    if (reqTile != new Vector2Int(-1, -1))
+                    {
+                        SetPlacementRestriction(new System.Collections.Generic.List<Vector2Int> { reqTile });
+                    }
+                }
+
                 HandleHover(hitTile);
                 _placementHandler.UpdateGhost(hitTile, _activeUnitData, IsDragging, screenPos);
 
-                if (isPressDown && !EventSystem.current.IsPointerOverGameObject())
+                if (isPressDown)
                 {
-                    ProcessAction(hitTile, _inputHandler.GetRayFromScreenPos(screenPos));
+                    bool isOverUI = EventSystem.current.IsPointerOverGameObject();
+                    if (isOverUI && _tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.IsPointerInHole(screenPos))
+                    {
+                        isOverUI = false;
+                    }
+
+                    if (!isOverUI)
+                    {
+                        ProcessAction(hitTile, _inputHandler.GetRayFromScreenPos(screenPos));
+                    }
                 }
             }
         }
@@ -153,6 +177,7 @@ namespace MaouSamaTD.Managers
                     _tutorialManager?.OnActionTriggered("UnitPlaced");
                 }
             }
+            SetPlacementRestriction(null); // Clear restriction
             DeselectUnit();
         }
 
@@ -175,6 +200,10 @@ namespace MaouSamaTD.Managers
         public void UpdateTileVisuals()
         {
             SyncVisualSettings();
+            if (_tileVisualsHandler != null && _placementHandler != null)
+            {
+                 _tileVisualsHandler.AllowedTiles = _placementHandler.AllowedTiles;
+            }
             _tileVisualsHandler.UpdateVisuals(_activeUnitData, IsDragging, _isSkillTargeting, _selectedSkill, _currentHoverTile, _inspectedPlayerUnit);
         }
 
@@ -247,6 +276,18 @@ namespace MaouSamaTD.Managers
                 PlayerUnit target = _selectionHandler.FindTargetUnit(ray, hitTile, _selectionMode, _selectionRange);
                 if (target != null)
                 {
+                    // Tutorial Restriction: Only allow selection if not locked, OR if we are specifically in a tutorial step that requires it
+                    bool isAllowedByTutorial = _tutorialManager != null && _tutorialManager.IsInTutorial && 
+                                             (_tutorialManager.IsWaitingForAction("UnitSelected") || 
+                                              _tutorialManager.IsWaitingForAction("UnitStatsOpened") ||
+                                              _tutorialManager.IsWaitingForAction("SkillUsed"));
+
+                    if (_isSelectionLocked && !isAllowedByTutorial)
+                    {
+                        Debug.Log("[InteractionManager] Selection is currently LOCKED by tutorial.");
+                        return;
+                    }
+
                     _inspectedPlayerUnit = target;
                     _unitInspectorUI.Show(target);
                     _tutorialManager?.OnActionTriggered("UnitSelected");

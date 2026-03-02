@@ -96,10 +96,10 @@ namespace MaouSamaTD.Managers
             if (_waves == null || waveIndex < 0 || waveIndex >= _waves.Count) return;
             
             StopAllCoroutines();
-            StartCoroutine(SpawnSingleWaveRoutine(_waves[waveIndex]));
+            StartCoroutine(SpawnSingleWaveRoutine(_waves[waveIndex], waveIndex));
         }
 
-        private IEnumerator SpawnSingleWaveRoutine(WaveData wave)
+        private IEnumerator SpawnSingleWaveRoutine(WaveData wave, int waveIndex)
         {
             _isSpawning = true;
             if (!string.IsNullOrEmpty(wave.WaveMessage))
@@ -107,6 +107,7 @@ namespace MaouSamaTD.Managers
                 Debug.Log($"[EnemyManager] Tutorial Wave: {wave.WaveMessage}");
             }
             
+            int enemyCounter = 0;
             foreach (var group in wave.Groups)
             {
                 if (group.InitialDelay > 0)
@@ -114,7 +115,8 @@ namespace MaouSamaTD.Managers
 
                 for (int i = 0; i < group.Count; i++)
                 {
-                    SpawnEnemy(group.EnemyType, group.SpawnPointIndex);
+                    SpawnEnemy(group.EnemyType, waveIndex, enemyCounter, group.SpawnPointIndex);
+                    enemyCounter++;
                     
                     if (group.SpawnInterval > 0)
                         yield return new WaitForSeconds(group.SpawnInterval);
@@ -124,7 +126,7 @@ namespace MaouSamaTD.Managers
         }
 
 
-        public void SpawnEnemy(EnemyData data, int spawnPointIndex = 0)
+        public void SpawnEnemy(EnemyData data, int waveIndex, int enemyIndex, int spawnPointIndex = 0)
         {
             if (_gridManager == null || _enemyPrefab == null || data == null) return;
 
@@ -151,7 +153,7 @@ namespace MaouSamaTD.Managers
             
             // 3. Initialize
             enemy.gameObject.SetActive(true); // Ensure active
-            enemy.Initialize(data);
+            enemy.Initialize(data, waveIndex, enemyIndex);
             enemy.SetPath(path);
         }
 
@@ -193,6 +195,7 @@ namespace MaouSamaTD.Managers
             
             if (_waves == null) yield break;
 
+            int waveCounter = 0;
             foreach (var wave in _waves)
             {
                 if (!_isSpawning) yield break;
@@ -202,6 +205,7 @@ namespace MaouSamaTD.Managers
                     Debug.Log($"[EnemyManager] Starting Wave: {wave.WaveMessage}");
                 }
                 
+                int enemyCounter = 0;
                 foreach (var group in wave.Groups)
                 {
                     if (!_isSpawning) yield break;
@@ -213,7 +217,8 @@ namespace MaouSamaTD.Managers
                     {
                         if (!_isSpawning) yield break;
 
-                        SpawnEnemy(group.EnemyType, group.SpawnPointIndex);
+                        SpawnEnemy(group.EnemyType, waveCounter, enemyCounter, group.SpawnPointIndex);
+                        enemyCounter++;
                         
                         if (group.SpawnInterval > 0)
                             yield return new WaitForSeconds(group.SpawnInterval);
@@ -222,6 +227,8 @@ namespace MaouSamaTD.Managers
 
                 if (wave.DelayBeforeNextWave > 0)
                     yield return new WaitForSeconds(wave.DelayBeforeNextWave);
+                
+                waveCounter++;
             }
             
             _isSpawning = false;

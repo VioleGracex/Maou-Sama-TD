@@ -93,7 +93,7 @@ namespace MaouSamaTD.Managers
                 return;
             }
 
-            var tutorialManager = FindObjectOfType<TutorialManager>();
+            var tutorialManager = FindFirstObjectByType<TutorialManager>();
             if (tutorialManager != null)
             {
                 tutorialManager.StartTutorial(_levelData.TutorialData);
@@ -110,7 +110,7 @@ namespace MaouSamaTD.Managers
                 return;
             }
 
-            var tutorialManager = FindObjectOfType<TutorialManager>();
+            var tutorialManager = FindFirstObjectByType<TutorialManager>();
             if (tutorialManager != null)
             {
                 tutorialManager.StartTutorial(_testTutorials[_tutorialIndex]);

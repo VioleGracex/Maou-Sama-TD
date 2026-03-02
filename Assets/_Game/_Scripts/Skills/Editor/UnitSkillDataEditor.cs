@@ -98,19 +98,7 @@ namespace MaouSamaTD.Skills.Editor
             GUILayout.EndVertical();
             GUILayout.Space(10);
             
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Targeting & Effect", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("TargetType", "Targeting Type");
-            DrawProperty("Range", "Cast Range");
-            DrawProperty("Radius", "AoE Radius");
-            GUILayout.Space(5);
-            DrawProperty("EffectType", "Effect Type");
-            DrawProperty("Value", "Effect Value/Damage");
-            DrawProperty("Duration", "Duration (Sec)");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-            GUILayout.Space(10);
+            // Targeting & Effect section removed as ultimates now manage logic on prefabs
 
             GUILayout.BeginVertical("helpbox");
             EditorGUILayout.LabelField("Costs & VFX", headerStyle);

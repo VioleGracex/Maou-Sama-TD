@@ -68,6 +68,7 @@ namespace MaouSamaTD.UI
                 _gameManager.OnLivesChanged += UpdateHp;
                 _gameManager.OnVictory += ShowWin;
                 _gameManager.OnGameOver += ShowLose;
+                _gameManager.OnSpeedChanged += (s) => UpdateUI();
                 UpdateHp(_gameManager.PlayerLives);
             }
 
@@ -87,6 +88,7 @@ namespace MaouSamaTD.UI
                 _gameManager.OnLivesChanged -= UpdateHp;
                 _gameManager.OnVictory -= ShowWin;
                 _gameManager.OnGameOver -= ShowLose;
+                _gameManager.OnSpeedChanged -= (s) => UpdateUI();
             }
         }
 

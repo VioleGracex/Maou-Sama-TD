@@ -43,7 +43,7 @@ namespace MaouSamaTD.Managers
             Debug.Log("[DebugManager] Spawn Enemy Clicked");
             if (_enemyManager != null && _testEnemyData != null)
             {
-                _enemyManager.SpawnEnemy(_testEnemyData);
+                _enemyManager.SpawnEnemy(_testEnemyData, -1, -1);
             }
             else
             {

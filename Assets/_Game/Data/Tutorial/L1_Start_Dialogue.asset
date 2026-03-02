@@ -18,19 +18,18 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: My Lord! You've awakened... The ritual was... intense. But there is no
-      time for rest.
+    Text: "Sovereign! Sovereign!\nthe seal is undone are you finally awake ?"
     PortraitOnLeft: 0
     EventID: 
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Lesser shadows have breached the outer corridor. They sense your weakened
-      state.
+    Text: Lesser shadows have breached the outer perimeter. They are vultures, sensing
+      your temporary weakness.
     PortraitOnLeft: 0
     EventID: 
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: You are still recovering, but you can still guide your vassals. Send Ignis
-      forth to hold the line.
+    Text: Your full strength is yet to return, but your authority is absolute. Command
+      Ignis to hold the line.
     PortraitOnLeft: 0
     EventID: 

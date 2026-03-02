@@ -107,7 +107,7 @@ namespace MaouSamaTD.Skills
             // Optional: Tick active buffs?
         }
 
-        private bool IsTargetValid(SkillBase skill, UnitBase targetUnit)
+        private bool IsTargetValid(SovereignRiteData skill, UnitBase targetUnit)
         {
             // AOE is usually ground target or unit center, always valid if clicked in bounds (handled by raycast)
             // But if we want to enforce "AOE must hit something", we'd check overlap, but user said "if aoe just anywhere"
@@ -133,7 +133,7 @@ namespace MaouSamaTD.Skills
             return true;
         }
 
-        private void ApplySkillEffect(SkillBase skill, Vector3 pos, UnitBase unit)
+        private void ApplySkillEffect(SovereignRiteData skill, Vector3 pos, UnitBase unit)
         {
             // Spawn VFX
             if (skill.HitVFX != null)
@@ -162,7 +162,7 @@ namespace MaouSamaTD.Skills
             Debug.Log($"[SkillManager] Executed Skill/Rite: {skill.SkillName}");
         }
 
-        private void ApplyAreaEffect(SkillBase skill, Vector3 center)
+        private void ApplyAreaEffect(SovereignRiteData skill, Vector3 center)
         {
             Collider[] hits = Physics.OverlapSphere(center, skill.Radius);
             foreach (var hit in hits)
@@ -175,7 +175,7 @@ namespace MaouSamaTD.Skills
             }
         }
 
-        private void ApplyEffectToUnit(SkillBase skill, UnitBase unit)
+        private void ApplyEffectToUnit(SovereignRiteData skill, UnitBase unit)
         {
             if (unit == null) return;
 

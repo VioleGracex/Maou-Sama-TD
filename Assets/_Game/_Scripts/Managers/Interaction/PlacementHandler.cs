@@ -101,6 +101,7 @@ namespace MaouSamaTD.Managers.Interaction
         }
 
         private System.Collections.Generic.List<Vector2Int> _allowedTiles = new System.Collections.Generic.List<Vector2Int>();
+        public System.Collections.Generic.List<Vector2Int> AllowedTiles => _allowedTiles;
 
         public void SetAllowedTiles(System.Collections.Generic.List<Vector2Int> allowedTiles)
         {
@@ -114,7 +115,12 @@ namespace MaouSamaTD.Managers.Interaction
             // Tutorial Lock
             if (_allowedTiles.Count > 0)
             {
-                if (!_allowedTiles.Contains(tile.Coordinate)) return false;
+                bool isAllowed = _allowedTiles.Contains(tile.Coordinate);
+                if (!isAllowed) 
+                {
+                    // Debug.Log($"[PlacementHandler] Tile {tile.Coordinate} is BLOCKED by tutorial. Allowed: {string.Join(", ", _allowedTiles)}");
+                    return false;
+                }
             }
 
             if (unit.ViableTiles == null || unit.ViableTiles.Count == 0) return false;

@@ -17,6 +17,7 @@ namespace MaouSamaTD.Managers.Interaction
         public bool UseFullFillRange;
         public bool UseFullFillPlacement;
         public bool UseFullFillSkills;
+        public List<Vector2Int> AllowedTiles = new List<Vector2Int>();
 
         public TileVisualsHandler(GridManager gridManager)
         {
@@ -74,6 +75,13 @@ namespace MaouSamaTD.Managers.Interaction
                         highlightColor = ValidColor * 0.7f;
                         useFullFill = UseFullFillPlacement;
                     }
+                    else if (isValidType && AllowedTiles.Count > 0)
+                    {
+                        // Explicitly show restricted tiles as red during tutorial
+                        shouldHighlight = true;
+                        highlightColor = InvalidColor * 0.5f;
+                        useFullFill = UseFullFillPlacement;
+                    }
                 }
                 else if (inspectedUnit != null && inspectedUnit.Data != null)
                 {
@@ -122,6 +130,12 @@ namespace MaouSamaTD.Managers.Interaction
         private bool IsTileValidForUnit(Tile tile, UnitData unit)
         {
             if (unit == null || tile == null) return false;
+            
+            if (AllowedTiles != null && AllowedTiles.Count > 0)
+            {
+                if (!AllowedTiles.Contains(tile.Coordinate)) return false;
+            }
+
             return unit.ViableTiles != null && unit.ViableTiles.Contains(tile.Type);
         }
     }

@@ -197,6 +197,35 @@ namespace MaouSamaTD.UI
 
             _currencyManager.TrySpendSeals(unitData.DeploymentCost);
             PlayerUnit newUnit = Instantiate(_unitPrefab, tile.transform.position, Quaternion.identity);
+            
+            // Facing Logic
+            // Facing Logic
+            Grid.GridManager gm = FindFirstObjectByType<Grid.GridManager>();
+            if (gm != null && gm.SpawnPoints != null && gm.SpawnPoints.Count > 0)
+            {
+                // Find closest spawn point
+                Vector2Int closestSpawn = gm.SpawnPoints[0];
+                float minDist = Vector2.Distance(tile.Coordinate, closestSpawn);
+                
+                for (int i = 1; i < gm.SpawnPoints.Count; i++)
+                {
+                    float dist = Vector2.Distance(tile.Coordinate, gm.SpawnPoints[i]);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        closestSpawn = gm.SpawnPoints[i];
+                    }
+                }
+
+                // If spawn is to the left, face left. If spawn is to the right, face right.
+                // Default sprite faces right usually.
+                var sr = newUnit.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.flipX = closestSpawn.x < tile.Coordinate.x;
+                }
+            }
+            
             newUnit.Initialize(unitData);
             
             newUnit.CurrentTile = tile;

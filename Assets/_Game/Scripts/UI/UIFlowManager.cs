@@ -17,7 +17,7 @@ namespace MaouSamaTD.UI
             {
                 if (_instance == null)
                 {
-                    _instance = FindObjectOfType<UIFlowManager>();
+                    _instance = FindFirstObjectByType<UIFlowManager>();
                     if (_instance == null)
                     {
                         var go = new GameObject("UIFlowManager_AutoInstance");

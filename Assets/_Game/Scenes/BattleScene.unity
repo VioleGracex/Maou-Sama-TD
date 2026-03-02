@@ -163,6 +163,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0195b8d1bf889354aa6393155f81c4da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.TutorialManager
+  _tileHighlightOffset: {x: 0, y: 0, z: 0}
+  _unitWorldHoleSizeDefault: {x: 1, y: 1}
+  _unitWorldHoleYOffset: 0
 --- !u!114 &10890609 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7969675024641289294, guid: d015e3395e2c03d43ba2159cb27420f8, type: 3}
@@ -1249,6 +1252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 322422184}
   - component: {fileID: 322422185}
+  - component: {fileID: 322422186}
   m_Layer: 0
   m_Name: UltimateCutInManager
   m_TagString: Untagged
@@ -1283,6 +1287,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 654a3b5c0581594439bc29fab881f9f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.UltimateCutInManager
+--- !u!114 &322422186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322422183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc4e2204896fe945a85a683b7bbab3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.UltimateCutInUI
+  _canvasGroup: {fileID: 1384214573}
+  _redBanner: {fileID: 1192563013}
+  _identityContainer: {fileID: 1533124323}
+  _nameText: {fileID: 1780673372}
+  _titleText: {fileID: 360540984}
+  _skillNameText: {fileID: 933283801}
+  _ultimateText: {fileID: 1901289167}
+  _bannerAngle: 6.38
+  _bannerSlideDistance: 1500
+  _identityStartScale: 1.5
+  _ultimateTextOffset: 800
+  _animationDuration: 0.7
 --- !u!1 &323961795
 GameObject:
   m_ObjectHideFlags: 0
@@ -4326,7 +4354,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1384214572}
-  - component: {fileID: 1384214574}
   - component: {fileID: 1384214573}
   m_Layer: 0
   m_Name: UltimateCutInUI
@@ -4366,29 +4393,10 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1384214571}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
---- !u!114 &1384214574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384214571}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bc4e2204896fe945a85a683b7bbab3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.UltimateCutInUI
-  _canvasGroup: {fileID: 1384214573}
-  _redBanner: {fileID: 1192563013}
-  _identityContainer: {fileID: 1533124323}
-  _nameText: {fileID: 1780673372}
-  _titleText: {fileID: 360540984}
-  _skillNameText: {fileID: 933283801}
-  _ultimateText: {fileID: 1901289167}
 --- !u!114 &1385525398 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8367760646960656949, guid: d015e3395e2c03d43ba2159cb27420f8, type: 3}
@@ -6357,10 +6365,12 @@ MonoBehaviour:
   m_text: ULTIMATE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_sharedMaterial: {fileID: 1946206135}
+  m_fontSharedMaterials:
+  - {fileID: 1946206135}
+  m_fontMaterial: {fileID: 1946206135}
+  m_fontMaterials:
+  - {fileID: 1946206135}
   m_fontColor32:
     serializedVersion: 2
     rgba: 1258291199
@@ -6800,6 +6810,73 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1945274585}
   m_CullTransparentMesh: 1
+--- !u!21 &1946206135
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LiberationSans SDF Material (Instance)
+  m_Shader: {fileID: 4800000, guid: fe393ace9b354375a9cb14cdbbc28be4, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 1
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 28684132378477856, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ColorMask: 15
+    - _CullMode: 0
+    - _FaceDilate: 0
+    - _GradientScale: 10
+    - _MaskSoftnessX: 0
+    - _MaskSoftnessY: 0
+    - _OutlineSoftness: 0
+    - _OutlineWidth: 0
+    - _PerspectiveFilter: 0.875
+    - _ScaleRatioA: 0.9
+    - _ScaleRatioB: 1
+    - _ScaleRatioC: 0.73125
+    - _ScaleX: 1
+    - _ScaleY: 1
+    - _ShaderFlags: 0
+    - _Sharpness: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _TextureHeight: 1024
+    - _TextureWidth: 1024
+    - _UnderlayDilate: 0
+    - _UnderlayOffsetX: 0
+    - _UnderlayOffsetY: 0
+    - _UnderlaySoftness: 0
+    - _VertexOffsetX: 0
+    - _VertexOffsetY: 0
+    - _WeightBold: 0.75
+    - _WeightNormal: 0
+    m_Colors:
+    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &1954492568 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8893673062061154985, guid: d015e3395e2c03d43ba2159cb27420f8, type: 3}

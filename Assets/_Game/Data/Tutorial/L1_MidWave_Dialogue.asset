@@ -18,12 +18,13 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Wait! A larger cluster is manifesting! They are overwhelming the corridor.
+    Text: Structural integrity failing! A massive shadow cluster is manifesting in
+      the corridor.
     PortraitOnLeft: 0
     EventID: 
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Lord, use your authority! Select Ignis and activate her [Obsidian Aegis]
-      to incinerate these vermin.
+    Text: Sovereign, exert your dominance! Command Ignis to unleash the [Phoenix
+      Radiance] and purge this filth.
     PortraitOnLeft: 0
     EventID: 

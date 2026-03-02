@@ -36,7 +36,7 @@ namespace MaouSamaTD.Grid
             get
             {
                 if (_gridGenerator != null) return _gridGenerator;
-                _gridGenerator = FindObjectOfType<GridGenerator>();
+                _gridGenerator = FindFirstObjectByType<GridGenerator>();
                 return _gridGenerator;
             }
         }
@@ -46,7 +46,7 @@ namespace MaouSamaTD.Grid
             get
             {
                 if (_gridManager != null) return _gridManager;
-                _gridManager = FindObjectOfType<GridManager>();
+                _gridManager = FindFirstObjectByType<GridManager>();
                 return _gridManager;
             }
         }
@@ -79,7 +79,7 @@ namespace MaouSamaTD.Grid
         private static readonly int UseFullFillId = Shader.PropertyToID("_UseFullFill");
 
         // Cache for optimization
-        private bool _isHighlighted;
+        private bool _isHighlightRequested;
         private Color _lastColor;
         private bool _lastUseFullFill;
 
@@ -96,20 +96,34 @@ namespace MaouSamaTD.Grid
             _propBlock = new MaterialPropertyBlock();
         }
 
+        [Header("Materials")]
+        [SerializeField] private Material _defaultMaterial;
+        [SerializeField] private Material _glowMaterial;
+
         public void SetHighlight(bool active, Color color, bool useFullFill = false)
         {
             if (_renderer == null) return;
 
             // Dirty check to avoid redundant and taxing SetPropertyBlock calls
-            if (_isHighlighted == active && _lastColor == color && _lastUseFullFill == useFullFill)
+            if (_isHighlightRequested == active && _lastColor == color && _lastUseFullFill == useFullFill)
                 return;
 
-            _renderer.GetPropertyBlock(_propBlock);
-            
-            _isHighlighted = active;
+            _isHighlightRequested = active;
             _lastColor = color;
             _lastUseFullFill = useFullFill;
 
+            // Material Swap Logic
+            if (active && _glowMaterial != null && _renderer.sharedMaterial != _glowMaterial)
+            {
+                _renderer.sharedMaterial = _glowMaterial;
+            }
+            else if (!active && _defaultMaterial != null && _renderer.sharedMaterial != _defaultMaterial)
+            {
+                _renderer.sharedMaterial = _defaultMaterial;
+            }
+
+            _renderer.GetPropertyBlock(_propBlock);
+            
             if (active)
             {
                 _propBlock.SetColor(GlowColorId, color);

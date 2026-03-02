@@ -17,7 +17,7 @@ namespace MaouSamaTD.Skills
         // Summon?
     }
 
-    // Base class for all skills/rites
+    // Base class for all skills/rites - contains common display and cost info
     public abstract class SkillBase : MaouSamaTD.Core.GameDataSO
     {
         [Header("Display")]
@@ -34,15 +34,5 @@ namespace MaouSamaTD.Skills
         [Header("Audio")]
         public AudioClip CastSFX;
         public AudioClip HitSFX;
-
-        [Header("Targeting")]
-        public SkillTargetType TargetType;
-        public float Range = 100f; 
-        public float Radius = 0f;
-
-        [Header("Effect")]
-        public SkillEffectType EffectType;
-        public float Value; 
-        public float Duration;
     }
 }

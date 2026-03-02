@@ -79,7 +79,7 @@ namespace MaouSamaTD.UI
                     _panel.SetActive(true);
                     _panel.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack).SetUpdate(true); // Animate In
                     
-                    Managers.TutorialManager tm = FindObjectOfType<Managers.TutorialManager>();
+                    Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
                     if (tm != null) tm.OnActionTriggered("UnitStatsOpened");
                 }
             }

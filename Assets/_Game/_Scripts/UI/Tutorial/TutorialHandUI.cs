@@ -16,7 +16,7 @@ namespace MaouSamaTD.UI.Tutorial
             if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
             
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 1010;
+            canvas.sortingOrder = 2000;
 
             if (GetComponent<GraphicRaycaster>() == null) gameObject.AddComponent<GraphicRaycaster>();
             

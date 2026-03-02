@@ -15,6 +15,7 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
   UnitName: Ignis
+  UnitTitle: 
   UnitSprite: {fileID: 21300000, guid: 74d8fc5cc8ac2294aa50b3b462b3a05a, type: 3}
   UnitIcon: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
   Level: 1
@@ -34,5 +35,5 @@ MonoBehaviour:
   MaxCharge: 100
   ChargePerSecond: 1
   ChargePerAttack: 2
-  Skill: {fileID: 0}
+  Skill: {fileID: 11400000, guid: e20c62474bbc31f40a06dc66077f2aaa, type: 2}
   ViableTiles: 00000000

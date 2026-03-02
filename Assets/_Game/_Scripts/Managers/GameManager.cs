@@ -36,6 +36,7 @@ namespace MaouSamaTD.Managers
         public System.Action<int> OnLivesChanged;
         public event System.Action OnVictory;
         public event System.Action OnGameOver;
+        public event System.Action<float> OnSpeedChanged;
 
         public bool IsGameEnded { get; private set; } = false;
         public float CurrentSpeed { get; private set; } = 1f;
@@ -280,6 +281,7 @@ namespace MaouSamaTD.Managers
             {
                 Time.timeScale = CurrentSpeed;
             }
+            OnSpeedChanged?.Invoke(speed);
         }
 
         public void TogglePause()

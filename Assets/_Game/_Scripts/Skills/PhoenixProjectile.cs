@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace MaouSamaTD.Skills
 {
-    public class PhoenixProjectile : MonoBehaviour
+    public class PhoenixProjectile : UltimateEffect
     {
-        [Header("Settings")]
-        [SerializeField] private float _speed = 10f;
-        [SerializeField] private float _damage = 50f;
-        [SerializeField] private float _lifetime = 5f;
-        [SerializeField] private float _hitRadius = 1.5f;
+        [Header("Projectile Settings")]
+        [SerializeField] private float _speed = 15f;
+        [SerializeField] private float _damage = 150f;
+        [SerializeField] private float _lifetime = 8f;
+        [SerializeField] private float _hitWidth = 1.0f; // Width of the grid lane
         [SerializeField] private LayerMask _enemyLayer;
 
         private Vector3 _direction;
@@ -18,17 +18,35 @@ namespace MaouSamaTD.Skills
         private HashSet<EnemyUnit> _hitEnemies = new HashSet<EnemyUnit>();
         private float _spawnTime;
 
-        public void Initialize(PlayerUnit owner, Vector3 direction, float damage, float speed)
+        // Lane tracking
+        private bool _isColumn; // True if constant X, varying Z
+        private float _laneCoordinate; // The fixed X or Z coordinate
+
+        public override void Execute(PlayerUnit owner, Vector3 direction)
         {
             _owner = owner;
             _direction = direction.normalized;
-            _damage = damage;
-            _speed = speed;
             _spawnTime = Time.time;
 
-            // Rotate to face direction
-            float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
+            // Determine if we are on a Column or Row based on direction
+            // If movement is mostly along Z, it's a Column (constant X)
+            // If movement is mostly along X, it's a Row (constant Z)
+            if (Mathf.Abs(_direction.z) > Mathf.Abs(_direction.x))
+            {
+                _isColumn = true;
+                _laneCoordinate = transform.position.x;
+            }
+            else
+            {
+                _isColumn = false;
+                _laneCoordinate = transform.position.z;
+            }
+
+            // Rotate Sprite (Facing Left by default -> offset 180)
+            float angle = Mathf.Atan2(_direction.z, _direction.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(90, angle + 180f, 0); // 90 on X for top-down visibility
+            
+            Debug.Log($"[Phoenix] Executing on {(_isColumn ? "Column X=" : "Row Z=")}{_laneCoordinate}");
         }
 
         private void Update()
@@ -39,18 +57,49 @@ namespace MaouSamaTD.Skills
                 return;
             }
 
+            Vector3 prevPos = transform.position;
             transform.position += _direction * _speed * Time.deltaTime;
 
-            // Simple overlap check for "line" feel (using a sphere at current pos)
-            Collider[] hits = Physics.OverlapSphere(transform.position, _hitRadius, _enemyLayer);
-            foreach (var hit in hits)
+            // Damage Logic: Hit all enemies in the designated lane
+            foreach (var enemy in EnemyUnit.ActiveEnemies)
             {
-                EnemyUnit enemy = hit.GetComponent<EnemyUnit>();
-                if (enemy != null && !_hitEnemies.Contains(enemy))
+                if (enemy == null || _hitEnemies.Contains(enemy)) continue;
+
+                Vector3 enemyPos = enemy.transform.position;
+                bool inLane = false;
+                float progress = 0;
+
+                if (_isColumn)
+                {
+                    // Check if enemy is in the same column (X)
+                    if (Mathf.Abs(enemyPos.x - _laneCoordinate) < _hitWidth)
+                    {
+                        // Check if phoenix has reached the enemy's Z
+                        float distToEnemy = enemyPos.z - transform.position.z;
+                        if (Vector3.Dot(_direction, enemyPos - transform.position) < 0) // Phoenix has passed it or is at it
+                        {
+                            inLane = true;
+                        }
+                    }
+                }
+                else
+                {
+                    // Check if enemy is in the same row (Z)
+                    if (Mathf.Abs(enemyPos.z - _laneCoordinate) < _hitWidth)
+                    {
+                        // Check progress
+                        if (Vector3.Dot(_direction, enemyPos - transform.position) < 0)
+                        {
+                            inLane = true;
+                        }
+                    }
+                }
+
+                if (inLane)
                 {
                     enemy.TakeDamage(_damage, _owner);
                     _hitEnemies.Add(enemy);
-                    Debug.Log($"[tutorial] Phoenix hit {enemy.name}");
+                    Debug.Log($"[Phoenix] Lane hit {enemy.name}");
                 }
             }
         }
@@ -58,7 +107,7 @@ namespace MaouSamaTD.Skills
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, _hitRadius);
+            Gizmos.DrawWireSphere(transform.position, _hitWidth);
         }
     }
 }

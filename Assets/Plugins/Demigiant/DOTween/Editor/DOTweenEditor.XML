@@ -9,12 +9,12 @@
             Contains compatibility methods taken from DemiEditor (for when DOTween is without it)
             </summary>
         </member>
-        <member name="M:DG.DOTweenEditor.EditorCompatibilityUtils.FindObjectOfType``1(System.Boolean)">
+        <member name="M:DG.DOTweenEditor.EditorCompatibilityUtils.FindFirstObjectByType``1(System.Boolean)">
             <summary>
             Warning: some versions of this method don't have the includeInactive parameter so it won't be taken into account
             </summary>
         </member>
-        <member name="M:DG.DOTweenEditor.EditorCompatibilityUtils.FindObjectOfType(System.Type,System.Boolean)">
+        <member name="M:DG.DOTweenEditor.EditorCompatibilityUtils.FindFirstObjectByType(System.Type,System.Boolean)">
             <summary>
             Warning: some versions of this method don't have the includeInactive parameter so it won't be taken into account
             </summary>

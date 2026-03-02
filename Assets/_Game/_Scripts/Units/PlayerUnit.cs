@@ -24,6 +24,7 @@ namespace MaouSamaTD.Units
 
     public class PlayerUnit : UnitBase
     {
+        public static System.Collections.Generic.List<PlayerUnit> ActiveUnits = new System.Collections.Generic.List<PlayerUnit>();
         public event System.Action<PlayerUnit> OnRetreat;
 
         [Header("Player Unit Stats")]
@@ -40,6 +41,15 @@ namespace MaouSamaTD.Units
         public float CurrentCharge => _currentCharge;
         public float MaxCharge => _data != null ? _data.MaxCharge : 100f;
         public int KillCount { get; private set; }
+        public int ReachCount { get; private set; }
+
+        public void NotifyEncounter()
+        {
+            ReachCount++;
+            Debug.Log($"[tutorial] {gameObject.name} encountered an enemy. Total reaches: {ReachCount}");
+            Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+            if (tm != null) tm.OnActionTriggered("UnitReach");
+        }
 
         public void IncrementKillCount()
         {
@@ -62,7 +72,7 @@ namespace MaouSamaTD.Units
                     StartCoroutine(ExecuteUltimateRoutine());
                     
                     Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
-                    if (tm != null) tm.OnActionTriggered("UltimateUsed");
+                    if (tm != null) tm.OnActionTriggered("SkillUsed");
                 }
                 else
                 {
@@ -97,23 +107,27 @@ namespace MaouSamaTD.Units
             Vector3 bestDir = FindBestUltimateDirection();
             GameObject projObj = Instantiate(_data.Skill.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
             
-            var phoenix = projObj.GetComponent<MaouSamaTD.Skills.PhoenixProjectile>();
-            if (phoenix != null)
+            var ultimateEffect = projObj.GetComponent<MaouSamaTD.Skills.UltimateEffect>();
+            if (ultimateEffect != null)
             {
-                phoenix.Initialize(this, bestDir, _data.Skill.Value, 12f);
+                ultimateEffect.Execute(this, bestDir);
+            }
+            else
+            {
+                Debug.LogError($"[Ultimate] Prefab on {_data.Skill.SkillName} is missing an UltimateEffect component!");
             }
             
-            Debug.Log($"[tutorial] {Data?.UnitName} fired {projObj.name} towards {bestDir}");
+            Debug.Log($"[tutorial] {Data?.UnitName} activated {projObj.name} towards {bestDir}");
         }
 
         private Vector3 FindBestUltimateDirection()
         {
-            // Standard Isometric cardinal directions in world space
+            // Align with Grid Axes: Forward (+Z), Back (-Z), Right (+X), Left (-X)
             Vector3[] directions = { 
-                (Vector3.forward + Vector3.right).normalized, // North/Up
-                (Vector3.back + Vector3.left).normalized,    // South/Down
-                (Vector3.forward + Vector3.left).normalized,  // West/Left
-                (Vector3.back + Vector3.right).normalized    // East/Right
+                Vector3.forward, 
+                Vector3.back,    
+                Vector3.right,  
+                Vector3.left    
             };
 
             Vector3 bestDir = directions[0];
@@ -129,8 +143,8 @@ namespace MaouSamaTD.Units
                     float projection = Vector3.Dot(toEnemy, dir);
                     float perpendicularDist = Vector3.Cross(toEnemy, dir).magnitude;
 
-                    // Check rectangle: 15 units long, 2.5 units wide
-                    if (projection > 0 && projection < 15f && perpendicularDist < 2.5f)
+                    // Lane: 20 units long, 1.5 units wide (roughly 1 grid cell width)
+                    if (projection > 0 && projection < 20f && perpendicularDist < 1.5f)
                     {
                         count++;
                     }
@@ -151,20 +165,32 @@ namespace MaouSamaTD.Units
             _currentCharge = Mathf.Min(_currentCharge + amount, MaxCharge);
         }
 
+        public void ForceChargeUltimate()
+        {
+            if (_data == null) return;
+            _currentCharge = MaxCharge;
+            Debug.Log($"[tutorial] {gameObject.name} ultimate forcefully charged.");
+        }
+
         [Header("Visuals")]
         [SerializeField] private Billboard _billboard;
 
         public override void Initialize(UnitData data)
         {
             base.Initialize(data);
+            if (!ActiveUnits.Contains(this)) ActiveUnits.Add(this);
             _unitClass = data.Class;
             _deploymentCost = data.DeploymentCost;
+            
+            // Set dynamic name for tutorial targeting (e.g., Unit_Ignis)
+            gameObject.name = "Unit_" + data.UnitName;
+            
             UpdateVisuals(data);
         }
         
         private void OnDestroy()
         {
-            
+            ActiveUnits.Remove(this);
         }
 
         private void UpdateVisuals(UnitData data)

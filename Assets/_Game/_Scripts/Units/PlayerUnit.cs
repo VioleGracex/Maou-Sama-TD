@@ -24,6 +24,8 @@ namespace MaouSamaTD.Units
 
     public class PlayerUnit : UnitBase
     {
+        // Removed shadowed _data field to fix null reference bugs
+        
         public static System.Collections.Generic.List<PlayerUnit> ActiveUnits = new System.Collections.Generic.List<PlayerUnit>();
         public event System.Action<PlayerUnit> OnRetreat;
 
@@ -32,21 +34,21 @@ namespace MaouSamaTD.Units
         [SerializeField] private int _deploymentCost = 10;
         
         public UnitClass UnitClass => _unitClass;
-        public int BlockCount => _data != null ? _data.BlockCount : 1;
+        public int BlockCount => Data != null ? Data.BlockCount : 1;
         public int DeploymentCost => _deploymentCost;
         
         public Grid.Tile CurrentTile { get; set; }
 
         private float _currentCharge;
         public float CurrentCharge => _currentCharge;
-        public float MaxCharge => _data != null ? _data.MaxCharge : 100f;
+        public float MaxCharge => Data != null ? Data.MaxCharge : 100f;
         public int KillCount { get; private set; }
         public int ReachCount { get; private set; }
 
         public void NotifyEncounter()
         {
             ReachCount++;
-            Debug.Log($"[tutorial] {gameObject.name} encountered an enemy. Total reaches: {ReachCount}");
+            if (_showDebugLogs) Debug.Log($"[Ultimate] {gameObject.name} encountered an enemy. Total reaches: {ReachCount}");
             Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
             if (tm != null) tm.OnActionTriggered("UnitReach");
         }
@@ -54,20 +56,20 @@ namespace MaouSamaTD.Units
         public void IncrementKillCount()
         {
             KillCount++;
-            Debug.Log($"[tutorial] {Data?.UnitName} now has {KillCount} kills.");
+            if (_showDebugLogs) Debug.Log($"[Ultimate] {Data?.UnitName} now has {KillCount} kills.");
             Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
             if (tm != null) tm.OnActionTriggered("UnitKill"); 
         }
 
         public void UseSkill()
         {
-            if (_data != null && _data.Skill != null)
+            if (Data != null && Data.Skill != null)
             {
-                float cost = _data.Skill.ChargeCost;
+                float cost = Data.Skill.ChargeCost;
                 
                 if (_currentCharge >= cost)
                 {
-                    Debug.Log($"Used Skill: {_data.Skill.SkillName}!");
+                    if (_showDebugLogs) Debug.Log($"[Ultimate] Used Skill: {Data.Skill.SkillName}!");
                     _currentCharge -= cost;
                     StartCoroutine(ExecuteUltimateRoutine());
                     
@@ -76,48 +78,69 @@ namespace MaouSamaTD.Units
                 }
                 else
                 {
-                    Debug.Log($"Not enough charge! ({_currentCharge}/{cost})");
+                    if (_showDebugLogs) Debug.Log($"[Ultimate] Not enough charge! ({_currentCharge}/{cost})");
                 }
             }
             else
             {
-                 Debug.LogWarning("Cannot use skill: No UnitData or SkillData assigned.");
+                 if (_showDebugLogs) Debug.LogWarning("[Ultimate] Cannot use skill: No UnitData or SkillData assigned.");
             }
         }
 
         private IEnumerator ExecuteUltimateRoutine()
         {
-            if (_data.Skill == null || _data.Skill.UltimatePrefab == null)
+            if (Data == null)
             {
-                Debug.LogWarning($"[tutorial] {Data?.UnitName} has no skill or ultimate prefab assigned!");
+                Debug.LogError("[Ultimate] PlayerUnit Data is NULL at runtime!");
                 yield break;
             }
 
-            // Play Cut-In Animation
+            if (Data.Skill == null)
+            {
+                Debug.LogError($"[Ultimate] {Data.UnitName} has no Skill Data assigned in IgnisUnitData.asset!");
+                yield break;
+            }
+
+            if (Data.Skill.UltimatePrefab == null)
+            {
+                Debug.LogError($"[Ultimate] {Data.UnitName} Skill [{Data.Skill.SkillName}] exists, but UltimatePrefab is NULL! GUID check needed.");
+                yield break;
+            }
+
+            if (_showDebugLogs) Debug.Log($"[Ultimate] STARTING sequence for {Data.UnitName}. Prefab: {Data.Skill.UltimatePrefab.name}");
+
+            // Start Cut-In Animation
             if (MaouSamaTD.UI.UltimateCutInUI.Instance != null)
             {
-                string uName = _data != null ? _data.UnitName : "Unknown";
-                string uTitle = _data != null ? _data.UnitTitle : "Vassal";
-                string sName = (_data != null && _data.Skill != null) ? _data.Skill.SkillName : "Ultimate";
-                Color bColor = (_data != null && _data.Skill != null) ? _data.Skill.UltimateColor : Color.red;
+                string uName = Data.UnitName;
+                string uTitle = Data.UnitTitle;
+                string sName = Data.Skill.SkillName;
+                Color bColor = Data.Skill.UltimateColor;
 
+                if (_showDebugLogs) Debug.Log($"[Ultimate] Triggering Cut-In Animation for {uName}...");
+                // Wait for the full animation sequence (Slide In -> Hold -> Slide Out) to complete
                 yield return MaouSamaTD.UI.UltimateCutInUI.Instance.PlayAnimation(uName, uTitle, sName, bColor);
+            }
+            else
+            {
+                if (_showDebugLogs) Debug.LogWarning("[Ultimate] UltimateCutInUI.Instance is MISSING. Skipping animation.");
             }
 
             Vector3 bestDir = FindBestUltimateDirection();
-            GameObject projObj = Instantiate(_data.Skill.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+            if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {Data.Skill.UltimatePrefab.name} towards {bestDir}");
+
+            GameObject projObj = Instantiate(Data.Skill.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
             
             var ultimateEffect = projObj.GetComponent<MaouSamaTD.Skills.UltimateEffect>();
             if (ultimateEffect != null)
             {
                 ultimateEffect.Execute(this, bestDir);
+                if (_showDebugLogs) Debug.Log($"[Ultimate] {projObj.name} EXECUTED successfully.");
             }
             else
             {
                 Debug.LogError($"[Ultimate] Prefab on {_data.Skill.SkillName} is missing an UltimateEffect component!");
             }
-            
-            Debug.Log($"[tutorial] {Data?.UnitName} activated {projObj.name} towards {bestDir}");
         }
 
         private Vector3 FindBestUltimateDirection()
@@ -169,7 +192,7 @@ namespace MaouSamaTD.Units
         {
             if (_data == null) return;
             _currentCharge = MaxCharge;
-            Debug.Log($"[tutorial] {gameObject.name} ultimate forcefully charged.");
+            if (_showDebugLogs) Debug.Log($"[tutorial] {gameObject.name} ultimate forcefully charged.");
         }
 
         [Header("Visuals")]

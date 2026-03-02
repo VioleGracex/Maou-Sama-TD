@@ -29,12 +29,13 @@ namespace MaouSamaTD.UI
         [Header("Overlay Settings")]
         [SerializeField] private Material overlayMaterial;
         [SerializeField] private Color overlayColor = new Color(0, 0, 0, 0.85f);
-        [SerializeField] private int maskSize = 1024;
-        [SerializeField] private float transitionDuration = 0.3f;
+        [SerializeField] private int maskSize = 512;
+        [SerializeField] private float transitionDuration = 0.2f;
 
         private List<UIHighlightData> uiHighlights = new List<UIHighlightData>();
         private List<WorldHighlightData> worldHighlights = new List<WorldHighlightData>();
         private bool isWorldHighlight = false;
+        private bool _isDirty = true;
         
         private GameObject overlayGO;
         private Image overlayImage;
@@ -80,6 +81,7 @@ namespace MaouSamaTD.UI
             isWorldHighlight = worldHits != null && worldHits.Count > 0;
             worldHighlights.Clear();
             if (worldHits != null) worldHighlights.AddRange(worldHits);
+            _isDirty = true;
             Show();
         }
 
@@ -94,6 +96,7 @@ namespace MaouSamaTD.UI
             isWorldHighlight = highlights != null && highlights.Count > 0;
             worldHighlights.Clear();
             if (highlights != null) worldHighlights.AddRange(highlights);
+            _isDirty = true;
             Show();
         }
 
@@ -104,6 +107,7 @@ namespace MaouSamaTD.UI
             if (!uiHighlights.Exists(h => h.Target == target))
             {
                 uiHighlights.Add(new UIHighlightData { Target = target, Size = Vector2.one });
+                _isDirty = true;
             }
             Show();
         }
@@ -112,6 +116,7 @@ namespace MaouSamaTD.UI
         {
             if (target == null) return;
             uiHighlights.RemoveAll(h => h.Target == target);
+            _isDirty = true;
             if (isActive) UpdateOverlayMask();
         }
 
@@ -120,6 +125,7 @@ namespace MaouSamaTD.UI
             uiHighlights.Clear();
             worldHighlights.Clear();
             isWorldHighlight = false;
+            _isDirty = true;
             
             if (overlayRaycaster != null)
             {
@@ -208,6 +214,7 @@ namespace MaouSamaTD.UI
                 uiHighlights.Clear();
                 worldHighlights.Clear();
                 isWorldHighlight = false;
+                _isDirty = true;
             });
         }
 
@@ -237,6 +244,7 @@ namespace MaouSamaTD.UI
             gameObject.SetActive(true);
             canvasGroup.blocksRaycasts = true;
             isActive = true;
+            _isDirty = true;
             
             UpdateOverlayMask();
             overlayRaycaster.SetUITargets(uiHighlights);
@@ -280,6 +288,13 @@ namespace MaouSamaTD.UI
         private void UpdateOverlayMask()
         {
             if (overlayImage == null || overlayImage.material == null) return;
+            
+            // Only update if dirty or moving (though for now we check highlights positions every frame if we want animating holes)
+            // But if everything is static, we can save a lot.
+            // For simplicity, we'll keep updating if any world highlight exists (as they move with camera/units)
+            // But UI highlights are often static.
+            
+            if (!_isDirty && !isWorldHighlight && uiHighlights.Count > 0) return;
 
             if (maskTex == null || maskTex.width != maskSize)
             {

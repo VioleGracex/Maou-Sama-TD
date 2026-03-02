@@ -166,6 +166,7 @@ MonoBehaviour:
   _tileHighlightOffset: {x: 0, y: 0, z: 0}
   _unitWorldHoleSizeDefault: {x: 1, y: 1}
   _unitWorldHoleYOffset: 0
+  _showDebugLogs: 1
 --- !u!114 &10890609 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7969675024641289294, guid: d015e3395e2c03d43ba2159cb27420f8, type: 3}
@@ -3296,6 +3297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 959374329}
   - component: {fileID: 959374330}
+  - component: {fileID: 959374331}
   m_Layer: 0
   m_Name: TutorialHandUI
   m_TagString: Untagged
@@ -3337,6 +3339,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.Tutorial.TutorialHandUI
   _handTransform: {fileID: 142483294}
   _panel: {fileID: 142483293}
+  _pulseAmount: 0.2
+  _pulseDuration: 0.6
+  _returnDuration: 0.4
+--- !u!223 &959374331
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959374328}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 10000
+  m_TargetDisplay: 0
 --- !u!224 &991535438 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3373707247017217704, guid: d015e3395e2c03d43ba2159cb27420f8, type: 3}
@@ -3392,6 +3420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d68164b64dcc24f40b7fb81cc3598a7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.SkillManager
+  _showDebugLogs: 1
 --- !u!114 &1000020735
 MonoBehaviour:
   m_ObjectHideFlags: 0

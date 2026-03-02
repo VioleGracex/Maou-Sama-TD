@@ -103,13 +103,32 @@ namespace MaouSamaTD.Skills.Editor
             GUILayout.BeginVertical("helpbox");
             EditorGUILayout.LabelField("Costs & VFX", headerStyle);
             EditorGUI.indentLevel++;
+            
+            // Ultimate Prefab is the most important for Unit Skills
+            SerializedProperty ultPrefabProp = serializedObject.FindProperty("UltimatePrefab");
+            if (ultPrefabProp.objectReferenceValue == null)
+            {
+                EditorGUILayout.HelpBox("Ultimate Prefab is REQUIRED for the skill to function!", MessageType.Error);
+            }
+            
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PropertyField(ultPrefabProp, new GUIContent("Ultimate Prefab (MUST)"));
+            EditorGUILayout.EndHorizontal();
+
+            DrawProperty("UltimateColor", "Ultimate Tint Color");
             DrawProperty("ChargeCost", "SP Cost (Unit Skills)");
+            
+            GUILayout.Space(10);
+            EditorGUILayout.LabelField("Optional Effects", EditorStyles.miniBoldLabel);
+            DrawProperty("CastVFX", "Cast Effects (Optional)");
+            DrawProperty("HitVFX", "Impact Effects (Optional)");
+            
             GUILayout.Space(5);
-            DrawProperty("CastVFX", "Cast Effects Prefab");
-            DrawProperty("HitVFX", "Impact Effects Prefab");
             DrawProperty("RangeIndicatorColor", "AoE Color Tint");
             DrawProperty("AnimationTriggerName", "Animator Trigger");
-            GUILayout.Space(5);
+            
+            GUILayout.Space(10);
+            EditorGUILayout.LabelField("Audio", EditorStyles.miniBoldLabel);
             DrawProperty("CastSFX", "Cast Sound");
             DrawProperty("HitSFX", "Impact Sound");
             EditorGUI.indentLevel--;

@@ -38,6 +38,7 @@ namespace MaouSamaTD.UI
         private Image _skillIcon;
         private PlayerUnit _selectedUnit;
         public event System.Action OnPanelHidden;
+        public bool IsLocked { get; set; } = false;
         
         [Inject] private DeploymentUI _deploymentUI;
 
@@ -91,6 +92,7 @@ namespace MaouSamaTD.UI
 
         public void Hide()
         {
+            if (IsLocked) return;
             OnPanelHidden?.Invoke();
 
             if (_panel != null && _panel.activeSelf)
@@ -209,6 +211,7 @@ namespace MaouSamaTD.UI
             if (_selectedUnit != null)
             {
                 _selectedUnit.Retreat();
+                IsLocked = false;
                 Hide();
             }
         }

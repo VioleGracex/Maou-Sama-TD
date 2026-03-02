@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
   m_Name: IgnisUnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
-  useDefaultInspector: 0
+  useDefaultInspector: 1
   UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
   UnitName: Ignis
-  UnitTitle: 
+  UnitTitle: The Crimson Bastion
   UnitSprite: {fileID: 21300000, guid: 74d8fc5cc8ac2294aa50b3b462b3a05a, type: 3}
   UnitIcon: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
   Level: 1
@@ -26,7 +26,7 @@ MonoBehaviour:
   AttackType: 0
   DeploymentCost: 10
   BlockCount: 1
-  MaxHp: 100
+  MaxHp: 200
   AttackPower: 10
   AttackInterval: 1
   Defense: 5

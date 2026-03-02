@@ -21,6 +21,7 @@ namespace MaouSamaTD.Managers
         [Inject] private TutorialHandUI _handUI;
         [Inject] private UIPopupBlocker _uiBlocker;
         [Inject] private EnemyManager _enemyManager;
+        [Inject] private UnitInspectorUI _unitInspectorUI;
         #endregion
 
         #region Serialized Settings
@@ -30,6 +31,9 @@ namespace MaouSamaTD.Managers
         [Header("World Hole Settings")]
         [SerializeField] private Vector2 _unitWorldHoleSizeDefault = Vector2.one;
         [SerializeField] private float _unitWorldHoleYOffset = 1.0f;
+
+        [Header("Debug")]
+        [SerializeField] private bool _showDebugLogs = true;
         #endregion
         
         #region State
@@ -45,10 +49,10 @@ namespace MaouSamaTD.Managers
         #region Public API
         public void StartTutorial(TutorialDataSO data)
         {
-            Debug.Log($"[tutorial] StartTutorial called for: {data?.name}");
+            if (_showDebugLogs) Debug.Log($"[tutorial] StartTutorial called for: {data?.name}");
             if (IsInTutorial)
             {
-                Debug.LogWarning("[tutorial] Tutorial already in progress!");
+                if (_showDebugLogs) Debug.LogWarning("[tutorial] Tutorial already in progress!");
                 return;
             }
             if (data == null)
@@ -63,7 +67,7 @@ namespace MaouSamaTD.Managers
             
             EnsureUIComponentsActive();
             
-            Debug.Log($"[tutorial] Starting Tutorial Routine with {data.Steps.Count} steps.");
+            if (_showDebugLogs) Debug.Log($"[tutorial] Starting Tutorial Routine with {data.Steps.Count} steps.");
             StartCoroutine(TutorialRoutine());
         }
         #endregion
@@ -86,11 +90,11 @@ namespace MaouSamaTD.Managers
                 
                 if (step.DelayBefore > 0)
                 {
-                    Debug.Log($"[tutorial] Delaying for {step.DelayBefore}s before step {step.StepName}");
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Delaying for {step.DelayBefore}s before step {step.StepName}");
                     yield return new WaitForSecondsRealtime(step.DelayBefore);
                 }
 
-                Debug.Log($"[tutorial] >>> Executing Step [{_currentStepIndex}]: {step.StepName} ({step.Type})");
+                if (_showDebugLogs) Debug.Log($"[tutorial] >>> Executing Step [{_currentStepIndex}]: {step.StepName} ({step.Type})");
                 
                 // Clear any previous tile highlights
                 ClearAllTileHighlights();
@@ -102,7 +106,7 @@ namespace MaouSamaTD.Managers
                         bool dialogueDone = false;
                         _dialogueManager.StartDialogue(step.Dialogue, () => 
                         {
-                            Debug.Log($"[tutorial] Dialogue completed for step: {step.StepName}");
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Dialogue completed for step: {step.StepName}");
                             dialogueDone = true;
                         });
                         yield return new WaitUntil(() => dialogueDone);
@@ -117,14 +121,14 @@ namespace MaouSamaTD.Managers
                         {
                             _dialogueManager.StartDialogue(step.Dialogue, () => 
                             {
-                                Debug.Log($"[tutorial] UI Highlight Dialogue completed for step: {step.StepName}");
+                                if (_showDebugLogs) Debug.Log($"[tutorial] UI Highlight Dialogue completed for step: {step.StepName}");
                                 uiDialogueDone = true;
                             });
                             yield return new WaitUntil(() => uiDialogueDone);
                         }
                         else
                         {
-                            Debug.Log($"[tutorial] No dialogue for HighlightUI step: {step.StepName}, moving on.");
+                            if (_showDebugLogs) Debug.Log($"[tutorial] No dialogue for HighlightUI step: {step.StepName}, moving on.");
                         }
                         _handUI.Hide(); 
                         _uiBlocker.HideBlocker();
@@ -142,7 +146,7 @@ namespace MaouSamaTD.Managers
                         bool tileDialogueDone = false;
                         _dialogueManager.StartDialogue(step.Dialogue, () => 
                         {
-                            Debug.Log($"[tutorial] Tile Highlight Dialogue completed for step: {step.StepName}");
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Tile Highlight Dialogue completed for step: {step.StepName}");
                             tileDialogueDone = true;
                         });
                         yield return new WaitUntil(() => tileDialogueDone);
@@ -152,7 +156,7 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.WaitForAction:
-                        Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
                         _gameManager.SetSpeed(0); 
                         
                         HandleUIHighlight(step);
@@ -160,6 +164,11 @@ namespace MaouSamaTD.Managers
                         // Set waiting state BEFORE dialogue so InteractionManager can unlock selection if needed
                         _waitingForAction = true;
                         _waitingActionKey = step.ActionKey;
+
+                        if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)
+                        {
+                            _unitInspectorUI.IsLocked = true;
+                        }
 
                         if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                         {
@@ -171,7 +180,7 @@ namespace MaouSamaTD.Managers
                         // Check buffer first (for fast sequential actions)
                         if (_triggeredActionsBuffer.Contains(step.ActionKey))
                         {
-                            Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer, proceeding.");
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer, proceeding.");
                             _waitingForAction = false; // Received during dialogue
                             _triggeredActionsBuffer.Remove(step.ActionKey);
                         }
@@ -182,21 +191,22 @@ namespace MaouSamaTD.Managers
                             _triggeredActionsBuffer.Remove(step.ActionKey); // Clean up
                         }
                         
+                        if (_unitInspectorUI != null) _unitInspectorUI.IsLocked = false;
                         _handUI.Hide(); 
                         _uiBlocker.HideBlocker();
                         ClearAllTileHighlights();
                         
                         if (step.ResumeTime) _gameManager.SetSpeed(1); 
-                        Debug.Log($"[tutorial] Action {step.ActionKey} received.");
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} received.");
                         break;
 
                     case TutorialStepType.WaitTime:
-                        Debug.Log($"[tutorial] Waiting for duration: {step.Duration}s");
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for duration: {step.Duration}s");
                         yield return new WaitForSecondsRealtime(step.Duration);
                         break;
 
                     case TutorialStepType.StartWave:
-                        Debug.Log($"[tutorial] Starting Wave Index: {step.WaveIndex}");
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Starting Wave Index: {step.WaveIndex}");
                         if (_enemyManager != null)
                         {
                             _enemyManager.StartSpecificWave(step.WaveIndex);
@@ -204,25 +214,28 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.WaitForWave:
-                        Debug.Log($"[tutorial] Waiting for Wave completion (Index: {step.WaveIndex})");
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for Wave completion (Index: {step.WaveIndex})");
                         _gameManager.SetSpeed(1); 
                         yield return new WaitUntil(() => _enemyManager != null && _enemyManager.ActiveEnemyCount == 0 && !_enemyManager.IsSpawning);
-                        Debug.Log("[tutorial] Wave cleared.");
+                        if (_showDebugLogs) Debug.Log("[tutorial] Wave cleared.");
                         break;
 
                     case TutorialStepType.WaitForCondition:
-                        Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey} (Value: {step.RequiredCount})");
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey} (Value: {step.RequiredCount})");
                         _gameManager.SetSpeed(1); // Usually we want time moving for kills/enemies
                         yield return new WaitUntil(() => CheckCondition(step));
                         _gameManager.SetSpeed(0);
                         break;
 
                     case TutorialStepType.CustomCommand:
-                        Debug.Log($"[tutorial] Executing Custom Command: {step.ActionKey} for {step.TargetUIName}");
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Executing Custom Command: {step.ActionKey} for {step.TargetUIName}");
                         if (step.ActionKey == "ChargeUnitUlt")
                         {
-                            var unit = PlayerUnit.ActiveUnits.Find(u => u.Data != null && u.Data.UnitName == step.TargetUIName);
-                            if (unit == null) unit = PlayerUnit.ActiveUnits.Find(u => u.gameObject.name.Contains(step.TargetUIName));
+                            // Fix: Use new TargetUI name if legacy TargetUIName is empty
+                            string targetName = !string.IsNullOrEmpty(step.TargetUIName) ? step.TargetUIName : (step.TargetUI != null ? step.TargetUI.Name : "");
+                            
+                            var unit = PlayerUnit.ActiveUnits.Find(u => u.Data != null && u.Data.UnitName == targetName);
+                            if (unit == null) unit = PlayerUnit.ActiveUnits.Find(u => u.gameObject.name.Contains(targetName));
                             
                             if (unit != null)
                             {
@@ -230,7 +243,7 @@ namespace MaouSamaTD.Managers
                             }
                             else
                             {
-                                Debug.LogWarning($"[tutorial] CustomCommand ChargeUnitUlt: Could not find unit {step.TargetUIName}");
+                                if (_showDebugLogs) Debug.LogWarning($"[tutorial] CustomCommand ChargeUnitUlt: Could not find unit '{targetName}'");
                             }
                         }
                         else if (step.ActionKey == "UnlockSelection")
@@ -238,20 +251,22 @@ namespace MaouSamaTD.Managers
                             if (_interactionManager != null)
                             {
                                 _interactionManager.IsSelectionLocked = false;
-                                Debug.Log("[tutorial] CustomCommand: Unit Selection UNLOCKED.");
+                                if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: Unit Selection UNLOCKED.");
                             }
                         }
                         break;
                 }
 
-                Debug.Log($"[tutorial] <<< Finished Step [{_currentStepIndex}]: {step.StepName}");
+                if (_showDebugLogs) Debug.Log($"[tutorial] <<< Finished Step [{_currentStepIndex}]: {step.StepName}");
                 _currentStepIndex++;
             }
 
             IsInTutorial = false;
             _activeTutorial = null;
             _gameManager.SetSpeed(1);
-            Debug.Log("[tutorial] Tutorial Sequence Completed.");
+            if (_interactionManager != null) _interactionManager.IsSelectionLocked = false;
+            
+            if (_showDebugLogs) Debug.Log("[tutorial] Tutorial Sequence Completed.");
             _uiBlocker.HideBlocker();
             _handUI.Hide();
         }
@@ -377,12 +392,21 @@ namespace MaouSamaTD.Managers
             else if (step.ShowHand)
             {
                 Vector2 handPos = Vector2.zero;
-                if (worldHighlights.Count > 0) 
-                    handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
-                else if (uiHits.Count > 0) 
-                    handPos = uiHits[0].Target.position;
+                float handScale = 1f;
 
-                if (handPos != Vector2.zero) _handUI.ShowAt(handPos);
+                if (worldHighlights.Count > 0) 
+                {
+                    handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
+                    // Use hole size x for world highlights if specified
+                    if (step.HoleSize.x > 0) handScale = step.HoleSize.x;
+                }
+                else if (uiHits.Count > 0) 
+                {
+                    handPos = uiHits[0].Target.position;
+                    handScale = uiHits[0].Size.x;
+                }
+
+                if (handPos != Vector2.zero) _handUI.ShowAt(handPos, handScale);
             }
         }
 
@@ -431,7 +455,7 @@ namespace MaouSamaTD.Managers
             var tile = _gridManager.GetTileAt(coord);
             if (tile != null)
             {
-                Debug.Log($"[tutorial] HIGHLIGHTING TILE at {coord}");
+                if (_showDebugLogs) Debug.Log($"[tutorial] HIGHLIGHTING TILE at {coord}");
                 tile.SetHighlight(true, Color.yellow, true);
                 _highlightedTiles.Add(coord);
             }
@@ -536,7 +560,7 @@ namespace MaouSamaTD.Managers
                     if (targetUnit != null)
                     {
                         bool met = targetUnit.KillCount >= step.RequiredCount && step.RequiredCount > 0;
-                        if (met) Debug.Log($"[tutorial] Condition MET: {step.ActionKey} ({targetUnit.KillCount}/{step.RequiredCount})");
+                        if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: {step.ActionKey} ({targetUnit.KillCount}/{step.RequiredCount})");
                         return met;
                     }
                     return false;
@@ -586,7 +610,7 @@ namespace MaouSamaTD.Managers
                             if (dist <= threshold) count++;
                         }
                         bool met = count >= step.RequiredCount && step.RequiredCount > 0;
-                        if (met) Debug.Log($"[tutorial] Condition MET: {step.ActionKey} ({count}/{step.RequiredCount})");
+                        if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: {step.ActionKey} ({count}/{step.RequiredCount})");
                         return met;
                     }
                     return false;
@@ -599,7 +623,7 @@ namespace MaouSamaTD.Managers
                     if (_enemyManager != null)
                     {
                         bool met = !_enemyManager.IsSpawning;
-                        if (met) Debug.Log($"[tutorial] Condition MET: WaveFinishedSpawning");
+                        if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: WaveFinishedSpawning");
                         return met;
                     }
                     return false;
@@ -613,7 +637,7 @@ namespace MaouSamaTD.Managers
                         if (u != null && (u.gameObject.name == reachName || (u.Data != null && u.Data.UnitName == reachTarget)))
                         {
                             bool met = u.ReachCount >= step.RequiredCount && step.RequiredCount > 0;
-                            if (met) Debug.Log($"[tutorial] Condition MET: UnitReach ({u.ReachCount}/{step.RequiredCount})");
+                            if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: UnitReach ({u.ReachCount}/{step.RequiredCount})");
                             return met;
                         }
                     }

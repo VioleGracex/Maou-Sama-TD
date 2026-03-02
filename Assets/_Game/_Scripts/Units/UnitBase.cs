@@ -43,6 +43,9 @@ namespace MaouSamaTD.Units
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
         private static readonly int OutlineEnabledId = Shader.PropertyToID("_OutlineEnabled");
 
+        [Header("Debug")]
+        [SerializeField] protected bool _showDebugLogs = true;
+
         protected virtual void Awake()
         {
             _mpb = new MaterialPropertyBlock();
@@ -54,6 +57,13 @@ namespace MaouSamaTD.Units
                 spriteObj.transform.localPosition = new Vector3(0, 1, 0); 
                 _spriteRenderer = spriteObj.AddComponent<SpriteRenderer>();
             }
+
+            // Ensure Billboard on Sprite if it's a child
+            if (_spriteRenderer.transform != transform)
+            {
+                SetupBillboard(_spriteRenderer.gameObject);
+            }
+
             if (_textFallback == null)
             {
                 GameObject textObj = new GameObject("TextFallback");
@@ -63,8 +73,21 @@ namespace MaouSamaTD.Units
                 _textFallback.fontSize = 20;
                 _textFallback.color = Color.white;
             }
+
+            if (_textFallback.transform != transform)
+            {
+                SetupBillboard(_textFallback.gameObject);
+            }
             
             _camTransform = Camera.main != null ? Camera.main.transform : null;
+        }
+
+        private void SetupBillboard(GameObject target)
+        {
+            if (target.GetComponent<MaouSamaTD.Utils.Billboard>() == null)
+            {
+                target.AddComponent<MaouSamaTD.Utils.Billboard>();
+            }
         }
 
         public virtual void Initialize(UnitData data)
@@ -78,30 +101,23 @@ namespace MaouSamaTD.Units
             
             name = data.UnitName;
 
-            if (_hpFillImage != null) _hpFillImage.fillAmount = 1f;
+            if (_hpFillImage != null)
+            {
+                _hpFillImage.fillAmount = 1f;
+                // Setup Billboard on HP Canvas if it's world space
+                if (_hpFillImage.canvas != null && _hpFillImage.canvas.renderMode == RenderMode.WorldSpace)
+                {
+                    _hpFillImage.canvas.worldCamera = Camera.main;
+                    SetupBillboard(_hpFillImage.canvas.gameObject);
+                }
+            }
 
             UpdateVisuals();
         }
 
         protected virtual void UpdateInternal()
         {
-            if (_camTransform != null)
-            {
-                if (_spriteRenderer != null && _spriteRenderer.transform != transform)
-                {
-                    _spriteRenderer.transform.rotation = _camTransform.rotation;
-                }
-                
-                if (_textFallback != null && _textFallback.transform != transform)
-                {
-                    _textFallback.transform.rotation = _camTransform.rotation;
-                }
-
-                if (_hpFillImage != null && _hpFillImage.canvas != null && _hpFillImage.canvas.renderMode == RenderMode.WorldSpace)
-                {
-                     _hpFillImage.canvas.transform.rotation = _camTransform.rotation;
-                }
-            }
+            // Unit specific logic here
         }
         
         private void Update()
@@ -149,6 +165,7 @@ namespace MaouSamaTD.Units
         public virtual void TakeDamage(float amount, UnitBase attacker = null)
         {
             float damageTaken = Mathf.Max(1, amount - _defense); 
+            if (_showDebugLogs) Debug.Log($"[Damage] {gameObject.name} taking {damageTaken} ({amount} - {_defense} def). HP: {_currentHp} -> {_currentHp - damageTaken}");
             _currentHp -= damageTaken;
             
             if (_hpFillImage != null)
@@ -158,8 +175,15 @@ namespace MaouSamaTD.Units
 
             if (_spriteRenderer != null)
             {
+                // Kill previous to prevent stacking offsets
+                _spriteRenderer.DOKill(true); // Complete active tweens and reset to target
+                _spriteRenderer.transform.DOKill(true);
+                
+                // Return to base position (in case kill didn't reset it perfectly due to stacking)
+                _spriteRenderer.transform.localPosition = new Vector3(0, 1f, 0); // Correct for UnitBase default
+
                 _spriteRenderer.DOColor(Color.red, 0.1f).OnComplete(() => _spriteRenderer.DOColor(Color.white, 0.1f));
-                _spriteRenderer.transform.DOShakePosition(0.2f, 0.1f, 10, 90f, false, true);
+                _spriteRenderer.transform.DOShakePosition(0.2f, 0.15f, 15, 90f, false, true);
             }
 
             if (FloatingTextManager.Instance != null)

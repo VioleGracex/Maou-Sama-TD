@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7969183693249724388}
   - component: {fileID: 1651422340765343472}
   - component: {fileID: 2599702047183927109}
-  - component: {fileID: 4241207656416773009}
   m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
@@ -59,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 1, b: 0.0325377, a: 1}
+  m_Color: {r: 1, g: 0.18773706, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -76,18 +75,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4241207656416773009
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 397520300626746280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51bc1ad3ce111c14f92204c6eb5727e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Utils.Billboard
 --- !u!1 &862469447517819888
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,6 +352,7 @@ MonoBehaviour:
   _textFallback: {fileID: 8580189831593633681}
   _hpFillImage: {fileID: 2599702047183927109}
   _healParticle: {fileID: 9158698671858778036}
+  _showDebugLogs: 1
 --- !u!65 &2337745682493686193
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -398,7 +386,6 @@ GameObject:
   - component: {fileID: 4928011465920256339}
   - component: {fileID: 8834889017857056619}
   - component: {fileID: 8783481665282038887}
-  - component: {fileID: 203543492337681228}
   m_Layer: 5
   m_Name: HP_BG
   m_TagString: Untagged
@@ -477,18 +464,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
---- !u!114 &203543492337681228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5157202036817403737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51bc1ad3ce111c14f92204c6eb5727e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Utils.Billboard
 --- !u!1 &5769882144697194085
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,6 +12,8 @@ namespace MaouSamaTD.Data
         public List<LevelStarData> LevelStars = new List<LevelStarData>();
         public List<string> UnlockedUnits = new List<string>();
         public int Currency;
+        public bool IsLilithAwakened;
+        public int MaxSeals;
 
         [Header("Ascension Identity")]
         public string PlayerName = "Mephisto"; // Custom input

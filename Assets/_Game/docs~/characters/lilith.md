@@ -1,5 +1,5 @@
 # Vassal: Lilith
-**Title**: Amethyst Sovereign  
+**Title**: Matriarch of Lust  
 **Rarity**: SSR  
 **Race**: Trueborn Demon  
 **Class**: Warlock  

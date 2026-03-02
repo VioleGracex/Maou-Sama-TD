@@ -12,6 +12,7 @@ namespace MaouSamaTD.Managers
         [Inject] private GameSelectionState _gameSelectionState;
         [Inject] private TutorialManager _tutorialManager;
         [Inject] private EnemyManager _enemyManager;
+        [Inject] private CurrencyManager _currencyManager;
 
         #region Lifecycle
         private void Start()
@@ -38,6 +39,11 @@ namespace MaouSamaTD.Managers
                 Debug.Log($"[LevelManager] Loading LevelData: {dataToLoad.LevelName}");
                 _gameManager.LoadLevelData(dataToLoad);
                 
+                if (_currencyManager != null)
+                {
+                    _currencyManager.Init(dataToLoad);
+                }
+
                 bool hasTutorial = dataToLoad.HasTutorial && dataToLoad.TutorialData != null;
 
                 if (_enemyManager != null && dataToLoad != null)

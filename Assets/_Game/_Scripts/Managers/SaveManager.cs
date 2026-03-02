@@ -154,6 +154,29 @@ namespace MaouSamaTD.Managers
             Save();
         }
 
+        public void AwakenLilith()
+        {
+            if (CurrentData == null) return;
+            if (CurrentData.IsLilithAwakened) return;
+
+            CurrentData.IsLilithAwakened = true;
+            
+            if (!CurrentData.UnlockedUnits.Contains("Lilith"))
+            {
+                CurrentData.UnlockedUnits.Add("Lilith");
+            }
+            
+            // Soveregin power regain: Increase currency/seals capacity
+            CurrencyManager currencyMgr = FindFirstObjectByType<CurrencyManager>();
+            if (currencyMgr != null)
+            {
+                currencyMgr.SetMaxSeals(150);
+            }
+
+            Debug.Log("[SaveManager] Lilith has been awakened! Sovereign power regained.");
+            Save();
+        }
+
         public bool IsLevelCompleted(string levelID)
         {
             return CurrentData != null && CurrentData.CompletedLevels.Contains(levelID);

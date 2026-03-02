@@ -19,13 +19,49 @@ namespace MaouSamaTD.Managers
         public int CurrentSeals { get; private set; }
         public int MaxSeals => _maxSeals;
 
+        public void SetMaxSeals(int newMax)
+        {
+            _maxSeals = newMax;
+            OnSealsChanged?.Invoke(CurrentSeals);
+        }
+
         private float _regenTimer;
         #endregion
 
         #region Lifecycle
-        public void Init()
+        public void Init(MaouSamaTD.Levels.LevelData levelData = null)
         {
             CurrentSeals = _startingSeals;
+            
+            if (levelData != null)
+            {
+                _maxSeals = levelData.MaxAuthoritySeals;
+                _startingSeals = levelData.StartingAuthoritySeals;
+                CurrentSeals = _startingSeals;
+            }
+            else
+            {
+                _maxSeals = 30; // Default fallback
+            }
+
+            // Tiered Logic: Level Base + Lilith Bonus (30) capped at 99
+            SaveManager save = FindFirstObjectByType<SaveManager>();
+            if (save != null && save.CurrentData != null)
+            {
+                int bonus = save.CurrentData.IsLilithAwakened ? 30 : 0;
+                
+                // If we have a specific persistent MaxSeals override (e.g. from shop/upgrades), use it
+                // Otherwise calculate based on level + Lilith
+                if (save.CurrentData.MaxSeals > 0)
+                {
+                    _maxSeals = save.CurrentData.MaxSeals;
+                }
+                else
+                {
+                    _maxSeals = Mathf.Min(_maxSeals + bonus, 99);
+                }
+            }
+            
             OnSealsChanged?.Invoke(CurrentSeals);
         }
 

@@ -18,7 +18,9 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: The corridor is secure for now. But this was just a scouting party. We
-      must reach the inner sanctum.
+    Text: "The path is clear, Sovereign... but the true power lies deeper. We must
+      reach the inner sanctum to reclaim your power. It... pains me to suggest
+      it, but we have little choice but to awaken Lilith, the Matriarch of Lust.
+      Her existence is... unfortunately necessary."
     PortraitOnLeft: 0
     EventID: 

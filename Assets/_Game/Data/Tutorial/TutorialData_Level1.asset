@@ -314,8 +314,8 @@ MonoBehaviour:
     TargetTiles:
     - Coordinate: {x: 2, y: 5}
       Size: {x: 1, y: 1}
-      Offset: {x: 0, y: 0, z: 0}
-      Height: 1
+      Offset: {x: 0, y: 0.5, z: 0}
+      Height: 0.4
     DelayBefore: 0.5
     Duration: 0
     ActionKey: UnitStatsOpened
@@ -323,16 +323,16 @@ MonoBehaviour:
     DragShowHand: 0
     HandDragTargetUI:
       Name: 
-      Size: {x: 1, y: 1}
+      Size: {x: 0.3, y: 0.3}
       SizeOffset: {x: 0, y: 0}
     HandDragTargetTile: {x: 2, y: 5}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandDragTargetTileOffset: {x: 0, y: -0.3, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
     ResetBlocker: 0
     ResumeTime: 0
-    HoleSize: {x: 0, y: 0}
+    HoleSize: {x: 1, y: 1}
     HoleHeight: 0
   - StepName: Activate Ignis Skill
     Type: 3
@@ -343,7 +343,7 @@ MonoBehaviour:
     AdditionalTargetTiles: []
     TargetUI:
       Name: Ult_Btn
-      Size: {x: 2, y: 2}
+      Size: {x: 1.2, y: 1.2}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles: []
@@ -354,13 +354,44 @@ MonoBehaviour:
     DragShowHand: 0
     HandDragTargetUI:
       Name: Ult_Btn
-      Size: {x: 0.5, y: 0.5}
-      SizeOffset: {x: 0, y: 0}
+      Size: {x: 0.3, y: 0.3}
+      SizeOffset: {x: 0, y: 0.2}
     HandDragTargetTile: {x: 0, y: 0}
     HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 0
+  - StepName: Unlock Interaction
+    Type: 5
+    Dialogue: {fileID: 0}
+    TargetUIName: 
+    AdditionalTargetUINames: []
+    TargetTile: {x: 0, y: 0}
+    AdditionalTargetTiles: []
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 0
+    ActionKey: UnlockSelection
+    ShowHand: 0
+    DragShowHand: 0
+    HandDragTargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandDragTargetTile: {x: 0, y: 0}
+    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 0
     ResetBlocker: 1
     ResumeTime: 1
     HoleSize: {x: 0, y: 0}

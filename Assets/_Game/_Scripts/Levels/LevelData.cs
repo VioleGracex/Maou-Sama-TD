@@ -49,6 +49,7 @@ namespace MaouSamaTD.Levels
 
         [Header("Economy")]
         public int StartingAuthoritySeals = 10;
+        public int MaxAuthoritySeals = 30;
         public float AuthoritySealsPerSecond = 1f;
 
         [Header("Waves")]

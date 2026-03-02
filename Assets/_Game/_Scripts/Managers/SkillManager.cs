@@ -14,6 +14,9 @@ namespace MaouSamaTD.Skills
         
         [Zenject.Inject] private CurrencyManager _currencyManager;
         [Zenject.Inject] private TutorialManager _tutorialManager;
+
+        [Header("Debug")]
+        [SerializeField] private bool _showDebugLogs = true;
         #endregion
 
         #region Public API
@@ -26,20 +29,20 @@ namespace MaouSamaTD.Skills
             {
                 _availableSkills.AddRange(skills);
             }
-            Debug.Log($"[SkillManager] Initialized with {_availableSkills.Count} rites.");
+            if (_showDebugLogs) Debug.Log($"[SkillManager] Initialized with {_availableSkills.Count} rites.");
         }
 
         public void ResetAllCooldowns()
         {
             _cooldowns.Clear();
-            Debug.Log("[SkillManager] All cooldowns reset.");
+            if (_showDebugLogs) Debug.Log("[SkillManager] All cooldowns reset.");
         }
 
         public void ForceSetReady(SovereignRiteData skill)
         {
             if (skill == null) return;
             _cooldowns.Remove(skill);
-            Debug.Log($"[SkillManager] Forced skill {skill.SkillName} to be ready.");
+            if (_showDebugLogs) Debug.Log($"[SkillManager] Forced skill {skill.SkillName} to be ready.");
         }
 
         public bool IsSkillReady(SovereignRiteData skill)
@@ -80,7 +83,7 @@ namespace MaouSamaTD.Skills
             // Validate Target
             if (!IsTargetValid(skill, targetUnit))
             {
-                Debug.Log($"[SkillManager] Target Invalid for skill {skill.SkillName}");
+                if (_showDebugLogs) Debug.Log($"[SkillManager] Target Invalid for skill {skill.SkillName}");
                 return false;
             }
 
@@ -159,7 +162,7 @@ namespace MaouSamaTD.Skills
                 }
             }
             
-            Debug.Log($"[SkillManager] Executed Skill/Rite: {skill.SkillName}");
+            if (_showDebugLogs) Debug.Log($"[SkillManager] Executed Skill/Rite: {skill.SkillName}");
         }
 
         private void ApplyAreaEffect(SovereignRiteData skill, Vector3 center)

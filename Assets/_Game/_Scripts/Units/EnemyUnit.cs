@@ -17,6 +17,10 @@ namespace MaouSamaTD.Units
         private bool _isCentering = false;
         private PlayerUnit _blockedBy = null;
         private PlayerUnit _attackTarget = null;
+        
+        private bool _isCharmed = false;
+        private float _charmTimer = 0f;
+        private Stack<Tile> _retreatPath = new Stack<Tile>();
 
         public static System.Collections.Generic.List<EnemyUnit> ActiveEnemies = new System.Collections.Generic.List<EnemyUnit>();
 
@@ -38,6 +42,7 @@ namespace MaouSamaTD.Units
             _currentHp = _maxHp;
             _attackPower = data.AttackPower;
             _attackInterval = data.AttackInterval;
+            _defense = 0f; // Reset defense as EnemyData doesn't have it yet
             
             gameObject.name = $"Enemy_{data.EnemyName}_W{waveIndex}_O{enemyIndex}";
             
@@ -114,9 +119,20 @@ namespace MaouSamaTD.Units
         protected override void UpdateInternal()
         {
             base.UpdateInternal();
+
+            if (_isCharmed)
+            {
+                _charmTimer -= Time.deltaTime;
+                if (_charmTimer <= 0)
+                {
+                    _isCharmed = false;
+                    _spriteRenderer.color = _enemyData != null ? _enemyData.Tint : Color.white;
+                    RecalculatePath(); // Find way back to exit
+                }
+            }
             
             // Re-evaluating blockers/targets while moving vs while stopped
-            if (!_isMoving)
+            if (!_isMoving && !_isCharmed)
             {
                 if (_blockedBy != null)
                 {
@@ -214,7 +230,7 @@ namespace MaouSamaTD.Units
             if (_enemyData == null || _targetTile == null) return;
 
             // 1. Check for range-based targets if not already centering/blocked
-            if (!_isCentering && _blockedBy == null)
+            if (!_isCentering && _blockedBy == null && !_isCharmed)
             {
                 if (ScanForTarget(out PlayerUnit target))
                 {
@@ -226,7 +242,7 @@ namespace MaouSamaTD.Units
 
             // 2. Check for blockers in moving path
             if (!_isCentering && _enemyData.MovementType != EnemyMovementType.Flying && 
-                _enemyData.CollisionType == EnemyCollisionType.BlockedByPlayer)
+                _enemyData.CollisionType == EnemyCollisionType.BlockedByPlayer && !_isCharmed)
             {
                 if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
                 {
@@ -238,13 +254,14 @@ namespace MaouSamaTD.Units
             }
 
             Vector3 targetPos = _targetTile.transform.position;
-            float step = _enemyData.MoveSpeed * Time.deltaTime;
+            float speedMultiplier = _isCharmed ? 0.5f : 1f; // Move slower when charmed
+            float step = _enemyData.MoveSpeed * speedMultiplier * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
 
             Vector3 dir = (targetPos - transform.position);
             if (Mathf.Abs(dir.x) > 0.05f)
             {
-                 FaceTarget(transform.position + dir);
+                 FaceTarget(transform.position + (_isCharmed ? -dir : dir));
             }
 
             if (Vector3.Distance(transform.position, targetPos) < 0.005f)
@@ -258,7 +275,19 @@ namespace MaouSamaTD.Units
                     return;
                 }
 
-                if (_path.Count > 0)
+                if (_isCharmed)
+                {
+                    if (_retreatPath.Count > 0)
+                    {
+                        _targetTile = _retreatPath.Pop();
+                    }
+                    else
+                    {
+                        // Reached a spawn? Just stop until charm wears off
+                        _isMoving = false;
+                    }
+                }
+                else if (_path.Count > 0)
                 {
                     _targetTile = _path.Dequeue();
                 }
@@ -287,7 +316,7 @@ namespace MaouSamaTD.Units
         private void ReachedExit()
         {
             _isMoving = false;
-            Debug.Log($"Enemy reached exit! Dealing {(int)_enemyData.DamageToPlayerBase} damage.");
+            if (_showDebugLogs) Debug.Log($"Enemy reached exit! Dealing {(int)_enemyData.DamageToPlayerBase} damage.");
             
             Managers.GameManager gm = FindFirstObjectByType<Managers.GameManager>();
             if (gm != null)
@@ -311,6 +340,49 @@ namespace MaouSamaTD.Units
         {
             _blockedBy = null;
             _isMoving = true;
+        }
+
+        public void ApplyCharm(float duration)
+        {
+            _isCharmed = true;
+            _charmTimer = duration;
+            _isMoving = true;
+            _isCentering = false;
+            _blockedBy = null;
+            _attackTarget = null;
+            
+            // Visual feedback
+            _spriteRenderer.color = new Color(1f, 0.5f, 0.8f, 1f); // Pinkish tint
+
+            // Calculate retreat path (reverse of current position to start/spawn)
+            if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
+            if (_gridManager != null)
+            {
+                Vector2Int currentCoord = _gridManager.WorldToGridCoordinates(transform.position);
+                // Simple version: just use BFS but aim for nearest spawn point instead of exit
+                Queue<Tile> retreatQueue = _gridManager.GetPath(currentCoord, _gridManager.SpawnPoint, _enemyData.MovementType, true);
+                if (retreatQueue != null)
+                {
+                    _retreatPath.Clear();
+                    // We need a Stack because GetPath gives tiles in order (Spawn -> Exit), 
+                    // and we want them in order (Current -> Spawn).
+                    // Actually GetPath returns start -> end. 
+                    // If we pass current -> spawn, it returns current's neighbor -> spawn.
+                    // So we can just use the queue but we need to dequeue carefully.
+                    // Wait, stacks are better if we want to reverse a path. 
+                    // If GetPath gives [T1, T2, T3] (where T3 is spawn), then it's already in the right order for retreat.
+                    
+                    // Let's re-use the Queue but call it _retreatQueue for clarity?
+                    // Or keep it simple and just use the same Stack logic.
+                    List<Tile> tiles = new List<Tile>(retreatQueue);
+                    _retreatPath.Clear();
+                    tiles.Reverse(); // So spawn is at bottom
+                    foreach(var t in tiles) _retreatPath.Push(t);
+                    
+                    if (_retreatPath.Count > 0)
+                        _targetTile = _retreatPath.Pop();
+                }
+            }
         }
     }
 }

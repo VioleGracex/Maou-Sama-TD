@@ -115,6 +115,7 @@ namespace MaouSamaTD.Managers
 
                 for (int i = 0; i < group.Count; i++)
                 {
+                    if (enemyCounter == 0 && _pathVisualizer != null) _pathVisualizer.Hide();
                     SpawnEnemy(group.EnemyType, waveIndex, enemyCounter, group.SpawnPointIndex);
                     enemyCounter++;
                     
@@ -123,6 +124,7 @@ namespace MaouSamaTD.Managers
                 }
             }
             _isSpawning = false;
+            _allWavesFinished = true; // Set to true so victory check in Update() can trigger
         }
 
 
@@ -217,6 +219,7 @@ namespace MaouSamaTD.Managers
                     {
                         if (!_isSpawning) yield break;
 
+                        if (waveCounter == 0 && enemyCounter == 0 && _pathVisualizer != null) _pathVisualizer.Hide();
                         SpawnEnemy(group.EnemyType, waveCounter, enemyCounter, group.SpawnPointIndex);
                         enemyCounter++;
                         

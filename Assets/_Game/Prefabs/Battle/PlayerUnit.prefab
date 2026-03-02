@@ -4848,7 +4848,6 @@ GameObject:
   - component: {fileID: 366704659266001463}
   - component: {fileID: 2484469425816582905}
   - component: {fileID: 1331933160779267861}
-  - component: {fileID: 1713040185426903716}
   m_Layer: 5
   m_Name: HP_BG
   m_TagString: Untagged
@@ -4927,18 +4926,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
---- !u!114 &1713040185426903716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1830290239816998072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51bc1ad3ce111c14f92204c6eb5727e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Utils.Billboard
 --- !u!1 &4814164524676806810
 GameObject:
   m_ObjectHideFlags: 0
@@ -5204,7 +5191,6 @@ GameObject:
   - component: {fileID: 6301083884183057651}
   - component: {fileID: 8426583262416068379}
   - component: {fileID: 1312120414639121609}
-  - component: {fileID: 6259340174568714898}
   m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
@@ -5269,18 +5255,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6259340174568714898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5808387478682328556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51bc1ad3ce111c14f92204c6eb5727e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Utils.Billboard
 --- !u!1 &7102920789647123861
 GameObject:
   m_ObjectHideFlags: 0
@@ -5441,6 +5415,7 @@ MonoBehaviour:
   _textFallback: {fileID: 2958040010651701506}
   _hpFillImage: {fileID: 1312120414639121609}
   _healParticle: {fileID: 4384362147522370408}
+  _showDebugLogs: 1
   _unitClass: 0
   _deploymentCost: 10
   _billboard: {fileID: 2857023423370468552}

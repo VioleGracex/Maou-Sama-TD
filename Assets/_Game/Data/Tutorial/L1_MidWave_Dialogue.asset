@@ -18,13 +18,12 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Structural integrity failing! A massive shadow cluster is manifesting in
-      the corridor.
+    Text: Sovereign! Ignis is holding the corridor, but the shadows keep coming.
+      She wants to clear them all out in one massive strike!
     PortraitOnLeft: 0
     EventID: 
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Sovereign, exert your dominance! Command Ignis to unleash the [Phoenix
-      Radiance] and purge this filth.
+    Text: Use Ignis's [Phoenix Radiance] now! Show them the true power of a Sovereign!
     PortraitOnLeft: 0
     EventID: 

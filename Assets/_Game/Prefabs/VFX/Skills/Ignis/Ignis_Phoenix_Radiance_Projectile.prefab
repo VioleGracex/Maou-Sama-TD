@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5216819150317757886}
   - component: {fileID: 2270744115111879702}
   m_Layer: 0
-  m_Name: Phoenix_Vengeance_Projectile
+  m_Name: Ignis_Phoenix_Radiance_Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -80,17 +80,17 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 999
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: c3dbb5f923f60d34ebe83fc616ba1a75, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 10.24, y: 10.24}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
 --- !u!114 &2270744115111879702
 MonoBehaviour:
@@ -107,7 +107,8 @@ MonoBehaviour:
   _speed: 15
   _damage: 150
   _lifetime: 5
-  _hitRadius: 2
+  _hitWidth: 1
   _enemyLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
+  _showDebugLogs: 1

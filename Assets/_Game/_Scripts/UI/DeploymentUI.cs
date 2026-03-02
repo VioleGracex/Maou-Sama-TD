@@ -199,7 +199,6 @@ namespace MaouSamaTD.UI
             PlayerUnit newUnit = Instantiate(_unitPrefab, tile.transform.position, Quaternion.identity);
             
             // Facing Logic
-            // Facing Logic
             Grid.GridManager gm = FindFirstObjectByType<Grid.GridManager>();
             if (gm != null && gm.SpawnPoints != null && gm.SpawnPoints.Count > 0)
             {

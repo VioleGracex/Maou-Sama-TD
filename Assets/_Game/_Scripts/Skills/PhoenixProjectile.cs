@@ -1,6 +1,7 @@
 using UnityEngine;
 using MaouSamaTD.Units;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MaouSamaTD.Skills
 {
@@ -12,6 +13,9 @@ namespace MaouSamaTD.Skills
         [SerializeField] private float _lifetime = 8f;
         [SerializeField] private float _hitWidth = 1.0f; // Width of the grid lane
         [SerializeField] private LayerMask _enemyLayer;
+
+        [Header("Debug")]
+        [SerializeField] private bool _showDebugLogs = true;
 
         private Vector3 _direction;
         private PlayerUnit _owner;
@@ -46,7 +50,7 @@ namespace MaouSamaTD.Skills
             float angle = Mathf.Atan2(_direction.z, _direction.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(90, angle + 180f, 0); // 90 on X for top-down visibility
             
-            Debug.Log($"[Phoenix] Executing on {(_isColumn ? "Column X=" : "Row Z=")}{_laneCoordinate}");
+            if (_showDebugLogs) Debug.Log($"[Phoenix] Executing on {(_isColumn ? "Column X=" : "Row Z=")}{_laneCoordinate}");
         }
 
         private void Update()
@@ -61,7 +65,7 @@ namespace MaouSamaTD.Skills
             transform.position += _direction * _speed * Time.deltaTime;
 
             // Damage Logic: Hit all enemies in the designated lane
-            foreach (var enemy in EnemyUnit.ActiveEnemies)
+            foreach (var enemy in EnemyUnit.ActiveEnemies.ToArray())
             {
                 if (enemy == null || _hitEnemies.Contains(enemy)) continue;
 
@@ -99,7 +103,7 @@ namespace MaouSamaTD.Skills
                 {
                     enemy.TakeDamage(_damage, _owner);
                     _hitEnemies.Add(enemy);
-                    Debug.Log($"[Phoenix] Lane hit {enemy.name}");
+                    if (_showDebugLogs) Debug.Log($"[Phoenix] Lane hit {enemy.name}");
                 }
             }
         }

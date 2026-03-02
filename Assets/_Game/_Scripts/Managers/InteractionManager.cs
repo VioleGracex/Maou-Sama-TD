@@ -276,11 +276,14 @@ namespace MaouSamaTD.Managers
                 PlayerUnit target = _selectionHandler.FindTargetUnit(ray, hitTile, _selectionMode, _selectionRange);
                 if (target != null)
                 {
-                    // Tutorial Restriction: Only allow selection if not locked, OR if we are specifically in a tutorial step that requires it
-                    bool isAllowedByTutorial = _tutorialManager != null && _tutorialManager.IsInTutorial && 
-                                             (_tutorialManager.IsWaitingForAction("UnitSelected") || 
+                    bool isAllowedByTutorial = (_tutorialManager == null || !_tutorialManager.IsInTutorial);
+                    
+                    if (!isAllowedByTutorial)
+                    {
+                        isAllowedByTutorial = _tutorialManager.IsWaitingForAction("UnitSelected") || 
                                               _tutorialManager.IsWaitingForAction("UnitStatsOpened") ||
-                                              _tutorialManager.IsWaitingForAction("SkillUsed"));
+                                              _tutorialManager.IsWaitingForAction("SkillUsed");
+                    }
 
                     if (_isSelectionLocked && !isAllowedByTutorial)
                     {

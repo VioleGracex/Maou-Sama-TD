@@ -76,6 +76,7 @@ namespace MaouSamaTD.Units.Editor
                 DrawProperty("UniqueID", "Unique ID");
             }
             DrawProperty("UnitName", "Unit Name");
+            DrawProperty("UnitTitle", "Unit Title");
 
             GUILayout.Space(5);
             GUILayout.BeginHorizontal();

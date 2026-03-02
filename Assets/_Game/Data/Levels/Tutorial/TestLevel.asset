@@ -40,6 +40,7 @@ MonoBehaviour:
   IsRitesLocked: 1
   MapData: {fileID: 11400000, guid: 359e79aee670d244cbc164c4119a73b6, type: 2}
   StartingAuthoritySeals: 10
+  MaxAuthoritySeals: 30
   AuthoritySealsPerSecond: 1
   Waves:
   - Groups:

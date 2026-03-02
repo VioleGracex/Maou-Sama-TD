@@ -40,6 +40,7 @@ MonoBehaviour:
   IsRitesLocked: 1
   MapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
   StartingAuthoritySeals: 20
+  MaxAuthoritySeals: 30
   AuthoritySealsPerSecond: 1.5
   Waves:
   - Groups:
@@ -51,7 +52,7 @@ MonoBehaviour:
     DelayBeforeNextWave: 5
     WaveMessage: 'Wave 1: Shadows approaching!'
   - Groups:
-    - EnemyType: {fileID: 11400000, guid: b3dd7b36f3b6dd84d8872428f11fdf20, type: 2}
+    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
       Count: 5
       SpawnInterval: 0.1
       InitialDelay: 0

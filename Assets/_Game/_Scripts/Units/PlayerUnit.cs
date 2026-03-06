@@ -13,7 +13,8 @@ namespace MaouSamaTD.Units
         Horizontal,     // -
         Diagonal,       // X
         Cross,          // + (Vertical + Horizontal)
-        All             // * (Surrounding 8 tiles)
+        All,            // * (Surrounding 8 tiles)
+        Custom          // Visual Grid Pattern
     }
 
     public enum AttackType
@@ -116,10 +117,12 @@ namespace MaouSamaTD.Units
                 string uTitle = Data.UnitTitle;
                 string sName = Data.Skill.SkillName;
                 Color bColor = Data.Skill.UltimateColor;
+                Color tBgColor = Data.Skill.TitleBgColor;
+                Color sBgColor = Data.Skill.SkillNameBgColor;
 
                 if (_showDebugLogs) Debug.Log($"[Ultimate] Triggering Cut-In Animation for {uName}...");
                 // Wait for the full animation sequence (Slide In -> Hold -> Slide Out) to complete
-                yield return MaouSamaTD.UI.UltimateCutInUI.Instance.PlayAnimation(uName, uTitle, sName, bColor);
+                yield return MaouSamaTD.UI.UltimateCutInUI.Instance.PlayAnimation(uName, uTitle, sName, bColor, tBgColor, sBgColor);
             }
             else
             {
@@ -237,6 +240,7 @@ namespace MaouSamaTD.Units
 
         protected override void UpdateInternal()
         {
+             if (_isDead) return;
              base.UpdateInternal();
              
              if (_data != null && _currentCharge < MaxCharge)
@@ -270,13 +274,14 @@ namespace MaouSamaTD.Units
 
             foreach (var enemy in enemies)
             {
-                if (enemy == null || enemy.CurrentHp <= 0) continue;
+                if (enemy == null || enemy.CurrentHp <= 0 || enemy.IsDead) continue;
 
                 Vector2Int enemyPos = _gridManager.WorldToGridCoordinates(enemy.transform.position);
                 
                 if (IsTargetInPattern(myPos, enemyPos, pattern, range))
                 {
-                     enemy.TakeDamage(AttackPower, this); // Pass self as attacker
+                     DamageType dType = _data != null ? _data.DamageType : DamageType.Melee;
+                     enemy.TakeDamage(AttackPower, this, dType); // Pass self as attacker and damage type
                      attacked = true;
                      FaceTarget(enemy.transform.position);
 

@@ -21,8 +21,28 @@ namespace MaouSamaTD.Grid
         
         [Inject] private DiContainer _container;
 
-        public int Width { get => _width; set => _width = value; }
-        public int Height { get => _height; set => _height = value; }
+        public int Width 
+        { 
+            get => _width; 
+            set 
+            {
+                _width = value;
+#if UNITY_EDITOR
+                if (!Application.isPlaying) UnityEditor.EditorUtility.SetDirty(this);
+#endif
+            } 
+        }
+        public int Height 
+        { 
+            get => _height; 
+            set 
+            {
+                _height = value;
+#if UNITY_EDITOR
+                if (!Application.isPlaying) UnityEditor.EditorUtility.SetDirty(this);
+#endif
+            }
+        }
         public float CellSize => _cellSize;
         public Transform WallContainer => _wallContainer;
         public Transform CameraAnchor { get; private set; }

@@ -282,5 +282,22 @@ namespace MaouSamaTD.UI
             
             _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
         }
+
+        public void SetUnitButtonVisibility(string unitName, bool visible)
+        {
+            // Support both internal name "Lilith" and UI name "UnitButton_Lilith"
+            string targetName = unitName.StartsWith("UnitButton_") ? unitName.Substring("UnitButton_".Length) : unitName;
+
+            UnitButtonUI btn = _unitButtons.Find(b => b.Data != null && b.Data.UnitName == targetName);
+            if (btn != null)
+            {
+                btn.gameObject.SetActive(visible);
+                Debug.Log($"[DeploymentUI] Set visibility for {targetName} to {visible}");
+            }
+            else
+            {
+                Debug.LogWarning($"[DeploymentUI] Could not find button for unit {targetName} to set visibility (Original: {unitName}).");
+            }
+        }
     }
 }

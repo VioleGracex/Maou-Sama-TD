@@ -21746,7 +21746,7 @@ MonoBehaviour:
   _levelContainer: {fileID: 2054385467}
   _levelButtonPrefab: {fileID: 4855466325438353668, guid: 34ba308c70dc7194c9a19298127e0af8, type: 3}
   _allLevels:
-  - {fileID: 11400000, guid: c8ff7eeb06602374398876e91503a50f, type: 2}
+  - {fileID: 11400000, guid: a2c6c0a664a64034e81cbd9127cb1407, type: 2}
   _briefingPanel: {fileID: 1606856882}
   _missionReadinessUI: {fileID: 1500575360}
 --- !u!1 &1834052159

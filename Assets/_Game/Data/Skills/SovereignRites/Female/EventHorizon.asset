@@ -15,9 +15,12 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 4bac5888-54cb-4b19-bd0c-516e2a2fc3a8
   SkillName: Event Horizon
-  Description: The Maou points a single finger at a high-value target, condensing
-    dark matter into a microscopic singularity... Deals devastating Single Target
-    Magic Damage and collapses into a miniature black hole.
+  Description: "The Maou points a single, manicured finger at a high-value target,\n
+    condensing dark matter into a microscopic singularity directly inside their core.\n
+    The singularity wildly implodes, dealing devastating Single Target Magic Damage.\n
+    If this strike successfully kills the target, the singularity collapses into\n
+    a miniature black hole that pulls in nearby enemies without doing further damage,\n
+    clumps them up for allied AOE strikes."
   Icon: {fileID: 0}
   CastVFX: {fileID: 0}
   HitVFX: {fileID: 0}

@@ -3,6 +3,7 @@ Shader "UI/OverlayWithHole"
     Properties
     {
         _Color ("Overlay Color", Color) = (0,0,0,0.7)
+        _MainTex ("Sprite Texture", 2D) = "white" {}
         _MaskTex ("Mask Texture", 2D) = "white" {}
     }
     SubShader

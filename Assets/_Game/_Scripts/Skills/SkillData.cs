@@ -14,7 +14,6 @@ namespace MaouSamaTD.Skills
         Damage,
         Buff,
         Debuff
-        // Summon?
     }
 
     // Base class for all skills/rites - contains common display and cost info

@@ -5,6 +5,20 @@ namespace MaouSamaTD.Managers
 {
     public class CurrencyManager : MonoBehaviour
     {
+        public static CurrencyManager Instance { get; private set; }
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject); // Ensure only one instance exists
+            }
+        }
+
         #region Events
         public event Action<int> OnSealsChanged;
         #endregion
@@ -76,6 +90,11 @@ namespace MaouSamaTD.Managers
         {
             CurrentSeals = Mathf.Min(CurrentSeals + amount, _maxSeals);
             OnSealsChanged?.Invoke(CurrentSeals);
+        }
+
+        public void GiveSeals(int amount)
+        {
+            AddSeals(amount);
         }
 
         public void SetSeals(int amount)

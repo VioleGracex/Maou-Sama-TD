@@ -17,6 +17,8 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _titleText;
         [SerializeField] private TextMeshProUGUI _skillNameText;
         [SerializeField] private TextMeshProUGUI _ultimateText;
+        [SerializeField] private Image _skillNameBgImage;
+        [SerializeField] private Image _titleBgImage;
         private GameObject _backgroundDim;
 
         [Header("Animation Settings")]
@@ -46,13 +48,13 @@ namespace MaouSamaTD.UI
             if (_identityContainer != null) _identityContainer.alpha = 0;
         }
 
-        public void Play(string unitName, string unitTitle, string skillName, Color bannerColor)
+        public void Play(string unitName, string unitTitle, string skillName, Color bannerColor, Color titleBgColor, Color skillBgColor)
         {
             StopAllCoroutines();
-            StartCoroutine(PlayAnimation(unitName, unitTitle, skillName, bannerColor));
+            StartCoroutine(PlayAnimation(unitName, unitTitle, skillName, bannerColor, titleBgColor, skillBgColor));
         }
 
-        public IEnumerator PlayAnimation(string unitName, string unitTitle, string skillName, Color bannerColor)
+        public IEnumerator PlayAnimation(string unitName, string unitTitle, string skillName, Color bannerColor, Color titleBgColor, Color skillBgColor)
         {
             // Initial State
             if (_canvasGroup != null)
@@ -70,6 +72,9 @@ namespace MaouSamaTD.UI
                 _redBanner.anchoredPosition = -slideDir * _bannerSlideDistance;
                 if (_redBanner.GetComponent<Image>() != null) _redBanner.GetComponent<Image>().color = bannerColor;
             }
+
+            if (_titleBgImage != null) _titleBgImage.color = titleBgColor;
+            if (_skillNameBgImage != null) _skillNameBgImage.color = skillBgColor;
 
             if (_identityContainer != null)
             {
@@ -134,7 +139,7 @@ namespace MaouSamaTD.UI
         {
             // Now works because GameObject is active
             StopAllCoroutines();
-            StartCoroutine(PlayAnimation("IGNIS", "THE CRIMSON BASTION", "PHOENIX Radiance", Color.red));
+            StartCoroutine(PlayAnimation("IGNIS", "THE CRIMSON BASTION", "PHOENIX Radiance", Color.red, Color.black, Color.black));
         }
     }
 }

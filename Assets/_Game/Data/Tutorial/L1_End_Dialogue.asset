@@ -18,9 +18,14 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: "The path is clear, Sovereign... but the true power lies deeper. We must
-      reach the inner sanctum to reclaim your power. It... pains me to suggest
-      it, but we have little choice but to awaken Lilith, the Matriarch of Lust.
-      Her existence is... unfortunately necessary."
+    Text: "The corridor is cleansed. A mere nuisance, though it confirms the 'Holy'
+      interlopers have marked our sanctuary."
+    PortraitOnLeft: 0
+    EventID: 
+  - SpeakerName: Hecatina
+    SpeakerPortrait: {fileID: 0}
+    Text: "It pains me to suggest it, but we must locate the chamber of *that* creature...
+      Lilith. Unfortunately, unsealing the First Succubus is the only way to reclaim
+      your lost Crests and replenishing your Authority Seals, My Sovereign."
     PortraitOnLeft: 0
     EventID: 

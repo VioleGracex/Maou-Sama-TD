@@ -101,7 +101,7 @@ namespace MaouSamaTD.Skills
 
                 if (inLane)
                 {
-                    enemy.TakeDamage(_damage, _owner);
+                    enemy.TakeDamage(_damage, _owner, DamageType.Magic, true);
                     _hitEnemies.Add(enemy);
                     if (_showDebugLogs) Debug.Log($"[Phoenix] Lane hit {enemy.name}");
                 }

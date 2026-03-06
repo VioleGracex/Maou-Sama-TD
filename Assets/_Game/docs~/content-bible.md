@@ -26,9 +26,9 @@
 
 ### Amethyst Witch (Mage)
 - **Name**: Lilith.
-- **Trope**: Onee-san / Ara Ara.
-- **Dynamic**: Teases the Maou. Very knowledgeable about history.
-- **Key Dialogue**: "My my, looking at me like that? How bold."
+- **Trope**: The Smug Matriarch / Onee-san.
+- **Dynamic**: Teases the Maou with a predatory, motherly affection. Smug, incredibly knowledgeable, and always seems to be three steps ahead.
+- **Key Dialogue**: "My my, such a bold little spark you are. Careful, Sovereign... you might catch fire."
 
 ## 3. Dialogue Guidelines
 

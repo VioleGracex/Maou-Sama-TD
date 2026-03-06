@@ -12,6 +12,13 @@ namespace MaouSamaTD.Units
         Legendary // 6 Star
     }
 
+    public enum DamageType
+    {
+        Melee,
+        Ranged,
+        Magic
+    }
+
     [CreateAssetMenu(fileName = "NewUnitData", menuName = "MaouSamaTD/Unit Data")]
     public class UnitData : MaouSamaTD.Core.GameDataSO
     {
@@ -30,8 +37,10 @@ namespace MaouSamaTD.Units
         public UnitClass Class;
         public AttackPattern AttackPattern;
         public AttackType AttackType;
+        public DamageType DamageType;
         public int DeploymentCost = 10;
         public int BlockCount = 1;
+        public System.Collections.Generic.List<Vector2Int> CustomPatternOffsets = new System.Collections.Generic.List<Vector2Int>();
 
         [Header("Stats Base")]
         public float MaxHp = 100f;

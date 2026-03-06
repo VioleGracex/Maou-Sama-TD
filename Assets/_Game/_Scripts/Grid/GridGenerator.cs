@@ -90,6 +90,13 @@ namespace MaouSamaTD.Grid
             _gridManager.ClearGrid();
             ClearWalls();
 
+            // Sync Dimensions from MapData if available
+            if (_mapData != null)
+            {
+                _gridManager.Width = _mapData.Width;
+                _gridManager.Height = _mapData.Height;
+            }
+
             int width = _gridManager.Width;
             int height = _gridManager.Height;
 
@@ -179,7 +186,15 @@ namespace MaouSamaTD.Grid
                 if (_wallMaterial != null)
                 {
                     var renderer = wall.GetComponentInChildren<Renderer>();
-                    if (renderer != null) renderer.material = _wallMaterial;
+                    if (renderer != null)
+                    {
+                        renderer.material = _wallMaterial;
+                        // Fix Texture Stretching
+                        Vector3 worldScale = wall.transform.lossyScale;
+                        // Use X or Z for horizontal tiling depending on wall orientation
+                        float horizontalTiling = (scaleMultiplier.x > scaleMultiplier.z) ? worldScale.x : worldScale.z;
+                        renderer.material.mainTextureScale = new Vector2(horizontalTiling, worldScale.y);
+                    }
                 }
 
                 _generatedWalls.Add(wall);
@@ -353,6 +368,10 @@ namespace MaouSamaTD.Grid
         {
             if (data == null) return;
             
+#if UNITY_EDITOR
+            if (!Application.isPlaying) UnityEditor.Undo.RecordObject(this, "Load Map Data");
+#endif
+
             _seed = data.MapSeed;
             _highGroundChance = data.HighGroundChance;
             _spawnPoints = new List<Vector2Int>(data.SpawnPoints);
@@ -360,11 +379,22 @@ namespace MaouSamaTD.Grid
             
             if (_gridManager != null)
             {
+#if UNITY_EDITOR
+                if (!Application.isPlaying) UnityEditor.Undo.RecordObject(_gridManager, "Load Map Data");
+#endif
                 _gridManager.Width = data.Width;
                 _gridManager.Height = data.Height;
             }
             
             GenerateMap();
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                UnityEditor.EditorUtility.SetDirty(this);
+                if (_gridManager != null) UnityEditor.EditorUtility.SetDirty(_gridManager);
+            }
+#endif
         }
 
         public void RemoveExitPoint(Vector2Int coord)

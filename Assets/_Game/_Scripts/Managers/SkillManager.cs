@@ -189,7 +189,18 @@ namespace MaouSamaTD.Skills
             {
                 if (isEnemy)
                 {
-                    unit.TakeDamage(skill.Value);
+                    float finalDamage = skill.Value;
+
+                    // Secret Tutorial Boost for Level 2 Boss
+                    if (_tutorialManager != null && _tutorialManager.IsInTutorial)
+                    {
+                        if (unit is EnemyUnit enemyUnit && enemyUnit.EnemyData != null && enemyUnit.EnemyData.EnemyName == "Abyssal Shade")
+                        {
+                            finalDamage = unit.CurrentHp + 999; // Ensure one-shot
+                            if (_showDebugLogs) Debug.Log("[SkillManager] Secret Tutorial Boost applied to Abyssal Shade!");
+                        }
+                    }
+                    unit.TakeDamage(finalDamage, null, DamageType.Magic, true);
                 }
             }
             else if (skill.EffectType == SkillEffectType.Buff)

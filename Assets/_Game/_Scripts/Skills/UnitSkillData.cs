@@ -15,6 +15,8 @@ namespace MaouSamaTD.Skills
 
         [Header("Assets")]
         public GameObject UltimatePrefab;
-        public Color UltimateColor = Color.red;
+        public Color UltimateColor = Color.red; // Banner color
+        public Color TitleBgColor = Color.black;
+        public Color SkillNameBgColor = Color.black;
     }
 }

@@ -18,18 +18,18 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: "Sovereign! Sovereign!\nthe seal is undone are you finally awake ?"
+    Text: "At last... the seal is being undone. My Sovereign, are you awake?"
     PortraitOnLeft: 0
     EventID: 
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Lesser shadows have breached the outer perimeter. They are vultures, sensing
-      your temporary weakness.
+    Text: "Forgive my intrusion, but sacrilege is afoot. Feral echoes and human interlopers
+      have breached the outer corridors."
     PortraitOnLeft: 0
     EventID: 
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Your full strength is yet to return, but your authority is absolute. Command
-      Ignis to hold the line.
+    Text: "Your strength is still recovering, but your command over the Obsidian Aegis
+      remains. Command Ignis to hold the bottleneck against these vermin."
     PortraitOnLeft: 0
     EventID: 

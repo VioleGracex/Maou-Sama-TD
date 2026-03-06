@@ -15,7 +15,7 @@ namespace MaouSamaTD.Tutorial
         CustomCommand,
         StartWave,
         WaitForWave,
-        WaitForCondition // New
+        WaitForCondition
     }
 
     [System.Serializable]
@@ -43,16 +43,12 @@ namespace MaouSamaTD.Tutorial
         
         [Header("Dialogue")]
         public DialogueData Dialogue;
-        
-        [Header("Targeting (Legacy)")]
-        [ShowIf("ShouldShowLegacyFields")]
-        public string TargetUIName;
-        [ShowIf("ShouldShowLegacyFields")]
-        public List<string> AdditionalTargetUINames = new List<string>();
-        [ShowIf("ShouldShowLegacyFields")]
-        public Vector2Int TargetTile;
-        [ShowIf("ShouldShowLegacyFields")]
-        public List<Vector2Int> AdditionalTargetTiles = new List<Vector2Int>();
+
+        [Button("Debug: Log Step Details")]
+        private void DebugLogStep()
+        {
+            Debug.Log($"[tutorial-debug] Step: {StepName}, Type: {Type}, HandScale: {HandScale}, TargetUI: {(TargetUI != null ? TargetUI.Name : "null")}");
+        }
 
         [Header("Targeting (New)")]
         [ShowIf("HasUITarget")]
@@ -75,21 +71,26 @@ namespace MaouSamaTD.Tutorial
         [Tooltip("Action string to wait for (e.g., 'UnitPlaced', 'WaveStarted')")]
         public string ActionKey;
         
-        [Header("Visuals")]
+        [Header("Hand Visuals")]
         [ShowIf("CanShowHand")]
         public bool ShowHand = true;
+
+        [ShowIf("ShowHand")]
+        [Tooltip("Base scale for the hand visual")]
+        public float HandScale = 1.0f;
         
-        [ShowIf("IsWaitAction")]
+        [ShowIf("ShowHand")]
         public bool DragShowHand = false;
         
-        [ShowIf("DragShowHand")]
-        public UITarget HandDragTargetUI;
+        [ShowIf("ShowHand")]
+        [Tooltip("Visual override for the hand position/scale/offset (if empty, uses primary target)")]
+        public UITarget HandTargetUIOverride;
         
-        [ShowIf("DragShowHand")]
-        public Vector2Int HandDragTargetTile;
+        [ShowIf("ShowHand")]
+        public Vector2Int HandTargetTileOverride;
         
-        [ShowIf("DragShowHand")]
-        public Vector3 HandDragTargetTileOffset = Vector3.zero;
+        [ShowIf("ShowHand")]
+        public Vector3 HandTargetTileOffsetOverride = Vector3.zero;
 
         [Header("Wave Interaction")]
         [ShowIf("IsWaveStep")]
@@ -111,13 +112,6 @@ namespace MaouSamaTD.Tutorial
         [Tooltip("Automatically resume game time (scale 1) after this step completes")]
         public bool ResumeTime = true;
 
-        [ShowIf("ShouldShowLegacyFields")]
-        [Tooltip("Base size of the hole (X, Z) on the floor. Used for UI targets as well.")]
-        public Vector2 HoleSize = Vector2.one;
-
-        [ShowIf("ShouldShowLegacyFields")]
-        [Tooltip("Base vertical height of the world hole column.")]
-        public float HoleHeight = 2.0f;
 
         #region NaughtyAttributes Helpers
         private bool HasUITarget => Type == TutorialStepType.HighlightUI || Type == TutorialStepType.WaitForAction || Type == TutorialStepType.WaitForCondition;
@@ -128,13 +122,15 @@ namespace MaouSamaTD.Tutorial
         private bool IsWaitAction => Type == TutorialStepType.WaitForAction;
         private bool IsWaveStep => Type == TutorialStepType.StartWave || Type == TutorialStepType.WaitForWave;
         private bool HasCondition => Type == TutorialStepType.WaitForCondition;
-        private bool ShouldShowLegacyFields => UseBlocker && (Type == TutorialStepType.HighlightUI || Type == TutorialStepType.WaitForAction) && (TargetUI == null || string.IsNullOrEmpty(TargetUI.Name));
         #endregion
     }
 
     [CreateAssetMenu(fileName = "NewTutorialData", menuName = "MaouSamaTD/Tutorial Data")]
     public class TutorialDataSO : ScriptableObject
     {
+        [Header("Editor Settings")]
+        public bool ShowCustomEditor = true;
+
         public List<TutorialStep> Steps = new List<TutorialStep>();
     }
 }

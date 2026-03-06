@@ -24,6 +24,7 @@ namespace MaouSamaTD.UI
         {
             public RectTransform Target;
             public Vector2 Size; // Multiplier, 1 = original size
+            public Vector2 Offset;
         }
 
         [Header("Overlay Settings")]
@@ -151,8 +152,8 @@ namespace MaouSamaTD.UI
                 size.x *= h.Size.x;
                 size.y *= h.Size.y;
 
-                Vector2 sMin = RectTransformUtility.WorldToScreenPoint(targetCam, center - size * 0.5f);
-                Vector2 sMax = RectTransformUtility.WorldToScreenPoint(targetCam, center + size * 0.5f);
+                Vector2 sMin = RectTransformUtility.WorldToScreenPoint(targetCam, center + new Vector3(size.x * h.Offset.x, size.y * h.Offset.y, 0) - size * 0.5f);
+                Vector2 sMax = RectTransformUtility.WorldToScreenPoint(targetCam, center + new Vector3(size.x * h.Offset.x, size.y * h.Offset.y, 0) + size * 0.5f);
 
                 if (screenPoint.x >= Mathf.Min(sMin.x, sMax.x) && screenPoint.x <= Mathf.Max(sMin.x, sMax.x) && 
                     screenPoint.y >= Mathf.Min(sMin.y, sMax.y) && screenPoint.y <= Mathf.Max(sMin.y, sMax.y))
@@ -339,8 +340,9 @@ namespace MaouSamaTD.UI
 
             Vector2 localBL, localTR;
             Camera targetCam = GetTargetCamera(rt);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[0]), null, out localBL);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[2]), null, out localTR);
+            Vector3 relativeOffset = new Vector3(size.x * data.Offset.x, size.y * data.Offset.y, 0);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[0] + relativeOffset), null, out localBL);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[2] + relativeOffset), null, out localTR);
 
             Rect overlayPixelRect = overlayRect.rect;
             float minX = Mathf.InverseLerp(overlayPixelRect.xMin, overlayPixelRect.xMax, localBL.x);
@@ -464,8 +466,8 @@ namespace MaouSamaTD.UI
                     size.x *= h.Size.x;
                     size.y *= h.Size.y;
 
-                    Vector2 sMin = RectTransformUtility.WorldToScreenPoint(targetCam, center - size * 0.5f);
-                    Vector2 sMax = RectTransformUtility.WorldToScreenPoint(targetCam, center + size * 0.5f);
+                    Vector2 sMin = RectTransformUtility.WorldToScreenPoint(targetCam, center + new Vector3(size.x * h.Offset.x, size.y * h.Offset.y, 0) - size * 0.5f);
+                    Vector2 sMax = RectTransformUtility.WorldToScreenPoint(targetCam, center + new Vector3(size.x * h.Offset.x, size.y * h.Offset.y, 0) + size * 0.5f);
                     
                     if (screenPoint.x >= Mathf.Min(sMin.x, sMax.x) && screenPoint.x <= Mathf.Max(sMin.x, sMax.x) && 
                         screenPoint.y >= Mathf.Min(sMin.y, sMax.y) && screenPoint.y <= Mathf.Max(sMin.y, sMax.y))

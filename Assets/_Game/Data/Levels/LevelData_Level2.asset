@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd8e99080aa85214c9d7d8ee3ade7292, type: 3}
+  m_Name: LevelData_Level2
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
+  useDefaultInspector: 0
+  UniqueID: b448e225-ae5c-4f11-9eac-591e3ff27ec9
+  LevelIndex: 2
+  LevelName: Tomb of Lilith
+  Description: Reclaim the First Succubus and restore your authority.
+  GracePeriod: 10
+  LevelID: 1-2
+  WinRewards:
+  - Type: 1
+    Amount: 100
+  PremadeCohort:
+  - {fileID: 11400000, guid: be5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b, type: 2}
+  - {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
+  IsCohortLocked: 1
+  SupportAssistant: {fileID: 0}
+  IsAssistantLocked: 1
+  MaleSovereignRites:
+  - {fileID: 11400000, guid: 1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a, type: 2}
+  FemaleSovereignRites: []
+  IsRitesLocked: 1
+  MapData: {fileID: 11400000, guid: cf6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c, type: 2}
+  StartingAuthoritySeals: 20
+  MaxAuthoritySeals: 50
+  AuthoritySealsPerSecond: 1.5
+  Waves:
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
+      Count: 5
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: b3dd7b36f3b6dd84d8872428f11fdf20, type: 2}
+      Count: 2
+      SpawnInterval: 2
+      InitialDelay: 5
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 10
+    WaveMessage: Shadow Skirmish
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: e0794d572780145479dfb13267b7c045, type: 2}
+      Count: 3
+      SpawnInterval: 2.5
+      InitialDelay: 2
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 10
+    WaveMessage: Aerial Incursion
+  - Groups: []
+    DelayBeforeNextWave: 5
+    WaveMessage: 
+  - Groups: []
+    DelayBeforeNextWave: 5
+    WaveMessage: 
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 479fb6620cf11e341b226f03c87e44b0, type: 2}
+      Count: 1
+      SpawnInterval: 1
+      InitialDelay: 3
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 10
+    WaveMessage: The Abyssal Shade
+  HasTutorial: 1
+  TutorialData: {fileID: 11400000, guid: f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5, type: 2}

@@ -18,7 +18,8 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Excellent. She will hold them. I've granted her your blessing using the
-      Authority Seals.
+    Text: "Exquisite. She stands as an unbreakable wall of shadow. I have woven her
+      soul-link into your Authority Seals; she is now a direct extension of your divine
+      will."
     PortraitOnLeft: 0
     EventID: 

@@ -49,6 +49,7 @@ namespace MaouSamaTD.UI.Skills
             }
             if (_toggleButton != null)
             {
+                 _toggleButton.gameObject.name = "SovereignRiteToggle";
                  var txt = _toggleButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                  if (txt != null) txt.text = "Show"; // Initial state is Hidden, so button says "Show"
             }
@@ -77,6 +78,17 @@ namespace MaouSamaTD.UI.Skills
                 
                 var btn = Instantiate(_buttonPrefab, _buttonContainer);
                 btn.Initialize(skill, _skillManager, _interactionManager, _currencyManager);
+                
+                // Name the button based on skill type for Tutorial Targeting
+                string btnName = "SkillButton_Unknown";
+                string effectStr = skill.EffectType.ToString();
+                
+                if (effectStr.Contains("AOE")) btnName = "SkillButton_AOE";
+                else if (effectStr.Contains("ST_Buff")) btnName = "SkillButton_BUFF";
+                else if (effectStr.Contains("ST_")) btnName = "SkillButton_ST";
+                
+                btn.gameObject.name = btnName;
+
                 _spawnedButtons.Add(btn);
             }
         }

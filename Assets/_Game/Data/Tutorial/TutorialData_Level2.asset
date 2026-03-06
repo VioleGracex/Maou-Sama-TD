@@ -1,0 +1,436 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c6c0a664a64034e81cbd9127cb1407, type: 3}
+  m_Name: TutorialData_Level2
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.TutorialDataSO
+  ShowCustomEditor: 1
+  Steps:
+  - StepName: Hide Lilith Button Initial
+    Type: 5
+    Dialogue: {fileID: 0}
+    TargetUI:
+      Name: UnitButton_Lilith
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 2
+    ActionKey: SetUnitButtonActive
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 0
+    ResumeTime: 0
+  - StepName: Intro
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: d7743a0cd5ffe49439ec1f41c24f8f20, type: 2}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 1
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+  - StepName: Start Wave 1
+    Type: 6
+    Dialogue: {fileID: 11400000, guid: 7a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d, type: 2}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0.5
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: 0
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+  - StepName: Holding the Line (Ignis)
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: 4055988c3759ad545876fec42bc946c3, type: 2}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0.5
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 0
+    ResumeTime: 1
+  - StepName: Wait for Wave 1
+    Type: 7
+    Dialogue: {fileID: 0}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: 0
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1
+  - StepName: Unsealing Lilith (Dialogue)
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: 8b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e, type: 2}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 1
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+  - StepName: Show Lilith Button
+    Type: 5
+    Dialogue: {fileID: 0}
+    TargetUI:
+      Name: UnitButton_Lilith
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 2
+    ActionKey: SetUnitButtonActive
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 1
+    UseBlocker: 0
+    ResetBlocker: 0
+    ResumeTime: 1
+  - StepName: Start Aerial Wave (Shadow Wings)
+    Type: 6
+    Dialogue: {fileID: 11400000, guid: 94fbae4361fa6f34999127f5611638d9, type: 2}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0.5
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: 1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+  - StepName: Lilith Placement Tutorial
+    Type: 3
+    Dialogue: {fileID: 11400000, guid: 4a9f99aba8e0d954c91df435e187f5e8, type: 2}
+    TargetUI:
+      Name: UnitButton_Lilith
+      Size: {x: 1.2, y: 1.2}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles:
+    - Coordinate: {x: 4, y: 5}
+      Size: {x: 1, y: 1}
+      Offset: {x: 0, y: 0, z: 0}
+      Height: 2
+    DelayBefore: 1
+    Duration: 2
+    ActionKey: UnitPlaced
+    ShowHand: 1
+    HandScale: 1
+    DragShowHand: 1
+    HandTargetUIOverride:
+      Name: UnitButton_Lilith
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 4, y: 5}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+  - StepName: Start Boss Wave (Abyssal Shade)
+    Type: 6
+    Dialogue: {fileID: 11400000, guid: 9964686cb89ebda479a89117220ac196, type: 2}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 1
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: 4
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 1
+  - StepName: Wait for Boss Phase (70% HP)
+    Type: 8
+    Dialogue: {fileID: 11400000, guid: 17e9b78031a7cf140b8b69281bda5be3, type: 2}
+    TargetUI:
+      Name: Abyssal Shade
+      Size: {x: 2, y: 2}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 2
+    ActionKey: BossHealth
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 70
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 0
+  - StepName: Grant Rites Power
+    Type: 5
+    Dialogue: {fileID: 0}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 2
+    ActionKey: GrantMaxSeals
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 0
+    ResumeTime: 0
+  - StepName: Opening the Vault (Rite Tutorial)
+    Type: 3
+    Dialogue: {fileID: 11400000, guid: acae4862676c7bb4ca51c7bd01b29ed1, type: 2}
+    TargetUI:
+      Name: SovereignRiteToggle
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0.5
+    Duration: 2
+    ActionKey: RiteMenuOpened
+    ShowHand: 1
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 1
+    ResumeTime: 0
+  - StepName: Final Rite Command
+    Type: 3
+    Dialogue: {fileID: 11400000, guid: 9c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f, type: 2}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0.5
+    Duration: 2
+    ActionKey: SkillUsed
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 1
+    ResetBlocker: 0
+    ResumeTime: 1
+  - StepName: Wait for Victory
+    Type: 7
+    Dialogue: {fileID: 0}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: 4
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1
+  - StepName: End Dialogue
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: ad4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a, type: 2}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 1
+    Duration: 2
+    ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 0
+    UseBlocker: 0
+    ResetBlocker: 1
+    ResumeTime: 1

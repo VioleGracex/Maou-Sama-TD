@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
+  m_Name: L2_GuidingMana_Dialogue
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
+  Style: 0
+  Background: 0
+  CharactersPerSecond: 30
+  Lines:
+  - SpeakerName: Hecatina
+    SpeakerPortrait: {fileID: 0}
+    Text: "My Sovereign... it is time to unleash your true authority. Lilith's presence has resonated with the ancient mana here."
+    PortraitOnLeft: 0
+    EventID: 
+  - SpeakerName: Hecatina
+    SpeakerPortrait: {fileID: 0}
+    Text: "Focus your intent... use your Rite to end this shadow once and for all."
+    PortraitOnLeft: 0
+    EventID:

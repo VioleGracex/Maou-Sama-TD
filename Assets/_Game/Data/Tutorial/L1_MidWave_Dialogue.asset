@@ -18,12 +18,13 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Sovereign! Ignis is holding the corridor, but the shadows keep coming.
-      She wants to clear them all out in one massive strike!
+    Text: "Wait! The air grows cold—a larger cluster of feral spirits manifests! They
+      seek to reclaim the Sanctum through sheer, mindless numbers."
     PortraitOnLeft: 0
     EventID: 
   - SpeakerName: Hecatina
     SpeakerPortrait: {fileID: 0}
-    Text: Use Ignis's [Phoenix Radiance] now! Show them the true power of a Sovereign!
+    Text: "Use your Authority! Command Ignis to unleash the [Obsidian Aegis] and incinerate
+      these wretched souls."
     PortraitOnLeft: 0
     EventID: 

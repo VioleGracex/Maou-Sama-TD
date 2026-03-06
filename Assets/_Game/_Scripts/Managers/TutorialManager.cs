@@ -22,6 +22,7 @@ namespace MaouSamaTD.Managers
         [Inject] private UIPopupBlocker _uiBlocker;
         [Inject] private EnemyManager _enemyManager;
         [Inject] private UnitInspectorUI _unitInspectorUI;
+        [Inject] private DeploymentUI _deploymentUI;
         #endregion
 
         #region Serialized Settings
@@ -137,10 +138,9 @@ namespace MaouSamaTD.Managers
                     case TutorialStepType.HighlightTile:
                         _gameManager.SetSpeed(0);
                         HandleUIHighlight(step);
-                        HighlightTile(step.TargetTile);
-                        if (step.AdditionalTargetTiles != null)
+                        if (step.TargetTiles != null)
                         {
-                            foreach (var tile in step.AdditionalTargetTiles) HighlightTile(tile);
+                            foreach (var wt in step.TargetTiles) HighlightTile(wt.Coordinate);
                         }
                         
                         bool tileDialogueDone = false;
@@ -228,33 +228,59 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.CustomCommand:
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Executing Custom Command: {step.ActionKey} for {step.TargetUIName}");
-                        if (step.ActionKey == "ChargeUnitUlt")
                         {
-                            // Fix: Use new TargetUI name if legacy TargetUIName is empty
-                            string targetName = !string.IsNullOrEmpty(step.TargetUIName) ? step.TargetUIName : (step.TargetUI != null ? step.TargetUI.Name : "");
+                            string targetName = (step.TargetUI != null ? step.TargetUI.Name : "");
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Executing Custom Command: {step.ActionKey} for {targetName}");
                             
-                            var unit = PlayerUnit.ActiveUnits.Find(u => u.Data != null && u.Data.UnitName == targetName);
-                            if (unit == null) unit = PlayerUnit.ActiveUnits.Find(u => u.gameObject.name.Contains(targetName));
-                            
-                            if (unit != null)
+                            if (step.ActionKey == "ChargeUnitUlt")
                             {
-                                unit.ForceChargeUltimate();
+                                var unit = PlayerUnit.ActiveUnits.Find(u => u.Data != null && u.Data.UnitName == targetName);
+                                if (unit == null) unit = PlayerUnit.ActiveUnits.Find(u => u.gameObject.name.Contains(targetName));
+                                
+                                if (unit != null)
+                                {
+                                    unit.ForceChargeUltimate();
+                                }
+                                else
+                                {
+                                    if (_showDebugLogs) Debug.LogWarning($"[tutorial] CustomCommand ChargeUnitUlt: Could not find unit '{targetName}'");
+                                }
                             }
-                            else
+                            else if (step.ActionKey == "UnlockSelection")
                             {
-                                if (_showDebugLogs) Debug.LogWarning($"[tutorial] CustomCommand ChargeUnitUlt: Could not find unit '{targetName}'");
+                                if (_interactionManager != null)
+                                {
+                                    _interactionManager.IsSelectionLocked = false;
+                                    if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: Unit Selection UNLOCKED.");
+                                }
                             }
+                            else if (step.ActionKey == "GrantMaxSeals")
+                            {
+                                if (MaouSamaTD.Managers.CurrencyManager.Instance != null)
+                                {
+                                    MaouSamaTD.Managers.CurrencyManager.Instance.GiveSeals(MaouSamaTD.Managers.CurrencyManager.Instance.MaxSeals);
+                                    if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: GrantMaxSeals executed.");
+                                }
+                                else
+                                {
+                                    if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand GrantMaxSeals: CurrencyManager.Instance is NULL!");
+                                }
+                            }
+                            else if (step.ActionKey == "SetUnitButtonActive")
+                            {
+                                if (_deploymentUI != null)
+                                {
+                                    bool active = (step.RequiredCount > 0);
+                                    _deploymentUI.SetUnitButtonVisibility(targetName, active);
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: SetUnitButtonActive for {targetName} to {active}");
+                                }
+                                else
+                                {
+                                    if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand SetUnitButtonActive: DeploymentUI is NULL!");
+                                }
+                            }
+                            break;
                         }
-                        else if (step.ActionKey == "UnlockSelection")
-                        {
-                            if (_interactionManager != null)
-                            {
-                                _interactionManager.IsSelectionLocked = false;
-                                if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: Unit Selection UNLOCKED.");
-                            }
-                        }
-                        break;
                 }
 
                 if (_showDebugLogs) Debug.Log($"[tutorial] <<< Finished Step [{_currentStepIndex}]: {step.StepName}");
@@ -300,19 +326,6 @@ namespace MaouSamaTD.Managers
             if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
             if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
 
-            // Legacy UI Fallback
-            if (uiTargets.Count == 0 && !string.IsNullOrEmpty(step.TargetUIName))
-            {
-                uiTargets.Add(new UITarget { Name = step.TargetUIName, Size = step.HoleSize });
-            }
-            if (step.AdditionalTargetUINames != null)
-            {
-                foreach (var name in step.AdditionalTargetUINames)
-                {
-                    if (!string.IsNullOrEmpty(name)) uiTargets.Add(new UITarget { Name = name, Size = step.HoleSize });
-                }
-            }
-
             foreach (var ut in uiTargets)
             {
                 RectTransform rt = FindTargetRect(ut.Name);
@@ -321,7 +334,8 @@ namespace MaouSamaTD.Managers
                     uiHits.Add(new UIPopupBlocker.UIHighlightData 
                     { 
                          Target = rt, 
-                         Size = (ut.Size != Vector2.zero) ? ut.Size : Vector2.one 
+                         Size = (ut.Size != Vector2.zero) ? ut.Size : Vector2.one,
+                         Offset = ut.SizeOffset
                     });
                 }
             }
@@ -339,31 +353,6 @@ namespace MaouSamaTD.Managers
                     });
                 }
             }
-            else
-            {
-                // Legacy Tile Fallback
-                if (step.TargetTile != Vector2Int.zero)
-                {
-                    worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
-                    {
-                        Position = GetWorldPosForTile(step.TargetTile),
-                        Size = step.HoleSize,
-                        Height = step.HoleHeight
-                    });
-                }
-                if (step.AdditionalTargetTiles != null)
-                {
-                    foreach (var tile in step.AdditionalTargetTiles)
-                    {
-                        worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
-                        {
-                            Position = GetWorldPosForTile(tile),
-                            Size = step.HoleSize,
-                            Height = step.HoleHeight
-                        });
-                    }
-                }
-            }
 
             // 5. Apply to Blocker
             _uiBlocker.ShowBlockerWithDetailedTargets(uiHits, worldHighlights);
@@ -372,41 +361,78 @@ namespace MaouSamaTD.Managers
             if (step.DragShowHand && (uiHits.Count > 0 || worldHighlights.Count > 0))
             {
                 Vector2 startPos = Vector2.zero;
-                if (uiHits.Count > 0) startPos = uiHits[0].Target.position;
+                if (uiHits.Count > 0) startPos = (Vector2)uiHits[0].Target.position + uiHits[0].Offset;
                 else if (worldHighlights.Count > 0) startPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
 
                 // Find drag target
-                if (step.HandDragTargetUI != null && !string.IsNullOrEmpty(step.HandDragTargetUI.Name))
+                if (step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
                 {
-                    RectTransform drt = FindTargetRect(step.HandDragTargetUI.Name);
-                    if (drt != null) _handUI.MoveHand(startPos, drt.position);
-                    else _handUI.MoveHand(startPos, Vector2.zero); // Or hide?
+                    RectTransform drt = FindTargetRect(step.HandTargetUIOverride.Name);
+                    if (drt != null) 
+                    {
+                        Vector3[] corners = new Vector3[4];
+                        drt.GetWorldCorners(corners);
+                        Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                        Vector3 size = corners[2] - corners[0];
+                        Vector2 targetPos = (Vector2)center + new Vector2(size.x * step.HandTargetUIOverride.SizeOffset.x, size.y * step.HandTargetUIOverride.SizeOffset.y);
+                        float finalScale = step.HandScale * step.HandTargetUIOverride.Size.x;
+                        if (_showDebugLogs) Debug.Log($"[tutorial] DRAG Hand: Override Scale {step.HandScale} * {step.HandTargetUIOverride.Size.x} = {finalScale}");
+                        _handUI.MoveHand(startPos, targetPos, finalScale);
+                    }
+                    else _handUI.MoveHand(startPos, Vector2.zero, step.HandScale);
                 }
                 else
                 {
-                    Vector3 worldTarget = GetWorldPosForTile(step.HandDragTargetTile) + step.HandDragTargetTileOffset;
+                    Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
                     Vector2 screenTarget = Camera.main.WorldToScreenPoint(worldTarget);
-                    _handUI.MoveHand(startPos, screenTarget);
+                    if (_showDebugLogs) Debug.Log($"[tutorial] DRAG Hand: Tile Scale {step.HandScale}");
+                    _handUI.MoveHand(startPos, screenTarget, step.HandScale);
                 }
             }
             else if (step.ShowHand)
             {
                 Vector2 handPos = Vector2.zero;
-                float handScale = 1f;
+                float handScale = step.HandScale;
 
-                if (worldHighlights.Count > 0) 
+                // 1. Check for manual Hand Override (UITarget or Tile)
+                if (step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
+                {
+                    RectTransform drt = FindTargetRect(step.HandTargetUIOverride.Name);
+                    if (drt != null) 
+                    {
+                        Vector3[] corners = new Vector3[4];
+                        drt.GetWorldCorners(corners);
+                        Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                        Vector3 size = corners[2] - corners[0];
+                        handPos = (Vector2)center + new Vector2(size.x * step.HandTargetUIOverride.SizeOffset.x, size.y * step.HandTargetUIOverride.SizeOffset.y);
+                        handScale *= step.HandTargetUIOverride.Size.x;
+                    }
+                }
+                else if (step.HandTargetTileOverride != Vector2Int.zero)
+                {
+                    Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
+                    handPos = Camera.main.WorldToScreenPoint(worldTarget);
+                }
+                // 2. Fallback to Primary Target
+                else if (worldHighlights.Count > 0) 
                 {
                     handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
-                    // Use hole size x for world highlights if specified
-                    if (step.HoleSize.x > 0) handScale = step.HoleSize.x;
                 }
                 else if (uiHits.Count > 0) 
                 {
-                    handPos = uiHits[0].Target.position;
-                    handScale = uiHits[0].Size.x;
+                    Vector3[] corners = new Vector3[4];
+                    uiHits[0].Target.GetWorldCorners(corners);
+                    Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                    Vector3 size = corners[2] - corners[0];
+                    handPos = (Vector2)center + new Vector2(size.x * uiHits[0].Offset.x, size.y * uiHits[0].Offset.y);
+                    handScale *= uiHits[0].Size.x;
                 }
 
-                if (handPos != Vector2.zero) _handUI.ShowAt(handPos, handScale);
+                if (handPos != Vector2.zero) 
+                {
+                    if (_showDebugLogs) Debug.Log($"[tutorial] STATIC Hand: Calculated Final Scale {handScale} (Base: {step.HandScale})");
+                    _handUI.ShowAt(handPos, handScale);
+                }
             }
         }
 
@@ -526,15 +552,11 @@ namespace MaouSamaTD.Managers
             if (currentStep == null) return new Vector2Int(-1, -1);
 
             if (currentStep.ActionKey == "UnitPlaced")
-                return currentStep.HandDragTargetTile;
+                return currentStep.HandTargetTileOverride;
 
             if (currentStep.TargetTiles != null && currentStep.TargetTiles.Count > 0)
                 return currentStep.TargetTiles[0].Coordinate;
             
-            // Legacy fallback
-            if (currentStep.TargetTile != Vector2Int.zero)
-                return currentStep.TargetTile;
-
             return new Vector2Int(-1, -1);
         }
 
@@ -545,7 +567,7 @@ namespace MaouSamaTD.Managers
                 case "UnitKills":
                 {
                     PlayerUnit targetUnit = null;
-                    string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : step.TargetUIName;
+                    string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "";
                     string killsTarget = targetName.Contains("_") ? targetName.Substring(targetName.IndexOf('_') + 1) : targetName;
                     
                     foreach(var u in PlayerUnit.ActiveUnits)
@@ -576,14 +598,9 @@ namespace MaouSamaTD.Managers
                         centerPos = GetWorldPosForTile(step.TargetTiles[0].Coordinate);
                         foundCenter = true;
                     }
-                    else if (step.TargetTile != Vector2Int.zero)
-                    {
-                        centerPos = GetWorldPosForTile(step.TargetTile);
-                        foundCenter = true;
-                    }
                     else
                     {
-                        string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : step.TargetUIName;
+                        string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "";
                         string rangeTarget = targetName.Contains("_") ? targetName.Substring(targetName.IndexOf('_') + 1) : targetName;
                         foreach(var u in PlayerUnit.ActiveUnits)
                         {
@@ -601,7 +618,6 @@ namespace MaouSamaTD.Managers
                         int count = 0;
                         float threshold = 2.0f;
                         if (step.TargetTiles != null && step.TargetTiles.Count > 0) threshold = step.TargetTiles[0].Size.x;
-                        else if (step.HoleSize.x > 0) threshold = step.HoleSize.x;
 
                         foreach(var enemy in EnemyUnit.ActiveEnemies)
                         {
@@ -630,7 +646,7 @@ namespace MaouSamaTD.Managers
                 
                 case "UnitReach":
                 {
-                    string reachName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : step.TargetUIName;
+                    string reachName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "";
                     string reachTarget = reachName.Contains("_") ? reachName.Substring(reachName.IndexOf('_') + 1) : reachName;
                     foreach(var u in PlayerUnit.ActiveUnits)
                     {
@@ -640,6 +656,20 @@ namespace MaouSamaTD.Managers
                             if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: UnitReach ({u.ReachCount}/{step.RequiredCount})");
                             return met;
                         }
+                    }
+                    return false;
+                }
+
+                case "BossHealth":
+                {
+                    string bossName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "Abyssal Shade";
+                    var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == bossName);
+                    if (boss != null)
+                    {
+                        float hpPercent = (boss.CurrentHp / boss.MaxHp) * 100f;
+                        bool met = hpPercent <= step.RequiredCount;
+                        if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: BossHealth ({hpPercent}% <= {step.RequiredCount}%)");
+                        return met;
                     }
                     return false;
                 }

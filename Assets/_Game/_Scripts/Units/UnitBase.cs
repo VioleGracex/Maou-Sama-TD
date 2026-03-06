@@ -21,6 +21,9 @@ namespace MaouSamaTD.Units
         public float AttackPower => _attackPower;
         public float Defense => _defense;
         public virtual float Range => _data != null ? _data.Range : 0f;
+        
+        protected bool _isDead = false;
+        public bool IsDead => _isDead;
 
         [Header("Visuals")]
         [SerializeField] protected SpriteRenderer _spriteRenderer;
@@ -162,10 +165,24 @@ namespace MaouSamaTD.Units
             _spriteRenderer.SetPropertyBlock(_mpb);
         }
 
-        public virtual void TakeDamage(float amount, UnitBase attacker = null)
+        [Header("Combat (Dynamics)")]
+        public System.Collections.Generic.List<DamageType> Immunities = new System.Collections.Generic.List<DamageType>();
+
+        public virtual void TakeDamage(float amount, UnitBase attacker = null, DamageType damageType = DamageType.Melee, bool isSkill = false)
         {
-            float damageTaken = Mathf.Max(1, amount - _defense); 
-            if (_showDebugLogs) Debug.Log($"[Damage] {gameObject.name} taking {damageTaken} ({amount} - {_defense} def). HP: {_currentHp} -> {_currentHp - damageTaken}");
+            if (_isDead) return;
+
+            float finalAmount = amount;
+
+            // Skills/Ultimates bypass regular damage type immunities
+            if (!isSkill && Immunities.Contains(damageType))
+            {
+                if (_showDebugLogs) Debug.Log($"[Immunity] {gameObject.name} is immune to {damageType}! Damage nullified.");
+                finalAmount = 0;
+            }
+
+            float damageTaken = Mathf.Max(finalAmount > 0 ? 1 : 0, finalAmount - _defense); 
+            if (_showDebugLogs) Debug.Log($"[Damage] {gameObject.name} taking {damageTaken} ({amount} {damageType} - {_defense} def, isSkill: {isSkill}). HP: {_currentHp} -> {_currentHp - damageTaken}");
             _currentHp -= damageTaken;
             
             if (_hpFillImage != null)
@@ -229,7 +246,74 @@ namespace MaouSamaTD.Units
 
         protected virtual void Die()
         {
+            if (_isDead) return;
+            _isDead = true;
+
+            if (_showDebugLogs) Debug.Log($"[Death] {gameObject.name} has died.");
+
+            // Disable interactions immediately
+            var colliders = GetComponentsInChildren<Collider>();
+            foreach (var c in colliders) c.enabled = false;
+
+            var colliders2D = GetComponentsInChildren<Collider2D>();
+            foreach (var c in colliders2D) c.enabled = false;
+
+            // Stop visual effects
+            if (_hpFillImage != null && _hpFillImage.canvas != null)
+                _hpFillImage.canvas.gameObject.SetActive(false);
+
+            if (_textFallback != null)
+                _textFallback.gameObject.SetActive(false);
+
             OnDeath?.Invoke();
+
+            // Handle Animation
+            Animator animator = GetComponentInChildren<Animator>();
+            if (animator != null)
+            {
+                bool hasDieTrigger = false;
+                foreach (var param in animator.parameters)
+                {
+                    if (param.name == "Die" || param.name == "Death")
+                    {
+                        hasDieTrigger = true;
+                        animator.SetTrigger(param.name);
+                        break;
+                    }
+                }
+
+                if (hasDieTrigger)
+                {
+                    StartCoroutine(DelayedDestroy(animator));
+                    return;
+                }
+            }
+
+            Destroy(gameObject);
+        }
+
+        private System.Collections.IEnumerator DelayedDestroy(Animator animator)
+        {
+            // Give a bit of time for the transition to start
+            yield return new WaitForSeconds(0.1f);
+
+            float timeout = 5f; // Hard limit for death animation
+            float elapsed = 0.1f;
+
+            while (elapsed < timeout)
+            {
+                var state = animator.GetCurrentAnimatorStateInfo(0);
+                // If we are not in a death-related state anymore after starting, or if the animation finished
+                if (!state.IsName("Die") && !state.IsName("Death") && elapsed > 0.5f)
+                    break;
+
+                if (state.normalizedTime >= 1.0f && !animator.IsInTransition(0))
+                    break;
+
+                yield return null;
+                elapsed += Time.deltaTime;
+            }
+
             Destroy(gameObject);
         }
 
@@ -253,6 +337,10 @@ namespace MaouSamaTD.Units
                     return dx == dy && dx <= iRange;
                 case AttackPattern.All:
                     return dx <= iRange && dy <= iRange; 
+                case AttackPattern.Custom:
+                    if (_data == null || _data.CustomPatternOffsets == null) return false;
+                    Vector2Int offset = target - origin;
+                    return _data.CustomPatternOffsets.Contains(offset);
                 default:
                     return false;
             }

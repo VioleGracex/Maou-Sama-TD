@@ -115,7 +115,9 @@ namespace MaouSamaTD.Skills.Editor
             EditorGUILayout.PropertyField(ultPrefabProp, new GUIContent("Ultimate Prefab (MUST)"));
             EditorGUILayout.EndHorizontal();
 
-            DrawProperty("UltimateColor", "Ultimate Tint Color");
+            DrawProperty("UltimateColor", "Ultimate Banner Color");
+            DrawProperty("TitleBgColor", "Title Background Color");
+            DrawProperty("SkillNameBgColor", "Skill Name Background Color");
             DrawProperty("ChargeCost", "SP Cost (Unit Skills)");
             
             GUILayout.Space(10);

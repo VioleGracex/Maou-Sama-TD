@@ -45,10 +45,10 @@ namespace MaouSamaTD.Utils
             _lineRenderer.endWidth = 0.5f;
             _lineRenderer.positionCount = 0;
             _lineRenderer.useWorldSpace = true;
-            _lineRenderer.textureMode = LineTextureMode.Tile; 
+            _lineRenderer.textureMode = LineTextureMode.RepeatPerSegment; // Prevent twisting at corners
             
-            _lineRenderer.startColor = new Color(1f, 0.5f, 0f, 0f); // Alpha 0 init
-            _lineRenderer.endColor = new Color(0f, 1f, 0.5f, 0f);   
+            _lineRenderer.startColor = new Color(1f, 0.5f, 0.2f, 0f); // Match orange-ish theme
+            _lineRenderer.endColor = new Color(0.2f, 1f, 0.5f, 0f);   
         }
 
         private void ConfigureMaterial()
@@ -107,37 +107,19 @@ namespace MaouSamaTD.Utils
                     // Let's do simple pixel math
                     // Center line y=32
                     
-                    // Distance from center line
-                    float distY = Mathf.Abs(y - size/2f);
+                    // New Thick Chevron Logic
+                    // Tip at x=55. Wings go back to x=15.
+                    // v = distance from center (0.5)
+                    float distFromCenter = Mathf.Abs(v - 0.5f);
                     
-                    // Arrow shape: x should be roughly size/2 + (something - distY)
-                    // Tip is at right (high X)
+                    // The tip of the arrow should be at x=55
+                    // As we go vertical (distFromCenter increases), the arrow edge should move left
+                    float arrowEdgeX = 55 - (distFromCenter * 60); // 60 is the "spread"
                     
-                    // Chevron condition: x > (size - distY * 1.5) ?
-                    // Let's create a filled chevron mask
-                    
-                    bool mask = false;
-                    // Chevron pointing Right
-                    // Head at x=50. Tail at x=10. Width based on Y.
-                    
-                    float tailX = 10 + distY; // As we go further from center, tail moves right -> Arrow points LEFT? 
-                    // Wait.
-                    // Center Y=32. DistY=0 -> TailX=10.
-                    // Y=0. DistY=32 -> TailX=42.
-                    // shape <
-                    
-                    // We want >
-                    // Tip at X=50.
-                    // Wings go back.
-                    // X < 50 - distY
-                    
-                    // Let's draw a thick line arrow
-                    if (x < (55 - distY) && x > (45 - distY))
+                    if (x < arrowEdgeX && x > arrowEdgeX - 15) // 15 is thickness
                     {
-                        mask = true;
+                        pixels[y * size + x] = white;
                     }
-
-                    if (mask) pixels[y * size + x] = white;
                 }
             }
 

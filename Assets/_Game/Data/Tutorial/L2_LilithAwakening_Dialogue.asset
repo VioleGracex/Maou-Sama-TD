@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
+  m_Name: L2_LilithAwakening_Dialogue
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
+  Style: 0
+  Background: 1
+  CharactersPerSecond: 30
+  Lines:
+  - SpeakerName: Lilith
+    SpeakerPortrait: {fileID: 0}
+    Text: "Mmm... such a powerful, cold grip. Is that you, my delicious Sovereign?
+      You've certainly taken your time."
+    PortraitOnLeft: 1
+    EventID: 
+  - SpeakerName: Hecatina
+    SpeakerPortrait: {fileID: 0}
+    Text: "Control your tongue, creature. The Sovereign requires your strength, not
+      your insolence."
+    PortraitOnLeft: 0
+    EventID: 
+  - SpeakerName: Lilith
+    SpeakerPortrait: {fileID: 0}
+    Text: "Jealous as ever, Hecatina? Don't worry, there’s enough of our Master to
+      go around. Now, Sovereign... let us deal with these uninvited guests."
+    PortraitOnLeft: 1
+    EventID: 

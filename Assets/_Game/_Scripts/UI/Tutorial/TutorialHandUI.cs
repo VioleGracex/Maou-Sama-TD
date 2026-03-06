@@ -46,13 +46,14 @@ namespace MaouSamaTD.UI.Tutorial
                     .SetUpdate(true);
         }
 
-        public void MoveHand(Vector2 start, Vector2 end)
+        public void MoveHand(Vector2 start, Vector2 end, float targetScale = 1f)
         {
-            Debug.Log($"[tutorial] Hand MoveHand: from {start} to {end}");
+            Debug.Log($"[tutorial] Hand MoveHand: from {start} to {end} scale: {targetScale}");
             gameObject.SetActive(true);
             _panel.SetActive(true);
             _handTransform.DOKill();
             _handTransform.position = start;
+            _handTransform.localScale = Vector3.one * targetScale;
             _handTransform.DOMove(end, 1.5f)
                 .SetLoops(-1, LoopType.Restart)
                 .SetEase(Ease.InOutSine)

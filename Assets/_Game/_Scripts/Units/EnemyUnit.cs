@@ -21,6 +21,7 @@ namespace MaouSamaTD.Units
         private bool _isCharmed = false;
         private float _charmTimer = 0f;
         private Stack<Tile> _retreatPath = new Stack<Tile>();
+        private int _currentPhasingCharges;
 
         public static System.Collections.Generic.List<EnemyUnit> ActiveEnemies = new System.Collections.Generic.List<EnemyUnit>();
 
@@ -43,6 +44,13 @@ namespace MaouSamaTD.Units
             _attackPower = data.AttackPower;
             _attackInterval = data.AttackInterval;
             _defense = 0f; // Reset defense as EnemyData doesn't have it yet
+            _currentPhasingCharges = data.PhasingCharges;
+            
+            Immunities.Clear();
+            if (data.Immunities != null)
+            {
+                Immunities.AddRange(data.Immunities);
+            }
             
             gameObject.name = $"Enemy_{data.EnemyName}_W{waveIndex}_O{enemyIndex}";
             
@@ -118,6 +126,7 @@ namespace MaouSamaTD.Units
 
         protected override void UpdateInternal()
         {
+            if (_isDead) return;
             base.UpdateInternal();
 
             if (_isCharmed)
@@ -189,7 +198,7 @@ namespace MaouSamaTD.Units
             foreach (var hit in hits)
             {
                 var unit = hit.GetComponent<PlayerUnit>();
-                if (unit != null && unit.CurrentHp > 0)
+                if (unit != null && unit.CurrentHp > 0 && !unit.IsDead)
                 {
                     Vector2Int myPos = _gridManager.WorldToGridCoordinates(transform.position);
                     Vector2Int targetPos = _gridManager.WorldToGridCoordinates(unit.transform.position);
@@ -221,7 +230,7 @@ namespace MaouSamaTD.Units
             if (Time.time >= _lastAttackTime + _attackInterval)
             {
                 _lastAttackTime = Time.time;
-                target.TakeDamage(_attackPower);
+                target.TakeDamage(_attackPower, this, DamageType.Melee);
             }
         }
 
@@ -246,10 +255,18 @@ namespace MaouSamaTD.Units
             {
                 if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
                 {
-                    _blockedBy = player;
-                    player.NotifyEncounter(); // Trigger reach tutorial logic
-                    InitiateCentering();
-                    return;
+                    if (_currentPhasingCharges > 0)
+                    {
+                        // We are phasing through. Continue moving.
+                        if (_showDebugLogs) Debug.Log($"{gameObject.name} Phasing through {player.name}...");
+                    }
+                    else
+                    {
+                        _blockedBy = player;
+                        player.NotifyEncounter(); // Trigger reach tutorial logic
+                        InitiateCentering();
+                        return;
+                    }
                 }
             }
 
@@ -273,6 +290,23 @@ namespace MaouSamaTD.Units
                     _isMoving = false;
                     _isCentering = false;
                     return;
+                }
+
+                // If we just reached an occupied tile while phasing, decrement charges
+                if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit && _currentPhasingCharges > 0)
+                {
+                    _currentPhasingCharges--;
+                    if (_showDebugLogs) Debug.Log($"{gameObject.name} Passed through unit! Charges left: {_currentPhasingCharges}");
+                    
+                    if (_currentPhasingCharges <= 0)
+                    {
+                        // Becomes vulnerable again
+                        if (Immunities.Contains(DamageType.Melee))
+                        {
+                            Immunities.Remove(DamageType.Melee);
+                            if (_showDebugLogs) Debug.Log($"{gameObject.name} Phasing ended. MELEE IMMUNITY REMOVED (Vulnerable)!");
+                        }
+                    }
                 }
 
                 if (_isCharmed)

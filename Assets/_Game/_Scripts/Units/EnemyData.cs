@@ -35,6 +35,8 @@ namespace MaouSamaTD.Units
         [Header("Behavior")]
         public EnemyMovementType MovementType;
         public EnemyCollisionType CollisionType;
+        public int PhasingCharges = 0;
+        public System.Collections.Generic.List<DamageType> Immunities = new System.Collections.Generic.List<DamageType>();
 
         [Header("Rewards")]
         public int CurrencyReward = 10;

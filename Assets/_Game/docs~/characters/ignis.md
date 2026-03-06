@@ -11,6 +11,11 @@
 - **Eyes**: Amber
 - **Unique**: Obsidian "Crown Horns" manifested in combat.
 
+## Weapon: Crimson Sovereign's Reach
+- **Type**: Infused Longsword
+- **Visuals**: A regal red blade with a brilliant silver edge. The center is inlaid with gold filigree and a glowing ruby core. Its guard is crafted from sun-stained brass and crimson steel.
+- **Function**: Channels her internal heat into physical strikes. Each swing leaves a trail of flickering embers that can ignite nearby shadows.
+
 ## Tactical Profile
 Ignis is the definitive ground blocker. She excels at holding chokepoints against multiple units. Her Obsidian Aegis skill provides a massive defensive buff to her and nearby allies.
 

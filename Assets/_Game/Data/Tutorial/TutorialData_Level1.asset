@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c6c0a664a64034e81cbd9127cb1407, type: 3}
   m_Name: TutorialData_Level1
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.TutorialDataSO
+  ShowCustomEditor: 1
+  ShowLegacyEditor: 0
   Steps:
   - StepName: Intro Dialogue (Highlight Deployment)
     Type: 1
@@ -20,6 +22,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: DeploymentPanel
       Size: {x: 1, y: 1}
@@ -30,20 +35,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: 
     ShowHand: 1
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
   - StepName: Drag Ignis to Field
     Type: 3
     Dialogue: {fileID: 0}
@@ -51,6 +55,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: UnitButton_Ignis
       Size: {x: 1, y: 1}
@@ -65,20 +72,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: UnitPlaced
     ShowHand: 1
+    HandScale: 0.5
     DragShowHand: 1
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
-      Size: {x: 1, y: 1}
+      Size: {x: 0.5, y: 0.5}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 2, y: 5}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 2, y: 5}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 2, y: 2}
-    HoleHeight: 2
   - StepName: Post Placement
     Type: 0
     Dialogue: {fileID: 11400000, guid: 2de51bdc33e6ac04faaffdd62d18e024, type: 2}
@@ -86,6 +92,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -96,20 +105,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: 
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 0
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 1
   - StepName: Start Skirmish Wave (0)
     Type: 6
     Dialogue: {fileID: 0}
@@ -117,6 +125,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -127,20 +138,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: 
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 0
     RequiredCount: 0
     UseBlocker: 0
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
   - StepName: Wait for 2 Kills
     Type: 8
     Dialogue: {fileID: 0}
@@ -148,6 +158,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1, y: 1}
@@ -158,20 +171,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: UnitKills
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 2
     UseBlocker: 1
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
   - StepName: Start Cluster Wave (1)
     Type: 6
     Dialogue: {fileID: 0}
@@ -179,6 +191,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -189,20 +204,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: 
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 1
     RequiredCount: 0
     UseBlocker: 0
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
   - StepName: Wait for Cluster Proximity
     Type: 8
     Dialogue: {fileID: 0}
@@ -210,6 +224,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1, y: 1}
@@ -220,20 +237,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: EnemiesInRange
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 1
     RequiredCount: 5
     UseBlocker: 1
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 4, y: 1}
-    HoleHeight: 2
   - StepName: Charge Ignis Ultimate
     Type: 5
     Dialogue: {fileID: 0}
@@ -241,6 +257,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1, y: 1}
@@ -251,20 +270,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: ChargeUnitUlt
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 0
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
   - StepName: Select Ignis Prompt
     Type: 0
     Dialogue: {fileID: 11400000, guid: a3034f72b4714f94d870862c3abaac68, type: 2}
@@ -272,6 +290,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1.2, y: 1.2}
@@ -282,20 +303,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: UnitSelected
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
     ResetBlocker: 1
     ResumeTime: 0
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
   - StepName: Wait For Ignis Stats
     Type: 3
     Dialogue: {fileID: 0}
@@ -303,6 +323,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: Ult_Btn
       Size: {x: 2, y: 2}
@@ -320,20 +343,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: UnitStatsOpened
     ShowHand: 1
+    HandScale: 0.5
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
-      Size: {x: 0.3, y: 0.3}
+      Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 2, y: 5}
-    HandDragTargetTileOffset: {x: 0, y: -0.3, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
     ResetBlocker: 0
     ResumeTime: 0
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 0
   - StepName: Activate Ignis Skill
     Type: 3
     Dialogue: {fileID: 0}
@@ -341,9 +363,12 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: Ult_Btn
-      Size: {x: 1.2, y: 1.2}
+      Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles: []
@@ -351,20 +376,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: SkillUsed
     ShowHand: 1
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
-      Name: Ult_Btn
-      Size: {x: 0.3, y: 0.3}
-      SizeOffset: {x: 0, y: 0.2}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 0.5, y: 0.5}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 0
   - StepName: Unlock Interaction
     Type: 5
     Dialogue: {fileID: 0}
@@ -372,6 +396,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -382,20 +409,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: UnlockSelection
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
-      Size: {x: 1, y: 1}
+      Size: {x: 0.5, y: 0.5}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 0
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 0, y: 0}
-    HoleHeight: 0
   - StepName: Wait for Wave 1 Clear
     Type: 7
     Dialogue: {fileID: 0}
@@ -403,6 +429,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -413,20 +442,19 @@ MonoBehaviour:
     Duration: 0
     ActionKey: 
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 1
     RequiredCount: 0
     UseBlocker: 0
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 0, y: 0}
-    HoleHeight: 0
   - StepName: Victory Dialogue
     Type: 0
     Dialogue: {fileID: 11400000, guid: 01ff824919311584790b7fdb247a2667, type: 2}
@@ -434,6 +462,9 @@ MonoBehaviour:
     AdditionalTargetUINames: []
     TargetTile: {x: 0, y: 0}
     AdditionalTargetTiles: []
+    HoleSize: {x: 1, y: 1}
+    HoleHeight: 2
+    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -444,17 +475,16 @@ MonoBehaviour:
     Duration: 0
     ActionKey: 
     ShowHand: 0
+    HandScale: 1
     DragShowHand: 0
-    HandDragTargetUI:
+    HandTargetUIOverride:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandDragTargetTile: {x: 0, y: 0}
-    HandDragTargetTileOffset: {x: 0, y: 0, z: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 1
     RequiredCount: 0
     UseBlocker: 0
     ResetBlocker: 1
     ResumeTime: 1
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2

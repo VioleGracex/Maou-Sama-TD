@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dce2ff6dacaa3443aafb3afa260d9cd, type: 3}
+  m_Name: Char_Lilith_VoidCaress
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.UnitSkillData
+  useDefaultInspector: 0
+  UniqueID: f3b9e4d5-2b1a-4c3e-8e5f-7a8b9c0d1e2f
+  SkillName: Void Caress
+  Description: Lilith releases a wave of dark energy, dealing damage to all enemies
+    in an area multiple times and charming survivors.
+  Icon: {fileID: 0}
+  CastVFX: {fileID: 0}
+  HitVFX: {fileID: 0}
+  RangeIndicatorColor: {r: 0.5, g: 0, b: 0.8, a: 1}
+  AnimationTriggerName: CastSkill
+  CastSFX: {fileID: 0}
+  HitSFX: {fileID: 0}
+  ChargeCost: 100
+  BonusHpPerLevel: 0
+  BonusAtkPerLevel: 0
+  BonusDefPerLevel: 0
+  UltimatePrefab: {fileID: 1100000, guid: c1c2c3c4c5c6c7c8c9c0c1c2c3c4c5c6, type: 3}
+  UltimateColor: {r: 0.8, g: 0.2, b: 1, a: 1}
+  TitleBgColor: {r: 0, g: 0, b: 0, a: 1}
+  SkillNameBgColor: {r: 0, g: 0, b: 0, a: 1}

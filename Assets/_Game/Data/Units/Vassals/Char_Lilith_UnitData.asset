@@ -18,6 +18,7 @@ MonoBehaviour:
   UnitTitle: Void Matriarch
   UnitSprite: {fileID: 21300000, guid: f446520f4c8860b48bfaacf1dc42c71e, type: 3}
   UnitIcon: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
+  AnimatorController: {fileID: 0}
   Level: 1
   AcquisitionDate: 0
   Rarity: 5

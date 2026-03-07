@@ -20,6 +20,7 @@ namespace MaouSamaTD.Units
         [Header("Identity")]
         public string EnemyName;
         public Sprite EnemySprite;
+        public RuntimeAnimatorController AnimatorController;
 
         [Header("Stats")]
         public float MaxHp = 50f;

@@ -129,6 +129,8 @@ namespace MaouSamaTD.Units
                 if (_showDebugLogs) Debug.LogWarning("[Ultimate] UltimateCutInUI.Instance is MISSING. Skipping animation.");
             }
 
+            if (_animator != null) _animator.Play("Ultimate", 0, 0f);
+
             Vector3 bestDir = FindBestUltimateDirection();
             if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {Data.Skill.UltimatePrefab.name} towards {bestDir}");
 
@@ -233,6 +235,12 @@ namespace MaouSamaTD.Units
                     _spriteRenderer.sprite = data.UnitSprite;
                 }
             }
+
+            if (_animator == null) _animator = GetComponentInChildren<Animator>();
+            if (_animator != null && data.AnimatorController != null)
+            {
+                _animator.runtimeAnimatorController = data.AnimatorController;
+            }
         }
 
         [Zenject.Inject] private Managers.InteractionManager _interactionManager;
@@ -280,6 +288,7 @@ namespace MaouSamaTD.Units
                 
                 if (IsTargetInPattern(myPos, enemyPos, pattern, range))
                 {
+                     if (_animator != null) _animator.Play("Attack", 0, 0f);
                      DamageType dType = _data != null ? _data.DamageType : DamageType.Melee;
                      enemy.TakeDamage(AttackPower, this, dType); // Pass self as attacker and damage type
                      attacked = true;

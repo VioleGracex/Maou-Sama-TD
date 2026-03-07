@@ -27,6 +27,7 @@ namespace MaouSamaTD.Units
 
         [Header("Visuals")]
         [SerializeField] protected SpriteRenderer _spriteRenderer;
+        [SerializeField] protected Animator _animator;
         [SerializeField] protected TextMeshProUGUI _textFallback; 
         [SerializeField] protected Image _hpFillImage;
         
@@ -132,15 +133,21 @@ namespace MaouSamaTD.Units
         {
             if (_data == null) return;
 
+            if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            if (_animator == null) _animator = GetComponentInChildren<Animator>();
+            
             if (_data.UnitSprite != null)
             {
-                _spriteRenderer.sprite = _data.UnitSprite;
-                _spriteRenderer.enabled = true;
+                if (_spriteRenderer != null) 
+                {
+                    _spriteRenderer.enabled = true;
+                    _spriteRenderer.sprite = _data.UnitSprite;
+                }
                 if (_textFallback != null) _textFallback.gameObject.SetActive(false);
             }
             else
             {
-                _spriteRenderer.enabled = false;
+                if (_spriteRenderer != null) _spriteRenderer.enabled = false;
                 if (_textFallback != null)
                 {
                     _textFallback.gameObject.SetActive(true);
@@ -149,7 +156,11 @@ namespace MaouSamaTD.Units
                     else
                         _textFallback.text = "?";
                 }
+                if (_animator != null && _data.AnimatorController != null)
+            {
+                _animator.runtimeAnimatorController = _data.AnimatorController;
             }
+        }
         }
 
         public void SetHighlight(bool active, Color color)
@@ -268,25 +279,14 @@ namespace MaouSamaTD.Units
             OnDeath?.Invoke();
 
             // Handle Animation
-            Animator animator = GetComponentInChildren<Animator>();
-            if (animator != null)
+            if (_animator != null)
             {
-                bool hasDieTrigger = false;
-                foreach (var param in animator.parameters)
-                {
-                    if (param.name == "Die" || param.name == "Death")
-                    {
-                        hasDieTrigger = true;
-                        animator.SetTrigger(param.name);
-                        break;
-                    }
-                }
-
-                if (hasDieTrigger)
-                {
-                    StartCoroutine(DelayedDestroy(animator));
-                    return;
-                }
+                // Try playing common death state names
+                _animator.Play("Die", 0, 0f);
+                _animator.Play("Death", 0, 0f);
+                
+                StartCoroutine(DelayedDestroy(_animator));
+                return;
             }
 
             Destroy(gameObject);

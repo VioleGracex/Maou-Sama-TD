@@ -88,6 +88,11 @@ namespace MaouSamaTD.Units
                 float finalY = baseHeight + _enemyData.VisualYOffset;
                 _spriteRenderer.transform.localPosition = new Vector3(0, finalY, 0);
             }
+
+            if (_animator != null && _enemyData.AnimatorController != null)
+            {
+                _animator.runtimeAnimatorController = _enemyData.AnimatorController;
+            }
         }
 
         public override float Range => _enemyData != null ? _enemyData.AttackRange : 1f; 
@@ -230,6 +235,7 @@ namespace MaouSamaTD.Units
             if (Time.time >= _lastAttackTime + _attackInterval)
             {
                 _lastAttackTime = Time.time;
+                if (_animator != null) _animator.Play("Attack", 0, 0f);
                 target.TakeDamage(_attackPower, this, DamageType.Melee);
             }
         }

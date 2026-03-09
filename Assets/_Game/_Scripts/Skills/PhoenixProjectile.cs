@@ -56,77 +56,86 @@ namespace MaouSamaTD.Skills
                 _laneCoordinate = transform.position.z;
             }
 
-            // Orientation logic: Sprites face Left by default.
-            // "flip it horizontallty if going right" (x > 0)
-            if (_spriteRenderer != null)
+            // Orientation logic: Fixed (90, 90, 0) rotation.
+            // This aligns World Z (Left/Right) with Local X.
+            // This aligns World X (Up/Down) with Local -Y.
+            transform.rotation = Quaternion.Euler(90, 90, 0); 
+
+            Vector3 scale = transform.localScale;
+            
+            // Z-axis flipping (World Z = Local X)
+            // Left is -Z, Right is +Z.
+            // User: "phoenix image is looking left side (-Z) if it dashes right (+Z)... we flip it -1"
+            if (Mathf.Abs(_direction.z) > 0.1f)
             {
-                _spriteRenderer.flipX = _direction.x > 0;
+                // If moving Right (+Z), flip to look Right (Negative Local X Scale if it faces Left by default)
+                scale.x = _direction.z > 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
             }
+
+            // X-axis flipping (World X = Local -Y)
+            if (Mathf.Abs(_direction.x) > 0.1f)
+            {
+                // If moving in +X, we flip scale.y
+                scale.y = _direction.x > 0 ? -Mathf.Abs(scale.y) : Mathf.Abs(scale.y);
+            }
+
+            transform.localScale = scale;
             
-            // Still allow small rotation for lane alignment if needed, 
-            // but the user specifically asked for flipping for "facing".
-            float angle = Mathf.Atan2(_direction.z, _direction.x) * Mathf.Rad2Deg;
-            
-            // If movement is horizontal, we use flipX. If movement is vertical, 
-            // we might still need rotation or a different sprite.
-            // For now, let's keep it simple: Rotate to face movement, then flip if right.
-            // Wait, if we use flipX, we should probably NOT rotate 180 degrees.
-            // Offset 180 makes it face movement direction IF it faces Left by default.
-            // Let's refine:
-            transform.rotation = Quaternion.Euler(90, angle + 180f, 0); 
-            
-            if (_showDebugLogs) Debug.Log($"[Phoenix] Executing. FlipX: {(_spriteRenderer != null ? _spriteRenderer.flipX.ToString() : "N/A")}");
+            if (_showDebugLogs) Debug.Log($"[Phoenix] Executing. Direction: {_direction}, Scale: {transform.localScale}, Rot: {transform.rotation.eulerAngles}");
         }
+        
+        private bool _isWaitingAfterRise = false;
+        private float _waitStartTime;
 
         private void Update()
         {
             float elapsed = Time.time - _spawnTime;
 
-            if (elapsed > _lifetime + _startDelay + 2f) // Extra buffer
+            if (elapsed > _lifetime + _startDelay + 5f) // Extra buffer
             {
                 Destroy(gameObject);
                 return;
             }
 
-            // Waiting in place during Rise phase
+            // Phase 1 & 2: Rise and Stay in place
             if (!_hasStartedDash)
             {
-                bool isAnimationDone = false;
-                if (_animator != null)
+                if (!_isWaitingAfterRise)
                 {
-                    var animState = _animator.GetCurrentAnimatorStateInfo(0);
-                    // If we are in Rise state, wait for it to finish.
-                    // If we already finished it or switched, continue.
-                    if (animState.IsName("Rise"))
+                    if (_animator != null)
                     {
-                        if (animState.normalizedTime < 0.95f) return; // Still rising
-                        isAnimationDone = true;
-                    }
-                    else if (animState.IsName("Dash"))
-                    {
-                        isAnimationDone = true; // Already dashed?
+                        var animState = _animator.GetCurrentAnimatorStateInfo(0);
+                        // If we are in Rise state, wait for it to finish.
+                        if (animState.IsName("Rise"))
+                        {
+                            if (animState.normalizedTime < 0.95f) return; // Keep waiting
+                        }
                     }
                     else
                     {
-                        // Some other state, maybe transition is slow. Wait for delay.
+                        // Fallback if no animator
                         if (elapsed < _startDelay) return;
-                        isAnimationDone = true;
                     }
+
+                    // Animation done, start the 1s delay
+                    _isWaitingAfterRise = true;
+                    _waitStartTime = Time.time;
+                    if (_showDebugLogs) Debug.Log("[Phoenix] Rise animation done. Staying in place for 1s...");
+                    return;
                 }
                 else
                 {
-                    if (elapsed < _startDelay) return;
-                    isAnimationDone = true;
-                }
+                    // Phase 2: Wait 1s
+                    if (Time.time - _waitStartTime < 1.0f) return;
 
-                if (isAnimationDone)
-                {
+                    // Phase 2 done, start Dash
                     _hasStartedDash = true;
                     if (_animator != null) _animator.Play("Dash", 0, 0f);
-                    if (_showDebugLogs) Debug.Log("[Phoenix] Rise animation finished, starting Dash phase");
+                    if (_showDebugLogs) Debug.Log("[Phoenix] Wait over. Starting Dash!");
                 }
             }
 
+            // Phase 3: Move and Damage
             transform.position += _direction * _speed * Time.deltaTime;
 
             // Damage Logic: Hit all enemies in the designated lane

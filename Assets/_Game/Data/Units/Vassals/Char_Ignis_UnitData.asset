@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
   m_Name: Char_Ignis_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
-  useDefaultInspector: 1
+  useDefaultInspector: 0
   UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
   UnitName: Ignis
   UnitTitle: The Crimson Bastion
-  UnitSprite: {fileID: 21300000, guid: 74d8fc5cc8ac2294aa50b3b462b3a05a, type: 3}
+  UnitSprite: {fileID: 21300000, guid: 2b7269185b2d93f4bb6017781c2f99a0, type: 3}
   UnitIcon: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
   AnimatorController: {fileID: 9100000, guid: a021d6c8141c30b4b89ccb2bfb26dccc, type: 2}
   Level: 1

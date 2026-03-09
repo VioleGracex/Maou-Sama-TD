@@ -216,12 +216,12 @@ namespace MaouSamaTD.UI
                     }
                 }
 
-                // If spawn is to the left, face left. If spawn is to the right, face right.
-                // Default sprite faces right usually.
+                // If spawn is to the left (-Z), flip. Default sprite faces Right (+Z/Right).
+                // Grid Y is World Z.
                 var sr = newUnit.GetComponentInChildren<SpriteRenderer>();
                 if (sr != null)
                 {
-                    sr.flipX = closestSpawn.x < tile.Coordinate.x;
+                    sr.flipX = closestSpawn.y < tile.Coordinate.y;
                 }
             }
             

@@ -17,7 +17,7 @@ MonoBehaviour:
   SkillName: Phoenix Radiance
   Description: Ignis summons a celestial phoenix that sweeps across a column, dealing
     massive fire damage to all enemies in its path.
-  Icon: {fileID: 21300000, guid: c3dbb5f923f60d34ebe83fc616ba1a75, type: 3}
+  Icon: {fileID: 21300000, guid: 55adbc734ec6af342ae3466f9a481709, type: 3}
   CastVFX: {fileID: 0}
   HitVFX: {fileID: 0}
   RangeIndicatorColor: {r: 1, g: 0, b: 0, a: 1}
@@ -30,3 +30,5 @@ MonoBehaviour:
   BonusDefPerLevel: 0
   UltimatePrefab: {fileID: 1105572606693206307, guid: f3076b7deb92d6f4fbc2bf6fc410253e, type: 3}
   UltimateColor: {r: 1, g: 0, b: 0, a: 1}
+  TitleBgColor: {r: 1, g: 1, b: 1, a: 1}
+  SkillNameBgColor: {r: 1, g: 0, b: 0, a: 1}

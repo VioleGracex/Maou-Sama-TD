@@ -141,6 +141,14 @@ namespace MaouSamaTD.Units
             {
                 ultimateEffect.Execute(this, bestDir);
                 if (_showDebugLogs) Debug.Log($"[Ultimate] {projObj.name} EXECUTED successfully.");
+                
+                // Wait for the local ultimate animation to finish before going back to idle
+                // Usually ultimate animations have a fixed duration or we can wait for state end
+                yield return new WaitForSeconds(1.5f); // Approximation or wait for state
+                if (_animator != null && !_isDead)
+                {
+                    _animator.Play("Idle", 0, 0f);
+                }
             }
             else
             {
@@ -304,6 +312,23 @@ namespace MaouSamaTD.Units
             if (attacked)
             {
                 _lastAttackTime = Time.time;
+            }
+            else
+            {
+                // If we didn't attack and are not in an ultimate, return to idle if we were attacking
+                if (_animator != null && !_isDead)
+                {
+                    var state = _animator.GetCurrentAnimatorStateInfo(0);
+                    if (state.IsName("Attack") && state.normalizedTime >= 1.0f)
+                    {
+                        _animator.Play("Idle", 0, 0f);
+                    }
+                    else if (!state.IsName("Attack") && !state.IsName("Ultimate") && !state.IsName("Idle"))
+                    {
+                        // Fallback reset for any other non-looping state that got stuck
+                        _animator.Play("Idle", 0, 0f);
+                    }
+                }
             }
         }
 

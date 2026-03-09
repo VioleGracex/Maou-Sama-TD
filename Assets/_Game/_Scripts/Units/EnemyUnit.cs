@@ -159,10 +159,8 @@ namespace MaouSamaTD.Units
                         HandleAttack(_blockedBy);
                         FaceTarget(_blockedBy.transform.position);
                     }
-                    return;
                 }
-
-                if (_attackTarget != null)
+                else if (_attackTarget != null)
                 {
                     if (_attackTarget == null || _attackTarget.CurrentHp <= 0)
                     {
@@ -180,11 +178,21 @@ namespace MaouSamaTD.Units
                             _attackTarget = nextTarget;
                         }
                     }
-                    return;
                 }
-
-                // If stopped but not blocked/targeting, resume move
-                _isMoving = true;
+                else
+                {
+                    // Not blocked, not targeting, not moving -> Idle
+                    if (_animator != null && !_isDead)
+                    {
+                        var state = _animator.GetCurrentAnimatorStateInfo(0);
+                        if (!state.IsName("Idle") && !state.IsName("Attack") && !state.IsName("Die") && !state.IsName("Death"))
+                        {
+                             _animator.Play("Idle", 0, 0f);
+                        }
+                    }
+                    _isMoving = true;
+                }
+                return;
             }
 
             if (_isMoving)

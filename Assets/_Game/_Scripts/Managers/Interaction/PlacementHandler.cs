@@ -82,6 +82,28 @@ namespace MaouSamaTD.Managers.Interaction
                 Color targetColor = validPosition ? _validColor : _invalidColor;
                 targetColor.a = 0.6f; 
                 sr.color = targetColor;
+
+                // Facing Logic for Ghost
+                if (_gridManager != null && _gridManager.SpawnPoints != null && _gridManager.SpawnPoints.Count > 0)
+                {
+                    Vector2Int unitCoord = _gridManager.WorldToGridCoordinates(targetPos);
+                    Vector2Int closestSpawn = _gridManager.SpawnPoints[0];
+                    float minDist = Vector2.Distance(unitCoord, closestSpawn);
+                    
+                    for (int i = 1; i < _gridManager.SpawnPoints.Count; i++)
+                    {
+                        float dist = Vector2.Distance(unitCoord, _gridManager.SpawnPoints[i]);
+                        if (dist < minDist)
+                        {
+                            minDist = dist;
+                            closestSpawn = _gridManager.SpawnPoints[i];
+                        }
+                    }
+
+                    // Default sprite faces Right. User says: "right is positive z axis left is minus z axis".
+                    // Grid Y is World Z. So if spawn is at smaller Y, it's to the Left.
+                    sr.flipX = closestSpawn.y < unitCoord.y;
+                }
             }
         }
 

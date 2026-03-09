@@ -26,5 +26,30 @@ namespace MaouSamaTD.Levels
 
         public List<Vector2Int> SpawnPoints = new List<Vector2Int>();
         public List<Vector2Int> ExitPoints = new List<Vector2Int>();
+        
+        [Header("Visuals")]
+        public List<TileVisualOverride> VisualOverrides = new List<TileVisualOverride>();
+    }
+
+    [System.Serializable]
+    public struct TileVisualOverride
+    {
+        public Vector2Int Coordinate;
+        public Texture2D Texture;
+        public List<DecorationData> Decorations;
+    }
+
+    [System.Serializable]
+    public struct DecorationData
+    {
+        public GameObject Prefab;
+        public Vector3 Offset;
+        public Vector3 Rotation;
+        public Vector3 Scale;
+
+        public static DecorationData Default => new DecorationData 
+        { 
+            Scale = Vector3.one 
+        };
     }
 }

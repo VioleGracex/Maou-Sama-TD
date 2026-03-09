@@ -68,8 +68,8 @@ namespace MaouSamaTD.Skills
             // User: "phoenix image is looking left side (-Z) if it dashes right (+Z)... we flip it -1"
             if (Mathf.Abs(_direction.z) > 0.1f)
             {
-                // If moving Right (+Z), flip to look Right (Negative Local X Scale if it faces Left by default)
-                scale.x = _direction.z > 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+                // If moving Left (-Z), flip to look Left (Negative Local X Scale)
+                scale.x = _direction.z < 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
             }
 
             // X-axis flipping (World X = Local -Y)

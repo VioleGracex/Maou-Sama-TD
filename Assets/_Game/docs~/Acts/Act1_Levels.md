@@ -1,50 +1,51 @@
-# Act 1: The Resurrection & The Betrayed
+# Act 1: The Ritual Awakening & The First Succubus
 
-**Setting:** The Ruined Demon Kingdom
-**Theme:** Reclaiming the Throne
-**Boss:** **Guild Master Gilder**
+**Setting:** The Obsidian Sanctuary (Subterranean Ritual Chambers)
+**Theme:** Reclaiming Lost Authority
+**Main Goal:** Locate and unseal Lilith to reclaim the Sovereign's Crests.
 
-## Chapter 1: The Tomb (Resurrection)
-*   **1-1: The 13th Awakening**
-    *   **Objective:** Defeat looting Goblins.
-    *   **New Unit:** **Maou (Avatar)** - Uses **Authority Seals**.
-    *   **Story:** Hecatina breaks the seal. "The World called. You answered."
-*   **1-2: Dust and Bones**
-    *   **Objective:** Defend the Sarcophagus Room.
-    *   **New Unit:** **Skeleton Bastion (Heavy Tank)**.
-    *   **Enemy:** **Loot Rat** (Steals gold if it reaches the exit).
-*   **1-3: Sunlight**
-    *   **Objective:** Clear the path to the surface.
-    *   **Story:** You step out. The castle is a wreck. You vow to rebuild it.
+## Chapter 1: The Sanctuary (The Awakening)
+*   **1-1: The Ritual Awakening**
+    *   **Objective:** Hold the bottleneck against feral spirits.
+    *   **Featured Unit:** **Ignis (The Crimson Bastion)**.
+    *   **Enemies:** **Lesser Shadows**, **Feral Echoes**.
+    *   **Story:** Hecatina breaks the initial seal. You awaken as the Sovereign. Ignis stands as your shield. 
+    *   **Outcome:** Hecatina reveals that the "Holy" interlopers have marked the sanctuary, and Lilith's awakening is now required.
 
-## Chapter 2: The Supply Line
-*   **1-4: The Opportunist**
-    *   **Objective:** Protect the **Merchant Wagon** (NPC Unit).
-    *   **New Unit:** **Imp Ranger (Ranged Unit)**.
-    *   **Story:** You save a Merchant. He doesn't care you're a Demon; he cares that you have gold.
-*   **1-5: Bandit Camp**
-    *   **Objective:** Destroy the Bandit Tent (Spawner).
-    *   **Enemy:** **Bandit Chief** (Mini-boss).
-*   **1-6: The Toll Bridge**
-    *   **Objective:** Hold the line for 3 waves.
-    *   **Story:** The Merchant establishes a trade route for construction materials.
+*   **1-2: The Outer Sanctum**
+    *   **Objective:** Clear the corridor to the Tower of Silence.
+    *   **Enemy:** **Holy Interlopers** (Human scouts trying to purge the tomb).
+    *   **Story:** You encounter the first humans. They fear the "Maou" and seek to destroy your recovering spirit.
 
-## Chapter 3: The Betrayed Hero
-*   **1-7: The Mourning Knight**
-    *   **Objective:** Survive until minute 3.
-    *   **New Unit:** **Ignis (Vanguard)** - Boss Fight.
+*   **1-3: The Sealed Tower**
+    *   **Objective:** Protect the Ritual Pillars while Hecatina breaks the Seal of Silence.
+    *   **Interactive:** Pillars boost **Authority Seal** generation but attract more Shadows.
+    *   **Story:** You reach the chamber of Lilith. The seals are complex, requiring a mass sacrifice of captured Shadow souls.
+
+## Chapter 2: The First Succubus
+*   **1-4: The Unsealing of Lilith**
+    *   **New Unit:** **Lilith (The First Succubus)**.
+    *   **Featured:** Lilith's ability to "Siphon Souls" converts slain enemies into extra Authority Seals.
+    *   **Story:** Lilith awakens. She is mocking but loyal. She returns the first of your lost Blood Crests.
+
+*   **1-5: Reclaiming the Crests**
+    *   **Objective:** Defeat the High Priest of the Interlopers who stolen a fragment of your soul.
+    *   **Enemy:** **Purging Inquisitor** (Mini-boss).
+    *   **Story:** With Lilith's manipulation and Ignis's protection, the first great threat to the ritual is extinguished.
+
+## Chapter 3: The Ruined Kingdom
+*   **1-6: Path to the Surface**
+    *   **Story:** The trio (Hecatina, Ignis, Lilith) prepares to leave the subterranean sanctuary.
+    *   **Theme:** Transition from shadows to the ruins of the surface world.
+
+*   **1-7: The Mourning Shadows**
+    *   **Objective:** Defend the Demon Kingdom's gates from looting mercenaries.
     *   **Dialogue:**
-        *   Ignis: "You wear his face... but he is dead! I buried him!"
-        *   Maou: "And who tried to bury *you*, Ignis? The Church? Or the years?"
-        *   Ignis: "My Lord...?"
-    *   **Unlock:** Ignis joins. Her profile reveals "Race: Human (Heroic Lineage)".
-*   **1-8: The Mercenary**
-    *   **New Unit:** **Shade (Ranger)**.
-*   **1-9: The Sealed Tower**
-    *   **New Unit:** **Lilith (Warlock)**.
+        *   Lilith: "Oh, look at what they've done to your 'eternal' kingdom, My Sovereign. It looks... cozy. In a 'piles of rubble' sort of way."
+        *   Ignis: "Silence, Succubus. The wall still stands, and so do I."
 
 ## Chapter 4: The Guild War (Climax)
 *   **1-10: The Throne Room Defense**
-    *   **Strategy:** Ignis gains a buff "Wrath of the Betrayed" against Human units.
+    *   **Strategy:** Combine Ignis's physical block and Lilith's magical siphoning to manage overwhelming waves.
 *   **1-12: Boss Battle - Guild Master Gilder**
-    *   **Story Victory:** Gilder recognizes Ignis's fighting style. "That sword art... The Lost Hero?!" Ignis silences him permanently.
+    *   **Story Victory:** Gilder realizes the Maou has returned not alone, but with his most dangerous vassals. "The Bastion and the Succubus... the nightmare begins again."

@@ -145,7 +145,7 @@ namespace MaouSamaTD.Grid
             }
         }
 
-        public void CreateTile(Vector2Int coord, TileType type)
+        public Tile CreateTile(Vector2Int coord, TileType type)
         {
             Vector3 position = new Vector3(coord.x * _cellSize, 0, coord.y * _cellSize);
             
@@ -167,6 +167,8 @@ namespace MaouSamaTD.Grid
             
             if (type == TileType.HighGround)
                 tile.transform.position += Vector3.up * 0.5f;
+
+            return tile;
         }
 
         public void ClearGrid()

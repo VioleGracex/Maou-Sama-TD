@@ -120,7 +120,20 @@ namespace MaouSamaTD.Grid
                         type = isHighGround ? TileType.HighGround : TileType.Walkable;
                     }
 
-                    _gridManager.CreateTile(coord, type);
+                    var tile = _gridManager.CreateTile(coord, type);
+
+                    // Apply Visual Overrides
+                    if (_mapData != null)
+                    {
+                        foreach (var visualOverride in _mapData.VisualOverrides)
+                        {
+                            if (visualOverride.Coordinate == coord)
+                            {
+                                tile.ApplyVisualOverride(visualOverride.Texture, visualOverride.Decorations);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -435,6 +448,16 @@ namespace MaouSamaTD.Grid
             {
                 if (tile.Type == TileType.DecoratedWalkable) newData.DecoratedWalkable.Add(tile.Coordinate);
                 else if (tile.Type == TileType.DecoratedHighGround) newData.DecoratedHighGround.Add(tile.Coordinate);
+
+                if (tile.OverriddenTexture != null || (tile.OverriddenDecorations != null && tile.OverriddenDecorations.Count > 0))
+                {
+                    newData.VisualOverrides.Add(new TileVisualOverride
+                    {
+                        Coordinate = tile.Coordinate,
+                        Texture = tile.OverriddenTexture,
+                        Decorations = tile.OverriddenDecorations
+                    });
+                }
             }
 
             // Ensure Path

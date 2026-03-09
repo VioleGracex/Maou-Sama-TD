@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using MaouSamaTD.Levels;
 using NaughtyAttributes;
 using UnityEngine;
 using Zenject;
@@ -29,6 +31,7 @@ namespace MaouSamaTD.Grid
         // Zenject Injections
         [Inject] private GridGenerator _gridGenerator;
         [Inject] private GridManager _gridManager;
+        [Inject] private DiContainer _container;
         
         // Fallback properties for Editor usage where injection doesn't run
         private GridGenerator Generator 
@@ -55,6 +58,8 @@ namespace MaouSamaTD.Grid
         public TileType Type => _type;
         public bool IsOccupied => _occupant != null;
         public MaouSamaTD.Units.UnitBase Occupant => _occupant;
+        public Texture2D OverriddenTexture => _overriddenTexture;
+        public List<DecorationData> OverriddenDecorations => _overriddenDecorations;
 
         public void Initialize(Vector2Int coordinate, TileType type)
         {
@@ -139,6 +144,12 @@ namespace MaouSamaTD.Grid
                 _propBlock.SetFloat(UseFullFillId, 0f);
             }
             _renderer.SetPropertyBlock(_propBlock);
+
+            // Update decoration glows
+            foreach (var glow in _decorationGlows)
+            {
+                if (glow != null) glow.SetSelected(active);
+            }
         }
 
         // Visual debug to see tile type easily in Editor
@@ -198,6 +209,75 @@ namespace MaouSamaTD.Grid
             // Apply locally
             _type = newType;
             UpdateTypeVisuals();
+        }
+
+        private List<GameObject> _decorationObjects = new List<GameObject>();
+        private List<SelectionGlowController> _decorationGlows = new List<SelectionGlowController>();
+        private Texture2D _overriddenTexture;
+        private List<DecorationData> _overriddenDecorations;
+
+        public void ApplyVisualOverride(Texture2D texture, List<DecorationData> decorations)
+        {
+            _overriddenTexture = texture;
+            _overriddenDecorations = decorations;
+
+            // 1. Texture Override
+            if (texture != null && _renderer != null)
+            {
+                _renderer.GetPropertyBlock(_propBlock);
+                _propBlock.SetTexture("_BaseMap", texture);
+                _propBlock.SetTexture("_MainTex", texture);
+                _renderer.SetPropertyBlock(_propBlock);
+            }
+
+            // 2. Decoration Prefabs
+            ClearDecorations();
+
+            if (decorations != null)
+            {
+                foreach (var deco in decorations)
+                {
+                    if (deco.Prefab == null) continue;
+
+                    GameObject obj;
+                    if (_container != null)
+                    {
+                        obj = _container.InstantiatePrefab(deco.Prefab, transform);
+                    }
+                    else
+                    {
+                        obj = Instantiate(deco.Prefab, transform);
+                    }
+
+                    obj.transform.localPosition = deco.Offset;
+                    obj.transform.localRotation = Quaternion.Euler(deco.Rotation);
+                    obj.transform.localScale = deco.Scale;
+                    obj.name = "Decoration";
+                    _decorationObjects.Add(obj);
+
+                    // Add glow controller if it's using the glow material
+                    var spriteRenderer = obj.GetComponentInChildren<SpriteRenderer>();
+                    if (spriteRenderer != null)
+                    {
+                        var glow = obj.AddComponent<SelectionGlowController>();
+                        _decorationGlows.Add(glow);
+                    }
+                }
+            }
+        }
+
+        private void ClearDecorations()
+        {
+            foreach (var obj in _decorationObjects)
+            {
+                if (obj != null)
+                {
+                    if (Application.isPlaying) Destroy(obj);
+                    else DestroyImmediate(obj);
+                }
+            }
+            _decorationObjects.Clear();
+            _decorationGlows.Clear();
         }
 
         private void UpdateTypeVisuals()

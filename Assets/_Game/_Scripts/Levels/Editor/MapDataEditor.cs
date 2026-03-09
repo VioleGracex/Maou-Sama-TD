@@ -12,15 +12,42 @@ namespace MaouSamaTD.Editor
         private const float CellPadding = 1f;
         private const float LabelSpace = 20f;
 
+        private int _selectedTab = 0;
+        private string[] _tabNames = { "Layout", "Visuals" };
+        private Vector2Int _selectedTile = new Vector2Int(-1, -1);
+        private Dictionary<string, bool> _decoFoldouts = new Dictionary<string, bool>();
+
         public override void OnInspectorGUI()
         {
-            DrawDefaultInspector();
-
+            serializedObject.Update();
             MapData data = (MapData)target;
 
+            _selectedTab = GUILayout.Toolbar(_selectedTab, _tabNames);
+            EditorGUILayout.Space();
+
+            if (_selectedTab == 0)
+            {
+                DrawLayoutTab(data);
+            }
+            else
+            {
+                DrawVisualsTab(data);
+            }
+
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawLayoutTab(MapData data)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("MapSeed"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("Width"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("Height"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("HighGroundChance"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("UseManualLayout"));
+            
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Map Preview & Interactive Editor", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Click tiles to cycle types: \nWalkable -> High Ground -> Deco Walkable -> Deco High Ground. \nEditing automatically enables 'Use Manual Layout'.", MessageType.Info);
+            EditorGUILayout.HelpBox("Click tiles to cycle types: \nWalkable -> High Ground -> Deco Walkable -> Deco High Ground.", MessageType.Info);
 
             if (data.Width <= 0 || data.Height <= 0)
             {
@@ -28,7 +55,7 @@ namespace MaouSamaTD.Editor
                 return;
             }
 
-            DrawMapPreview(data);
+            DrawMapPreview(data, false);
 
             EditorGUILayout.Space();
             
@@ -69,14 +96,166 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawMapPreview(MapData data)
+        private void DrawVisualsTab(MapData data)
+        {
+            EditorGUILayout.LabelField("Tile Visual Customization", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Select a tile to override its texture or add a decoration prefab.", MessageType.Info);
+
+            if (data.Width <= 0 || data.Height <= 0)
+            {
+                EditorGUILayout.HelpBox("Width and Height must be greater than 0 for preview.", MessageType.Warning);
+                return;
+            }
+
+            DrawMapPreview(data, true);
+
+            EditorGUILayout.Space();
+
+            if (_selectedTile.x >= 0 && _selectedTile.y >= 0)
+            {
+                DrawTileCustomizer(data, _selectedTile);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("Click a tile to customize visuals.", MessageType.None);
+            }
+        }
+
+        private void DrawTileCustomizer(MapData data, Vector2Int coord)
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField($"Customizing Tile ({coord.x}, {coord.y})", EditorStyles.boldLabel);
+
+            int overrideIndex = -1;
+            for (int i = 0; i < data.VisualOverrides.Count; i++)
+            {
+                if (data.VisualOverrides[i].Coordinate == coord)
+                {
+                    overrideIndex = i;
+                    break;
+                }
+            }
+
+            // Get SerializedProperty for the override
+            SerializedProperty visualOverridesProp = serializedObject.FindProperty("VisualOverrides");
+            SerializedProperty overrideProp = null;
+            
+            if (overrideIndex != -1)
+            {
+                overrideProp = visualOverridesProp.GetArrayElementAtIndex(overrideIndex);
+            }
+
+            EditorGUI.BeginChangeCheck();
+            
+            if (overrideProp != null)
+            {
+                SerializedProperty texProp = overrideProp.FindPropertyRelative("Texture");
+                EditorGUILayout.PropertyField(texProp, new GUIContent("Base Texture"));
+            }
+            else
+            {
+                Texture2D tex = (Texture2D)EditorGUILayout.ObjectField("Base Texture", null, typeof(Texture2D), false);
+                if (tex != null)
+                {
+                    Undo.RecordObject(data, "Add Tile Override");
+                    data.VisualOverrides.Add(new TileVisualOverride { Coordinate = coord, Texture = tex, Decorations = new List<DecorationData>() });
+                    EditorUtility.SetDirty(data);
+                    serializedObject.Update();
+                    return;
+                }
+            }
+
+            EditorGUILayout.Space(5);
+            EditorGUILayout.LabelField("Decorations List", EditorStyles.boldLabel);
+
+            if (overrideProp != null)
+            {
+                SerializedProperty decosProp = overrideProp.FindPropertyRelative("Decorations");
+                
+                for (int i = 0; i < decosProp.arraySize; i++)
+                {
+                    SerializedProperty decoProp = decosProp.GetArrayElementAtIndex(i);
+                    SerializedProperty prefabProp = decoProp.FindPropertyRelative("Prefab");
+                    
+                    string foldoutKey = $"{coord.x}_{coord.y}_{i}";
+                    if (!_decoFoldouts.ContainsKey(foldoutKey)) _decoFoldouts[foldoutKey] = true;
+
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                    
+                    EditorGUILayout.BeginHorizontal();
+                    string label = prefabProp.objectReferenceValue != null ? prefabProp.objectReferenceValue.name : $"Decoration {i}";
+                    _decoFoldouts[foldoutKey] = EditorGUILayout.Foldout(_decoFoldouts[foldoutKey], label, true, EditorStyles.foldoutHeader);
+                    
+                    if (GUILayout.Button("Remove", GUILayout.Width(60)))
+                    {
+                        decosProp.DeleteArrayElementAtIndex(i);
+                        break;
+                    }
+                    EditorGUILayout.EndHorizontal();
+
+                    if (_decoFoldouts[foldoutKey])
+                    {
+                        EditorGUI.indentLevel++;
+                        EditorGUILayout.PropertyField(prefabProp, new GUIContent("Prefab"));
+                        EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Offset"));
+                        EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Rotation"));
+                        EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Scale"));
+                        EditorGUI.indentLevel--;
+                        EditorGUILayout.Space(2);
+                    }
+                    
+                    EditorGUILayout.EndVertical();
+                }
+
+                EditorGUILayout.Space(2);
+                if (GUILayout.Button("+ Add New Decoration", GUILayout.Height(25)))
+                {
+                    decosProp.arraySize++;
+                    SerializedProperty newDeco = decosProp.GetArrayElementAtIndex(decosProp.arraySize - 1);
+                    newDeco.FindPropertyRelative("Scale").vector3Value = Vector3.one;
+                    newDeco.FindPropertyRelative("Offset").vector3Value = Vector3.zero;
+                    newDeco.FindPropertyRelative("Rotation").vector3Value = Vector3.zero;
+                    newDeco.FindPropertyRelative("Prefab").objectReferenceValue = null;
+                }
+            }
+            else
+            {
+                if (GUILayout.Button("+ Add Initial Decoration", GUILayout.Height(25)))
+                {
+                    Undo.RecordObject(data, "Add Tile Override");
+                    data.VisualOverrides.Add(new TileVisualOverride { 
+                        Coordinate = coord, 
+                        Decorations = new List<DecorationData> { DecorationData.Default } 
+                    });
+                    EditorUtility.SetDirty(data);
+                    serializedObject.Update();
+                }
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            EditorGUILayout.Space(10);
+            GUI.backgroundColor = new Color(1, 0.5f, 0.5f);
+            if (GUILayout.Button("Clear All Overrides for Tile", GUILayout.Height(20)))
+            {
+                if (overrideIndex != -1 && EditorUtility.DisplayDialog("Clear Overrides", "Are you sure you want to remove all visual overrides for this tile?", "Yes", "No"))
+                {
+                    Undo.RecordObject(data, "Clear Tile Visuals");
+                    data.VisualOverrides.RemoveAt(overrideIndex);
+                    EditorUtility.SetDirty(data);
+                }
+            }
+            GUI.backgroundColor = Color.white;
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawMapPreview(MapData data, bool isVisualMode)
         {
             float availableWidth = EditorGUIUtility.currentViewWidth - 40 - LabelSpace;
-            
-            // 90 Degree CW Rotation:
-            // GUI X = (Height - 1 - y)  [Scene Y=0 becomes Right]
-            // GUI Y = x                 [Scene X=0 becomes Top]
-            // We swap W/H for the grid rect display.
             
             float cellW = Mathf.Min(availableWidth / data.Height, MaxCellSize);
             float cellH = cellW;
@@ -92,14 +271,12 @@ namespace MaouSamaTD.Editor
 
             GUIStyle labelStyle = new GUIStyle(EditorStyles.miniLabel) { alignment = TextAnchor.MiddleCenter };
 
-            // Horizontal Labels (Scene Y - Flipped)
+            // Labels
             for (int y = 0; y < data.Height; y++)
             {
                 Rect labelRect = new Rect(gridRect.x + (data.Height - 1 - y) * cellW, gridRect.y + gridRect.height, cellW, LabelSpace);
                 EditorGUI.LabelField(labelRect, y.ToString(), labelStyle);
             }
-
-            // Vertical Labels (Scene X)
             for (int x = 0; x < data.Width; x++)
             {
                 Rect labelRect = new Rect(outerRect.x, gridRect.y + x * cellH, LabelSpace, cellH);
@@ -126,11 +303,41 @@ namespace MaouSamaTD.Editor
                         cellH - CellPadding * 2
                     );
 
-                    EditorGUI.DrawRect(cellRect, color);
+                    // Highlight selection in visual mode
+                    if (isVisualMode && _selectedTile == coord)
+                    {
+                        EditorGUI.DrawRect(cellRect, Color.yellow);
+                        Rect innerRect = new Rect(cellRect.x + 2, cellRect.y + 2, cellRect.width - 4, cellRect.height - 4);
+                        EditorGUI.DrawRect(innerRect, color);
+                    }
+                    else
+                    {
+                        EditorGUI.DrawRect(cellRect, color);
+                    }
+
+                    // Visual override indicators
+                    bool hasOverride = false;
+                    foreach(var o in data.VisualOverrides) 
+                        if(o.Coordinate == coord) { hasOverride = true; break; }
+
+                    if (hasOverride)
+                    {
+                        EditorGUI.LabelField(cellRect, "*", new GUIStyle(EditorStyles.boldLabel) { 
+                            alignment = TextAnchor.UpperRight, 
+                            normal = { textColor = Color.yellow } 
+                        });
+                    }
 
                     if (clicked && cellRect.Contains(e.mousePosition))
                     {
-                        CycleTile(data, coord);
+                        if (isVisualMode)
+                        {
+                            _selectedTile = coord;
+                        }
+                        else
+                        {
+                            CycleTile(data, coord);
+                        }
                         e.Use();
                     }
                 }

@@ -58,7 +58,6 @@ MonoBehaviour:
   - {x: 1, y: 6}
   - {x: 1, y: 7}
   - {x: 1, y: 8}
-  - {x: 1, y: 9}
   - {x: 3, y: -10}
   - {x: 3, y: -9}
   - {x: 3, y: -8}
@@ -100,9 +99,26 @@ MonoBehaviour:
   - {x: 4, y: 8}
   - {x: 4, y: 9}
   - {x: 1, y: -6}
-  DecoratedWalkable: []
+  - {x: 1, y: 9}
+  DecoratedWalkable:
+  - {x: 2, y: 9}
   DecoratedHighGround: []
   SpawnPoints:
   - {x: 2, y: 0}
   ExitPoints:
   - {x: 2, y: 9}
+  VisualOverrides:
+  - Coordinate: {x: 2, y: 9}
+    Texture: {fileID: 0}
+    Decorations:
+    - Prefab: {fileID: 6970448052209002702, guid: eb84dd54acb52ac40a62b3f2cc477866, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 270, y: 0, z: 0}
+      Scale: {x: 1, y: 1, z: 1}
+  - Coordinate: {x: 2, y: 0}
+    Texture: {fileID: 0}
+    Decorations:
+    - Prefab: {fileID: 6797045440574753935, guid: 5df1e870d4ab24249a927d18e4cd36fd, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 270, y: 0, z: 0}
+      Scale: {x: 1, y: 1, z: 1}

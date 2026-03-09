@@ -5333,8 +5333,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5585815369d92041a316a922b0b2797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Grid.GridManager
-  _width: 9
-  _height: 9
+  _width: 5
+  _height: 10
   _cellSize: 1
   _tilePrefab: {fileID: 961863415363111276, guid: 361ae00729f0efc479b1baad89574779, type: 3}
   _gridContainer: {fileID: 212953964}

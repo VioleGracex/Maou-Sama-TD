@@ -5299,14 +5299,16 @@ MonoBehaviour:
   _gridManager: {fileID: 1567414775}
   _extractPath: Assets/_Game/ScriptableObjects/Maps/
   _extractFileName: NewMapData
-  _mapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
+  _mapData: {fileID: 11400000, guid: cf6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c, type: 2}
   _useSeed: 1
   _seed: 12345
   _highGroundChance: 0.3
   _lanesPerConnection: 1
   _spawnPoints:
-  - {x: 2, y: 7}
-  - {x: 6, y: 7}
+  - Coordinate: {x: 0, y: 0}
+    TargetExitIndex: 0
+  - Coordinate: {x: 0, y: 0}
+    TargetExitIndex: 0
   _exitPoints:
   - {x: 4, y: 0}
   _startPrefab: {fileID: 0}
@@ -5457,7 +5459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0becde9f03fa53d40ba8df82dd8ac1d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.LevelManager
-  _levelData: {fileID: 11400000, guid: a2c6c0a664a64034e81cbd9127cb1407, type: 2}
+  _levelData: {fileID: 11400000, guid: e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6, type: 2}
 --- !u!1 &1652122061
 GameObject:
   m_ObjectHideFlags: 0

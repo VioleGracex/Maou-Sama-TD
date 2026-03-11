@@ -163,6 +163,8 @@ namespace MaouSamaTD.Grid
                 case TileType.DecoHighGround: return new Color(0.3f, 0.3f, 0.3f); // Dark Gray
                 case TileType.None: return new Color(0.1f, 0.1f, 0.1f); // Black/Void
                 case TileType.LowTile: return new Color(0.8f, 0.8f, 0.8f); // Lighter gray
+                case TileType.SpawnPointHigh: return new Color(1f, 0.4f, 0.4f); // Lighter Red
+                case TileType.ExitPointHigh: return new Color(0.4f, 1f, 1f); // Lighter Cyan
                 default: return Color.gray;
             }
         }
@@ -186,8 +188,8 @@ namespace MaouSamaTD.Grid
                  if (_type == TileType.ExitPoint && newType != TileType.ExitPoint) generator.RemoveExitPoint(_coordinate);
                  
                  // Handle new type addition
-                 if (newType == TileType.SpawnPoint) generator.AddSpawnPoint(_coordinate);
-                 else if (newType == TileType.ExitPoint) generator.AddExitPoint(_coordinate);
+                 if (newType == TileType.SpawnPoint || newType == TileType.SpawnPointHigh) generator.AddSpawnPoint(_coordinate);
+                 else if (newType == TileType.ExitPoint || newType == TileType.ExitPointHigh) generator.AddExitPoint(_coordinate);
                  else 
                  {
                      // If just changing to Walkable/HighGround, generator doesn't track these lists explicitly
@@ -308,11 +310,11 @@ namespace MaouSamaTD.Grid
                  float size = 0.9f; 
                  
                  Color markerColor = Color.white;
-                 if (_type == TileType.SpawnPoint)
+                 if (_type == TileType.SpawnPoint || _type == TileType.SpawnPointHigh)
                  {
                      markerColor = Color.red; 
                  }
-                 else if (_type == TileType.ExitPoint)
+                 else if (_type == TileType.ExitPoint || _type == TileType.ExitPointHigh)
                  {
                      if (ColorUtility.TryParseHtmlString("#00D2D3", out Color c))
                      {
@@ -397,6 +399,18 @@ namespace MaouSamaTD.Grid
         private void SetAsHighGround()
         {
             SetType(TileType.HighGround);
+        }
+
+        [Button("Set as High Spawn")]
+        private void SetAsHighSpawn()
+        {
+            SetType(TileType.SpawnPointHigh);
+        }
+
+        [Button("Set as High Exit")]
+        private void SetAsHighExit()
+        {
+            SetType(TileType.ExitPointHigh);
         }
     }
 }

@@ -50,8 +50,34 @@ namespace MaouSamaTD.Grid
         
         // Spawn/Exit Points
         public Vector2Int SpawnPoint { get; private set; }
-        public List<Vector2Int> SpawnPoints { get; private set; } = new List<Vector2Int>();
+        public List<SpawnPointData> SpawnPoints { get; private set; } = new List<SpawnPointData>();
         public Vector2Int ExitPoint { get; private set; }
+        public List<Vector2Int> ExitPoints { get; private set; } = new List<Vector2Int>();
+        
+        public Vector2Int GetTargetExitForSpawn(Vector2Int spawnCoord)
+        {
+            var spawnData = SpawnPoints.Find(s => s.Coordinate == spawnCoord);
+            if (spawnData.Coordinate == spawnCoord && spawnData.TargetExitIndex >= 0 && spawnData.TargetExitIndex < ExitPoints.Count)
+            {
+                return ExitPoints[spawnData.TargetExitIndex];
+            }
+            return ExitPoint; // Default fallback
+        }
+
+        public void SetSpawnMapping(Vector2Int spawnCoord, int exitIndex)
+        {
+            int idx = SpawnPoints.FindIndex(s => s.Coordinate == spawnCoord);
+            if (idx != -1)
+            {
+                var s = SpawnPoints[idx];
+                s.TargetExitIndex = exitIndex;
+                SpawnPoints[idx] = s;
+            }
+            else
+            {
+                SpawnPoints.Add(new SpawnPointData { Coordinate = spawnCoord, TargetExitIndex = exitIndex });
+            }
+        }
         #endregion
 
         #region Initialization
@@ -119,24 +145,30 @@ namespace MaouSamaTD.Grid
             // Default Fallback
             SpawnPoint = new Vector2Int(0, 0);
             SpawnPoints.Clear();
+            ExitPoints.Clear();
             ExitPoint = new Vector2Int(_width - 1, _height - 1);
 
             if (_grid.Count > 0)
             {
                 foreach (var kvp in _grid)
                 {
-                    if (kvp.Value.Type == TileType.SpawnPoint)
+                    if (kvp.Value.Type == TileType.SpawnPoint || kvp.Value.Type == TileType.SpawnPointHigh)
                     {
                         if (SpawnPoints.Count == 0) SpawnPoint = kvp.Key;
-                        SpawnPoints.Add(kvp.Key);
+                        SpawnPoints.Add(new SpawnPointData { Coordinate = kvp.Key, TargetExitIndex = -1 });
                     }
-                    if (kvp.Value.Type == TileType.ExitPoint) ExitPoint = kvp.Key;
+                    if (kvp.Value.Type == TileType.ExitPoint || kvp.Value.Type == TileType.ExitPointHigh)
+                    {
+                        if (ExitPoints.Count == 0) ExitPoint = kvp.Key;
+                        ExitPoints.Add(kvp.Key);
+                    }
                 }
             }
             
-            if (SpawnPoints.Count == 0) SpawnPoints.Add(SpawnPoint);
+            if (SpawnPoints.Count == 0) SpawnPoints.Add(new SpawnPointData { Coordinate = SpawnPoint, TargetExitIndex = -1 });
+            if (ExitPoints.Count == 0) ExitPoints.Add(ExitPoint);
 
-            Debug.Log($"GridManager: Found {SpawnPoints.Count} Spawns, Exit {ExitPoint}");
+            Debug.Log($"GridManager: Found {SpawnPoints.Count} Spawns, {ExitPoints.Count} Exits");
         }
         #endregion
         
@@ -179,7 +211,7 @@ namespace MaouSamaTD.Grid
             tile.Initialize(coord, type);
             _grid[coord] = tile;
             
-            if (type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor || type == TileType.Wall)
+            if (type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor || type == TileType.Wall || type == TileType.SpawnPointHigh || type == TileType.ExitPointHigh)
                 tile.transform.position += Vector3.up * 0.5f;
             else if (type == TileType.LowTile)
                 tile.transform.position += Vector3.down * 0.2f;
@@ -271,7 +303,7 @@ namespace MaouSamaTD.Grid
             {
                 tile.Initialize(coord, type);
                 
-                bool isHigh = type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor || type == TileType.Wall;
+                bool isHigh = type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor || type == TileType.Wall || type == TileType.SpawnPointHigh || type == TileType.ExitPointHigh;
                 float yOffset = isHigh ? 0.5f : 0f;
                 
                 // Low Tile special case: move it down slightly
@@ -493,25 +525,41 @@ namespace MaouSamaTD.Grid
                     
                     if (moveType == MaouSamaTD.Units.EnemyMovementType.Ground)
                     {
-                        // Ground cannot walk on obstacles
+                        // Ground cannot walk on high ground or obstacles
                         if (tile.Type == TileType.NonWalkableDecor || 
                             tile.Type == TileType.HighGround || 
                             tile.Type == TileType.DecoHighGround ||
+                            tile.Type == TileType.SpawnPointHigh ||
+                            tile.Type == TileType.ExitPointHigh ||
                             tile.Type == TileType.None ||
-                            tile.Type == TileType.Wall) 
+                            tile.Type == TileType.Wall ||
+                            tile.Type == TileType.LowTile) // Adding LowTile as obstacle for ground if it's meant to be a pit/gap
                             isWalkable = false;
-                            
-                        // Check occupancy logic
-                        if (!ignoreOccupants && tile.IsOccupied && tile.Occupant is MaouSamaTD.Units.PlayerUnit)
+                    }
+                    else if (moveType == MaouSamaTD.Units.EnemyMovementType.Flying)
+                    {
+                        // Flying MUST be on high ground or special tiles (cannot be on normal walkable tiles)
+                        // Unless "Mixed" is specified.
+                        if (tile.Type == TileType.Walkable || 
+                            tile.Type == TileType.DecoWalkable ||
+                            tile.Type == TileType.None)
+                            isWalkable = false;
+                    }
+                    // Mixed can walk on both Ground and HighGround
+                    else if (moveType == MaouSamaTD.Units.EnemyMovementType.Mixed)
+                    {
+                        if (tile.Type == TileType.None || tile.Type == TileType.Wall)
+                            isWalkable = false;
+                    }
+                    
+                    if (isWalkable && !ignoreOccupants && tile.IsOccupied && tile.Occupant is MaouSamaTD.Units.PlayerUnit)
+                    {
+                        // Towers block ground and mixed units, but flyers pass through
+                        if (moveType != MaouSamaTD.Units.EnemyMovementType.Flying)
                         {
-                            // If tower is blocking?
-                            // For now, assume yes if it's a "Melee" or "Blocker" tower? 
-                            // Or all towers block?
-                            // Let's assume Occupied = Blocked for pathfinding to avoid clipping.
-                            isWalkable = false; 
+                            isWalkable = false;
                         }
                     }
-                    // Flying ignores terrain/towers
                     
                     if (isWalkable) yield return next;
                 }

@@ -87,16 +87,16 @@ namespace MaouSamaTD.Managers.Interaction
                 if (_gridManager != null && _gridManager.SpawnPoints != null && _gridManager.SpawnPoints.Count > 0)
                 {
                     Vector2Int unitCoord = _gridManager.WorldToGridCoordinates(targetPos);
-                    Vector2Int closestSpawn = _gridManager.SpawnPoints[0];
+                    Vector2Int closestSpawn = _gridManager.SpawnPoints[0].Coordinate;
                     float minDist = Vector2.Distance(unitCoord, closestSpawn);
                     
                     for (int i = 1; i < _gridManager.SpawnPoints.Count; i++)
                     {
-                        float dist = Vector2.Distance(unitCoord, _gridManager.SpawnPoints[i]);
+                        float dist = Vector2.Distance(unitCoord, _gridManager.SpawnPoints[i].Coordinate);
                         if (dist < minDist)
                         {
                             minDist = dist;
-                            closestSpawn = _gridManager.SpawnPoints[i];
+                            closestSpawn = _gridManager.SpawnPoints[i].Coordinate;
                         }
                     }
 

@@ -14,6 +14,7 @@ namespace MaouSamaTD.Editor
 
         private int _selectedTab = 0;
         private string[] _tabNames = { "Layout", "Visuals" };
+        private Vector2 _scrollPosition;
         
         private static Texture2D s_TextureClipboard;
         
@@ -104,12 +105,13 @@ namespace MaouSamaTD.Editor
                 return;
             }
 
+            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition); // Start ScrollView
             DrawMapPreview(data, true);
-
-            EditorGUILayout.Space();
             DrawPalette(data);
-
+            DrawSpawnPointConfig(data);
             EditorGUILayout.Space();
+            DrawLegend(data);
+            EditorGUILayout.EndScrollView(); // End ScrollView
             
             // Layout Tools
             EditorGUILayout.LabelField("Layout Tools", EditorStyles.boldLabel);
@@ -838,7 +840,7 @@ namespace MaouSamaTD.Editor
             // Draw Walls
             bool toggleCascade = data.WallCascadeOnHoles;
 
-            // North = top row in preview (gridX = -1), runs along Y (z axis), index = y
+            // North = top row in preview (gridX = Width), runs along Y (z axis), index = y
             // GridGenerator North: x = Width, adjacent to (Width - 1, y)
             for (int y = 0; y < data.Height; y++) {
                 int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.North && o.Index == y);
@@ -851,9 +853,9 @@ namespace MaouSamaTD.Editor
                 bool isEnabled = data.Walls.North;
                 bool isCascaded = !toggleCascade && IsTileTypeHole(data, data.Width - 1, y);
                 Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
-                DrawItem(-1, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.North, y);
+                DrawItem(data.Width, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.North, y);
             }
-            // South = bottom row in preview (gridX = Width), runs along Y (z axis), index = y
+            // South = bottom row in preview (gridX = -1), runs along Y (z axis), index = y
             // GridGenerator South: x = -1, adjacent to (0, y)
             for (int y = 0; y < data.Height; y++) {
                 int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.South && o.Index == y);
@@ -866,7 +868,7 @@ namespace MaouSamaTD.Editor
                 bool isEnabled = data.Walls.South;
                 bool isCascaded = !toggleCascade && IsTileTypeHole(data, 0, y);
                 Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
-                DrawItem(data.Width, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.South, y);
+                DrawItem(-1, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.South, y);
             }
             // West = left column in preview (gridY = Height), runs along X (x axis), index = x
             // GridGenerator West: y = Height, adjacent to (adjX, Height - 1)
@@ -1021,6 +1023,8 @@ namespace MaouSamaTD.Editor
                 case TileType.LowTile: return new Color(0.8f, 0.6f, 0.4f);
                 case TileType.NonWalkableDecor: return new Color(0.5f, 0.2f, 0.5f);
                 case TileType.Wall: return new Color(0.2f, 0.2f, 0.6f);
+                case TileType.SpawnPointHigh: return new Color(1f, 0.4f, 0.4f);
+                case TileType.ExitPointHigh: return new Color(0.4f, 1f, 1f);
                 default: return Color.black;
             }
         }
@@ -1107,6 +1111,8 @@ namespace MaouSamaTD.Editor
             DrawLegendItem("Low Tile", GetTileColor(TileType.LowTile));
             DrawLegendItem("Non-Walkable Decor", GetTileColor(TileType.NonWalkableDecor));
             DrawLegendItem("Wall", GetTileColor(TileType.Wall));
+            DrawLegendItem("Spawn High", GetTileColor(TileType.SpawnPointHigh));
+            DrawLegendItem("Exit High", GetTileColor(TileType.ExitPointHigh));
             EditorGUILayout.EndVertical();
         }
 
@@ -1170,11 +1176,23 @@ namespace MaouSamaTD.Editor
                 data.ManualLayoutData[i] = d;
             }
             TransformCoordSet(data.SpawnPoints, horizontal, data.Width, data.Height);
-            TransformCoordSet(data.ExitPoints, horizontal, data.Width, data.Height);
+            TransformVectorSet(data.ExitPoints, horizontal, data.Width, data.Height);
             EditorUtility.SetDirty(data);
         }
 
-        private void TransformCoordSet(List<Vector2Int> coords, bool horizontal, int w, int h)
+        private void TransformCoordSet(List<SpawnPointData> coords, bool horizontal, int w, int h)
+        {
+            if (coords == null) return;
+            for (int i = 0; i < coords.Count; i++)
+            {
+                var s = coords[i];
+                if (horizontal) s.Coordinate.x = (w - 1) - s.Coordinate.x;
+                else s.Coordinate.y = (h - 1) - s.Coordinate.y;
+                coords[i] = s;
+            }
+        }
+
+        private void TransformVectorSet(List<Vector2Int> coords, bool horizontal, int w, int h)
         {
             if (coords == null) return;
             for (int i = 0; i < coords.Count; i++)
@@ -1202,13 +1220,26 @@ namespace MaouSamaTD.Editor
             }
             
             RotateCoordSet(data.SpawnPoints, oldW, oldH);
-            RotateCoordSet(data.ExitPoints, oldW, oldH);
+            RotateVectorSet(data.ExitPoints, oldW, oldH);
             data.Width = oldH;
             data.Height = oldW;
             EditorUtility.SetDirty(data);
         }
 
-        private void RotateCoordSet(List<Vector2Int> coords, int w, int h)
+        private void RotateCoordSet(List<SpawnPointData> coords, int w, int h)
+        {
+            if (coords == null) return;
+            for (int i = 0; i < coords.Count; i++)
+            {
+                var s = coords[i];
+                int newX = s.Coordinate.y;
+                int newY = (w - 1) - s.Coordinate.x;
+                s.Coordinate = new Vector2Int(newX, newY);
+                coords[i] = s;
+            }
+        }
+
+        private void RotateVectorSet(List<Vector2Int> coords, int w, int h)
         {
             if (coords == null) return;
             for (int i = 0; i < coords.Count; i++)
@@ -1225,6 +1256,45 @@ namespace MaouSamaTD.Editor
             Rect r = EditorGUILayout.GetControlRect(false, 16);
             EditorGUI.DrawRect(new Rect(r.x, r.y, 16, 16), color);
             EditorGUI.LabelField(new Rect(r.x + 20, r.y, r.width - 20, r.height), label);
+        }
+
+        private void DrawSpawnPointConfig(MapData data)
+        {
+            // Only show if a single spawn point is selected
+            if (_selection.Count != 1 || _selection[0].Type != SelectionType.Tile) return;
+            
+            Vector2Int coord = _selection[0].TileCoord;
+            int spawnIdx = data.SpawnPoints.FindIndex(s => s.Coordinate == coord);
+            if (spawnIdx == -1) return;
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Spawn Point Configuration", EditorStyles.boldLabel);
+            
+            var spawnData = data.SpawnPoints[spawnIdx];
+            
+            string[] exitOptions = new string[data.ExitPoints.Count + 1];
+            exitOptions[0] = "Any/First Exit (-1)";
+            for (int i = 0; i < data.ExitPoints.Count; i++)
+            {
+                exitOptions[i + 1] = $"Exit {i} at {data.ExitPoints[i]}";
+            }
+
+            EditorGUI.BeginChangeCheck();
+            int selectedExit = EditorGUILayout.Popup("Target Exit", spawnData.TargetExitIndex + 1, exitOptions) - 1;
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(data, "Change Spawn Point Target Exit");
+                spawnData.TargetExitIndex = selectedExit;
+                data.SpawnPoints[spawnIdx] = spawnData;
+                EditorUtility.SetDirty(data);
+            }
+            
+            if (spawnData.TargetExitIndex >= 0 && spawnData.TargetExitIndex < data.ExitPoints.Count)
+            {
+                EditorGUILayout.HelpBox($"Mapped to Exit {spawnData.TargetExitIndex} at {data.ExitPoints[spawnData.TargetExitIndex]}", MessageType.Info);
+            }
+
+            EditorGUILayout.EndVertical();
         }
 
         private bool IsTileTypeHole(MapData data, int x, int y)

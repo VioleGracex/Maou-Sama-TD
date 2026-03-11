@@ -9,6 +9,7 @@ namespace MaouSamaTD.Units
     {
         private EnemyData _enemyData;
         public EnemyData EnemyData => _enemyData;
+        public Vector2Int GoalCoord { get; set; } = new Vector2Int(-1, -1);
 
         private GridManager _gridManager;
 
@@ -115,8 +116,9 @@ namespace MaouSamaTD.Units
             if (gridMgr == null || _enemyData == null) return;
 
             Vector2Int startValues = gridMgr.WorldToGridCoordinates(transform.position);
+            Vector2Int goal = GoalCoord.x != -1 ? GoalCoord : gridMgr.ExitPoint;
 
-            Queue<Tile> newPath = gridMgr.GetPath(startValues, gridMgr.ExitPoint, _enemyData.MovementType);
+            Queue<Tile> newPath = gridMgr.GetPath(startValues, goal, _enemyData.MovementType);
             
             if (newPath != null && newPath.Count > 0)
             {

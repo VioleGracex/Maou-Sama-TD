@@ -14,7 +14,9 @@ namespace MaouSamaTD.Levels
         ExitPoint,
         LowTile,
         NonWalkableDecor,
-        Wall
+        Wall,
+        SpawnPointHigh,
+        ExitPointHigh
     }
 
     [System.Serializable]
@@ -22,6 +24,13 @@ namespace MaouSamaTD.Levels
     {
         public Vector2Int Coordinate;
         public TileType Type;
+    }
+
+    [System.Serializable]
+    public struct SpawnPointData
+    {
+        public Vector2Int Coordinate;
+        public int TargetExitIndex; // -1 for "Any/First"
     }
 
     [CreateAssetMenu(fileName = "NewMapData", menuName = "MaouSamaTD/Map Data")]
@@ -44,7 +53,7 @@ namespace MaouSamaTD.Levels
         public List<TileLayoutData> ManualLayoutData = new List<TileLayoutData>();
 
         [Header("Legacy/Special Points")]
-        public List<Vector2Int> SpawnPoints = new List<Vector2Int>();
+        public List<SpawnPointData> SpawnPoints = new List<SpawnPointData>();
         public List<Vector2Int> ExitPoints = new List<Vector2Int>();
 
         [Header("Visuals")]

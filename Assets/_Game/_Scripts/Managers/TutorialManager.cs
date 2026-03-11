@@ -103,7 +103,8 @@ namespace MaouSamaTD.Managers
                 switch (step.Type)
                 {
                     case TutorialStepType.DialogueOnly:
-                        _gameManager.SetSpeed(0);
+                        if (step.StopTime) _gameManager.SetSpeed(0);
+                        HandleUIHighlight(step);
                         bool dialogueDone = false;
                         _dialogueManager.StartDialogue(step.Dialogue, () => 
                         {
@@ -115,7 +116,7 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.HighlightUI:
-                        _gameManager.SetSpeed(0);
+                        if (step.StopTime) _gameManager.SetSpeed(0);
                         HandleUIHighlight(step);
                         bool uiDialogueDone = false;
                         if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
@@ -136,7 +137,7 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.HighlightTile:
-                        _gameManager.SetSpeed(0);
+                        if (step.StopTime) _gameManager.SetSpeed(0);
                         HandleUIHighlight(step);
                         if (step.TargetTiles != null)
                         {
@@ -157,7 +158,7 @@ namespace MaouSamaTD.Managers
 
                     case TutorialStepType.WaitForAction:
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
-                        _gameManager.SetSpeed(0); 
+                        if (step.StopTime) _gameManager.SetSpeed(0); 
                         
                         HandleUIHighlight(step);
                         
@@ -314,6 +315,15 @@ namespace MaouSamaTD.Managers
             if (!step.UseBlocker)
             {
                 _uiBlocker.HideBlocker();
+                if (!step.ShowHand && !step.DragShowHand) _handUI.Hide();
+                return;
+            }
+
+            // 2.5 Full Blocker - No Targeting
+            if (step.FullBlocker)
+            {
+                _uiBlocker.ShowBlockerWithDetailedTargets(null, null);
+                // Still handle hand logic if needed, but usually full blockers don't show hands pointing to nothing
                 if (!step.ShowHand && !step.DragShowHand) _handUI.Hide();
                 return;
             }

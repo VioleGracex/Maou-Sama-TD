@@ -116,7 +116,7 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
-    ResetBlocker: 0
+    ResetBlocker: 1
     ResumeTime: 1
   - StepName: Wait for Wave 1
     Type: 7
@@ -148,7 +148,7 @@ MonoBehaviour:
     Type: 0
     Dialogue: {fileID: 11400000, guid: 8b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e, type: 2}
     TargetUI:
-      Name: 
+      Name: UnitButton_Ignis
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []

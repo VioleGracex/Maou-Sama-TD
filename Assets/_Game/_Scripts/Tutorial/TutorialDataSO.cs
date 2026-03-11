@@ -101,13 +101,20 @@ namespace MaouSamaTD.Tutorial
         [ShowIf("HasCondition")]
         public int RequiredCount;
         
-        [Header("Visual Customization")]
+        [ShowIf("UseBlocker")]
         [Tooltip("Enable dark overlay blocker for this step")]
         public bool UseBlocker = true;
 
         [ShowIf("UseBlocker")]
+        [Tooltip("If true, the blocker covers the entire screen without any holes/cutouts")]
+        public bool FullBlocker = false;
+
+        [ShowIf("UseBlocker")]
         [Tooltip("Reset previous holes when this step starts")]
         public bool ResetBlocker = true;
+
+        [Tooltip("If true, game time will be paused (speed 0) while this step is active")]
+        public bool StopTime = true;
 
         [Tooltip("Automatically resume game time (scale 1) after this step completes")]
         public bool ResumeTime = true;

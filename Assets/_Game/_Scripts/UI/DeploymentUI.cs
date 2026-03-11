@@ -203,16 +203,16 @@ namespace MaouSamaTD.UI
             if (gm != null && gm.SpawnPoints != null && gm.SpawnPoints.Count > 0)
             {
                 // Find closest spawn point
-                Vector2Int closestSpawn = gm.SpawnPoints[0];
+                Vector2Int closestSpawn = gm.SpawnPoints[0].Coordinate;
                 float minDist = Vector2.Distance(tile.Coordinate, closestSpawn);
                 
                 for (int i = 1; i < gm.SpawnPoints.Count; i++)
                 {
-                    float dist = Vector2.Distance(tile.Coordinate, gm.SpawnPoints[i]);
+                    float dist = Vector2.Distance(tile.Coordinate, gm.SpawnPoints[i].Coordinate);
                     if (dist < minDist)
                     {
                         minDist = dist;
-                        closestSpawn = gm.SpawnPoints[i];
+                        closestSpawn = gm.SpawnPoints[i].Coordinate;
                     }
                 }
 

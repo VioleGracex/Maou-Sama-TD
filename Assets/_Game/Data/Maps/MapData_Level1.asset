@@ -21,85 +21,85 @@ MonoBehaviour:
   UseManualLayout: 1
   ManualLayoutData:
   - Coordinate: {x: 0, y: 9}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 0}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 1}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 2}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 3}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 4}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 5}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 6}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 7}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 0, y: 8}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 9}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 0}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 1}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 2}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 3}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 4}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 5}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 6}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 7}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 1, y: 8}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 9}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 0}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 1}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 2}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 3}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 4}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 5}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 6}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 7}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 3, y: 8}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 0}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 1}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 2}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 3}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 4}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 5}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 6}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 7}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 8}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 4, y: 9}
-    Type: 9
+    Type: 8
   - Coordinate: {x: 2, y: 0}
     Type: 5
   - Coordinate: {x: 2, y: 9}
@@ -270,7 +270,7 @@ MonoBehaviour:
   WallCascadeOnHoles: 0
   Walls:
     North: 1
-    South: 0
+    South: 1
     East: 1
     West: 1
   WallVisuals:
@@ -450,7 +450,7 @@ MonoBehaviour:
     Decorations: []
   - Side: 2
     Index: 2
-    TextureOverride: {fileID: 2800000, guid: 8628c7957a7904c4dbf47adff7fd192d, type: 3}
+    TextureOverride: {fileID: 2800000, guid: 85d855880805f514c9636a92c37d65ba, type: 3}
     OverrideScale: 0
     Scale: {x: 0, y: 0, z: 0}
     OverrideOffset: 0

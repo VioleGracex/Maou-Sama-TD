@@ -132,14 +132,32 @@ namespace MaouSamaTD.Managers
         {
             if (_gridManager == null || _enemyPrefab == null || data == null) return;
 
+            Vector2Int spawnPoint = _gridManager.SpawnPoints[spawnPointIndex].Coordinate;
+            Vector2Int exitPoint = _gridManager.GetTargetExitForSpawn(spawnPoint);
+            
+            // Validate Spawning Constraints
+            Tile spawnTile = _gridManager.GetTileAt(spawnPoint);
+            if (spawnTile != null)
+            {
+                if (data.MovementType == MaouSamaTD.Units.EnemyMovementType.Ground)
+                {
+                    if (spawnTile.Type == TileType.HighGround || spawnTile.Type == TileType.DecoHighGround)
+                    {
+                        Debug.LogWarning($"EnemyManager: Cannot spawn Ground enemy at {spawnPoint} (HighGround). Skipping.");
+                        return;
+                    }
+                }
+                // Add more constraints if needed (e.g. Flying only on HighGround?)
+            }
+
             // 1. Get Path (Normal)
-            Queue<Tile> path = _gridManager.GetPath(_gridManager.SpawnPoint, _gridManager.ExitPoint, data.MovementType, false);
+            Queue<Tile> path = _gridManager.GetPath(spawnPoint, exitPoint, data.MovementType, false);
             
             // Fallback: If blocked, path ignoring occupants (so they spawn and fight)
             if (path == null || path.Count == 0)
             {
                 Debug.Log("[EnemyManager] Spawn Path Blocked! Attempting fallback (Ignore Occupants)...");
-                path = _gridManager.GetPath(_gridManager.SpawnPoint, _gridManager.ExitPoint, data.MovementType, true);
+                path = _gridManager.GetPath(spawnPoint, exitPoint, data.MovementType, true);
             }
 
             if (path == null || path.Count == 0)
@@ -149,13 +167,14 @@ namespace MaouSamaTD.Managers
             }
 
             // 2. Instantiate
-            Vector3 startPos = _gridManager.GridToWorldPosition(_gridManager.SpawnPoint);
+            Vector3 startPos = _gridManager.GridToWorldPosition(spawnPoint);
             
             MaouSamaTD.Units.EnemyUnit enemy = Instantiate(_enemyPrefab, startPos, Quaternion.identity, _enemyContainer);
             
             // 3. Initialize
             enemy.gameObject.SetActive(true); // Ensure active
             enemy.Initialize(data, waveIndex, enemyIndex);
+            enemy.GoalCoord = exitPoint;
             enemy.SetPath(path);
         }
 

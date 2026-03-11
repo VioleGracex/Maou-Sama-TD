@@ -5,7 +5,8 @@ namespace MaouSamaTD.Units
     public enum EnemyMovementType
     {
         Ground,
-        Flying
+        Flying,
+        Mixed
     }
 
     public enum EnemyCollisionType

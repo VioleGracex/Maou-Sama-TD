@@ -27,7 +27,7 @@ namespace MaouSamaTD.Grid
         [Header("Lanes")]
         [Min(1)] [SerializeField] private int _lanesPerConnection = 1;
         [Tooltip("If empty, default logic will be used (Left -> Right)")]
-        [SerializeField] private List<Vector2Int> _spawnPoints = new List<Vector2Int>();
+        [SerializeField] private List<SpawnPointData> _spawnPoints = new List<SpawnPointData>();
         [SerializeField] private List<Vector2Int> _exitPoints = new List<Vector2Int>();
 
         [Header("Visuals")]
@@ -125,6 +125,18 @@ namespace MaouSamaTD.Grid
                     var tile = _gridManager.CreateTile(coord, type);
                     if (tile == null) continue;
 
+                    // If manually setting types, ensure they are in the lists if they are spawn/exit
+                    if (type == TileType.SpawnPoint || type == TileType.SpawnPointHigh)
+                    {
+                        if (!_spawnPoints.Exists(s => s.Coordinate == coord))
+                            _spawnPoints.Add(new SpawnPointData { Coordinate = coord, TargetExitIndex = -1 });
+                    }
+                    if (type == TileType.ExitPoint || type == TileType.ExitPointHigh)
+                    {
+                        if (!_exitPoints.Contains(coord))
+                            _exitPoints.Add(coord);
+                    }
+
                     // Apply Visual Overrides
                     if (_mapData != null)
                     {
@@ -138,6 +150,12 @@ namespace MaouSamaTD.Grid
                         }
                     }
                 }
+            }
+
+            // Sync Spawn Mappings
+            foreach (var spawn in _spawnPoints)
+            {
+                _gridManager.SetSpawnMapping(spawn.Coordinate, spawn.TargetExitIndex);
             }
 
             if (_mapData != null && _mapData.UseManualLayout)
@@ -519,14 +537,15 @@ namespace MaouSamaTD.Grid
         #region Lanes & Pathing
         private void GenerateLanes()
         {
-            List<Vector2Int> currentSpawns = new List<Vector2Int>(_spawnPoints);
+            List<SpawnPointData> currentSpawns = new List<SpawnPointData>(_spawnPoints);
             List<Vector2Int> currentExits = new List<Vector2Int>(_exitPoints);
 
-            if (currentSpawns.Count == 0) currentSpawns.Add(new Vector2Int(0, _gridManager.Height / 2));
+            if (currentSpawns.Count == 0) currentSpawns.Add(new SpawnPointData { Coordinate = new Vector2Int(0, _gridManager.Height / 2), TargetExitIndex = -1 });
             if (currentExits.Count == 0) currentExits.Add(new Vector2Int(_gridManager.Width - 1, _gridManager.Height / 2));
 
-            foreach (var start in currentSpawns)
+            foreach (var startData in currentSpawns)
             {
+                Vector2Int start = startData.Coordinate;
                 Vector2Int closestExit = GetClosestExit(start, currentExits);
                 
                 for (int i = 0; i < _lanesPerConnection; i++)
@@ -611,9 +630,11 @@ namespace MaouSamaTD.Grid
 
         public void AddSpawnPoint(Vector2Int coord)
         {
-            if (!_spawnPoints.Contains(coord))
+            if (!_spawnPoints.Exists(s => s.Coordinate == coord))
             {
-                _spawnPoints.Add(coord);
+                _spawnPoints.Add(new SpawnPointData { Coordinate = coord, TargetExitIndex = -1 });
+                // We keep the logic as SpawnPoint for auto-gen, or let it be whatever it was.
+                // But if someone calls this, it usually forces the type.
                 _gridManager.SetTileType(coord, TileType.SpawnPoint);
                 Debug.Log($"Added Spawn Point at {coord}");
                 GenerateMap();
@@ -633,9 +654,9 @@ namespace MaouSamaTD.Grid
 
         public void RemoveSpawnPoint(Vector2Int coord)
         {
-            if (_spawnPoints.Contains(coord))
+            if (_spawnPoints.Exists(s => s.Coordinate == coord))
             {
-                _spawnPoints.Remove(coord);
+                _spawnPoints.RemoveAll(s => s.Coordinate == coord);
                 Debug.Log($"Removed Spawn Point at {coord}");
                 GenerateMap();
             }
@@ -651,7 +672,7 @@ namespace MaouSamaTD.Grid
 
             _seed = data.MapSeed;
             _highGroundChance = data.HighGroundChance;
-            _spawnPoints = new List<Vector2Int>(data.SpawnPoints);
+            _spawnPoints = new List<SpawnPointData>(data.SpawnPoints);
             _exitPoints = new List<Vector2Int>(data.ExitPoints);
 
             // Sync Wall Settings
@@ -714,7 +735,7 @@ namespace MaouSamaTD.Grid
             newData.Height = _gridManager.Height;
             newData.MapSeed = _seed;
             newData.HighGroundChance = _highGroundChance;
-            newData.SpawnPoints = new List<Vector2Int>(_spawnPoints);
+            newData.SpawnPoints = new List<SpawnPointData>(_spawnPoints);
             newData.ExitPoints = new List<Vector2Int>(_exitPoints);
             
             // Wall Settings

@@ -12,9 +12,9 @@ namespace MaouSamaTD.Levels
         DecoHighGround, 
         SpawnPoint, 
         ExitPoint,
-        Hole,
         LowTile,
-        NonWalkableDecor
+        NonWalkableDecor,
+        Wall
     }
 
     [System.Serializable]
@@ -51,7 +51,7 @@ namespace MaouSamaTD.Levels
         public List<TileVisualOverride> VisualOverrides = new List<TileVisualOverride>();
 
         [Header("Global Wall Settings")]
-        public bool WallCascadeOnHoles = true;
+        public bool WallCascadeOnHoles = false;
         public WallSettings Walls = WallSettings.Default;
         public WallVisualSettings WallVisuals = WallVisualSettings.Default;
         public List<WallVisualOverride> WallOverrides = new List<WallVisualOverride>();

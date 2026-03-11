@@ -267,9 +267,10 @@ MonoBehaviour:
   - Coordinate: {x: 4, y: 9}
     Texture: {fileID: 2800000, guid: 7b0642108368d994ea73c5ca8562616f, type: 3}
     Decorations: []
+  WallCascadeOnHoles: 0
   Walls:
-    North: 0
-    South: 1
+    North: 1
+    South: 0
     East: 1
     West: 1
   WallVisuals:

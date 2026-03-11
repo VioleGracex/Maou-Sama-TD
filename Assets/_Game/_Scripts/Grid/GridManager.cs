@@ -83,6 +83,13 @@ namespace MaouSamaTD.Grid
                     // Recalculate coordinate based on actual position
                     Vector2Int realCoord = WorldToGridCoordinates(tile.transform.position);
                     
+                    if (tile.Type == TileType.None)
+                    {
+                        if (Application.isPlaying) Destroy(tile.gameObject);
+                        else DestroyImmediate(tile.gameObject);
+                        continue;
+                    }
+
                     tile.Initialize(realCoord, tile.Type);
 
                 if (!_grid.ContainsKey(realCoord))
@@ -148,6 +155,12 @@ namespace MaouSamaTD.Grid
 
         public Tile CreateTile(Vector2Int coord, TileType type)
         {
+            if (type == TileType.None) 
+            {
+                if (_grid.ContainsKey(coord)) _grid.Remove(coord);
+                return null;
+            }
+
             Vector3 position = new Vector3(coord.x * _cellSize, 0, coord.y * _cellSize);
             
             Tile tile;
@@ -166,10 +179,8 @@ namespace MaouSamaTD.Grid
             tile.Initialize(coord, type);
             _grid[coord] = tile;
             
-            if (type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor)
+            if (type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor || type == TileType.Wall)
                 tile.transform.position += Vector3.up * 0.5f;
-            else if (type == TileType.Hole)
-                tile.transform.position += Vector3.down * 5f;
             else if (type == TileType.LowTile)
                 tile.transform.position += Vector3.down * 0.2f;
 
@@ -238,19 +249,36 @@ namespace MaouSamaTD.Grid
         public void SetTileType(Vector2Int coord, TileType type)
         {
             Tile tile = GetTileAt(coord);
+
+            if (type == TileType.None)
+            {
+                if (tile != null)
+                {
+                    if (Application.isPlaying) Destroy(tile.gameObject);
+                    else DestroyImmediate(tile.gameObject);
+                    _grid.Remove(coord);
+                    NotifyGridStateChanged();
+                }
+                return;
+            }
+
+            if (tile == null)
+            {
+                tile = CreateTile(coord, type);
+            }
+
             if (tile != null)
             {
                 tile.Initialize(coord, type);
                 
-                bool isHigh = type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor;
+                bool isHigh = type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor || type == TileType.Wall;
                 float yOffset = isHigh ? 0.5f : 0f;
                 
-                // Hole special case: move it down
-                if (type == TileType.Hole) yOffset = -5f;
                 // Low Tile special case: move it down slightly
                 if (type == TileType.LowTile) yOffset = -0.2f;
 
                 tile.transform.position = new Vector3(coord.x * _cellSize, yOffset, coord.y * _cellSize);
+                NotifyGridStateChanged();
             }
         }
 
@@ -469,7 +497,8 @@ namespace MaouSamaTD.Grid
                         if (tile.Type == TileType.NonWalkableDecor || 
                             tile.Type == TileType.HighGround || 
                             tile.Type == TileType.DecoHighGround ||
-                            tile.Type == TileType.Hole) 
+                            tile.Type == TileType.None ||
+                            tile.Type == TileType.Wall) 
                             isWalkable = false;
                             
                         // Check occupancy logic

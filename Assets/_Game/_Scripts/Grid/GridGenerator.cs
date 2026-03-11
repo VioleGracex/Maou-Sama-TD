@@ -123,6 +123,7 @@ namespace MaouSamaTD.Grid
                     }
 
                     var tile = _gridManager.CreateTile(coord, type);
+                    if (tile == null) continue;
 
                     // Apply Visual Overrides
                     if (_mapData != null)
@@ -330,7 +331,7 @@ namespace MaouSamaTD.Grid
                     if (!cascadeHoles)
                     {
                         var tile = _gridManager.GetTileAt(new Vector2Int(_gridManager.Width - 1, y));
-                        if (tile != null && tile.Type == TileType.Hole) continue;
+                        if (tile != null && tile.Type == TileType.None) continue;
                     }
 
                     Vector3 finalScale = sideScale;
@@ -370,7 +371,7 @@ namespace MaouSamaTD.Grid
                     if (!cascadeHoles)
                     {
                         var tile = _gridManager.GetTileAt(new Vector2Int(0, y));
-                        if (tile != null && tile.Type == TileType.Hole) continue;
+                        if (tile != null && tile.Type == TileType.None) continue;
                     }
 
                     Vector3 finalScale = sideScale;
@@ -411,7 +412,7 @@ namespace MaouSamaTD.Grid
                     {
                         int adjX = Mathf.Clamp(x, 0, _gridManager.Width - 1);
                         var tile = _gridManager.GetTileAt(new Vector2Int(adjX, _gridManager.Height - 1));
-                        if (tile != null && tile.Type == TileType.Hole) continue;
+                        if (tile != null && tile.Type == TileType.None) continue;
                     }
 
                     Vector3 finalScale = sideScale;
@@ -466,7 +467,7 @@ namespace MaouSamaTD.Grid
                     {
                         int adjX = Mathf.Clamp(x, 0, _gridManager.Width - 1);
                         var tile = _gridManager.GetTileAt(new Vector2Int(adjX, 0));
-                        if (tile != null && tile.Type == TileType.Hole) continue;
+                        if (tile != null && tile.Type == TileType.None) continue;
                     }
 
                     Vector3 finalScale = sideScale;

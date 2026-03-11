@@ -848,8 +848,9 @@ namespace MaouSamaTD.Editor
                     hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
                 }
                 
+                bool isEnabled = data.Walls.North;
                 bool isCascaded = !toggleCascade && IsTileTypeHole(data, data.Width - 1, y);
-                Color wallColor = isCascaded ? new Color(0.1f, 0.1f, 0.15f, 0.4f) : new Color(0.2f, 0.2f, 0.3f);
+                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
                 DrawItem(-1, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.North, y);
             }
             // South = bottom row in preview (gridX = Width), runs along Y (z axis), index = y
@@ -862,8 +863,9 @@ namespace MaouSamaTD.Editor
                     hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
                 }
 
+                bool isEnabled = data.Walls.South;
                 bool isCascaded = !toggleCascade && IsTileTypeHole(data, 0, y);
-                Color wallColor = isCascaded ? new Color(0.1f, 0.1f, 0.15f, 0.4f) : new Color(0.2f, 0.2f, 0.3f);
+                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
                 DrawItem(data.Width, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.South, y);
             }
             // West = left column in preview (gridY = Height), runs along X (x axis), index = x
@@ -875,10 +877,11 @@ namespace MaouSamaTD.Editor
                     var o = data.WallOverrides[ovIdx];
                     hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
                 }
-
+                
+                bool isEnabled = data.Walls.West;
                 int adjX = Mathf.Clamp(x, 0, data.Width - 1);
                 bool isCascaded = !toggleCascade && IsTileTypeHole(data, adjX, data.Height - 1);
-                Color wallColor = isCascaded ? new Color(0.15f, 0.12f, 0.2f, 0.4f) : new Color(0.25f, 0.2f, 0.35f);
+                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f);
                 DrawItem(x, data.Height, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.West, x);
             }
             // East = right column in preview (gridY = -1), runs along X (x axis), index = x
@@ -890,10 +893,11 @@ namespace MaouSamaTD.Editor
                     var o = data.WallOverrides[ovIdx];
                     hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
                 }
-
+                
+                bool isEnabled = data.Walls.East;
                 int adjX = Mathf.Clamp(x, 0, data.Width - 1);
                 bool isCascaded = !toggleCascade && IsTileTypeHole(data, adjX, 0);
-                Color wallColor = isCascaded ? new Color(0.15f, 0.12f, 0.2f, 0.4f) : new Color(0.25f, 0.2f, 0.35f);
+                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f);
                 DrawItem(x, -1, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.East, x);
             }
 
@@ -1003,6 +1007,24 @@ namespace MaouSamaTD.Editor
             }
         }
 
+        private Color GetTileColor(TileType type)
+        {
+            switch (type)
+            {
+                case TileType.SpawnPoint: return Color.red;
+                case TileType.ExitPoint: return Color.green;
+                case TileType.Walkable: return Color.white;
+                case TileType.HighGround: return Color.gray;
+                case TileType.DecoWalkable: return new Color(0.7f, 0.7f, 1f);
+                case TileType.DecoHighGround: return new Color(0.3f, 0.3f, 0.3f);
+                case TileType.None: return new Color(0.1f, 0.1f, 0.1f);
+                case TileType.LowTile: return new Color(0.8f, 0.6f, 0.4f);
+                case TileType.NonWalkableDecor: return new Color(0.5f, 0.2f, 0.5f);
+                case TileType.Wall: return new Color(0.2f, 0.2f, 0.6f);
+                default: return Color.black;
+            }
+        }
+
         private Color GetTileColor(MapData data, Vector2Int coord)
         {
             if (data.UseManualLayout)
@@ -1010,20 +1032,7 @@ namespace MaouSamaTD.Editor
                 int idx = data.ManualLayoutData.FindIndex(d => d.Coordinate == coord);
                 if (idx != -1)
                 {
-                    TileType type = data.ManualLayoutData[idx].Type;
-                    switch (type)
-                    {
-                        case TileType.SpawnPoint: return Color.red;
-                        case TileType.ExitPoint: return Color.green;
-                        case TileType.Walkable: return Color.white;
-                        case TileType.HighGround: return Color.gray;
-                        case TileType.DecoWalkable: return new Color(0.7f, 0.7f, 1f);
-                        case TileType.DecoHighGround: return new Color(0.3f, 0.3f, 0.3f);
-                        case TileType.Hole: return new Color(0.1f, 0.1f, 0.1f);
-                        case TileType.LowTile: return new Color(0.8f, 0.6f, 0.4f);
-                        case TileType.NonWalkableDecor: return new Color(0.5f, 0.2f, 0.5f);
-                        default: return Color.black;
-                    }
+                    return GetTileColor(data.ManualLayoutData[idx].Type);
                 }
                 return Color.white;
             }
@@ -1056,10 +1065,28 @@ namespace MaouSamaTD.Editor
                 for (int j = 0; j < typesPerRow && (i + j) < types.Length; j++)
                 {
                     TileType type = (TileType)types.GetValue(i + j);
-                    if (GUILayout.Button(type.ToString(), GUILayout.Width((EditorGUIUtility.currentViewWidth - 60) / typesPerRow)))
+                    Color typeColor = GetTileColor(type);
+                    
+                    // Create a button with a color box
+                    GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+                    buttonStyle.alignment = TextAnchor.MiddleLeft;
+                    buttonStyle.padding.left = 20; // Give space for the icon
+                    
+                    float buttonWidth = (EditorGUIUtility.currentViewWidth - 60) / typesPerRow;
+                    Rect rect = GUILayoutUtility.GetRect(new GUIContent(type.ToString()), buttonStyle, GUILayout.Width(buttonWidth));
+                    
+                    if (GUI.Button(rect, type.ToString(), buttonStyle))
                     {
                         SetTileType(data, type);
                     }
+                    
+                    // Draw color icon over the button
+                    Rect colorRect = new Rect(rect.x + 4, rect.y + 4, 12, 12);
+                    EditorGUI.DrawRect(colorRect, typeColor);
+                    
+                    // Add padding to the label if we want it to not overlap, or just let it overlap if name is short
+                    // Actually, let's just draw the text offset manually if we want to be fancy, but simple Button text is usually centered.
+                    // Let's stick to the button but use a custom draw or just accept the icon on the left.
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -1070,15 +1097,16 @@ namespace MaouSamaTD.Editor
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.LabelField("Legend:", EditorStyles.miniBoldLabel);
-            DrawLegendItem("Spawn Point", Color.red);
-            DrawLegendItem("Exit Point", Color.green);
-            DrawLegendItem("Walkable", Color.white);
-            DrawLegendItem("High Ground", Color.gray);
-            DrawLegendItem("Deco Walkable (Unusable)", new Color(0.7f, 0.7f, 1f));
-            DrawLegendItem("Deco High Ground (Unusable)", new Color(0.3f, 0.3f, 0.3f));
-            DrawLegendItem("Hole/None", new Color(0.1f, 0.1f, 0.1f));
-            DrawLegendItem("Low Tile", new Color(0.8f, 0.6f, 0.4f));
-            DrawLegendItem("Non-Walkable Decor", new Color(0.5f, 0.2f, 0.5f));
+            DrawLegendItem("Spawn Point", GetTileColor(TileType.SpawnPoint));
+            DrawLegendItem("Exit Point", GetTileColor(TileType.ExitPoint));
+            DrawLegendItem("Walkable", GetTileColor(TileType.Walkable));
+            DrawLegendItem("High Ground", GetTileColor(TileType.HighGround));
+            DrawLegendItem("Deco Walkable (Unusable)", GetTileColor(TileType.DecoWalkable));
+            DrawLegendItem("Deco High Ground (Unusable)", GetTileColor(TileType.DecoHighGround));
+            DrawLegendItem("Hole/None", GetTileColor(TileType.None));
+            DrawLegendItem("Low Tile", GetTileColor(TileType.LowTile));
+            DrawLegendItem("Non-Walkable Decor", GetTileColor(TileType.NonWalkableDecor));
+            DrawLegendItem("Wall", GetTileColor(TileType.Wall));
             EditorGUILayout.EndVertical();
         }
 
@@ -1205,7 +1233,7 @@ namespace MaouSamaTD.Editor
             if (data.UseManualLayout)
             {
                 int idx = data.ManualLayoutData.FindIndex(d => d.Coordinate.x == x && d.Coordinate.y == y);
-                if (idx != -1) return data.ManualLayoutData[idx].Type == TileType.Hole;
+                if (idx != -1) return data.ManualLayoutData[idx].Type == TileType.None;
                 return true; 
             }
             return false;

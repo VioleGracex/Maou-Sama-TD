@@ -14,7 +14,29 @@ namespace MaouSamaTD.Editor
 
         private int _selectedTab = 0;
         private string[] _tabNames = { "Layout", "Visuals" };
-        private Vector2Int _selectedTile = new Vector2Int(-1, -1);
+        
+        private static Texture2D s_TextureClipboard;
+        
+        [System.Serializable]
+        private struct SelectionItem
+        {
+            public SelectionType Type;
+            public Vector2Int TileCoord;
+            public WallSide WallSide;
+            public int WallIndex;
+
+            public bool Equals(SelectionItem other)
+            {
+                if (Type != other.Type) return false;
+                if (Type == SelectionType.Tile) return TileCoord == other.TileCoord;
+                return WallSide == other.WallSide && WallIndex == other.WallIndex;
+            }
+        }
+
+        private List<SelectionItem> _selection = new List<SelectionItem>();
+        private SelectionItem _lastSelectedItem = new SelectionItem { Type = (SelectionType)(-1) };
+        private enum SelectionType { Tile, Wall }
+
         private Dictionary<string, bool> _decoFoldouts = new Dictionary<string, bool>();
 
         public override void OnInspectorGUI()
@@ -39,15 +61,42 @@ namespace MaouSamaTD.Editor
 
         private void DrawLayoutTab(MapData data)
         {
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("MapSeed"));
+            if (!data.UseManualLayout)
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("MapSeed"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("HighGroundChance"));
+            }
+            
+            EditorGUILayout.LabelField("Map Dimensions", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Width"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Height"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("HighGroundChance"));
+            
+            if (data.UseManualLayout)
+            {
+                EditorGUILayout.HelpBox("Changing dimensions while using Manual Layout will resize the grid. Tiles outside the new bounds will still be saved but won't be visible or editable in the preview.", MessageType.Info);
+            }
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty("UseManualLayout"));
             
             EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Wall Toggles", EditorStyles.boldLabel);
+            SerializedProperty wallsProp = serializedObject.FindProperty("Walls");
+            
+            float oldLabelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 20;
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("North"), new GUIContent("N"), GUILayout.Width(40));
+            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("South"), new GUIContent("S"), GUILayout.Width(40));
+            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("East"), new GUIContent("E"), GUILayout.Width(40));
+            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("West"), new GUIContent("W"), GUILayout.Width(40));
+            EditorGUILayout.EndHorizontal();
+            EditorGUIUtility.labelWidth = oldLabelWidth;
+            
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("WallCascadeOnHoles"), new GUIContent("Wall Cascade On Holes"));
+
+            EditorGUILayout.Space();
             EditorGUILayout.LabelField("Map Preview & Interactive Editor", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Click tiles to cycle types: \nWalkable -> High Ground -> Deco Walkable -> Deco High Ground.", MessageType.Info);
+            EditorGUILayout.HelpBox("Click tiles to cycle types. In 'Visuals' tab, click walls to customize them individually.", MessageType.Info);
 
             if (data.Width <= 0 || data.Height <= 0)
             {
@@ -55,7 +104,10 @@ namespace MaouSamaTD.Editor
                 return;
             }
 
-            DrawMapPreview(data, false);
+            DrawMapPreview(data, true);
+
+            EditorGUILayout.Space();
+            DrawPalette(data);
 
             EditorGUILayout.Space();
             
@@ -71,12 +123,13 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear Manual Layout"))
             {
-                Undo.RecordObject(data, "Clear Manual Layout");
-                data.ManualHighGround.Clear();
-                data.DecoratedWalkable.Clear();
-                data.DecoratedHighGround.Clear();
-                data.UseManualLayout = false;
-                EditorUtility.SetDirty(data);
+                if (EditorUtility.DisplayDialog("Clear Layout", "Are you sure you want to clear the manual layout?", "Yes", "No"))
+                {
+                    Undo.RecordObject(data, "Clear Manual Layout");
+                    data.ManualLayoutData.Clear();
+                    data.UseManualLayout = false;
+                    EditorUtility.SetDirty(data);
+                }
             }
             if (GUILayout.Button("Capture Random to Manual"))
             {
@@ -85,21 +138,13 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField("Legend:", EditorStyles.miniBoldLabel);
-            DrawLegendItem("Spawn Point", Color.red);
-            DrawLegendItem("Exit Point", Color.green);
-            DrawLegendItem("Walkable", Color.white);
-            DrawLegendItem("High Ground", Color.gray);
-            DrawLegendItem("Deco Walkable (Unusable)", new Color(0.7f, 0.7f, 1f));
-            DrawLegendItem("Deco High Ground (Unusable)", new Color(0.3f, 0.3f, 0.3f));
-            EditorGUILayout.EndVertical();
+            DrawLegend(data);
         }
 
         private void DrawVisualsTab(MapData data)
         {
-            EditorGUILayout.LabelField("Tile Visual Customization", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Select a tile to override its texture or add a decoration prefab.", MessageType.Info);
+            EditorGUILayout.LabelField("Tile & Wall Visual Customization", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Select a tile or a boundary wall segment to override its texture or add decorations.", MessageType.Info);
 
             if (data.Width <= 0 || data.Height <= 0)
             {
@@ -107,18 +152,438 @@ namespace MaouSamaTD.Editor
                 return;
             }
 
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Global Wall Visuals", EditorStyles.boldLabel);
+            SerializedProperty wallVisualsProp = serializedObject.FindProperty("WallVisuals");
+            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallPrefab"));
+            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallMaterial"));
+            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallScale"), new GUIContent("Wall Scale (X=Thick, Y=Height, Z=Length)"));
+            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallOffset"), new GUIContent("Wall Global Offset"));
+            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("SeamlessCorners"), new GUIContent("Seamless Wall Corners (Fix Gaps)"));
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Side Overrides", EditorStyles.boldLabel);
+            DrawSideOverrides(data);
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Bulk Actions", EditorStyles.boldLabel);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Clear All Wall Textures"))
+            {
+                if (EditorUtility.DisplayDialog("Clear Wall Textures", "Are you sure you want to clear ALL wall texture overrides?", "Yes", "No"))
+                {
+                    Undo.RecordObject(data, "Clear All Wall Textures");
+                    // Clear side-wide textures
+                    for (int i = 0; i < data.SideVisualOverrides.Count; i++) {
+                        var so = data.SideVisualOverrides[i];
+                        so.TextureOverride = null;
+                        data.SideVisualOverrides[i] = so;
+                    }
+                    // Clear individual wall textures and remove if empty
+                    for (int i = data.WallOverrides.Count - 1; i >= 0; i--) {
+                        var wo = data.WallOverrides[i];
+                        wo.TextureOverride = null;
+                        
+                        bool hasDecorations = wo.Decorations != null && wo.Decorations.Count > 0;
+                        if (!wo.OverrideScale && !wo.OverrideOffset && !hasDecorations) {
+                            data.WallOverrides.RemoveAt(i);
+                        } else {
+                            data.WallOverrides[i] = wo;
+                        }
+                    }
+                    EditorUtility.SetDirty(data);
+                }
+            }
+            if (GUILayout.Button("Clear All Floor Textures"))
+            {
+                if (EditorUtility.DisplayDialog("Clear Tile Textures", "Are you sure you want to clear ALL tile texture overrides?", "Yes", "No"))
+                {
+                    Undo.RecordObject(data, "Clear All Tile Textures");
+                    for (int i = data.VisualOverrides.Count - 1; i >= 0; i--) {
+                        var to = data.VisualOverrides[i];
+                        to.Texture = null;
+
+                        bool hasDecorations = to.Decorations != null && to.Decorations.Count > 0;
+                        if (!hasDecorations) {
+                            data.VisualOverrides.RemoveAt(i);
+                        } else {
+                            data.VisualOverrides[i] = to;
+                        }
+                    }
+                    EditorUtility.SetDirty(data);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space();
+
             DrawMapPreview(data, true);
 
             EditorGUILayout.Space();
 
-            if (_selectedTile.x >= 0 && _selectedTile.y >= 0)
+            if (_selection.Count == 0)
             {
-                DrawTileCustomizer(data, _selectedTile);
+                EditorGUILayout.HelpBox("Click a tile or wall segment above to customize.", MessageType.None);
+            }
+            else if (_selection.Count == 1)
+            {
+                var sel = _selection[0];
+                if (sel.Type == SelectionType.Tile) DrawTileCustomizer(data, sel.TileCoord);
+                else DrawWallCustomizer(data, sel.WallSide, sel.WallIndex);
             }
             else
             {
-                EditorGUILayout.HelpBox("Click a tile to customize visuals.", MessageType.None);
+                DrawBatchCustomizer(data);
             }
+        }
+
+        private void DrawSideOverrides(MapData data)
+        {
+            SerializedProperty sideOverridesProp = serializedObject.FindProperty("SideVisualOverrides");
+            System.Array sides = System.Enum.GetValues(typeof(WallSide));
+
+            foreach (WallSide side in sides)
+            {
+                int idx = data.SideVisualOverrides.FindIndex(o => o.Side == side);
+                if (idx == -1)
+                {
+                    data.SideVisualOverrides.Add(new SideVisualOverride { Side = side });
+                    serializedObject.Update();
+                    idx = data.SideVisualOverrides.Count - 1;
+                }
+                
+                SerializedProperty p = sideOverridesProp.GetArrayElementAtIndex(idx);
+                SerializedProperty overScaleProp = p.FindPropertyRelative("OverrideScale");
+                SerializedProperty scaleProp = p.FindPropertyRelative("Scale");
+                SerializedProperty overOffsetProp = p.FindPropertyRelative("OverrideOffset");
+                SerializedProperty offsetProp = p.FindPropertyRelative("Offset");
+
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(side.ToString(), EditorStyles.boldLabel, GUILayout.Width(60));
+                
+                EditorGUILayout.PropertyField(overScaleProp, new GUIContent("Scale"), GUILayout.Width(60));
+                EditorGUI.BeginDisabledGroup(!overScaleProp.boolValue);
+                EditorGUILayout.PropertyField(scaleProp, GUIContent.none);
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("", GUILayout.Width(60));
+                EditorGUILayout.PropertyField(overOffsetProp, new GUIContent("Offset"), GUILayout.Width(60));
+                EditorGUI.BeginDisabledGroup(!overOffsetProp.boolValue);
+                EditorGUILayout.PropertyField(offsetProp, GUIContent.none);
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("", GUILayout.Width(60));
+                EditorGUILayout.PropertyField(p.FindPropertyRelative("TextureOverride"), new GUIContent("Texture"), true);
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.EndVertical();
+            }
+        }
+
+        private void DrawBatchCustomizer(MapData data)
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorUtility.SetDirty(data);
+            EditorGUILayout.LabelField($"Batch Editing ({_selection.Count} items)", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Applying a texture or decoration here will be added to ALL selected items.", MessageType.Info);
+
+            // Determine if all selected items have the same texture
+            Texture2D commonTexture = null;
+            bool first = true;
+            bool multipleValues = false;
+
+            foreach (var sel in _selection)
+            {
+                Texture2D currentTex = null;
+                if (sel.Type == SelectionType.Tile)
+                {
+                    int idx = data.VisualOverrides.FindIndex(o => o.Coordinate == sel.TileCoord);
+                    if (idx != -1) currentTex = data.VisualOverrides[idx].Texture;
+                }
+                else
+                {
+                    int idx = data.WallOverrides.FindIndex(o => o.Side == sel.WallSide && o.Index == sel.WallIndex);
+                    if (idx != -1) currentTex = data.WallOverrides[idx].TextureOverride;
+                }
+
+                if (first)
+                {
+                    commonTexture = currentTex;
+                    first = false;
+                }
+                else if (currentTex != commonTexture)
+                {
+                    multipleValues = true;
+                    break;
+                }
+            }
+
+            EditorGUI.showMixedValue = multipleValues;
+            EditorGUI.BeginChangeCheck();
+            Texture2D newBatchTexture = (Texture2D)EditorGUILayout.ObjectField("Apply Texture to All", commonTexture, typeof(Texture2D), false);
+            
+            EditorGUILayout.BeginHorizontal();
+            bool overS = EditorGUILayout.ToggleLeft("Scale", false, GUILayout.Width(60));
+            Vector3 newScale = Vector3.one;
+            if (overS) newScale = EditorGUILayout.Vector3Field("", Vector3.one);
+            else EditorGUILayout.LabelField("(Default)");
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            bool overO = EditorGUILayout.ToggleLeft("Offset", false, GUILayout.Width(60));
+            Vector3 newOffset = Vector3.zero;
+            if (overO) newOffset = EditorGUILayout.Vector3Field("", Vector3.zero);
+            else EditorGUILayout.LabelField("(Default)");
+            EditorGUILayout.EndHorizontal();
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(data, "Batch Apply Texture/Size");
+                foreach (var sel in _selection)
+                {
+                    if (sel.Type == SelectionType.Tile) ApplyTileTexture(data, sel.TileCoord, newBatchTexture);
+                    else ApplyWallOverride(data, sel.WallSide, sel.WallIndex, newBatchTexture, overS, newScale, overO, newOffset);
+                }
+                EditorUtility.SetDirty(data);
+            }
+            EditorGUI.showMixedValue = false;
+
+            EditorGUILayout.Space(5);
+            if (GUILayout.Button("+ Add Decoration to All Selected", GUILayout.Height(30)))
+            {
+                Undo.RecordObject(data, "Batch Add Decoration");
+                foreach (var sel in _selection)
+                {
+                    if (sel.Type == SelectionType.Tile) AddTileDecoration(data, sel.TileCoord);
+                    else AddWallDecoration(data, sel.WallSide, sel.WallIndex);
+                }
+                EditorUtility.SetDirty(data);
+            }
+
+            if (GUILayout.Button("Clear Overrides for All Selected", GUILayout.Height(25)))
+            {
+                if (EditorUtility.DisplayDialog("Clear All Selected", $"Are you sure you want to clear overrides for all {_selection.Count} selected items?", "Yes", "No"))
+                {
+                    Undo.RecordObject(data, "Batch Clear Overrides");
+                    foreach (var sel in _selection)
+                    {
+                        if (sel.Type == SelectionType.Tile) data.VisualOverrides.RemoveAll(o => o.Coordinate == sel.TileCoord);
+                        else data.WallOverrides.RemoveAll(o => o.Side == sel.WallSide && o.Index == sel.WallIndex);
+                    }
+                    EditorUtility.SetDirty(data);
+                }
+            }
+
+            if (GUILayout.Button("Deselect All", GUILayout.Height(20))) _selection.Clear();
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Select All Tiles"))
+            {
+                _selection.Clear();
+                for (int x = 0; x < data.Width; x++)
+                    for (int y = 0; y < data.Height; y++)
+                        _selection.Add(new SelectionItem { Type = SelectionType.Tile, TileCoord = new Vector2Int(x, y) });
+            }
+            if (GUILayout.Button("Select All Walls"))
+            {
+                _selection.Clear();
+                // North/South
+                for (int x = -1; x <= data.Width; x++) {
+                    _selection.Add(new SelectionItem { Type = SelectionType.Wall, WallSide = WallSide.North, WallIndex = x });
+                    _selection.Add(new SelectionItem { Type = SelectionType.Wall, WallSide = WallSide.South, WallIndex = x });
+                }
+                // East/West
+                for (int y = 0; y < data.Height; y++) {
+                    _selection.Add(new SelectionItem { Type = SelectionType.Wall, WallSide = WallSide.East, WallIndex = y });
+                    _selection.Add(new SelectionItem { Type = SelectionType.Wall, WallSide = WallSide.West, WallIndex = y });
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private void ApplyTileTexture(MapData data, Vector2Int coord, Texture2D tex)
+        {
+            int idx = data.VisualOverrides.FindIndex(o => o.Coordinate == coord);
+            if (idx != -1)
+            {
+                var o = data.VisualOverrides[idx];
+                o.Texture = tex;
+                data.VisualOverrides[idx] = o;
+            }
+            else data.VisualOverrides.Add(new TileVisualOverride { Coordinate = coord, Texture = tex, Decorations = new List<DecorationData>() });
+        }
+
+        private void ApplyWallOverride(MapData data, WallSide side, int index, Texture2D tex, bool overS, Vector3 s, bool overO, Vector3 oPos)
+        {
+            int idx = data.WallOverrides.FindIndex(o => o.Side == side && o.Index == index);
+            if (idx != -1)
+            {
+                var o = data.WallOverrides[idx];
+                if (tex != null) o.TextureOverride = tex;
+                if (overS) { o.OverrideScale = true; o.Scale = s; }
+                if (overO) { o.OverrideOffset = true; o.Offset = oPos; }
+                data.WallOverrides[idx] = o;
+            }
+            else
+            {
+                data.WallOverrides.Add(new WallVisualOverride { 
+                    Side = side, Index = index, TextureOverride = tex, 
+                    OverrideScale = overS, Scale = s, 
+                    OverrideOffset = overO, Offset = oPos, 
+                    Decorations = new List<DecorationData>() 
+                });
+            }
+        }
+
+        private void AddTileDecoration(MapData data, Vector2Int coord)
+        {
+            int idx = data.VisualOverrides.FindIndex(o => o.Coordinate == coord);
+            if (idx != -1)
+            {
+                if (data.VisualOverrides[idx].Decorations == null) {
+                    var o = data.VisualOverrides[idx];
+                    o.Decorations = new List<DecorationData>();
+                    data.VisualOverrides[idx] = o;
+                }
+                data.VisualOverrides[idx].Decorations.Add(DecorationData.Default);
+            }
+            else data.VisualOverrides.Add(new TileVisualOverride { Coordinate = coord, Decorations = new List<DecorationData> { DecorationData.Default } });
+        }
+
+        private void AddWallDecoration(MapData data, WallSide side, int index)
+        {
+            int idx = data.WallOverrides.FindIndex(o => o.Side == side && o.Index == index);
+            if (idx != -1)
+            {
+                if (data.WallOverrides[idx].Decorations == null) {
+                    var o = data.WallOverrides[idx];
+                    o.Decorations = new List<DecorationData>();
+                    data.WallOverrides[idx] = o;
+                }
+                data.WallOverrides[idx].Decorations.Add(DecorationData.Default);
+            }
+            else data.WallOverrides.Add(new WallVisualOverride { Side = side, Index = index, Decorations = new List<DecorationData> { DecorationData.Default } });
+        }
+
+        private void DrawWallCustomizer(MapData data, WallSide side, int index)
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField($"Customizing Wall: {side} Segment {index}", EditorStyles.boldLabel);
+
+            int overrideIndex = -1;
+            for (int i = 0; i < data.WallOverrides.Count; i++)
+            {
+                if (data.WallOverrides[i].Side == side && data.WallOverrides[i].Index == index)
+                {
+                    overrideIndex = i;
+                    break;
+                }
+            }
+
+            SerializedProperty wallOverridesProp = serializedObject.FindProperty("WallOverrides");
+            SerializedProperty overrideProp = null;
+            if (overrideIndex != -1) overrideProp = wallOverridesProp.GetArrayElementAtIndex(overrideIndex);
+
+            EditorGUI.BeginChangeCheck();
+
+            if (overrideProp != null)
+            {
+                EditorGUILayout.PropertyField(overrideProp.FindPropertyRelative("TextureOverride"), new GUIContent("Wall Texture Override"));
+                
+                EditorGUILayout.Space(2);
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                SerializedProperty overScaleProp = overrideProp.FindPropertyRelative("OverrideScale");
+                SerializedProperty overOffsetProp = overrideProp.FindPropertyRelative("OverrideOffset");
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.PropertyField(overScaleProp, new GUIContent("Scale"), GUILayout.Width(100));
+                EditorGUI.BeginDisabledGroup(!overScaleProp.boolValue);
+                EditorGUILayout.PropertyField(overrideProp.FindPropertyRelative("Scale"), GUIContent.none);
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.PropertyField(overOffsetProp, new GUIContent("Offset"), GUILayout.Width(100));
+                EditorGUI.BeginDisabledGroup(!overOffsetProp.boolValue);
+                EditorGUILayout.PropertyField(overrideProp.FindPropertyRelative("Offset"), GUIContent.none);
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.EndVertical();
+
+                DrawDecorationsList(data, overrideProp.FindPropertyRelative("Decorations"), $"wall_{side}_{index}");
+            }
+            else
+            {
+                Texture2D tex = (Texture2D)EditorGUILayout.ObjectField("Wall Texture Override", null, typeof(Texture2D), false);
+                
+                EditorGUILayout.Space(2);
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.BeginHorizontal();
+                bool overS = EditorGUILayout.ToggleLeft("Scale", false, GUILayout.Width(100));
+                Vector3 s = Vector3.one;
+                if (overS) s = EditorGUILayout.Vector3Field("", Vector3.one);
+                else EditorGUILayout.LabelField("(Default)", EditorStyles.miniLabel);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                bool overO = EditorGUILayout.ToggleLeft("Offset", false, GUILayout.Width(100));
+                Vector3 oPos = Vector3.zero;
+                if (overO) oPos = EditorGUILayout.Vector3Field("", Vector3.zero);
+                else EditorGUILayout.LabelField("(Default)", EditorStyles.miniLabel);
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.EndVertical();
+
+                if (tex != null || overS || overO)
+                {
+                    Undo.RecordObject(data, "Add Wall Override");
+                    data.WallOverrides.Add(new WallVisualOverride { 
+                        Side = side, Index = index, TextureOverride = tex, 
+                        OverrideScale = overS, Scale = s,
+                        OverrideOffset = overO, Offset = oPos,
+                        Decorations = new List<DecorationData>() 
+                    });
+                    EditorUtility.SetDirty(data);
+                    serializedObject.Update();
+                    return;
+                }
+                
+                if (GUILayout.Button("+ Add Decoration to Wall Segment"))
+                {
+                    Undo.RecordObject(data, "Add Wall Decoration");
+                    data.WallOverrides.Add(new WallVisualOverride { 
+                        Side = side, Index = index, 
+                        Decorations = new List<DecorationData> { DecorationData.Default } 
+                    });
+                    EditorUtility.SetDirty(data);
+                    serializedObject.Update();
+                }
+            }
+
+            if (EditorGUI.EndChangeCheck()) serializedObject.ApplyModifiedProperties();
+
+            if (overrideIndex != -1)
+            {
+                EditorGUILayout.Space(10);
+                GUI.backgroundColor = new Color(1, 0.5f, 0.5f);
+                if (GUILayout.Button("Remove All Overrides for this Wall Segment"))
+                {
+                    Undo.RecordObject(data, "Remove Wall Override");
+                    data.WallOverrides.RemoveAt(overrideIndex);
+                    EditorUtility.SetDirty(data);
+                }
+                GUI.backgroundColor = Color.white;
+            }
+
+            EditorGUILayout.EndVertical();
         }
 
         private void DrawTileCustomizer(MapData data, Vector2Int coord)
@@ -136,21 +601,15 @@ namespace MaouSamaTD.Editor
                 }
             }
 
-            // Get SerializedProperty for the override
             SerializedProperty visualOverridesProp = serializedObject.FindProperty("VisualOverrides");
             SerializedProperty overrideProp = null;
-            
-            if (overrideIndex != -1)
-            {
-                overrideProp = visualOverridesProp.GetArrayElementAtIndex(overrideIndex);
-            }
+            if (overrideIndex != -1) overrideProp = visualOverridesProp.GetArrayElementAtIndex(overrideIndex);
 
             EditorGUI.BeginChangeCheck();
-            
             if (overrideProp != null)
             {
-                SerializedProperty texProp = overrideProp.FindPropertyRelative("Texture");
-                EditorGUILayout.PropertyField(texProp, new GUIContent("Base Texture"));
+                EditorGUILayout.PropertyField(overrideProp.FindPropertyRelative("Texture"), new GUIContent("Base Texture"));
+                DrawDecorationsList(data, overrideProp.FindPropertyRelative("Decorations"), $"tile_{coord.x}_{coord.y}");
             }
             else
             {
@@ -163,198 +622,409 @@ namespace MaouSamaTD.Editor
                     serializedObject.Update();
                     return;
                 }
-            }
-
-            EditorGUILayout.Space(5);
-            EditorGUILayout.LabelField("Decorations List", EditorStyles.boldLabel);
-
-            if (overrideProp != null)
-            {
-                SerializedProperty decosProp = overrideProp.FindPropertyRelative("Decorations");
-                
-                for (int i = 0; i < decosProp.arraySize; i++)
+                if (GUILayout.Button("+ Add Decoration to Tile"))
                 {
-                    SerializedProperty decoProp = decosProp.GetArrayElementAtIndex(i);
-                    SerializedProperty prefabProp = decoProp.FindPropertyRelative("Prefab");
-                    
-                    string foldoutKey = $"{coord.x}_{coord.y}_{i}";
-                    if (!_decoFoldouts.ContainsKey(foldoutKey)) _decoFoldouts[foldoutKey] = true;
-
-                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    
-                    EditorGUILayout.BeginHorizontal();
-                    string label = prefabProp.objectReferenceValue != null ? prefabProp.objectReferenceValue.name : $"Decoration {i}";
-                    _decoFoldouts[foldoutKey] = EditorGUILayout.Foldout(_decoFoldouts[foldoutKey], label, true, EditorStyles.foldoutHeader);
-                    
-                    if (GUILayout.Button("Remove", GUILayout.Width(60)))
-                    {
-                        decosProp.DeleteArrayElementAtIndex(i);
-                        break;
-                    }
-                    EditorGUILayout.EndHorizontal();
-
-                    if (_decoFoldouts[foldoutKey])
-                    {
-                        EditorGUI.indentLevel++;
-                        EditorGUILayout.PropertyField(prefabProp, new GUIContent("Prefab"));
-                        EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Offset"));
-                        EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Rotation"));
-                        EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Scale"));
-                        EditorGUI.indentLevel--;
-                        EditorGUILayout.Space(2);
-                    }
-                    
-                    EditorGUILayout.EndVertical();
-                }
-
-                EditorGUILayout.Space(2);
-                if (GUILayout.Button("+ Add New Decoration", GUILayout.Height(25)))
-                {
-                    decosProp.arraySize++;
-                    SerializedProperty newDeco = decosProp.GetArrayElementAtIndex(decosProp.arraySize - 1);
-                    newDeco.FindPropertyRelative("Scale").vector3Value = Vector3.one;
-                    newDeco.FindPropertyRelative("Offset").vector3Value = Vector3.zero;
-                    newDeco.FindPropertyRelative("Rotation").vector3Value = Vector3.zero;
-                    newDeco.FindPropertyRelative("Prefab").objectReferenceValue = null;
-                }
-            }
-            else
-            {
-                if (GUILayout.Button("+ Add Initial Decoration", GUILayout.Height(25)))
-                {
-                    Undo.RecordObject(data, "Add Tile Override");
-                    data.VisualOverrides.Add(new TileVisualOverride { 
-                        Coordinate = coord, 
-                        Decorations = new List<DecorationData> { DecorationData.Default } 
-                    });
+                    Undo.RecordObject(data, "Add Tile Decoration");
+                    data.VisualOverrides.Add(new TileVisualOverride { Coordinate = coord, Decorations = new List<DecorationData> { DecorationData.Default } });
                     EditorUtility.SetDirty(data);
                     serializedObject.Update();
                 }
             }
 
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-            }
+            if (EditorGUI.EndChangeCheck()) serializedObject.ApplyModifiedProperties();
 
-            EditorGUILayout.Space(10);
-            GUI.backgroundColor = new Color(1, 0.5f, 0.5f);
-            if (GUILayout.Button("Clear All Overrides for Tile", GUILayout.Height(20)))
+            if (overrideIndex != -1)
             {
-                if (overrideIndex != -1 && EditorUtility.DisplayDialog("Clear Overrides", "Are you sure you want to remove all visual overrides for this tile?", "Yes", "No"))
+                EditorGUILayout.Space(10);
+                GUI.backgroundColor = new Color(1, 0.5f, 0.5f);
+                if (GUILayout.Button("Clear All Overrides for Tile"))
                 {
                     Undo.RecordObject(data, "Clear Tile Visuals");
                     data.VisualOverrides.RemoveAt(overrideIndex);
                     EditorUtility.SetDirty(data);
                 }
+                GUI.backgroundColor = Color.white;
             }
-            GUI.backgroundColor = Color.white;
-
             EditorGUILayout.EndVertical();
+        }
+
+        private void DrawDecorationsList(MapData data, SerializedProperty decosProp, string idPrefix)
+        {
+            EditorGUILayout.LabelField("Decorations", EditorStyles.miniBoldLabel);
+            for (int i = 0; i < decosProp.arraySize; i++)
+            {
+                SerializedProperty decoProp = decosProp.GetArrayElementAtIndex(i);
+                SerializedProperty prefabProp = decoProp.FindPropertyRelative("Prefab");
+                
+                string foldoutKey = $"{idPrefix}_deco_{i}";
+                if (!_decoFoldouts.ContainsKey(foldoutKey)) _decoFoldouts[foldoutKey] = true;
+
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.BeginHorizontal();
+                string label = prefabProp.objectReferenceValue != null ? prefabProp.objectReferenceValue.name : $"Decoration {i}";
+                _decoFoldouts[foldoutKey] = EditorGUILayout.Foldout(_decoFoldouts[foldoutKey], label, true, EditorStyles.foldoutHeader);
+                if (GUILayout.Button("Remove", GUILayout.Width(60))) { decosProp.DeleteArrayElementAtIndex(i); break; }
+                EditorGUILayout.EndHorizontal();
+
+                if (_decoFoldouts[foldoutKey])
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(prefabProp, new GUIContent("Prefab"));
+                    EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Offset"));
+                    EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Rotation"));
+                    EditorGUILayout.PropertyField(decoProp.FindPropertyRelative("Scale"));
+                    EditorGUI.indentLevel--;
+                }
+                EditorGUILayout.EndVertical();
+            }
+            if (GUILayout.Button("+ Add New Decoration")) { 
+                decosProp.arraySize++; 
+                SerializedProperty newDeco = decosProp.GetArrayElementAtIndex(decosProp.arraySize - 1);
+                newDeco.FindPropertyRelative("Scale").vector3Value = Vector3.one;
+                newDeco.FindPropertyRelative("Offset").vector3Value = Vector3.zero;
+                newDeco.FindPropertyRelative("Rotation").vector3Value = Vector3.zero;
+                newDeco.FindPropertyRelative("Prefab").objectReferenceValue = null;
+            }
         }
 
         private void DrawMapPreview(MapData data, bool isVisualMode)
         {
-            float availableWidth = EditorGUIUtility.currentViewWidth - 40 - LabelSpace;
-            
-            float cellW = Mathf.Min(availableWidth / data.Height, MaxCellSize);
+            float availableWidth = EditorGUIUtility.currentViewWidth - 60 - LabelSpace;
+            // Map boundaries are Width x Height. We draw walls at -1 and data.Width/Height.
+            // So total grid drawn is (Width + 2) high and (Height + 2) wide in terms of cells.
+            float cellW = Mathf.Min(availableWidth / (data.Height + 2), MaxCellSize);
             float cellH = cellW;
 
-            float gridWidth = cellW * data.Height;
-            float gridHeight = cellH * data.Width;
+            float gridWidth = cellW * (data.Height + 2);
+            float gridHeight = cellH * (data.Width + 2);
 
             Rect outerRect = GUILayoutUtility.GetRect(gridWidth + LabelSpace, gridHeight + LabelSpace);
             outerRect.x += (availableWidth + LabelSpace - (gridWidth + LabelSpace)) / 2f;
 
-            Rect gridRect = new Rect(outerRect.x + LabelSpace, outerRect.y, gridWidth, gridHeight);
-            EditorGUI.DrawRect(gridRect, new Color(0.1f, 0.1f, 0.1f, 1f));
+            // gridRect is for the actual tiles (0 to width)
+            Rect tileGridRect = new Rect(outerRect.x + LabelSpace + cellW, outerRect.y + cellH, cellW * data.Height, cellH * data.Width);
+            EditorGUI.DrawRect(new Rect(outerRect.x + LabelSpace, outerRect.y, gridWidth, gridHeight), new Color(0.12f, 0.12f, 0.12f, 1f));
 
             GUIStyle labelStyle = new GUIStyle(EditorStyles.miniLabel) { alignment = TextAnchor.MiddleCenter };
+            GUIStyle dirStyle = new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = new Color(0.9f, 0.8f, 0.2f) } };
 
-            // Labels
+            // Tile labels
             for (int y = 0; y < data.Height; y++)
             {
-                Rect labelRect = new Rect(gridRect.x + (data.Height - 1 - y) * cellW, gridRect.y + gridRect.height, cellW, LabelSpace);
+                Rect labelRect = new Rect(tileGridRect.x + (data.Height - 1 - y) * cellW, tileGridRect.y + tileGridRect.height + cellH, cellW, LabelSpace);
                 EditorGUI.LabelField(labelRect, y.ToString(), labelStyle);
             }
             for (int x = 0; x < data.Width; x++)
             {
-                Rect labelRect = new Rect(outerRect.x, gridRect.y + x * cellH, LabelSpace, cellH);
+                Rect labelRect = new Rect(outerRect.x, tileGridRect.y + x * cellH, LabelSpace, cellH);
                 EditorGUI.LabelField(labelRect, x.ToString(), labelStyle);
             }
 
-            Event e = Event.current;
-            bool clicked = (e.type == EventType.MouseDown) && gridRect.Contains(e.mousePosition);
+            // Cardinal direction labels
+            float midX = tileGridRect.x + tileGridRect.width / 2f;
+            float midY = tileGridRect.y + tileGridRect.height / 2f;
+            // North label above the grid
+            EditorGUI.LabelField(new Rect(midX - 20, outerRect.y - 2, 40, LabelSpace), "N", dirStyle);
+            // South label below the grid
+            EditorGUI.LabelField(new Rect(midX - 20, tileGridRect.y + tileGridRect.height + cellH + LabelSpace - 2, 40, LabelSpace), "S", dirStyle);
+            // West label to the left
+            EditorGUI.LabelField(new Rect(outerRect.x + LabelSpace - 2, midY - 8, cellW, 16), "W", dirStyle);
+            // East label to the right
+            EditorGUI.LabelField(new Rect(tileGridRect.x + tileGridRect.width + cellW - 2, midY - 8, cellW, 16), "E", dirStyle);
 
+            Event e = Event.current;
             Random.State oldState = Random.state;
             Random.InitState(data.MapSeed);
 
+            // Closure for drawing selectable items (tiles or walls)
+            void DrawItem(int gridX, int gridY, Color baseColor, string label, SelectionType type, WallSide side = WallSide.North, int index = 0)
+            {
+                // Invert X and Y for drawing to match world view orientation
+                int displayX = data.Width - 1 - gridX;
+                // For walls, we need to handle indices correctly
+                if (type == SelectionType.Wall)
+                {
+                    if (side == WallSide.West || side == WallSide.East)
+                    {
+                        displayX = data.Width - 1 - index;
+                    }
+                }
+
+                Rect rect = new Rect(
+                    outerRect.x + LabelSpace + ((data.Height - 1 - gridY + 1) * cellW) + CellPadding,
+                    outerRect.y + ((displayX + 1) * cellH) + CellPadding,
+                    cellW - CellPadding * 2,
+                    cellH - CellPadding * 2
+                );
+
+                SelectionItem thisItem = new SelectionItem { Type = type, TileCoord = new Vector2Int(gridX, gridY), WallSide = side, WallIndex = index };
+                bool isSelected = _selection.Exists(s => s.Equals(thisItem));
+
+                EditorGUI.DrawRect(rect, isSelected && isVisualMode ? Color.yellow : baseColor);
+                if (isSelected && isVisualMode) {
+                    Rect inner = new Rect(rect.x+2, rect.y+2, rect.width-4, rect.height-4);
+                    EditorGUI.DrawRect(inner, baseColor);
+                }
+
+                if (!string.IsNullOrEmpty(label))
+                {
+                    EditorGUI.LabelField(rect, label, new GUIStyle(EditorStyles.boldLabel) { 
+                        alignment = TextAnchor.UpperRight, normal = { textColor = Color.yellow } 
+                    });
+                }
+
+                if (e.type == EventType.MouseDown && rect.Contains(e.mousePosition))
+                {
+                    if (isVisualMode)
+                    {
+                        if (e.button == 0) // Left Click
+                        {
+                            if (e.control)
+                            {
+                                if (isSelected) _selection.RemoveAll(s => s.Equals(thisItem));
+                                else _selection.Add(thisItem);
+                                _lastSelectedItem = thisItem;
+                            }
+                            else if (e.alt)
+                            {
+                                _selection.RemoveAll(s => s.Equals(thisItem));
+                            }
+                            else if (e.shift && (int)_lastSelectedItem.Type != -1 && _lastSelectedItem.Type == type)
+                            {
+                                if (type == SelectionType.Tile) SelectTileRange(data, _lastSelectedItem.TileCoord, thisItem.TileCoord);
+                                else if (type == SelectionType.Wall) SelectWallRange(data, _lastSelectedItem, thisItem);
+                            }
+                            else
+                            {
+                                _selection.Clear();
+                                _selection.Add(thisItem);
+                                _lastSelectedItem = thisItem;
+                            }
+                        }
+                        else if (e.button == 1) // Right Click
+                        {
+                            if (!isSelected)
+                            {
+                                _selection.Clear();
+                                _selection.Add(thisItem);
+                                _lastSelectedItem = thisItem;
+                            }
+                            ShowContextMenu(data, thisItem);
+                        }
+                    }
+                    if (type == SelectionType.Tile && e.button == 0)
+                    {
+                        if (e.control)
+                        {
+                            if (isSelected) _selection.RemoveAll(s => s.Equals(thisItem));
+                            else _selection.Add(thisItem);
+                            _lastSelectedItem = thisItem;
+                        }
+                        else if (e.shift && (int)_lastSelectedItem.Type != -1 && _lastSelectedItem.Type == type)
+                        {
+                            SelectTileRange(data, _lastSelectedItem.TileCoord, thisItem.TileCoord);
+                        }
+                        else
+                        {
+                            _selection.Clear();
+                            _selection.Add(thisItem);
+                            _lastSelectedItem = thisItem;
+                        }
+                    }
+                    e.Use();
+                }
+            }
+
+            // Draw Walls
+            bool toggleCascade = data.WallCascadeOnHoles;
+
+            // North = top row in preview (gridX = -1), runs along Y (z axis), index = y
+            // GridGenerator North: x = Width, adjacent to (Width - 1, y)
+            for (int y = 0; y < data.Height; y++) {
+                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.North && o.Index == y);
+                bool hasOverride = false;
+                if (ovIdx != -1) {
+                    var o = data.WallOverrides[ovIdx];
+                    hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
+                }
+                
+                bool isCascaded = !toggleCascade && IsTileTypeHole(data, data.Width - 1, y);
+                Color wallColor = isCascaded ? new Color(0.1f, 0.1f, 0.15f, 0.4f) : new Color(0.2f, 0.2f, 0.3f);
+                DrawItem(-1, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.North, y);
+            }
+            // South = bottom row in preview (gridX = Width), runs along Y (z axis), index = y
+            // GridGenerator South: x = -1, adjacent to (0, y)
+            for (int y = 0; y < data.Height; y++) {
+                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.South && o.Index == y);
+                bool hasOverride = false;
+                if (ovIdx != -1) {
+                    var o = data.WallOverrides[ovIdx];
+                    hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
+                }
+
+                bool isCascaded = !toggleCascade && IsTileTypeHole(data, 0, y);
+                Color wallColor = isCascaded ? new Color(0.1f, 0.1f, 0.15f, 0.4f) : new Color(0.2f, 0.2f, 0.3f);
+                DrawItem(data.Width, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.South, y);
+            }
+            // West = left column in preview (gridY = Height), runs along X (x axis), index = x
+            // GridGenerator West: y = Height, adjacent to (adjX, Height - 1)
+            for (int x = -1; x <= data.Width; x++) {
+                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.West && o.Index == x);
+                bool hasOverride = false;
+                if (ovIdx != -1) {
+                    var o = data.WallOverrides[ovIdx];
+                    hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
+                }
+
+                int adjX = Mathf.Clamp(x, 0, data.Width - 1);
+                bool isCascaded = !toggleCascade && IsTileTypeHole(data, adjX, data.Height - 1);
+                Color wallColor = isCascaded ? new Color(0.15f, 0.12f, 0.2f, 0.4f) : new Color(0.25f, 0.2f, 0.35f);
+                DrawItem(x, data.Height, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.West, x);
+            }
+            // East = right column in preview (gridY = -1), runs along X (x axis), index = x
+            // GridGenerator East: y = -1, adjacent to (adjX, 0)
+            for (int x = -1; x <= data.Width; x++) {
+                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.East && o.Index == x);
+                bool hasOverride = false;
+                if (ovIdx != -1) {
+                    var o = data.WallOverrides[ovIdx];
+                    hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
+                }
+
+                int adjX = Mathf.Clamp(x, 0, data.Width - 1);
+                bool isCascaded = !toggleCascade && IsTileTypeHole(data, adjX, 0);
+                Color wallColor = isCascaded ? new Color(0.15f, 0.12f, 0.2f, 0.4f) : new Color(0.25f, 0.2f, 0.35f);
+                DrawItem(x, -1, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.East, x);
+            }
+
+            // Draw Tiles
             for (int y = 0; y < data.Height; y++)
             {
                 for (int x = 0; x < data.Width; x++)
                 {
                     Vector2Int coord = new Vector2Int(x, y);
-                    Color color = GetTileColor(data, coord);
-
-                    Rect cellRect = new Rect(
-                        gridRect.x + ((data.Height - 1 - y) * cellW) + CellPadding,
-                        gridRect.y + (x * cellH) + CellPadding,
-                        cellW - CellPadding * 2,
-                        cellH - CellPadding * 2
-                    );
-
-                    // Highlight selection in visual mode
-                    if (isVisualMode && _selectedTile == coord)
-                    {
-                        EditorGUI.DrawRect(cellRect, Color.yellow);
-                        Rect innerRect = new Rect(cellRect.x + 2, cellRect.y + 2, cellRect.width - 4, cellRect.height - 4);
-                        EditorGUI.DrawRect(innerRect, color);
-                    }
-                    else
-                    {
-                        EditorGUI.DrawRect(cellRect, color);
-                    }
-
-                    // Visual override indicators
+                    int ovIdx = data.VisualOverrides.FindIndex(o => o.Coordinate == coord);
                     bool hasOverride = false;
-                    foreach(var o in data.VisualOverrides) 
-                        if(o.Coordinate == coord) { hasOverride = true; break; }
-
-                    if (hasOverride)
-                    {
-                        EditorGUI.LabelField(cellRect, "*", new GUIStyle(EditorStyles.boldLabel) { 
-                            alignment = TextAnchor.UpperRight, 
-                            normal = { textColor = Color.yellow } 
-                        });
+                    if (ovIdx != -1) {
+                        var o = data.VisualOverrides[ovIdx];
+                        hasOverride = o.Texture != null || (o.Decorations != null && o.Decorations.Count > 0);
                     }
-
-                    if (clicked && cellRect.Contains(e.mousePosition))
-                    {
-                        if (isVisualMode)
-                        {
-                            _selectedTile = coord;
-                        }
-                        else
-                        {
-                            CycleTile(data, coord);
-                        }
-                        e.Use();
-                    }
+                    DrawItem(x, y, GetTileColor(data, coord), hasOverride ? "*" : "", SelectionType.Tile);
                 }
             }
+
             Random.state = oldState;
+        }
+
+        private void ShowContextMenu(MapData data, SelectionItem targetItem)
+        {
+            GenericMenu menu = new GenericMenu();
+
+            Texture2D targetTex = null;
+            if (targetItem.Type == SelectionType.Tile)
+            {
+                int idx = data.VisualOverrides.FindIndex(o => o.Coordinate == targetItem.TileCoord);
+                if (idx != -1) targetTex = data.VisualOverrides[idx].Texture;
+            }
+            else
+            {
+                int idx = data.WallOverrides.FindIndex(o => o.Side == targetItem.WallSide && o.Index == targetItem.WallIndex);
+                if (idx != -1) targetTex = data.WallOverrides[idx].TextureOverride;
+            }
+
+            if (targetTex != null)
+            {
+                menu.AddItem(new GUIContent("Copy Texture"), false, () => s_TextureClipboard = targetTex);
+            }
+            else
+            {
+                menu.AddDisabledItem(new GUIContent("Copy Texture"));
+            }
+
+            if (s_TextureClipboard != null)
+            {
+                menu.AddItem(new GUIContent("Paste Texture"), false, () => {
+                    Undo.RecordObject(data, "Paste Texture Override");
+                    foreach (var sel in _selection)
+                    {
+                        if (sel.Type == SelectionType.Tile) ApplyTileTexture(data, sel.TileCoord, s_TextureClipboard);
+                        else ApplyWallOverride(data, sel.WallSide, sel.WallIndex, s_TextureClipboard, false, Vector3.one, false, Vector3.zero);
+                    }
+                    EditorUtility.SetDirty(data);
+                });
+            }
+            else
+            {
+                menu.AddDisabledItem(new GUIContent("Paste Texture"));
+            }
+
+            menu.AddSeparator("");
+            menu.AddItem(new GUIContent("Clear Overrides"), false, () => {
+                Undo.RecordObject(data, "Clear Overrides");
+                foreach (var sel in _selection)
+                {
+                    if (sel.Type == SelectionType.Tile) data.VisualOverrides.RemoveAll(o => o.Coordinate == sel.TileCoord);
+                    else data.WallOverrides.RemoveAll(o => o.Side == sel.WallSide && o.Index == sel.WallIndex);
+                }
+                EditorUtility.SetDirty(data);
+            });
+
+            menu.ShowAsContext();
+        }
+
+        private void SelectTileRange(MapData data, Vector2Int start, Vector2Int end)
+        {
+            int xMin = Mathf.Min(start.x, end.x);
+            int xMax = Mathf.Max(start.x, end.x);
+            int yMin = Mathf.Min(start.y, end.y);
+            int yMax = Mathf.Max(start.y, end.y);
+
+            for (int x = xMin; x <= xMax; x++)
+            {
+                for (int y = yMin; y <= yMax; y++)
+                {
+                    SelectionItem item = new SelectionItem { Type = SelectionType.Tile, TileCoord = new Vector2Int(x, y) };
+                    if (!_selection.Exists(s => s.Equals(item))) _selection.Add(item);
+                }
+            }
+        }
+
+        private void SelectWallRange(MapData data, SelectionItem start, SelectionItem end)
+        {
+            if (start.WallSide != end.WallSide) return;
+
+            int iMin = Mathf.Min(start.WallIndex, end.WallIndex);
+            int iMax = Mathf.Max(start.WallIndex, end.WallIndex);
+
+            for (int i = iMin; i <= iMax; i++)
+            {
+                SelectionItem item = new SelectionItem { Type = SelectionType.Wall, WallSide = start.WallSide, WallIndex = i };
+                if (!_selection.Exists(s => s.Equals(item))) _selection.Add(item);
+            }
         }
 
         private Color GetTileColor(MapData data, Vector2Int coord)
         {
-            if (data.SpawnPoints.Contains(coord)) return Color.red;
-            if (data.ExitPoints.Contains(coord)) return Color.green;
-
             if (data.UseManualLayout)
             {
-                if (data.ManualHighGround.Contains(coord)) return Color.gray;
-                if (data.DecoratedWalkable.Contains(coord)) return new Color(0.7f, 0.7f, 1f);
-                if (data.DecoratedHighGround.Contains(coord)) return new Color(0.3f, 0.3f, 0.3f);
+                int idx = data.ManualLayoutData.FindIndex(d => d.Coordinate == coord);
+                if (idx != -1)
+                {
+                    TileType type = data.ManualLayoutData[idx].Type;
+                    switch (type)
+                    {
+                        case TileType.SpawnPoint: return Color.red;
+                        case TileType.ExitPoint: return Color.green;
+                        case TileType.Walkable: return Color.white;
+                        case TileType.HighGround: return Color.gray;
+                        case TileType.DecoWalkable: return new Color(0.7f, 0.7f, 1f);
+                        case TileType.DecoHighGround: return new Color(0.3f, 0.3f, 0.3f);
+                        case TileType.Hole: return new Color(0.1f, 0.1f, 0.1f);
+                        case TileType.LowTile: return new Color(0.8f, 0.6f, 0.4f);
+                        case TileType.NonWalkableDecor: return new Color(0.5f, 0.2f, 0.5f);
+                        default: return Color.black;
+                    }
+                }
                 return Color.white;
             }
 
@@ -366,28 +1036,72 @@ namespace MaouSamaTD.Editor
             return isHighGround ? Color.gray : Color.white;
         }
 
-        private void CycleTile(MapData data, Vector2Int coord)
+        private void DrawPalette(MapData data)
         {
-            Undo.RecordObject(data, "Cycle Map Tile");
+            EditorGUILayout.LabelField("Tile Palette", EditorStyles.boldLabel);
+            if (_selection.Count == 0 || _selection.Exists(s => s.Type != SelectionType.Tile))
+            {
+                EditorGUILayout.HelpBox("Select tiles in the grid to change their type.", MessageType.None);
+                return;
+            }
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField($"Selection: {_selection.Count} Tiles", EditorStyles.miniBoldLabel);
+            
+            System.Array types = System.Enum.GetValues(typeof(TileType));
+            int typesPerRow = 3;
+            for (int i = 0; i < types.Length; i += typesPerRow)
+            {
+                EditorGUILayout.BeginHorizontal();
+                for (int j = 0; j < typesPerRow && (i + j) < types.Length; j++)
+                {
+                    TileType type = (TileType)types.GetValue(i + j);
+                    if (GUILayout.Button(type.ToString(), GUILayout.Width((EditorGUIUtility.currentViewWidth - 60) / typesPerRow)))
+                    {
+                        SetTileType(data, type);
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawLegend(MapData data)
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Legend:", EditorStyles.miniBoldLabel);
+            DrawLegendItem("Spawn Point", Color.red);
+            DrawLegendItem("Exit Point", Color.green);
+            DrawLegendItem("Walkable", Color.white);
+            DrawLegendItem("High Ground", Color.gray);
+            DrawLegendItem("Deco Walkable (Unusable)", new Color(0.7f, 0.7f, 1f));
+            DrawLegendItem("Deco High Ground (Unusable)", new Color(0.3f, 0.3f, 0.3f));
+            DrawLegendItem("Hole/None", new Color(0.1f, 0.1f, 0.1f));
+            DrawLegendItem("Low Tile", new Color(0.8f, 0.6f, 0.4f));
+            DrawLegendItem("Non-Walkable Decor", new Color(0.5f, 0.2f, 0.5f));
+            EditorGUILayout.EndVertical();
+        }
+
+        private void SetTileType(MapData data, TileType type)
+        {
+            Undo.RecordObject(data, $"Set Tile Type to {type}");
             if (!data.UseManualLayout) CaptureRandomToManual(data);
 
-            if (data.ManualHighGround.Contains(coord))
+            foreach (var sel in _selection)
             {
-                data.ManualHighGround.Remove(coord);
-                data.DecoratedWalkable.Add(coord);
-            }
-            else if (data.DecoratedWalkable.Contains(coord))
-            {
-                data.DecoratedWalkable.Remove(coord);
-                data.DecoratedHighGround.Add(coord);
-            }
-            else if (data.DecoratedHighGround.Contains(coord))
-            {
-                data.DecoratedHighGround.Remove(coord);
-            }
-            else
-            {
-                data.ManualHighGround.Add(coord);
+                if (sel.Type != SelectionType.Tile) continue;
+                
+                int idx = data.ManualLayoutData.FindIndex(d => d.Coordinate == sel.TileCoord);
+                if (idx != -1)
+                {
+                    var d = data.ManualLayoutData[idx];
+                    d.Type = type;
+                    data.ManualLayoutData[idx] = d;
+                }
+                else
+                {
+                    data.ManualLayoutData.Add(new TileLayoutData { Coordinate = sel.TileCoord, Type = type });
+                }
             }
 
             data.UseManualLayout = true;
@@ -397,9 +1111,7 @@ namespace MaouSamaTD.Editor
         private void CaptureRandomToManual(MapData data)
         {
             Undo.RecordObject(data, "Capture Random to Manual");
-            data.ManualHighGround.Clear();
-            data.DecoratedWalkable.Clear();
-            data.DecoratedHighGround.Clear();
+            data.ManualLayoutData.Clear();
             
             Random.State oldState = Random.state;
             Random.InitState(data.MapSeed);
@@ -409,7 +1121,9 @@ namespace MaouSamaTD.Editor
                 {
                     bool isHighGround = Random.value < data.HighGroundChance;
                     if (y == 0 || y == data.Height - 1) isHighGround = true;
-                    if (isHighGround) data.ManualHighGround.Add(new Vector2Int(x, y));
+                    
+                    TileType type = isHighGround ? TileType.HighGround : TileType.Walkable;
+                    data.ManualLayoutData.Add(new TileLayoutData { Coordinate = new Vector2Int(x, y), Type = type });
                 }
             }
             data.UseManualLayout = true;
@@ -420,9 +1134,13 @@ namespace MaouSamaTD.Editor
         private void Flip(MapData data, bool horizontal)
         {
             Undo.RecordObject(data, horizontal ? "Flip Horizontal" : "Flip Vertical");
-            TransformCoordSet(data.ManualHighGround, horizontal, data.Width, data.Height);
-            TransformCoordSet(data.DecoratedWalkable, horizontal, data.Width, data.Height);
-            TransformCoordSet(data.DecoratedHighGround, horizontal, data.Width, data.Height);
+            for (int i = 0; i < data.ManualLayoutData.Count; i++)
+            {
+                var d = data.ManualLayoutData[i];
+                if (horizontal) d.Coordinate.x = (data.Width - 1) - d.Coordinate.x;
+                else d.Coordinate.y = (data.Height - 1) - d.Coordinate.y;
+                data.ManualLayoutData[i] = d;
+            }
             TransformCoordSet(data.SpawnPoints, horizontal, data.Width, data.Height);
             TransformCoordSet(data.ExitPoints, horizontal, data.Width, data.Height);
             EditorUtility.SetDirty(data);
@@ -430,6 +1148,7 @@ namespace MaouSamaTD.Editor
 
         private void TransformCoordSet(List<Vector2Int> coords, bool horizontal, int w, int h)
         {
+            if (coords == null) return;
             for (int i = 0; i < coords.Count; i++)
             {
                 Vector2Int c = coords[i];
@@ -444,9 +1163,16 @@ namespace MaouSamaTD.Editor
             Undo.RecordObject(data, "Rotate 90 CW");
             int oldW = data.Width;
             int oldH = data.Height;
-            RotateCoordSet(data.ManualHighGround, oldW, oldH);
-            RotateCoordSet(data.DecoratedWalkable, oldW, oldH);
-            RotateCoordSet(data.DecoratedHighGround, oldW, oldH);
+            
+            for (int i = 0; i < data.ManualLayoutData.Count; i++)
+            {
+                var d = data.ManualLayoutData[i];
+                int newX = d.Coordinate.y;
+                int newY = (oldW - 1) - d.Coordinate.x;
+                d.Coordinate = new Vector2Int(newX, newY);
+                data.ManualLayoutData[i] = d;
+            }
+            
             RotateCoordSet(data.SpawnPoints, oldW, oldH);
             RotateCoordSet(data.ExitPoints, oldW, oldH);
             data.Width = oldH;
@@ -456,6 +1182,7 @@ namespace MaouSamaTD.Editor
 
         private void RotateCoordSet(List<Vector2Int> coords, int w, int h)
         {
+            if (coords == null) return;
             for (int i = 0; i < coords.Count; i++)
             {
                 Vector2Int c = coords[i];
@@ -470,6 +1197,18 @@ namespace MaouSamaTD.Editor
             Rect r = EditorGUILayout.GetControlRect(false, 16);
             EditorGUI.DrawRect(new Rect(r.x, r.y, 16, 16), color);
             EditorGUI.LabelField(new Rect(r.x + 20, r.y, r.width - 20, r.height), label);
+        }
+
+        private bool IsTileTypeHole(MapData data, int x, int y)
+        {
+            if (x < 0 || x >= data.Width || y < 0 || y >= data.Height) return true;
+            if (data.UseManualLayout)
+            {
+                int idx = data.ManualLayoutData.FindIndex(d => d.Coordinate.x == x && d.Coordinate.y == y);
+                if (idx != -1) return data.ManualLayoutData[idx].Type == TileType.Hole;
+                return true; 
+            }
+            return false;
         }
     }
 }

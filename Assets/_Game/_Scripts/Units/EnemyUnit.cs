@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using MaouSamaTD.Grid;
+using MaouSamaTD.Levels;
 
 namespace MaouSamaTD.Units
 {
@@ -373,7 +374,7 @@ namespace MaouSamaTD.Units
             }
 
             GridManager gridMgr = FindFirstObjectByType<GridManager>(); 
-            if (gridMgr != null) gridMgr.SetTileType(_targetTile.Coordinate, TileType.Exit); 
+            if (gridMgr != null) gridMgr.SetTileType(_targetTile.Coordinate, TileType.ExitPoint); 
             
             Destroy(gameObject);
         }

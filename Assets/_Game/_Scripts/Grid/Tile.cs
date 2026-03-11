@@ -6,16 +6,7 @@ using Zenject;
 
 namespace MaouSamaTD.Grid
 {
-    public enum TileType
-    {
-        Walkable,   // Low ground, enemies walk here, melee units placed here
-        HighGround, // Ranged units placed here, enemies cannot walk
-        Spawn,              // Enemy spawn point
-        Exit,               // Enemy target point
-        Unwalkable,         // Obstacle
-        DecoratedWalkable,  // Flat but unusable
-        DecoratedHighGround // High ground but unusable
-    }
+    // Local TileType enum removed to use MaouSamaTD.Levels.TileType
 
     public class Tile : MonoBehaviour
     {
@@ -165,11 +156,13 @@ namespace MaouSamaTD.Grid
             {
                 case TileType.Walkable: return Color.white;
                 case TileType.HighGround: return Color.cyan;
-                case TileType.Spawn: return Color.red;
-                case TileType.Exit: return Color.green;
-                case TileType.Unwalkable: return Color.black;
-                case TileType.DecoratedWalkable: return new Color(0.7f, 0.7f, 1f); // Light Blue-ish
-                case TileType.DecoratedHighGround: return new Color(0.3f, 0.3f, 0.3f); // Dark Gray
+                case TileType.SpawnPoint: return Color.red;
+                case TileType.ExitPoint: return Color.green;
+                case TileType.NonWalkableDecor: return Color.black;
+                case TileType.DecoWalkable: return new Color(0.7f, 0.7f, 1f); // Light Blue-ish
+                case TileType.DecoHighGround: return new Color(0.3f, 0.3f, 0.3f); // Dark Gray
+                case TileType.Hole: return new Color(0.1f, 0f, 0.2f); // Dark purple for void
+                case TileType.LowTile: return new Color(0.8f, 0.8f, 0.8f); // Lighter gray
                 default: return Color.gray;
             }
         }
@@ -189,12 +182,12 @@ namespace MaouSamaTD.Grid
             var generator = Generator; // Use property for fallback
             if (generator != null)
             {
-                 if (_type == TileType.Spawn && newType != TileType.Spawn) generator.RemoveSpawnPoint(_coordinate);
-                 if (_type == TileType.Exit && newType != TileType.Exit) generator.RemoveExitPoint(_coordinate);
+                 if (_type == TileType.SpawnPoint && newType != TileType.SpawnPoint) generator.RemoveSpawnPoint(_coordinate);
+                 if (_type == TileType.ExitPoint && newType != TileType.ExitPoint) generator.RemoveExitPoint(_coordinate);
                  
                  // Handle new type addition
-                 if (newType == TileType.Spawn) generator.AddSpawnPoint(_coordinate);
-                 else if (newType == TileType.Exit) generator.AddExitPoint(_coordinate);
+                 if (newType == TileType.SpawnPoint) generator.AddSpawnPoint(_coordinate);
+                 else if (newType == TileType.ExitPoint) generator.AddExitPoint(_coordinate);
                  else 
                  {
                      // If just changing to Walkable/HighGround, generator doesn't track these lists explicitly
@@ -300,7 +293,7 @@ namespace MaouSamaTD.Grid
             }
 
             // 3. Create Marker based on Type
-            if (_type == TileType.Spawn || _type == TileType.Exit)
+            if (_type == TileType.SpawnPoint || _type == TileType.ExitPoint)
             {
                  // Create Container
                  _markerObject = new GameObject($"{_type}_Marker");
@@ -315,11 +308,11 @@ namespace MaouSamaTD.Grid
                  float size = 0.9f; 
                  
                  Color markerColor = Color.white;
-                 if (_type == TileType.Spawn)
+                 if (_type == TileType.SpawnPoint)
                  {
                      markerColor = Color.red; 
                  }
-                 else if (_type == TileType.Exit)
+                 else if (_type == TileType.ExitPoint)
                  {
                      if (ColorUtility.TryParseHtmlString("#00D2D3", out Color c))
                      {
@@ -385,13 +378,13 @@ namespace MaouSamaTD.Grid
         [Button("Set as Spawn Point")]
         private void SetAsSpawn()
         {
-            SetType(TileType.Spawn);
+            SetType(TileType.SpawnPoint);
         }
 
         [Button("Set as Exit Point")]
         private void SetAsExit()
         {
-            SetType(TileType.Exit);
+            SetType(TileType.ExitPoint);
         }
 
         [Button("Set as Walkable")]

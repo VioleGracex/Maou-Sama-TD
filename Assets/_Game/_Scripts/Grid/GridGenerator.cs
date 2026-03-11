@@ -47,10 +47,8 @@ namespace MaouSamaTD.Grid
         [SerializeField] private bool _wallWest = true;
         
         [Header("Primitive Wall Settings")]
-        [Tooltip("Width (Thickness) of the wall relative to cell size")]
-        [SerializeField] private float _wallWidth = 1.0f;
-        [Tooltip("Height of the wall relative to cell size")]
-        [SerializeField] private float _wallHeight = 1.0f;
+        [Tooltip("Global scale for walls (X=Thick, Y=Height, Z=Length per block)")]
+        [SerializeField] private Vector3 _wallScale = Vector3.one;
 
         private List<GameObject> _generatedWalls = new List<GameObject>();
         #endregion
@@ -109,9 +107,13 @@ namespace MaouSamaTD.Grid
 
                     if (_mapData != null && _mapData.UseManualLayout)
                     {
-                        if (_mapData.ManualHighGround.Contains(coord)) type = TileType.HighGround;
-                        else if (_mapData.DecoratedWalkable.Contains(coord)) type = TileType.DecoratedWalkable;
-                        else if (_mapData.DecoratedHighGround.Contains(coord)) type = TileType.DecoratedHighGround;
+                        var manualTile = _mapData.ManualLayoutData.Find(t => t.Coordinate == coord);
+                        if (manualTile.Coordinate == coord) // Found
+                        {
+                            // Convert Levels.TileType to Grid.TileType if they are still separate, 
+                            // but I will unify them soon. For now, let's assume they map or I'll fix Tile.cs next.
+                            type = (TileType)manualTile.Type; 
+                        }
                     }
                     else
                     {
@@ -140,9 +142,14 @@ namespace MaouSamaTD.Grid
             if (_mapData != null && _mapData.UseManualLayout)
             {
                 // Skip random lane generation, rely on manual layout.
-                // But we still want to mark Spawn and Exit points from MapData.
-                foreach (var spawn in _mapData.SpawnPoints) _gridManager.SetTileType(spawn, TileType.Spawn);
-                foreach (var exit in _mapData.ExitPoints) _gridManager.SetTileType(exit, TileType.Exit);
+                // Spawn and Exit points are now part of ManualLayoutData, 
+                // but we might still have explicit SpawnPoints/ExitPoints lists for other logic?
+                // Actually, let's check if we still need to set types based on the old lists.
+                // The old code had:
+                // foreach (var spawn in _mapData.SpawnPoints) _gridManager.SetTileType(spawn, TileType.Spawn);
+                // foreach (var exit in _mapData.ExitPoints) _gridManager.SetTileType(exit, TileType.Exit);
+                
+                // If SpawnPoint/ExitPoint are in the ManualLayoutData, they are already set.
             }
             else
             {
@@ -167,7 +174,33 @@ namespace MaouSamaTD.Grid
         private void GenerateWalls()
         {
             float cellSize = _gridManager.CellSize;
-            float wallRealHeight = cellSize * _wallHeight;
+            Vector3 globalWallScale = _wallScale;
+            GameObject wallPrefab = _wallPrefab;
+            Material wallMaterial = _wallMaterial;
+            bool wallNorth = _wallNorth;
+            bool wallSouth = _wallSouth;
+            bool wallEast = _wallEast;
+            bool wallWest = _wallWest;
+
+            Vector3 globalWallOffset = Vector3.zero;
+            bool seamlessCorners = true;
+
+            if (_mapData != null)
+            {
+                globalWallScale = _mapData.WallVisuals.WallScale;
+                globalWallOffset = _mapData.WallVisuals.WallOffset;
+                seamlessCorners = _mapData.WallVisuals.SeamlessCorners;
+                wallPrefab = _mapData.WallVisuals.WallPrefab;
+                wallMaterial = _mapData.WallVisuals.WallMaterial;
+                wallNorth = _mapData.Walls.North;
+                wallSouth = _mapData.Walls.South;
+                wallEast = _mapData.Walls.East;
+                wallWest = _mapData.Walls.West;
+            }
+
+            bool cascadeHoles = _mapData != null ? _mapData.WallCascadeOnHoles : true;
+
+            float wallRealHeight = cellSize * globalWallScale.y;
             float yPos = wallRealHeight / 2f; 
 
             Transform wallContainer = _gridManager.WallContainer;
@@ -177,14 +210,39 @@ namespace MaouSamaTD.Grid
                  wallContainer = _gridManager.WallContainer;
             }
 
-            void CreateWallBlock(int x, int y, Vector3 scaleMultiplier)
+            void CreateWallBlock(int x, int y, Vector3 scaleMultiplier, Vector3 additionalOffset, WallSide side, int index, Texture2D sideTexture)
             {
-                Vector3 pos = new Vector3(x * cellSize, yPos, y * cellSize);
+                float basePosX = x * cellSize;
+                float basePosZ = y * cellSize;
+
+                // Adjust position to keep inner face flush with grid when scale is changed.
+                // If SeamlessCorners is true: 
+                //    Shift wall inward by (1-thickness)*0.5 so it stays stuck to tiles (no extrude)
+                //    but centers on grid lines for full 1.0 scale.
+                if (seamlessCorners)
+                {
+                    float shiftX = (1f - scaleMultiplier.x) * cellSize * 0.5f;
+                    float shiftZ = (1f - scaleMultiplier.z) * cellSize * 0.5f;
+
+                    if (side == WallSide.North) basePosX = x * cellSize - shiftX;
+                    else if (side == WallSide.South) basePosX = x * cellSize + shiftX;
+                    else if (side == WallSide.West) basePosZ = y * cellSize - shiftZ;
+                    else if (side == WallSide.East) basePosZ = y * cellSize + shiftZ;
+                }
+                else
+                {
+                    if (side == WallSide.North) basePosX = (x - 0.5f) * cellSize + (scaleMultiplier.x * cellSize * 0.5f);
+                    else if (side == WallSide.South) basePosX = (x + 0.5f) * cellSize - (scaleMultiplier.x * cellSize * 0.5f);
+                    else if (side == WallSide.West) basePosZ = (y - 0.5f) * cellSize + (scaleMultiplier.z * cellSize * 0.5f);
+                    else if (side == WallSide.East) basePosZ = (y + 0.5f) * cellSize - (scaleMultiplier.z * cellSize * 0.5f);
+                }
+
+                Vector3 pos = new Vector3(basePosX, yPos, basePosZ) + globalWallOffset + additionalOffset;
                 GameObject wall;
                 
-                if (_wallPrefab != null)
+                if (wallPrefab != null)
                 {
-                    wall = Instantiate(_wallPrefab, wallContainer);
+                    wall = Instantiate(wallPrefab, wallContainer);
                     wall.transform.position = pos;
                 }
                 else
@@ -192,49 +250,254 @@ namespace MaouSamaTD.Grid
                     wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     wall.transform.SetParent(wallContainer, false);
                     wall.transform.localPosition = pos;
-                    wall.name = $"Wall_{x}_{y}";
-                    wall.transform.localScale = Vector3.Scale(new Vector3(cellSize, cellSize, cellSize), scaleMultiplier);
+                    wall.name = $"Wall_{side}_{index}";
                 }
 
-                if (_wallMaterial != null)
+                wall.transform.localScale = Vector3.Scale(new Vector3(cellSize, cellSize, cellSize), scaleMultiplier);
+
+                if (wallMaterial != null)
                 {
                     var renderer = wall.GetComponentInChildren<Renderer>();
                     if (renderer != null)
                     {
-                        renderer.material = _wallMaterial;
+                        renderer.material = wallMaterial;
                         // Fix Texture Stretching
                         Vector3 worldScale = wall.transform.lossyScale;
-                        // Use X or Z for horizontal tiling depending on wall orientation
                         float horizontalTiling = (scaleMultiplier.x > scaleMultiplier.z) ? worldScale.x : worldScale.z;
                         renderer.material.mainTextureScale = new Vector2(horizontalTiling, worldScale.y);
+                    }
+                }
+
+                // Apply Individual Wall Overrides
+                if (_mapData != null)
+                {
+                    int wallOvIdx = _mapData.WallOverrides.FindIndex(o => o.Side == side && o.Index == index);
+                    if (wallOvIdx != -1)
+                    {
+                        var wallOverride = _mapData.WallOverrides[wallOvIdx];
+                        // Texture Override
+                        if (wallOverride.TextureOverride != null)
+                        {
+                            var renderer = wall.GetComponentInChildren<Renderer>();
+                            if (renderer != null) renderer.material.mainTexture = wallOverride.TextureOverride;
+                        }
+                        else if (sideTexture != null)
+                        {
+                            var renderer = wall.GetComponentInChildren<Renderer>();
+                            if (renderer != null) renderer.material.mainTexture = sideTexture;
+                        }
+
+                        // Decoration Overrides
+                        if (wallOverride.Decorations != null)
+                        {
+                            foreach (var deco in wallOverride.Decorations)
+                            {
+                                if (deco.Prefab == null) continue;
+                                GameObject d = Instantiate(deco.Prefab, wall.transform);
+                                d.transform.localPosition = deco.Offset;
+                                d.transform.localRotation = Quaternion.Euler(deco.Rotation);
+                                d.transform.localScale = deco.Scale;
+                            }
+                        }
+                    }
+                    else if (sideTexture != null)
+                    {
+                        var renderer = wall.GetComponentInChildren<Renderer>();
+                        if (renderer != null) renderer.material.mainTexture = sideTexture;
                     }
                 }
 
                 _generatedWalls.Add(wall);
             }
 
-            if (_wallSouth)
+            if (wallNorth)
             {
-                Vector3 scale = new Vector3(1f, _wallHeight, _wallWidth);
-                for (int x = -1; x <= _gridManager.Width; x++) CreateWallBlock(x, -1, scale);
-            }
-            
-            if (_wallNorth)
-            {
-                Vector3 scale = new Vector3(1f, _wallHeight, _wallWidth);
-                for (int x = -1; x <= _gridManager.Width; x++) CreateWallBlock(x, _gridManager.Height, scale);
+                // North = top in editor, at grid x=Width, runs along Y (Z world axis)
+                Vector3 sideScale = globalWallScale;
+                Vector3 sideOffset = Vector3.zero;
+                Texture2D sideTexture = null;
+
+                if (_mapData != null)
+                {
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.North);
+                    if (sOv.OverrideScale) sideScale = sOv.Scale;
+                    if (sOv.OverrideOffset) sideOffset = sOv.Offset;
+                    sideTexture = sOv.TextureOverride;
+                }
+
+                for (int y = 0; y < _gridManager.Height; y++)
+                {
+                    if (!cascadeHoles)
+                    {
+                        var tile = _gridManager.GetTileAt(new Vector2Int(_gridManager.Width - 1, y));
+                        if (tile != null && tile.Type == TileType.Hole) continue;
+                    }
+
+                    Vector3 finalScale = sideScale;
+                    Vector3 finalOffset = sideOffset;
+
+                    if (_mapData != null)
+                    {
+                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.North && o.Index == y);
+                        if (idx != -1)
+                        {
+                            var o = _mapData.WallOverrides[idx];
+                            if (o.OverrideScale) finalScale = o.Scale;
+                            if (o.OverrideOffset) finalOffset = o.Offset;
+                        }
+                    }
+                    CreateWallBlock(_gridManager.Width, y, finalScale, finalOffset, WallSide.North, y, sideTexture);
+                }
             }
 
-            if (_wallWest)
+            if (wallSouth)
             {
-                Vector3 scale = new Vector3(_wallWidth, _wallHeight, 1f);
-                for (int y = 0; y < _gridManager.Height; y++) CreateWallBlock(-1, y, scale);
+                // South = bottom in editor, at grid x=-1, runs along Y (Z world axis)
+                Vector3 sideScale = globalWallScale;
+                Vector3 sideOffset = Vector3.zero;
+                Texture2D sideTexture = null;
+
+                if (_mapData != null)
+                {
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.South);
+                    if (sOv.OverrideScale) sideScale = sOv.Scale;
+                    if (sOv.OverrideOffset) sideOffset = sOv.Offset;
+                    sideTexture = sOv.TextureOverride;
+                }
+
+                for (int y = 0; y < _gridManager.Height; y++)
+                {
+                    if (!cascadeHoles)
+                    {
+                        var tile = _gridManager.GetTileAt(new Vector2Int(0, y));
+                        if (tile != null && tile.Type == TileType.Hole) continue;
+                    }
+
+                    Vector3 finalScale = sideScale;
+                    Vector3 finalOffset = sideOffset;
+
+                    if (_mapData != null)
+                    {
+                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.South && o.Index == y);
+                        if (idx != -1)
+                        {
+                            var o = _mapData.WallOverrides[idx];
+                            if (o.OverrideScale) finalScale = o.Scale;
+                            if (o.OverrideOffset) finalOffset = o.Offset;
+                        }
+                    }
+                    CreateWallBlock(-1, y, finalScale, finalOffset, WallSide.South, y, sideTexture);
+                }
             }
 
-            if (_wallEast)
+            if (wallWest)
             {
-                Vector3 scale = new Vector3(_wallWidth, _wallHeight, 1f);
-                for (int y = 0; y < _gridManager.Height; y++) CreateWallBlock(_gridManager.Width, y, scale);
+                // West = left in editor, at grid y=Height, runs along X
+                Vector3 sideScale = new Vector3(globalWallScale.z, globalWallScale.y, globalWallScale.x);
+                Vector3 sideOffset = Vector3.zero;
+                Texture2D sideTexture = null;
+
+                if (_mapData != null)
+                {
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.West);
+                    if (sOv.OverrideScale) sideScale = sOv.Scale;
+                    if (sOv.OverrideOffset) sideOffset = sOv.Offset;
+                    sideTexture = sOv.TextureOverride;
+                }
+
+                for (int x = -1; x <= _gridManager.Width; x++)
+                {
+                    if (!cascadeHoles)
+                    {
+                        int adjX = Mathf.Clamp(x, 0, _gridManager.Width - 1);
+                        var tile = _gridManager.GetTileAt(new Vector2Int(adjX, _gridManager.Height - 1));
+                        if (tile != null && tile.Type == TileType.Hole) continue;
+                    }
+
+                    Vector3 finalScale = sideScale;
+                    Vector3 finalOffset = sideOffset;
+
+                    // Seamless Corners: Shorten the corner-most segments to match thickness
+                    if (seamlessCorners)
+                    {
+                        if (x == -1 || x == _gridManager.Width)
+                        {
+                            finalScale.x = globalWallScale.x; // Make it square (length = thickness)
+                            
+                            // Align corner block to the outward/inward edge of the wall strip
+                            float cornerShift = (1f - globalWallScale.x) * cellSize * 0.5f;
+                            if (x == -1) finalOffset.x += cornerShift; // Northwest corner
+                            else finalOffset.x -= cornerShift;        // Northeast corner
+                        }
+                    }
+
+                    if (_mapData != null)
+                    {
+                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.West && o.Index == x);
+                        if (idx != -1)
+                        {
+                            var o = _mapData.WallOverrides[idx];
+                            if (o.OverrideScale) finalScale = o.Scale;
+                            if (o.OverrideOffset) finalOffset = o.Offset;
+                        }
+                    }
+                    CreateWallBlock(x, _gridManager.Height, finalScale, finalOffset, WallSide.West, x, sideTexture);
+                }
+            }
+
+            if (wallEast)
+            {
+                // East = right in editor, at grid y=-1, runs along X
+                Vector3 sideScale = new Vector3(globalWallScale.z, globalWallScale.y, globalWallScale.x);
+                Vector3 sideOffset = Vector3.zero;
+                Texture2D sideTexture = null;
+
+                if (_mapData != null)
+                {
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.East);
+                    if (sOv.OverrideScale) sideScale = sOv.Scale;
+                    if (sOv.OverrideOffset) sideOffset = sOv.Offset;
+                    sideTexture = sOv.TextureOverride;
+                }
+
+                for (int x = -1; x <= _gridManager.Width; x++)
+                {
+                    if (!cascadeHoles)
+                    {
+                        int adjX = Mathf.Clamp(x, 0, _gridManager.Width - 1);
+                        var tile = _gridManager.GetTileAt(new Vector2Int(adjX, 0));
+                        if (tile != null && tile.Type == TileType.Hole) continue;
+                    }
+
+                    Vector3 finalScale = sideScale;
+                    Vector3 finalOffset = sideOffset;
+
+                    // Seamless Corners: Shorten the corner-most segments to match thickness
+                    if (seamlessCorners)
+                    {
+                        if (x == -1 || x == _gridManager.Width)
+                        {
+                            finalScale.x = globalWallScale.x; // Make it square (length = thickness)
+
+                            // Align corner block to the outward/inward edge of the wall strip
+                            float cornerShift = (1f - globalWallScale.x) * cellSize * 0.5f;
+                            if (x == -1) finalOffset.x += cornerShift; // Southwest corner
+                            else finalOffset.x -= cornerShift;        // Southeast corner
+                        }
+                    }
+
+                    if (_mapData != null)
+                    {
+                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.East && o.Index == x);
+                        if (idx != -1)
+                        {
+                            var o = _mapData.WallOverrides[idx];
+                            if (o.OverrideScale) finalScale = o.Scale;
+                            if (o.OverrideOffset) finalOffset = o.Offset;
+                        }
+                    }
+                    CreateWallBlock(x, -1, finalScale, finalOffset, WallSide.East, x, sideTexture);
+                }
             }
         }
 
@@ -275,8 +538,8 @@ namespace MaouSamaTD.Grid
                     }
                 }
 
-                _gridManager.SetTileType(start, TileType.Spawn);
-                _gridManager.SetTileType(closestExit, TileType.Exit);
+                _gridManager.SetTileType(start, TileType.SpawnPoint);
+                _gridManager.SetTileType(closestExit, TileType.ExitPoint);
                 
                 // Markers are now handled by Tile.cs UpdateTypeVisuals
             }
@@ -350,7 +613,7 @@ namespace MaouSamaTD.Grid
             if (!_spawnPoints.Contains(coord))
             {
                 _spawnPoints.Add(coord);
-                _gridManager.SetTileType(coord, TileType.Spawn);
+                _gridManager.SetTileType(coord, TileType.SpawnPoint);
                 Debug.Log($"Added Spawn Point at {coord}");
                 GenerateMap();
             }
@@ -361,7 +624,7 @@ namespace MaouSamaTD.Grid
             if (!_exitPoints.Contains(coord))
             {
                 _exitPoints.Add(coord);
-                _gridManager.SetTileType(coord, TileType.Exit);
+                _gridManager.SetTileType(coord, TileType.ExitPoint);
                 Debug.Log($"Added Exit Point at {coord}");
                 GenerateMap();
             }
@@ -389,6 +652,16 @@ namespace MaouSamaTD.Grid
             _highGroundChance = data.HighGroundChance;
             _spawnPoints = new List<Vector2Int>(data.SpawnPoints);
             _exitPoints = new List<Vector2Int>(data.ExitPoints);
+
+            // Sync Wall Settings
+            _wallNorth = data.Walls.North;
+            _wallSouth = data.Walls.South;
+            _wallEast = data.Walls.East;
+            _wallWest = data.Walls.West;
+            _wallScale = data.WallVisuals.WallScale;
+            // Note: _wallOffset and _seamlessCorners are not yet serializable fields in GridGenerator 
+            // but we use them locally in GenerateWalls.
+            // For now, they come directly from MapData.
             
             if (_gridManager != null)
             {
@@ -442,12 +715,27 @@ namespace MaouSamaTD.Grid
             newData.HighGroundChance = _highGroundChance;
             newData.SpawnPoints = new List<Vector2Int>(_spawnPoints);
             newData.ExitPoints = new List<Vector2Int>(_exitPoints);
+            
+            // Wall Settings
+            newData.Walls = new WallSettings {
+                North = _wallNorth, South = _wallSouth, East = _wallEast, West = _wallWest
+            };
+            newData.WallVisuals = new WallVisualSettings {
+                WallMaterial = _wallMaterial, WallPrefab = _wallPrefab,
+                WallScale = _wallScale,
+                WallOffset = Vector3.zero, // Default when extracted
+                SeamlessCorners = true     // Default when extracted
+            };
 
             // Populate from current Grid if available
             foreach (var tile in _gridManager.GetAllTiles())
             {
-                if (tile.Type == TileType.DecoratedWalkable) newData.DecoratedWalkable.Add(tile.Coordinate);
-                else if (tile.Type == TileType.DecoratedHighGround) newData.DecoratedHighGround.Add(tile.Coordinate);
+                // Unify all layouts into ManualLayoutData
+                newData.ManualLayoutData.Add(new TileLayoutData
+                {
+                    Coordinate = tile.Coordinate,
+                    Type = (MaouSamaTD.Levels.TileType)tile.Type
+                });
 
                 if (tile.OverriddenTexture != null || (tile.OverriddenDecorations != null && tile.OverriddenDecorations.Count > 0))
                 {

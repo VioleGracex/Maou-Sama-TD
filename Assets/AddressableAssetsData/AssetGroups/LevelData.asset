@@ -14,12 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: LevelData
   m_GUID: ba7060186f858e8478f8b8cf2ea25320
-  m_SerializeEntries:
-  - m_GUID: c8ff7eeb06602374398876e91503a50f
-    m_Address: Assets/_Game/Data/Levels/Tutorial/TestLevel.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 19b417a427e1a474d9e81fbe4eae59a7, type: 2}
   m_SchemaSet:

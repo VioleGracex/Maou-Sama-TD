@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using MaouSamaTD.Levels;
 using Zenject;
 
 namespace MaouSamaTD.Grid
@@ -117,12 +118,12 @@ namespace MaouSamaTD.Grid
             {
                 foreach (var kvp in _grid)
                 {
-                    if (kvp.Value.Type == TileType.Spawn)
+                    if (kvp.Value.Type == TileType.SpawnPoint)
                     {
                         if (SpawnPoints.Count == 0) SpawnPoint = kvp.Key;
                         SpawnPoints.Add(kvp.Key);
                     }
-                    if (kvp.Value.Type == TileType.Exit) ExitPoint = kvp.Key;
+                    if (kvp.Value.Type == TileType.ExitPoint) ExitPoint = kvp.Key;
                 }
             }
             
@@ -160,13 +161,17 @@ namespace MaouSamaTD.Grid
                  tile = Instantiate(_tilePrefab, position, Quaternion.identity, _gridContainer);
             }
             
-            tile.transform.localScale = Vector3.one * _cellSize * 0.95f;
+            tile.transform.localScale = Vector3.one * _cellSize;
             
             tile.Initialize(coord, type);
             _grid[coord] = tile;
             
-            if (type == TileType.HighGround)
+            if (type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor)
                 tile.transform.position += Vector3.up * 0.5f;
+            else if (type == TileType.Hole)
+                tile.transform.position += Vector3.down * 5f;
+            else if (type == TileType.LowTile)
+                tile.transform.position += Vector3.down * 0.2f;
 
             return tile;
         }
@@ -237,8 +242,14 @@ namespace MaouSamaTD.Grid
             {
                 tile.Initialize(coord, type);
                 
-                bool isHigh = type == TileType.HighGround || type == TileType.DecoratedHighGround;
+                bool isHigh = type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor;
                 float yOffset = isHigh ? 0.5f : 0f;
+                
+                // Hole special case: move it down
+                if (type == TileType.Hole) yOffset = -5f;
+                // Low Tile special case: move it down slightly
+                if (type == TileType.LowTile) yOffset = -0.2f;
+
                 tile.transform.position = new Vector3(coord.x * _cellSize, yOffset, coord.y * _cellSize);
             }
         }
@@ -454,9 +465,11 @@ namespace MaouSamaTD.Grid
                     
                     if (moveType == MaouSamaTD.Units.EnemyMovementType.Ground)
                     {
-                        // Ground cannot walk on Unwalkable, HighGround, or Decorated variants
-                        if (tile.Type == TileType.Unwalkable || tile.Type == TileType.HighGround || 
-                            tile.Type == TileType.DecoratedWalkable || tile.Type == TileType.DecoratedHighGround) 
+                        // Ground cannot walk on obstacles
+                        if (tile.Type == TileType.NonWalkableDecor || 
+                            tile.Type == TileType.HighGround || 
+                            tile.Type == TileType.DecoHighGround ||
+                            tile.Type == TileType.Hole) 
                             isWalkable = false;
                             
                         // Check occupancy logic

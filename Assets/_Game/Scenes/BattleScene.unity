@@ -5319,8 +5319,7 @@ MonoBehaviour:
   _wallSouth: 1
   _wallEast: 1
   _wallWest: 1
-  _wallWidth: 1
-  _wallHeight: 1
+  _wallScale: {x: 1, y: 1, z: 1}
 --- !u!114 &1567414775
 MonoBehaviour:
   m_ObjectHideFlags: 0

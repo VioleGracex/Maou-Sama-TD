@@ -1,4 +1,5 @@
 using UnityEngine;
+using MaouSamaTD.Levels;
 
 namespace MaouSamaTD.Units
 {
@@ -58,7 +59,7 @@ namespace MaouSamaTD.Units
         public MaouSamaTD.Skills.UnitSkillData Skill;
 
         [Header("Placement Rules")]
-        public System.Collections.Generic.List<Grid.TileType> ViableTiles;
+        public System.Collections.Generic.List<Levels.TileType> ViableTiles;
 
         protected override void OnValidate()
         {
@@ -67,15 +68,15 @@ namespace MaouSamaTD.Units
             // Set defaults if empty based on class logic (expanded for new 11 classes)
             if (ViableTiles == null || ViableTiles.Count == 0)
             {
-                ViableTiles = new System.Collections.Generic.List<Grid.TileType>();
+                ViableTiles = new System.Collections.Generic.List<Levels.TileType>();
                 if (Class == UnitClass.Ranger || Class == UnitClass.Warlock || Class == UnitClass.Sage || Class == UnitClass.Support)
                 {
-                    ViableTiles.Add(Grid.TileType.HighGround);
+                    ViableTiles.Add(TileType.HighGround);
                 }
                 else
                 {
                     // Bastion, Vanguard, Executioner, etc.
-                    ViableTiles.Add(Grid.TileType.Walkable);
+                    ViableTiles.Add(TileType.Walkable);
                 }
             }
         }

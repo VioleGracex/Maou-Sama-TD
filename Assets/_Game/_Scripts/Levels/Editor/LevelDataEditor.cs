@@ -9,11 +9,8 @@ namespace MaouSamaTD.Levels.Editor
     {
         private LevelData _target;
 
-        // Static allows the foldout states to persist while clicking between different levels in the project
-        private static bool _showIdentity = true;
-        private static bool _showSetup = true;
-        private static bool _showRoster = true;
-        private static bool _showMapWaves = true;
+        private static int _selectedTab = 0;
+        private readonly string[] _tabNames = { "General", "Economy", "Units", "Encounter" };
 
         private void OnEnable()
         {
@@ -40,138 +37,160 @@ namespace MaouSamaTD.Levels.Editor
 
             if (_target.useDefaultInspector)
             {
-                // Draw all properties like default inspector, but explicitly make UniqueID read-only
-                SerializedProperty iter = serializedObject.GetIterator();
-                bool enterChildren = true;
-                while (iter.NextVisible(enterChildren))
-                {
-                    using (new EditorGUI.DisabledScope(iter.name == "UniqueID" || iter.name == "m_Script"))
-                    {
-                        EditorGUILayout.PropertyField(iter, true);
-                    }
-                    enterChildren = false;
-                }
-                serializedObject.ApplyModifiedProperties();
+                DrawDefaultInspectorWithReadOnlyID();
                 return;
             }
 
-            // Increase label width so long property names (e.g. "Delay Before Next Wave" or "Spawn Interval") 
-            // aren't truncated, making the object input fields smaller as requested
             float originalLabelWidth = EditorGUIUtility.labelWidth;
-            EditorGUIUtility.labelWidth = 210f; // Adjusted width to prevent label hiding
+            EditorGUIUtility.labelWidth = 210f;
 
-            // Draw custom editor
-            DrawCustomInspector();
+            // Tab Selection
+            _selectedTab = GUILayout.Toolbar(_selectedTab, _tabNames, GUILayout.Height(25));
+            EditorGUILayout.Space(5);
 
-            // Restore original width just in case
+            switch (_selectedTab)
+            {
+                case 0: DrawGeneralTab(); break;
+                case 1: DrawEconomyTab(); break;
+                case 2: DrawUnitsTab(); break;
+                case 3: DrawEncounterTab(); break;
+            }
+
             EditorGUIUtility.labelWidth = originalLabelWidth;
-
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawCustomInspector()
+        private void DrawDefaultInspectorWithReadOnlyID()
         {
-            GUIStyle foldoutStyle = new GUIStyle(EditorStyles.foldout);
-            foldoutStyle.fontStyle = FontStyle.Bold;
-            foldoutStyle.fontSize = 13;
-
-            // Level Identification
-            GUILayout.BeginVertical("helpbox");
-            EditorGUI.indentLevel++;
-            _showIdentity = EditorGUILayout.Foldout(_showIdentity, "Level Identification", true, foldoutStyle);
-            if (_showIdentity)
+            SerializedProperty iter = serializedObject.GetIterator();
+            bool enterChildren = true;
+            while (iter.NextVisible(enterChildren))
             {
-                EditorGUILayout.Space(2);
-                
-                using (new EditorGUI.DisabledScope(true))
+                using (new EditorGUI.DisabledScope(iter.name == "UniqueID" || iter.name == "m_Script"))
                 {
-                    DrawProperty("UniqueID", "Unique ID", "Permanent generic GUID for this scriptable object.");
+                    EditorGUILayout.PropertyField(iter, true);
                 }
-
-                DrawProperty("LevelIndex", "Integer Index", "Numeric index used for Addressables or logic (e.g., 1, 2, 3)");
-                DrawProperty("LevelID", "String ID", "String identifier. Naming convention: [Chapter]-[Level] (e.g., 1-1, 1-2, 2-1)");
-                DrawProperty("LevelName", "Level Name");
-                
-                EditorGUILayout.LabelField("Description");
-                SerializedProperty descProp = serializedObject.FindProperty("Description");
-                descProp.stringValue = EditorGUILayout.TextArea(descProp.stringValue, EditorStyles.textArea, GUILayout.Height(50));
+                enterChildren = false;
             }
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
+            serializedObject.ApplyModifiedProperties();
+        }
 
-            EditorGUILayout.Space();
+        private void DrawGeneralTab()
+        {
+            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
 
-            // Setup
             GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Identity & Info", headerStyle);
             EditorGUI.indentLevel++;
-            _showSetup = EditorGUILayout.Foldout(_showSetup, "Rules & Setup", true, foldoutStyle);
-            if (_showSetup)
+            
+            using (new EditorGUI.DisabledScope(true))
             {
-                EditorGUILayout.Space(2);
-                DrawProperty("GracePeriod", "Grace Period (Sec)", "Time before the first wave begins.");
-                DrawProperty("StartingAuthoritySeals", "Starting Authority (Economy)");
-                DrawProperty("AuthoritySealsPerSecond", "Authority Per Second", "Economy generation speed.");
-                
-                EditorGUILayout.Space(5);
-                DrawProperty("WinRewards", "Level Win Rewards", "List of rewards granted upon clearing the level.");
+                DrawProperty("UniqueID", "Unique ID", "Permanent generic GUID for this scriptable object.");
             }
+
+            DrawProperty("LevelIndex", "Integer Index");
+            DrawProperty("LevelID", "String ID (e.g. 1-1)");
+            DrawProperty("LevelName", "Level Name");
+            
+            EditorGUILayout.LabelField("Description");
+            SerializedProperty descProp = serializedObject.FindProperty("Description");
+            descProp.stringValue = EditorGUILayout.TextArea(descProp.stringValue, EditorStyles.textArea, GUILayout.Height(60));
+            
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
 
-            EditorGUILayout.Space();
+            GUILayout.Space(10);
 
-            // Units
             GUILayout.BeginVertical("helpbox");
-            EditorGUI.indentLevel++;
-            _showRoster = EditorGUILayout.Foldout(_showRoster, "Unit Roster Settings", true, foldoutStyle);
-            if (_showRoster)
-            {
-                EditorGUILayout.Space(2);
-                DrawProperty("PremadeCohort", "Premade Cohort (Base Roster)", "Forced units for this level.");
-                DrawProperty("IsCohortLocked", "Lock Premade Cohort", "Prevent player from changing them.");
-                EditorGUILayout.Space(5);
-                DrawProperty("SupportAssistant", "Support Assistant (11th Unit)", "Additional helper unit.");
-                DrawProperty("IsAssistantLocked", "Lock Assistant Unit");
-                EditorGUILayout.Space(5);
-                DrawProperty("MaleSovereignRites", "Male Rites", "The rites available for Male Maou.");
-                DrawProperty("FemaleSovereignRites", "Female Rites", "The rites available for Female Maou.");
-                DrawProperty("IsRitesLocked", "Lock Sovereign Rites");
-            }
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-
-            EditorGUILayout.Space();
-
-            // Map & Waves
-            GUILayout.BeginVertical("helpbox");
-            EditorGUI.indentLevel++;
-            _showMapWaves = EditorGUILayout.Foldout(_showMapWaves, "Map & Encounter", true, foldoutStyle);
-            if (_showMapWaves)
-            {
-                EditorGUILayout.Space(2);
-                DrawProperty("MapData", "Linked Map Data");
-                EditorGUILayout.Space(5);
-                DrawProperty("Waves", "Enemy Waves");
-            }
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-
-            EditorGUILayout.Space();
-
-            // Tutorial
-            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Tutorial Settings", headerStyle);
             EditorGUI.indentLevel++;
             SerializedProperty hasTutorialProp = serializedObject.FindProperty("HasTutorial");
-            bool showTutorial = EditorGUILayout.Foldout(hasTutorialProp.boolValue, "Tutorial Settings", true, foldoutStyle);
-            
-            // Sync foldout with the bool if we want, or just use the bool
-            EditorGUILayout.PropertyField(hasTutorialProp, new GUIContent("Has Tutorial"));
+            EditorGUILayout.PropertyField(hasTutorialProp, new GUIContent("Enable Tutorial"));
             
             if (hasTutorialProp.boolValue)
             {
-                EditorGUILayout.Space(2);
                 DrawProperty("TutorialData", "Tutorial Sequence");
             }
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+        }
+
+        private void DrawEconomyTab()
+        {
+            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
+
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Timing & Rules", headerStyle);
+            EditorGUI.indentLevel++;
+            DrawProperty("GracePeriod", "Grace Period (Sec)");
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Economy (Authority Seals)", headerStyle);
+            EditorGUI.indentLevel++;
+            DrawProperty("StartingAuthoritySeals", "Starting Amount");
+            DrawProperty("MaxAuthoritySeals", "Max Capacity");
+            DrawProperty("AuthoritySealsPerSecond", "Passive Generation");
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Rewards", headerStyle);
+            EditorGUI.indentLevel++;
+            DrawProperty("WinRewards", "Level Win Rewards");
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+        }
+
+        private void DrawUnitsTab()
+        {
+            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
+
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Unit Roster Settings", headerStyle);
+            EditorGUI.indentLevel++;
+            DrawProperty("PremadeCohort", "Premade Cohort");
+            DrawProperty("IsCohortLocked", "Lock Cohort Slots");
+            EditorGUILayout.Space(5);
+            DrawProperty("SupportAssistant", "Support Assistant");
+            DrawProperty("IsAssistantLocked", "Lock Assistant Slot");
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Sovereign Rites", headerStyle);
+            EditorGUI.indentLevel++;
+            DrawProperty("MaleSovereignRites", "Male Rites");
+            DrawProperty("FemaleSovereignRites", "Female Rites");
+            DrawProperty("IsRitesLocked", "Lock Rites Selection");
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+        }
+
+        private void DrawEncounterTab()
+        {
+            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
+
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Map Settings", headerStyle);
+            EditorGUI.indentLevel++;
+            DrawProperty("MapData", "Linked Map Data");
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+
+            GUILayout.Space(10);
+
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Enemy Waves", headerStyle);
+            EditorGUI.indentLevel++;
+            DrawProperty("Waves", "Wave List");
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
         }

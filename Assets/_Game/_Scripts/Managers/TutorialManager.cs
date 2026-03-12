@@ -557,17 +557,31 @@ namespace MaouSamaTD.Managers
             return _waitingForAction && _waitingActionKey == actionKey;
         }
 
-        public Vector2Int GetRequiredPlacementTile()
+        public List<Vector2Int> GetRequiredPlacementTiles()
         {
-            if (currentStep == null) return new Vector2Int(-1, -1);
+            List<Vector2Int> allowed = new List<Vector2Int>();
+            if (currentStep == null) return allowed;
 
+            // If we are specifically waiting for UnitPlaced, honor the overrides
             if (currentStep.ActionKey == "UnitPlaced")
-                return currentStep.HandTargetTileOverride;
+            {
+                if (currentStep.HandTargetTileOverride != Vector2Int.zero && currentStep.HandTargetTileOverride != new Vector2Int(-1, -1))
+                {
+                    allowed.Add(currentStep.HandTargetTileOverride);
+                }
+            }
 
-            if (currentStep.TargetTiles != null && currentStep.TargetTiles.Count > 0)
-                return currentStep.TargetTiles[0].Coordinate;
+            // Always allow any TargetTiles defined in the step
+            if (currentStep.TargetTiles != null)
+            {
+                foreach (var wt in currentStep.TargetTiles)
+                {
+                    if (!allowed.Contains(wt.Coordinate))
+                        allowed.Add(wt.Coordinate);
+                }
+            }
             
-            return new Vector2Int(-1, -1);
+            return allowed;
         }
 
         private bool CheckCondition(TutorialStep step)

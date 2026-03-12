@@ -159,7 +159,6 @@ namespace MaouSamaTD.Grid
                 case TileType.SpawnPoint: return Color.red;
                 case TileType.ExitPoint: return Color.green;
                 case TileType.NonWalkableDecor: return Color.black;
-                case TileType.DecoWalkable: return new Color(0.7f, 0.7f, 1f); // Light Blue-ish
                 case TileType.DecoHighGround: return new Color(0.3f, 0.3f, 0.3f); // Dark Gray
                 case TileType.None: return new Color(0.1f, 0.1f, 0.1f); // Black/Void
                 case TileType.LowTile: return new Color(0.8f, 0.8f, 0.8f); // Lighter gray

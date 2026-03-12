@@ -13,18 +13,10 @@ MonoBehaviour:
   m_Name: TutorialData_Level1
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.TutorialDataSO
   ShowCustomEditor: 1
-  ShowLegacyEditor: 0
   Steps:
   - StepName: Intro Dialogue (Highlight Deployment)
     Type: 1
     Dialogue: {fileID: 11400000, guid: 4232a08ce1431974dab61fac5db1447e, type: 2}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: DeploymentPanel
       Size: {x: 1, y: 1}
@@ -46,25 +38,20 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Drag Ignis to Field
     Type: 3
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: UnitButton_Ignis
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles:
-    - Coordinate: {x: 2, y: 5}
+    - Coordinate: {x: 7, y: 4}
       Size: {x: 1, y: 1}
       Offset: {x: 0, y: 0.5, z: 0}
       Height: 0.4
@@ -78,29 +65,28 @@ MonoBehaviour:
       Name: 
       Size: {x: 0.5, y: 0.5}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 5}
+    HandTargetTileOverride: {x: 7, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Post Placement
     Type: 0
     Dialogue: {fileID: 11400000, guid: 2de51bdc33e6ac04faaffdd62d18e024, type: 2}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
-    TargetTiles: []
+    TargetTiles:
+    - Coordinate: {x: 7, y: 4}
+      Size: {x: 1, y: 1}
+      Offset: {x: 0, y: 0, z: 0}
+      Height: 0
     DelayBefore: 0
     Duration: 0
     ActionKey: 
@@ -116,18 +102,13 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 0
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Start Skirmish Wave (0)
     Type: 6
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -149,18 +130,13 @@ MonoBehaviour:
     WaveIndex: 0
     RequiredCount: 0
     UseBlocker: 0
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Wait for 2 Kills
     Type: 8
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1, y: 1}
@@ -182,18 +158,13 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 2
     UseBlocker: 1
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Start Cluster Wave (1)
     Type: 6
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -215,18 +186,13 @@ MonoBehaviour:
     WaveIndex: 1
     RequiredCount: 0
     UseBlocker: 0
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Wait for Cluster Proximity
     Type: 8
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1, y: 1}
@@ -248,18 +214,13 @@ MonoBehaviour:
     WaveIndex: 1
     RequiredCount: 5
     UseBlocker: 1
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Charge Ignis Ultimate
     Type: 5
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1, y: 1}
@@ -281,18 +242,13 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 0
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Select Ignis Prompt
     Type: 0
     Dialogue: {fileID: 11400000, guid: a3034f72b4714f94d870862c3abaac68, type: 2}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1.2, y: 1.2}
@@ -314,18 +270,13 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 0
   - StepName: Wait For Ignis Stats
     Type: 3
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: Ult_Btn
       Size: {x: 2, y: 2}
@@ -335,7 +286,7 @@ MonoBehaviour:
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
     TargetTiles:
-    - Coordinate: {x: 2, y: 5}
+    - Coordinate: {x: 7, y: 4}
       Size: {x: 1, y: 1}
       Offset: {x: 0, y: 0.5, z: 0}
       Height: 0.4
@@ -354,18 +305,13 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
+    FullBlocker: 0
     ResetBlocker: 0
+    StopTime: 1
     ResumeTime: 0
   - StepName: Activate Ignis Skill
     Type: 3
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: Ult_Btn
       Size: {x: 1, y: 1}
@@ -387,18 +333,13 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Unlock Interaction
     Type: 5
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -420,18 +361,13 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 0
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Wait for Wave 1 Clear
     Type: 7
     Dialogue: {fileID: 0}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -453,18 +389,13 @@ MonoBehaviour:
     WaveIndex: 1
     RequiredCount: 0
     UseBlocker: 0
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1
   - StepName: Victory Dialogue
     Type: 0
     Dialogue: {fileID: 11400000, guid: 01ff824919311584790b7fdb247a2667, type: 2}
-    TargetUIName: 
-    AdditionalTargetUINames: []
-    TargetTile: {x: 0, y: 0}
-    AdditionalTargetTiles: []
-    HoleSize: {x: 1, y: 1}
-    HoleHeight: 2
-    ShowLegacyFields: 0
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
@@ -486,5 +417,7 @@ MonoBehaviour:
     WaveIndex: 1
     RequiredCount: 0
     UseBlocker: 0
+    FullBlocker: 0
     ResetBlocker: 1
+    StopTime: 1
     ResumeTime: 1

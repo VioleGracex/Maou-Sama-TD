@@ -69,8 +69,8 @@ namespace MaouSamaTD.Editor
             }
             
             EditorGUILayout.LabelField("Map Dimensions", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("Width"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("Height"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("Width"), new GUIContent("Width", "The horizontal size of the map (X axis)"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("Height"), new GUIContent("Height", "The vertical size of the map (Y axis)"));
             
             if (data.UseManualLayout)
             {
@@ -91,6 +91,12 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("East"), new GUIContent("E"), GUILayout.Width(40));
             EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("West"), new GUIContent("W"), GUILayout.Width(40));
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("NW"), new GUIContent("NW"), GUILayout.Width(40));
+            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("NE"), new GUIContent("NE"), GUILayout.Width(40));
+            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("SW"), new GUIContent("SW"), GUILayout.Width(40));
+            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("SE"), new GUIContent("SE"), GUILayout.Width(40));
+            EditorGUILayout.EndHorizontal();
             EditorGUIUtility.labelWidth = oldLabelWidth;
             
             EditorGUILayout.PropertyField(serializedObject.FindProperty("WallCascadeOnHoles"), new GUIContent("Wall Cascade On Holes"));
@@ -109,8 +115,6 @@ namespace MaouSamaTD.Editor
             DrawMapPreview(data, true);
             DrawPalette(data);
             DrawSpawnPointConfig(data);
-            EditorGUILayout.Space();
-            DrawLegend(data);
             EditorGUILayout.EndScrollView(); // End ScrollView
             
             // Layout Tools
@@ -119,6 +123,14 @@ namespace MaouSamaTD.Editor
             if (GUILayout.Button("Flip Horizontal")) Flip(data, true); 
             if (GUILayout.Button("Flip Vertical")) Flip(data, false);
             if (GUILayout.Button("Rotate 90 CW")) Rotate(data);
+            if (GUILayout.Button("Refresh View")) { EditorUtility.SetDirty(data); GUI.changed = true; }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Shift N")) Shift(data, 1, 0);
+            if (GUILayout.Button("Shift S")) Shift(data, -1, 0);
+            if (GUILayout.Button("Shift E")) Shift(data, 0, -1);
+            if (GUILayout.Button("Shift W")) Shift(data, 0, 1);
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
@@ -140,7 +152,6 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
-            DrawLegend(data);
         }
 
         private void DrawVisualsTab(MapData data)
@@ -217,6 +228,7 @@ namespace MaouSamaTD.Editor
                     EditorUtility.SetDirty(data);
                 }
             }
+            if (GUILayout.Button("Refresh View")) { EditorUtility.SetDirty(data); GUI.changed = true; }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
 
@@ -694,45 +706,54 @@ namespace MaouSamaTD.Editor
             float availableWidth = EditorGUIUtility.currentViewWidth - 60 - LabelSpace;
             // Map boundaries are Width x Height. We draw walls at -1 and data.Width/Height.
             // So total grid drawn is (Width + 2) high and (Height + 2) wide in terms of cells.
-            float cellW = Mathf.Min(availableWidth / (data.Height + 2), MaxCellSize);
+            // Standardized: Width is Horizontal (X), Height is Vertical (Y)
+            float cellW = Mathf.Min(availableWidth / (data.Width + 2), MaxCellSize);
             float cellH = cellW;
 
-            float gridWidth = cellW * (data.Height + 2);
-            float gridHeight = cellH * (data.Width + 2);
+            float gridWidth = cellW * (data.Width + 2);
+            float gridHeight = cellH * (data.Height + 2);
 
-            Rect outerRect = GUILayoutUtility.GetRect(gridWidth + LabelSpace, gridHeight + LabelSpace);
-            outerRect.x += (availableWidth + LabelSpace - (gridWidth + LabelSpace)) / 2f;
+            // Increase outerRect to provide room for labels around the dark box
+            float totalWidth = gridWidth + LabelSpace * 4;
+            float totalHeight = gridHeight + LabelSpace * 4;
+            Rect outerRect = GUILayoutUtility.GetRect(totalWidth, totalHeight);
+            outerRect.x += (availableWidth + LabelSpace * 4 - totalWidth) / 2f;
 
-            // gridRect is for the actual tiles (0 to width)
-            Rect tileGridRect = new Rect(outerRect.x + LabelSpace + cellW, outerRect.y + cellH, cellW * data.Height, cellH * data.Width);
-            EditorGUI.DrawRect(new Rect(outerRect.x + LabelSpace, outerRect.y, gridWidth, gridHeight), new Color(0.12f, 0.12f, 0.12f, 1f));
+            // cellAreaRect is the dark box containing walls and tiles
+            Rect cellAreaRect = new Rect(outerRect.x + LabelSpace * 2, outerRect.y + LabelSpace * 2, gridWidth, gridHeight);
+            EditorGUI.DrawRect(cellAreaRect, new Color(0.12f, 0.12f, 0.12f, 1f));
+
+            // tileGridRect is for the actual tiles (0 to width)
+            Rect tileGridRect = new Rect(cellAreaRect.x + cellW, cellAreaRect.y + cellH, cellW * data.Width, cellH * data.Height);
 
             GUIStyle labelStyle = new GUIStyle(EditorStyles.miniLabel) { alignment = TextAnchor.MiddleCenter };
             GUIStyle dirStyle = new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = new Color(0.9f, 0.8f, 0.2f) } };
 
-            // Tile labels
-            for (int y = 0; y < data.Height; y++)
-            {
-                Rect labelRect = new Rect(tileGridRect.x + (data.Height - 1 - y) * cellW, tileGridRect.y + tileGridRect.height + cellH, cellW, LabelSpace);
-                EditorGUI.LabelField(labelRect, y.ToString(), labelStyle);
-            }
+            // Tile labels (X horizontal, Y vertical)
             for (int x = 0; x < data.Width; x++)
             {
-                Rect labelRect = new Rect(outerRect.x, tileGridRect.y + x * cellH, LabelSpace, cellH);
+                // Draw numbers below the South wall (cellAreaRect.y + cellAreaRect.height)
+                Rect labelRect = new Rect(tileGridRect.x + x * cellW, cellAreaRect.y + cellAreaRect.height + 2, cellW, LabelSpace);
                 EditorGUI.LabelField(labelRect, x.ToString(), labelStyle);
             }
+            for (int y = 0; y < data.Height; y++)
+            {
+                // Draw numbers to the left of the West wall (cellAreaRect.x)
+                Rect labelRect = new Rect(cellAreaRect.x - LabelSpace - 2, tileGridRect.y + (data.Height - 1 - y) * cellH, LabelSpace, cellH);
+                EditorGUI.LabelField(labelRect, y.ToString(), labelStyle);
+            }
 
-            // Cardinal direction labels
-            float midX = tileGridRect.x + tileGridRect.width / 2f;
-            float midY = tileGridRect.y + tileGridRect.height / 2f;
-            // North label above the grid
-            EditorGUI.LabelField(new Rect(midX - 20, outerRect.y - 2, 40, LabelSpace), "N", dirStyle);
-            // South label below the grid
-            EditorGUI.LabelField(new Rect(midX - 20, tileGridRect.y + tileGridRect.height + cellH + LabelSpace - 2, 40, LabelSpace), "S", dirStyle);
-            // West label to the left
-            EditorGUI.LabelField(new Rect(outerRect.x + LabelSpace - 2, midY - 8, cellW, 16), "W", dirStyle);
-            // East label to the right
-            EditorGUI.LabelField(new Rect(tileGridRect.x + tileGridRect.width + cellW - 2, midY - 8, cellW, 16), "E", dirStyle);
+            // Cardinal direction labels (Moved significantly outside the dark box)
+            float midX = cellAreaRect.x + cellAreaRect.width / 2f;
+            float midY = cellAreaRect.y + cellAreaRect.height / 2f;
+            // North label above
+            EditorGUI.LabelField(new Rect(midX - 20, cellAreaRect.y - LabelSpace - 5, 40, LabelSpace), "N", dirStyle);
+            // South label below
+            EditorGUI.LabelField(new Rect(midX - 20, cellAreaRect.y + cellAreaRect.height + LabelSpace, 40, LabelSpace), "S", dirStyle);
+            // West label left
+            EditorGUI.LabelField(new Rect(cellAreaRect.x - LabelSpace * 2, midY - 8, LabelSpace, 16), "W", dirStyle);
+            // East label right
+            EditorGUI.LabelField(new Rect(cellAreaRect.x + cellAreaRect.width + LabelSpace, midY - 8, LabelSpace, 16), "E", dirStyle);
 
             Event e = Event.current;
             Random.State oldState = Random.state;
@@ -741,23 +762,16 @@ namespace MaouSamaTD.Editor
             // Closure for drawing selectable items (tiles or walls)
             void DrawItem(int gridX, int gridY, Color baseColor, string label, SelectionType type, WallSide side = WallSide.North, int index = 0)
             {
-                // Invert X and Y for drawing to match world view orientation
-                int displayX = data.Width - 1 - gridX;
-                // For walls, we need to handle indices correctly
-                if (type == SelectionType.Wall)
-                {
-                    if (side == WallSide.West || side == WallSide.East)
-                    {
-                        displayX = data.Width - 1 - index;
-                    }
-                }
-
+                // Standard: X is horizontal, Y is vertical (0,0 at bottom-left)
                 Rect rect = new Rect(
-                    outerRect.x + LabelSpace + ((data.Height - 1 - gridY + 1) * cellW) + CellPadding,
-                    outerRect.y + ((displayX + 1) * cellH) + CellPadding,
+                    tileGridRect.x + (gridX * cellW) + CellPadding,
+                    tileGridRect.y + ((data.Height - 1 - gridY) * cellH) + CellPadding,
                     cellW - CellPadding * 2,
                     cellH - CellPadding * 2
                 );
+
+                // NO OFFSET NEEDED HERE. The coordinates x,y are already transformed to rect pos.
+                // gridX outside 0..Width-1 range automatically places walls in the margin rows/cols.
 
                 SelectionItem thisItem = new SelectionItem { Type = type, TileCoord = new Vector2Int(gridX, gridY), WallSide = side, WallIndex = index };
                 bool isSelected = _selection.Exists(s => s.Equals(thisItem));
@@ -840,56 +854,9 @@ namespace MaouSamaTD.Editor
             // Draw Walls
             bool toggleCascade = data.WallCascadeOnHoles;
 
-            // North = top row in preview (gridX = Width), runs along Y (z axis), index = y
-            // GridGenerator North: x = Width, adjacent to (Width - 1, y)
+            // East = Right side (x = Width), runs along Y, index = y
             for (int y = 0; y < data.Height; y++) {
-                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.North && o.Index == y);
-                bool hasOverride = false;
-                if (ovIdx != -1) {
-                    var o = data.WallOverrides[ovIdx];
-                    hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
-                }
-                
-                bool isEnabled = data.Walls.North;
-                bool isCascaded = !toggleCascade && IsTileTypeHole(data, data.Width - 1, y);
-                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
-                DrawItem(data.Width, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.North, y);
-            }
-            // South = bottom row in preview (gridX = -1), runs along Y (z axis), index = y
-            // GridGenerator South: x = -1, adjacent to (0, y)
-            for (int y = 0; y < data.Height; y++) {
-                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.South && o.Index == y);
-                bool hasOverride = false;
-                if (ovIdx != -1) {
-                    var o = data.WallOverrides[ovIdx];
-                    hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
-                }
-
-                bool isEnabled = data.Walls.South;
-                bool isCascaded = !toggleCascade && IsTileTypeHole(data, 0, y);
-                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
-                DrawItem(-1, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.South, y);
-            }
-            // West = left column in preview (gridY = Height), runs along X (x axis), index = x
-            // GridGenerator West: y = Height, adjacent to (adjX, Height - 1)
-            for (int x = -1; x <= data.Width; x++) {
-                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.West && o.Index == x);
-                bool hasOverride = false;
-                if (ovIdx != -1) {
-                    var o = data.WallOverrides[ovIdx];
-                    hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
-                }
-                
-                bool isEnabled = data.Walls.West;
-                int adjX = Mathf.Clamp(x, 0, data.Width - 1);
-                bool isCascaded = !toggleCascade && IsTileTypeHole(data, adjX, data.Height - 1);
-                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f);
-                DrawItem(x, data.Height, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.West, x);
-            }
-            // East = right column in preview (gridY = -1), runs along X (x axis), index = x
-            // GridGenerator East: y = -1, adjacent to (adjX, 0)
-            for (int x = -1; x <= data.Width; x++) {
-                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.East && o.Index == x);
+                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.East && o.Index == y);
                 bool hasOverride = false;
                 if (ovIdx != -1) {
                     var o = data.WallOverrides[ovIdx];
@@ -897,11 +864,49 @@ namespace MaouSamaTD.Editor
                 }
                 
                 bool isEnabled = data.Walls.East;
-                int adjX = Mathf.Clamp(x, 0, data.Width - 1);
-                bool isCascaded = !toggleCascade && IsTileTypeHole(data, adjX, 0);
-                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f);
-                DrawItem(x, -1, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.East, x);
+                bool isCascaded = !toggleCascade && IsTileTypeHole(data, data.Width - 1, y);
+                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
+                DrawItem(data.Width, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.East, y);
             }
+            // West = Left side (x = -1), runs along Y, index = y
+            for (int y = 0; y < data.Height; y++) {
+                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.West && o.Index == y);
+                bool hasOverride = false;
+                if (ovIdx != -1) {
+                    var o = data.WallOverrides[ovIdx];
+                    hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
+                }
+
+                bool isEnabled = data.Walls.West;
+                bool isCascaded = !toggleCascade && IsTileTypeHole(data, 0, y);
+                Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
+                DrawItem(-1, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.West, y);
+            }
+            // North/South segments
+            for (int x = 0; x < data.Width; x++) {
+                // North
+                int ovIdxN = data.WallOverrides.FindIndex(o => o.Side == WallSide.North && o.Index == x);
+                bool hasOverrideN = ovIdxN != -1 && (data.WallOverrides[ovIdxN].TextureOverride != null || data.WallOverrides[ovIdxN].Decorations.Count > 0);
+                bool isCascadedN = !toggleCascade && IsTileTypeHole(data, x, data.Height - 1);
+                DrawItem(x, data.Height, (!data.Walls.North || isCascadedN) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f), hasOverrideN ? "*" : "", SelectionType.Wall, WallSide.North, x);
+
+                // South
+                int ovIdxS = data.WallOverrides.FindIndex(o => o.Side == WallSide.South && o.Index == x);
+                bool hasOverrideS = ovIdxS != -1 && (data.WallOverrides[ovIdxS].TextureOverride != null || data.WallOverrides[ovIdxS].Decorations.Count > 0);
+                bool isCascadedS = !toggleCascade && IsTileTypeHole(data, x, 0);
+                DrawItem(x, -1, (!data.Walls.South || isCascadedS) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f), hasOverrideS ? "*" : "", SelectionType.Wall, WallSide.South, x);
+            }
+
+            // Corners
+            void DrawCorner(int x, int y, WallSide side, bool enabled) {
+                int ovIdx = data.WallOverrides.FindIndex(o => o.Side == side && o.Index == 0);
+                bool hasOverride = ovIdx != -1 && (data.WallOverrides[ovIdx].TextureOverride != null || data.WallOverrides[ovIdx].Decorations.Count > 0);
+                DrawItem(x, y, enabled ? new Color(0.3f, 0.3f, 0.3f) : new Color(0.1f, 0.1f, 0.1f), hasOverride ? "*" : "", SelectionType.Wall, side, 0);
+            }
+            DrawCorner(-1, data.Height, WallSide.NorthWest, data.Walls.NW);
+            DrawCorner(data.Width, data.Height, WallSide.NorthEast, data.Walls.NE);
+            DrawCorner(-1, -1, WallSide.SouthWest, data.Walls.SW);
+            DrawCorner(data.Width, -1, WallSide.SouthEast, data.Walls.SE);
 
             // Draw Tiles
             for (int y = 0; y < data.Height; y++)
@@ -1017,7 +1022,6 @@ namespace MaouSamaTD.Editor
                 case TileType.ExitPoint: return Color.green;
                 case TileType.Walkable: return Color.white;
                 case TileType.HighGround: return Color.gray;
-                case TileType.DecoWalkable: return new Color(0.7f, 0.7f, 1f);
                 case TileType.DecoHighGround: return new Color(0.3f, 0.3f, 0.3f);
                 case TileType.None: return new Color(0.1f, 0.1f, 0.1f);
                 case TileType.LowTile: return new Color(0.8f, 0.6f, 0.4f);
@@ -1061,20 +1065,25 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.LabelField($"Selection: {_selection.Count} Tiles", EditorStyles.miniBoldLabel);
             
-            System.Array types = System.Enum.GetValues(typeof(TileType));
+            TileType[] paletteOrder = new TileType[] {
+                TileType.None, TileType.Walkable, TileType.HighGround,
+                TileType.SpawnPoint, TileType.SpawnPointHigh, TileType.ExitPoint,
+                TileType.ExitPointHigh, TileType.LowTile, TileType.NonWalkableDecor,
+                TileType.DecoHighGround, TileType.Wall
+            };
+
             int typesPerRow = 3;
-            for (int i = 0; i < types.Length; i += typesPerRow)
+            for (int i = 0; i < paletteOrder.Length; i += typesPerRow)
             {
                 EditorGUILayout.BeginHorizontal();
-                for (int j = 0; j < typesPerRow && (i + j) < types.Length; j++)
+                for (int j = 0; j < typesPerRow && (i + j) < paletteOrder.Length; j++)
                 {
-                    TileType type = (TileType)types.GetValue(i + j);
+                    TileType type = paletteOrder[i + j];
                     Color typeColor = GetTileColor(type);
                     
-                    // Create a button with a color box
                     GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
                     buttonStyle.alignment = TextAnchor.MiddleLeft;
-                    buttonStyle.padding.left = 20; // Give space for the icon
+                    buttonStyle.padding.left = 20;
                     
                     float buttonWidth = (EditorGUIUtility.currentViewWidth - 60) / typesPerRow;
                     Rect rect = GUILayoutUtility.GetRect(new GUIContent(type.ToString()), buttonStyle, GUILayout.Width(buttonWidth));
@@ -1084,37 +1093,14 @@ namespace MaouSamaTD.Editor
                         SetTileType(data, type);
                     }
                     
-                    // Draw color icon over the button
                     Rect colorRect = new Rect(rect.x + 4, rect.y + 4, 12, 12);
                     EditorGUI.DrawRect(colorRect, typeColor);
-                    
-                    // Add padding to the label if we want it to not overlap, or just let it overlap if name is short
-                    // Actually, let's just draw the text offset manually if we want to be fancy, but simple Button text is usually centered.
-                    // Let's stick to the button but use a custom draw or just accept the icon on the left.
                 }
                 EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawLegend(MapData data)
-        {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField("Legend:", EditorStyles.miniBoldLabel);
-            DrawLegendItem("Spawn Point", GetTileColor(TileType.SpawnPoint));
-            DrawLegendItem("Exit Point", GetTileColor(TileType.ExitPoint));
-            DrawLegendItem("Walkable", GetTileColor(TileType.Walkable));
-            DrawLegendItem("High Ground", GetTileColor(TileType.HighGround));
-            DrawLegendItem("Deco Walkable (Unusable)", GetTileColor(TileType.DecoWalkable));
-            DrawLegendItem("Deco High Ground (Unusable)", GetTileColor(TileType.DecoHighGround));
-            DrawLegendItem("Hole/None", GetTileColor(TileType.None));
-            DrawLegendItem("Low Tile", GetTileColor(TileType.LowTile));
-            DrawLegendItem("Non-Walkable Decor", GetTileColor(TileType.NonWalkableDecor));
-            DrawLegendItem("Wall", GetTileColor(TileType.Wall));
-            DrawLegendItem("Spawn High", GetTileColor(TileType.SpawnPointHigh));
-            DrawLegendItem("Exit High", GetTileColor(TileType.ExitPointHigh));
-            EditorGUILayout.EndVertical();
-        }
 
         private void SetTileType(MapData data, TileType type)
         {
@@ -1168,6 +1154,8 @@ namespace MaouSamaTD.Editor
         private void Flip(MapData data, bool horizontal)
         {
             Undo.RecordObject(data, horizontal ? "Flip Horizontal" : "Flip Vertical");
+            
+            // Flip Layout Data
             for (int i = 0; i < data.ManualLayoutData.Count; i++)
             {
                 var d = data.ManualLayoutData[i];
@@ -1175,8 +1163,100 @@ namespace MaouSamaTD.Editor
                 else d.Coordinate.y = (data.Height - 1) - d.Coordinate.y;
                 data.ManualLayoutData[i] = d;
             }
+            
             TransformCoordSet(data.SpawnPoints, horizontal, data.Width, data.Height);
             TransformVectorSet(data.ExitPoints, horizontal, data.Width, data.Height);
+
+            // Flip Visual Overrides
+            for (int i = 0; i < data.VisualOverrides.Count; i++)
+            {
+                var v = data.VisualOverrides[i];
+                if (horizontal) v.Coordinate.x = (data.Width - 1) - v.Coordinate.x;
+                else v.Coordinate.y = (data.Height - 1) - v.Coordinate.y;
+                data.VisualOverrides[i] = v;
+            }
+
+            // Flip Wall Overrides & Toggles
+            if (horizontal)
+            {
+                // Toggles
+                bool tempW = data.Walls.West;
+                data.Walls.West = data.Walls.East;
+                data.Walls.East = tempW;
+                bool tempNW = data.Walls.NW;
+                data.Walls.NW = data.Walls.NE;
+                data.Walls.NE = tempNW;
+                bool tempSW = data.Walls.SW;
+                data.Walls.SW = data.Walls.SE;
+                data.Walls.SE = tempSW;
+
+                for (int i = 0; i < data.WallOverrides.Count; i++)
+                {
+                    var w = data.WallOverrides[i];
+                    if (w.Side == WallSide.North || w.Side == WallSide.South) w.Index = (data.Width - 1) - w.Index;
+                    else if (w.Side == WallSide.West) w.Side = WallSide.East;
+                    else if (w.Side == WallSide.East) w.Side = WallSide.West;
+                    else if (w.Side == WallSide.NorthWest) w.Side = WallSide.NorthEast;
+                    else if (w.Side == WallSide.NorthEast) w.Side = WallSide.NorthWest;
+                    else if (w.Side == WallSide.SouthWest) w.Side = WallSide.SouthEast;
+                    else if (w.Side == WallSide.SouthEast) w.Side = WallSide.SouthWest;
+                    data.WallOverrides[i] = w;
+                }
+
+                // Side Visual Overrides
+                for (int i = 0; i < data.SideVisualOverrides.Count; i++)
+                {
+                    var sideOv = data.SideVisualOverrides[i];
+                    if (sideOv.Side == WallSide.West) sideOv.Side = WallSide.East;
+                    else if (sideOv.Side == WallSide.East) sideOv.Side = WallSide.West;
+                    else if (sideOv.Side == WallSide.NorthWest) sideOv.Side = WallSide.NorthEast;
+                    else if (sideOv.Side == WallSide.NorthEast) sideOv.Side = WallSide.NorthWest;
+                    else if (sideOv.Side == WallSide.SouthWest) sideOv.Side = WallSide.SouthEast;
+                    else if (sideOv.Side == WallSide.SouthEast) sideOv.Side = WallSide.SouthWest;
+                    data.SideVisualOverrides[i] = sideOv;
+                }
+            }
+            else
+            {
+                // Toggles
+                bool tempN = data.Walls.North;
+                data.Walls.North = data.Walls.South;
+                data.Walls.South = tempN;
+                bool tempNW = data.Walls.NW;
+                data.Walls.NW = data.Walls.SW;
+                data.Walls.SW = tempNW;
+                bool tempNE = data.Walls.NE;
+                data.Walls.NE = data.Walls.SE;
+                data.Walls.SE = tempNE;
+
+                for (int i = 0; i < data.WallOverrides.Count; i++)
+                {
+                    var w = data.WallOverrides[i];
+                    if (w.Side == WallSide.West || w.Side == WallSide.East) w.Index = (data.Height - 1) - w.Index;
+                    else if (w.Side == WallSide.North) w.Side = WallSide.South;
+                    else if (w.Side == WallSide.South) w.Side = WallSide.North;
+                    else if (w.Side == WallSide.NorthWest) w.Side = WallSide.SouthWest;
+                    else if (w.Side == WallSide.SouthWest) w.Side = WallSide.NorthWest;
+                    else if (w.Side == WallSide.NorthEast) w.Side = WallSide.SouthEast;
+                    else if (w.Side == WallSide.SouthEast) w.Side = WallSide.NorthEast;
+                    data.WallOverrides[i] = w;
+                }
+
+                // Side Visual Overrides
+                for (int i = 0; i < data.SideVisualOverrides.Count; i++)
+                {
+                    var sideOv = data.SideVisualOverrides[i];
+                    if (sideOv.Side == WallSide.North) sideOv.Side = WallSide.South;
+                    else if (sideOv.Side == WallSide.South) sideOv.Side = WallSide.North;
+                    else if (sideOv.Side == WallSide.NorthWest) sideOv.Side = WallSide.SouthWest;
+                    else if (sideOv.Side == WallSide.SouthWest) sideOv.Side = WallSide.NorthWest;
+                    else if (sideOv.Side == WallSide.NorthEast) sideOv.Side = WallSide.SouthEast;
+                    else if (sideOv.Side == WallSide.SouthEast) sideOv.Side = WallSide.NorthEast;
+                    data.SideVisualOverrides[i] = sideOv;
+                }
+            }
+
+            _selection.Clear();
             EditorUtility.SetDirty(data);
         }
 
@@ -1210,6 +1290,7 @@ namespace MaouSamaTD.Editor
             int oldW = data.Width;
             int oldH = data.Height;
             
+            // Rotate Layout Data
             for (int i = 0; i < data.ManualLayoutData.Count; i++)
             {
                 var d = data.ManualLayoutData[i];
@@ -1221,8 +1302,80 @@ namespace MaouSamaTD.Editor
             
             RotateCoordSet(data.SpawnPoints, oldW, oldH);
             RotateVectorSet(data.ExitPoints, oldW, oldH);
+
+            // Rotate Visual Overrides
+            for (int i = 0; i < data.VisualOverrides.Count; i++)
+            {
+                var v = data.VisualOverrides[i];
+                int newX = v.Coordinate.y;
+                int newY = (oldW - 1) - v.Coordinate.x;
+                v.Coordinate = new Vector2Int(newX, newY);
+                data.VisualOverrides[i] = v;
+            }
+
+            // Toggles
+            bool oldN = data.Walls.North;
+            bool oldS = data.Walls.South;
+            bool oldE = data.Walls.East;
+            bool oldW_wall = data.Walls.West;
+            data.Walls.North = oldW_wall;
+            data.Walls.East = oldN;
+            data.Walls.South = oldE;
+            data.Walls.West = oldS;
+
+            bool oldNW = data.Walls.NW;
+            bool oldNE = data.Walls.NE;
+            bool oldSW = data.Walls.SW;
+            bool oldSE = data.Walls.SE;
+            data.Walls.NW = oldSW;
+            data.Walls.NE = oldNW;
+            data.Walls.SE = oldNE;
+            data.Walls.SW = oldSE;
+
+            // Side Visual Overrides
+            for (int i = 0; i < data.SideVisualOverrides.Count; i++)
+            {
+                var sideOv = data.SideVisualOverrides[i];
+                switch (sideOv.Side)
+                {
+                    case WallSide.North: sideOv.Side = WallSide.East; break;
+                    case WallSide.East: sideOv.Side = WallSide.South; break;
+                    case WallSide.South: sideOv.Side = WallSide.West; break;
+                    case WallSide.West: sideOv.Side = WallSide.North; break;
+                    case WallSide.NorthWest: sideOv.Side = WallSide.NorthEast; break;
+                    case WallSide.NorthEast: sideOv.Side = WallSide.SouthEast; break;
+                    case WallSide.SouthEast: sideOv.Side = WallSide.SouthWest; break;
+                    case WallSide.SouthWest: sideOv.Side = WallSide.NorthWest; break;
+                }
+                data.SideVisualOverrides[i] = sideOv;
+            }
+
+            // Wall Overrides
+            for (int i = 0; i < data.WallOverrides.Count; i++)
+            {
+                var w = data.WallOverrides[i];
+                WallSide newSide = w.Side;
+                int newIndex = w.Index;
+
+                switch (w.Side)
+                {
+                    case WallSide.North: newSide = WallSide.East; newIndex = (oldW - 1) - w.Index; break;
+                    case WallSide.South: newSide = WallSide.West; newIndex = (oldW - 1) - w.Index; break;
+                    case WallSide.East: newSide = WallSide.South; newIndex = w.Index; break;
+                    case WallSide.West: newSide = WallSide.North; newIndex = w.Index; break;
+                    case WallSide.NorthWest: newSide = WallSide.NorthEast; newIndex = 0; break;
+                    case WallSide.NorthEast: newSide = WallSide.SouthEast; newIndex = 0; break;
+                    case WallSide.SouthEast: newSide = WallSide.SouthWest; newIndex = 0; break;
+                    case WallSide.SouthWest: newSide = WallSide.NorthWest; newIndex = 0; break;
+                }
+                w.Side = newSide;
+                w.Index = newIndex;
+                data.WallOverrides[i] = w;
+            }
+
             data.Width = oldH;
             data.Height = oldW;
+            _selection.Clear();
             EditorUtility.SetDirty(data);
         }
 
@@ -1251,12 +1404,6 @@ namespace MaouSamaTD.Editor
             }
         }
 
-        private void DrawLegendItem(string label, Color color)
-        {
-            Rect r = EditorGUILayout.GetControlRect(false, 16);
-            EditorGUI.DrawRect(new Rect(r.x, r.y, 16, 16), color);
-            EditorGUI.LabelField(new Rect(r.x + 20, r.y, r.width - 20, r.height), label);
-        }
 
         private void DrawSpawnPointConfig(MapData data)
         {
@@ -1304,9 +1451,57 @@ namespace MaouSamaTD.Editor
             {
                 int idx = data.ManualLayoutData.FindIndex(d => d.Coordinate.x == x && d.Coordinate.y == y);
                 if (idx != -1) return data.ManualLayoutData[idx].Type == TileType.None;
-                return true; 
+                // If it's missing in manual layout but within bounds, don't treat it as a hole for the preview's cascade logic,
+                // otherwise increasing map height/width makes all walls look broken (black).
+                return false; 
             }
             return false;
+        }
+
+        private void Shift(MapData data, int dx, int dy)
+        {
+            Undo.RecordObject(data, "Shift Map Layout");
+
+            // Shift Tiles
+            for (int i = 0; i < data.ManualLayoutData.Count; i++)
+            {
+                var d = data.ManualLayoutData[i];
+                d.Coordinate += new Vector2Int(dx, dy);
+                data.ManualLayoutData[i] = d;
+            }
+
+            // Shift Spawn Points
+            for (int i = 0; i < data.SpawnPoints.Count; i++)
+            {
+                var s = data.SpawnPoints[i];
+                s.Coordinate += new Vector2Int(dx, dy);
+                data.SpawnPoints[i] = s;
+            }
+
+            // Shift Exit Points
+            for (int i = 0; i < data.ExitPoints.Count; i++)
+            {
+                data.ExitPoints[i] += new Vector2Int(dx, dy);
+            }
+
+            // Shift Visual Overrides
+            for (int i = 0; i < data.VisualOverrides.Count; i++)
+            {
+                var v = data.VisualOverrides[i];
+                v.Coordinate += new Vector2Int(dx, dy);
+                data.VisualOverrides[i] = v;
+            }
+
+            // Shift Wall Overrides
+            for (int i = 0; i < data.WallOverrides.Count; i++)
+            {
+                var w = data.WallOverrides[i];
+                if (w.Side == WallSide.North || w.Side == WallSide.South) w.Index += dy;
+                else w.Index += dx;
+                data.WallOverrides[i] = w;
+            }
+
+            EditorUtility.SetDirty(data);
         }
     }
 }

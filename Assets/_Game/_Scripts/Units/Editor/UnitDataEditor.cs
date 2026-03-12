@@ -157,7 +157,7 @@ namespace MaouSamaTD.Units.Editor
             GUILayout.BeginVertical("helpbox");
             EditorGUILayout.LabelField("Placement Rules", headerStyle);
             EditorGUI.indentLevel++;
-            DrawProperty("ViableTiles");
+            DrawProperty("_viableTiles", "Viable Tiles");
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
         }

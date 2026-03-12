@@ -541,7 +541,6 @@ namespace MaouSamaTD.Grid
                         // Flying MUST be on high ground or special tiles (cannot be on normal walkable tiles)
                         // Unless "Mixed" is specified.
                         if (tile.Type == TileType.Walkable || 
-                            tile.Type == TileType.DecoWalkable ||
                             tile.Type == TileType.None)
                             isWalkable = false;
                     }

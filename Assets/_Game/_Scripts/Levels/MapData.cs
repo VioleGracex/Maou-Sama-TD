@@ -5,18 +5,17 @@ namespace MaouSamaTD.Levels
 {
     public enum TileType 
     { 
-        None, 
-        Walkable, 
-        HighGround, 
-        DecoWalkable, 
-        DecoHighGround, 
-        SpawnPoint, 
-        ExitPoint,
-        LowTile,
-        NonWalkableDecor,
-        Wall,
-        SpawnPointHigh,
-        ExitPointHigh
+        None = 0, 
+        Walkable = 1, 
+        HighGround = 2, 
+        DecoHighGround = 3, 
+        SpawnPoint = 4, 
+        ExitPoint = 5,
+        LowTile = 6,
+        NonWalkableDecor = 7,
+        Wall = 8,
+        SpawnPointHigh = 9,
+        ExitPointHigh = 10
     }
 
     [System.Serializable]
@@ -67,7 +66,7 @@ namespace MaouSamaTD.Levels
         public List<SideVisualOverride> SideVisualOverrides = new List<SideVisualOverride>();
     }
 
-    public enum WallSide { North, South, East, West }
+    public enum WallSide { North, South, East, West, NorthWest, NorthEast, SouthWest, SouthEast }
 
     [System.Serializable]
     public struct WallVisualOverride
@@ -100,10 +99,15 @@ namespace MaouSamaTD.Levels
         public bool South;
         public bool East;
         public bool West;
+        public bool NW;
+        public bool NE;
+        public bool SW;
+        public bool SE;
 
         public static WallSettings Default => new WallSettings 
         { 
-            North = true, South = true, East = true, West = true 
+            North = true, South = true, East = true, West = true,
+            NW = true, NE = true, SW = true, SE = true
         };
     }
 

@@ -18,6 +18,8 @@ namespace MaouSamaTD.Managers.Interaction
         private Color _validColor;
         private Color _invalidColor;
 
+        public string LastRejectionReason { get; private set; }
+
         public PlacementHandler(GridManager gridManager, CurrencyManager currencyManager, DeploymentUI deploymentUI, Camera camera, Color validColor, Color invalidColor)
         {
             _gridManager = gridManager;
@@ -62,7 +64,11 @@ namespace MaouSamaTD.Managers.Interaction
             if (tile != null)
             {
                 targetPos = tile.transform.position;
-                validPosition = IsTileValidForUnit(tile, data) && !tile.IsOccupied;
+                bool isOccupied = tile.IsOccupied;
+                bool isValid = IsTileValidForUnit(tile, data);
+                
+                if (isOccupied) LastRejectionReason = "Tile is OCCUPIED";
+                validPosition = isValid && !isOccupied;
             }
             else
             {
@@ -132,7 +138,8 @@ namespace MaouSamaTD.Managers.Interaction
 
         public bool IsTileValidForUnit(Tile tile, UnitData unit)
         {
-            if (unit == null || tile == null) return false;
+            if (unit == null) { LastRejectionReason = "Unit Data is NULL"; return false; }
+            if (tile == null) { LastRejectionReason = "Tile is NULL"; return false; }
             
             // Tutorial Lock
             if (_allowedTiles.Count > 0)
@@ -140,13 +147,21 @@ namespace MaouSamaTD.Managers.Interaction
                 bool isAllowed = _allowedTiles.Contains(tile.Coordinate);
                 if (!isAllowed) 
                 {
-                    // Debug.Log($"[PlacementHandler] Tile {tile.Coordinate} is BLOCKED by tutorial. Allowed: {string.Join(", ", _allowedTiles)}");
+                    LastRejectionReason = $"Tutorial Restriction: Allowed {string.Join(", ", _allowedTiles)}";
                     return false;
                 }
             }
 
-            if (unit.ViableTiles == null || unit.ViableTiles.Count == 0) return false;
-            return unit.ViableTiles.Contains(tile.Type);
+            if (unit.ViableTiles == null || unit.ViableTiles.Count == 0) 
+            {
+                LastRejectionReason = "Unit has NO ViableTiles defined!";
+                return false;
+            }
+
+            bool typeValid = unit.ViableTiles.Contains(tile.Type);
+            if (!typeValid) LastRejectionReason = $"Tile Type {tile.Type} not in unit's ViableTiles list";
+            
+            return typeValid;
         }
     }
 }

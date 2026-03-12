@@ -45,6 +45,10 @@ namespace MaouSamaTD.Grid
         [SerializeField] private bool _wallSouth = true;
         [SerializeField] private bool _wallEast = true;
         [SerializeField] private bool _wallWest = true;
+        [SerializeField] private bool _wallNW = true;
+        [SerializeField] private bool _wallNE = true;
+        [SerializeField] private bool _wallSW = true;
+        [SerializeField] private bool _wallSE = true;
         
         [Header("Primitive Wall Settings")]
         [Tooltip("Global scale for walls (X=Thick, Y=Height, Z=Length per block)")]
@@ -215,6 +219,10 @@ namespace MaouSamaTD.Grid
                 wallSouth = _mapData.Walls.South;
                 wallEast = _mapData.Walls.East;
                 wallWest = _mapData.Walls.West;
+                _wallNW = _mapData.Walls.NW;
+                _wallNE = _mapData.Walls.NE;
+                _wallSW = _mapData.Walls.SW;
+                _wallSE = _mapData.Walls.SE;
             }
 
             bool cascadeHoles = _mapData != null ? _mapData.WallCascadeOnHoles : true;
@@ -329,16 +337,16 @@ namespace MaouSamaTD.Grid
                 _generatedWalls.Add(wall);
             }
 
-            if (wallNorth)
+            if (wallEast)
             {
-                // North = top in editor, at grid x=Width, runs along Y (Z world axis)
+                // East = Right side, at grid x=Width, runs along Y (Z world axis)
                 Vector3 sideScale = globalWallScale;
                 Vector3 sideOffset = Vector3.zero;
                 Texture2D sideTexture = null;
 
                 if (_mapData != null)
                 {
-                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.North);
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.East);
                     if (sOv.OverrideScale) sideScale = sOv.Scale;
                     if (sOv.OverrideOffset) sideOffset = sOv.Offset;
                     sideTexture = sOv.TextureOverride;
@@ -357,7 +365,7 @@ namespace MaouSamaTD.Grid
 
                     if (_mapData != null)
                     {
-                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.North && o.Index == y);
+                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.East && o.Index == y);
                         if (idx != -1)
                         {
                             var o = _mapData.WallOverrides[idx];
@@ -365,20 +373,20 @@ namespace MaouSamaTD.Grid
                             if (o.OverrideOffset) finalOffset = o.Offset;
                         }
                     }
-                    CreateWallBlock(_gridManager.Width, y, finalScale, finalOffset, WallSide.North, y, sideTexture);
+                    CreateWallBlock(_gridManager.Width, y, finalScale, finalOffset, WallSide.East, y, sideTexture);
                 }
             }
 
-            if (wallSouth)
+            if (wallWest)
             {
-                // South = bottom in editor, at grid x=-1, runs along Y (Z world axis)
+                // West = Left side, at grid x=-1, runs along Y (Z world axis)
                 Vector3 sideScale = globalWallScale;
                 Vector3 sideOffset = Vector3.zero;
                 Texture2D sideTexture = null;
 
                 if (_mapData != null)
                 {
-                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.South);
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.West);
                     if (sOv.OverrideScale) sideScale = sOv.Scale;
                     if (sOv.OverrideOffset) sideOffset = sOv.Offset;
                     sideTexture = sOv.TextureOverride;
@@ -397,7 +405,7 @@ namespace MaouSamaTD.Grid
 
                     if (_mapData != null)
                     {
-                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.South && o.Index == y);
+                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.West && o.Index == y);
                         if (idx != -1)
                         {
                             var o = _mapData.WallOverrides[idx];
@@ -405,54 +413,39 @@ namespace MaouSamaTD.Grid
                             if (o.OverrideOffset) finalOffset = o.Offset;
                         }
                     }
-                    CreateWallBlock(-1, y, finalScale, finalOffset, WallSide.South, y, sideTexture);
+                    CreateWallBlock(-1, y, finalScale, finalOffset, WallSide.West, y, sideTexture);
                 }
             }
 
-            if (wallWest)
+            if (wallNorth)
             {
-                // West = left in editor, at grid y=Height, runs along X
+                // North = Forward side, at grid y=Height, runs along X
                 Vector3 sideScale = new Vector3(globalWallScale.z, globalWallScale.y, globalWallScale.x);
                 Vector3 sideOffset = Vector3.zero;
                 Texture2D sideTexture = null;
 
                 if (_mapData != null)
                 {
-                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.West);
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.North);
                     if (sOv.OverrideScale) sideScale = sOv.Scale;
                     if (sOv.OverrideOffset) sideOffset = sOv.Offset;
                     sideTexture = sOv.TextureOverride;
                 }
 
-                for (int x = -1; x <= _gridManager.Width; x++)
+                for (int x = 0; x < _gridManager.Width; x++)
                 {
                     if (!cascadeHoles)
                     {
-                        int adjX = Mathf.Clamp(x, 0, _gridManager.Width - 1);
-                        var tile = _gridManager.GetTileAt(new Vector2Int(adjX, _gridManager.Height - 1));
+                        var tile = _gridManager.GetTileAt(new Vector2Int(x, _gridManager.Height - 1));
                         if (tile != null && tile.Type == TileType.None) continue;
                     }
 
                     Vector3 finalScale = sideScale;
                     Vector3 finalOffset = sideOffset;
 
-                    // Seamless Corners: Shorten the corner-most segments to match thickness
-                    if (seamlessCorners)
-                    {
-                        if (x == -1 || x == _gridManager.Width)
-                        {
-                            finalScale.x = globalWallScale.x; // Make it square (length = thickness)
-                            
-                            // Align corner block to the outward/inward edge of the wall strip
-                            float cornerShift = (1f - globalWallScale.x) * cellSize * 0.5f;
-                            if (x == -1) finalOffset.x += cornerShift; // Northwest corner
-                            else finalOffset.x -= cornerShift;        // Northeast corner
-                        }
-                    }
-
                     if (_mapData != null)
                     {
-                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.West && o.Index == x);
+                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.North && o.Index == x);
                         if (idx != -1)
                         {
                             var o = _mapData.WallOverrides[idx];
@@ -460,54 +453,70 @@ namespace MaouSamaTD.Grid
                             if (o.OverrideOffset) finalOffset = o.Offset;
                         }
                     }
-                    CreateWallBlock(x, _gridManager.Height, finalScale, finalOffset, WallSide.West, x, sideTexture);
+                    CreateWallBlock(x, _gridManager.Height, finalScale, finalOffset, WallSide.North, x, sideTexture);
                 }
             }
 
-            if (wallEast)
+            // Corners
+            void CreateCorner(int x, int y, WallSide side, bool enabled)
             {
-                // East = right in editor, at grid y=-1, runs along X
+                if (!enabled) return;
+                Vector3 finalScale = globalWallScale;
+                Vector3 finalOffset = Vector3.zero;
+                Texture2D sideTexture = null;
+
+                if (_mapData != null)
+                {
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == side);
+                    if (sOv.OverrideScale) finalScale = sOv.Scale;
+                    if (sOv.OverrideOffset) finalOffset = sOv.Offset;
+                    sideTexture = sOv.TextureOverride;
+
+                    int idx = _mapData.WallOverrides.FindIndex(o => o.Side == side && o.Index == 0);
+                    if (idx != -1)
+                    {
+                        var o = _mapData.WallOverrides[idx];
+                        if (o.OverrideScale) finalScale = o.Scale;
+                        if (o.OverrideOffset) finalOffset = o.Offset;
+                    }
+                }
+                CreateWallBlock(x, y, finalScale, finalOffset, side, 0, sideTexture);
+            }
+
+            CreateCorner(-1, _gridManager.Height, WallSide.NorthWest, _wallNW);
+            CreateCorner(_gridManager.Width, _gridManager.Height, WallSide.NorthEast, _wallNE);
+            CreateCorner(-1, -1, WallSide.SouthWest, _wallSW);
+            CreateCorner(_gridManager.Width, -1, WallSide.SouthEast, _wallSE);
+
+            if (wallSouth)
+            {
+                // South = Back side, at grid y=-1, runs along X
                 Vector3 sideScale = new Vector3(globalWallScale.z, globalWallScale.y, globalWallScale.x);
                 Vector3 sideOffset = Vector3.zero;
                 Texture2D sideTexture = null;
 
                 if (_mapData != null)
                 {
-                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.East);
+                    var sOv = _mapData.SideVisualOverrides.Find(o => o.Side == WallSide.South);
                     if (sOv.OverrideScale) sideScale = sOv.Scale;
                     if (sOv.OverrideOffset) sideOffset = sOv.Offset;
                     sideTexture = sOv.TextureOverride;
                 }
 
-                for (int x = -1; x <= _gridManager.Width; x++)
+                for (int x = 0; x < _gridManager.Width; x++)
                 {
                     if (!cascadeHoles)
                     {
-                        int adjX = Mathf.Clamp(x, 0, _gridManager.Width - 1);
-                        var tile = _gridManager.GetTileAt(new Vector2Int(adjX, 0));
+                        var tile = _gridManager.GetTileAt(new Vector2Int(x, 0));
                         if (tile != null && tile.Type == TileType.None) continue;
                     }
 
                     Vector3 finalScale = sideScale;
                     Vector3 finalOffset = sideOffset;
 
-                    // Seamless Corners: Shorten the corner-most segments to match thickness
-                    if (seamlessCorners)
-                    {
-                        if (x == -1 || x == _gridManager.Width)
-                        {
-                            finalScale.x = globalWallScale.x; // Make it square (length = thickness)
-
-                            // Align corner block to the outward/inward edge of the wall strip
-                            float cornerShift = (1f - globalWallScale.x) * cellSize * 0.5f;
-                            if (x == -1) finalOffset.x += cornerShift; // Southwest corner
-                            else finalOffset.x -= cornerShift;        // Southeast corner
-                        }
-                    }
-
                     if (_mapData != null)
                     {
-                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.East && o.Index == x);
+                        int idx = _mapData.WallOverrides.FindIndex(o => o.Side == WallSide.South && o.Index == x);
                         if (idx != -1)
                         {
                             var o = _mapData.WallOverrides[idx];
@@ -515,7 +524,7 @@ namespace MaouSamaTD.Grid
                             if (o.OverrideOffset) finalOffset = o.Offset;
                         }
                     }
-                    CreateWallBlock(x, -1, finalScale, finalOffset, WallSide.East, x, sideTexture);
+                    CreateWallBlock(x, -1, finalScale, finalOffset, WallSide.South, x, sideTexture);
                 }
             }
         }
@@ -680,6 +689,10 @@ namespace MaouSamaTD.Grid
             _wallSouth = data.Walls.South;
             _wallEast = data.Walls.East;
             _wallWest = data.Walls.West;
+            _wallNW = data.Walls.NW;
+            _wallNE = data.Walls.NE;
+            _wallSW = data.Walls.SW;
+            _wallSE = data.Walls.SE;
             _wallScale = data.WallVisuals.WallScale;
             // Note: _wallOffset and _seamlessCorners are not yet serializable fields in GridGenerator 
             // but we use them locally in GenerateWalls.
@@ -740,7 +753,8 @@ namespace MaouSamaTD.Grid
             
             // Wall Settings
             newData.Walls = new WallSettings {
-                North = _wallNorth, South = _wallSouth, East = _wallEast, West = _wallWest
+                North = _wallNorth, South = _wallSouth, East = _wallEast, West = _wallWest,
+                NW = _wallNW, NE = _wallNE, SW = _wallSW, SE = _wallSE
             };
             newData.WallVisuals = new WallVisualSettings {
                 WallMaterial = _wallMaterial, WallPrefab = _wallPrefab,

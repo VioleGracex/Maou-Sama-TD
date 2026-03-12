@@ -29,6 +29,8 @@ namespace MaouSamaTD.Managers
         [SerializeField] private bool _useFullFillForPlacement = false;
         [SerializeField] private bool _useFullFillForRange = true;
         [SerializeField] private bool _useFullFillForSkills = false;
+        [Space]
+        [SerializeField] private bool _showPlacementDebug = true;
         #endregion
 
         #region State
@@ -105,10 +107,10 @@ namespace MaouSamaTD.Managers
                 // Tutorial placement restriction override
                 if (IsDragging && _tutorialManager != null)
                 {
-                    Vector2Int reqTile = _tutorialManager.GetRequiredPlacementTile();
-                    if (reqTile != new Vector2Int(-1, -1))
+                    var reqTiles = _tutorialManager.GetRequiredPlacementTiles();
+                    if (reqTiles != null && reqTiles.Count > 0)
                     {
-                        SetPlacementRestriction(new System.Collections.Generic.List<Vector2Int> { reqTile });
+                        SetPlacementRestriction(reqTiles);
                     }
                 }
 
@@ -352,6 +354,22 @@ namespace MaouSamaTD.Managers
             _tileVisualsHandler.UseFullFillRange = _useFullFillForRange;
             _tileVisualsHandler.UseFullFillPlacement = _useFullFillForPlacement;
             _tileVisualsHandler.UseFullFillSkills = _useFullFillForSkills;
+        }
+
+        private void OnGUI()
+        {
+            if (!_showPlacementDebug || !IsDragging || _placementHandler == null) return;
+
+            string reason = _placementHandler.LastRejectionReason;
+            if (string.IsNullOrEmpty(reason)) return;
+
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.fontSize = 20;
+            style.fontStyle = FontStyle.Bold;
+            style.normal.textColor = Color.red;
+
+            Vector2 pos = Event.current.mousePosition;
+            GUI.Label(new Rect(pos.x + 20, pos.y + 20, 800, 50), "BLOCK REASON: " + reason, style);
         }
         #endregion
     }

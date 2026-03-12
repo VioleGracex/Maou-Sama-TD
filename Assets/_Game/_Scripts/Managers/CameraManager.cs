@@ -63,6 +63,18 @@ namespace MaouSamaTD.Managers
 
             // Get Components
             _cmOrbital = _battleCamera.GetComponent<CinemachineOrbitalFollow>();
+            
+            // Ensure axes are not locked
+            if (_cmOrbital != null)
+            {
+                var hAxis = _cmOrbital.HorizontalAxis;
+                hAxis.Range = new Vector2(-180, 180);
+                _cmOrbital.HorizontalAxis = hAxis;
+
+                var vAxis = _cmOrbital.VerticalAxis;
+                vAxis.Range = new Vector2(-180, 180);
+                _cmOrbital.VerticalAxis = vAxis;
+            }
 
             // Assign Targets
             if (_cameraAnchor != null)

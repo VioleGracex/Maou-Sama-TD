@@ -59,26 +59,27 @@ namespace MaouSamaTD.Units
         public MaouSamaTD.Skills.UnitSkillData Skill;
 
         [Header("Placement Rules")]
-        public System.Collections.Generic.List<Levels.TileType> ViableTiles;
+        [SerializeField] private System.Collections.Generic.List<Levels.TileType> _viableTiles;
+        public System.Collections.Generic.List<Levels.TileType> ViableTiles
+        {
+            get
+            {
+                if (_viableTiles == null || _viableTiles.Count == 0)
+                {
+                    _viableTiles = new System.Collections.Generic.List<Levels.TileType>();
+                    if (Class == UnitClass.Ranger || Class == UnitClass.Warlock || Class == UnitClass.Sage || Class == UnitClass.Support)
+                        _viableTiles.Add(TileType.HighGround);
+                    else
+                        _viableTiles.Add(TileType.Walkable);
+                }
+                return _viableTiles;
+            }
+            set => _viableTiles = value;
+        }
 
         protected override void OnValidate()
         {
             base.OnValidate();
-
-            // Set defaults if empty based on class logic (expanded for new 11 classes)
-            if (ViableTiles == null || ViableTiles.Count == 0)
-            {
-                ViableTiles = new System.Collections.Generic.List<Levels.TileType>();
-                if (Class == UnitClass.Ranger || Class == UnitClass.Warlock || Class == UnitClass.Sage || Class == UnitClass.Support)
-                {
-                    ViableTiles.Add(TileType.HighGround);
-                }
-                else
-                {
-                    // Bastion, Vanguard, Executioner, etc.
-                    ViableTiles.Add(TileType.Walkable);
-                }
-            }
         }
     }
 }

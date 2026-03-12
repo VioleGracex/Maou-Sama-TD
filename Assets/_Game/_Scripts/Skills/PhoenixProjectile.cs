@@ -56,29 +56,15 @@ namespace MaouSamaTD.Skills
                 _laneCoordinate = transform.position.z;
             }
 
-            // Orientation logic: Fixed (90, 90, 0) rotation.
-            // This aligns World Z (Left/Right) with Local X.
-            // This aligns World X (Up/Down) with Local -Y.
-            transform.rotation = Quaternion.Euler(90, 90, 0); 
+            // Orientation logic: Lie flat on XZ plane (90 on X).
+            // Rotate on Y to face the movement direction.
+            float angleY = Mathf.Atan2(-_direction.z, _direction.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(90, angleY, 0);
 
             Vector3 scale = transform.localScale;
-            
-            // Z-axis flipping (World Z = Local X)
-            // Left is -Z, Right is +Z.
-            // User: "phoenix image is looking left side (-Z) if it dashes right (+Z)... we flip it -1"
-            if (Mathf.Abs(_direction.z) > 0.1f)
-            {
-                // If moving Left (-Z), flip to look Left (Negative Local X Scale)
-                scale.x = _direction.z < 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-            }
-
-            // X-axis flipping (World X = Local -Y)
-            if (Mathf.Abs(_direction.x) > 0.1f)
-            {
-                // If moving in +X, we flip scale.y
-                scale.y = _direction.x > 0 ? -Mathf.Abs(scale.y) : Mathf.Abs(scale.y);
-            }
-
+            // No need for complicated flipping if we rotate on Y
+            scale.x = Mathf.Abs(scale.x);
+            scale.y = Mathf.Abs(scale.y);
             transform.localScale = scale;
             
             if (_showDebugLogs) Debug.Log($"[Phoenix] Executing. Direction: {_direction}, Scale: {transform.localScale}, Rot: {transform.rotation.eulerAngles}");

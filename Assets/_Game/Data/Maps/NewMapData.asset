@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f164ffae824d914586ed66a2817435c, type: 3}
+  m_Name: NewMapData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.MapData
+  useDefaultInspector: 0
+  UniqueID: 25e6ec95-f763-413f-896e-f8721b7d82cb
+  MapSeed: 12345
+  Width: 10
+  Height: 5
+  HighGroundChance: 0.3
+  UseManualLayout: 0
+  ManualLayoutData: []
+  SpawnPoints: []
+  ExitPoints: []
+  VisualOverrides: []
+  WallCascadeOnHoles: 0
+  Walls:
+    North: 1
+    South: 1
+    East: 1
+    West: 1
+    NW: 1
+    NE: 1
+    SW: 1
+    SE: 1
+  WallVisuals:
+    WallPrefab: {fileID: 0}
+    WallMaterial: {fileID: 0}
+    WallScale: {x: 1, y: 1, z: 1}
+    WallOffset: {x: 0, y: 0, z: 0}
+    SeamlessCorners: 1
+  WallOverrides: []
+  SideVisualOverrides: []

@@ -13,7 +13,8 @@ namespace MaouSamaTD.Managers
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private GridManager _gridManager;
         [Inject] private InteractionManager _interactionManager;
-        [Inject] private CurrencyManager _currencyManager;
+        [Inject] private BattleCurrencyManager _battleCurrencyManager;
+        [Inject] private EconomyManager _economyManager;
         [Inject] private UnitInspectorUI _unitInspectorUI;
         [Inject] private CameraControlUI _cameraControlUI;
         [Inject] private CameraManager _cameraManager;
@@ -110,14 +111,14 @@ namespace MaouSamaTD.Managers
                 _pathVisualizer.Init(_pathMaterial);
             }
 
-            if (_currencyManager != null)
+            if (_battleCurrencyManager != null)
             {
-                _currencyManager.Init();
-                Debug.Log("[GameManager] CurrencyManager Initialized.");
+                _battleCurrencyManager.Init();
+                Debug.Log("[GameManager] BattleCurrencyManager Initialized.");
             }
             else
             {
-                Debug.LogError("[GameManager] CurrencyManager is NULL!");
+                Debug.LogError("[GameManager] BattleCurrencyManager is NULL!");
             }
 
             if (_deploymentUI != null)
@@ -258,11 +259,13 @@ namespace MaouSamaTD.Managers
                     {
                         if (reward.Type == MaouSamaTD.Levels.RewardType.GoldCoins)
                         {
-                            _saveManager.AddCurrency(reward.Amount);
+                            if (_economyManager != null) _economyManager.AddGold(reward.Amount);
+                            else _saveManager.AddGold(reward.Amount);
                         }
                         else if (reward.Type == MaouSamaTD.Levels.RewardType.BloodCrests)
                         {
-                            Debug.Log($"[GameManager] Earned {reward.Amount} Blood Crests!");
+                            if (_economyManager != null) _economyManager.AddBloodCrest(reward.Amount);
+                            else _saveManager.AddBloodCrest(reward.Amount);
                         }
                     }
                 }

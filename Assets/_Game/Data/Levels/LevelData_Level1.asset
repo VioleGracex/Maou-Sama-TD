@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd8e99080aa85214c9d7d8ee3ade7292, type: 3}
   m_Name: LevelData_Level1
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
-  useDefaultInspector: 1
+  useDefaultInspector: 0
   UniqueID: c4964e5f-4250-4bf0-8819-b7c021745d61
   LevelIndex: 1
   LevelName: 'Chapter 1: The Awakening'

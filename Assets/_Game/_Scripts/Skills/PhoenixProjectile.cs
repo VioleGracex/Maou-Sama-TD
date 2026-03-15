@@ -56,9 +56,9 @@ namespace MaouSamaTD.Skills
                 _laneCoordinate = transform.position.z;
             }
 
-            // Orientation logic: Lie flat on XZ plane (90 on X).
+            // Orientation logic: Lie flat on XZ plane (90 on X). 
             // Rotate on Y to face the movement direction.
-            float angleY = Mathf.Atan2(-_direction.z, _direction.x) * Mathf.Rad2Deg;
+            float angleY = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(90, angleY, 0);
 
             Vector3 scale = transform.localScale;

@@ -21,7 +21,7 @@ namespace MaouSamaTD.UI.Skills
         
         [Inject] private SkillManager _skillManager;
         [Inject] private InteractionManager _interactionManager;
-        [Inject] private CurrencyManager _currencyManager;
+        [Inject] private BattleCurrencyManager _currencyManager;
         
         private List<SkillButtonUI> _spawnedButtons = new List<SkillButtonUI>();
         private bool _isVisible = false; // Default: Docked/Hidden
@@ -110,11 +110,6 @@ namespace MaouSamaTD.UI.Skills
                 var txt = _toggleButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                 if (txt != null)
                 {
-                    // If IS Visible, we want to Hide -> Button says "Hide" ?? 
-                    // Or Button says what it DOES?
-                    // Usually button says action.
-                    // If Visible, Action is Hide.
-                    // If Hidden, Action is Show.
                     txt.text = _isVisible ? "Hide" : "Show"; 
                 }
             }

@@ -3,7 +3,6 @@ using MaouSamaTD.Grid;
 using MaouSamaTD.Units;
 using MaouSamaTD.UI;
 using MaouSamaTD.Utils;
-using Zenject;
 
 namespace MaouSamaTD.Managers.Interaction
 {
@@ -11,7 +10,7 @@ namespace MaouSamaTD.Managers.Interaction
     {
         private GameObject _ghostObject;
         private GridManager _gridManager;
-        private CurrencyManager _currencyManager;
+        private BattleCurrencyManager _currencyManager;
         private DeploymentUI _deploymentUI;
         private Camera _mainCamera;
 
@@ -20,7 +19,7 @@ namespace MaouSamaTD.Managers.Interaction
 
         public string LastRejectionReason { get; private set; }
 
-        public PlacementHandler(GridManager gridManager, CurrencyManager currencyManager, DeploymentUI deploymentUI, Camera camera, Color validColor, Color invalidColor)
+        public PlacementHandler(GridManager gridManager, BattleCurrencyManager currencyManager, DeploymentUI deploymentUI, Camera camera, Color validColor, Color invalidColor)
         {
             _gridManager = gridManager;
             _currencyManager = currencyManager;
@@ -89,7 +88,6 @@ namespace MaouSamaTD.Managers.Interaction
                 targetColor.a = 0.6f; 
                 sr.color = targetColor;
 
-                // Facing Logic for Ghost
                 if (_gridManager != null && _gridManager.SpawnPoints != null && _gridManager.SpawnPoints.Count > 0)
                 {
                     Vector2Int unitCoord = _gridManager.WorldToGridCoordinates(targetPos);
@@ -106,9 +104,7 @@ namespace MaouSamaTD.Managers.Interaction
                         }
                     }
 
-                    // Default sprite faces Right. User says: "right is positive z axis left is minus z axis".
-                    // Grid Y is World Z. So if spawn is at smaller Y, it's to the Left.
-                    sr.flipX = closestSpawn.y < unitCoord.y;
+                    sr.flipX = closestSpawn.x < unitCoord.x;
                 }
             }
         }
@@ -117,7 +113,7 @@ namespace MaouSamaTD.Managers.Interaction
         {
             if (unitData == null || tile == null) return false;
 
-            bool canAfford = _currencyManager.CanAfford(unitData.DeploymentCost);
+            bool canAfford = _currencyManager != null ? _currencyManager.CanAfford(unitData.DeploymentCost) : true;
             bool validTile = IsTileValidForUnit(tile, unitData);
 
             if (canAfford && validTile && !tile.IsOccupied)
@@ -141,7 +137,6 @@ namespace MaouSamaTD.Managers.Interaction
             if (unit == null) { LastRejectionReason = "Unit Data is NULL"; return false; }
             if (tile == null) { LastRejectionReason = "Tile is NULL"; return false; }
             
-            // Tutorial Lock
             if (_allowedTiles.Count > 0)
             {
                 bool isAllowed = _allowedTiles.Contains(tile.Coordinate);

@@ -82,11 +82,7 @@ MonoBehaviour:
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
-    TargetTiles:
-    - Coordinate: {x: 7, y: 4}
-      Size: {x: 1, y: 1}
-      Offset: {x: 0, y: 0, z: 0}
-      Height: 0
+    TargetTiles: []
     DelayBefore: 0
     Duration: 0
     ActionKey: 

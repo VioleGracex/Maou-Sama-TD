@@ -39,5 +39,4 @@ MonoBehaviour:
   ChargePerSecond: 1
   ChargePerAttack: 2
   Skill: {fileID: 11400000, guid: e20c62474bbc31f40a06dc66077f2aaa, type: 2}
-  _viableTiles:
-  - 1
+  _viableTiles: 01000000

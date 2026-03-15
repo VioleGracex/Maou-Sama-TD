@@ -24,12 +24,19 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private Button _btnDaily;
         [SerializeField] private Button _btnGrimoire;
 
+        [Header("Global Header Buttons")]
+        [SerializeField] private Button _btnSettings;
+        [SerializeField] private Button _btnQuickNav;
+
         [Header("Target UI Pages")]
         [Tooltip("Assign the Campaign Page script here.")]
         [SerializeField] private CampaignPage _campaignPage;
         
         [Tooltip("Assign the Barracks/Unit Selection panel here if it acts as the Vassals/Cohorts page.")]
         [SerializeField] private UnitSelectionPanel _unitSelectionPanel;
+
+        [SerializeField] private SettingsPanel _settingsPanel;
+        [SerializeField] private QuickNavPanel _quickNavPanel;
 
         private void Start()
         {
@@ -43,6 +50,9 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnRanks != null) _btnRanks.onClick.AddListener(OnRanksClicked);
             if (_btnDaily != null) _btnDaily.onClick.AddListener(OnDailyClicked);
             if (_btnGrimoire != null) _btnGrimoire.onClick.AddListener(OnGrimoireClicked);
+
+            if (_btnSettings != null) _btnSettings.onClick.AddListener(OnSettingsClicked);
+            if (_btnQuickNav != null) _btnQuickNav.onClick.AddListener(OnQuickNavClicked);
         }
 
         public void Open()
@@ -100,5 +110,21 @@ namespace MaouSamaTD.UI.MainMenu
         private void OnRanksClicked() { Debug.Log("[HomeUIManager] Ranks clicked (Not Implemented Yet)"); }
         private void OnDailyClicked() { Debug.Log("[HomeUIManager] Daily clicked (Not Implemented Yet)"); }
         private void OnGrimoireClicked() { Debug.Log("[HomeUIManager] Grimoire clicked (Not Implemented Yet)"); }
+
+        private void OnSettingsClicked()
+        {
+            if (_settingsPanel != null)
+            {
+                UIFlowManager.Instance.OpenPanel(_settingsPanel);
+            }
+        }
+
+        private void OnQuickNavClicked()
+        {
+            if (_quickNavPanel != null)
+            {
+                UIFlowManager.Instance.OpenPanel(_quickNavPanel);
+            }
+        }
     }
 }

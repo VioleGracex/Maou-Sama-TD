@@ -11,7 +11,8 @@ namespace MaouSamaTD.Data
         // Using List of structs for JsonUtility compatibility instead of Dictionary
         public List<LevelStarData> LevelStars = new List<LevelStarData>();
         public List<string> UnlockedUnits = new List<string>();
-        public int Currency;
+        public int Gold;
+        public int BloodCrest;
         public bool IsLilithAwakened;
         public int MaxSeals;
 
@@ -26,6 +27,37 @@ namespace MaouSamaTD.Data
         // Cohort / Squad Data
         public List<CohortData> Cohorts = new List<CohortData>();
         public int CurrentCohortIndex = 0;
+
+        [Header("Settings")]
+        public SettingsData Settings = new SettingsData();
+    }
+
+    [Serializable]
+    public class SettingsData
+    {
+        public int QualityLevel = 2;
+        public float UIAdaptation = 90f;
+        public string Language = "English";
+        public bool PerformanceOptimization = true;
+        public int TargetFPS = 30;
+        public bool BatterySaveMode = false;
+        public bool AntiAliasing = true;
+
+        // Audio
+        public float MusicVolume = 0.8f;
+        public float SFXVolume = 0.8f;
+        public float VoiceVolume = 0.8f;
+        public bool MusicEnabled = true;
+        public bool SFXEnabled = true;
+        public bool VoiceEnabled = true;
+
+        // Notifications
+        public bool ConfirmExitBase = true;
+        public bool ShowDeploymentTips = true;
+        public bool ShowOutputStatistics = true;
+        public bool AutoResupply = true;
+        public bool ShowEarningStatistics = true;
+        public bool ShowFatigueStatistics = true;
     }
 
     [Serializable]

@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Installers.ProjectGlobalInstaller
   _saveManagerPrefab: {fileID: 4037027942731295039, guid: 8207321bb4ec3b94fa6577a40c981660, type: 3}
+  _settingsManagerPrefab: {fileID: 5318909517765026839, guid: 188a0e235d43cd442a1c1b638e27de99, type: 3}

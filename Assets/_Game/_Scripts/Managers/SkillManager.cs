@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using MaouSamaTD.Managers;
 using MaouSamaTD.Units;
+using Zenject;
 
 namespace MaouSamaTD.Skills
 {
@@ -12,8 +13,8 @@ namespace MaouSamaTD.Skills
         private List<SovereignRiteData> _availableSkills = new List<SovereignRiteData>();
         private Dictionary<SovereignRiteData, float> _cooldowns = new Dictionary<SovereignRiteData, float>();
         
-        [Zenject.Inject] private CurrencyManager _currencyManager;
-        [Zenject.Inject] private TutorialManager _tutorialManager;
+        [Inject] private BattleCurrencyManager _currencyManager;
+        [Inject] private TutorialManager _tutorialManager;
 
         [Header("Debug")]
         [SerializeField] private bool _showDebugLogs = true;

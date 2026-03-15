@@ -19,7 +19,7 @@ namespace MaouSamaTD.Managers
         [Inject] private EnemyManager _enemyManager; 
         [Inject] private GameManager _gameManager;
         [Inject] private Grid.GridManager _gridManager;
-        [Inject] private CurrencyManager _currencyManager;
+        [Inject] private BattleCurrencyManager _currencyManager;
         #endregion
 
         #region Lifecycle
@@ -66,7 +66,6 @@ namespace MaouSamaTD.Managers
         private void GlobalDamageEnemy()
         {
             Debug.Log("[DebugManager] Global Damage Triggered");
-            // Iterating copy to avoid collection modified exception
             var enemies = new List<EnemyUnit>(EnemyUnit.ActiveEnemies);
             foreach (var enemy in enemies)
             {
@@ -83,7 +82,6 @@ namespace MaouSamaTD.Managers
             Debug.Log("[DebugManager] Retreat All Units Triggered");
             if (_gridManager != null)
             {
-                // Create list to avoid modification during iteration if Retreat modifies the collection used by GetAllTiles (unlikely as it iterates dictionary values, but safe practice)
                 List<PlayerUnit> unitsToRetreat = new List<PlayerUnit>();
                 
                 foreach (var tile in _gridManager.GetAllTiles())

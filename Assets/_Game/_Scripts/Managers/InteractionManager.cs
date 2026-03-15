@@ -35,7 +35,7 @@ namespace MaouSamaTD.Managers
 
         #region State
         public bool IsDragging { get; private set; }
-        private UnitData _activeUnitData; // Shared between dragging and placement mode
+        private UnitData _activeUnitData;
         private SovereignRiteData _selectedSkill;
         private bool _isSkillTargeting;
         
@@ -44,7 +44,7 @@ namespace MaouSamaTD.Managers
         private PlayerUnit _inspectedPlayerUnit;
         public UnitData SelectedUnitData => _activeUnitData;
         
-        private bool _isSelectionLocked = true; // Locked by default for tutorial levels
+        private bool _isSelectionLocked = true;
         public bool IsSelectionLocked { get => _isSelectionLocked; set => _isSelectionLocked = value; }
         #endregion
 
@@ -58,7 +58,7 @@ namespace MaouSamaTD.Managers
         #region Dependencies
         [Inject] private GridManager _gridManager;
         [Inject] private UnitInspectorUI _unitInspectorUI;
-        [Inject] private CurrencyManager _currencyManager;
+        [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private SkillManager _skillManager;
         [Inject] private TutorialManager _tutorialManager;
@@ -104,7 +104,6 @@ namespace MaouSamaTD.Managers
 
                 Tile hitTile = _inputHandler.GetTileFromScreenPos(screenPos);
                 
-                // Tutorial placement restriction override
                 if (IsDragging && _tutorialManager != null)
                 {
                     var reqTiles = _tutorialManager.GetRequiredPlacementTiles();
@@ -179,7 +178,7 @@ namespace MaouSamaTD.Managers
                     _tutorialManager?.OnActionTriggered("UnitPlaced");
                 }
             }
-            SetPlacementRestriction(null); // Clear restriction
+            SetPlacementRestriction(null);
             DeselectUnit();
         }
 
@@ -235,7 +234,6 @@ namespace MaouSamaTD.Managers
                 UpdateTileVisuals();
             }
 
-            // Unit Outline Hover Logic
             UnitBase newHoverUnit = null;
             if (_inputHandler.GetPointerState(out Vector2 screenPos, out _, out _))
             {
@@ -258,7 +256,7 @@ namespace MaouSamaTD.Managers
 
         private void ProcessAction(Tile hitTile, Ray ray)
         {
-            if (IsDragging) return; // EndDrag handles release elsewhere if needed, but here we trigger on press
+            if (IsDragging) return;
 
             if (_isSkillTargeting)
             {

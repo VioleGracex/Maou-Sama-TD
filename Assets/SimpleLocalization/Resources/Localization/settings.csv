@@ -1,0 +1,10 @@
+Key,English,Japanese,Russian
+settings.tabs.game,Game,ゲーム,Игра
+settings.tabs.audio,Audio,オーディオ,Аудио
+settings.tabs.notification,Notifications,通知,Уведомления
+settings.tabs.account,Account,アカウント,Аккаунт
+settings.game.language,Language,言語,Язык
+settings.game.quality,Quality,品質,Качество
+settings.game.ui_adaptation,UI Adaptation,UIの適応,Адапция UI
+settings.account.wipedata,WIPE ALL DATA,データをすべて消去する,СБРОСИТЬ ВСЕ ДАННЫЕ
+settings.account.wipedataconfirm,Are you sure? This will delete all progress.,本当にいいですか？すべての進行状況が削除されます。,Вы уверены? Это удалит весь прогресс.

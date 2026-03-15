@@ -9,47 +9,75 @@ namespace MaouSamaTD.Grid
     public class GridGenerator : MonoBehaviour
     {
         #region Settings
+        [Header("Editor View")]
+        [SerializeField] private bool _showGenerationSettings = false;
+
         [Header("Target")]
         [SerializeField] private GridManager _gridManager;
+
+        [ShowIf("_showGenerationSettings")]
         [Header("Extraction Settings")]
         [SerializeField] private string _extractPath = "Assets/_Game/Data/Maps/";
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private string _extractFileName = "NewMapData";
 
         // Dimensions are now taken from GridManager to avoid duplication
 
 
+        [ShowIf("_showGenerationSettings")]
         [Header("Procedural Settings")]
         [SerializeField] private MapData _mapData;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _useSeed = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private int _seed = 12345;
+        [ShowIf("_showGenerationSettings")]
         [Range(0f, 1f)] [SerializeField] private float _highGroundChance = 0.3f;
 
+        [ShowIf("_showGenerationSettings")]
         [Header("Lanes")]
         [Min(1)] [SerializeField] private int _lanesPerConnection = 1;
+        [ShowIf("_showGenerationSettings")]
         [Tooltip("If empty, default logic will be used (Left -> Right)")]
         [SerializeField] private List<SpawnPointData> _spawnPoints = new List<SpawnPointData>();
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private List<Vector2Int> _exitPoints = new List<Vector2Int>();
 
+        [ShowIf("_showGenerationSettings")]
         [Header("Visuals")]
         [SerializeField] private GameObject _startPrefab;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private GameObject _endPrefab;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private GameObject _wallPrefab;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private Material _wallMaterial; // Override Material
 
+        [ShowIf("_showGenerationSettings")]
         [Header("Generation Settings")]
         [SerializeField] private bool _generateMapOnStart = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _generateWalls = true;
         
+        [ShowIf("_showGenerationSettings")]
         [Header("Wall Configuration")]
         [SerializeField] private bool _wallNorth = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _wallSouth = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _wallEast = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _wallWest = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _wallNW = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _wallNE = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _wallSW = true;
+        [ShowIf("_showGenerationSettings")]
         [SerializeField] private bool _wallSE = true;
         
+        [ShowIf("_showGenerationSettings")]
         [Header("Primitive Wall Settings")]
         [Tooltip("Global scale for walls (X=Thick, Y=Height, Z=Length per block)")]
         [SerializeField] private Vector3 _wallScale = Vector3.one;
@@ -73,6 +101,7 @@ namespace MaouSamaTD.Grid
         #endregion
 
         #region Map Generation
+        [ShowIf("_showGenerationSettings")]
         [Button("Generate Map")]
         public void GenerateMap()
         {
@@ -185,6 +214,7 @@ namespace MaouSamaTD.Grid
             }
         }
 
+        [ShowIf("_showGenerationSettings")]
         [Button("Generate From Map Data")]
         public void GenerateFromMapData()
         {
@@ -631,6 +661,7 @@ namespace MaouSamaTD.Grid
         #endregion
 
         #region Interaction
+        [ShowIf("_showGenerationSettings")]
         [Button("Clear Map")]
          public void ClearMap()
          {
@@ -730,6 +761,7 @@ namespace MaouSamaTD.Grid
         #endregion
 
         #region Tools
+        [ShowIf("_showGenerationSettings")]
         [Button("Extract New Map Data")]
         public void ExtractMapData()
         {

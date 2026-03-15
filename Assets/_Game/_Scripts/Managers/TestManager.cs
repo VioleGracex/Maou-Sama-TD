@@ -19,7 +19,7 @@ namespace MaouSamaTD.Managers
         
         [Inject] private GameManager _gameManager;
         [Inject] private SkillManager _skillManager;
-        [Inject] private CurrencyManager _currencyManager;
+        [Inject] private BattleCurrencyManager _currencyManager;
         [InjectOptional] private SkillPanelUI _skillPanelUI;
         #endregion
 

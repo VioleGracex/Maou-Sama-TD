@@ -12,7 +12,7 @@ namespace MaouSamaTD.Managers
     {
         #region Fields
         private const string SaveFileName = "player_save.json";
-        private const string HashKey = "MaouSamaTD_Sylvan_Secret"; // Basic obfuscation key
+        private const string HashKey = "MaouSamaTD_Sylvan_Secret"; 
 
         public PlayerData CurrentData { get; private set; }
         
@@ -35,7 +35,6 @@ namespace MaouSamaTD.Managers
             string json = JsonUtility.ToJson(CurrentData, true);
             string hash = GenerateHash(json);
             
-            // Format: JSON content + valid separator + Hash
             string content = json + "\n|HASH|" + hash;
             
             try 
@@ -77,8 +76,6 @@ namespace MaouSamaTD.Managers
                 if (savedHash != calculatedHash)
                 {
                     Debug.LogError("[SaveManager] Anti-Cheat: Hash mismatch! Data integrity compromised.");
-                    // In a stricter system, you might ban or flag. For now, we reset or allow with warning (user asked for anti-cheat checks).
-                    // We will reset to be safe/punitive for now as per "dont allow user to cheat".
                     CreateNewSave(); 
                     return;
                 }
@@ -110,20 +107,38 @@ namespace MaouSamaTD.Managers
             CurrentData = null;
         }
 
-        public void AddCurrency(int amount)
+        public void AddGold(int amount)
         {
             if (CurrentData == null) return;
-            CurrentData.Currency += amount;
+            CurrentData.Gold += amount;
             Save();
         }
 
-        public bool SpendCurrency(int amount)
+        public bool SpendGold(int amount)
         {
-            if (CurrentData == null || CurrentData.Currency < amount) return false;
-            CurrentData.Currency -= amount;
+            if (CurrentData == null || CurrentData.Gold < amount) return false;
+            CurrentData.Gold -= amount;
             Save();
             return true;
         }
+
+        public void AddBloodCrest(int amount)
+        {
+            if (CurrentData == null) return;
+            CurrentData.BloodCrest += amount;
+            Save();
+        }
+
+        public bool SpendBloodCrest(int amount)
+        {
+            if (CurrentData == null || CurrentData.BloodCrest < amount) return false;
+            CurrentData.BloodCrest -= amount;
+            Save();
+            return true;
+        }
+
+        public void AddCurrency(int amount) => AddGold(amount);
+        public bool SpendCurrency(int amount) => SpendGold(amount);
 
         public void LevelComplete(string levelID, int stars)
         {
@@ -134,7 +149,6 @@ namespace MaouSamaTD.Managers
                 CurrentData.CompletedLevels.Add(levelID);
             }
 
-            // Update stars if higher
             var starEntry = CurrentData.LevelStars.FindIndex(x => x.LevelID == levelID);
             if (starEntry != -1)
             {
@@ -142,7 +156,7 @@ namespace MaouSamaTD.Managers
                 {
                     var entry = CurrentData.LevelStars[starEntry];
                     entry.Stars = stars;
-                    CurrentData.LevelStars[starEntry] = entry; // Update struct in list
+                    CurrentData.LevelStars[starEntry] = entry; 
                 }
             }
             else
@@ -150,7 +164,7 @@ namespace MaouSamaTD.Managers
                 CurrentData.LevelStars.Add(new LevelStarData(levelID, stars));
             }
             
-            AddActivity($"Complete_{levelID}"); // Anti-cheat logging
+            AddActivity($"Complete_{levelID}"); 
             Save();
         }
 
@@ -166,8 +180,7 @@ namespace MaouSamaTD.Managers
                 CurrentData.UnlockedUnits.Add("Lilith");
             }
             
-            // Soveregin power regain: Increase currency/seals capacity
-            CurrencyManager currencyMgr = FindFirstObjectByType<CurrencyManager>();
+            BattleCurrencyManager currencyMgr = FindFirstObjectByType<BattleCurrencyManager>();
             if (currencyMgr != null)
             {
                 currencyMgr.SetMaxSeals(150);
@@ -203,10 +216,8 @@ namespace MaouSamaTD.Managers
         {
             if (CurrentData == null) return new List<string>();
             
-            // Ensure Cohorts list is initialized
             if (CurrentData.Cohorts == null) CurrentData.Cohorts = new List<CohortData>();
             
-            // Ensure specific cohort exists
             if (index < 0) index = 0;
             while (CurrentData.Cohorts.Count <= index)
             {
@@ -219,7 +230,6 @@ namespace MaouSamaTD.Managers
         public void SetCohort(int index, List<string> unitIDs)
         {
              if (CurrentData == null) return;
-             // Ensure exists (reuse logic or simplify)
              GetCohort(index); 
              
              CurrentData.Cohorts[index] = new CohortData
@@ -235,11 +245,11 @@ namespace MaouSamaTD.Managers
         private void CreateNewSave()
         {
             CurrentData = new PlayerData();
-            // Initial New Game State
-            CurrentData.Currency = 0;
+            CurrentData.Gold = 0;
+            CurrentData.BloodCrest = 0;
             CurrentData.UnlockedUnits = new List<string>()
             {
-                "Ignis", // Default Starter Unit
+                "Ignis", 
                 
             }; 
             

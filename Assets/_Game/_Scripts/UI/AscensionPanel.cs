@@ -45,13 +45,26 @@ namespace MaouSamaTD.UI.MainMenu
         private MaouGender _selectedGender = MaouGender.Male;
         private string _selectedTrueName = "Tyrant";
         private bool _hasSelectedClass = false;
+        private bool _tyrantHovering = false;
+        private bool _sovereignHovering = false;
         #endregion
 
         #region Unity Methods
         private void Start()
         {
-            if (_tyrantButton != null) _tyrantButton.onClick.AddListener(() => OnClassSelected(MaouGender.Male, "Sovereign of Force"));
-            if (_sovereignButton != null) _sovereignButton.onClick.AddListener(() => OnClassSelected(MaouGender.Female, "Sovereign of Guile"));
+            if (_tyrantButton != null) 
+            {
+                _tyrantButton.onClick.AddListener(() => OnClassSelected(MaouGender.Male, "Sovereign of Force"));
+                AddHoverEntry(_tyrantButton.gameObject, () => OnCardHover(MaouGender.Male, true));
+                AddHoverEntry(_tyrantButton.gameObject, () => OnCardHover(MaouGender.Male, false), false);
+            }
+            
+            if (_sovereignButton != null) 
+            {
+                _sovereignButton.onClick.AddListener(() => OnClassSelected(MaouGender.Female, "Sovereign of Guile"));
+                AddHoverEntry(_sovereignButton.gameObject, () => OnCardHover(MaouGender.Female, true));
+                AddHoverEntry(_sovereignButton.gameObject, () => OnCardHover(MaouGender.Female, false), false);
+            }
             
             if (_nameInputField != null) _nameInputField.onValueChanged.AddListener(OnNameChanged);
             if (_diceButton != null) _diceButton.onClick.AddListener(OnDiceClicked);
@@ -132,31 +145,37 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void RefreshHighlights()
         {
+            RefreshCardVisuals();
+        }
+
+        private void RefreshCardVisuals()
+        {
             bool isTyrantChosen = _hasSelectedClass && _selectedGender == MaouGender.Male;
             bool isSovereignChosen = _hasSelectedClass && _selectedGender == MaouGender.Female;
 
             if (_tyrantSelectedHighlight != null) _tyrantSelectedHighlight.SetActive(isTyrantChosen);
             if (_sovereignSelectedHighlight != null) _sovereignSelectedHighlight.SetActive(isSovereignChosen);
 
-            UpdateCardVisual(_tyrantButton, _tyrantVisual, isTyrantChosen, _hasSelectedClass);
-            UpdateCardVisual(_sovereignButton, _sovereignVisual, isSovereignChosen, _hasSelectedClass);
+            UpdateCardVisual(_tyrantButton, _tyrantVisual, isTyrantChosen, _hasSelectedClass, _tyrantHovering);
+            UpdateCardVisual(_sovereignButton, _sovereignVisual, isSovereignChosen, _hasSelectedClass, _sovereignHovering);
         }
 
-        private void UpdateCardVisual(Button cardButton, Image targetImage, bool isChosen, bool hasSelection)
+        private void UpdateCardVisual(Button cardButton, Image targetImage, bool isChosen, bool hasSelection, bool isHovering)
         {
             if (cardButton == null) return;
             
             // If no selection has been made, we want them both greyed out by default
-            bool fullyVisible = hasSelection && isChosen;
+            bool fullyVisible = (hasSelection && isChosen) || isHovering;
             Color targetColor = fullyVisible ? Color.white : new Color(0.4f, 0.4f, 0.4f, 1f);
 
             if (targetImage != null)
             {
-                targetImage.DOColor(targetColor, 0.3f);
+                targetImage.DOColor(targetColor, 0.2f);
             }
             
-            Vector3 targetScale = isChosen ? new Vector3(1.05f, 1.05f, 1.05f) : Vector3.one;
-            cardButton.transform.DOScale(targetScale, 0.3f).SetEase(Ease.OutQuad);
+            float scale = isChosen ? 1.05f : (isHovering ? 1.02f : 1.0f);
+            Vector3 targetScale = new Vector3(scale, scale, scale);
+            cardButton.transform.DOScale(targetScale, 0.2f).SetEase(Ease.OutQuad);
         }
 
         private void OnNameChanged(string newName)
@@ -198,6 +217,27 @@ namespace MaouSamaTD.UI.MainMenu
                 _nameInputField.text = chosenName;
                 ValidateInput();
             }
+        }
+
+        private void OnCardHover(MaouGender gender, bool isHovering)
+        {
+            if (gender == MaouGender.Male) _tyrantHovering = isHovering;
+            else _sovereignHovering = isHovering;
+
+            RefreshCardVisuals();
+        }
+
+        private void AddHoverEntry(GameObject target, UnityEngine.Events.UnityAction action, bool enter = true)
+        {
+            UnityEngine.EventSystems.EventTrigger trigger = target.GetComponent<UnityEngine.EventSystems.EventTrigger>();
+            if (trigger == null) trigger = target.AddComponent<UnityEngine.EventSystems.EventTrigger>();
+            
+            var entry = new UnityEngine.EventSystems.EventTrigger.Entry 
+            { 
+                eventID = enter ? UnityEngine.EventSystems.EventTriggerType.PointerEnter : UnityEngine.EventSystems.EventTriggerType.PointerExit 
+            };
+            entry.callback.AddListener((data) => action.Invoke());
+            trigger.triggers.Add(entry);
         }
 
         private void OnAriseClicked()

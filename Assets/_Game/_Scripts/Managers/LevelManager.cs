@@ -12,7 +12,7 @@ namespace MaouSamaTD.Managers
         [Inject] private GameSelectionState _gameSelectionState;
         [Inject] private TutorialManager _tutorialManager;
         [Inject] private EnemyManager _enemyManager;
-        [Inject] private CurrencyManager _currencyManager;
+        [Inject] private BattleCurrencyManager _currencyManager;
 
         #region Lifecycle
         private void Start()
@@ -26,7 +26,6 @@ namespace MaouSamaTD.Managers
 
             LevelData dataToLoad = _levelData;
 
-            // Prioritize GameSelectionState if valid
             if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
             {
                 Debug.Log($"[LevelManager] Using selected level: {_gameSelectionState.SelectedLevel.LevelName}");
@@ -50,11 +49,9 @@ namespace MaouSamaTD.Managers
                 {
                     float gracePeriod = dataToLoad.GracePeriod;
                     Debug.Log($"[LevelManager] Initializing Enemy Manager. Tutorial Active: {hasTutorial}");
-                    // If tutorial is active, DON'T start immediately. TutorialManager will trigger waves.
                     _enemyManager.Initialize(dataToLoad.Waves, gracePeriod, !hasTutorial);
                 }
 
-                // Trigger tutorial if enabled for this level
                 if (hasTutorial)
                 {
                     Debug.Log($"[LevelManager] Level has tutorial: {dataToLoad.TutorialData.name}. Starting...");

@@ -4429,6 +4429,7 @@ MonoBehaviour:
   _useFullFillForPlacement: 0
   _useFullFillForRange: 1
   _useFullFillForSkills: 0
+  _showPlacementDebug: 1
 --- !u!4 &1321145781
 Transform:
   m_ObjectHideFlags: 0
@@ -7276,7 +7277,7 @@ MonoBehaviour:
   _cameraControlUI: {fileID: 150639815}
   _skillPanelUI: {fileID: 1000020735}
   _interactionManager: {fileID: 1321145780}
-  _currencyManager: {fileID: 889581265}
+  _battleCurrencyManager: {fileID: 889581265}
   _gridManager: {fileID: 1567414775}
   _gameManager: {fileID: 1491943334}
   _cameraManager: {fileID: 644362016}

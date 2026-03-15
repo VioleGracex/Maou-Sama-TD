@@ -23,6 +23,7 @@ namespace MaouSamaTD.Managers
         [Inject] private EnemyManager _enemyManager;
         [Inject] private UnitInspectorUI _unitInspectorUI;
         [Inject] private DeploymentUI _deploymentUI;
+        [Inject] private BattleCurrencyManager _currencyManager;
         #endregion
 
         #region Serialized Settings
@@ -97,7 +98,6 @@ namespace MaouSamaTD.Managers
 
                 if (_showDebugLogs) Debug.Log($"[tutorial] >>> Executing Step [{_currentStepIndex}]: {step.StepName} ({step.Type})");
                 
-                // Clear any previous tile highlights
                 ClearAllTileHighlights();
 
                 switch (step.Type)
@@ -162,7 +162,6 @@ namespace MaouSamaTD.Managers
                         
                         HandleUIHighlight(step);
                         
-                        // Set waiting state BEFORE dialogue so InteractionManager can unlock selection if needed
                         _waitingForAction = true;
                         _waitingActionKey = step.ActionKey;
 
@@ -178,18 +177,16 @@ namespace MaouSamaTD.Managers
                             yield return new WaitUntil(() => actionDialogueDone);
                         }
 
-                        // Check buffer first (for fast sequential actions)
                         if (_triggeredActionsBuffer.Contains(step.ActionKey))
                         {
                             if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer, proceeding.");
-                            _waitingForAction = false; // Received during dialogue
+                            _waitingForAction = false; 
                             _triggeredActionsBuffer.Remove(step.ActionKey);
                         }
                         else
                         {
-                            // Already set to true above, just wait
                             yield return new WaitUntil(() => !_waitingForAction);
-                            _triggeredActionsBuffer.Remove(step.ActionKey); // Clean up
+                            _triggeredActionsBuffer.Remove(step.ActionKey); 
                         }
                         
                         if (_unitInspectorUI != null) _unitInspectorUI.IsLocked = false;
@@ -223,7 +220,7 @@ namespace MaouSamaTD.Managers
 
                     case TutorialStepType.WaitForCondition:
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey} (Value: {step.RequiredCount})");
-                        _gameManager.SetSpeed(1); // Usually we want time moving for kills/enemies
+                        _gameManager.SetSpeed(1); 
                         yield return new WaitUntil(() => CheckCondition(step));
                         _gameManager.SetSpeed(0);
                         break;
@@ -257,14 +254,14 @@ namespace MaouSamaTD.Managers
                             }
                             else if (step.ActionKey == "GrantMaxSeals")
                             {
-                                if (MaouSamaTD.Managers.CurrencyManager.Instance != null)
+                                if (_currencyManager != null)
                                 {
-                                    MaouSamaTD.Managers.CurrencyManager.Instance.GiveSeals(MaouSamaTD.Managers.CurrencyManager.Instance.MaxSeals);
+                                    _currencyManager.GiveSeals(_currencyManager.MaxSeals);
                                     if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: GrantMaxSeals executed.");
                                 }
                                 else
                                 {
-                                    if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand GrantMaxSeals: CurrencyManager.Instance is NULL!");
+                                    if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand GrantMaxSeals: BattleCurrencyManager dependency is missing!");
                                 }
                             }
                             else if (step.ActionKey == "SetUnitButtonActive")
@@ -304,14 +301,12 @@ namespace MaouSamaTD.Managers
         {
             if (step == null) return;
 
-            // 1. Reset Logic
             if (step.ResetBlocker)
             {
                 _uiBlocker.ClearTargets();
                 _handUI.Hide();
             }
 
-            // 2. Use Blocker Toggle
             if (!step.UseBlocker)
             {
                 _uiBlocker.HideBlocker();
@@ -319,11 +314,9 @@ namespace MaouSamaTD.Managers
                 return;
             }
 
-            // 2.5 Full Blocker - No Targeting
             if (step.FullBlocker)
             {
                 _uiBlocker.ShowBlockerWithDetailedTargets(null, null);
-                // Still handle hand logic if needed, but usually full blockers don't show hands pointing to nothing
                 if (!step.ShowHand && !step.DragShowHand) _handUI.Hide();
                 return;
             }
@@ -331,7 +324,6 @@ namespace MaouSamaTD.Managers
             List<UIPopupBlocker.UIHighlightData> uiHits = new List<UIPopupBlocker.UIHighlightData>();
             List<UIPopupBlocker.WorldHighlightData> worldHighlights = new List<UIPopupBlocker.WorldHighlightData>();
 
-            // 3. Collect UI Targets
             List<UITarget> uiTargets = new List<UITarget>();
             if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
             if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
@@ -350,7 +342,6 @@ namespace MaouSamaTD.Managers
                 }
             }
 
-            // 4. Collect World Targets
             if (step.TargetTiles != null && step.TargetTiles.Count > 0)
             {
                 foreach (var wt in step.TargetTiles)
@@ -364,17 +355,14 @@ namespace MaouSamaTD.Managers
                 }
             }
 
-            // 5. Apply to Blocker
             _uiBlocker.ShowBlockerWithDetailedTargets(uiHits, worldHighlights);
 
-            // 6. Hand UI Logic
             if (step.DragShowHand && (uiHits.Count > 0 || worldHighlights.Count > 0))
             {
                 Vector2 startPos = Vector2.zero;
                 if (uiHits.Count > 0) startPos = (Vector2)uiHits[0].Target.position + uiHits[0].Offset;
                 else if (worldHighlights.Count > 0) startPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
 
-                // Find drag target
                 if (step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
                 {
                     RectTransform drt = FindTargetRect(step.HandTargetUIOverride.Name);
@@ -386,7 +374,6 @@ namespace MaouSamaTD.Managers
                         Vector3 size = corners[2] - corners[0];
                         Vector2 targetPos = (Vector2)center + new Vector2(size.x * step.HandTargetUIOverride.SizeOffset.x, size.y * step.HandTargetUIOverride.SizeOffset.y);
                         float finalScale = step.HandScale * step.HandTargetUIOverride.Size.x;
-                        if (_showDebugLogs) Debug.Log($"[tutorial] DRAG Hand: Override Scale {step.HandScale} * {step.HandTargetUIOverride.Size.x} = {finalScale}");
                         _handUI.MoveHand(startPos, targetPos, finalScale);
                     }
                     else _handUI.MoveHand(startPos, Vector2.zero, step.HandScale);
@@ -395,7 +382,6 @@ namespace MaouSamaTD.Managers
                 {
                     Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
                     Vector2 screenTarget = Camera.main.WorldToScreenPoint(worldTarget);
-                    if (_showDebugLogs) Debug.Log($"[tutorial] DRAG Hand: Tile Scale {step.HandScale}");
                     _handUI.MoveHand(startPos, screenTarget, step.HandScale);
                 }
             }
@@ -404,7 +390,6 @@ namespace MaouSamaTD.Managers
                 Vector2 handPos = Vector2.zero;
                 float handScale = step.HandScale;
 
-                // 1. Check for manual Hand Override (UITarget or Tile)
                 if (step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
                 {
                     RectTransform drt = FindTargetRect(step.HandTargetUIOverride.Name);
@@ -423,7 +408,6 @@ namespace MaouSamaTD.Managers
                     Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
                     handPos = Camera.main.WorldToScreenPoint(worldTarget);
                 }
-                // 2. Fallback to Primary Target
                 else if (worldHighlights.Count > 0) 
                 {
                     handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
@@ -440,7 +424,6 @@ namespace MaouSamaTD.Managers
 
                 if (handPos != Vector2.zero) 
                 {
-                    if (_showDebugLogs) Debug.Log($"[tutorial] STATIC Hand: Calculated Final Scale {handScale} (Base: {step.HandScale})");
                     _handUI.ShowAt(handPos, handScale);
                 }
             }
@@ -456,12 +439,10 @@ namespace MaouSamaTD.Managers
                 RectTransform rt = go.GetComponent<RectTransform>();
                 if (rt != null) return rt;
                 
-                // If found but no RT, it's a world object, check for unit canvas
                 Canvas canvas = go.GetComponentInChildren<Canvas>(true);
                 if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
             }
 
-            // Fallback for units by name
             string unitName = name;
             if (unitName.StartsWith("Enemy_")) unitName = unitName.Replace("Enemy_", "");
             else if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
@@ -491,7 +472,6 @@ namespace MaouSamaTD.Managers
             var tile = _gridManager.GetTileAt(coord);
             if (tile != null)
             {
-                if (_showDebugLogs) Debug.Log($"[tutorial] HIGHLIGHTING TILE at {coord}");
                 tile.SetHighlight(true, Color.yellow, true);
                 _highlightedTiles.Add(coord);
             }
@@ -521,7 +501,6 @@ namespace MaouSamaTD.Managers
                 
                 if (tile != null)
                 {
-                    // Use actual transform position which includes HighGround Y offset
                     pos = tile.transform.position;
                 }
                 else
@@ -529,8 +508,6 @@ namespace MaouSamaTD.Managers
                     pos = _gridManager.GridToWorldPosition(tileCoord);
                 }
 
-                // Apply a serialized offset to align with the tile footprint visually
-                // in isometric perspective
                 return pos + _tileHighlightOffset;
             }
             return new Vector3(tileCoord.x, -0.2f, tileCoord.y) + _tileHighlightOffset;
@@ -547,7 +524,7 @@ namespace MaouSamaTD.Managers
                 _waitingForAction = false;
                 if (currentStep != null && currentStep.ResumeTime)
                 {
-                    _gameManager.SetSpeed(1); // Resume time only if step allows
+                    _gameManager.SetSpeed(1); 
                 }
             }
         }
@@ -562,7 +539,6 @@ namespace MaouSamaTD.Managers
             List<Vector2Int> allowed = new List<Vector2Int>();
             if (currentStep == null) return allowed;
 
-            // If we are specifically waiting for UnitPlaced, honor the overrides
             if (currentStep.ActionKey == "UnitPlaced")
             {
                 if (currentStep.HandTargetTileOverride != Vector2Int.zero && currentStep.HandTargetTileOverride != new Vector2Int(-1, -1))
@@ -571,7 +547,6 @@ namespace MaouSamaTD.Managers
                 }
             }
 
-            // Always allow any TargetTiles defined in the step
             if (currentStep.TargetTiles != null)
             {
                 foreach (var wt in currentStep.TargetTiles)
@@ -606,7 +581,6 @@ namespace MaouSamaTD.Managers
                     if (targetUnit != null)
                     {
                         bool met = targetUnit.KillCount >= step.RequiredCount && step.RequiredCount > 0;
-                        if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: {step.ActionKey} ({targetUnit.KillCount}/{step.RequiredCount})");
                         return met;
                     }
                     return false;
@@ -650,20 +624,15 @@ namespace MaouSamaTD.Managers
                             if (dist <= threshold) count++;
                         }
                         bool met = count >= step.RequiredCount && step.RequiredCount > 0;
-                        if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: {step.ActionKey} ({count}/{step.RequiredCount})");
                         return met;
                     }
                     return false;
                 }
 
                 case "WaveFinishedSpawning":
-                    // If enemy manager is null or not spawning, and we are at or past the wave index?
-                    // Actually, StartWave sets _isSpawning. We wait for it to become false after it was true.
-                    // But simpler: just check if enemy manager reports it is no longer spawning.
                     if (_enemyManager != null)
                     {
                         bool met = !_enemyManager.IsSpawning;
-                        if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: WaveFinishedSpawning");
                         return met;
                     }
                     return false;
@@ -677,7 +646,6 @@ namespace MaouSamaTD.Managers
                         if (u != null && (u.gameObject.name == reachName || (u.Data != null && u.Data.UnitName == reachTarget)))
                         {
                             bool met = u.ReachCount >= step.RequiredCount && step.RequiredCount > 0;
-                            if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: UnitReach ({u.ReachCount}/{step.RequiredCount})");
                             return met;
                         }
                     }
@@ -692,7 +660,6 @@ namespace MaouSamaTD.Managers
                     {
                         float hpPercent = (boss.CurrentHp / boss.MaxHp) * 100f;
                         bool met = hpPercent <= step.RequiredCount;
-                        if (met && _showDebugLogs) Debug.Log($"[tutorial] Condition MET: BossHealth ({hpPercent}% <= {step.RequiredCount}%)");
                         return met;
                     }
                     return false;

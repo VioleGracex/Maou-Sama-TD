@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63817d93022759543b57e795c78efe11, type: 3}
+  m_Name: LocalizationSettings
+  m_EditorClassIdentifier: 
+  TableId: 1EH-nCicXf4Ex8TxgOfuZ5RaeaD9AXdBY9xNevxlezjk
+  Sheets:
+  - Name: main
+    Id: 0
+    TextAsset: {fileID: 4900000, guid: 2e529b57da0140c42ac3d6219494fa23, type: 3}
+  - Name: tutorial
+    Id: 1516943926
+    TextAsset: {fileID: 4900000, guid: d14cbe1ac036b174bb1f1b068dc8c5bb, type: 3}
+  - Name: battle
+    Id: 288798759
+    TextAsset: {fileID: 4900000, guid: 545179bc17e16744ba5652aaed2bcb04, type: 3}
+  - Name: shop
+    Id: 24742259
+    TextAsset: {fileID: 4900000, guid: 7821a2e6cefe81a4286669d2dc572af7, type: 3}
+  - Name: fakeChat
+    Id: 1123146441
+    TextAsset: {fileID: 4900000, guid: 4d0c8d5bd2a3c684f9ded260d8b04e60, type: 3}
+  - Name: enemies
+    Id: 1147746341
+    TextAsset: {fileID: 4900000, guid: 1161b08452a7379448680f9afb313ddc, type: 3}
+  - Name: predictions
+    Id: 719932313
+    TextAsset: {fileID: 4900000, guid: e0033ecdc8af6294699bde1f5b009b48, type: 3}
+  - Name: push
+    Id: 242302440
+    TextAsset: {fileID: 4900000, guid: a7932bea9b1fe8240ab54fcff0b54186, type: 3}
+  - Name: achievements
+    Id: 2021448966
+    TextAsset: {fileID: 4900000, guid: 0ca891919022d64488f1e6801e108ff7, type: 3}
+  - Name: settings
+    Id: 1773483364
+    TextAsset: {fileID: 4900000, guid: f9e52b57da0140c42ac3d6219494fa24, type: 3}
+  SaveFolder: {fileID: 102900000, guid: c392831e85f928548b8494fefd912562, type: 3}

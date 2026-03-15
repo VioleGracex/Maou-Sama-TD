@@ -12,8 +12,7 @@ namespace MaouSamaTD.UI
 {
     public class DeploymentUI : MonoBehaviour
     {
-        
-        [Inject] private CurrencyManager _currencyManager;
+        [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private DiContainer _container;
         [Inject] private TutorialManager _tutorialManager;
 
@@ -39,8 +38,6 @@ namespace MaouSamaTD.UI
         private Dictionary<UnitData, float> _cooldownTimers = new Dictionary<UnitData, float>();
         private List<UnitButtonUI> _unitButtons = new List<UnitButtonUI>();
 
-
-
         private void OnEnable()
         {
             if (_currencyManager != null)
@@ -49,8 +46,6 @@ namespace MaouSamaTD.UI
             if (_toggleButton != null)
                 _toggleButton.onClick.AddListener(ToggleVisibility);
         }
-
-
 
         private void OnDisable()
         {
@@ -136,6 +131,7 @@ namespace MaouSamaTD.UI
 
         private void GenerateButtons()
         {
+            if (_barContainer == null) return;
             foreach(Transform child in _barContainer) Destroy(child.gameObject);
             _unitButtons.Clear();
             _deployedUnits.Clear();
@@ -195,7 +191,9 @@ namespace MaouSamaTD.UI
                 return;
             }
 
-            _currencyManager.TrySpendSeals(unitData.DeploymentCost);
+            if (_currencyManager != null)
+                _currencyManager.TrySpendSeals(unitData.DeploymentCost);
+
             PlayerUnit newUnit = Instantiate(_unitPrefab, tile.transform.position, Quaternion.identity);
             
             // Facing Logic

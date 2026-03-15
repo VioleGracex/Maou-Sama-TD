@@ -16,7 +16,7 @@ namespace MaouSamaTD.Installers
         [SerializeField] private CameraControlUI _cameraControlUI;
         [SerializeField] private MaouSamaTD.UI.Skills.SkillPanelUI _skillPanelUI;
         [SerializeField] private InteractionManager _interactionManager;
-        [SerializeField] private CurrencyManager _currencyManager;
+        [SerializeField] private BattleCurrencyManager _battleCurrencyManager;
         [SerializeField] private GridManager _gridManager;
         [SerializeField] private GameManager _gameManager;
         [SerializeField] private CameraManager _cameraManager;
@@ -32,22 +32,19 @@ namespace MaouSamaTD.Installers
 
         public override void InstallBindings()
         {
-            // ... existing bindings ...
-            
             if (_unitInspectorUI) Container.Bind<UnitInspectorUI>().FromInstance(_unitInspectorUI).AsSingle();
             if (_deploymentUI) Container.Bind<DeploymentUI>().FromInstance(_deploymentUI).AsSingle();
             if (_skillPanelUI) Container.Bind<MaouSamaTD.UI.Skills.SkillPanelUI>().FromInstance(_skillPanelUI).AsSingle();
             if (_interactionManager) Container.Bind<InteractionManager>().FromInstance(_interactionManager).AsSingle();
-            if (_currencyManager) Container.Bind<CurrencyManager>().FromInstance(_currencyManager).AsSingle();
+            if (_battleCurrencyManager) Container.Bind<BattleCurrencyManager>().FromInstance(_battleCurrencyManager).AsSingle();
             if (_gridManager) Container.Bind<GridManager>().FromInstance(_gridManager).AsSingle();
             if (_skillManager) Container.Bind<SkillManager>().FromInstance(_skillManager).AsSingle();
             
             if (_gameManager) 
             {
                 Container.Bind<GameManager>().FromInstance(_gameManager).AsSingle();
-                Container.QueueForInject(_gameManager); // Ensure it gets injected
+                Container.QueueForInject(_gameManager);
             }
-            
             
             if (_cameraManager) Container.Bind<CameraManager>().FromInstance(_cameraManager).AsSingle();
             if (_enemyManager) Container.Bind<EnemyManager>().FromInstance(_enemyManager).AsSingle();
@@ -68,15 +65,8 @@ namespace MaouSamaTD.Installers
             if (_tutorialManager) Container.Bind<TutorialManager>().FromInstance(_tutorialManager).AsSingle();
             else Container.Bind<TutorialManager>().FromComponentInHierarchy().AsSingle();
 
-            // Bind GridGenerator using hierarchy search since it's not explicitly referenced in various installers
             Container.Bind<GridGenerator>().FromComponentInHierarchy().AsSingle();
-            
-            // Bind PathVisualizer
             Container.Bind<MaouSamaTD.Utils.PathVisualizer>().FromNewComponentOnNewGameObject().AsSingle();
-            
-            // If they can be null and we want to find them automatically:
-            // Container.Bind<UnitInspectorUI>().FromComponentInHierarchy().AsSingle();
-            // But explicit references are usually safer/cleaner for MonoInstallers.
         }
     }
 }

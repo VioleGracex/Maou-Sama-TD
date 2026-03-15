@@ -30,16 +30,7 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private Button _btnHome;
         [SerializeField] private Button _btnManifest;
 
-        [Header("Target UI Pages")]
-        [Tooltip("Assign the Campaign Page script here.")]
-        [SerializeField] private CampaignPage _campaignPage;
-        
-        [Tooltip("Assign the Barracks/Unit Selection panel here if it acts as the Vassals/Cohorts page.")]
-        [SerializeField] private UnitSelectionPanel _unitSelectionPanel;
-
-        [SerializeField] private SettingsPanel _settingsPanel;
-        [SerializeField] private QuickNavPanel _quickNavPanel;
-        [SerializeField] private MaouSamaTD.UI.Gacha.GachaPanel _gachaPanel;
+        // Panels are now looked up dynamically to ensure one source of truth.
 
         private void Start()
         {
@@ -72,40 +63,40 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnConquestClicked()
         {
-            if (_campaignPage != null)
+            var panel = Object.FindFirstObjectByType<CampaignPage>(FindObjectsInactive.Include);
+            if (panel != null)
             {
-                // This automatically triggers campaignPage.ResetState() inside UIFlowManager
-                UIFlowManager.Instance.OpenPanel(_campaignPage);
+                UIFlowManager.Instance.OpenPanel(panel);
             }
             else
             {
-                Debug.LogWarning("[HomeUIManager] Conquest clicked, but CampaignPage is not assigned!");
+                Debug.LogWarning("[HomeUIManager] Conquest clicked, but CampaignPage could not be found!");
             }
         }
 
         private void OnCohortsClicked()
         {
-            // If UnitSelectionPanel acts as Cohorts or Vassals
-            if (_unitSelectionPanel != null)
+            var panel = Object.FindFirstObjectByType<UnitSelectionPanel>(FindObjectsInactive.Include);
+            if (panel != null)
             {
-                UIFlowManager.Instance.OpenPanel(_unitSelectionPanel);
+                UIFlowManager.Instance.OpenPanel(panel);
             }
             else
             {
-                Debug.LogWarning("[HomeUIManager] Cohorts clicked, but UnitSelectionPanel is not assigned!");
+                Debug.LogWarning("[HomeUIManager] Cohorts clicked, but UnitSelectionPanel could not be found!");
             }
         }
 
         private void OnVassalsClicked()
         {
-            // If UnitSelectionPanel acts as Cohorts or Vassals
-            if (_unitSelectionPanel != null)
+            var panel = Object.FindFirstObjectByType<UnitSelectionPanel>(FindObjectsInactive.Include);
+            if (panel != null)
             {
-                UIFlowManager.Instance.OpenPanel(_unitSelectionPanel);
+                UIFlowManager.Instance.OpenPanel(panel);
             }
             else
             {
-                Debug.LogWarning("[HomeUIManager] Vassals clicked, but UnitSelectionPanel is not assigned!");
+                Debug.LogWarning("[HomeUIManager] Vassals clicked, but UnitSelectionPanel could not be found!");
             }
         }
 
@@ -118,17 +109,19 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnSettingsClicked()
         {
-            if (_settingsPanel != null)
+            var panel = Object.FindFirstObjectByType<SettingsPanel>(FindObjectsInactive.Include);
+            if (panel != null)
             {
-                UIFlowManager.Instance.OpenPanel(_settingsPanel);
+                UIFlowManager.Instance.OpenPanel(panel);
             }
         }
 
         private void OnQuickNavClicked()
         {
-            if (_quickNavPanel != null)
+            var panel = Object.FindFirstObjectByType<QuickNavPanel>(FindObjectsInactive.Include);
+            if (panel != null)
             {
-                UIFlowManager.Instance.OpenPanel(_quickNavPanel);
+                UIFlowManager.Instance.OpenPanel(panel);
             }
         }
 
@@ -141,9 +134,10 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnManifestClicked()
         {
-            if (_gachaPanel != null)
+            var panel = Object.FindFirstObjectByType<MaouSamaTD.UI.Gacha.GachaPanel>(FindObjectsInactive.Include);
+            if (panel != null)
             {
-                UIFlowManager.Instance.OpenPanel(_gachaPanel);
+                UIFlowManager.Instance.OpenPanel(panel);
             }
         }
     }

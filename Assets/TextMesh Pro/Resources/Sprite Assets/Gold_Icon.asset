@@ -25,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7cec06e77e964aa4cac15a5e60e5a74a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -53,22 +53,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84a92b25f83d49b9bc132d206b370281, type: 3}
-  m_Name: EmojiOne
+  m_Name: Gold_Icon
   m_EditorClassIdentifier: 
   m_Version: 1.1.0
   m_FaceInfo:
     m_FaceIndex: 0
     m_FamilyName: 
     m_StyleName: 
-    m_PointSize: 0
-    m_Scale: 0
+    m_PointSize: 1
+    m_Scale: 1
     m_UnitsPerEM: 0
     m_LineHeight: 0
-    m_AscentLine: 0
+    m_AscentLine: 1
     m_CapLine: 0
     m_MeanLine: 0
-    m_Baseline: 0
-    m_DescentLine: 0
+    m_Baseline: 1
+    m_DescentLine: 1
     m_SuperscriptOffset: 0
     m_SuperscriptSize: 0
     m_SubscriptOffset: 0
@@ -79,7 +79,7 @@ MonoBehaviour:
     m_StrikethroughThickness: 0
     m_TabWidth: 0
   m_Material: {fileID: 2103686}
-  spriteSheet: {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
+  spriteSheet: {fileID: 2800000, guid: 7cec06e77e964aa4cac15a5e60e5a74a, type: 3}
   m_SpriteCharacterTable:
   - m_ElementType: 2
     m_Unicode: 128522
@@ -142,7 +142,7 @@ MonoBehaviour:
     m_Scale: 1
     m_Name: 1f609
   - m_ElementType: 2
-    m_Unicode: 0
+    m_Unicode: 65534
     m_GlyphIndex: 12
     m_Scale: 1
     m_Name: .notdef
@@ -161,6 +161,11 @@ MonoBehaviour:
     m_GlyphIndex: 15
     m_Scale: 1
     m_Name: 2639
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 16
+    m_Scale: 1
+    m_Name: Gold_Icon
   m_GlyphTable:
   - m_Index: 0
     m_Metrics:
@@ -418,6 +423,22 @@ MonoBehaviour:
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
     sprite: {fileID: 0}
+  - m_Index: 16
+    m_Metrics:
+      m_Width: 512
+      m_Height: 512
+      m_HorizontalBearingX: -256
+      m_HorizontalBearingY: 256
+      m_HorizontalAdvance: 512
+    m_GlyphRect:
+      m_X: 0
+      m_Y: 0
+      m_Width: 512
+      m_Height: 512
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+    sprite: {fileID: 21300000, guid: 7cec06e77e964aa4cac15a5e60e5a74a, type: 3}
   spriteInfoList:
   - id: 0
     x: 0
@@ -643,9 +664,7 @@ MonoBehaviour:
     unicode: 9785
     pivot: {x: 0.5, y: 0.5}
     sprite: {fileID: 0}
-  fallbackSpriteAssets:
-  - {fileID: 11400000, guid: a6faa1e522800bc42b4c5b4392d2eb76, type: 2}
-  - {fileID: 11400000, guid: 9594f2b4711c3a24d849a0e9229f6f58, type: 2}
+  fallbackSpriteAssets: []
 --- !u!21 &1369835458
 Material:
   serializedVersion: 8

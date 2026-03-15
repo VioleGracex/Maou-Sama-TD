@@ -25,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
+        m_Texture: {fileID: 2800000, guid: 261d1a5bc92d1224ca0b6de54a90f257, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84a92b25f83d49b9bc132d206b370281, type: 3}
-  m_Name: EmojiOne
+  m_Name: BloodCrest_1
   m_EditorClassIdentifier: 
   m_Version: 1.1.0
   m_FaceInfo:
@@ -79,7 +79,7 @@ MonoBehaviour:
     m_StrikethroughThickness: 0
     m_TabWidth: 0
   m_Material: {fileID: 2103686}
-  spriteSheet: {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
+  spriteSheet: {fileID: 2800000, guid: 261d1a5bc92d1224ca0b6de54a90f257, type: 3}
   m_SpriteCharacterTable:
   - m_ElementType: 2
     m_Unicode: 128522
@@ -645,7 +645,6 @@ MonoBehaviour:
     sprite: {fileID: 0}
   fallbackSpriteAssets:
   - {fileID: 11400000, guid: a6faa1e522800bc42b4c5b4392d2eb76, type: 2}
-  - {fileID: 11400000, guid: 9594f2b4711c3a24d849a0e9229f6f58, type: 2}
 --- !u!21 &1369835458
 Material:
   serializedVersion: 8

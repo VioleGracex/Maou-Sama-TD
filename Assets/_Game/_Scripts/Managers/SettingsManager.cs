@@ -22,13 +22,6 @@ namespace MaouSamaTD.Managers
         public bool BatterySaveMode => _saveManager?.CurrentData?.Settings?.BatterySaveMode ?? false;
         public bool AntiAliasing => _saveManager?.CurrentData?.Settings?.AntiAliasing ?? true;
 
-        // Notification Settings
-        public bool ConfirmExitBase => _saveManager?.CurrentData?.Settings?.ConfirmExitBase ?? true;
-        public bool ShowDeploymentTips => _saveManager?.CurrentData?.Settings?.ShowDeploymentTips ?? true;
-        public bool ShowOutputStatistics => _saveManager?.CurrentData?.Settings?.ShowOutputStatistics ?? true;
-        public bool AutoResupply => _saveManager?.CurrentData?.Settings?.AutoResupply ?? true;
-        public bool ShowEarningStatistics => _saveManager?.CurrentData?.Settings?.ShowEarningStatistics ?? true;
-        public bool ShowFatigueStatistics => _saveManager?.CurrentData?.Settings?.ShowFatigueStatistics ?? true;
 
         private void Start()
         {
@@ -153,13 +146,6 @@ namespace MaouSamaTD.Managers
                 SaveSettings();
             }
         }
-
-        public void SetConfirmExitBase(bool enabled) { if (_saveManager?.CurrentData?.Settings != null) { _saveManager.CurrentData.Settings.ConfirmExitBase = enabled; SaveSettings(); } }
-        public void SetShowDeploymentTips(bool enabled) { if (_saveManager?.CurrentData?.Settings != null) { _saveManager.CurrentData.Settings.ShowDeploymentTips = enabled; SaveSettings(); } }
-        public void SetShowOutputStatistics(bool enabled) { if (_saveManager?.CurrentData?.Settings != null) { _saveManager.CurrentData.Settings.ShowOutputStatistics = enabled; SaveSettings(); } }
-        public void SetAutoResupply(bool enabled) { if (_saveManager?.CurrentData?.Settings != null) { _saveManager.CurrentData.Settings.AutoResupply = enabled; SaveSettings(); } }
-        public void SetShowEarningStatistics(bool enabled) { if (_saveManager?.CurrentData?.Settings != null) { _saveManager.CurrentData.Settings.ShowEarningStatistics = enabled; SaveSettings(); } }
-        public void SetShowFatigueStatistics(bool enabled) { if (_saveManager?.CurrentData?.Settings != null) { _saveManager.CurrentData.Settings.ShowFatigueStatistics = enabled; SaveSettings(); } }
 
         private void LoadSettings()
         {

@@ -24,7 +24,6 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("Tabs")]
         [SerializeField] private Button _btnGameTab;
         [SerializeField] private Button _btnAudioTab;
-        [SerializeField] private Button _btnNotificationTab;
         [SerializeField] private Button _btnAccountTab;
         [SerializeField] private Button _btnOthersTab;
         #endregion
@@ -33,7 +32,6 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("Pages")]
         [SerializeField] private GameObject _gamePage;
         [SerializeField] private GameObject _audioPage;
-        [SerializeField] private GameObject _notificationPage;
         [SerializeField] private GameObject _accountPage;
         [SerializeField] private GameObject _othersPage;
         #endregion
@@ -61,15 +59,6 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private CustomToggle _toggleVoice;
         #endregion
 
-        #region Notification Settings
-        [Header("Notification Toggles")]
-        [SerializeField] private CustomToggle _toggleConfirmExitBase;
-        [SerializeField] private CustomToggle _toggleDeploymentTips;
-        [SerializeField] private CustomToggle _toggleOutputStatistics;
-        [SerializeField] private CustomToggle _toggleAutoResupply;
-        [SerializeField] private CustomToggle _toggleEarningStatistics;
-        [SerializeField] private CustomToggle _toggleFatigueStatistics;
-        #endregion
         
         #region Account Settings
         [Header("Account Settings")]
@@ -117,18 +106,10 @@ namespace MaouSamaTD.UI.MainMenu
             if (_toggleAntiAliasing != null) _toggleAntiAliasing.OnValueChanged.AddListener(OnAntiAliasingToggle);
             if (_toggleBatterySave != null) _toggleBatterySave.OnValueChanged.AddListener(OnBatterySaveToggle);
 
-            if (_toggleConfirmExitBase != null) _toggleConfirmExitBase.OnValueChanged.AddListener(OnConfirmExitBaseToggle);
-            if (_toggleDeploymentTips != null) _toggleDeploymentTips.OnValueChanged.AddListener(OnDeploymentTipsToggle);
-            if (_toggleOutputStatistics != null) _toggleOutputStatistics.OnValueChanged.AddListener(OnOutputStatisticsToggle);
-            if (_toggleAutoResupply != null) _toggleAutoResupply.OnValueChanged.AddListener(OnAutoResupplyToggle);
-            if (_toggleEarningStatistics != null) _toggleEarningStatistics.OnValueChanged.AddListener(OnEarningStatisticsToggle);
-            if (_toggleFatigueStatistics != null) _toggleFatigueStatistics.OnValueChanged.AddListener(OnFatigueStatisticsToggle);
-
             if (_btnBack != null) _btnBack.onClick.AddListener(OnBackClicked);
 
             if (_btnGameTab != null) _btnGameTab.onClick.AddListener(() => SwitchTab(SettingsTab.Game));
             if (_btnAudioTab != null) _btnAudioTab.onClick.AddListener(() => SwitchTab(SettingsTab.Audio));
-            if (_btnNotificationTab != null) _btnNotificationTab.onClick.AddListener(() => SwitchTab(SettingsTab.Notification));
             if (_btnAccountTab != null) _btnAccountTab.onClick.AddListener(() => SwitchTab(SettingsTab.Account));
             if (_btnOthersTab != null) _btnOthersTab.onClick.AddListener(() => SwitchTab(SettingsTab.Others));
 
@@ -200,13 +181,6 @@ namespace MaouSamaTD.UI.MainMenu
                 if (_sliderVoice != null) _sliderVoice.Interactable = _audioManager.VoiceEnabled;
             }
 
-            // Notifications
-            if (_toggleConfirmExitBase != null) _toggleConfirmExitBase.SetIsOnWithoutNotify(_settingsManager.ConfirmExitBase);
-            if (_toggleDeploymentTips != null) _toggleDeploymentTips.SetIsOnWithoutNotify(_settingsManager.ShowDeploymentTips);
-            if (_toggleOutputStatistics != null) _toggleOutputStatistics.SetIsOnWithoutNotify(_settingsManager.ShowOutputStatistics);
-            if (_toggleAutoResupply != null) _toggleAutoResupply.SetIsOnWithoutNotify(_settingsManager.AutoResupply);
-            if (_toggleEarningStatistics != null) _toggleEarningStatistics.SetIsOnWithoutNotify(_settingsManager.ShowEarningStatistics);
-            if (_toggleFatigueStatistics != null) _toggleFatigueStatistics.SetIsOnWithoutNotify(_settingsManager.ShowFatigueStatistics);
 
             if (_dropdownQuality != null) _dropdownQuality.SetValueWithoutNotify(_settingsManager.QualityLevel);
             if (_togglePerformance != null) _togglePerformance.SetIsOnWithoutNotify(_settingsManager.PerformanceOptimization);
@@ -233,14 +207,12 @@ namespace MaouSamaTD.UI.MainMenu
         {
             if (_gamePage != null) _gamePage.SetActive(tab == SettingsTab.Game);
             if (_audioPage != null) _audioPage.SetActive(tab == SettingsTab.Audio);
-            if (_notificationPage != null) _notificationPage.SetActive(tab == SettingsTab.Notification);
             if (_accountPage != null) _accountPage.SetActive(tab == SettingsTab.Account);
             if (_othersPage != null) _othersPage.SetActive(tab == SettingsTab.Others);
             
             // Update button visual states
             UpdateTabButton(_btnGameTab, tab == SettingsTab.Game);
             UpdateTabButton(_btnAudioTab, tab == SettingsTab.Audio);
-            UpdateTabButton(_btnNotificationTab, tab == SettingsTab.Notification);
             UpdateTabButton(_btnAccountTab, tab == SettingsTab.Account);
             UpdateTabButton(_btnOthersTab, tab == SettingsTab.Others);
         }
@@ -332,12 +304,6 @@ namespace MaouSamaTD.UI.MainMenu
             if (_wipeConfirmationPopup != null) _wipeConfirmationPopup.SetActive(false);
         }
 
-        private void OnConfirmExitBaseToggle(bool val) => _settingsManager.SetConfirmExitBase(val);
-        private void OnDeploymentTipsToggle(bool val) => _settingsManager.SetShowDeploymentTips(val);
-        private void OnOutputStatisticsToggle(bool val) => _settingsManager.SetShowOutputStatistics(val);
-        private void OnAutoResupplyToggle(bool val) => _settingsManager.SetAutoResupply(val);
-        private void OnEarningStatisticsToggle(bool val) => _settingsManager.SetShowEarningStatistics(val);
-        private void OnFatigueStatisticsToggle(bool val) => _settingsManager.SetShowFatigueStatistics(val);
 
         private void OnPerformanceToggle(bool val) => _settingsManager.SetPerformanceOptimization(val);
         private void OnFPSToggle(bool val) => _settingsManager.SetTargetFPS(val ? 60 : 30);
@@ -356,7 +322,6 @@ namespace MaouSamaTD.UI.MainMenu
         {
             Game,
             Audio,
-            Notification,
             Account,
             Others
         }

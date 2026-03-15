@@ -53,13 +53,7 @@ namespace MaouSamaTD.Data
         public bool SFXEnabled = true;
         public bool VoiceEnabled = true;
 
-        // Notifications
-        public bool ConfirmExitBase = true;
-        public bool ShowDeploymentTips = true;
-        public bool ShowOutputStatistics = true;
-        public bool AutoResupply = true;
-        public bool ShowEarningStatistics = true;
-        public bool ShowFatigueStatistics = true;
+        // Notifications (Removed)
     }
 
     [Serializable]

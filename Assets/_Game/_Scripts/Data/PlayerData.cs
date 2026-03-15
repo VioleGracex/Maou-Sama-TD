@@ -10,7 +10,9 @@ namespace MaouSamaTD.Data
         public List<string> CompletedLevels = new List<string>();
         // Using List of structs for JsonUtility compatibility instead of Dictionary
         public List<LevelStarData> LevelStars = new List<LevelStarData>();
-        public List<string> UnlockedUnits = new List<string>();
+        public List<string> UnlockedUnits = new List<string>(); // Legacy / Discovery list
+        public List<UnitInventoryEntry> UnitInventory = new List<UnitInventoryEntry>();
+        
         public int Gold;
         public int BloodCrest;
         public bool IsLilithAwakened;
@@ -97,6 +99,24 @@ namespace MaouSamaTD.Data
         {
             ActivityName = activityName;
             Count = count;
+        }
+    }
+
+    [Serializable]
+    public class UnitInventoryEntry
+    {
+        public string InstanceID; // Unique GUID for this specific instance
+        public string UnitID;     // ID/Name of the UnitData asset
+        public int Level = 1;
+        public int Potential = 0;  // Arknights-style potential (from duplicates)
+        public int Experience = 0;
+        public long AcquisitionDate;
+
+        public UnitInventoryEntry(string unitID)
+        {
+            InstanceID = Guid.NewGuid().ToString();
+            UnitID = unitID;
+            AcquisitionDate = DateTime.UtcNow.Ticks;
         }
     }
 

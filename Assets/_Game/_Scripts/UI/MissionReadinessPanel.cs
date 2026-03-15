@@ -28,6 +28,9 @@ namespace MaouSamaTD.UI
         [SerializeField] private Button _removeAllButton;
         [SerializeField] private Button _barracksButton;
 
+        [Header("Locked Mode")]
+        [SerializeField] private GameObject _noEditBlocker;
+
 
         [Inject] private MaouSamaTD.Managers.GameSelectionState _selectionState;
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
@@ -116,7 +119,7 @@ namespace MaouSamaTD.UI
                     Debug.Log($"[MissionReadinessPanel] Free cohort mode.");
                 }
                 
-                int squadSize = 10;
+                int squadSize = 11;
                 while (_lockedUnitIDs.Count < squadSize) _lockedUnitIDs.Add(""); 
                 
                 if (!_isLockedMode && _playerData != null && _playerData.Cohorts.Count > 0)
@@ -130,6 +133,11 @@ namespace MaouSamaTD.UI
                 }
             }
 
+            if (_noEditBlocker != null)
+            {
+                _noEditBlocker.SetActive(_isLockedMode);
+            }
+
             SetUIState();
             RefreshUI();
         }
@@ -137,6 +145,9 @@ namespace MaouSamaTD.UI
         public void Close()
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
+            
+            // Ensure barracks/selection is also off
+            if (_unitSelectionController != null) _unitSelectionController.Close();
         }
 
         public void ResetState()
@@ -201,8 +212,8 @@ namespace MaouSamaTD.UI
 
         private void OnSlotClicked(int index)
         {
-            if (index < 10 && _isLockedMode) return;
-            if (index == 10 && _currentLevel != null && _currentLevel.IsAssistantLocked) return;
+            if (index < 11 && _isLockedMode) return;
+            if (index == 11 && _currentLevel != null && _currentLevel.IsAssistantLocked) return;
 
             if (_unitSelectionController != null)
             {
@@ -235,7 +246,7 @@ namespace MaouSamaTD.UI
                 string unitID = "";
                 bool isSlotLocked = false;
 
-                if (i < 10)
+                if (i < 11)
                 {
                     if (_isLockedMode)
                     {
@@ -251,7 +262,7 @@ namespace MaouSamaTD.UI
                         unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
                     }
                 }
-                else if (i == 10) // Assistant Slot
+                else if (i == 11) // Assistant Slot
                 {
                     if (_currentLevel != null && _currentLevel.IsAssistantLocked)
                     {
@@ -261,7 +272,7 @@ namespace MaouSamaTD.UI
                     else if (_playerData.Cohorts.Count > 0)
                     {
                         var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-                        // Assuming 11th slot in cohort data, or handle independently if it doesn't exist
+                        // Assuming 12th slot in cohort data, or handle independently if it doesn't exist
                         unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
                     }
                 }
@@ -310,7 +321,7 @@ namespace MaouSamaTD.UI
              {
                  string unitID = "";
 
-                 if (i < 10)
+                 if (i < 11)
                  {
                      if (_isLockedMode && _lockedUnitIDs.Count > i)
                      {
@@ -322,7 +333,7 @@ namespace MaouSamaTD.UI
                          unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
                      }
                  }
-                 else if (i == 10)
+                 else if (i == 11)
                  {
                      if (_currentLevel != null && _currentLevel.IsAssistantLocked)
                      {
@@ -381,7 +392,7 @@ namespace MaouSamaTD.UI
              {
                  var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
                  
-                 int squadSize = Mathf.Min(10, _preassignedSlots.Count);
+                 int squadSize = Mathf.Min(11, _preassignedSlots.Count);
 
                  _unitSelectionController.OpenMultiSelect(cohort.UnitIDs, squadSize, (selectedIds) => 
                  {

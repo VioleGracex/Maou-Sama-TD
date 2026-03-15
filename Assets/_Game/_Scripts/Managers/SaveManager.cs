@@ -187,7 +187,25 @@ namespace MaouSamaTD.Managers
             }
 
             Debug.Log("[SaveManager] Lilith has been awakened! Sovereign power regained.");
+            UnlockUnit("Lilith");
             Save();
+        }
+
+        public void UnlockUnit(string unitID)
+        {
+            if (CurrentData == null) return;
+            
+            if (!CurrentData.UnlockedUnits.Contains(unitID))
+            {
+                CurrentData.UnlockedUnits.Add(unitID);
+            }
+            
+            // Add to instance inventory if not already there (for unique starter/gift units)
+            // Note: Gacha handles its own inventory addition, this is for guaranteed/story unlocks
+            if (!CurrentData.UnitInventory.Exists(x => x.UnitID == unitID))
+            {
+                CurrentData.UnitInventory.Add(new UnitInventoryEntry(unitID));
+            }
         }
 
         public bool IsLevelCompleted(string levelID)
@@ -247,11 +265,8 @@ namespace MaouSamaTD.Managers
             CurrentData = new PlayerData();
             CurrentData.Gold = 0;
             CurrentData.BloodCrest = 0;
-            CurrentData.UnlockedUnits = new List<string>()
-            {
-                "Ignis", 
-                
-            }; 
+            CurrentData.UnlockedUnits = new List<string>() { "Ignis" }; 
+            CurrentData.UnitInventory = new List<UnitInventoryEntry>() { new UnitInventoryEntry("Ignis") };
             
             Debug.Log($"[SaveManager] Created New Save Data. Granted Default Units: {string.Join(", ", CurrentData.UnlockedUnits)}");
             Save();

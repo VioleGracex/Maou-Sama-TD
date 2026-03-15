@@ -27,6 +27,8 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("Global Header Buttons")]
         [SerializeField] private Button _btnSettings;
         [SerializeField] private Button _btnQuickNav;
+        [SerializeField] private Button _btnHome;
+        [SerializeField] private Button _btnManifest;
 
         [Header("Target UI Pages")]
         [Tooltip("Assign the Campaign Page script here.")]
@@ -37,6 +39,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         [SerializeField] private SettingsPanel _settingsPanel;
         [SerializeField] private QuickNavPanel _quickNavPanel;
+        [SerializeField] private MaouSamaTD.UI.Gacha.GachaPanel _gachaPanel;
 
         private void Start()
         {
@@ -53,6 +56,8 @@ namespace MaouSamaTD.UI.MainMenu
 
             if (_btnSettings != null) _btnSettings.onClick.AddListener(OnSettingsClicked);
             if (_btnQuickNav != null) _btnQuickNav.onClick.AddListener(OnQuickNavClicked);
+            if (_btnHome != null) _btnHome.onClick.AddListener(OnHomeClicked);
+            if (_btnManifest != null) _btnManifest.onClick.AddListener(OnManifestClicked);
         }
 
         public void Open()
@@ -124,6 +129,21 @@ namespace MaouSamaTD.UI.MainMenu
             if (_quickNavPanel != null)
             {
                 UIFlowManager.Instance.OpenPanel(_quickNavPanel);
+            }
+        }
+
+        private void OnHomeClicked()
+        {
+            // Clear all panel history and return to Home root
+            UIFlowManager.Instance.ClearHistory(true);
+            Open();
+        }
+
+        private void OnManifestClicked()
+        {
+            if (_gachaPanel != null)
+            {
+                UIFlowManager.Instance.OpenPanel(_gachaPanel);
             }
         }
     }

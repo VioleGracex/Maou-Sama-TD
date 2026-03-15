@@ -24,13 +24,13 @@ namespace MaouSamaTD.Levels
         [Tooltip("List of rewards granted upon clearing the level for the first time or repeatedly (depending on logic).")]
         public List<LevelReward> WinRewards = new List<LevelReward>();
         
-        [Tooltip("If populated, forces the player to use this specific cohort for the first 10 slots. Existing cohort selection is ignored.")]
+        [Tooltip("If populated, forces the player to use this specific cohort for the first 11 slots. Existing cohort selection is ignored.")]
         public List<MaouSamaTD.Units.UnitData> PremadeCohort;
         [Tooltip("If true, the player cannot change the premade cohort slots.")]
         public bool IsCohortLocked = true;
 
         [Space]
-        [Tooltip("The 11th specific assistant/friend unit provided for this level.")]
+        [Tooltip("The 12th specific assistant/friend unit provided for this level.")]
         public MaouSamaTD.Units.UnitData SupportAssistant;
         [Tooltip("If true, the player cannot swap out the support assistant.")]
         public bool IsAssistantLocked = true;

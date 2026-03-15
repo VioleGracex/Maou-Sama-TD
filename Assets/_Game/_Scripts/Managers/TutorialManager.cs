@@ -24,6 +24,7 @@ namespace MaouSamaTD.Managers
         [Inject] private UnitInspectorUI _unitInspectorUI;
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private BattleCurrencyManager _currencyManager;
+        [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
         #endregion
 
         #region Serialized Settings
@@ -262,6 +263,26 @@ namespace MaouSamaTD.Managers
                                 else
                                 {
                                     if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand GrantMaxSeals: BattleCurrencyManager dependency is missing!");
+                                }
+                            }
+                            else if (step.ActionKey == "AwakenLilith")
+                            {
+                                if (_saveManager != null)
+                                {
+                                    _saveManager.AwakenLilith();
+                                    
+                                    // Also ensure her button appears in DeploymentUI if it's there
+                                    if (_deploymentUI != null)
+                                    {
+                                        var lilithData = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID("Lilith");
+                                        if (lilithData != null)
+                                        {
+                                            _deploymentUI.AddUnit(lilithData);
+                                            _deploymentUI.SetUnitButtonVisibility("Lilith", true);
+                                        }
+                                    }
+                                    
+                                    if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: AwakenLilith executed.");
                                 }
                             }
                             else if (step.ActionKey == "SetUnitButtonActive")

@@ -43,6 +43,10 @@ namespace MaouSamaTD.UI.MainMenu
         public void Close()
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
+            
+            // Explicitly close sub-panels/overlays when the main page closes
+            if (_briefingPanel != null) _briefingPanel.Close();
+            if (_missionReadinessUI != null) _missionReadinessUI.Close();
         }
 
         public void ResetState()

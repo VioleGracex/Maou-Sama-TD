@@ -129,6 +129,23 @@ namespace MaouSamaTD.UI
                 UpdateSealsUI(_currencyManager.CurrentSeals);
         }
 
+        public void AddUnit(UnitData unit)
+        {
+            if (unit == null || _availableUnits.Contains(unit)) return;
+            
+            _availableUnits.Add(unit);
+            
+            // Instantiate button
+            GameObject btnObj = _container.InstantiatePrefab(_buttonPrefab, _barContainer);
+            UnitButtonUI btnUI = btnObj.GetComponent<UnitButtonUI>();
+            if (btnUI == null) btnUI = btnObj.AddComponent<UnitButtonUI>();
+
+            btnUI.Initialize(unit);
+            _unitButtons.Add(btnUI);
+            
+            RefreshButtonsState();
+        }
+
         private void GenerateButtons()
         {
             if (_barContainer == null) return;

@@ -167,6 +167,9 @@ namespace MaouSamaTD.UI.MainMenu
         public void Close()
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
+            
+            // Ensure any open popups are also closed
+            if (_wipeConfirmationPopup != null) _wipeConfirmationPopup.SetActive(false);
         }
 
         public void ResetState()

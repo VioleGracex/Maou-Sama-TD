@@ -8,6 +8,7 @@ namespace MaouSamaTD.UI
     public class UnitCardSlot : MonoBehaviour
     {
         [SerializeField] private GameObject _emptyVisual; // Visual graphic representing empty state ("+")
+        [SerializeField] private TextMeshProUGUI _emptySlotText; // Text for empty state ("ASSIGN SLOT X")
         [SerializeField] private MaouSamaTD.UI.MainMenu.UnitCardUI _unitCardUI; // The pre-placed unit card child object
         [SerializeField] private Button _button;
         
@@ -23,11 +24,22 @@ namespace MaouSamaTD.UI
         public void SetIndex(int index)
         {
             Index = index;
+            UpdateEmptyText();
+        }
+
+        private void UpdateEmptyText()
+        {
+            if (_emptySlotText != null)
+            {
+                // Localization key: UI_COHORT_SLOT_ASSIGN
+                _emptySlotText.text = Assets.SimpleLocalization.Scripts.LocalizationManager.Localize("UI_COHORT_SLOT_ASSIGN", Index + 1);
+            }
         }
 
         public void SetUnit(MaouSamaTD.Units.UnitData unitData)
         {
             if (_emptyVisual != null) _emptyVisual.SetActive(false);
+            if (_emptySlotText != null) _emptySlotText.gameObject.SetActive(false);
 
             if (_unitCardUI != null)
             {
@@ -43,6 +55,11 @@ namespace MaouSamaTD.UI
         public void SetEmpty()
         {
             if (_emptyVisual != null) _emptyVisual.SetActive(true);
+            if (_emptySlotText != null) 
+            {
+                _emptySlotText.gameObject.SetActive(true);
+                UpdateEmptyText();
+            }
 
             if (_unitCardUI != null)
             {

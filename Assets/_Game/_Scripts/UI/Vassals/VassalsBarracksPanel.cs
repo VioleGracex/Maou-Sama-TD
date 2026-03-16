@@ -4,6 +4,8 @@ using TMPro;
 using System.Collections.Generic;
 using MaouSamaTD.Data;
 using MaouSamaTD.UI.MainMenu;
+using Zenject;
+using DG.Tweening;
 
 namespace MaouSamaTD.UI.Vassals
 {
@@ -21,6 +23,13 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private GameObject _filterContainer;
         [SerializeField] private TextMeshProUGUI _unitCountText;
 
+        [Header("Layout Animation")]
+        [SerializeField] private RectTransform _scrollViewRect;
+        [SerializeField] private float _expandedPaddingLeft = 0f;
+        [SerializeField] private float _squeezedPaddingLeft = 400f;
+        [SerializeField] private float _paddingTop = 100f;
+        [SerializeField] private float _paddingBottom = 0f;
+
         [Header("Sub Panels")]
         [SerializeField] private UnitInspectorPanel _inspectorPanel;
 
@@ -35,6 +44,15 @@ namespace MaouSamaTD.UI.Vassals
         public bool AddsToHistory => true;
         public Button CloseButton => _btnClose;
         public Button LevelUpButton => _btnLevelUp;
+
+        public void Awake()
+        {
+            if (_btnClose == null)
+            {
+                var btnTr = transform.Find("Header/Back_MissionReady_Btn");
+                if (btnTr != null) _btnClose = btnTr.GetComponent<Button>();
+            }
+        }
 
         public void Open()
         {
@@ -54,6 +72,7 @@ namespace MaouSamaTD.UI.Vassals
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
             if (_inspectorPanel != null) _inspectorPanel.Close();
+            UpdateScrollRectLayout(false);
         }
     
         public bool RequestClose()
@@ -62,10 +81,10 @@ namespace MaouSamaTD.UI.Vassals
             if (_inspectorPanel != null && _inspectorPanel.VisualRoot != null && _inspectorPanel.VisualRoot.activeSelf)
             {
                 _inspectorPanel.Close();
+                UpdateScrollRectLayout(false);
                 return false;
             }
 
-            UIFlowManager.Instance.GoBack();
             return true;
         }
 
@@ -74,17 +93,44 @@ namespace MaouSamaTD.UI.Vassals
             if (_inspectorPanel != null) _inspectorPanel.ResetState();
         }
 
+        [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
+
         public void RefreshInventory()
         {
-            // Clear existing
-            foreach (var card in _spawnedCards)
+            if (_cardContainer == null || _cardPrefab == null) return;
+
+            // Get owned units
+            List<string> ownedIDs = new List<string>();
+            if (_saveManager != null && _saveManager.CurrentData != null)
             {
-                if (card != null) card.gameObject.SetActive(false);
+                ownedIDs = _saveManager.CurrentData.UnlockedUnits;
             }
 
-            // Logic to fetch units from PlayerData and spawn/reuse cards
-            // This will be expanded in the next steps
-            Debug.Log("[VassalsBarracksPanel] Refreshing Inventory...");
+            // Reuse/Spawn cards
+            while (_spawnedCards.Count < ownedIDs.Count)
+            {
+                var card = Instantiate(_cardPrefab, _cardContainer);
+                _spawnedCards.Add(card);
+            }
+
+            for (int i = 0; i < _spawnedCards.Count; i++)
+            {
+                var card = _spawnedCards[i];
+                if (i < ownedIDs.Count)
+                {
+                    var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(ownedIDs[i]);
+                    if (unit != null)
+                    {
+                        card.gameObject.SetActive(true);
+                        card.Setup(unit, OnCardClicked);
+                    }
+                    else card.gameObject.SetActive(false);
+                }
+                else card.gameObject.SetActive(false);
+            }
+
+            if (_unitCountText != null)
+                _unitCountText.text = $"VASSALS: {ownedIDs.Count}";
         }
 
         private void OnCardClicked(UnitCardUI card)
@@ -92,7 +138,23 @@ namespace MaouSamaTD.UI.Vassals
             if (_inspectorPanel != null)
             {
                 _inspectorPanel.Open(card.Data);
+                UpdateScrollRectLayout(true);
             }
+        }
+
+        private void UpdateScrollRectLayout(bool isDetailsOpen)
+        {
+            if (_scrollViewRect == null) return;
+            DOTween.Kill(_scrollViewRect);
+
+            float targetLeft = isDetailsOpen ? _squeezedPaddingLeft : _expandedPaddingLeft;
+            float targetRight = 0f; 
+            
+            Vector2 targetMin = new Vector2(targetLeft, _paddingBottom);
+            Vector2 targetMax = new Vector2(-targetRight, -_paddingTop);
+
+            DOTween.To(() => _scrollViewRect.offsetMin, x => _scrollViewRect.offsetMin = x, targetMin, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
+            DOTween.To(() => _scrollViewRect.offsetMax, x => _scrollViewRect.offsetMax = x, targetMax, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
         }
     }
 }

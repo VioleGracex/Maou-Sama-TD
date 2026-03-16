@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using Zenject;
 using System.Linq;
+using MaouSamaTD.Data;
+using MaouSamaTD.UI.MainMenu;
+using Zenject;
 
 namespace MaouSamaTD.UI
 {
@@ -31,11 +33,11 @@ namespace MaouSamaTD.UI
         [SerializeField] private Button _removeAllButton;
         [SerializeField] private Button _barracksButton;
 
-        [Header("Confirmation UI")]
+        [Header("Unsaved Changes Popup")]
         [SerializeField] private GameObject _unsavedChangesPopup;
-        [SerializeField] private Button _confirmExitButton;
-        [SerializeField] private Button _cancelExitButton;
-
+        [SerializeField] private Button _confirmLeaveButton;
+        [SerializeField] private Button _cancelLeaveButton;
+        
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
 
         private MaouSamaTD.Data.PlayerData _playerData;
@@ -45,15 +47,24 @@ namespace MaouSamaTD.UI
         #endregion
 
         #region Unity Methods
+        private void Awake()
+        {
+            if (_unitSelectionController == null)
+            {
+                var selectionPanel = GetComponentInChildren<UnitSelectionPanel>(true);
+                if (selectionPanel != null) _unitSelectionController = selectionPanel;
+            }
+        }
+
         private void Start()
         {
-            if (_saveButton != null) _saveButton.onClick.AddListener(SaveCurrentCohort);
+            if (_saveButton != null) _saveButton.onClick.AddListener(SaveCohort);
             if (_backButton != null) _backButton.onClick.AddListener(OnBackClicked);
             if (_removeAllButton != null) _removeAllButton.onClick.AddListener(OnRemoveAllClicked);
             if (_barracksButton != null) _barracksButton.onClick.AddListener(OnBarracksClicked);
             
-            if (_confirmExitButton != null) _confirmExitButton.onClick.AddListener(OnConfirmDiscardExit);
-            if (_cancelExitButton != null) _cancelExitButton.onClick.AddListener(() => _unsavedChangesPopup.SetActive(false));
+            if (_confirmLeaveButton != null) _confirmLeaveButton.onClick.AddListener(OnConfirmLeave);
+            if (_cancelLeaveButton != null) _cancelLeaveButton.onClick.AddListener(OnCancelLeave);
 
             InitializeData();
             SetupSlots();
@@ -91,8 +102,8 @@ namespace MaouSamaTD.UI
                 if (_unsavedChangesPopup != null)
                 {
                     _unsavedChangesPopup.SetActive(true);
+                    return false;
                 }
-                return false;
             }
             return true;
         }
@@ -110,10 +121,27 @@ namespace MaouSamaTD.UI
             {
                 // Fallback for safety/editor testing
                 _playerData = new MaouSamaTD.Data.PlayerData();
-                if (_playerData.Cohorts.Count == 0)
+            }
+
+            // Ensure cohort list exists and has at least 4 teams
+            if (_playerData.Cohorts == null)
+            {
+                _playerData.Cohorts = new List<MaouSamaTD.Data.CohortData>();
+            }
+
+            if (_playerData.Cohorts.Count < 4)
+            {
+                int needed = 4 - _playerData.Cohorts.Count;
+                for (int i = 0; i < needed; i++)
                 {
-                    for (int i = 0; i < 4; i++) _playerData.Cohorts.Add(new MaouSamaTD.Data.CohortData($"Cohort {i + 1}"));
+                    _playerData.Cohorts.Add(new MaouSamaTD.Data.CohortData($"Cohort {_playerData.Cohorts.Count + 1}"));
                 }
+            }
+
+            // Clamp current cohort index to valid range
+            if (_playerData.CurrentCohortIndex < 0 || _playerData.CurrentCohortIndex >= _playerData.Cohorts.Count)
+            {
+                _playerData.CurrentCohortIndex = 0;
             }
         }
 
@@ -224,7 +252,7 @@ namespace MaouSamaTD.UI
             }
         }
 
-        private void SaveCurrentCohort()
+        private void SaveCohort()
         {
             if (!_isDirty) return;
 
@@ -247,6 +275,18 @@ namespace MaouSamaTD.UI
         {
             _isDirty = false;
             UIFlowManager.Instance.GoBack(true);
+        }
+
+        private void OnConfirmLeave()
+        {
+            _isDirty = false;
+            if (_unsavedChangesPopup != null) _unsavedChangesPopup.SetActive(false);
+            UIFlowManager.Instance.GoBack();
+        }
+
+        private void OnCancelLeave()
+        {
+            if (_unsavedChangesPopup != null) _unsavedChangesPopup.SetActive(false);
         }
 
         private void OnRemoveAllClicked()

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Zenject;
+using MaouSamaTD.Core;
 
 namespace MaouSamaTD.UI
 {
@@ -27,6 +28,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private Button _backButton;
         [SerializeField] private Button _removeAllButton;
         [SerializeField] private Button _barracksButton;
+        [SerializeField] private Button _resetButton;
 
         [Header("Locked Mode")]
         [SerializeField] private GameObject _noEditBlocker;
@@ -37,8 +39,10 @@ namespace MaouSamaTD.UI
 
         private MaouSamaTD.Data.PlayerData _playerData;  
         private MaouSamaTD.Levels.LevelData _currentLevel;
+        
+        private List<string> _currentSquadUnitIDs = new List<string>();
+        private int _selectedCohortIndex = -1; // -1 = Premade/Custom, 0-3 = Saved Cohorts
         private bool _isLockedMode = false;
-        private List<string> _lockedUnitIDs = new List<string>();
         #endregion
 
         #region Unity Methods
@@ -48,96 +52,71 @@ namespace MaouSamaTD.UI
             if (_backButton != null) _backButton.onClick.AddListener(() => UIFlowManager.Instance.GoBack());
             if (_removeAllButton != null) _removeAllButton.onClick.AddListener(OnRemoveAllClicked);
             if (_barracksButton != null) _barracksButton.onClick.AddListener(OnBarracksClicked);
+            if (_resetButton != null) _resetButton.onClick.AddListener(ResetToDefault);
 
-            if (_playerData == null)
-            {
-                 _playerData = new MaouSamaTD.Data.PlayerData(); 
-                if (_playerData.Cohorts.Count == 0)
-                {
-                    for (int i = 0; i < 4; i++) _playerData.Cohorts.Add(new MaouSamaTD.Data.CohortData($"Cohort {i + 1}"));
-                }
-            }
-
+            InitializePlayerData();
             SetupSlots();
             SetupCohortButtons();
-            RefreshUI();
         }
         #endregion
 
         #region Public Methods
         public void Open()
         {
-            if (_visualRoot == null)
-            {
-                Debug.LogError($"[UIFlow] {gameObject.name} (MissionReadinessPanel) cannot open! _visualRoot is not assigned in the Inspector.");
-                return;
-            }
+            if (_visualRoot == null) return;
             _visualRoot.SetActive(true);
             RefreshUI();
         }
 
         public void Open(MaouSamaTD.Levels.LevelData level)
         {
-            if (_visualRoot == null)
-            {
-                Debug.LogError($"[UIFlow] {gameObject.name} (MissionReadinessPanel) cannot open! _visualRoot is not assigned in the Inspector.");
-                return;
-            }
+            if (_visualRoot == null) return;
             _visualRoot.SetActive(true);
 
             _currentLevel = level;
-            
-            _isLockedMode = false;
-            _lockedUnitIDs.Clear();
+            InitializePlayerData();
             
             if (_titleText != null)
-            {
                 _titleText.text = level != null ? level.LevelName : "MISSION READINESS";
-            }
+
+            // Initialize Temporary Squad
+            _currentSquadUnitIDs.Clear();
+            _isLockedMode = level != null && level.IsCohortLocked;
+
+            bool hasPremade = level != null && level.PremadeCohort != null && level.PremadeCohort.Count > 0;
             
-            if (_currentLevel != null)
+            if (hasPremade)
             {
-                // Fix: Only lock if the boolean is explicitly true in LevelData
-                _isLockedMode = _currentLevel.IsCohortLocked;
-                Debug.Log($"[MissionReadinessPanel] Opening level '{_currentLevel.LevelName}'. IsLockedMode: {_isLockedMode}");
-                
-                bool hasPremade = _currentLevel.PremadeCohort != null && _currentLevel.PremadeCohort.Count > 0;
-                if (hasPremade)
-                {
-                    Debug.Log($"[MissionReadinessPanel] Premade cohort found. Units count: {_currentLevel.PremadeCohort.Count}");
-                    foreach (var unit in _currentLevel.PremadeCohort)
-                    {
-                        string idToUse = "";
-                        if (unit != null) 
-                        {
-                            idToUse = string.IsNullOrEmpty(unit.UniqueID) ? unit.name : unit.UniqueID;
-                        }
-                        _lockedUnitIDs.Add(idToUse);
-                    }
-                }
-                
-                int squadSize = 11;
-                while (_lockedUnitIDs.Count < squadSize) _lockedUnitIDs.Add(""); 
-                
-                // Fix: Only overwrite player data if a premade cohort is actually provided 
-                // OR if it's locked (so the UI shows the fixed units)
-                if ((hasPremade || _isLockedMode) && _playerData != null && _playerData.Cohorts.Count > 0)
-                {
-                    var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-                    for(int i = 0; i < squadSize; i++)
-                    {
-                        if (cohort.UnitIDs.Count > i) cohort.UnitIDs[i] = _lockedUnitIDs[i];
-                        else cohort.UnitIDs.Add(_lockedUnitIDs[i]); 
-                    }
-                }
+                LoadPremadeCohort();
+                _selectedCohortIndex = -1;
+            }
+            else
+            {
+                _selectedCohortIndex = _playerData.CurrentCohortIndex;
+                LoadSavedCohort(_selectedCohortIndex);
             }
 
             if (_noEditBlocker != null)
-            {
                 _noEditBlocker.SetActive(_isLockedMode);
-            }
 
-            SetUIState();
+            UpdateButtonsInteractable();
+            RefreshUI();
+        }
+
+        public void ResetToDefault()
+        {
+            if (_currentLevel == null) return;
+            
+            if (_currentLevel.PremadeCohort != null && _currentLevel.PremadeCohort.Count > 0)
+            {
+                LoadPremadeCohort();
+                _selectedCohortIndex = -1;
+            }
+            else
+            {
+                LoadSavedCohort(_playerData.CurrentCohortIndex);
+                _selectedCohortIndex = _playerData.CurrentCohortIndex;
+            }
             RefreshUI();
         }
 
@@ -146,46 +125,73 @@ namespace MaouSamaTD.UI
             if (_visualRoot != null) _visualRoot.SetActive(false);
         }
 
-        public void ResetState()
-        {
-            // Specifically requested to not wipe the loaded data when re-opening
-            // _currentLevel = null;
-            // _isLockedMode = false;
-            // if (_lockedUnitIDs != null) _lockedUnitIDs.Clear();
-        }
+        public void ResetState() { }
 
         public bool RequestClose() => true;
         #endregion
 
         #region Private Methods
-        private void SetUIState()
+        private void InitializePlayerData()
         {
-            bool interactable = !_isLockedMode;
+            if (_saveManager != null) _playerData = _saveManager.CurrentData;
             
+            if (_playerData == null)
+            {
+                _playerData = new MaouSamaTD.Data.PlayerData();
+            }
+
+            if (_playerData.Cohorts == null) _playerData.Cohorts = new List<MaouSamaTD.Data.CohortData>();
+            if (_playerData.Cohorts.Count < 4)
+            {
+                for (int i = _playerData.Cohorts.Count; i < 4; i++)
+                    _playerData.Cohorts.Add(new MaouSamaTD.Data.CohortData($"Cohort {i + 1}"));
+            }
+        }
+
+        private void LoadPremadeCohort()
+        {
+            _currentSquadUnitIDs.Clear();
+            if (_currentLevel == null || _currentLevel.PremadeCohort == null) return;
+
+            foreach (var unit in _currentLevel.PremadeCohort)
+            {
+                if (unit == null) _currentSquadUnitIDs.Add("");
+                else _currentSquadUnitIDs.Add(string.IsNullOrEmpty(unit.UniqueID) ? unit.name : unit.UniqueID);
+            }
+            while (_currentSquadUnitIDs.Count < 12) _currentSquadUnitIDs.Add("");
+        }
+
+        private void LoadSavedCohort(int index)
+        {
+            _currentSquadUnitIDs.Clear();
+            if (index < 0 || index >= _playerData.Cohorts.Count) return;
+
+            var cohort = _playerData.Cohorts[index];
+            _currentSquadUnitIDs = new List<string>(cohort.UnitIDs);
+            while (_currentSquadUnitIDs.Count < 12) _currentSquadUnitIDs.Add("");
+        }
+
+        private void UpdateButtonsInteractable()
+        {
+            bool canEdit = !_isLockedMode;
             if (_cohortButtons != null)
             {
-                foreach(var btn in _cohortButtons)
-                {
-                    if(btn != null) btn.interactable = interactable;
-                }
+                foreach (var btn in _cohortButtons)
+                    if (btn != null) btn.interactable = canEdit;
             }
-            
-            if (_removeAllButton != null) _removeAllButton.interactable = interactable;
-            if (_barracksButton != null) _barracksButton.interactable = interactable;
-            
-            // Slots interactivity is handled per-slot in RefreshUI based on locked assignments
+            if (_removeAllButton != null) _removeAllButton.interactable = canEdit;
+            if (_barracksButton != null) _barracksButton.interactable = canEdit;
         }
 
         private void SetupSlots()
         {
             for (int i = 0; i < _preassignedSlots.Count; i++)
             {
-                var slot = _preassignedSlots[i];
-                if (slot != null)
+                if (_preassignedSlots[i] != null)
                 {
-                    slot.SetIndex(i);
-                    slot.OnClick -= OnSlotClicked;
-                    slot.OnClick += OnSlotClicked;
+                    _preassignedSlots[i].SetIndex(i);
+                    _preassignedSlots[i].OnClick -= OnSlotClicked;
+                    _preassignedSlots[i].OnClick += OnSlotClicked;
                 }
             }
         }
@@ -197,45 +203,44 @@ namespace MaouSamaTD.UI
             {
                 int index = i;
                 if (_cohortButtons[i] != null)
-                   _cohortButtons[i].onClick.AddListener(() => SwitchCohort(index));
+                    _cohortButtons[i].onClick.AddListener(() => SwitchCohort(index));
             }
         }
 
         private void SwitchCohort(int index)
         {
-            if (_playerData == null) return;
-            _playerData.CurrentCohortIndex = index;
+            if (_isLockedMode) return;
+            _selectedCohortIndex = index;
+            LoadSavedCohort(index);
             RefreshUI();
         }
 
         private void OnSlotClicked(int index)
         {
-            if (index < 11 && _isLockedMode) return;
+            if (_isLockedMode && index < 11) return;
             if (index == 11 && _currentLevel != null && _currentLevel.IsAssistantLocked) return;
 
             if (_unitSelectionController != null)
             {
-                _unitSelectionController.Open(index, OnUnitSelected); 
+                _unitSelectionController.Open(index, OnUnitSelected);
                 UIFlowManager.Instance.OpenPanel(_unitSelectionController);
-            }
-            else
-            {
-                Debug.LogError("UnitSelectionController reference not assigned in Inspector!");
             }
         }
 
         private void OnUnitSelected(int slotIndex, string unitID)
         {
-            if (_playerData == null) return;
-            var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-            cohort.UnitIDs[slotIndex] = unitID;
-            RefreshUI();
+            if (slotIndex < _currentSquadUnitIDs.Count)
+            {
+                _currentSquadUnitIDs[slotIndex] = unitID;
+                _selectedCohortIndex = -1; // Now it's a "Custom" configuration
+                RefreshUI();
+            }
         }
 
         private void RefreshUI()
         {
             if (_playerData == null) return;
-            
+
             for (int i = 0; i < _preassignedSlots.Count; i++)
             {
                 var slot = _preassignedSlots[i];
@@ -246,19 +251,8 @@ namespace MaouSamaTD.UI
 
                 if (i < 11)
                 {
-                    if (_isLockedMode)
-                    {
-                        isSlotLocked = true;
-                        if (_lockedUnitIDs.Count > i && !string.IsNullOrEmpty(_lockedUnitIDs[i]))
-                        {
-                            unitID = _lockedUnitIDs[i];
-                        }
-                    }
-                    else if (_playerData.Cohorts.Count > 0)
-                    {
-                        var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-                        unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
-                    }
+                    isSlotLocked = _isLockedMode;
+                    if (i < _currentSquadUnitIDs.Count) unitID = _currentSquadUnitIDs[i];
                 }
                 else if (i == 11) // Assistant Slot
                 {
@@ -267,154 +261,90 @@ namespace MaouSamaTD.UI
                         unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UniqueID : "";
                         isSlotLocked = true;
                     }
-                    else if (_playerData.Cohorts.Count > 0)
+                    else if (i < _currentSquadUnitIDs.Count)
                     {
-                        var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-                        // Assuming 12th slot in cohort data, or handle independently if it doesn't exist
-                        unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
+                        unitID = _currentSquadUnitIDs[i];
                     }
                 }
 
                 if (string.IsNullOrEmpty(unitID))
                 {
                     slot.SetEmpty();
-                    
-                    Button slotBtn = slot.GetComponent<Button>();
-                    if (slotBtn != null) slotBtn.interactable = !isSlotLocked;
                 }
                 else
                 {
-                    if (MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null)
-                    {
-                        var unitData = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(unitID);
-                        if (unitData != null)
-                        {
-                            slot.SetUnit(unitData);
-                            // Debug.Log($"[MissionReadinessPanel] Slot {i} populated with unit: {unitData.UnitName}");
-                        }
-                        else
-                        {
-                            Debug.LogError($"[MissionReadinessPanel] Slot {i} requested unitID '{unitID}' but it was not found in UnitDatabase.");
-                            slot.SetEmpty();
-                        }
-                        
-                        Button slotBtn = slot.GetComponent<Button>();
-                        if (slotBtn != null) slotBtn.interactable = !isSlotLocked;
-                    }
+                    var unitData = AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(unitID);
+                    if (unitData != null) slot.SetUnit(unitData);
+                    else slot.SetEmpty();
                 }
+
+                var btn = slot.GetComponent<Button>();
+                if (btn != null) btn.interactable = !isSlotLocked;
             }
         }
 
         private void OnStartBattle()
         {
-            if (_currentLevel == null)
+            if (_currentLevel == null) return;
+
+            List<MaouSamaTD.Units.UnitData> selectedUnits = new List<MaouSamaTD.Units.UnitData>();
+            for (int i = 0; i < 12; i++)
             {
-                Debug.LogError("Cannot start battle: No level selected!");
-                return;
+                string id = (i < _currentSquadUnitIDs.Count) ? _currentSquadUnitIDs[i] : "";
+                
+                // Handle Forced Assistant Override
+                if (i == 11 && _currentLevel.IsAssistantLocked && _currentLevel.SupportAssistant != null)
+                {
+                    id = _currentLevel.SupportAssistant.UniqueID;
+                }
+
+                if (!string.IsNullOrEmpty(id))
+                {
+                    var unit = AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(id);
+                    if (unit != null) selectedUnits.Add(unit);
+                }
             }
 
-             List<MaouSamaTD.Units.UnitData> selectedUnits = new List<MaouSamaTD.Units.UnitData>();
-             
-             for (int i = 0; i < _preassignedSlots.Count; i++)
-             {
-                 string unitID = "";
+            if (_selectionState != null)
+            {
+                _selectionState.SetLevel(_currentLevel);
+                _selectionState.SetCohort(selectedUnits);
+            }
 
-                 if (i < 11)
-                 {
-                     if (_isLockedMode && _lockedUnitIDs.Count > i)
-                     {
-                         unitID = _lockedUnitIDs[i];
-                     }
-                     else if (_playerData != null && _playerData.Cohorts.Count > 0)
-                     {
-                         var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-                         unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
-                     }
-                 }
-                 else if (i == 11)
-                 {
-                     if (_currentLevel != null && _currentLevel.IsAssistantLocked)
-                     {
-                         unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UniqueID : "";
-                     }
-                     else if (_playerData != null && _playerData.Cohorts.Count > 0)
-                     {
-                         var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-                         unitID = (i < cohort.UnitIDs.Count) ? cohort.UnitIDs[i] : "";
-                     }
-                 }
-
-                 if (!string.IsNullOrEmpty(unitID) && MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null)
-                 {
-                     var unitData = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(unitID);
-                     if (unitData != null) selectedUnits.Add(unitData);
-                 }
-             }
-
-             if (selectedUnits.Count == 0)
-             {
-                 Debug.LogWarning("Starting battle with 0 units!");
-             }
-
-             if (_selectionState != null)
-             {
-                 _selectionState.SetLevel(_currentLevel);
-                 _selectionState.SetCohort(selectedUnits);
-             }
-
-             var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
-             if (loader != null)
-             {
-                 loader.LoadSceneTransition("BattleScene");
-             }
-             else
-             {
-                 UnityEngine.SceneManagement.SceneManager.LoadScene("BattleScene");
-             }
+            var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+            if (loader != null) loader.LoadSceneTransition("BattleScene");
+            else UnityEngine.SceneManagement.SceneManager.LoadScene("BattleScene");
         }
 
         private void OnRemoveAllClicked()
         {
-            if (_playerData == null) return;
-            var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-            for (int i = 0; i < cohort.UnitIDs.Count; i++)
+            if (_isLockedMode) return;
+            for (int i = 0; i < _currentSquadUnitIDs.Count; i++)
             {
-                cohort.UnitIDs[i] = "";
+                 // Don't remove if locked assistant
+                if (i == 11 && _currentLevel != null && _currentLevel.IsAssistantLocked) continue;
+                _currentSquadUnitIDs[i] = "";
             }
+            _selectedCohortIndex = -1;
             RefreshUI();
         }
 
         private void OnBarracksClicked()
         {
-             if (_unitSelectionController != null)
-             {
-                 var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
-                 
-                 int squadSize = Mathf.Min(11, _preassignedSlots.Count);
-
-                 _unitSelectionController.OpenMultiSelect(cohort.UnitIDs, squadSize, (selectedIds) => 
-                 {
-                     for(int i = 0; i < squadSize; i++)
-                     {
-                         if(i < selectedIds.Count)
-                         { 
-                             if (cohort.UnitIDs.Count > i) cohort.UnitIDs[i] = selectedIds[i];
-                             else cohort.UnitIDs.Add(selectedIds[i]);
-                         }
-                         else 
-                         {
-                             if (cohort.UnitIDs.Count > i) cohort.UnitIDs[i] = "";
-                             else cohort.UnitIDs.Add("");
-                         }
-                     }
-                     RefreshUI();
-                 });
-                 UIFlowManager.Instance.OpenPanel(_unitSelectionController);
-             }
-             else
-             {
-                 Debug.LogError("UnitSelectionController reference not assigned!");
-             }
+            if (_unitSelectionController != null)
+            {
+                int squadSize = Mathf.Min(11, _preassignedSlots.Count);
+                _unitSelectionController.OpenMultiSelect(_currentSquadUnitIDs, squadSize, (selectedIds) =>
+                {
+                    for (int i = 0; i < squadSize; i++)
+                    {
+                        _currentSquadUnitIDs[i] = i < selectedIds.Count ? selectedIds[i] : "";
+                    }
+                    _selectedCohortIndex = -1;
+                    RefreshUI();
+                });
+                UIFlowManager.Instance.OpenPanel(_unitSelectionController);
+            }
         }
         #endregion
     }

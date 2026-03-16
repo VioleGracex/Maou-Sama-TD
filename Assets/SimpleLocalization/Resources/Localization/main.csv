@@ -1,1 +1,7 @@
 Key,Russian,English,German,French,Portuguese,Spanish,Japanese,Chinese
+UI_COHORT_1_LABEL,КОГОРТА 1,COHORT 1,,,,,,
+UI_COHORT_2_LABEL,КОГОРТА 2,COHORT 2,,,,,,
+UI_COHORT_3_LABEL,КОГОРТА 3,COHORT 3,,,,,,
+UI_COHORT_4_LABEL,КОГОРТА 4,COHORT 4,,,,,,
+UI_COHORT_MANAGEMENT_TITLE,УПРАВЛЕНИЕ КОГОРТОЙ,COHORT MANAGEMENT,,,,,,
+UI_COHORT_SLOT_ASSIGN,НАЗНАЧИТЬ СЛОТ {0},ASSIGN SLOT {0},,,,,,

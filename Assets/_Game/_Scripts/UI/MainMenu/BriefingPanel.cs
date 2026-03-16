@@ -80,6 +80,8 @@ namespace MaouSamaTD.UI.MainMenu
             });
         }
 
+        public bool RequestClose() => true;
+
         public void ResetState()
         {
             // Reset state for Briefing Panel if needed

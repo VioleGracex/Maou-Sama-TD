@@ -76,27 +76,27 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnCohortsClicked()
         {
-            var panel = Object.FindFirstObjectByType<UnitSelectionPanel>(FindObjectsInactive.Include);
-            if (panel != null)
+            var cohortPanel = Object.FindAnyObjectByType<MaouSamaTD.UI.CohortManagerPanel>(FindObjectsInactive.Include);
+            if (cohortPanel != null)
             {
-                UIFlowManager.Instance.OpenPanel(panel);
+                UIFlowManager.Instance.OpenPanel(cohortPanel);
             }
             else
             {
-                Debug.LogWarning("[HomeUIManager] Cohorts clicked, but UnitSelectionPanel could not be found!");
+                Debug.LogWarning("[HomeUIManager] CohortManagerPanel not found in scene!");
             }
         }
-
+    
         private void OnVassalsClicked()
         {
-            var panel = Object.FindFirstObjectByType<UnitSelectionPanel>(FindObjectsInactive.Include);
+            var panel = Object.FindAnyObjectByType<MaouSamaTD.UI.Vassals.VassalsBarracksPanel>(FindObjectsInactive.Include);
             if (panel != null)
             {
                 UIFlowManager.Instance.OpenPanel(panel);
             }
             else
             {
-                Debug.LogWarning("[HomeUIManager] Vassals clicked, but UnitSelectionPanel could not be found!");
+                Debug.LogWarning("[HomeUIManager] Vassals clicked, but VassalsBarracksPanel could not be found!");
             }
         }
 

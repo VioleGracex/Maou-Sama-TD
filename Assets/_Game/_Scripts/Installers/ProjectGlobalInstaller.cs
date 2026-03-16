@@ -1,6 +1,7 @@
 using UnityEngine;
 using Zenject;
 using MaouSamaTD.Managers;
+using MaouSamaTD.Data;
 
 namespace MaouSamaTD.Installers
 {
@@ -9,12 +10,26 @@ namespace MaouSamaTD.Installers
         [SerializeField] private SaveManager _saveManagerPrefab;
         [SerializeField] private SettingsManager _settingsManagerPrefab;
         [SerializeField] private EconomyManager _economyManagerPrefab;
+        [SerializeField] private AudioSettingsManager _audioSettingsManagerPrefab;
+        [SerializeField] private UnitDatabase _unitDatabase;
 
         public override void InstallBindings()
         {
             if (_saveManagerPrefab == null)
             {
                 Debug.LogError("[ProjectGlobalInstaller] SaveManager Prefab is NOT assigned in the Inspector!");
+            }
+
+            // Bind UnitDatabase if assigned
+            if (_unitDatabase != null)
+            {
+                Container.Bind<UnitDatabase>()
+                    .FromInstance(_unitDatabase)
+                    .AsSingle();
+            }
+            else
+            {
+                Debug.LogError("[ProjectGlobalInstaller] UnitDatabase is NOT assigned in the Inspector! GachaManager will fail.");
             }
 
             // Bind SaveManager from the assigned prefab
@@ -49,17 +64,29 @@ namespace MaouSamaTD.Installers
             }
             else
             {
+                Debug.LogWarning("[ProjectGlobalInstaller] EconomyManager Prefab missing! Creating empty instance to prevent crash.");
                  Container.Bind<EconomyManager>()
                     .FromNewComponentOnNewGameObject()
                     .AsSingle()
                     .NonLazy();
             }
 
-            // Bind AudioSettingsManager from Hierarchy as per user request
-            Container.Bind<AudioSettingsManager>()
-                .FromComponentInHierarchy()
-                .AsSingle()
-                .NonLazy();
+            // Bind AudioSettingsManager
+            if (_audioSettingsManagerPrefab != null)
+            {
+                Container.Bind<AudioSettingsManager>()
+                    .FromComponentInNewPrefab(_audioSettingsManagerPrefab)
+                    .AsSingle()
+                    .NonLazy();
+            }
+            else
+            {
+                Debug.LogWarning("[ProjectGlobalInstaller] AudioSettingsManager Prefab missing! Creating empty instance to prevent crash.");
+                Container.Bind<AudioSettingsManager>()
+                    .FromNewComponentOnNewGameObject()
+                    .AsSingle()
+                    .NonLazy();
+            }
 
             // Bind GameSelectionState as a pure C# class singleton
             Container.Bind<GameSelectionState>()

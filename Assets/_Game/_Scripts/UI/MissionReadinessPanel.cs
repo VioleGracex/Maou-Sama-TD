@@ -97,10 +97,12 @@ namespace MaouSamaTD.UI
             
             if (_currentLevel != null)
             {
-                _isLockedMode = _currentLevel.IsCohortLocked || (_currentLevel.PremadeCohort != null && _currentLevel.PremadeCohort.Count > 0);
+                // Fix: Only lock if the boolean is explicitly true in LevelData
+                _isLockedMode = _currentLevel.IsCohortLocked;
                 Debug.Log($"[MissionReadinessPanel] Opening level '{_currentLevel.LevelName}'. IsLockedMode: {_isLockedMode}");
                 
-                if (_currentLevel.PremadeCohort != null && _currentLevel.PremadeCohort.Count > 0)
+                bool hasPremade = _currentLevel.PremadeCohort != null && _currentLevel.PremadeCohort.Count > 0;
+                if (hasPremade)
                 {
                     Debug.Log($"[MissionReadinessPanel] Premade cohort found. Units count: {_currentLevel.PremadeCohort.Count}");
                     foreach (var unit in _currentLevel.PremadeCohort)
@@ -109,20 +111,17 @@ namespace MaouSamaTD.UI
                         if (unit != null) 
                         {
                             idToUse = string.IsNullOrEmpty(unit.UniqueID) ? unit.name : unit.UniqueID;
-                            Debug.Log($"[MissionReadinessPanel] Processing Cohort Unit: SO_Name={unit.name}, ID={unit.UniqueID}, IDToUse={idToUse}, Name={unit.UnitName}");
                         }
                         _lockedUnitIDs.Add(idToUse);
                     }
-                }
-                else
-                {
-                    Debug.Log($"[MissionReadinessPanel] Free cohort mode.");
                 }
                 
                 int squadSize = 11;
                 while (_lockedUnitIDs.Count < squadSize) _lockedUnitIDs.Add(""); 
                 
-                if (!_isLockedMode && _playerData != null && _playerData.Cohorts.Count > 0)
+                // Fix: Only overwrite player data if a premade cohort is actually provided 
+                // OR if it's locked (so the UI shows the fixed units)
+                if ((hasPremade || _isLockedMode) && _playerData != null && _playerData.Cohorts.Count > 0)
                 {
                     var cohort = _playerData.Cohorts[_playerData.CurrentCohortIndex];
                     for(int i = 0; i < squadSize; i++)
@@ -145,9 +144,6 @@ namespace MaouSamaTD.UI
         public void Close()
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
-            
-            // Ensure barracks/selection is also off
-            if (_unitSelectionController != null) _unitSelectionController.Close();
         }
 
         public void ResetState()
@@ -157,6 +153,8 @@ namespace MaouSamaTD.UI
             // _isLockedMode = false;
             // if (_lockedUnitIDs != null) _lockedUnitIDs.Clear();
         }
+
+        public bool RequestClose() => true;
         #endregion
 
         #region Private Methods

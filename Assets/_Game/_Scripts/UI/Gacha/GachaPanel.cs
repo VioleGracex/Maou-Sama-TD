@@ -100,6 +100,8 @@ namespace MaouSamaTD.UI.Gacha
             if (_btnDetails != null) _btnDetails.onClick.RemoveAllListeners();
         }
 
+        public bool RequestClose() => true;
+
         private void OnPoolsReady()
         {
             SetSummonButtonsInteractable(true);

@@ -34,15 +34,20 @@ The main entry point after login. Contains the following dashboard modules:
 
 ---
 
-## 3. Page Content & Specifics
+## 3. Page Content & Priorities
 
-| Page | Content / Key Features |
-| :--- | :--- |
-| **Home Hub** | Dynamic Background (Lobby), Quick-start Banner, Resource Bar (Mana, Soul Gems, Gold). |
-| **Conquest** | Scrollable map with chapters. Difficulty toggle (Normal / Abyssal). 3-star tracker. |
-| **Manifest** | Gacha banners (Standard, Rate-up, Weapon/Artifact). Pity tracker display. |
-| **Treasury** | Tabs: "Soul Gem Purchase", "Abyssal Dust Exchange", "Limited Offers", "Vassal Skins". |
-| **Grimore** | "Chronicles" (Re-watch scenes), "Bestiary" (Enemy stats), "World Map" (Lore flavor). |
+| Priority | Page | Content / Key Features | Status |
+| :--- | :--- | :--- | :--- |
+| **0** | **Citadel (Home)** | Dynamic Background, Quick-start, Resource Bar. | [READY] |
+| **0** | **Conquest** | Scrollable map, Difficulty toggle, 3-star tracker. | [READY] |
+| **0** | **Manifest** | Gacha banners, Pity tracker. | [READY] |
+| **0** | **Settings** | Game, Audio, Notification, Account settings. | [READY] |
+| **1** | **Cohorts** | Team management, loadout editing (No Start button). | [DEVELOPING] |
+| **1** | **Vassals** | Unit collection, barracks-style management. | [DEVELOPING] |
+| **2** | **Treasury** | Premium shop, exchange tabs. | [PLANNED] |
+| **3** | **Mandates** | Daily rotating resource stages. | [PLANNED] |
+| **4** | **Grimore** | Story archives, Bestiary, Lore World Map. | [PLANNED] |
+| **5** | **Throne/Vault** | End-game and long-term progression hubs. | [PLANNED] |
 
 ---
 
@@ -57,7 +62,7 @@ The main entry point after login. Contains the following dashboard modules:
 
 ```text
 [ LOGIN ] -> [ SPLASH ] -> [ CITADEL (HOME) ]
-                               |
+                                |
       +------------------------+------------------------+
       |            |           |           |            |
  [CONQUEST]    [VASSALS]   [MANIFEST]  [TREASURY]   [MANDATES]

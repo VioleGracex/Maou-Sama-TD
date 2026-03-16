@@ -49,6 +49,8 @@ namespace MaouSamaTD.UI.MainMenu
             if (_missionReadinessUI != null) _missionReadinessUI.Close();
         }
 
+        public bool RequestClose() => true;
+
         public void ResetState()
         {
             // The user wanted pages to look fresh. For the Campaign Page, that means maybe clearing the briefing if it was open.
@@ -155,12 +157,39 @@ namespace MaouSamaTD.UI.MainMenu
                 // Give missionReadinessUI history priority so it hides campaign
                 MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_missionReadinessUI);
 
-                // Unparent to ensure it survives Campaign Page deactivation
-                if (_missionReadinessUI.VisualRoot != null)
+                // FIX: Unparent the entire manager GameObject, not just the visual root.
+                // This ensures the scripts (MissionReadinessPanel, UnitSelectionPanel) 
+                // aren't deactivated when CampaignPage closes.
+                GameObject readinessManager = _missionReadinessUI.gameObject;
+                if (readinessManager.transform.parent != null && readinessManager.transform.parent.gameObject == gameObject)
                 {
-                    if (_missionReadinessUI.VisualRoot.transform.parent == _visualRoot.transform)
+                    readinessManager.transform.SetParent(transform.parent, true);
+                }
+
+                // Also unparent the UnitSelectionController if it's a child of this page
+                var selectionPanel = _missionReadinessUI.GetComponent<MaouSamaTD.UI.MissionReadinessPanel>();
+                // In MissionReadinessPanel.cs, the field is named _unitSelectionController
+                // We need to find the actual GameObject for it.
+                // Looking at the Inspector in the provided images, it's called "BarracksManagerUI"
+                
+                // Let's search for it via a public property or by the reference held in missionReadinessUI
+                // Wait, I don't have a public reference to the GameObject in MissionReadinessPanel, 
+                // but I can get it from the component reference.
+                
+                // Since I can't easily access the internal field of _missionReadinessUI from here without reflection
+                // or changing the script, let's look at how they are assigned in the Inspector.
+                // Both MissionReadinessManagerUI and BarracksManagerUI are siblings under CampaignPageManagerUI.
+                
+                // I will unparent any sibling that is an IUIController to be safe, or specifically target these.
+                Transform parent = transform.parent;
+                if (parent != null)
+                {
+                    foreach (Transform child in transform)
                     {
-                        _missionReadinessUI.VisualRoot.transform.SetParent(_visualRoot.transform.parent, false);
+                        if (child.GetComponent<IUIController>() != null)
+                        {
+                            child.SetParent(parent, true);
+                        }
                     }
                 }
 

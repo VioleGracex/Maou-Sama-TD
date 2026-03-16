@@ -48,6 +48,8 @@ namespace MaouSamaTD.UI.MainMenu
             if (_visualRoot != null) _visualRoot.SetActive(false);
         }
 
+        public bool RequestClose() => true;
+
         public void ResetState()
         {
             // No complex state to reset for a quick nav menu

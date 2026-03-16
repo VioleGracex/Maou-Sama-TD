@@ -153,6 +153,8 @@ namespace MaouSamaTD.UI.MainMenu
             if (_wipeConfirmationPopup != null) _wipeConfirmationPopup.SetActive(false);
         }
 
+        public bool RequestClose() => true;
+
         public void ResetState()
         {
             RefreshUI();

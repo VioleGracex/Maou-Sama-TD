@@ -26,9 +26,9 @@ MonoBehaviour:
     Amount: 100
   PremadeCohort:
   - {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
-  IsCohortLocked: 1
+  IsCohortLocked: 0
   SupportAssistant: {fileID: 0}
-  IsAssistantLocked: 1
+  IsAssistantLocked: 0
   MaleSovereignRites:
   - {fileID: 11400000, guid: 26176ff9d988e054f837872af4bd1395, type: 2}
   - {fileID: 11400000, guid: 6bd81f30c91fa6b4e9c4fe7264325583, type: 2}

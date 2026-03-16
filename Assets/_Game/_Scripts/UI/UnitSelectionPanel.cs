@@ -143,6 +143,8 @@ namespace MaouSamaTD.UI
             UpdateScrollRectLayout(false);
         }
 
+        public bool RequestClose() => true;
+
         #endregion
 
         #region Private Methods

@@ -76,12 +76,18 @@ namespace MaouSamaTD.UI
         /// <summary>
         /// Pops the current panel and returns to the previous one in history.
         /// </summary>
-        public void GoBack()
+        public void GoBack(bool force = false)
         {
             if (_panelStack.Count <= 1)
             {
                 Debug.LogWarning("[UIFlowManager] No more history to go back to. Ignoring.");
                 return;
+            }
+
+            var topPanel = _panelStack.Peek();
+            if (!force && topPanel != null && !topPanel.RequestClose())
+            {
+                return; // Panel blocked closing (likely showing a confirmation)
             }
 
             var closingPanel = _panelStack.Pop();
@@ -100,10 +106,13 @@ namespace MaouSamaTD.UI
         /// <summary>
         /// Completely clears the history stack and closes everything.
         /// </summary>
-        public void ClearHistory(bool closeCurrent = true)
+        public void ClearHistory(bool closeCurrent = true, bool force = false)
         {
             if (closeCurrent && _panelStack.Count > 0)
             {
+                var top = _panelStack.Peek();
+                if (!force && top != null && !top.RequestClose()) return;
+
                 var current = _panelStack.Pop();
                 if (current != null) current.Close();
             }

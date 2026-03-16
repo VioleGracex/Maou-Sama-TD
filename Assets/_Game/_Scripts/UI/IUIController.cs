@@ -17,6 +17,13 @@ namespace MaouSamaTD.UI
         void Close();
         
         /// <summary>
+        /// Called when the user attempts to close/navigate away. 
+        /// Returns true if the panel can close immediately. 
+        /// Returns false if the panel blocks closing (e.g. to show a confirmation popup).
+        /// </summary>
+        bool RequestClose();
+
+        /// <summary>
         /// Resets the panel to its default, original state. Handled automatically by HomeUIManager/UIFlowManager.
         /// </summary>
         void ResetState();

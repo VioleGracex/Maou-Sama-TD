@@ -55,9 +55,16 @@ namespace MaouSamaTD.Core
 
             Debug.Log("[AppEntryPoint] Initializing Save Data...");
             // SaveManager automatically loaded inside its constructor/Zenject Init, but we can double check here.
-            if (_saveManager.CurrentData == null)
+            if (_saveManager != null)
             {
-                 _saveManager.Load();
+                if (_saveManager.CurrentData == null)
+                {
+                    _saveManager.Load();
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[AppEntryPoint] SaveManager not injected! Check ProjectGlobalInstaller.");
             }
 
             onProgress?.Invoke(1.0f);

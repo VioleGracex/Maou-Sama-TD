@@ -49,13 +49,13 @@ namespace MaouSamaTD.EditorTools
             bSO.ApplyModifiedProperties();
 
             // --- Panel 2: Readiness ---
-            var readiness = CreateMockPanel<MissionReadinessPanel>(canvasObj.transform, "MissionReadiness", new Color(0.4f, 0.2f, 0.3f, 1f));
+            var readiness = CreateMockPanel<CohortManagerPanel>(canvasObj.transform, "MissionReadiness", new Color(0.4f, 0.2f, 0.3f, 1f));
             var rSO = new SerializedObject(readiness.Script);
             rSO.FindProperty("_visualRoot").objectReferenceValue = readiness.Visuals;
             rSO.ApplyModifiedProperties();
 
             // --- Panel 3: Barracks ---
-            var barracks = CreateMockPanel<UnitSelectionPanel>(canvasObj.transform, "Barracks", new Color(0.3f, 0.4f, 0.2f, 1f));
+            var barracks = CreateMockPanel<MaouSamaTD.UI.Vassals.VassalsBarracksPanel>(canvasObj.transform, "Barracks", new Color(0.3f, 0.4f, 0.2f, 1f));
             var baSO = new SerializedObject(barracks.Script);
             baSO.FindProperty("_visualRoot").objectReferenceValue = barracks.Visuals;
             baSO.ApplyModifiedProperties();
@@ -171,8 +171,8 @@ namespace MaouSamaTD.EditorTools
             {
                 if (ActionName.Contains("Back")) UIFlowManager.Instance.GoBack();
                 else if (ActionName.Contains("START")) FindFirstObjectByType<BriefingPanel>().Open();
-                else if (ActionName.Contains("Readiness")) UIFlowManager.Instance.OpenPanel(FindFirstObjectByType<MissionReadinessPanel>());
-                else if (ActionName.Contains("Barracks")) UIFlowManager.Instance.OpenPanel(FindFirstObjectByType<UnitSelectionPanel>());
+                else if (ActionName.Contains("Readiness")) UIFlowManager.Instance.OpenPanel(FindFirstObjectByType<CohortManagerPanel>());
+                else if (ActionName.Contains("Barracks")) UIFlowManager.Instance.OpenPanel(FindFirstObjectByType<MaouSamaTD.UI.Vassals.VassalsBarracksPanel>());
             });
         }
     }

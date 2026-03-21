@@ -16,10 +16,10 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("References")]
         [SerializeField] private Transform _levelContainer;
         [SerializeField] private LevelButton _levelButtonPrefab;
-        [SerializeField] private List<LevelData> _allLevels; 
+        [SerializeField] private List<LevelData> _allLevels;
         [SerializeField] private BriefingPanel _briefingPanel;
         
-        [SerializeField] private MaouSamaTD.UI.MissionReadinessPanel _missionReadinessUI;
+        [SerializeField] private MaouSamaTD.UI.CohortManagerPanel _cohortManagerUI;
         
         [Inject] private SaveManager _saveManager;
 
@@ -43,10 +43,9 @@ namespace MaouSamaTD.UI.MainMenu
         public void Close()
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
-            
             // Explicitly close sub-panels/overlays when the main page closes
             if (_briefingPanel != null) _briefingPanel.Close();
-            if (_missionReadinessUI != null) _missionReadinessUI.Close();
+            if (_cohortManagerUI != null) _cohortManagerUI.Close();
         }
 
         public bool RequestClose() => true;
@@ -149,38 +148,20 @@ namespace MaouSamaTD.UI.MainMenu
                 OnBriefingEngage(level);
             }
         }
-        
         private void OnBriefingEngage(LevelData level)
         {
-            if (_missionReadinessUI != null)
+            if (_cohortManagerUI != null)
             {
-                // Give missionReadinessUI history priority so it hides campaign
-                MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_missionReadinessUI);
+                // Give cohortManagerUI history priority so it hides campaign
+                MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_cohortManagerUI);
 
-                // FIX: Unparent the entire manager GameObject, not just the visual root.
-                // This ensures the scripts (MissionReadinessPanel, UnitSelectionPanel) 
-                // aren't deactivated when CampaignPage closes.
-                GameObject readinessManager = _missionReadinessUI.gameObject;
+                // Ensure the scripts (CohortManagerPanel, etc.) aren't deactivated when CampaignPage closes.
+                GameObject readinessManager = _cohortManagerUI.gameObject;
                 if (readinessManager.transform.parent != null && readinessManager.transform.parent.gameObject == gameObject)
                 {
                     readinessManager.transform.SetParent(transform.parent, true);
                 }
 
-                // Also unparent the UnitSelectionController if it's a child of this page
-                var selectionPanel = _missionReadinessUI.GetComponent<MaouSamaTD.UI.MissionReadinessPanel>();
-                // In MissionReadinessPanel.cs, the field is named _unitSelectionController
-                // We need to find the actual GameObject for it.
-                // Looking at the Inspector in the provided images, it's called "BarracksManagerUI"
-                
-                // Let's search for it via a public property or by the reference held in missionReadinessUI
-                // Wait, I don't have a public reference to the GameObject in MissionReadinessPanel, 
-                // but I can get it from the component reference.
-                
-                // Since I can't easily access the internal field of _missionReadinessUI from here without reflection
-                // or changing the script, let's look at how they are assigned in the Inspector.
-                // Both MissionReadinessManagerUI and BarracksManagerUI are siblings under CampaignPageManagerUI.
-                
-                // I will unparent any sibling that is an IUIController to be safe, or specifically target these.
                 Transform parent = transform.parent;
                 if (parent != null)
                 {
@@ -193,12 +174,12 @@ namespace MaouSamaTD.UI.MainMenu
                     }
                 }
 
-                // The ResetState in OpenPanel wiped variables, so call Open(level) AFTER
-                _missionReadinessUI.Open(level);
+                // Call OpenReadiness to initialize pre-battle constraints
+                _cohortManagerUI.OpenReadiness(level);
             }
             else
             {
-                Debug.LogError("[CampaignPage] Mission Readiness UI is not assigned in CampaignPage!");
+                Debug.LogError("[CampaignPage] Cohort Manager UI is not assigned in CampaignPage!");
             }
         }
     }

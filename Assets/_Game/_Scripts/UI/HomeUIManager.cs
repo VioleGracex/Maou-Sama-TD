@@ -1,5 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Assets.SimpleLocalization.Scripts;
+using Zenject;
+using MaouSamaTD.UI;
+using MaouSamaTD.UI.Common;
 
 namespace MaouSamaTD.UI.MainMenu
 {
@@ -26,9 +30,17 @@ namespace MaouSamaTD.UI.MainMenu
 
         [Header("Global Header Buttons")]
         [SerializeField] private Button _btnSettings;
-        [SerializeField] private Button _btnQuickNav;
-        [SerializeField] private Button _btnHome;
-        [SerializeField] private Button _btnManifest;
+        public Button _btnCitadel; // Renamed from _btnHome or similar
+        
+        [Header("Account & Currency Info")]
+        [SerializeField] private TMPro.TextMeshProUGUI _accountNameText;
+        public CurrencyDisplay _goldDisplay;
+        public CurrencyDisplay _bloodCrestDisplay;
+
+        [Header("Nav Overlay")]
+        public UINavigationOverlay _navOverlay;
+
+        [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
 
         // Panels are now looked up dynamically to ensure one source of truth.
 
@@ -46,9 +58,19 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnGrimoire != null) _btnGrimoire.onClick.AddListener(OnGrimoireClicked);
 
             if (_btnSettings != null) _btnSettings.onClick.AddListener(OnSettingsClicked);
-            if (_btnQuickNav != null) _btnQuickNav.onClick.AddListener(OnQuickNavClicked);
-            if (_btnHome != null) _btnHome.onClick.AddListener(OnHomeClicked);
-            if (_btnManifest != null) _btnManifest.onClick.AddListener(OnManifestClicked);
+            if (_btnCitadel != null) _btnCitadel.onClick.AddListener(OnCitadelClicked);
+
+            UpdateAccountInfo();
+        }
+
+        private void UpdateAccountInfo()
+        {
+            if (_accountNameText != null && _saveManager != null && _saveManager.CurrentData != null)
+            {
+                string label = LocalizationManager.Localize("Home.Account.Label");
+                string playerName = _saveManager.CurrentData.PlayerName.ToUpper();
+                _accountNameText.text = $"{label}: {playerName}";
+            }
         }
 
         public void Open()
@@ -116,13 +138,9 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
-        private void OnQuickNavClicked()
+        private void OnCitadelClicked()
         {
-            var panel = Object.FindFirstObjectByType<QuickNavPanel>(FindObjectsInactive.Include);
-            if (panel != null)
-            {
-                UIFlowManager.Instance.OpenPanel(panel);
-            }
+            if (_navOverlay != null) _navOverlay.Toggle();
         }
 
         private void OnHomeClicked()

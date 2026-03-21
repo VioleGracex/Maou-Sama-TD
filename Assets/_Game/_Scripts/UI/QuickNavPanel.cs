@@ -26,7 +26,8 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("Target Pages")]
         [SerializeField] private HomeUIManager _homeUI;
         [SerializeField] private CampaignPage _campaignPage;
-        [SerializeField] private UnitSelectionPanel _unitSelectionPanel;
+        [SerializeField] private MaouSamaTD.UI.CohortManagerPanel _cohortManagerPanel;
+        [SerializeField] private MaouSamaTD.UI.Vassals.VassalsBarracksPanel _vassalsBarracksPanel;
 
         private void Start()
         {
@@ -72,8 +73,10 @@ namespace MaouSamaTD.UI.MainMenu
                     if (_campaignPage != null) UIFlowManager.Instance.OpenPanel(_campaignPage);
                     break;
                 case HomeTab.Cohorts:
+                    if (_cohortManagerPanel != null) UIFlowManager.Instance.OpenPanel(_cohortManagerPanel);
+                    break;
                 case HomeTab.Vassals:
-                    if (_unitSelectionPanel != null) UIFlowManager.Instance.OpenPanel(_unitSelectionPanel);
+                    if (_vassalsBarracksPanel != null) UIFlowManager.Instance.OpenPanel(_vassalsBarracksPanel);
                     break;
             }
         }

@@ -22,7 +22,7 @@ namespace MaouSamaTD.EditorTools
             }
 
             // Main Panel Controller
-            GameObject panelObject = new GameObject("BarracksController", typeof(RectTransform), typeof(UnitSelectionPanel));
+            GameObject panelObject = new GameObject("BarracksController", typeof(RectTransform), typeof(MaouSamaTD.UI.Vassals.VassalsBarracksPanel));
             panelObject.transform.SetParent(canvas.transform, false);
             RectTransform panelRect = panelObject.GetComponent<RectTransform>();
             panelRect.anchorMin = Vector2.zero;
@@ -38,7 +38,7 @@ namespace MaouSamaTD.EditorTools
             visualRect.sizeDelta = Vector2.zero;
             panelVisuals.GetComponent<Image>().color = new Color(0, 0, 0, 0.8f); // Dark background
 
-            var selectionScript = panelObject.GetComponent<UnitSelectionPanel>();
+            var selectionScript = panelObject.GetComponent<MaouSamaTD.UI.Vassals.VassalsBarracksPanel>();
 
             // 1. Details Panel (Left Sidebar)
             GameObject detailsObject = new GameObject("DetailsController", typeof(RectTransform), typeof(UnitDetailsPanel));
@@ -290,8 +290,9 @@ namespace MaouSamaTD.EditorTools
             // Attempt to hook up scripts loosely
             var serializedObj = new SerializedObject(selectionScript);
             serializedObj.FindProperty("_visualRoot").objectReferenceValue = panelVisuals;
-            serializedObj.FindProperty("_unitListContainer").objectReferenceValue = content;
-            serializedObj.FindProperty("_filterContainer").objectReferenceValue = cContent; // Point to Class Toggles container
+            // Removed obsolete property mappings
+            // serializedObj.FindProperty("_unitListContainer").objectReferenceValue = content;
+            // serializedObj.FindProperty("_filterContainer").objectReferenceValue = cContent; // Point to Class Toggles container
             
             var detailsSpt = detailsObject.GetComponent<UnitDetailsPanel>();
             var detSO = new SerializedObject(detailsSpt);
@@ -319,16 +320,17 @@ namespace MaouSamaTD.EditorTools
             detSO.FindProperty("_ultimateDesc").objectReferenceValue = skillDescs[2].GetComponent<TextMeshProUGUI>();
             detSO.ApplyModifiedProperties();
 
-            serializedObj.FindProperty("_detailsPanel").objectReferenceValue = detailsSpt;
-            serializedObj.FindProperty("_scrollViewRect").objectReferenceValue = scrollRect;
-            serializedObj.FindProperty("_paddingTop").floatValue = 100f; 
-            serializedObj.FindProperty("_paddingBottom").floatValue = 0f; 
-            serializedObj.FindProperty("_squeezedPaddingLeft").floatValue = 400f; 
-            serializedObj.FindProperty("_expandedPaddingLeft").floatValue = 0f;
-            serializedObj.FindProperty("_squeezedPaddingRight").floatValue = 120f; 
-            serializedObj.FindProperty("_expandedPaddingRight").floatValue = 0f;
-            serializedObj.FindProperty("_confirmButton").objectReferenceValue = btnConfirm.GetComponent<Button>();
-            serializedObj.FindProperty("_backButton").objectReferenceValue = btnCancel.GetComponent<Button>();
+            // Removed obsolete scroll and map bindings for new Vassals Barracks
+            // serializedObj.FindProperty("_detailsPanel").objectReferenceValue = detailsSpt;
+            // serializedObj.FindProperty("_scrollViewRect").objectReferenceValue = scrollRect;
+            // serializedObj.FindProperty("_paddingTop").floatValue = 100f; 
+            // serializedObj.FindProperty("_paddingBottom").floatValue = 0f; 
+            // serializedObj.FindProperty("_squeezedPaddingLeft").floatValue = 400f; 
+            // serializedObj.FindProperty("_expandedPaddingLeft").floatValue = 0f;
+            // serializedObj.FindProperty("_squeezedPaddingRight").floatValue = 120f; 
+            // serializedObj.FindProperty("_expandedPaddingRight").floatValue = 0f;
+            // serializedObj.FindProperty("_confirmButton").objectReferenceValue = btnConfirm.GetComponent<Button>();
+            // serializedObj.FindProperty("_backButton").objectReferenceValue = btnCancel.GetComponent<Button>();
             serializedObj.ApplyModifiedProperties();
 
             EditorGUIUtility.PingObject(panelObject);

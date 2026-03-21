@@ -1,0 +1,1 @@
+using UnityEngine; namespace MaouSamaTD.UI { public class TempVerify2 : MonoBehaviour { } }

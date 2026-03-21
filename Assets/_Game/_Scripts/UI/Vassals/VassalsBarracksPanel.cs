@@ -9,12 +9,13 @@ using DG.Tweening;
 
 namespace MaouSamaTD.UI.Vassals
 {
-    /// <summary>
     /// Management page for all owned units (Vassals).
-    /// Handles inspection, leveling, and upgrading.
+    /// Handles inspection, leveling, upgrading, single-selection, and multi-selection modes.
     /// </summary>
     public class VassalsBarracksPanel : MonoBehaviour, IUIController
     {
+        public enum OperationMode { View, SingleSelect, MultiSelect }
+
         [Header("Roots")]
         [SerializeField] private GameObject _visualRoot;
         [SerializeField] private Transform _cardContainer;
@@ -22,6 +23,10 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private GameObject _sortContainer;
         [SerializeField] private GameObject _filterContainer;
         [SerializeField] private TextMeshProUGUI _unitCountText;
+
+        [Header("Multi-Select UI")]
+        [SerializeField] private Button _btnConfirmSelection;
+        [SerializeField] private TextMeshProUGUI _multiSelectCountText;
 
         [Header("Layout Animation")]
         [SerializeField] private RectTransform _scrollViewRect;
@@ -31,7 +36,8 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private float _paddingBottom = 0f;
 
         [Header("Sub Panels")]
-        [SerializeField] private UnitInspectorPanel _inspectorPanel;
+        [SerializeField] private VassalDetailPanel _inspectorPanel; // Side Bar
+        public UnitInspectorFullScreenUI _fullScreenInspector;
 
         [Header("Buttons")]
         [SerializeField] private Button _btnLevelUp;
@@ -39,6 +45,15 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private Button _btnClose;
 
         private List<UnitCardUI> _spawnedCards = new List<UnitCardUI>();
+
+        // Operational State
+        private OperationMode _currentMode = OperationMode.View;
+        private System.Action<int, string> _onSingleSelectComplete;
+        private int _currentSlotIndex = -1;
+
+        private System.Action<List<string>> _onMultiSelectComplete;
+        private List<string> _tempSelectedIds = new List<string>();
+        private int _maxMultiSelectLimit = 12;
 
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true;
@@ -52,10 +67,13 @@ namespace MaouSamaTD.UI.Vassals
                 var btnTr = transform.Find("Header/Back_MissionReady_Btn");
                 if (btnTr != null) _btnClose = btnTr.GetComponent<Button>();
             }
+
+            if (_btnConfirmSelection != null) _btnConfirmSelection.onClick.AddListener(OnConfirmMultiSelection);
         }
 
         public void Open()
         {
+            _currentMode = OperationMode.View;
             if (_visualRoot != null) _visualRoot.SetActive(true);
             
             // Connect inspector close button if not already
@@ -65,6 +83,36 @@ namespace MaouSamaTD.UI.Vassals
                 _inspectorPanel.CloseButton.onClick.AddListener(() => _inspectorPanel.Close());
             }
 
+            UpdateMultiSelectUI();
+            RefreshInventory();
+        }
+
+        public void OpenForSingleSelect(int slotIndex, System.Action<int, string> onComplete)
+        {
+            _currentMode = OperationMode.SingleSelect;
+            _currentSlotIndex = slotIndex;
+            _onSingleSelectComplete = onComplete;
+            
+            if (_inspectorPanel != null) _inspectorPanel.SetLayout(true); // Left side for selection
+
+            if (_visualRoot != null) _visualRoot.SetActive(true);
+            UpdateMultiSelectUI();
+            RefreshInventory();
+        }
+
+        public void OpenForMultiSelect(List<string> currentIds, int maxLimit, System.Action<List<string>> onComplete)
+        {
+            _currentMode = OperationMode.MultiSelect;
+            _maxMultiSelectLimit = maxLimit;
+            _onMultiSelectComplete = onComplete;
+
+            if (_inspectorPanel != null) _inspectorPanel.SetLayout(true); // Left side for selection
+
+            _tempSelectedIds = new List<string>(currentIds);
+            _tempSelectedIds.RemoveAll(string.IsNullOrEmpty);
+
+            if (_visualRoot != null) _visualRoot.SetActive(true);
+            UpdateMultiSelectUI();
             RefreshInventory();
         }
     
@@ -90,7 +138,15 @@ namespace MaouSamaTD.UI.Vassals
 
         public void ResetState()
         {
-            if (_inspectorPanel != null) _inspectorPanel.ResetState();
+            if (_inspectorPanel != null) 
+            {
+                _inspectorPanel.ResetState();
+                _inspectorPanel.SetLayout(false); // Default to right side
+            }
+            _currentMode = OperationMode.View;
+            _tempSelectedIds.Clear();
+            _onSingleSelectComplete = null;
+            _onMultiSelectComplete = null;
         }
 
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
@@ -131,15 +187,99 @@ namespace MaouSamaTD.UI.Vassals
 
             if (_unitCountText != null)
                 _unitCountText.text = $"VASSALS: {ownedIDs.Count}";
+
+            UpdateCardSelectionStates();
+        }
+
+        private void UpdateMultiSelectUI()
+        {
+            bool isMulti = _currentMode == OperationMode.MultiSelect;
+            if (_btnConfirmSelection != null) _btnConfirmSelection.gameObject.SetActive(isMulti);
+            if (_multiSelectCountText != null) _multiSelectCountText.gameObject.SetActive(isMulti);
+            UpdateCountText();
+        }
+
+        private void UpdateCountText()
+        {
+            if (_currentMode == OperationMode.MultiSelect && _multiSelectCountText != null)
+            {
+                _multiSelectCountText.text = $"{_tempSelectedIds.Count}/{_maxMultiSelectLimit}";
+            }
+        }
+
+        private void UpdateCardSelectionStates()
+        {
+            foreach (var card in _spawnedCards)
+            {
+                if (card.isActiveAndEnabled && card.Data != null)
+                {
+                    int index = -1;
+                    if (_currentMode == OperationMode.MultiSelect && _tempSelectedIds.Contains(card.Data.UniqueID))
+                    {
+                        index = _tempSelectedIds.IndexOf(card.Data.UniqueID);
+                    }
+                    card.SetSelectionState(index);
+                }
+            }
         }
 
         private void OnCardClicked(UnitCardUI card)
         {
-            if (_inspectorPanel != null)
+            if (_currentMode == OperationMode.View)
             {
-                _inspectorPanel.Open(card.Data);
-                UpdateScrollRectLayout(true);
+                if (_fullScreenInspector != null)
+                {
+                    _fullScreenInspector.Open(card.Data);
+                    UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
+                }
+                else if (_inspectorPanel != null)
+                {
+                    _inspectorPanel.Open(card.Data);
+                    UpdateScrollRectLayout(true);
+                }
             }
+            else if (_currentMode == OperationMode.SingleSelect)
+            {
+                if (_inspectorPanel != null)
+                {
+                    _inspectorPanel.Open(card.Data);
+                    UpdateScrollRectLayout(true);
+                }
+                
+                // We keep the selection logic separate or maybe add a "Select" button to the side-bar?
+                // For now, let's keep the card click as selection too, but show the side-bar.
+                _onSingleSelectComplete?.Invoke(_currentSlotIndex, card.Data.UniqueID);
+                UIFlowManager.Instance.GoBack();
+            }
+            else if (_currentMode == OperationMode.MultiSelect)
+            {
+                if (_inspectorPanel != null)
+                {
+                    _inspectorPanel.Open(card.Data);
+                    UpdateScrollRectLayout(true);
+                }
+
+                string id = card.Data.UniqueID;
+                if (_tempSelectedIds.Contains(id))
+                {
+                    _tempSelectedIds.Remove(id);
+                }
+                else
+                {
+                    if (_tempSelectedIds.Count < _maxMultiSelectLimit)
+                    {
+                        _tempSelectedIds.Add(id);
+                    }
+                }
+                UpdateCardSelectionStates();
+                UpdateCountText();
+            }
+        }
+
+        private void OnConfirmMultiSelection()
+        {
+            _onMultiSelectComplete?.Invoke(_tempSelectedIds);
+            UIFlowManager.Instance.GoBack();
         }
 
         private void UpdateScrollRectLayout(bool isDetailsOpen)

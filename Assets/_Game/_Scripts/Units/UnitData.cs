@@ -32,7 +32,9 @@ namespace MaouSamaTD.Units
 
         [Header("Progression")]
         public int Level = 1;
-        public long AcquisitionDate; // Tick for sorting by age
+        public int Experience = 0;
+        public int StarRating = 1; // 1 to 6 Stars
+        public long AcquisitionDate;
 
         [Header("Class & Rules")]
         public UnitRarity Rarity;
@@ -49,6 +51,7 @@ namespace MaouSamaTD.Units
         public float AttackPower = 10f;
         public float AttackInterval = 1f;
         public float Defense = 0f;
+        public float Resistance = 0f;
         public float RespawnTime = 5f; // Seconds
         public float Range = 1f; // Tiles
         public float MaxCharge = 100f;
@@ -57,6 +60,16 @@ namespace MaouSamaTD.Units
 
         [Header("Skill")]
         public MaouSamaTD.Skills.UnitSkillData Skill;
+
+        [Header("Resonance (Duplicate Unlock Nodes)")]
+        public System.Collections.Generic.List<UnitAscensionNode> AscensionNodes =
+            new System.Collections.Generic.List<UnitAscensionNode>();
+
+        [Header("Skins & Rank Art")]
+        public Sprite Rank2Art; // "Elite" art style
+        public System.Collections.Generic.List<Sprite> AlternateSkins =
+            new System.Collections.Generic.List<Sprite>();
+        public Sprite EquippedSkin;
 
         [Header("Placement Rules")]
         [SerializeField] private System.Collections.Generic.List<Levels.TileType> _viableTiles;
@@ -77,9 +90,43 @@ namespace MaouSamaTD.Units
             set => _viableTiles = value;
         }
 
+        public int MaxLevel => GetMaxLevelForStars(StarRating);
+
+        public static int GetMaxLevelForStars(int stars)
+        {
+            return stars switch
+            {
+                1 => 20,
+                2 => 30,
+                3 => 45,
+                4 => 60,
+                5 => 80,
+                6 => 90,
+                _ => 20
+            };
+        }
+
+        public Sprite GetCurrentVisualArt()
+        {
+            if (EquippedSkin != null) return EquippedSkin;
+            if (StarRating >= 4 && Rank2Art != null) return Rank2Art; // E.g., Rank 2 art unlocks at 4 stars
+            return UnitSprite;
+        }
+
+        public void AdvanceStar()
+        {
+            if (StarRating >= 6) return;
+            StarRating++;
+            Level = 1;
+            Experience = 0;
+            // Base stats increase logic can be handled by ProgressionLogic or local modifiers
+        }
+
         protected override void OnValidate()
         {
             base.OnValidate();
+            if (StarRating < 1) StarRating = 1;
+            if (StarRating > 6) StarRating = 6;
         }
     }
 }

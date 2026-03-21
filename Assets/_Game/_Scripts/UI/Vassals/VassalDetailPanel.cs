@@ -252,17 +252,17 @@ namespace MaouSamaTD.UI.Vassals
         private void PopulateHeader(UnitData u)
         {
             if (_nameText)   _nameText.text   = u.UnitName?.ToUpper();
-            if (_levelText)  _levelText.text  = $"LV. {u.Level}";
+            if (_levelText)  _levelText.text  = $"LV. {u.Level}/{u.MaxLevel}";
             if (_rarityText) _rarityText.text = u.Rarity.ToString().ToUpper();
-            if (_portraitImage && u.UnitSprite) { _portraitImage.sprite = u.UnitSprite; _portraitImage.color = Color.white; }
+            if (_portraitImage) { _portraitImage.sprite = u.GetCurrentVisualArt(); _portraitImage.color = Color.white; }
             if (_classIcon && u.UnitIcon)        { _classIcon.sprite = u.UnitIcon;       _classIcon.color = Color.white; }
             if (_starsRoot != null)
             {
-                int stars = (int)u.Rarity + 1;
+                int stars = u.StarRating;
                 for (int i = 0; i < _starsRoot.childCount; i++)
                 {
                     var img = _starsRoot.GetChild(i).GetComponent<Image>();
-                    if (img) img.color = i < stars ? new Color(1f, 0.78f, 0f) : new Color(0.3f, 0.3f, 0.3f);
+                    if (img) img.color = i < stars ? new Color(1f, 0.78f, 0f) : new Color(0.15f, 0.15f, 0.15f);
                 }
             }
         }

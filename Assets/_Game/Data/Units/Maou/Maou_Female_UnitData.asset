@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
+  m_Name: Maou_Female_UnitData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
+  useDefaultInspector: 0
+  UniqueID: 4f994223-0716-4c08-ab73-6647d5d6e863
+  UnitName: The 13th Maou (Female)
+  UnitTitle: Overlord of Chaos
+  UnitSprite: {fileID: 21300000, guid: 172263759d7e8aa4fb598f242c7f0617, type: 3}
+  UnitIcon: {fileID: 0}
+  AnimatorController: {fileID: 0}
+  Level: 1
+  Experience: 0
+  StarRating: 6
+  SkillLevel: 1
+  BaseStatMultiplier: 1
+  AcquisitionDate: 0
+  Rarity: 5
+  Class: 11
+  AttackPattern: 0
+  AttackType: 0
+  DamageType: 0
+  DeploymentCost: 10
+  BlockCount: 1
+  CustomPatternOffsets: []
+  MaxHp: 2500
+  AttackPower: 150
+  AttackInterval: 1
+  Defense: 100
+  Resistance: 0
+  RespawnTime: 5
+  Range: 1
+  MaxCharge: 100
+  ChargePerSecond: 5
+  ChargePerAttack: 10
+  Skill: {fileID: 11400000, guid: becc3295a79da5843847dcf8269bc1a3, type: 2}
+  AscensionNodes: []
+  Rank2Art: {fileID: 0}
+  AlternateSkins: []
+  EquippedSkin: {fileID: 0}
+  _viableTiles: 

@@ -11,7 +11,9 @@ namespace MaouSamaTD.UI
         [Header("Global UI References")]
         [SerializeField] public GameObject _backBtnRoot;
         [SerializeField] public GameObject _citadelBtnRoot;
-        [SerializeField] public UINavigationOverlay NavigationOverlay;
+        [Header("Global UI References")]
+        public UINavigationOverlay NavigationOverlay;
+        public UnitInspectorFullScreenUI UnitInspector;
 
         private Stack<IUIController> _panelStack = new Stack<IUIController>();
 

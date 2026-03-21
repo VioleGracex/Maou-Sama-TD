@@ -252,6 +252,15 @@ namespace MaouSamaTD.Managers
             {
                 _saveManager.LevelComplete(_currentLevelData.LevelID, stars);
                 
+                // Distribute Mission XP to all deployed units
+                if (_deploymentUI != null && _currentLevelData != null)
+                {
+                    MaouSamaTD.Progression.ProgressionLogic.DistributeMissionXP(
+                        new System.Collections.Generic.List<UnitData>(_deploymentUI.DeployedUnits), 
+                        _currentLevelData.MissionXP
+                    );
+                }
+
                 // Process all rewards for winning the level
                 if (_currentLevelData.WinRewards != null)
                 {

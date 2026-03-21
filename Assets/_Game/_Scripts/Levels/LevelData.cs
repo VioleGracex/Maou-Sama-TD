@@ -47,6 +47,10 @@ namespace MaouSamaTD.Levels
         [Header("Map Settings")]
         public MapData MapData;
 
+        [Header("Progression Rewards")]
+        [Tooltip("Base XP rewarded to every deployed unit upon winning the level.")]
+        public int MissionXP = 100;
+
         [Header("Economy")]
         public int StartingAuthoritySeals = 10;
         public int MaxAuthoritySeals = 30;

@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
+  m_Name: Vassal_Ignis
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
+  useDefaultInspector: 0
+  UniqueID: a9ebfb48-2c64-4b10-a7c7-af0075a5b918
+  UnitName: 
+  UnitTitle: 
+  UnitSprite: {fileID: 0}
+  UnitIcon: {fileID: 0}
+  AnimatorController: {fileID: 0}
+  Level: 1
+  Experience: 0
+  StarRating: 1
+  SkillLevel: 1
+  BaseStatMultiplier: 1
+  AcquisitionDate: 0
+  Rarity: 0
+  Class: 0
+  AttackPattern: 0
+  AttackType: 0
+  DamageType: 0
+  DeploymentCost: 10
+  BlockCount: 1
+  CustomPatternOffsets: []
+  MaxHp: 100
+  AttackPower: 10
+  AttackInterval: 1
+  Defense: 0
+  Resistance: 0
+  RespawnTime: 5
+  Range: 1
+  MaxCharge: 100
+  ChargePerSecond: 5
+  ChargePerAttack: 10
+  Skill: {fileID: 0}
+  AscensionNodes: []
+  Rank2Art: {fileID: 0}
+  AlternateSkins: []
+  EquippedSkin: {fileID: 0}
+  _viableTiles: 

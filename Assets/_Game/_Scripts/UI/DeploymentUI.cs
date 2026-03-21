@@ -35,6 +35,7 @@ namespace MaouSamaTD.UI
         private Vector2 _visiblePos;
 
         private HashSet<UnitData> _deployedUnits = new HashSet<UnitData>();
+        public IEnumerable<UnitData> DeployedUnits => _deployedUnits;
         private Dictionary<UnitData, float> _cooldownTimers = new Dictionary<UnitData, float>();
         private List<UnitButtonUI> _unitButtons = new List<UnitButtonUI>();
 

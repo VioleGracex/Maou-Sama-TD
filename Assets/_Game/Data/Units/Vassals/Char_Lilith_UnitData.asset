@@ -15,11 +15,15 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: c7b8e2d4-1a2b-4c3d-8e5f-6a7b8c9d0e1f
   UnitName: Lilith
-  UnitTitle: Void Matriarch
+  UnitTitle: Matriarch of Lust
   UnitSprite: {fileID: 21300000, guid: f446520f4c8860b48bfaacf1dc42c71e, type: 3}
   UnitIcon: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
   AnimatorController: {fileID: 0}
   Level: 1
+  Experience: 0
+  StarRating: 6
+  SkillLevel: 1
+  BaseStatMultiplier: 1
   AcquisitionDate: 0
   Rarity: 5
   Class: 4
@@ -61,14 +65,19 @@ MonoBehaviour:
   - {x: 0, y: -3}
   - {x: -1, y: -2}
   - {x: -1, y: -3}
-  MaxHp: 100
-  AttackPower: 10
+  MaxHp: 850
+  AttackPower: 110
   AttackInterval: 1
-  Defense: 0
+  Defense: 40
+  Resistance: 0
   RespawnTime: 5
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10
   Skill: {fileID: 11400000, guid: a1a2a3a4a5a6a7a8a9a0a1a2a3a4a5a6, type: 2}
-  ViableTiles: 00000000
+  AscensionNodes: []
+  Rank2Art: {fileID: 0}
+  AlternateSkins: []
+  EquippedSkin: {fileID: 0}
+  _viableTiles: 

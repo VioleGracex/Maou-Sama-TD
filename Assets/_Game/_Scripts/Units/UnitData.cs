@@ -34,6 +34,8 @@ namespace MaouSamaTD.Units
         public int Level = 1;
         public int Experience = 0;
         public int StarRating = 1; // 1 to 6 Stars
+        public int SkillLevel = 1; // Global skill level for the unit
+        public float BaseStatMultiplier = 1.0f; // Permanent boost from advancements
         public long AcquisitionDate;
 
         [Header("Class & Rules")]
@@ -119,7 +121,7 @@ namespace MaouSamaTD.Units
             StarRating++;
             Level = 1;
             Experience = 0;
-            // Base stats increase logic can be handled by ProgressionLogic or local modifiers
+            BaseStatMultiplier += 0.2f; // Permanent 20% boost per star advancement
         }
 
         protected override void OnValidate()

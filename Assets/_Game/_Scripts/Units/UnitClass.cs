@@ -17,6 +17,7 @@ namespace MaouSamaTD.Units
         Support,        // Buffer: Passive auras.
         Gunner,         // Rapid Fire: Extreme ASPD, True DMG.
         Assassin,       // Infiltrator: Ignores 1 enemy to strike backline.
+        Overlord,       // The Ruler: Specialized skills and high authority.
         
         // Miscellaneous / Enemy
         EnemyMelee,

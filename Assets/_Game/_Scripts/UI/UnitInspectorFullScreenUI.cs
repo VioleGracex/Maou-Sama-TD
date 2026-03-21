@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using MaouSamaTD.Units;
+using MaouSamaTD.Progression;
 using Assets.SimpleLocalization.Scripts;
 using Zenject;
 
@@ -24,9 +25,12 @@ namespace MaouSamaTD.UI
 
         [Header("Header Info")]
         [SerializeField] private TextMeshProUGUI _nameText;
+        [SerializeField] private TextMeshProUGUI _levelText;
         [SerializeField] private TextMeshProUGUI _rarityText;
         [SerializeField] private Image _portraitImage;
         [SerializeField] private Transform _starsRoot;
+        [SerializeField] private Slider _expBar;
+        [SerializeField] private TextMeshProUGUI _expText;
 
         [Header("Tab Buttons")]
         [SerializeField] private Button _tabStats;
@@ -44,7 +48,8 @@ namespace MaouSamaTD.UI
         [SerializeField] private Button _btnClose;
         [SerializeField] private Button _btnUpgradeSkill;
         [SerializeField] private Button _btnSkins;
-        [SerializeField] private Button _btnPromote;
+        [SerializeField] private Button _btnPromote; // Used for Star Advancement
+        [SerializeField] private Button _btnLevelUp;
 
         private UnitData _currentUnit;
 
@@ -57,6 +62,8 @@ namespace MaouSamaTD.UI
             if (_tabSkins) _tabSkins.onClick.AddListener(() => SwitchTab(3));
 
             if (_btnSkins) _btnSkins.onClick.AddListener(() => SwitchTab(3));
+            if (_btnLevelUp) _btnLevelUp.onClick.AddListener(OnLevelUpClicked);
+            if (_btnPromote) _btnPromote.onClick.AddListener(OnAdvanceStarClicked);
             
             // Initial Localization
             LocalizeUI();
@@ -128,7 +135,60 @@ namespace MaouSamaTD.UI
         {
             if (_nameText) _nameText.text = u.UnitName.ToUpper();
             if (_rarityText) _rarityText.text = u.Rarity.ToString().ToUpper();
-            if (_portraitImage) _portraitImage.sprite = u.UnitSprite;
+            if (_portraitImage) _portraitImage.sprite = u.GetCurrentVisualArt();
+            
+            RefreshProgressionUI();
+        }
+
+        private void RefreshProgressionUI()
+        {
+            if (_currentUnit == null) return;
+
+            if (_levelText) _levelText.text = $"LV. {_currentUnit.Level}/{_currentUnit.MaxLevel}";
+            
+            if (_expBar)
+            {
+                int req = ProgressionLogic.GetRequiredXP(_currentUnit.Level);
+                _expBar.maxValue = req;
+                _expBar.value = _currentUnit.Experience;
+                if (_expText) _expText.text = $"{_currentUnit.Experience} / {req}";
+            }
+
+            if (_starsRoot != null)
+            {
+                for (int i = 0; i < _starsRoot.childCount; i++)
+                {
+                    var img = _starsRoot.GetChild(i).GetComponent<Image>();
+                    if (img) img.color = i < _currentUnit.StarRating ? new Color(1f, 0.8f, 0f) : new Color(0.2f, 0.2f, 0.2f);
+                }
+            }
+
+            // Enable Promote button only if at max level and not already 6 stars
+            if (_btnPromote) _btnPromote.interactable = (_currentUnit.Level == _currentUnit.MaxLevel && _currentUnit.StarRating < 6);
+            if (_btnLevelUp) _btnLevelUp.interactable = (_currentUnit.Level < _currentUnit.MaxLevel);
+        }
+
+        private void OnLevelUpClicked()
+        {
+            if (_currentUnit == null) return;
+            // For now, simulate adding 100 XP per click (or open a modal)
+            ProgressionLogic.AddXP(_currentUnit, 100);
+            RefreshProgressionUI();
+            
+            // Pop an animation
+            _levelText?.transform.DOPunchScale(Vector3.one * 0.1f, 0.2f);
+        }
+
+        private void OnAdvanceStarClicked()
+        {
+            if (_currentUnit == null) return;
+            if (_currentUnit.Level < _currentUnit.MaxLevel) return;
+
+            _currentUnit.AdvanceStar();
+            PopulateHeader(_currentUnit); // Full refresh (might change art)
+            
+            // Visual Effect
+            _portraitImage?.transform.DOPunchScale(Vector3.one * 0.05f, 0.5f);
         }
     }
 }

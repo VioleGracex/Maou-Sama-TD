@@ -69,6 +69,7 @@ namespace MaouSamaTD.UI
 
             if (_unitIcon != null)
             {
+                // Prefer UI Icon, fallback to Chibi
                 if (_data.UnitIcon != null)
                 {
                     _unitIcon.sprite = _data.UnitIcon;
@@ -76,8 +77,8 @@ namespace MaouSamaTD.UI
                 }
                 else
                 {
-                    _unitIcon.sprite = _data.UnitSprite;
-                    _unitIcon.enabled = _data.UnitSprite != null;
+                    _unitIcon.sprite = _data.UnitChibi;
+                    _unitIcon.enabled = _data.UnitChibi != null;
                 }
             }
 

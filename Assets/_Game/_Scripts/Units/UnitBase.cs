@@ -136,12 +136,12 @@ namespace MaouSamaTD.Units
             if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
             
-            if (_data.UnitSprite != null)
+            if (_data.UnitChibi != null)
             {
                 if (_spriteRenderer != null) 
                 {
                     _spriteRenderer.enabled = true;
-                    _spriteRenderer.sprite = _data.UnitSprite;
+                    _spriteRenderer.sprite = _data.UnitChibi;
                 }
                 if (_textFallback != null) _textFallback.gameObject.SetActive(false);
             }

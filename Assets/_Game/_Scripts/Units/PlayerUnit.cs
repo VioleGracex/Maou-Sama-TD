@@ -64,13 +64,13 @@ namespace MaouSamaTD.Units
 
         public void UseSkill()
         {
-            if (Data != null && Data.Skill != null)
+            if (Data != null && Data.UltimateSkill != null)
             {
-                float cost = Data.Skill.ChargeCost;
+                float cost = Data.UltimateSkill.ChargeCost;
                 
                 if (_currentCharge >= cost)
                 {
-                    if (_showDebugLogs) Debug.Log($"[Ultimate] Used Skill: {Data.Skill.SkillName}!");
+                    if (_showDebugLogs) Debug.Log($"[Ultimate] Used Skill: {Data.UltimateSkill.SkillName}!");
                     _currentCharge -= cost;
                     StartCoroutine(ExecuteUltimateRoutine());
                     
@@ -96,29 +96,29 @@ namespace MaouSamaTD.Units
                 yield break;
             }
 
-            if (Data.Skill == null)
+            if (Data.UltimateSkill == null)
             {
                 Debug.LogError($"[Ultimate] {Data.UnitName} has no Skill Data assigned in IgnisUnitData.asset!");
                 yield break;
             }
 
-            if (Data.Skill.UltimatePrefab == null)
+            if (Data.UltimateSkill.UltimatePrefab == null)
             {
-                Debug.LogError($"[Ultimate] {Data.UnitName} Skill [{Data.Skill.SkillName}] exists, but UltimatePrefab is NULL! GUID check needed.");
+                Debug.LogError($"[Ultimate] {Data.UnitName} Skill [{Data.UltimateSkill.SkillName}] exists, but UltimatePrefab is NULL! GUID check needed.");
                 yield break;
             }
 
-            if (_showDebugLogs) Debug.Log($"[Ultimate] STARTING sequence for {Data.UnitName}. Prefab: {Data.Skill.UltimatePrefab.name}");
+            if (_showDebugLogs) Debug.Log($"[Ultimate] STARTING sequence for {Data.UnitName}. Prefab: {Data.UltimateSkill.UltimatePrefab.name}");
 
             // Start Cut-In Animation
             if (MaouSamaTD.UI.UltimateCutInUI.Instance != null)
             {
                 string uName = Data.UnitName;
                 string uTitle = Data.UnitTitle;
-                string sName = Data.Skill.SkillName;
-                Color bColor = Data.Skill.UltimateColor;
-                Color tBgColor = Data.Skill.TitleBgColor;
-                Color sBgColor = Data.Skill.SkillNameBgColor;
+                string sName = Data.UltimateSkill.SkillName;
+                Color bColor = Data.UltimateSkill.UltimateColor;
+                Color tBgColor = Data.UltimateSkill.TitleBgColor;
+                Color sBgColor = Data.UltimateSkill.SkillNameBgColor;
 
                 if (_showDebugLogs) Debug.Log($"[Ultimate] Triggering Cut-In Animation for {uName}...");
                 // Wait for the full animation sequence (Slide In -> Hold -> Slide Out) to complete
@@ -132,9 +132,9 @@ namespace MaouSamaTD.Units
             if (_animator != null) _animator.Play("Ultimate", 0, 0f);
 
             Vector3 bestDir = FindBestUltimateDirection();
-            if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {Data.Skill.UltimatePrefab.name} towards {bestDir}");
+            if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {Data.UltimateSkill.UltimatePrefab.name} towards {bestDir}");
 
-            GameObject projObj = Instantiate(Data.Skill.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+            GameObject projObj = Instantiate(Data.UltimateSkill.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
             
             var ultimateEffect = projObj.GetComponent<MaouSamaTD.Skills.UltimateEffect>();
             if (ultimateEffect != null)
@@ -152,7 +152,7 @@ namespace MaouSamaTD.Units
             }
             else
             {
-                Debug.LogError($"[Ultimate] Prefab on {_data.Skill.SkillName} is missing an UltimateEffect component!");
+                Debug.LogError($"[Ultimate] Prefab on {_data.UltimateSkill.SkillName} is missing an UltimateEffect component!");
             }
         }
 
@@ -235,12 +235,12 @@ namespace MaouSamaTD.Units
             
             if (_billboard == null) _billboard = GetComponentInChildren<Billboard>();
 
-            if (data.UnitSprite != null)
+            if (data.UnitChibi != null)
             {
                 if (_spriteRenderer != null) 
                 {
                     _spriteRenderer.enabled = true;
-                    _spriteRenderer.sprite = data.UnitSprite;
+                    _spriteRenderer.sprite = data.UnitChibi;
                 }
             }
 

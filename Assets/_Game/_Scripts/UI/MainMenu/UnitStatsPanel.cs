@@ -35,8 +35,8 @@ namespace MaouSamaTD.UI.MainMenu
             if (_unitNameText) _unitNameText.text = unit.UnitName;
             if (_unitPortrait) 
             {
-                _unitPortrait.sprite = unit.UnitSprite;
-                _unitPortrait.gameObject.SetActive(unit.UnitSprite != null);
+                _unitPortrait.sprite = unit.GetCurrentVisualArt();
+                _unitPortrait.gameObject.SetActive(_unitPortrait.sprite != null);
             }
             
             // Basic Stats
@@ -51,10 +51,10 @@ namespace MaouSamaTD.UI.MainMenu
             if (_levelText) _levelText.text = "Lv 1"; // Future: Fetch from SaveManager
 
             // Skill
-            if (unit.Skill != null)
+            if (unit.UltimateSkill != null)
             {
-                if (_skillNameText) _skillNameText.text = unit.Skill.SkillName;
-                if (_skillDescText) _skillDescText.text = unit.Skill.Description;
+                if (_skillNameText) _skillNameText.text = unit.UltimateSkill.SkillName;
+                if (_skillDescText) _skillDescText.text = unit.UltimateSkill.Description;
             }
             else
             {

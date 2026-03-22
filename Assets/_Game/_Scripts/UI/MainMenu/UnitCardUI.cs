@@ -65,7 +65,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_nameText) _nameText.text = unit.UnitName;
             if (_portraitImage) 
             {
-                _portraitImage.sprite = unit.UnitIcon != null ? unit.UnitIcon : unit.UnitSprite;
+                _portraitImage.sprite = unit.UnitIcon != null ? unit.UnitIcon : unit.UnitChibi;
                 _portraitImage.gameObject.SetActive(_portraitImage.sprite != null);
             }
             if (_classIconImage)

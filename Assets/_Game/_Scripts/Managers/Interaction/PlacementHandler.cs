@@ -42,7 +42,7 @@ namespace MaouSamaTD.Managers.Interaction
             visuals.transform.localPosition = Vector3.up * 1f; 
 
             SpriteRenderer sr = visuals.AddComponent<SpriteRenderer>();
-            sr.sprite = data.UnitSprite; 
+            sr.sprite = data.UnitChibi; 
             visuals.AddComponent<Billboard>(); 
             sr.color = new Color(1f, 1f, 1f, 0.6f); 
             sr.sortingOrder = 100;

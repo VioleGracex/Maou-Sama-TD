@@ -281,12 +281,12 @@ namespace MaouSamaTD.UI.Vassals
 
         private void PopulateSkills(UnitData u)
         {
-            ApplySkill(_passiveIcon,  _passiveName,  _passiveDesc,  "PASSIVE",  "—", null);
-            if (u.Skill != null)
-                ApplySkill(_activeIcon, _activeName, _activeDesc, u.Skill.SkillName?.ToUpper(), u.Skill.Description, u.Skill.Icon);
+            ApplySkill(_passiveIcon,  _passiveName,  _passiveDesc,  "PASSIVE",  u.PassiveSkill?.Description ?? "—", u.PassiveSkill?.Icon);
+            if (u.UltimateSkill != null)
+                ApplySkill(_activeIcon, _activeName, _activeDesc, u.UltimateSkill.SkillName?.ToUpper(), u.UltimateSkill.Description, u.UltimateSkill.Icon);
             else
                 ApplySkill(_activeIcon, _activeName, _activeDesc, "ACTIVE", "No active skill.", null);
-            ApplySkill(_ultimateIcon, _ultimateName, _ultimateDesc, "ULTIMATE", "—", null);
+            ApplySkill(_ultimateIcon, _ultimateName, _ultimateDesc, "ULTIMATE", u.UltimateSkill?.Description ?? "—", u.UltimateSkill?.Icon);
         }
 
         private void ApplySkill(Image icon, TextMeshProUGUI nameTxt, TextMeshProUGUI descTxt, string name, string desc, Sprite sprite)
@@ -329,14 +329,23 @@ namespace MaouSamaTD.UI.Vassals
             if (_skinsContainer == null || _skinCardPrefab == null) return;
             foreach (Transform c in _skinsContainer) Destroy(c.gameObject);
 
-            var skins = new System.Collections.Generic.List<Sprite> { u.UnitSprite };
-            if (u.AlternateSkins != null) skins.AddRange(u.AlternateSkins);
-            foreach (var skin in skins)
+            // Default skin
+            CreateSkinCard(u.UnitIcon);
+
+            if (u.AlternateSkins != null)
             {
-                var go  = Instantiate(_skinCardPrefab, _skinsContainer);
-                var img = go.GetComponentInChildren<Image>(true);
-                if (img) { img.sprite = skin; img.color = skin ? Color.white : new Color(0.2f, 0.2f, 0.2f); }
+                foreach (var skin in u.AlternateSkins)
+                {
+                    if (skin != null) CreateSkinCard(skin.Icon);
+                }
             }
+        }
+
+        private void CreateSkinCard(Sprite sprite)
+        {
+            var go = Instantiate(_skinCardPrefab, _skinsContainer);
+            var img = go.GetComponentInChildren<Image>(true);
+            if (img) { img.sprite = sprite; img.color = sprite ? Color.white : new Color(0.2f, 0.2f, 0.2f); }
         }
         #endregion
 

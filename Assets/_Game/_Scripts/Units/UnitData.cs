@@ -26,14 +26,24 @@ namespace MaouSamaTD.Units
         [Header("Identity (Data)")]
         public string UnitName;
         public string UnitTitle;
-        public Sprite UnitSprite; // Nullable, if null use Initials
-        public Sprite UnitIcon;   // Specific icon for UI buttons
+        
+        [UnityEngine.Serialization.FormerlySerializedAs("UnitSprite")]
+        public Sprite UnitIcon;   // UI Square Icon (Fallback to initials)
+        
+        [UnityEngine.Serialization.FormerlySerializedAs("UnitIcon")]
+        public Sprite UnitChibi;  // Battle Render (Idle Animation)
+        
+        public Sprite UnitWaistUp;    // Portrait / Inspector View
+        public Sprite UnitSplashArt;  // Full Background Art
+        public Sprite UnitFullSprite; // Full Body Cutout
+        
         public RuntimeAnimatorController AnimatorController;
 
         [Header("Progression")]
         public int Level = 1;
         public int Experience = 0;
         public int StarRating = 1; // 1 to 6 Stars
+        public float Amity = 0f; // New field for Amity % (Bond)
         public int SkillLevel = 1; // Global skill level for the unit
         public float BaseStatMultiplier = 1.0f; // Permanent boost from advancements
         public long AcquisitionDate;
@@ -60,8 +70,10 @@ namespace MaouSamaTD.Units
         public float ChargePerSecond = 5f;
         public float ChargePerAttack = 10f;
 
-        [Header("Skill")]
-        public MaouSamaTD.Skills.UnitSkillData Skill;
+        [Header("Skills")]
+        public MaouSamaTD.Skills.UnitSkillData PassiveSkill;
+        public MaouSamaTD.Skills.UnitSkillData ActiveSkill;
+        public MaouSamaTD.Skills.UnitSkillData UltimateSkill;
 
         [Header("Resonance (Duplicate Unlock Nodes)")]
         public System.Collections.Generic.List<UnitAscensionNode> AscensionNodes =
@@ -69,9 +81,9 @@ namespace MaouSamaTD.Units
 
         [Header("Skins & Rank Art")]
         public Sprite Rank2Art; // "Elite" art style
-        public System.Collections.Generic.List<Sprite> AlternateSkins =
-            new System.Collections.Generic.List<Sprite>();
-        public Sprite EquippedSkin;
+        public System.Collections.Generic.List<UnitSkinData> AlternateSkins =
+            new System.Collections.Generic.List<UnitSkinData>();
+        public UnitSkinData EquippedSkin;
 
         [Header("Placement Rules")]
         [SerializeField] private System.Collections.Generic.List<Levels.TileType> _viableTiles;
@@ -110,9 +122,9 @@ namespace MaouSamaTD.Units
 
         public Sprite GetCurrentVisualArt()
         {
-            if (EquippedSkin != null) return EquippedSkin;
+            if (EquippedSkin != null) return EquippedSkin.WaistUp;
             if (StarRating >= 4 && Rank2Art != null) return Rank2Art; // E.g., Rank 2 art unlocks at 4 stars
-            return UnitSprite;
+            return UnitWaistUp != null ? UnitWaistUp : UnitIcon;
         }
 
         public void AdvanceStar()

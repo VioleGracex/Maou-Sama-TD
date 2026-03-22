@@ -198,7 +198,7 @@ namespace MaouSamaTD.UI
             // Ult Button Icon
             if (_skillIcon != null)
             {
-                var icon = data.Skill != null ? data.Skill.Icon : null;
+                var icon = data.UltimateSkill != null ? data.UltimateSkill.Icon : null;
                 _skillIcon.sprite = icon;
                 _skillIcon.enabled = icon != null;
             }

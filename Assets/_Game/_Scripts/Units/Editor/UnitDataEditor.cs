@@ -81,18 +81,18 @@ namespace MaouSamaTD.Units.Editor
             GUILayout.Space(5);
             GUILayout.BeginHorizontal();
             
-            // Draw Sprite
+            // Draw Sprite (Icon)
             GUILayout.BeginVertical();
-            EditorGUILayout.LabelField("Unit Sprite", GUILayout.Width(100));
-            SerializedProperty spriteProp = serializedObject.FindProperty("UnitSprite");
-            spriteProp.objectReferenceValue = EditorGUILayout.ObjectField(spriteProp.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(80), GUILayout.Height(80));
-            GUILayout.EndVertical();
-
-            // Draw Icon
-            GUILayout.BeginVertical();
-            EditorGUILayout.LabelField("Unit Icon", GUILayout.Width(100));
+            EditorGUILayout.LabelField("Unit Icon (UI)", GUILayout.Width(100));
             SerializedProperty iconProp = serializedObject.FindProperty("UnitIcon");
             iconProp.objectReferenceValue = EditorGUILayout.ObjectField(iconProp.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(80), GUILayout.Height(80));
+            GUILayout.EndVertical();
+
+            // Draw Chibi
+            GUILayout.BeginVertical();
+            EditorGUILayout.LabelField("Unit Chibi (Battle)", GUILayout.Width(100));
+            SerializedProperty chibiProp = serializedObject.FindProperty("UnitChibi");
+            chibiProp.objectReferenceValue = EditorGUILayout.ObjectField(chibiProp.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(80), GUILayout.Height(80));
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
@@ -158,6 +158,22 @@ namespace MaouSamaTD.Units.Editor
             EditorGUILayout.LabelField("Placement Rules", headerStyle);
             EditorGUI.indentLevel++;
             DrawProperty("_viableTiles", "Viable Tiles");
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+
+            GUILayout.Space(10);
+            
+            // Advanced Art Crops (New)
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Advanced Art Crops", headerStyle);
+            EditorGUI.indentLevel++;
+            DrawProperty("UnitWaistUp", "Waist-Up Portrait");
+            DrawProperty("UnitSplashArt", "Splash Art");
+            DrawProperty("UnitFullSprite", "Full Body Sprite");
+
+            GUILayout.Space(10);
+            DrawProperty("AlternateSkins", "Alternate Skins");
+            DrawProperty("EquippedSkin", "Equipped Skin");
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
         }

@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 1671895919746688988}
   - component: {fileID: 6013280099024784779}
   m_Layer: 0
-  m_Name: UnitButton
+  m_Name: UnitButton_Battle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

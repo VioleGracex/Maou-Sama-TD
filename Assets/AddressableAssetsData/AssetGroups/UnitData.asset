@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: UnitData
   m_GUID: 04cd9117d50264444baef4519d7d9bf4
   m_SerializeEntries:
+  - m_GUID: 11d7389b4f79aa7478880b2f1f893615
+    m_Address: Assets/_Game/Data/ClassScalingData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 30760c1cf17c6a84ea8f3d9493c5ca88
     m_Address: UnitDatabase
     m_ReadOnly: 0

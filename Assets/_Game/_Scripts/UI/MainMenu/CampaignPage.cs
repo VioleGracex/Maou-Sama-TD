@@ -19,7 +19,7 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private List<LevelData> _allLevels;
         [SerializeField] private BriefingPanel _briefingPanel;
         
-        [SerializeField] private MaouSamaTD.UI.CohortManagerPanel _cohortManagerUI;
+        [SerializeField] private MaouSamaTD.UI.Cohorts.CohortSquadUI _cohortSquadUI;
         
         [Inject] private SaveManager _saveManager;
 
@@ -45,7 +45,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_visualRoot != null) _visualRoot.SetActive(false);
             // Explicitly close sub-panels/overlays when the main page closes
             if (_briefingPanel != null) _briefingPanel.Close();
-            if (_cohortManagerUI != null) _cohortManagerUI.Close();
+            if (_cohortSquadUI != null) _cohortSquadUI.Close();
         }
 
         public bool RequestClose() => true;
@@ -150,13 +150,13 @@ namespace MaouSamaTD.UI.MainMenu
         }
         private void OnBriefingEngage(LevelData level)
         {
-            if (_cohortManagerUI != null)
+            if (_cohortSquadUI != null)
             {
-                // Give cohortManagerUI history priority so it hides campaign
-                MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_cohortManagerUI);
+                // Give cohortSquadUI history priority so it hides campaign
+                MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_cohortSquadUI);
 
-                // Ensure the scripts (CohortManagerPanel, etc.) aren't deactivated when CampaignPage closes.
-                GameObject readinessManager = _cohortManagerUI.gameObject;
+                // Ensure the scripts (CohortSquadUI, etc.) aren't deactivated when CampaignPage closes.
+                GameObject readinessManager = _cohortSquadUI.gameObject;
                 if (readinessManager.transform.parent != null && readinessManager.transform.parent.gameObject == gameObject)
                 {
                     readinessManager.transform.SetParent(transform.parent, true);
@@ -175,7 +175,7 @@ namespace MaouSamaTD.UI.MainMenu
                 }
 
                 // Call OpenReadiness to initialize pre-battle constraints
-                _cohortManagerUI.OpenReadiness(level);
+                _cohortSquadUI.OpenReadiness(level);
             }
             else
             {

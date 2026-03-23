@@ -255,7 +255,7 @@ namespace MaouSamaTD.UI.Vassals
             if (_levelText)  _levelText.text  = $"LV. {u.Level}/{u.MaxLevel}";
             if (_rarityText) _rarityText.text = u.Rarity.ToString().ToUpper();
             if (_portraitImage) { _portraitImage.sprite = u.GetCurrentVisualArt(); _portraitImage.color = Color.white; }
-            if (_classIcon && u.UnitIcon)        { _classIcon.sprite = u.UnitIcon;       _classIcon.color = Color.white; }
+            if (_classIcon && u.UnitAvatar)        { _classIcon.sprite = u.UnitAvatar;       _classIcon.color = Color.white; }
             if (_starsRoot != null)
             {
                 int stars = u.StarRating;
@@ -330,7 +330,7 @@ namespace MaouSamaTD.UI.Vassals
             foreach (Transform c in _skinsContainer) Destroy(c.gameObject);
 
             // Default skin
-            CreateSkinCard(u.UnitIcon);
+            CreateSkinCard(u.UnitAvatar);
 
             if (u.AlternateSkins != null)
             {

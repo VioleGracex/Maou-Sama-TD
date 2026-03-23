@@ -34,6 +34,7 @@ namespace MaouSamaTD.Units
     [CreateAssetMenu(fileName = "ClassScalingData", menuName = "MaouSamaTD/Class Scaling Data")]
     public class ClassScalingData : MaouSamaTD.Core.GameDataSO
     {
+        public string AssetLabel;
         public ClassStatMultipliers[] ClassScalings;
 
         public bool TryGetMultipliers(UnitClass classType, out ClassStatMultipliers result)

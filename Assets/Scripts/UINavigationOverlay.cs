@@ -5,6 +5,7 @@ using Assets.SimpleLocalization.Scripts;
 using MaouSamaTD.UI.MainMenu;
 using MaouSamaTD.UI.Gacha;
 using MaouSamaTD.UI.Vassals;
+using MaouSamaTD.UI.Cohorts;
 using TMPro;
 
 namespace MaouSamaTD.UI
@@ -40,8 +41,8 @@ namespace MaouSamaTD.UI
 
             if (_btnHome) _btnHome.onClick.AddListener(() => NavigateToHome());
             if (_btnCampaign) _btnCampaign.onClick.AddListener(() => NavigateTo<CampaignPage>());
-            if (_btnVassals) _btnVassals.onClick.AddListener(() => NavigateTo<VassalsBarracksPanel>());
-            if (_btnCohorts) _btnCohorts.onClick.AddListener(() => NavigateTo<CohortManagerPanel>());
+            if (_btnVassals) _btnVassals.onClick.AddListener(() => NavigateTo<CohortManagerUI>());
+            if (_btnCohorts) _btnCohorts.onClick.AddListener(() => NavigateTo<CohortSquadUI>());
             if (_btnManifest) _btnManifest.onClick.AddListener(() => NavigateTo<GachaPanel>());
             
             LocalizeUI();
@@ -85,8 +86,8 @@ namespace MaouSamaTD.UI
             if (_indicators == null || _indicators.Length < 5) return;
             _indicators[0].SetActive(pageType == typeof(CampaignPage));
             _indicators[1].SetActive(false); // Shop
-            _indicators[2].SetActive(pageType == typeof(VassalsBarracksPanel));
-            _indicators[3].SetActive(pageType == typeof(CohortManagerPanel));
+            _indicators[2].SetActive(pageType == typeof(CohortManagerUI));
+            _indicators[3].SetActive(pageType == typeof(CohortSquadUI));
             _indicators[4].SetActive(pageType == typeof(GachaPanel));
         }
 

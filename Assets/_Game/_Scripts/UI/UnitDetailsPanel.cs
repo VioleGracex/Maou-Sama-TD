@@ -171,9 +171,9 @@ namespace MaouSamaTD.UI
         {
             if (_nameText)   _nameText.text   = u.UnitName?.ToUpper();
             if (_rarityText) _rarityText.text = $"{u.Rarity.ToString().ToUpper()} CLASS SOUL";
-            if (_classIcon && u.UnitIcon != null)
+            if (_classIcon && u.UnitAvatar != null)
             {
-                _classIcon.sprite = u.UnitIcon;
+                _classIcon.sprite = u.UnitAvatar;
                 _classIcon.color  = Color.white;
             }
             if (_starsRoot != null)
@@ -282,7 +282,7 @@ namespace MaouSamaTD.UI
             foreach (Transform c in _skinsContainer) Destroy(c.gameObject);
 
             // Default skin
-            AddSkinCard(u.UnitIcon);
+            AddSkinCard(u.UnitAvatar);
 
             if (u.AlternateSkins != null)
             {

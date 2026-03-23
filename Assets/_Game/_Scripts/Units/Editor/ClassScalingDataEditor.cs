@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEditor;
 using MaouSamaTD.Units;
+using MaouSamaTD.Core;
+using System.Linq;
 
 namespace MaouSamaTD.Units.Editor
 {
@@ -8,90 +10,129 @@ namespace MaouSamaTD.Units.Editor
     public class ClassScalingDataEditor : UnityEditor.Editor
     {
         private ClassScalingData _target;
+        private int _selectedTabIndex = 0;
+        private string[] _allClassNames;
+        private UnitClass[] _allClasses;
 
         private void OnEnable()
         {
             _target = (ClassScalingData)target;
+            _allClasses = (UnitClass[])System.Enum.GetValues(typeof(UnitClass));
+            _allClassNames = _allClasses.Select(c => c.ToString()).ToArray();
         }
 
         public override void OnInspectorGUI()
         {
+            if (_target == null) _target = (ClassScalingData)target;
+            
             serializedObject.Update();
 
-            GUIStyle buttonStyle = new GUIStyle(GUI.skin.button)
-            {
-                fontStyle = FontStyle.Bold,
-                fontSize = 12
-            };
-            buttonStyle.normal.textColor = _target.useDefaultInspector ? Color.gray : new Color(0.1f, 0.7f, 0.2f);
-
+            GUIStyle buttonStyle = new GUIStyle(GUI.skin.button) { fontStyle = FontStyle.Bold, fontSize = 12 };
+            
+            // Accessing useDefaultInspector from GameDataSO
             if (GUILayout.Button(_target.useDefaultInspector ? "Switch to Custom Editor" : "Switch to Default Editor", buttonStyle, GUILayout.Height(30)))
             {
                 _target.useDefaultInspector = !_target.useDefaultInspector;
                 EditorUtility.SetDirty(_target);
             }
 
-            EditorGUILayout.Space();
-
             if (_target.useDefaultInspector)
             {
-                DrawDefaultInspectorWithReadOnlyID();
+                DrawDefaultInspector();
+                serializedObject.ApplyModifiedProperties();
                 return;
             }
 
-            float originalLabelWidth = EditorGUIUtility.labelWidth;
-            EditorGUIUtility.labelWidth = 180f;
+            EditorGUILayout.Space(5);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("AssetLabel"));
+            EditorGUILayout.Space(10);
 
-            DrawCustomInspector();
-
-            EditorGUIUtility.labelWidth = originalLabelWidth;
-            serializedObject.ApplyModifiedProperties();
-        }
-
-        private void DrawDefaultInspectorWithReadOnlyID()
-        {
-            SerializedProperty iter = serializedObject.GetIterator();
-            bool enterChildren = true;
-            while (iter.NextVisible(enterChildren))
+            if (_allClassNames == null || _allClassNames.Length == 0)
             {
-                using (new EditorGUI.DisabledScope(iter.name == "UniqueID" || iter.name == "m_Script"))
-                {
-                    EditorGUILayout.PropertyField(iter, true);
-                }
-                enterChildren = false;
+                _allClasses = (UnitClass[])System.Enum.GetValues(typeof(UnitClass));
+                _allClassNames = _allClasses.Select(c => c.ToString()).ToArray();
             }
-            serializedObject.ApplyModifiedProperties();
-        }
 
-        private void DrawCustomInspector()
-        {
-            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Identity", headerStyle);
-            EditorGUI.indentLevel++;
+            // Tabs for each Class
+            _selectedTabIndex = GUILayout.SelectionGrid(_selectedTabIndex, _allClassNames, 4);
             
-            using (new EditorGUI.DisabledScope(true))
+            EditorGUILayout.Space(10);
+
+            if (_selectedTabIndex < _allClasses.Length)
             {
-                DrawProperty("UniqueID", "Unique ID");
+                UnitClass selectedClass = _allClasses[_selectedTabIndex];
+                DrawClassScalingArea(selectedClass);
             }
 
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-            GUILayout.Space(10);
+            EditorGUILayout.Space(20);
+            
+            if (GUILayout.Button("Show Raw Data", EditorStyles.miniButton))
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("ClassScalings"), true);
+            }
 
-            // Class Scalings List
-            SerializedProperty classScalingsProp = serializedObject.FindProperty("ClassScalings");
-            EditorGUILayout.PropertyField(classScalingsProp, new GUIContent("Class Scalings Configuration"), true);
+            serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawProperty(string propName, string label = null)
+        private void DrawClassScalingArea(UnitClass classType)
         {
-            SerializedProperty prop = serializedObject.FindProperty(propName);
-            if (prop != null)
+            SerializedProperty scalingsProp = serializedObject.FindProperty("ClassScalings");
+            int existingIndex = -1;
+
+            if (scalingsProp == null) return;
+
+            for (int i = 0; i < scalingsProp.arraySize; i++)
             {
-                if (string.IsNullOrEmpty(label)) EditorGUILayout.PropertyField(prop, true);
-                else EditorGUILayout.PropertyField(prop, new GUIContent(label), true);
+                SerializedProperty element = scalingsProp.GetArrayElementAtIndex(i);
+                if (element.FindPropertyRelative("ClassType").enumValueIndex == (int)classType)
+                {
+                    existingIndex = i;
+                    break;
+                }
+            }
+
+            if (existingIndex >= 0)
+            {
+                SerializedProperty scaling = scalingsProp.GetArrayElementAtIndex(existingIndex);
+                
+                EditorGUILayout.BeginVertical("helpbox");
+                EditorGUILayout.LabelField($"Scaling Settings for {classType}", EditorStyles.boldLabel);
+                EditorGUILayout.Space(5);
+
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("OverrideClassName"));
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("ClassIcon"));
+                
+                EditorGUILayout.Space(5);
+                EditorGUILayout.LabelField("Base Multipliers", EditorStyles.miniBoldLabel);
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("BaseHpMultiplier"), new GUIContent("HP Multiplier"));
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("BaseAtkMultiplier"), new GUIContent("ATK Multiplier"));
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("BaseDefMultiplier"), new GUIContent("DEF Multiplier"));
+
+                EditorGUILayout.Space(5);
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("RarityGrowths"), true);
+                
+                EditorGUILayout.Space(10);
+                if (GUILayout.Button("Remove This Class Entry", GUILayout.Width(180)))
+                {
+                    scalingsProp.DeleteArrayElementAtIndex(existingIndex);
+                }
+                
+                EditorGUILayout.EndVertical();
+            }
+            else
+            {
+                EditorGUILayout.HelpBox($"No scaling data found for {classType}.", MessageType.Info);
+                if (GUILayout.Button($"Initialize {classType} Scaling"))
+                {
+                    scalingsProp.InsertArrayElementAtIndex(scalingsProp.arraySize);
+                    SerializedProperty newItem = scalingsProp.GetArrayElementAtIndex(scalingsProp.arraySize - 1);
+                    newItem.FindPropertyRelative("ClassType").enumValueIndex = (int)classType;
+                    
+                    // Set some defaults
+                    newItem.FindPropertyRelative("BaseHpMultiplier").floatValue = 1.0f;
+                    newItem.FindPropertyRelative("BaseAtkMultiplier").floatValue = 1.0f;
+                    newItem.FindPropertyRelative("BaseDefMultiplier").floatValue = 1.0f;
+                }
             }
         }
     }

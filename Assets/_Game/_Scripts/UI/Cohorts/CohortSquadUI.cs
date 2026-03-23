@@ -6,14 +6,17 @@ using MaouSamaTD.Data;
 using MaouSamaTD.UI.MainMenu;
 using Assets.SimpleLocalization.Scripts;
 using Zenject;
+using MaouSamaTD.UI.Cohorts;
+using MaouSamaTD.UI;
+using MaouSamaTD.UI.Vassals;
 
-namespace MaouSamaTD.UI
+namespace MaouSamaTD.UI.Cohorts
 {
     /// <summary>
-    /// Standalone team/loadout editor. Reuses logic from MissionReadinessPanel but without battle constraints.
+    /// Standalone team/loadout editor. Manages the 12 squad slots for a cohort.
     /// Includes "Dirty State" tracking and unsaved changes prompts.
     /// </summary>
-    public class CohortManagerPanel : MonoBehaviour, IUIController
+    public class CohortSquadUI : MonoBehaviour, IUIController
     {
         #region Variables
         [Header("UI Controller Architecture")]
@@ -21,10 +24,10 @@ namespace MaouSamaTD.UI
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true;
         [SerializeField] private TMPro.TextMeshProUGUI _titleText;
-        [SerializeField] private MaouSamaTD.UI.Vassals.VassalsBarracksPanel _vassalsBarracksController;
+        [SerializeField] private CohortManagerUI _cohortInventoryController;
 
         [Header("Cohort Slots")]
-        [SerializeField] private List<UnitCardSlot> _slots = new List<UnitCardSlot>();
+        [SerializeField] private List<UnitCardSlot> _squadSlots = new List<UnitCardSlot>();
 
         [Header("Cohort Selection")]
         [SerializeField] private Button[] _cohortButtons;
@@ -32,9 +35,7 @@ namespace MaouSamaTD.UI
         [Header("Actions")]
         public Button _actionButton; // Unified Save / Start Battle
         public TMPro.TextMeshProUGUI _actionButtonText;
-        [SerializeField] private Button _backButton;
         [SerializeField] private Button _removeAllButton;
-        [SerializeField] private Button _barracksButton;
 
         [Header("Locked Mode")]
         [SerializeField] private GameObject _noEditBlocker;
@@ -59,19 +60,16 @@ namespace MaouSamaTD.UI
         #region Unity Methods
         private void Awake()
         {
-            if (_vassalsBarracksController == null)
+            if (_cohortInventoryController == null)
             {
-                var selectionPanel = GetComponentInChildren<MaouSamaTD.UI.Vassals.VassalsBarracksPanel>(true);
-                if (selectionPanel != null) _vassalsBarracksController = selectionPanel;
+                _cohortInventoryController = GetComponentInChildren<CohortManagerUI>(true);
             }
         }
 
         private void Start()
         {
             if (_actionButton != null) _actionButton.onClick.AddListener(OnActionButtonClicked);
-            if (_backButton != null) _backButton.onClick.AddListener(OnBackClicked);
             if (_removeAllButton != null) _removeAllButton.onClick.AddListener(OnRemoveAllClicked);
-            if (_barracksButton != null) _barracksButton.onClick.AddListener(OnBarracksClicked);
             
             if (_confirmLeaveButton != null) _confirmLeaveButton.onClick.AddListener(OnConfirmLeave);
             if (_cancelLeaveButton != null) _cancelLeaveButton.onClick.AddListener(OnCancelLeave);
@@ -138,7 +136,7 @@ namespace MaouSamaTD.UI
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
             if (_unsavedChangesPopup != null) _unsavedChangesPopup.SetActive(false);
-            if (_vassalsBarracksController != null) _vassalsBarracksController.Close();
+            if (_cohortInventoryController != null) _cohortInventoryController.Close();
         }
 
         public void ResetState()
@@ -170,11 +168,9 @@ namespace MaouSamaTD.UI
 
             if (_playerData == null)
             {
-                // Fallback for safety/editor testing
                 _playerData = new MaouSamaTD.Data.PlayerData();
             }
 
-            // Ensure cohort list exists and has at least 4 teams
             if (_playerData.Cohorts == null)
             {
                 _playerData.Cohorts = new List<MaouSamaTD.Data.CohortData>();
@@ -189,7 +185,6 @@ namespace MaouSamaTD.UI
                 }
             }
 
-            // Clamp current cohort index to valid range
             if (_playerData.CurrentCohortIndex < 0 || _playerData.CurrentCohortIndex >= _playerData.Cohorts.Count)
             {
                 _playerData.CurrentCohortIndex = 0;
@@ -198,9 +193,9 @@ namespace MaouSamaTD.UI
 
         private void SetupSlots()
         {
-            for (int i = 0; i < _slots.Count; i++)
+            for (int i = 0; i < _squadSlots.Count; i++)
             {
-                var slot = _slots[i];
+                var slot = _squadSlots[i];
                 if (slot != null)
                 {
                     slot.SetIndex(i);
@@ -227,7 +222,6 @@ namespace MaouSamaTD.UI
             var cohort = _playerData.Cohorts[index];
             _tempUnitIDs = new List<string>(cohort.UnitIDs);
             
-            // Ensure capacity (12 slots: 11 basic, 1 assistant)
             while (_tempUnitIDs.Count < 12) _tempUnitIDs.Add("");
             
             _isDirty = false;
@@ -259,17 +253,11 @@ namespace MaouSamaTD.UI
                     if (btn != null) btn.interactable = canEdit;
             }
             if (_removeAllButton != null) _removeAllButton.interactable = canEdit;
-            if (_barracksButton != null) _barracksButton.interactable = canEdit;
         }
 
         private void OnCohortButtonClicked(int index)
         {
             if (_isLockedMode) return;
-            if (_isDirty)
-            {
-                // Optionally show prompt here if switching cohorts also counts as an exit
-                // For now, let's keep it simple and just switch, overwriting temp
-            }
             LoadCohortToTemp(index);
             RefreshUI();
         }
@@ -279,10 +267,10 @@ namespace MaouSamaTD.UI
             if (_isLockedMode && index < 11) return;
             if (index == 11 && _currentLevel != null && _currentLevel.IsAssistantLocked) return;
 
-            if (_vassalsBarracksController != null)
+            if (_cohortInventoryController != null)
             {
-                _vassalsBarracksController.OpenForSingleSelect(index, OnUnitSelected);
-                UIFlowManager.Instance.OpenPanel(_vassalsBarracksController);
+                _cohortInventoryController.OpenForSingleSelect(index, OnUnitSelected);
+                UIFlowManager.Instance.OpenPanel(_cohortInventoryController);
             }
         }
 
@@ -293,7 +281,7 @@ namespace MaouSamaTD.UI
                 if (_tempUnitIDs[slotIndex] != unitID)
                 {
                     _tempUnitIDs[slotIndex] = unitID;
-                    _viewingCohortIndex = -1; // Switch to Custom if altered in readiness mode
+                    _viewingCohortIndex = -1; 
                     MarkDirty();
                 }
             }
@@ -304,11 +292,11 @@ namespace MaouSamaTD.UI
         {
             if (_playerData == null) return;
 
-            for (int i = 0; i < _slots.Count; i++)
+            for (int i = 0; i < _squadSlots.Count; i++)
             {
                 if (i >= _tempUnitIDs.Count) break;
                 
-                var slot = _slots[i];
+                var slot = _squadSlots[i];
                 if (slot == null) continue;
 
                 string unitID = "";
@@ -346,6 +334,8 @@ namespace MaouSamaTD.UI
                 var btn = slot.GetComponent<Button>();
                 if (btn != null) btn.interactable = !isSlotLocked;
             }
+
+            UpdateSaveButtonState();
         }
 
         private void MarkDirty()
@@ -358,11 +348,14 @@ namespace MaouSamaTD.UI
         {
             if (_actionButton == null) return;
 
+            int unitCount = _tempUnitIDs.Count(id => !string.IsNullOrEmpty(id));
+
             if (_isReadinessMode)
             {
                 if (_actionButtonText != null) 
                     _actionButtonText.text = LocalizationManager.Localize("Cohort.ActionButton.StartBattle");
-                _actionButton.interactable = true;
+                
+                _actionButton.interactable = unitCount > 0;
             }
             else
             {
@@ -389,7 +382,7 @@ namespace MaouSamaTD.UI
             
             _isDirty = false;
             UpdateSaveButtonState();
-            Debug.Log($"[CohortManager] Cohort {_viewingCohortIndex + 1} saved.");
+            Debug.Log($"[CohortSquadUI] Cohort {_viewingCohortIndex + 1} saved.");
         }
 
         private void OnStartBattle()
@@ -401,7 +394,6 @@ namespace MaouSamaTD.UI
             {
                 string id = (i < _tempUnitIDs.Count) ? _tempUnitIDs[i] : "";
                 
-                // Handle Forced Assistant Override
                 if (i == 11 && _currentLevel.IsAssistantLocked && _currentLevel.SupportAssistant != null)
                 {
                     id = _currentLevel.SupportAssistant.UniqueID;
@@ -412,6 +404,12 @@ namespace MaouSamaTD.UI
                     var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(id);
                     if (unit != null) selectedUnits.Add(unit);
                 }
+            }
+
+            if (selectedUnits.Count == 0)
+            {
+                Debug.LogWarning("[CohortSquadUI] Cannot start battle with 0 units!");
+                return;
             }
 
             if (_selectionState != null)
@@ -428,12 +426,6 @@ namespace MaouSamaTD.UI
         private void OnBackClicked()
         {
             UIFlowManager.Instance.GoBack();
-        }
-
-        private void OnConfirmDiscardExit()
-        {
-            _isDirty = false;
-            UIFlowManager.Instance.GoBack(true);
         }
 
         private void OnConfirmLeave()
@@ -455,7 +447,6 @@ namespace MaouSamaTD.UI
             bool wasModified = false;
             for (int i = 0; i < _tempUnitIDs.Count; i++)
             {
-                // Don't clear a locked assistant slot
                 if (i == 11 && _isReadinessMode && _currentLevel != null && _currentLevel.IsAssistantLocked) continue;
 
                 if (!string.IsNullOrEmpty(_tempUnitIDs[i]))
@@ -467,29 +458,6 @@ namespace MaouSamaTD.UI
             
             if (wasModified) MarkDirty();
             RefreshUI();
-        }
-
-        private void OnBarracksClicked()
-        {
-            if (_vassalsBarracksController != null)
-            {
-                int squadSize = Mathf.Min(11, _slots.Count);
-                _vassalsBarracksController.OpenForMultiSelect(_tempUnitIDs, squadSize, (selectedIds) => 
-                {
-                    // Check if actually changed
-                    if (!Enumerable.SequenceEqual(_tempUnitIDs.Take(squadSize), selectedIds.Take(squadSize)))
-                    {
-                        for (int i = 0; i < squadSize; i++)
-                        {
-                            _tempUnitIDs[i] = i < selectedIds.Count ? selectedIds[i] : "";
-                        }
-                        _viewingCohortIndex = -1;
-                        MarkDirty();
-                        RefreshUI();
-                    }
-                });
-                UIFlowManager.Instance.OpenPanel(_vassalsBarracksController);
-            }
         }
         #endregion
     }

@@ -28,7 +28,8 @@ namespace MaouSamaTD.Units
         public string UnitTitle;
         
         [UnityEngine.Serialization.FormerlySerializedAs("UnitSprite")]
-        public Sprite UnitIcon;   // UI Square Icon (Fallback to initials)
+        [UnityEngine.Serialization.FormerlySerializedAs("UnitIcon")]
+        public Sprite UnitAvatar;   // UI Square Icon (Headshot)
         
         [UnityEngine.Serialization.FormerlySerializedAs("UnitIcon")]
         public Sprite UnitChibi;  // Battle Render (Idle Animation)
@@ -38,6 +39,25 @@ namespace MaouSamaTD.Units
         public Sprite UnitFullSprite; // Full Body Cutout
         
         public RuntimeAnimatorController AnimatorController;
+
+        public enum UnitImageType { Avatar, Chibi, WaistUp, SplashArt, FullSprite }
+        
+        [Header("UI Selection")]
+        public UnitImageType CardSlotImageType = UnitImageType.WaistUp;
+        public UnitImageType ButtonImageType = UnitImageType.Avatar;
+
+        public Sprite GetSprite(UnitImageType type)
+        {
+            return type switch
+            {
+                UnitImageType.Avatar => UnitAvatar,
+                UnitImageType.Chibi => UnitChibi,
+                UnitImageType.WaistUp => UnitWaistUp,
+                UnitImageType.SplashArt => UnitSplashArt,
+                UnitImageType.FullSprite => UnitFullSprite,
+                _ => UnitAvatar
+            };
+        }
 
         [Header("Progression")]
         public int Level = 1;
@@ -124,7 +144,7 @@ namespace MaouSamaTD.Units
         {
             if (EquippedSkin != null) return EquippedSkin.WaistUp;
             if (StarRating >= 4 && Rank2Art != null) return Rank2Art; // E.g., Rank 2 art unlocks at 4 stars
-            return UnitWaistUp != null ? UnitWaistUp : UnitIcon;
+            return UnitWaistUp != null ? UnitWaistUp : UnitAvatar;
         }
 
         public void AdvanceStar()

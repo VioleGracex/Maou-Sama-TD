@@ -16,12 +16,18 @@ MonoBehaviour:
   UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
   UnitName: Ignis
   UnitTitle: The Crimson Bastion
-  UnitSprite: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
-  UnitIcon: {fileID: 21300000, guid: 2ee969558738c8947813acd12636bf16, type: 3}
+  UnitAvatar: {fileID: 21300000, guid: 2ee969558738c8947813acd12636bf16, type: 3}
+  UnitChibi: {fileID: 21300000, guid: 2b7269185b2d93f4bb6017781c2f99a0, type: 3}
+  UnitWaistUp: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
+  UnitSplashArt: {fileID: 0}
+  UnitFullSprite: {fileID: 21300000, guid: 27d88e95005001640970c417ed541b79, type: 3}
   AnimatorController: {fileID: 9100000, guid: a021d6c8141c30b4b89ccb2bfb26dccc, type: 2}
+  CardSlotImageType: 2
+  ButtonImageType: 2
   Level: 1
   Experience: 0
   StarRating: 6
+  Amity: 0
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
@@ -43,7 +49,9 @@ MonoBehaviour:
   MaxCharge: 100
   ChargePerSecond: 1
   ChargePerAttack: 2
-  Skill: {fileID: 11400000, guid: e20c62474bbc31f40a06dc66077f2aaa, type: 2}
+  PassiveSkill: {fileID: 0}
+  ActiveSkill: {fileID: 0}
+  UltimateSkill: {fileID: 0}
   AscensionNodes: []
   Rank2Art: {fileID: 0}
   AlternateSkins: []

@@ -6,27 +6,29 @@ using MaouSamaTD.Data;
 using MaouSamaTD.UI.MainMenu;
 using Zenject;
 using DG.Tweening;
+using MaouSamaTD.Units;
+using MaouSamaTD.UI;
+using MaouSamaTD.UI.Vassals;
 
-namespace MaouSamaTD.UI.Vassals
+namespace MaouSamaTD.UI.Cohorts
 {
-    /// Management page for all owned units (Vassals).
-    /// Handles inspection, leveling, upgrading, single-selection, and multi-selection modes.
+    /// <summary>
+    /// Management page for all owned units (formerly Vassals, now referred to as Cohort Inventory).
+    /// Handles inspection, leveling, upgrading, and selection for squad assignment.
     /// </summary>
-    public class VassalsBarracksPanel : MonoBehaviour, IUIController
+    public class CohortManagerUI : MonoBehaviour, IUIController
     {
         public enum OperationMode { View, SingleSelect, MultiSelect }
 
         [Header("Roots")]
         [SerializeField] private GameObject _visualRoot;
         [SerializeField] private Transform _cardContainer;
-        [SerializeField] private UnitCardUI _cardPrefab;
-        [SerializeField] private GameObject _sortContainer;
+        [SerializeField] private UnitCardUI _cardPrefab; // Use UnitCardUI directly for inventory items
+        [SerializeField] private ClassScalingData _classScalingData;
         [SerializeField] private GameObject _filterContainer;
-        [SerializeField] private TextMeshProUGUI _unitCountText;
 
         [Header("Multi-Select UI")]
         [SerializeField] private Button _btnConfirmSelection;
-        [SerializeField] private TextMeshProUGUI _multiSelectCountText;
 
         [Header("Layout Animation")]
         [SerializeField] private RectTransform _scrollViewRect;
@@ -39,10 +41,6 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private VassalDetailPanel _inspectorPanel; // Side Bar
         public UnitInspectorFullScreenUI _fullScreenInspector;
 
-        [Header("Buttons")]
-        [SerializeField] private Button _btnLevelUp;
-        [SerializeField] private Button _btnPromote;
-        [SerializeField] private Button _btnClose;
 
         private List<UnitCardUI> _spawnedCards = new List<UnitCardUI>();
 
@@ -57,17 +55,9 @@ namespace MaouSamaTD.UI.Vassals
 
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true;
-        public Button CloseButton => _btnClose;
-        public Button LevelUpButton => _btnLevelUp;
 
         public void Awake()
         {
-            if (_btnClose == null)
-            {
-                var btnTr = transform.Find("Header/Back_MissionReady_Btn");
-                if (btnTr != null) _btnClose = btnTr.GetComponent<Button>();
-            }
-
             if (_btnConfirmSelection != null) _btnConfirmSelection.onClick.AddListener(OnConfirmMultiSelection);
         }
 
@@ -185,9 +175,6 @@ namespace MaouSamaTD.UI.Vassals
                 else card.gameObject.SetActive(false);
             }
 
-            if (_unitCountText != null)
-                _unitCountText.text = $"VASSALS: {ownedIDs.Count}";
-
             UpdateCardSelectionStates();
         }
 
@@ -195,16 +182,6 @@ namespace MaouSamaTD.UI.Vassals
         {
             bool isMulti = _currentMode == OperationMode.MultiSelect;
             if (_btnConfirmSelection != null) _btnConfirmSelection.gameObject.SetActive(isMulti);
-            if (_multiSelectCountText != null) _multiSelectCountText.gameObject.SetActive(isMulti);
-            UpdateCountText();
-        }
-
-        private void UpdateCountText()
-        {
-            if (_currentMode == OperationMode.MultiSelect && _multiSelectCountText != null)
-            {
-                _multiSelectCountText.text = $"{_tempSelectedIds.Count}/{_maxMultiSelectLimit}";
-            }
         }
 
         private void UpdateCardSelectionStates()
@@ -223,18 +200,21 @@ namespace MaouSamaTD.UI.Vassals
             }
         }
 
-        private void OnCardClicked(UnitCardUI card)
+        private void OnCardClicked(UnitCardUI cardUI)
         {
+            if (cardUI == null || cardUI.Data == null) return;
+            var data = cardUI.Data;
+
             if (_currentMode == OperationMode.View)
             {
                 if (_fullScreenInspector != null)
                 {
-                    _fullScreenInspector.Open(card.Data);
+                    _fullScreenInspector.Open(data);
                     UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
                 }
                 else if (_inspectorPanel != null)
                 {
-                    _inspectorPanel.Open(card.Data);
+                    _inspectorPanel.Open(data);
                     UpdateScrollRectLayout(true);
                 }
             }
@@ -242,24 +222,22 @@ namespace MaouSamaTD.UI.Vassals
             {
                 if (_inspectorPanel != null)
                 {
-                    _inspectorPanel.Open(card.Data);
+                    _inspectorPanel.Open(data);
                     UpdateScrollRectLayout(true);
                 }
                 
-                // We keep the selection logic separate or maybe add a "Select" button to the side-bar?
-                // For now, let's keep the card click as selection too, but show the side-bar.
-                _onSingleSelectComplete?.Invoke(_currentSlotIndex, card.Data.UniqueID);
+                _onSingleSelectComplete?.Invoke(_currentSlotIndex, data.UniqueID);
                 UIFlowManager.Instance.GoBack();
             }
             else if (_currentMode == OperationMode.MultiSelect)
             {
                 if (_inspectorPanel != null)
                 {
-                    _inspectorPanel.Open(card.Data);
+                    _inspectorPanel.Open(data);
                     UpdateScrollRectLayout(true);
                 }
 
-                string id = card.Data.UniqueID;
+                string id = data.UniqueID;
                 if (_tempSelectedIds.Contains(id))
                 {
                     _tempSelectedIds.Remove(id);
@@ -272,7 +250,6 @@ namespace MaouSamaTD.UI.Vassals
                     }
                 }
                 UpdateCardSelectionStates();
-                UpdateCountText();
             }
         }
 

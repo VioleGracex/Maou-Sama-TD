@@ -216,7 +216,7 @@ namespace MaouSamaTD.UI
             {
                 // Basic setup if no helper script yet
                 var img = go.GetComponentInChildren<Image>();
-                if (img) img.sprite = (skin != null) ? skin.Icon : _currentUnit.UnitIcon;
+                if (img) img.sprite = (skin != null) ? skin.Icon : _currentUnit.UnitAvatar;
                 var btn = go.GetComponent<Button>();
                 if (btn) btn.onClick.AddListener(() => SelectSkin(skin));
             }

@@ -5,11 +5,15 @@ using TMPro;
 
 namespace MaouSamaTD.UI
 {
+    /// <summary>
+    /// Specialized container for a unit within a Cohort Roster.
+    /// Responsible for handling "Empty" states, "Assign" prompts, and wrapping a UnitCardUI.
+    /// </summary>
     public class UnitCardSlot : MonoBehaviour
     {
         [SerializeField] private GameObject _emptyVisual; // Visual graphic representing empty state ("+")
         [SerializeField] private TextMeshProUGUI _emptySlotText; // Text for empty state ("ASSIGN SLOT X")
-        [SerializeField] private MaouSamaTD.UI.MainMenu.UnitCardUI _unitCardUI; // The pre-placed unit card child object
+        [SerializeField] private MaouSamaTD.UI.MainMenu.UnitCardUI _unitCardUI; // The visual card component
         [SerializeField] private Button _button;
         
         public event System.Action<int> OnClick;
@@ -36,22 +40,24 @@ namespace MaouSamaTD.UI
             }
         }
 
-        public void SetUnit(MaouSamaTD.Units.UnitData unitData)
+        /// <summary>
+        /// Assigns a unit to this slot and hides empty visuals.
+        /// </summary>
+        public void SetUnit(MaouSamaTD.Units.UnitData unitData, MaouSamaTD.Units.ClassScalingData scalingData = null, System.Action<MaouSamaTD.UI.MainMenu.UnitCardUI> onClick = null)
         {
             if (_emptyVisual != null) _emptyVisual.SetActive(false);
             if (_emptySlotText != null) _emptySlotText.gameObject.SetActive(false);
 
             if (_unitCardUI != null)
             {
-                Debug.Log($"[UnitCardSlot] Slot {Index} setting unit: {(unitData != null ? unitData.UnitName : "NULL")}");
-                _unitCardUI.Setup(unitData);
-            }
-            else
-            {
-                Debug.LogError($"[UnitCardSlot] Slot {Index} missing _unitCardUI reference!");
+                _unitCardUI.gameObject.SetActive(true);
+                _unitCardUI.Setup(unitData, onClick);
             }
         }
 
+        /// <summary>
+        /// Clears the unit from this slot and shows the empty assignment prompt.
+        /// </summary>
         public void SetEmpty()
         {
             if (_emptyVisual != null) _emptyVisual.SetActive(true);
@@ -63,9 +69,15 @@ namespace MaouSamaTD.UI
 
             if (_unitCardUI != null)
             {
-                Debug.Log($"[UnitCardSlot] Slot {Index} setting empty.");
-                _unitCardUI.Setup(null);
+                _unitCardUI.Setup(null); // This usually hides the visual root of the card
             }
+        }
+
+        public MaouSamaTD.Units.UnitData Data => _unitCardUI != null ? _unitCardUI.Data : null;
+
+        public void SetSelectionState(int index)
+        {
+            if (_unitCardUI != null) _unitCardUI.SetSelectionState(index);
         }
 
         private void HandleClick()

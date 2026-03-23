@@ -4,6 +4,8 @@ using Assets.SimpleLocalization.Scripts;
 using Zenject;
 using MaouSamaTD.UI;
 using MaouSamaTD.UI.Common;
+using MaouSamaTD.UI.MainMenu;
+using MaouSamaTD.UI.Cohorts;
 
 namespace MaouSamaTD.UI.MainMenu
 {
@@ -41,8 +43,6 @@ namespace MaouSamaTD.UI.MainMenu
         public UINavigationOverlay _navOverlay;
 
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
-
-        // Panels are now looked up dynamically to ensure one source of truth.
 
         private void Start()
         {
@@ -98,27 +98,27 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnCohortsClicked()
         {
-            var cohortPanel = Object.FindAnyObjectByType<MaouSamaTD.UI.CohortManagerPanel>(FindObjectsInactive.Include);
+            var cohortPanel = Object.FindAnyObjectByType<CohortSquadUI>(FindObjectsInactive.Include);
             if (cohortPanel != null)
             {
                 UIFlowManager.Instance.OpenPanel(cohortPanel);
             }
             else
             {
-                Debug.LogWarning("[HomeUIManager] CohortManagerPanel not found in scene!");
+                Debug.LogWarning("[HomeUIManager] CohortSquadUI not found in scene!");
             }
         }
     
         private void OnVassalsClicked()
         {
-            var panel = Object.FindAnyObjectByType<MaouSamaTD.UI.Vassals.VassalsBarracksPanel>(FindObjectsInactive.Include);
+            var panel = Object.FindAnyObjectByType<CohortManagerUI>(FindObjectsInactive.Include);
             if (panel != null)
             {
                 UIFlowManager.Instance.OpenPanel(panel);
             }
             else
             {
-                Debug.LogWarning("[HomeUIManager] Vassals clicked, but VassalsBarracksPanel could not be found!");
+                Debug.LogWarning("[HomeUIManager] CohortManagerUI could not be found!");
             }
         }
 

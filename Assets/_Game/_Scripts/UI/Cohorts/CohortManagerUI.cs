@@ -9,6 +9,7 @@ using DG.Tweening;
 using MaouSamaTD.Units;
 using MaouSamaTD.UI;
 using MaouSamaTD.UI.Vassals;
+using MaouSamaTD.UI.Common;
 
 namespace MaouSamaTD.UI.Cohorts
 {
@@ -41,8 +42,7 @@ namespace MaouSamaTD.UI.Cohorts
         [SerializeField] private VassalDetailPanel _inspectorPanel; // Side Bar
         public UnitInspectorFullScreenUI _fullScreenInspector;
 
-
-        private List<UnitCardUI> _spawnedCards = new List<UnitCardUI>();
+        private GenericListView<UnitData, UnitCardUI> _listView;
 
         // Operational State
         private OperationMode _currentMode = OperationMode.View;
@@ -59,6 +59,7 @@ namespace MaouSamaTD.UI.Cohorts
         public void Awake()
         {
             if (_btnConfirmSelection != null) _btnConfirmSelection.onClick.AddListener(OnConfirmMultiSelection);
+            _listView = new GenericListView<UnitData, UnitCardUI>(_cardContainer, _cardPrefab);
         }
 
         public void Open()
@@ -141,39 +142,38 @@ namespace MaouSamaTD.UI.Cohorts
 
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
 
+        public void Preheat()
+        {
+            // Pre-load owned units from save
+            if (_saveManager != null && _saveManager.CurrentData != null && MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null)
+            {
+                var ownedIDs = _saveManager.CurrentData.UnlockedUnits;
+                foreach (var id in ownedIDs)
+                {
+                    // Accessing the database ensures the SOs are referenced/loaded if they weren't already
+                    MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(id);
+                }
+                Debug.Log($"[CohortManagerUI] Preheated {ownedIDs.Count} unit data references.");
+            }
+        }
+
         public void RefreshInventory()
         {
             if (_cardContainer == null || _cardPrefab == null) return;
 
             // Get owned units
-            List<string> ownedIDs = new List<string>();
-            if (_saveManager != null && _saveManager.CurrentData != null)
+            List<UnitData> ownedUnits = new List<UnitData>();
+            if (_saveManager != null && _saveManager.CurrentData != null && MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null)
             {
-                ownedIDs = _saveManager.CurrentData.UnlockedUnits;
-            }
-
-            // Reuse/Spawn cards
-            while (_spawnedCards.Count < ownedIDs.Count)
-            {
-                var card = Instantiate(_cardPrefab, _cardContainer);
-                _spawnedCards.Add(card);
-            }
-
-            for (int i = 0; i < _spawnedCards.Count; i++)
-            {
-                var card = _spawnedCards[i];
-                if (i < ownedIDs.Count)
+                foreach (var id in _saveManager.CurrentData.UnlockedUnits)
                 {
-                    var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(ownedIDs[i]);
-                    if (unit != null)
-                    {
-                        card.gameObject.SetActive(true);
-                        card.Setup(unit, OnCardClicked);
-                    }
-                    else card.gameObject.SetActive(false);
+                    var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(id);
+                    if (unit != null) ownedUnits.Add(unit);
                 }
-                else card.gameObject.SetActive(false);
             }
+
+            // Use the optimized list view
+            _listView.UpdateContent(ownedUnits, OnCardClicked);
 
             UpdateCardSelectionStates();
         }
@@ -186,9 +186,9 @@ namespace MaouSamaTD.UI.Cohorts
 
         private void UpdateCardSelectionStates()
         {
-            foreach (var card in _spawnedCards)
+            foreach (var card in _listView.ActiveItems)
             {
-                if (card.isActiveAndEnabled && card.Data != null)
+                if (card.Data != null)
                 {
                     int index = -1;
                     if (_currentMode == OperationMode.MultiSelect && _tempSelectedIds.Contains(card.Data.UniqueID))

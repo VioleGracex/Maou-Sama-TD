@@ -27,5 +27,10 @@ namespace MaouSamaTD.UI
         /// Resets the panel to its default, original state. Handled automatically by HomeUIManager/UIFlowManager.
         /// </summary>
         void ResetState();
+
+        /// <summary>
+        /// Optional: Load data into memory without instantiating UI.
+        /// </summary>
+        void Preheat() { }
     }
 }

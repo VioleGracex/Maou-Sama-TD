@@ -3,44 +3,42 @@ using UnityEditor;
 using MaouSamaTD.Units;
 using MaouSamaTD.Core;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace MaouSamaTD.Units.Editor
 {
-    [CustomEditor(typeof(ClassScalingData))]
-    public class ClassScalingDataEditor : UnityEditor.Editor
+    [CustomEditor(typeof(EnemyScalingData))]
+    public class EnemyScalingDataEditor : UnityEditor.Editor
     {
-        private ClassScalingData _target;
-        private int _selectedClassIndex = 0;
+        private EnemyScalingData _target;
+        private int _selectedEnemyIndex = 0;
         private int _selectedStarIndex = 0;
-        private string[] _vassalClassNames;
-        private UnitClass[] _vassalClasses;
+        private string[] _enemyClassNames;
+        private UnitClass[] _enemyClasses;
 
         private void OnEnable()
         {
-            _target = (ClassScalingData)target;
+            _target = (EnemyScalingData)target;
             RefreshClasses();
         }
 
         private void RefreshClasses()
         {
             var allClasses = (UnitClass[])System.Enum.GetValues(typeof(UnitClass));
-            // Filter out Enemy types
-            _vassalClasses = allClasses.Where(c => 
-                c != UnitClass.EnemyMelee && 
-                c != UnitClass.EnemyRanged && 
-                c != UnitClass.EnemyBoss).ToArray();
+            // Filter only Enemy types
+            _enemyClasses = allClasses.Where(c => 
+                c == UnitClass.EnemyMelee || 
+                c == UnitClass.EnemyRanged || 
+                c == UnitClass.EnemyBoss).ToArray();
             
-            _vassalClassNames = _vassalClasses.Select(c => c.ToString()).ToArray();
+            _enemyClassNames = _enemyClasses.Select(c => c.ToString()).ToArray();
         }
 
         public override void OnInspectorGUI()
         {
-            if (_target == null) _target = (ClassScalingData)target;
+            if (_target == null) _target = (EnemyScalingData)target;
             
             serializedObject.Update();
 
-            GUIStyle titleStyle = new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Bold, fontSize = 14, alignment = TextAnchor.MiddleCenter };
             GUIStyle buttonStyle = new GUIStyle(GUI.skin.button) { fontStyle = FontStyle.Bold, fontSize = 12 };
             
             if (GUILayout.Button(_target.useDefaultInspector ? "Switch to Custom Editor" : "Switch to Default Editor", buttonStyle, GUILayout.Height(30)))
@@ -60,32 +58,32 @@ namespace MaouSamaTD.Units.Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("AssetLabel"));
             EditorGUILayout.Space(10);
 
-            if (_vassalClassNames == null || _vassalClassNames.Length == 0) RefreshClasses();
+            if (_enemyClassNames == null || _enemyClassNames.Length == 0) RefreshClasses();
 
-            // Tabs for each Class
-            _selectedClassIndex = GUILayout.SelectionGrid(_selectedClassIndex, _vassalClassNames, 4);
+            // Tabs for each Enemy Type
+            _selectedEnemyIndex = GUILayout.SelectionGrid(_selectedEnemyIndex, _enemyClassNames, 3);
             
             EditorGUILayout.Space(10);
 
-            if (_selectedClassIndex < _vassalClasses.Length)
+            if (_selectedEnemyIndex < _enemyClasses.Length)
             {
-                UnitClass selectedClass = _vassalClasses[_selectedClassIndex];
-                DrawClassScalingArea(selectedClass);
+                UnitClass selectedClass = _enemyClasses[_selectedEnemyIndex];
+                DrawEnemyScalingArea(selectedClass);
             }
 
             EditorGUILayout.Space(20);
             
             if (GUILayout.Button("Show Raw Data", EditorStyles.miniButton))
             {
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("ClassScalings"), true);
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("EnemyScalings"), true);
             }
 
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawClassScalingArea(UnitClass classType)
+        private void DrawEnemyScalingArea(UnitClass classType)
         {
-            SerializedProperty scalingsProp = serializedObject.FindProperty("ClassScalings");
+            SerializedProperty scalingsProp = serializedObject.FindProperty("EnemyScalings");
             int existingIndex = -1;
 
             if (scalingsProp == null) return;
@@ -93,7 +91,7 @@ namespace MaouSamaTD.Units.Editor
             for (int i = 0; i < scalingsProp.arraySize; i++)
             {
                 SerializedProperty element = scalingsProp.GetArrayElementAtIndex(i);
-                if (element.FindPropertyRelative("ClassType").enumValueIndex == (int)classType)
+                if (element.FindPropertyRelative("EnemyType").enumValueIndex == (int)classType)
                 {
                     existingIndex = i;
                     break;
@@ -105,13 +103,13 @@ namespace MaouSamaTD.Units.Editor
                 SerializedProperty scaling = scalingsProp.GetArrayElementAtIndex(existingIndex);
                 
                 EditorGUILayout.BeginVertical("helpbox");
-                EditorGUILayout.LabelField($"Scaling Settings for {classType}", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField($"Enemy Scaling Settings for {classType}", EditorStyles.boldLabel);
                 EditorGUILayout.Space(5);
 
-                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("OverrideClassName"));
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("OverrideName"));
                 
                 // Icon Preview Area
-                DrawIconWithPreview(scaling.FindPropertyRelative("ClassIcon"));
+                DrawIconWithPreview(scaling.FindPropertyRelative("Icon"));
                 
                 EditorGUILayout.Space(5);
                 EditorGUILayout.LabelField("Base Multipliers", EditorStyles.miniBoldLabel);
@@ -120,10 +118,10 @@ namespace MaouSamaTD.Units.Editor
                 EditorGUILayout.PropertyField(scaling.FindPropertyRelative("BaseDefMultiplier"), new GUIContent("DEF Multiplier"));
 
                 EditorGUILayout.Space(10);
-                DrawRarityGrowthTabs(scaling.FindPropertyRelative("RarityGrowths"));
+                DrawDifficultyGrowthTabs(scaling.FindPropertyRelative("DifficultyGrowths"));
                 
                 EditorGUILayout.Space(15);
-                if (GUILayout.Button("Remove This Class Entry", GUILayout.Width(180)))
+                if (GUILayout.Button("Remove This Enemy Entry", GUILayout.Width(180)))
                 {
                     scalingsProp.DeleteArrayElementAtIndex(existingIndex);
                 }
@@ -137,7 +135,7 @@ namespace MaouSamaTD.Units.Editor
                 {
                     scalingsProp.InsertArrayElementAtIndex(scalingsProp.arraySize);
                     SerializedProperty newItem = scalingsProp.GetArrayElementAtIndex(scalingsProp.arraySize - 1);
-                    newItem.FindPropertyRelative("ClassType").enumValueIndex = (int)classType;
+                    newItem.FindPropertyRelative("EnemyType").enumValueIndex = (int)classType;
                     
                     // Set some defaults
                     newItem.FindPropertyRelative("BaseHpMultiplier").floatValue = 1.0f;
@@ -170,25 +168,25 @@ namespace MaouSamaTD.Units.Editor
             EditorGUILayout.EndHorizontal();
         }
 
-        private void DrawRarityGrowthTabs(SerializedProperty rarityGrowthsProp)
+        private void DrawDifficultyGrowthTabs(SerializedProperty growthsProp)
         {
-            EditorGUILayout.LabelField("Rarity (Star) Growth", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Difficulty (Star) Growth", EditorStyles.boldLabel);
             
             string[] starTabs = { "1⭐", "2⭐", "3⭐", "4⭐", "5⭐", "6⭐" };
             _selectedStarIndex = GUILayout.Toolbar(_selectedStarIndex, starTabs);
 
             // Ensure we have 6 elements
-            while (rarityGrowthsProp.arraySize < 6)
+            while (growthsProp.arraySize < 6)
             {
-                rarityGrowthsProp.InsertArrayElementAtIndex(rarityGrowthsProp.arraySize);
-                SerializedProperty newGrowth = rarityGrowthsProp.GetArrayElementAtIndex(rarityGrowthsProp.arraySize - 1);
-                newGrowth.FindPropertyRelative("Rarity").enumValueIndex = rarityGrowthsProp.arraySize - 1;
+                growthsProp.InsertArrayElementAtIndex(growthsProp.arraySize);
+                SerializedProperty newGrowth = growthsProp.GetArrayElementAtIndex(growthsProp.arraySize - 1);
+                newGrowth.FindPropertyRelative("Rarity").enumValueIndex = growthsProp.arraySize - 1;
             }
 
-            SerializedProperty selectedGrowth = rarityGrowthsProp.GetArrayElementAtIndex(_selectedStarIndex);
+            SerializedProperty selectedGrowth = growthsProp.GetArrayElementAtIndex(_selectedStarIndex);
             
             EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.LabelField($"{_selectedStarIndex + 1}-Star Growth Stats", EditorStyles.miniBoldLabel);
+            EditorGUILayout.LabelField($"Tier {(_selectedStarIndex + 1)} Growth Stats", EditorStyles.miniBoldLabel);
             EditorGUILayout.PropertyField(selectedGrowth.FindPropertyRelative("HpGrowthPerLevel"), new GUIContent("HP Growth"));
             EditorGUILayout.PropertyField(selectedGrowth.FindPropertyRelative("AtkGrowthPerLevel"), new GUIContent("ATK Growth"));
             EditorGUILayout.PropertyField(selectedGrowth.FindPropertyRelative("DefGrowthPerLevel"), new GUIContent("DEF Growth"));

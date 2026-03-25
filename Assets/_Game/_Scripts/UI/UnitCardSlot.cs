@@ -43,7 +43,7 @@ namespace MaouSamaTD.UI
         /// <summary>
         /// Assigns a unit to this slot and hides empty visuals.
         /// </summary>
-        public void SetUnit(MaouSamaTD.Units.UnitData unitData, MaouSamaTD.Units.ClassScalingData scalingData = null, System.Action<MaouSamaTD.UI.MainMenu.UnitCardUI> onClick = null)
+        public void SetUnit(MaouSamaTD.Units.UnitData unitData, MaouSamaTD.Units.ClassScalingData scalingData = null, System.Action<UnityEngine.Component> onClick = null)
         {
             if (_emptyVisual != null) _emptyVisual.SetActive(false);
             if (_emptySlotText != null) _emptySlotText.gameObject.SetActive(false);

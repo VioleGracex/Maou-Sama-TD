@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using MaouSamaTD.Levels;
 using MaouSamaTD.Managers;
+using MaouSamaTD.UI.Common;
 using Zenject;
 
 namespace MaouSamaTD.UI.MainMenu
@@ -23,9 +24,16 @@ namespace MaouSamaTD.UI.MainMenu
         
         [Inject] private SaveManager _saveManager;
 
+        private GenericListView<LevelDisplayData, LevelButton> _listView;
+
         private void OnEnable()
         {
             Refresh();
+        }
+
+        private void Awake()
+        {
+            _listView = new GenericListView<LevelDisplayData, LevelButton>(_levelContainer, _levelButtonPrefab);
         }
 
         private void Start()
@@ -50,6 +58,24 @@ namespace MaouSamaTD.UI.MainMenu
 
         public bool RequestClose() => true;
 
+        public void Preheat()
+        {
+            // Ensure levels are loaded into memory
+            if (_allLevels == null || _allLevels.Count == 0)
+            {
+                Debug.Log("[CampaignPage] Preheating: No levels assigned in inspector, checking database...");
+                // In a real scenario, we might pull from a static database reference
+                // _allLevels = AppEntryPoint.LoadedLevelDatabase.AllLevels;
+            }
+            
+            // Validate save manager status
+            if (_saveManager != null)
+            {
+                var data = _saveManager.CurrentData;
+                Debug.Log($"[CampaignPage] Preheating: Save data loaded. Player: {data?.PlayerName}");
+            }
+        }
+
         public void ResetState()
         {
             // The user wanted pages to look fresh. For the Campaign Page, that means maybe clearing the briefing if it was open.
@@ -64,50 +90,31 @@ namespace MaouSamaTD.UI.MainMenu
         {
             if (_levelContainer == null || _levelButtonPrefab == null || _allLevels == null)
             {
-                Debug.LogWarning("[CampaignPage] Missing references! Cannot spawn level buttons. Container: " + (_levelContainer != null) + ", Prefab: " + (_levelButtonPrefab != null) + ", Levels: " + (_allLevels != null));
+                Debug.LogWarning("[CampaignPage] Missing references! Cannot spawn level buttons.");
                 return;
-            }
-
-            if (_saveManager == null)
-            {
-                Debug.LogWarning("[CampaignPage] SaveManager is null! Stages will spawn but unlock states might be inaccurate.");
             }
 
             Debug.Log($"[CampaignPage] Starting Refresh. Total levels in list: {_allLevels.Count}");
 
-            // Clean up old buttons but keep the prefab if it's a child template
-            foreach(Transform child in _levelContainer)
-            {
-                if (child.gameObject == _levelButtonPrefab.gameObject)
-                {
-                    child.gameObject.SetActive(false);
-                    continue;
-                }
-                Destroy(child.gameObject);
-            }
-
-            int spawnedCount = 0;
-
+            List<LevelDisplayData> displayDataList = new List<LevelDisplayData>();
             for (int i = 0; i < _allLevels.Count; i++)
             {
                 LevelData level = _allLevels[i];
-                if (level == null)
-                {
-                    Debug.LogWarning($"[CampaignPage] Level at index {i} is null in the _allLevels list!");
-                    continue;
-                }
+                if (level == null) continue;
 
-                var btn = Instantiate(_levelButtonPrefab, _levelContainer);
-                btn.gameObject.SetActive(true); // Ensure new instances are active
-                
-                bool isLocked = !IsLevelUnlocked(level, i);
-                int stars = GetLevelStars(level);
-                
-                btn.Setup(level, i, isLocked, stars, OnLevelClicked);
-                spawnedCount++;
+                displayDataList.Add(new LevelDisplayData
+                {
+                    Level = level,
+                    Index = i,
+                    IsLocked = !IsLevelUnlocked(level, i),
+                    StarCount = GetLevelStars(level)
+                });
             }
-            
-            Debug.Log($"[CampaignPage] Spawned levels from 0 to {spawnedCount}");
+
+            _listView.UpdateContent(displayDataList, (btnComp) => {
+                var btn = btnComp as LevelButton;
+                if (btn != null) OnLevelClicked(btn.LevelDataForCallback); 
+            });
         }
 
         private bool IsLevelUnlocked(LevelData level, int index)

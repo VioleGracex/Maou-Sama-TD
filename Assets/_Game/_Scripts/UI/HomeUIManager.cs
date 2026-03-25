@@ -61,6 +61,24 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnCitadel != null) _btnCitadel.onClick.AddListener(OnCitadelClicked);
 
             UpdateAccountInfo();
+            PreheatData();
+        }
+
+        private void PreheatData()
+        {
+            Debug.Log("[HomeUIManager] Starting UI Data Preheating...");
+            
+            // Find all core pages (even inactive ones) and preheat their data
+            var campaign = Object.FindAnyObjectByType<CampaignPage>(FindObjectsInactive.Include);
+            if (campaign != null) campaign.Preheat();
+
+            var cohortInventory = Object.FindAnyObjectByType<CohortManagerUI>(FindObjectsInactive.Include);
+            if (cohortInventory != null) cohortInventory.Preheat();
+
+            var cohortSquad = Object.FindAnyObjectByType<CohortSquadUI>(FindObjectsInactive.Include);
+            if (cohortSquad != null) cohortSquad.Preheat();
+
+            Debug.Log("[HomeUIManager] UI Data Preheating Complete.");
         }
 
         private void UpdateAccountInfo()

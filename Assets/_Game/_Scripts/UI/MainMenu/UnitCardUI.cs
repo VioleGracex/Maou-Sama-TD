@@ -6,7 +6,7 @@ using System;
 
 namespace MaouSamaTD.UI.MainMenu
 {
-    public class UnitCardUI : MonoBehaviour
+    public class UnitCardUI : MonoBehaviour, MaouSamaTD.UI.Common.IListItem<UnitData>
     {
         [Header("General")]
         [SerializeField] private GameObject _visualRoot;
@@ -29,6 +29,10 @@ namespace MaouSamaTD.UI.MainMenu
 
         public UnitData Data => _data;
 
+        // IListItem implementation
+        public string GetContentID() => _data != null ? _data.UniqueID : string.Empty;
+        public int GetContentVersion() => _data != null ? (_data.Level ^ _data.StarRating.GetHashCode() ^ _data.Experience) : 0;
+
         private void Start()
         {
             Button btn = GetComponent<Button>();
@@ -38,11 +42,16 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
-        public void Setup(UnitData unit, Action<UnitCardUI> onClick = null)
+        public void Setup(UnitData unit, Action<UnityEngine.Component> onClick = null)
         {
-            Debug.Log($"[UnitCardUI] Setup called for unit: {(unit != null ? unit.UnitName : "NULL")}. VisualRoot assigned: {(_visualRoot != null)}");
+            _onClickCallback = onClick != null ? (card) => onClick(card) : null;
+            InternalSetup(unit);
+        }
+
+        private void InternalSetup(UnitData unit)
+        {
+            Debug.Log($"[UnitCardUI] Setup called for unit: {(unit != null ? unit.UnitName : "NULL")}.");
             _data = unit;
-            if (onClick != null) _onClickCallback = onClick;
 
             if (_visualRoot != null)
             {
@@ -90,7 +99,11 @@ namespace MaouSamaTD.UI.MainMenu
                     _classIconImage.gameObject.SetActive(false);
                 }
             }
-            if (_levelText) _levelText.gameObject.SetActive(true);
+            if (_levelText) 
+            {
+                _levelText.text = $"LV. {unit.Level}";
+                _levelText.gameObject.SetActive(true);
+            }
             
             if (_starsContainer != null)
             {

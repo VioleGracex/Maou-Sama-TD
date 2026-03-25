@@ -139,6 +139,13 @@ namespace MaouSamaTD.UI.Cohorts
             if (_cohortInventoryController != null) _cohortInventoryController.Close();
         }
 
+        public void Preheat()
+        {
+            InitializeData();
+            LoadCohortToTemp(_playerData.CurrentCohortIndex);
+            Debug.Log("[CohortSquadUI] Preheated cohort data and squad slots.");
+        }
+
         public void ResetState()
         {
             _isDirty = false;

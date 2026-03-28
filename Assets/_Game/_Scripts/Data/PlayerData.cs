@@ -32,6 +32,31 @@ namespace MaouSamaTD.Data
 
         [Header("Settings")]
         public SettingsData Settings = new SettingsData();
+
+        [Header("Home Page Customization")]
+        public List<HomeCharacterSettings> HomePresets = new List<HomeCharacterSettings>();
+        public int ActivePresetIndex = 0;
+
+        public HomeCharacterSettings CurrentHomeSettings
+        {
+            get
+            {
+                if (HomePresets == null || HomePresets.Count == 0)
+                {
+                    HomePresets = new List<HomeCharacterSettings> { new HomeCharacterSettings() };
+                }
+                return HomePresets[Mathf.Clamp(ActivePresetIndex, 0, HomePresets.Count - 1)];
+            }
+        }
+    }
+
+    [Serializable]
+    public class HomeCharacterSettings
+    {
+        public string PresetName = "Default";
+        public string SelectedUnitID = "Ignis"; // Default unit
+        public Vector2 Position = new Vector2(0, 0); // Position relative to center/screen
+        public float Scale = 1.0f;
     }
 
     [Serializable]

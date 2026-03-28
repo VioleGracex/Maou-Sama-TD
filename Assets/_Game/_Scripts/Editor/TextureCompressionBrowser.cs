@@ -47,10 +47,14 @@ public class TextureCompressionBrowser : EditorWindow
         public string path;
         public string guid;
         public string name;
-        public long fileSize;
+        public long fileSize; // source file size
+        public long compressedSize; // estimated for Android
         public int width;
         public int height;
+        public int targetWidth;
+        public int targetHeight;
         public TextureImporterCompression compression;
+        public TextureImporterFormat androidFormat;
         public bool isSelected;
         public int useCount = -1; // -1 means Not Scanned
         public List<string> usedInScenes = new List<string>();
@@ -67,6 +71,11 @@ public class TextureCompressionBrowser : EditorWindow
         public string GetReadableFileSize()
         {
             return FormatBytes(fileSize);
+        }
+
+        public string GetReadableCompressedSize()
+        {
+            return FormatBytes(compressedSize);
         }
     }
 
@@ -321,7 +330,7 @@ public class TextureCompressionBrowser : EditorWindow
     private void DrawFooter()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
-        long totalSize = filteredInfos.Sum(i => i.fileSize);
+        long totalSize = filteredInfos.Sum(i => i.compressedSize);
         int selectedCount = filteredInfos.Count(i => i.isSelected);
         
         int totalPages = Mathf.Max(1, Mathf.CeilToInt((float)filteredInfos.Count / itemsPerPage));
@@ -425,15 +434,37 @@ public class TextureCompressionBrowser : EditorWindow
                     Resources.UnloadAsset(tex); // Free RAM immediately
                 }
 
+                // Android logic
+                var androidSettings = importer.GetPlatformTextureSettings("Android");
+                int targetW = w;
+                int targetH = h;
+                if (androidSettings.overridden && w > 0 && h > 0)
+                {
+                    int max = androidSettings.maxTextureSize;
+                    if (w > max || h > max)
+                    {
+                        float scale = (float)max / Mathf.Max(w, h);
+                        targetW = Mathf.Max(1, Mathf.RoundToInt(w * scale));
+                        targetH = Mathf.Max(1, Mathf.RoundToInt(h * scale));
+                    }
+                }
+
+                float bpp = GetBitsPerPixel(androidSettings.format);
+                long estimatedSize = (long)(targetW * targetH * bpp / 8f);
+
                 textureInfos.Add(new TextureInfo
                 {
                     path = path,
                     guid = guid,
                     name = Path.GetFileName(path),
                     fileSize = fileInfo.Length,
+                    compressedSize = estimatedSize,
                     width = w,
                     height = h,
+                    targetWidth = targetW,
+                    targetHeight = targetH,
                     compression = importer.textureCompression,
+                    androidFormat = androidSettings.format,
                     isSelected = false
                 });
             }
@@ -561,10 +592,10 @@ public class TextureCompressionBrowser : EditorWindow
                 filteredInfos.Sort((a, b) => b.name.CompareTo(a.name));
                 break;
             case SortType.SizeAscending:
-                filteredInfos.Sort((a, b) => a.fileSize.CompareTo(b.fileSize));
+                filteredInfos.Sort((a, b) => a.compressedSize.CompareTo(b.compressedSize));
                 break;
             case SortType.SizeDescending:
-                filteredInfos.Sort((a, b) => b.fileSize.CompareTo(a.fileSize));
+                filteredInfos.Sort((a, b) => b.compressedSize.CompareTo(a.compressedSize));
                 break;
         }
         lastSelectedIndex = -1;
@@ -653,7 +684,7 @@ public class TextureCompressionBrowser : EditorWindow
         EditorGUILayout.LabelField(info.name, EditorStyles.boldLabel);
         
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField($"{info.width}x{info.height}", EditorStyles.miniLabel);
+        EditorGUILayout.LabelField($"{info.targetWidth}x{info.targetHeight}", EditorStyles.miniLabel);
         GUILayout.FlexibleSpace();
         
         // Usage Indicator
@@ -667,7 +698,7 @@ public class TextureCompressionBrowser : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.LabelField(info.GetReadableFileSize(), EditorStyles.miniLabel);
+        EditorGUILayout.LabelField(info.GetReadableCompressedSize(), EditorStyles.miniLabel);
 
         EditorGUI.BeginChangeCheck();
         TextureImporterCompression newCompression = (TextureImporterCompression)EditorGUILayout.EnumPopup(info.compression);
@@ -726,8 +757,8 @@ public class TextureCompressionBrowser : EditorWindow
             }
             EditorGUILayout.EndVertical();
 
-            EditorGUILayout.LabelField($"{info.width}x{info.height}", GUILayout.Width(80));
-            EditorGUILayout.LabelField(info.GetReadableFileSize(), GUILayout.Width(80));
+            EditorGUILayout.LabelField($"{info.targetWidth}x{info.targetHeight}", GUILayout.Width(80));
+            EditorGUILayout.LabelField(info.GetReadableCompressedSize(), GUILayout.Width(80));
 
             // Usage Count Column
             string countStr = info.useCount >= 0 ? info.useCount.ToString() : "?";
@@ -805,8 +836,56 @@ public class TextureCompressionBrowser : EditorWindow
             importer.textureCompression = newCompression;
             importer.SaveAndReimport();
             info.compression = newCompression;
+            
+            // Recalculate
+            var androidSettings = importer.GetPlatformTextureSettings("Android");
+            float bpp = GetBitsPerPixel(androidSettings.format);
+            info.compressedSize = (long)(info.targetWidth * info.targetHeight * bpp / 8f);
+            
             FileInfo fileInfo = new FileInfo(Path.Combine(Application.dataPath, "..", info.path));
             info.fileSize = fileInfo.Length;
+        }
+    }
+
+    private float GetBitsPerPixel(TextureImporterFormat format)
+    {
+        switch (format)
+        {
+            case TextureImporterFormat.ASTC_4x4: return 8f;
+            case TextureImporterFormat.ASTC_5x5: return 5.12f;
+            case TextureImporterFormat.ASTC_6x6: return 3.56f;
+            case TextureImporterFormat.ASTC_8x8: return 2f;
+            case TextureImporterFormat.ASTC_10x10: return 1.28f;
+            case TextureImporterFormat.ASTC_12x12: return 0.89f;
+            
+            case TextureImporterFormat.ETC_RGB4: return 4f;
+            case TextureImporterFormat.ETC2_RGB4: return 4f;
+            case TextureImporterFormat.ETC2_RGB4_PUNCHTHROUGH_ALPHA: return 4f;
+            case TextureImporterFormat.ETC2_RGBA8: return 8f;
+            
+            case TextureImporterFormat.PVRTC_RGB2: return 2f;
+            case TextureImporterFormat.PVRTC_RGBA2: return 2f;
+            case TextureImporterFormat.PVRTC_RGB4: return 4f;
+            case TextureImporterFormat.PVRTC_RGBA4: return 4f;
+            
+            case TextureImporterFormat.DXT1: return 4f;
+            case TextureImporterFormat.DXT5: return 8f;
+            
+            case TextureImporterFormat.BC7: return 8f;
+            case TextureImporterFormat.BC6H: return 8f;
+            case TextureImporterFormat.BC5: return 8f;
+            case TextureImporterFormat.BC4: return 4f;
+            
+            case TextureImporterFormat.RGBA32: return 32f;
+            case TextureImporterFormat.RGB24: return 24f;
+            case TextureImporterFormat.Alpha8: return 8f;
+            case TextureImporterFormat.R8: return 8f;
+            case TextureImporterFormat.R16: return 16f;
+            case TextureImporterFormat.RGBA16: return 16f;
+            case TextureImporterFormat.RGBAHalf: return 64f;
+            case TextureImporterFormat.RGBAFloat: return 128f;
+            
+            default: return 8f; // Reasonable fallback
         }
     }
 }

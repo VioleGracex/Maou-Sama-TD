@@ -3,9 +3,13 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using MaouSamaTD.Units;
+using MaouSamaTD.Data;
+using System.Collections.Generic;
+using System.Linq;
 using MaouSamaTD.Progression;
 using Assets.SimpleLocalization.Scripts;
 using Zenject;
+using MaouSamaTD.Managers;
 
 namespace MaouSamaTD.UI
 {
@@ -53,6 +57,12 @@ namespace MaouSamaTD.UI
         [Header("Skill Slots")]
         [SerializeField] private Image[] _skillSlots;
 
+        [Header("Level Up Page References")]
+        [SerializeField] private ScrollRect _duplicatesScrollRect;
+        [SerializeField] private GameObject _duplicateItemPrefab;
+        [SerializeField] private TextMeshProUGUI _xpMeterValueText;
+        [SerializeField] private Button _btnConfirmLevelUp;
+
         [Header("Tab Content Roots")]
         [SerializeField] private GameObject _contentStats;
         [SerializeField] private GameObject _contentSkills;
@@ -80,7 +90,10 @@ namespace MaouSamaTD.UI
         [SerializeField] private Button _btnLevelUp;
         [SerializeField] private Button _btnChamber;
 
+        [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
+
         private UnitData _currentUnit;
+        private List<UnitInventoryEntry> _selectedDuplicates = new List<UnitInventoryEntry>();
 
         private void Start()
         {
@@ -93,6 +106,7 @@ namespace MaouSamaTD.UI
             if (_btnPromote) _btnPromote.onClick.AddListener(() => SwitchTab(2)); // Resonance/Promote Panel
             if (_btnUpgradeSkill) _btnUpgradeSkill.onClick.AddListener(() => SwitchTab(1)); // Skills Panel
             if (_btnChamber) _btnChamber.onClick.AddListener(OnChamberClicked);
+            if (_btnConfirmLevelUp) _btnConfirmLevelUp.onClick.AddListener(PerformLevelUp);
             
             // Initial Localization
             LocalizeUI();
@@ -176,6 +190,84 @@ namespace MaouSamaTD.UI
             if (_btnHome) _btnHome.gameObject.SetActive(index != 3);
 
             if (index == 3) RefreshSkinsPage();
+            if (index == 4) RefreshXPPage();
+        }
+
+        private void RefreshXPPage()
+        {
+            if (_currentUnit == null || _saveManager == null || _saveManager.CurrentData == null) return;
+            
+            _selectedDuplicates.Clear();
+            if (_btnConfirmLevelUp) _btnConfirmLevelUp.interactable = false;
+
+            // Clear duplicates list
+            if (_duplicatesScrollRect != null && _duplicatesScrollRect.content != null)
+            {
+                foreach (Transform child in _duplicatesScrollRect.content) Destroy(child.gameObject);
+                
+                // Fetch duplicates from PlayerData (Inventory)
+                var inventory = _saveManager.CurrentData.UnitInventory;
+                // We use unit.name to match UnitID in inventory
+                // Note: GetInstanceID() is internal, we might need a better way to find the "current instance" 
+                // but for now we filter all instances of same UnitID.
+                var duplicates = inventory.FindAll(entry => entry.UnitID == _currentUnit.name);
+
+                foreach (var entry in duplicates)
+                {
+                    if (_duplicateItemPrefab == null) continue;
+                    GameObject go = Instantiate(_duplicateItemPrefab, _duplicatesScrollRect.content);
+                    var item = go.GetComponent<VassalDuplicateItemUI>();
+                    if (item != null)
+                    {
+                        item.Setup(entry, _currentUnit.UnitAvatar, (e) => OnDuplicateSelected(e, item));
+                    }
+                }
+            }
+
+            // Update XP Meter text if available
+            int req = ProgressionLogic.GetRequiredXP(_currentUnit.Level);
+            if (_xpMeterValueText) _xpMeterValueText.text = $"{_currentUnit.Experience} / {req}";
+        }
+
+        private void OnDuplicateSelected(UnitInventoryEntry entry, VassalDuplicateItemUI item)
+        {
+            if (_selectedDuplicates.Contains(entry))
+            {
+                _selectedDuplicates.Remove(entry);
+                item.SetSelected(false);
+            }
+            else
+            {
+                _selectedDuplicates.Add(entry);
+                item.SetSelected(true);
+            }
+
+            if (_btnConfirmLevelUp) _btnConfirmLevelUp.interactable = _selectedDuplicates.Count > 0;
+        }
+
+        private void PerformLevelUp()
+        {
+            if (_currentUnit == null || _selectedDuplicates.Count == 0) return;
+
+            // Per User: "level up change skins upgrade units"
+            // Consumption logic: each duplicate gives fixed XP or based on duplicate level
+            int totalXPGain = _selectedDuplicates.Count * 500; // Placeholder value
+            
+            ProgressionLogic.AddXP(_currentUnit, totalXPGain);
+            
+            // Remove consumed duplicates from inventory
+            foreach (var entry in _selectedDuplicates)
+            {
+                _saveManager.CurrentData.UnitInventory.Remove(entry);
+                // Also increment potential if desired, but here we focus on XP
+            }
+
+            _saveManager.Save();
+            
+            Debug.Log($"[Vassals] Level Up performed! Gained {totalXPGain} XP. Consumed {_selectedDuplicates.Count} duplicates.");
+            
+            RefreshProgressionUI();
+            RefreshXPPage();
         }
 
         #region Skins Page Methods

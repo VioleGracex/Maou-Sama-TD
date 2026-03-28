@@ -52,22 +52,8 @@
    - **Passive**: Always active (e.g., "Deal 10% more dmg to Humans").
    - **Active**: Manually triggered or Auto-triggered on cooldown.
 
-## 4. Battle Mechanics Detail
-
-### Damage Formula (Draft)
-```
-PhysicalDmg = (Attacker.ATK * SkillMulti) - (Defender.DEF)
-MagicDmg    = (Attacker.ATK * SkillMulti * (1 - Defender.RES_Percent))
-MinDmg      = Attacker.ATK * 0.05
-```
-
 ### Lane Logic
 - **Ground**: Melee units block enemies.
 - **High Ground**: Ranged units (Archers/Mages) placed here. Cannot be hit by melee enemies unless the enemy has "Ranged Attack".
 - **Flying Enemies**: Ignore ground blockers. Must be hit by Ranged units.
 
-### Maou Skills (Player Spells)
-- **Thunder Strike**: Deal DMG to single tile.
-- **Rally**: Increase ASPD of all units for 10s.
-- **Terror**: Stun all enemies for 3s.
-- *Cost*: Uses "Commander Points" generated over time or by kills.

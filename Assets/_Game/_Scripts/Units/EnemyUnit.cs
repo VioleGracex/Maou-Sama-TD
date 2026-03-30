@@ -229,17 +229,22 @@ namespace MaouSamaTD.Units
             return false;
         }
 
-        private void FaceTarget(Vector3 targetPos)
-        {
-             if (_spriteRenderer == null) return;
+         private void FaceTarget(Vector3 targetPos)
+         {
+              if (_spriteRenderer == null) return;
 
-             float diff = targetPos.x - transform.position.x;
-             if (Mathf.Abs(diff) < 0.05f) return;
+              float diff = targetPos.x - transform.position.x;
+              if (Mathf.Abs(diff) < 0.05f) return;
 
-             bool isTargetRight = diff > 0;
-             _spriteRenderer.flipX = isTargetRight; // Sprites face left by default, flipX=true makes them face right (+x)
-             if (_showDebugLogs) Debug.Log($"[Facing] {gameObject.name} facing {(isTargetRight ? "Right (+x)" : "Left (-x)")}. Target X: {targetPos.x:F2}, My X: {transform.position.x:F2}");
-        }
+              bool isTargetRight = diff > 0;
+              
+              Vector3 currentScale = transform.localScale;
+              // Default facing is Left (+1). To face Right, use -1.
+              currentScale.x = isTargetRight ? -1f : 1f;
+              transform.localScale = currentScale;
+              
+              if (_showDebugLogs) Debug.Log($"[Facing] {gameObject.name} facing {(isTargetRight ? "Right (+x)" : "Left (-x)")}. Target X: {targetPos.x:F2}, My X: {transform.position.x:F2}");
+         }
 
         private void HandleAttack(UnitBase target)
         {

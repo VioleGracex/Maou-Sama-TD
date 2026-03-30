@@ -22,6 +22,7 @@ namespace MaouSamaTD.UI.Skills
         [Inject] private SkillManager _skillManager;
         [Inject] private InteractionManager _interactionManager;
         [Inject] private BattleCurrencyManager _currencyManager;
+        [Inject] private MaouSamaTD.Managers.GameSelectionState _gameSelectionState;
         
         private List<SkillButtonUI> _spawnedButtons = new List<SkillButtonUI>();
         private bool _isVisible = false; // Default: Docked/Hidden
@@ -41,6 +42,15 @@ namespace MaouSamaTD.UI.Skills
 
         private void Start()
         {
+            if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
+            {
+                if (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1")
+                {
+                    gameObject.SetActive(false);
+                    return;
+                }
+            }
+
             if (_panelRect != null) 
             {
                 _visiblePos = _panelRect.anchoredPosition;

@@ -132,48 +132,28 @@ namespace MaouSamaTD.UI
             float current = _selectedUnit.CurrentCharge;
             float max = _selectedUnit.MaxCharge;
             bool isFull = current >= max;
-            bool isFirstTutorial = false;
-
-            if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
+            
+            // Toggle Button vs Charge Display
+            if (_ultButton)
             {
-                if (_gameSelectionState.SelectedLevel.LevelIndex == 1 || 
-                    _gameSelectionState.SelectedLevel.LevelName == "Level 1" || 
-                    _gameSelectionState.SelectedLevel.LevelID == "1-1")
+                _ultButton.gameObject.SetActive(isFull);
+            }
+            
+            if (_ultChargeParent)
+            {
+                _ultChargeParent.gameObject.SetActive(!isFull);
+                if (!isFull && max > 0)
                 {
-                    isFirstTutorial = true;
+                    _ultChargeFill.fillAmount = current / max;
                 }
             }
-
-            if (isFirstTutorial)
+            
+            if (_ultChargeLabel)
             {
-                if (_ultButton) _ultButton.gameObject.SetActive(false);
-                if (_ultChargeParent) _ultChargeParent.gameObject.SetActive(false);
-                if (_ultChargeLabel) _ultChargeLabel.gameObject.SetActive(false);
-            }
-            else
-            {
-                // Toggle Button vs Charge Display
-                if (_ultButton)
+                _ultChargeLabel.gameObject.SetActive(!isFull);
+                if (!isFull && max > 0)
                 {
-                    _ultButton.gameObject.SetActive(isFull);
-                }
-                
-                if (_ultChargeParent)
-                {
-                    _ultChargeParent.gameObject.SetActive(!isFull);
-                    if (!isFull && max > 0)
-                    {
-                        _ultChargeFill.fillAmount = current / max;
-                    }
-                }
-                
-                if (_ultChargeLabel)
-                {
-                    _ultChargeLabel.gameObject.SetActive(!isFull);
-                    if (!isFull && max > 0)
-                    {
-                        _ultChargeLabel.text = $"{(current/max):P0} Charging Skill";
-                    }
+                    _ultChargeLabel.text = $"{(current/max):P0} Charging Skill";
                 }
             }
         }

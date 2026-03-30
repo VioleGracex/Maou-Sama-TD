@@ -223,6 +223,31 @@ namespace MaouSamaTD.Units
             gameObject.name = "Unit_" + data.UnitName;
             
             UpdateVisuals(data);
+            
+            // Face nearest spawn point automatically upon deployment
+            if (_gridManager == null) _gridManager = FindFirstObjectByType<Grid.GridManager>();
+            if (_gridManager != null && _gridManager.SpawnPoints != null && _gridManager.SpawnPoints.Count > 0)
+            {
+                var closestSpawnCoord = _gridManager.SpawnPoints[0].Coordinate;
+                var unitCoord = CurrentTile != null ? CurrentTile.Coordinate : _gridManager.WorldToGridCoordinates(transform.position);
+                float minDist = Vector2.Distance(unitCoord, closestSpawnCoord);
+
+                for (int i = 1; i < _gridManager.SpawnPoints.Count; i++)
+                {
+                    float dist = Vector2.Distance(unitCoord, _gridManager.SpawnPoints[i].Coordinate);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        closestSpawnCoord = _gridManager.SpawnPoints[i].Coordinate;
+                    }
+                }
+                
+                bool isTargetRight = closestSpawnCoord.x > unitCoord.x;
+                Vector3 currentScale = transform.localScale;
+                // Default facing is Left (+1). To face Right, use -1.
+                currentScale.x = isTargetRight ? -1f : 1f;
+                transform.localScale = currentScale;
+            }
         }
         
         private void OnDestroy()
@@ -337,7 +362,12 @@ namespace MaouSamaTD.Units
         {
              if (_spriteRenderer == null) return;
              bool isTargetRight = targetPos.x > transform.position.x;
-             _spriteRenderer.flipX = isTargetRight; 
+             
+             Vector3 currentScale = transform.localScale;
+             // Default facing is Left (+1). To face Right, use -1.
+             currentScale.x = isTargetRight ? -1f : 1f;
+             transform.localScale = currentScale;
+             
              if (_showDebugLogs) Debug.Log($"[Facing] {gameObject.name} facing {(isTargetRight ? "Right (+x)" : "Left (-x)")}. Target X: {targetPos.x:F2}, My X: {transform.position.x:F2}");
         }
 

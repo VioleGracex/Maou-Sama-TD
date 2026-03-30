@@ -517,7 +517,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1561,13 +1561,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8743284321488027943}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15, g: 0.15, b: 0.15, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1642,12 +1642,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.MainMenu.UnitCardUI
   _visualRoot: {fileID: 5247294705198212412}
   _data: {fileID: 0}
-  _classScalingData: {fileID: 0}
   _portraitImage: {fileID: 3751108895014725321}
   _nameText: {fileID: 2581567603498324666}
   _classIconImage: {fileID: 2319635127683627166}
   _levelText: {fileID: 7831377982639309289}
   _starsContainer: {fileID: 2471742757189325087}
+  _button: {fileID: 7271203900064019929}
   _selectedOverlay: {fileID: 7957700571502684031}
   _selectionOrderText: {fileID: 2091171514871988407}
   _checkMarkIcon: {fileID: 1807712075546120230}

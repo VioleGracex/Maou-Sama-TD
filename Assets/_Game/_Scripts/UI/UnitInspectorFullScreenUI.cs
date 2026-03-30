@@ -10,6 +10,7 @@ using MaouSamaTD.Progression;
 using Assets.SimpleLocalization.Scripts;
 using Zenject;
 using MaouSamaTD.Managers;
+using MaouSamaTD.UI.Vassals;
 
 namespace MaouSamaTD.UI
 {
@@ -71,12 +72,11 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _contentXP;
 
         [Header("Skins Page References")]
-        [SerializeField] private ScrollRect _skinScrollRect;       // Vertical thumbnails
+        [SerializeField] private SkinInfiniteScroll _skinInfiniteScroll;
         [SerializeField] private ScrollRect _skinPurchaseScroll;   // Horizontal buy list
         [SerializeField] private Image _skinSplashPreview;        // Full-screen art
         [SerializeField] private Animator _skinChibiPreview;       // Idle animator
         [SerializeField] private TextMeshProUGUI _skinNameText;
-        [SerializeField] private TextMeshProUGUI _skinBrandText;
         [SerializeField] private Button _btnApplySkin;
         [SerializeField] private GameObject _skinItemPrefab;
 
@@ -94,6 +94,8 @@ namespace MaouSamaTD.UI
 
         private UnitData _currentUnit;
         private List<UnitInventoryEntry> _selectedDuplicates = new List<UnitInventoryEntry>();
+        private List<UnitData.SkinData> _skinDataList = new List<UnitData.SkinData>();
+        private UnitData _lastSkinUnit; // For lazy loading check
 
         private void Start()
         {
@@ -108,8 +110,21 @@ namespace MaouSamaTD.UI
             if (_btnChamber) _btnChamber.onClick.AddListener(OnChamberClicked);
             if (_btnConfirmLevelUp) _btnConfirmLevelUp.onClick.AddListener(PerformLevelUp);
             
+            if (_skinInfiniteScroll) _skinInfiniteScroll.OnSelectionChanged += OnSkinScrollSelectionChanged;
+
             // Initial Localization
             LocalizeUI();
+        }
+
+        private void OnSkinScrollSelectionChanged(int index)
+        {
+            if (_skinDataList != null && index >= 0 && index < _skinDataList.Count)
+            {
+                SelectSkin(_skinDataList[index]);
+            }
+            
+            // Per User: "show price only on active skin card ... hide for others on side"
+            UpdateSkinItemsStatus(index);
         }
 
         private void OnChamberClicked()
@@ -140,8 +155,14 @@ namespace MaouSamaTD.UI
 
         public void Open(UnitData unit)
         {
+            bool unitChanged = _currentUnit != unit;
             _currentUnit = unit;
+            
             PopulateHeader(unit);
+            
+            // Lazy load skins immediately if unit changed, so page is ready
+            if (unitChanged) RefreshSkinsPage();
+            
             SwitchTab(0); // Default to Stats
             Open();
         }
@@ -189,7 +210,7 @@ namespace MaouSamaTD.UI
             // Per User: Hide Citadel (Home) button in Skin page
             if (_btnHome) _btnHome.gameObject.SetActive(index != 3);
 
-            if (index == 3) RefreshSkinsPage();
+            // if (index == 3) RefreshSkinsPage(); // Now handled in Open() for "lazy" immediate access
             if (index == 4) RefreshXPPage();
         }
 
@@ -219,7 +240,7 @@ namespace MaouSamaTD.UI
                     var item = go.GetComponent<VassalDuplicateItemUI>();
                     if (item != null)
                     {
-                        item.Setup(entry, _currentUnit.UnitAvatar, (e) => OnDuplicateSelected(e, item));
+                        item.Setup(entry, _currentUnit.GetSprite(UnitData.UnitImageType.Avatar), (e) => OnDuplicateSelected(e, item));
                     }
                 }
             }
@@ -271,64 +292,121 @@ namespace MaouSamaTD.UI
         }
 
         #region Skins Page Methods
-        private UnitSkinData _selectedSkin;
+        private UnitData.SkinData _selectedSkin;
 
         private void RefreshSkinsPage()
         {
             if (_currentUnit == null) return;
             
-            // Clear items
-            if (_skinScrollRect != null && _skinScrollRect.content != null)
+            // Optimization: Only rebuild if it's a different unit
+            if (_lastSkinUnit == _currentUnit) 
             {
-                foreach (Transform child in _skinScrollRect.content) Destroy(child.gameObject);
-                
-                // Add Default Skin first
-                CreateSkinItem(null); 
+                // Just update the "Equipped" checkmarks on existing items
+                UpdateSkinItemsStatus();
+                return;
+            }
+            _lastSkinUnit = _currentUnit;
 
-                foreach (var skin in _currentUnit.AlternateSkins)
+            _skinDataList.Clear();
+            List<GameObject> items = new List<GameObject>();
+
+            Transform content = (_skinInfiniteScroll != null) ? _skinInfiniteScroll.Content : null;
+            if (content == null) return;
+
+            // Clear items
+            foreach (Transform child in content) Destroy(child.gameObject);
+                
+            // Add Base Skin first (represented as null in the skin mapping)
+            _skinDataList.Add(null);
+            items.Add(CreateSkinItem(null, content)); 
+
+            foreach (var skin in _currentUnit.Skins)
+            {
+                if (skin != null)
                 {
-                    if (skin != null) CreateSkinItem(skin);
+                    _skinDataList.Add(skin);
+                    items.Add(CreateSkinItem(skin, content));
                 }
             }
 
-            // Default selection
-            SelectSkin(_currentUnit.EquippedSkin);
+            if (_skinInfiniteScroll)
+            {
+                _skinInfiniteScroll.Initialize(items);
+            }
+
+            // Default selection based on currently equipped skin
+            int equippedIndex = _skinDataList.FindIndex(s => s != null ? s.SkinID == _currentUnit.EquippedSkinID : string.IsNullOrEmpty(_currentUnit.EquippedSkinID));
+            if (equippedIndex >= 0)
+            {
+                SelectSkin(_skinDataList[equippedIndex]);
+                UpdateSkinItemsStatus(equippedIndex);
+            }
         }
 
-        private void CreateSkinItem(UnitSkinData skin)
+        private void UpdateSkinItemsStatus(int activeIndex = -1)
         {
-            if (_skinItemPrefab == null) return;
-            var go = Instantiate(_skinItemPrefab, _skinScrollRect.content);
-            var item = go.GetComponent<UnitSkinItemUI>(); // Assuming we'll create this helper
-            if (item != null)
+            if (_skinInfiniteScroll == null || _skinInfiniteScroll.Content == null) return;
+            
+            int i = 0;
+            foreach (Transform child in _skinInfiniteScroll.Content)
             {
-                item.Setup(skin, () => SelectSkin(skin));
-            }
-            else
-            {
-                // Basic setup if no helper script yet
-                var img = go.GetComponentInChildren<Image>();
-                if (img) img.sprite = (skin != null) ? skin.Icon : _currentUnit.UnitAvatar;
-                var btn = go.GetComponent<Button>();
-                if (btn) btn.onClick.AddListener(() => SelectSkin(skin));
+                var cardUI = child.GetComponent<SkinCardUI>();
+                if (cardUI != null)
+                {
+                    // Update highlighting (active/inactive)
+                    if (activeIndex != -1)
+                    {
+                        cardUI.SetHighlighted(i == activeIndex);
+                    }
+                    
+                    // Re-set the equipped status in case it changed
+                    // Since we don't store indices in the cards, we can derive it from the name if needed,
+                    // but RefreshSkinsPage usually handles the initial state.
+                }
+                i++;
             }
         }
 
-        private void SelectSkin(UnitSkinData skin)
+        private GameObject CreateSkinItem(UnitData.SkinData skin, Transform parent)
+        {
+            if (_skinItemPrefab == null) return null;
+            var go = Instantiate(_skinItemPrefab, parent);
+            var cardUI = go.GetComponent<SkinCardUI>();
+            if (cardUI != null)
+            {
+                string theme = (skin != null) ? skin.SkinThemeName : "Default";
+                Sprite icon = (skin != null) ? skin.Avatar : _currentUnit.BaseSkin.Avatar;
+                int price = (skin != null) ? skin.UnlockCost : 0;
+                string skinID = (skin != null) ? skin.SkinID : null;
+                bool isLocked = !string.IsNullOrEmpty(skinID) && !_currentUnit.IsSkinUnlocked(skinID);
+                
+                // cardUI handles the visual layout of name, portrait, equipped/locked, and PRICE
+                bool isEquipped = skinID == _currentUnit.EquippedSkinID || (string.IsNullOrEmpty(skinID) && string.IsNullOrEmpty(_currentUnit.EquippedSkinID));
+                cardUI.SetState(theme, icon, isEquipped, isLocked, price);
+            }
+            return go;
+        }
+
+        private void SelectSkin(UnitData.SkinData skin)
         {
             _selectedSkin = skin;
-            bool isDeault = (skin == null);
+            bool isBase = (skin == null);
 
-            if (_skinSplashPreview) _skinSplashPreview.sprite = isDeault ? _currentUnit.UnitSplashArt : skin.SplashArt;
-            if (_skinNameText) _skinNameText.text = isDeault ? "DEFAULT" : skin.SkinName;
-            if (_skinBrandText) _skinBrandText.text = isDeault ? _currentUnit.UnitTitle : skin.BrandName;
+            // Update Text & Assets
+            if (_skinSplashPreview) 
+                _skinSplashPreview.sprite = isBase ? _currentUnit.BaseSkin.FullSplashArt : skin.FullSplashArt;
             
-            // Chibi Idle Animation
+            if (_skinNameText) 
+                _skinNameText.text = isBase ? $"{_currentUnit.UnitName} (Default)" : $"{skin.SkinThemeName} {_currentUnit.UnitName}";
+            
+            // Visual Preview (Chibi)
             if (_skinChibiPreview != null)
             {
-                // Toggle active if missing, but ideally we just swap animator or sprite
-                var sr = _skinChibiPreview.GetComponent<Image>();
-                if (sr) sr.sprite = isDeault ? _currentUnit.UnitChibi : skin.Chibi;
+                var img = _skinChibiPreview.GetComponent<Image>();
+                if (img) img.sprite = isBase ? _currentUnit.BaseSkin.Chibi : skin.Chibi;
+                
+                // Update Animator
+                _skinChibiPreview.runtimeAnimatorController = isBase ? _currentUnit.BaseSkin.AnimatorController : skin.AnimatorController;
             }
 
             if (_btnApplySkin)
@@ -336,22 +414,23 @@ namespace MaouSamaTD.UI
                 _btnApplySkin.onClick.RemoveAllListeners();
                 _btnApplySkin.onClick.AddListener(OnApplySkinClicked);
                 
-                // Show "Apply" if not equipped, "Equipped" otherwise
                 var txt = _btnApplySkin.GetComponentInChildren<TextMeshProUGUI>();
-                if (txt) txt.text = (_currentUnit.EquippedSkin == skin) ? "EQUIPPED" : "APPLY";
-                _btnApplySkin.interactable = (_currentUnit.EquippedSkin != skin);
+                string skinID = skin != null ? skin.SkinID : null;
+                bool alreadyEquipped = (_currentUnit.EquippedSkinID == skinID) || (string.IsNullOrEmpty(skinID) && string.IsNullOrEmpty(_currentUnit.EquippedSkinID));
+                
+                if (txt) txt.text = alreadyEquipped ? "EQUIPPED" : "APPLY";
+                _btnApplySkin.interactable = !alreadyEquipped;
             }
         }
 
         private void OnApplySkinClicked()
         {
             if (_currentUnit == null) return;
-            _currentUnit.EquippedSkin = _selectedSkin;
-            Debug.Log($"[Skins] Applied skin: {(_selectedSkin != null ? _selectedSkin.SkinName : "Default")}");
+            _currentUnit.EquippedSkinID = _selectedSkin != null ? _selectedSkin.SkinID : null;
+            Debug.Log($"[Skins] Applied skin: {(_selectedSkin != null ? _selectedSkin.SkinThemeName : "Default")}");
             
-            // Refresh visuals on other tabs if needed
             PopulateHeader(_currentUnit); 
-            RefreshSkinsPage(); // Refresh button states
+            RefreshSkinsPage(); // Refresh selection icons on cards
         }
         #endregion
 
@@ -359,7 +438,9 @@ namespace MaouSamaTD.UI
         {
             if (_nameText) _nameText.text = u.UnitName.ToUpper();
             if (_rarityText) _rarityText.text = u.Rarity.ToString().ToUpper();
-            if (_portraitImage) _portraitImage.sprite = u.GetCurrentVisualArt();
+            
+            // Per User: Show full body cutout in the main portrait art
+            if (_portraitImage) _portraitImage.sprite = u.GetSprite(UnitData.UnitImageType.FullSprite);
             
             RefreshProgressionUI();
             RefreshUnitDetails();

@@ -110,14 +110,14 @@ namespace MaouSamaTD.Managers.Interaction
                         if (tile == hoverTile)
                         {
                             shouldHighlight = true;
-                            highlightColor = selectedSkill.RangeIndicatorColor;
+                            highlightColor = selectedSkill.BaseVisuals.RangeIndicatorColor;
                             useFullFill = UseFullFillSkills;
                         }
                     }
                     else if (inRadius)
                     {
                         shouldHighlight = true;
-                        highlightColor = selectedSkill.RangeIndicatorColor;
+                        highlightColor = selectedSkill.BaseVisuals.RangeIndicatorColor;
                         highlightColor.a = (tile == hoverTile) ? 0.8f : 0.5f;
                         useFullFill = UseFullFillSkills;
                     }

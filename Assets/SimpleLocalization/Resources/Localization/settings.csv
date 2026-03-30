@@ -1,10 +1,10 @@
-Key,English,Japanese,Russian
-settings.tabs.game,Game,ゲーム,Игра
-settings.tabs.audio,Audio,オーディオ,Аудио
-settings.tabs.notification,Notifications,通知,Уведомления
-settings.tabs.account,Account,アカウント,Аккаунт
-settings.game.language,Language,言語,Язык
-settings.game.quality,Quality,品質,Качество
-settings.game.ui_adaptation,UI Adaptation,UIの適応,Адапция UI
-settings.account.wipedata,WIPE ALL DATA,データをすべて消去する,СБРОСИТЬ ВСЕ ДАННЫЕ
-settings.account.wipedataconfirm,Are you sure? This will delete all progress.,本当にいいですか？すべての進行状況が削除されます。,Вы уверены? Это удалит весь прогресс.
+Key,English,Russian,German,French,Portuguese,Spanish,Japanese,Chinese
+settings.tabs.game,Game,ゲーム,Игра,Jeu,Jogo,Juego,ゲーム,游戏
+settings.tabs.audio,Audio,オーディオ,Аудио,Audio,Áudio,Audio,オーディオ,音频
+settings.tabs.notification,Notifications,通知,Уведомления,Notifications,Notificações,Notificaciones,通知,通知
+settings.tabs.account,Account,アカウント,Аккаунт,,,,,
+settings.game.language,Language,言語,Язык,Langue,Idioma,Idioma,言語,语言
+settings.game.quality,Quality,品質,Качество,Qualité,Qualidade,Calidad,品質,画质
+settings.game.ui_adaptation,UI Adaptation,UIの適応,Адапция UI,Adaptation UI,Adaptação de UI,Adaptación de UI,UIの適応,UI 自适应
+settings.account.wipedata,WIPE ALL DATA,データをすべて消去する,СБРОСИТЬ ВСЕ ДАННЫЕ,EFFACER TOUTES LES DONNÉES,APAGAR TODOS OS DADOS,BORRAR TODOS LOS DATOS,データをすべて消去する,清空所有数据
+settings.account.wipedataconfirm,Are you sure? This will delete all progress.,本当にいいですか？すべての進行状況が削除されます。,Вы уверены? Это удалит весь прогресс.,Êtes-vous sûr ? Cela supprimera toute progression.,Tem certeza? Isso excluirá todo o progresso.,¿Está seguro? Esto eliminará todo el progreso.,本当にいいですか？すべての進行状況が削除されます。,确定吗？这将删除所有进度。

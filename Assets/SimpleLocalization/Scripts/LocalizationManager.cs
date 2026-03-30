@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -48,6 +48,11 @@ namespace Assets.SimpleLocalization.Scripts
             foreach (var sheet in LocalizationSettings.Instance.Sheets)
             {
                 var textAsset = sheet.TextAsset;
+                if (textAsset == null)
+                {
+                    Debug.LogWarning($"Localization Sheet `{sheet.Name}` is missing its TextAsset reference. Please re-download sheets in LocalizationSettings.");
+                    continue;
+                }
                 var lines = GetLines(textAsset.text);
 				var languages = lines[0].Split(',').Select(i => i.Trim()).ToList();
 

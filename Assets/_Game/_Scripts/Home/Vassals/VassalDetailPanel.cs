@@ -255,7 +255,7 @@ namespace MaouSamaTD.UI.Vassals
             if (_levelText)  _levelText.text  = $"LV. {u.Level}/{u.MaxLevel}";
             if (_rarityText) _rarityText.text = u.Rarity.ToString().ToUpper();
             if (_portraitImage) { _portraitImage.sprite = u.GetCurrentVisualArt(); _portraitImage.color = Color.white; }
-            if (_classIcon && u.UnitAvatar)        { _classIcon.sprite = u.UnitAvatar;       _classIcon.color = Color.white; }
+            if (_classIcon)        { _classIcon.sprite = u.GetSprite(UnitData.UnitImageType.Avatar);       _classIcon.color = Color.white; }
             if (_starsRoot != null)
             {
                 int stars = u.StarRating;
@@ -330,22 +330,36 @@ namespace MaouSamaTD.UI.Vassals
             foreach (Transform c in _skinsContainer) Destroy(c.gameObject);
 
             // Default skin
-            CreateSkinCard(u.UnitAvatar);
+            string baseName = LocalizationManager.Localize("Skins.Default") ?? "BASE SKIN";
+            bool isBaseEquipped = string.IsNullOrEmpty(u.EquippedSkinID); 
+            CreateSkinCard(baseName, u.GetSprite(UnitData.UnitImageType.Avatar), isBaseEquipped, false);
 
-            if (u.AlternateSkins != null)
+            if (u.Skins != null)
             {
-                foreach (var skin in u.AlternateSkins)
+                foreach (var skin in u.Skins)
                 {
-                    if (skin != null) CreateSkinCard(skin.Icon);
+                    if (skin == null) continue;
+                    bool isEquipped = u.EquippedSkinID == skin.SkinID;
+                    bool isLocked = !u.IsSkinUnlocked(skin.SkinID);
+                    CreateSkinCard(skin.SkinThemeName, skin.Avatar, isEquipped, isLocked, skin.UnlockCost);
                 }
             }
         }
 
-        private void CreateSkinCard(Sprite sprite)
+        private void CreateSkinCard(string name, Sprite sprite, bool isEquipped, bool isLocked, int price = 0)
         {
             var go = Instantiate(_skinCardPrefab, _skinsContainer);
-            var img = go.GetComponentInChildren<Image>(true);
-            if (img) { img.sprite = sprite; img.color = sprite ? Color.white : new Color(0.2f, 0.2f, 0.2f); }
+            var cardUI = go.GetComponent<SkinCardUI>();
+            if (cardUI != null)
+            {
+                cardUI.SetState(name, sprite, isEquipped, isLocked, price);
+            }
+            else
+            {
+                // Fallback for old prefabs or simple images
+                var img = go.GetComponentInChildren<Image>(true);
+                if (img) { img.sprite = sprite; img.color = isLocked ? new Color(0.2f, 0.2f, 0.2f) : Color.white; }
+            }
         }
         #endregion
 

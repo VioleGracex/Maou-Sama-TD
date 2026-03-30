@@ -41,7 +41,7 @@ namespace MaouSamaTD.UI
 
             if (_btnHome) _btnHome.onClick.AddListener(() => NavigateToHome());
             if (_btnCampaign) _btnCampaign.onClick.AddListener(() => NavigateTo<CampaignPage>());
-            if (_btnVassals) _btnVassals.onClick.AddListener(() => NavigateTo<CohortManagerUI>());
+            if (_btnVassals) _btnVassals.onClick.AddListener(() => NavigateTo<VassalManagerUI>());
             if (_btnCohorts) _btnCohorts.onClick.AddListener(() => NavigateTo<CohortSquadUI>());
             if (_btnManifest) _btnManifest.onClick.AddListener(() => NavigateTo<GachaPanel>());
             
@@ -83,12 +83,25 @@ namespace MaouSamaTD.UI
 
         public void UpdateHighlight(System.Type pageType)
         {
-            if (_indicators == null || _indicators.Length < 5) return;
-            _indicators[0].SetActive(pageType == typeof(CampaignPage));
-            _indicators[1].SetActive(false); // Shop
-            _indicators[2].SetActive(pageType == typeof(CohortManagerUI));
-            _indicators[3].SetActive(pageType == typeof(CohortSquadUI));
-            _indicators[4].SetActive(pageType == typeof(GachaPanel));
+            if (_indicators == null) return;
+
+            // Mapping: 0:Campaign, 1:Shop, 2:Vassals, 3:Cohorts, 4:Manifest
+            bool[] targets = new bool[] 
+            {
+                pageType == typeof(CampaignPage),
+                false, // Shop
+                pageType == typeof(MaouSamaTD.UI.Vassals.VassalManagerUI),
+                pageType == typeof(CohortSquadUI),
+                pageType == typeof(GachaPanel)
+            };
+
+            for (int i = 0; i < _indicators.Length && i < targets.Length; i++)
+            {
+                if (_indicators[i] != null)
+                {
+                    _indicators[i].SetActive(targets[i]);
+                }
+            }
         }
 
         private void NavigateTo<T>() where T : MonoBehaviour, IUIController

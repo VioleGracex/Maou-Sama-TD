@@ -9,7 +9,7 @@ namespace MaouSamaTD.UI
     /// Specialized container for a unit within a Cohort Roster.
     /// Responsible for handling "Empty" states, "Assign" prompts, and wrapping a UnitCardUI.
     /// </summary>
-    public class UnitCardSlot : MonoBehaviour
+    public class CohortSlot : MonoBehaviour
     {
         [SerializeField] private GameObject _emptyVisual; // Visual graphic representing empty state ("+")
         [SerializeField] private TextMeshProUGUI _emptySlotText; // Text for empty state ("ASSIGN SLOT X")
@@ -36,22 +36,40 @@ namespace MaouSamaTD.UI
             if (_emptySlotText != null)
             {
                 // Localization key: UI_COHORT_SLOT_ASSIGN
-                _emptySlotText.text = Assets.SimpleLocalization.Scripts.LocalizationManager.Localize("UI_COHORT_SLOT_ASSIGN", Index + 1);
+                string key = "UI_COHORT_SLOT_ASSIGN";
+                var loc = Assets.SimpleLocalization.Scripts.LocalizationManager.Dictionary;
+                if (Assets.SimpleLocalization.Scripts.LocalizationManager.HasKey(key))
+                {
+                    _emptySlotText.text = Assets.SimpleLocalization.Scripts.LocalizationManager.Localize(key, Index + 1);
+                }
+                else
+                {
+                    _emptySlotText.text = $"ASSIGN SLOT {Index + 1}";
+                }
             }
         }
 
         /// <summary>
         /// Assigns a unit to this slot and hides empty visuals.
         /// </summary>
-        public void SetUnit(MaouSamaTD.Units.UnitData unitData, MaouSamaTD.Units.ClassScalingData scalingData = null, System.Action<UnityEngine.Component> onClick = null)
+        public void SetUnit(MaouSamaTD.Units.UnitData unitData, System.Action<UnityEngine.Component> onClick = null)
         {
             if (_emptyVisual != null) _emptyVisual.SetActive(false);
-            if (_emptySlotText != null) _emptySlotText.gameObject.SetActive(false);
+            if (_emptySlotText != null) _emptySlotText.gameObject.SetActive(false); // Hide assignment prompt
 
             if (_unitCardUI != null)
             {
-                _unitCardUI.gameObject.SetActive(true);
-                _unitCardUI.Setup(unitData, onClick);
+                Debug.Log($"[CohortSlot] {gameObject.name} [Index: {Index}] SET UNIT: {(unitData != null ? unitData.UnitName : "NULL")}");
+                _unitCardUI.gameObject.SetActive(true); 
+                
+                var callback = onClick ?? ((comp) => HandleClick());
+                _unitCardUI.Setup(unitData, callback);
+                _unitCardUI.UpdateVisuals(unitData); // Redundantly ensure visuals are active
+                _unitCardUI.SetInteractable(false);
+            }
+            else
+            {
+                Debug.LogWarning($"[CohortSlot] {gameObject.name} is missing the UnitCardUI reference!");
             }
         }
 
@@ -63,13 +81,13 @@ namespace MaouSamaTD.UI
             if (_emptyVisual != null) _emptyVisual.SetActive(true);
             if (_emptySlotText != null) 
             {
-                _emptySlotText.gameObject.SetActive(true);
+                _emptySlotText.gameObject.SetActive(true); // Show assignment prompt
                 UpdateEmptyText();
             }
 
             if (_unitCardUI != null)
             {
-                _unitCardUI.Setup(null); // This usually hides the visual root of the card
+                _unitCardUI.gameObject.SetActive(false); // Turn off the card visual when slot is empty
             }
         }
 

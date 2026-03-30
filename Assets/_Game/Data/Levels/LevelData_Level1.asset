@@ -26,7 +26,7 @@ MonoBehaviour:
     Amount: 100
   PremadeCohort:
   - {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
-  IsCohortLocked: 0
+  IsCohortLocked: 1
   SupportAssistant: {fileID: 0}
   IsAssistantLocked: 0
   MaleSovereignRites:
@@ -39,6 +39,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fb5431989bc19e94194d518202dec6d9, type: 2}
   IsRitesLocked: 1
   MapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
+  MissionXP: 100
   StartingAuthoritySeals: 20
   MaxAuthoritySeals: 30
   AuthoritySealsPerSecond: 1.5

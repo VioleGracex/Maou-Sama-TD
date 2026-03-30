@@ -62,6 +62,12 @@ namespace CleverClicker.Ouiki
             set => EditorPrefs.SetBool(Prefix + "ShowOnStartup", value);
         }
 
+        public static bool ShowOnlyActive
+        {
+            get => EditorPrefs.GetBool(Prefix + "ShowOnlyActive", false);
+            set => EditorPrefs.SetBool(Prefix + "ShowOnlyActive", value);
+        }
+
         public static void ResetToDefaults()
         {
             ModifierKeys = EventModifiers.Control | EventModifiers.Shift;

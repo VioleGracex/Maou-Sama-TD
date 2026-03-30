@@ -16,22 +16,28 @@ namespace MaouSamaTD.Skills
         Debuff
     }
 
+    [System.Serializable]
+    public struct SkillVisuals
+    {
+        public GameObject UltimatePrefab;
+        public GameObject CastVFX;
+        public GameObject HitVFX;
+        public AudioClip CastSFX;
+        public AudioClip HitSFX;
+        public Color UltimateColor;
+        public Color TitleBgColor;
+        public Color SkillNameBgColor;
+        public Color RangeIndicatorColor;
+        public string AnimationTriggerName;
+    }
+
     // Base class for all skills/rites - contains common display and cost info
     public abstract class SkillBase : MaouSamaTD.Core.GameDataSO
     {
-        [Header("Display")]
         public string SkillName;
         [TextArea] public string Description;
         public Sprite Icon;
         
-        [Header("Visuals")]
-        public GameObject CastVFX; 
-        public GameObject HitVFX;
-        public Color RangeIndicatorColor = Color.red;
-        public string AnimationTriggerName = "CastSkill";
-
-        [Header("Audio")]
-        public AudioClip CastSFX;
-        public AudioClip HitSFX;
+        public SkillVisuals BaseVisuals;
     }
 }

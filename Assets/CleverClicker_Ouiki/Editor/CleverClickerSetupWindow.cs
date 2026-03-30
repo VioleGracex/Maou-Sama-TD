@@ -149,6 +149,7 @@ namespace CleverClicker.Ouiki
             EditorGUI.BeginChangeCheck();
             CleverClickerSettings.FocusOnSelect = EditorGUILayout.Toggle("Auto-Focus on Select", CleverClickerSettings.FocusOnSelect);
             CleverClickerSettings.ShowIcons = EditorGUILayout.Toggle("Display Object Icons", CleverClickerSettings.ShowIcons);
+            CleverClickerSettings.ShowOnlyActive = EditorGUILayout.Toggle("Show Only Active Objects", CleverClickerSettings.ShowOnlyActive);
             CleverClickerSettings.HighlightColor = EditorGUILayout.ColorField("Highlight Color", CleverClickerSettings.HighlightColor);
             CleverClickerSettings.ExcludeLayers = EditorGUILayout.MaskField("Exclude Layers", CleverClickerSettings.ExcludeLayers, InternalEditorUtility.layers);
             

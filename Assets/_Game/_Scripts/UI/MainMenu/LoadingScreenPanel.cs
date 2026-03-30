@@ -55,6 +55,13 @@ namespace MaouSamaTD.UI.MainMenu
         private IList<Sprite> _splashScreens;
         private int _currentSplashIndex = -1;
         private bool _isTransitioning = false;
+        private bool _isLevelReady = false;
+
+        public void NotifyLevelReady()
+        {
+            Debug.Log("[LoadingScreenPanel] Level Ready signal received.");
+            _isLevelReady = true;
+        }
 
         private void Start()
         {
@@ -278,11 +285,23 @@ namespace MaouSamaTD.UI.MainMenu
             
             op.allowSceneActivation = true;
 
-            // Wait until done
+            // Wait until scene is loaded
             while (!op.isDone)
             {
                 yield return null;
             }
+
+            Debug.Log("[LoadingScreenPanel] Scene loaded. Waiting for level ready signal...");
+            
+            // Wait for manual ready signal (with a safety timeout of 5 seconds)
+            float timeout = 5f;
+            while (!_isLevelReady && timeout > 0)
+            {
+                timeout -= Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (!_isLevelReady) Debug.LogWarning("[LoadingScreenPanel] Level ready signal timed out! Hiding anyway.");
 
             CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();
             if (cg == null) cg = gameObject.AddComponent<CanvasGroup>();

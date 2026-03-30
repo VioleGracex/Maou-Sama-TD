@@ -6,6 +6,7 @@ using MaouSamaTD.UI;
 using MaouSamaTD.UI.Common;
 using MaouSamaTD.UI.MainMenu;
 using MaouSamaTD.UI.Cohorts;
+using MaouSamaTD.UI.Vassals;
 
 namespace MaouSamaTD.UI.MainMenu
 {
@@ -72,8 +73,8 @@ namespace MaouSamaTD.UI.MainMenu
             var campaign = Object.FindAnyObjectByType<CampaignPage>(FindObjectsInactive.Include);
             if (campaign != null) campaign.Preheat();
 
-            var cohortInventory = Object.FindAnyObjectByType<CohortManagerUI>(FindObjectsInactive.Include);
-            if (cohortInventory != null) cohortInventory.Preheat();
+            var vassalInventory = Object.FindAnyObjectByType<VassalManagerUI>(FindObjectsInactive.Include);
+            if (vassalInventory != null) vassalInventory.Preheat();
 
             var cohortSquad = Object.FindAnyObjectByType<CohortSquadUI>(FindObjectsInactive.Include);
             if (cohortSquad != null) cohortSquad.Preheat();
@@ -129,7 +130,7 @@ namespace MaouSamaTD.UI.MainMenu
     
         private void OnVassalsClicked()
         {
-            var panel = Object.FindAnyObjectByType<CohortManagerUI>(FindObjectsInactive.Include);
+            var panel = Object.FindAnyObjectByType<VassalManagerUI>(FindObjectsInactive.Include);
             if (panel != null)
             {
                 UIFlowManager.Instance.OpenPanel(panel);

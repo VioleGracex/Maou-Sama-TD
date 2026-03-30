@@ -13,11 +13,19 @@ namespace MaouSamaTD.UI
     {
         [SerializeField] private Image _icon;
         [SerializeField] private Button _button;
-        [SerializeField] private GameObject _selectionHighlight;
+        [SerializeField] private TMPro.TextMeshProUGUI _fullNameText;
+        [SerializeField] private GameObject _selectionIcon; // Marks "Currently Equipped"
 
-        public void Setup(UnitSkinData skin, Action onSelect)
+        [SerializeField] private CanvasGroup _canvasGroup;
+
+        public void Setup(string characterName, string themeName, Sprite icon, Action onSelect)
         {
-            // If skin is null, it's the default skin
+            if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
+            if (_canvasGroup == null) _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+            if (_icon) _icon.sprite = icon;
+            if (_fullNameText) _fullNameText.text = string.IsNullOrEmpty(themeName) ? characterName : $"{themeName} {characterName}";
+
             if (_button != null)
             {
                 _button.onClick.RemoveAllListeners();
@@ -25,14 +33,9 @@ namespace MaouSamaTD.UI
             }
         }
         
-        public void SetIcon(Sprite sprite)
+        public void SetEquippedStatus(bool isEquipped)
         {
-            if (_icon) _icon.sprite = sprite;
-        }
-
-        public void SetSelected(bool isSelected)
-        {
-            if (_selectionHighlight) _selectionHighlight.SetActive(isSelected);
+            if (_selectionIcon) _selectionIcon.SetActive(isEquipped);
         }
     }
 }

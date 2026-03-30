@@ -102,13 +102,15 @@ namespace MaouSamaTD.Units
                 yield break;
             }
 
-            if (Data.UltimateSkill.UltimatePrefab == null)
+            var visuals = Data.UltimateSkill.GetVisuals(Data.EquippedSkinID);
+
+            if (visuals.UltimatePrefab == null)
             {
                 Debug.LogError($"[Ultimate] {Data.UnitName} Skill [{Data.UltimateSkill.SkillName}] exists, but UltimatePrefab is NULL! GUID check needed.");
                 yield break;
             }
 
-            if (_showDebugLogs) Debug.Log($"[Ultimate] STARTING sequence for {Data.UnitName}. Prefab: {Data.UltimateSkill.UltimatePrefab.name}");
+            if (_showDebugLogs) Debug.Log($"[Ultimate] STARTING sequence for {Data.UnitName}. Prefab: {visuals.UltimatePrefab.name}");
 
             // Start Cut-In Animation
             if (MaouSamaTD.UI.UltimateCutInUI.Instance != null)
@@ -116,13 +118,14 @@ namespace MaouSamaTD.Units
                 string uName = Data.UnitName;
                 string uTitle = Data.UnitTitle;
                 string sName = Data.UltimateSkill.SkillName;
-                Color bColor = Data.UltimateSkill.UltimateColor;
-                Color tBgColor = Data.UltimateSkill.TitleBgColor;
-                Color sBgColor = Data.UltimateSkill.SkillNameBgColor;
+                Color bColor = visuals.UltimateColor;
+                Color tBgColor = visuals.TitleBgColor;
+                Color sBgColor = visuals.SkillNameBgColor;
+                Sprite portrait = Data.GetSprite(UnitData.UnitImageType.WaistUp);
 
                 if (_showDebugLogs) Debug.Log($"[Ultimate] Triggering Cut-In Animation for {uName}...");
                 // Wait for the full animation sequence (Slide In -> Hold -> Slide Out) to complete
-                yield return MaouSamaTD.UI.UltimateCutInUI.Instance.PlayAnimation(uName, uTitle, sName, bColor, tBgColor, sBgColor);
+                yield return MaouSamaTD.UI.UltimateCutInUI.Instance.PlayAnimation(uName, uTitle, sName, bColor, tBgColor, sBgColor, portrait);
             }
             else
             {
@@ -132,9 +135,9 @@ namespace MaouSamaTD.Units
             if (_animator != null) _animator.Play("Ultimate", 0, 0f);
 
             Vector3 bestDir = FindBestUltimateDirection();
-            if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {Data.UltimateSkill.UltimatePrefab.name} towards {bestDir}");
+            if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {visuals.UltimatePrefab.name} towards {bestDir}");
 
-            GameObject projObj = Instantiate(Data.UltimateSkill.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+            GameObject projObj = Instantiate(visuals.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
             
             var ultimateEffect = projObj.GetComponent<MaouSamaTD.Skills.UltimateEffect>();
             if (ultimateEffect != null)
@@ -235,19 +238,19 @@ namespace MaouSamaTD.Units
             
             if (_billboard == null) _billboard = GetComponentInChildren<Billboard>();
 
-            if (data.UnitChibi != null)
+            if (data.GetSprite(UnitData.UnitImageType.Chibi) != null)
             {
                 if (_spriteRenderer != null) 
                 {
                     _spriteRenderer.enabled = true;
-                    _spriteRenderer.sprite = data.UnitChibi;
+                    _spriteRenderer.sprite = data.GetSprite(UnitData.UnitImageType.Chibi);
                 }
             }
 
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
-            if (_animator != null && data.AnimatorController != null)
+            if (_animator != null && data.GetAnimatorController() != null)
             {
-                _animator.runtimeAnimatorController = data.AnimatorController;
+                _animator.runtimeAnimatorController = data.GetAnimatorController();
             }
         }
 

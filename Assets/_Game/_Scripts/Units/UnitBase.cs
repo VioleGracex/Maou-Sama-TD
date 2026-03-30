@@ -136,12 +136,12 @@ namespace MaouSamaTD.Units
             if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
             
-            if (_data.UnitChibi != null)
+            if (_data.GetSprite(UnitData.UnitImageType.Chibi) != null)
             {
                 if (_spriteRenderer != null) 
                 {
                     _spriteRenderer.enabled = true;
-                    _spriteRenderer.sprite = _data.UnitChibi;
+                    _spriteRenderer.sprite = _data.GetSprite(UnitData.UnitImageType.Chibi);
                 }
                 if (_textFallback != null) _textFallback.gameObject.SetActive(false);
             }
@@ -156,10 +156,10 @@ namespace MaouSamaTD.Units
                     else
                         _textFallback.text = "?";
                 }
-                if (_animator != null && _data.AnimatorController != null)
-            {
-                _animator.runtimeAnimatorController = _data.AnimatorController;
-            }
+                if (_animator != null && _data.GetAnimatorController() != null)
+                {
+                    _animator.runtimeAnimatorController = _data.GetAnimatorController();
+                }
         }
         }
 

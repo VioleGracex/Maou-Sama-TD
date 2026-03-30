@@ -12,23 +12,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dce2ff6dacaa3443aafb3afa260d9cd, type: 3}
   m_Name: Char_Ignis_Phoenix_Radiance
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.UnitSkillData
-  useDefaultInspector: 1
+  useDefaultInspector: 0
   UniqueID: 2dbe9a36-7e58-42f6-8403-1c997cd7d0b0
   SkillName: Phoenix Radiance
   Description: Ignis summons a celestial phoenix that sweeps across a column, dealing
     massive fire damage to all enemies in its path.
   Icon: {fileID: 21300000, guid: 55adbc734ec6af342ae3466f9a481709, type: 3}
-  CastVFX: {fileID: 0}
-  HitVFX: {fileID: 0}
-  RangeIndicatorColor: {r: 1, g: 0, b: 0, a: 1}
-  AnimationTriggerName: CastSkill
-  CastSFX: {fileID: 8300000, guid: 89c7353f9cd19884181e8bf03c09dc91, type: 3}
-  HitSFX: {fileID: 0}
+  BaseVisuals:
+    UltimatePrefab: {fileID: 1105572606693206307, guid: f3076b7deb92d6f4fbc2bf6fc410253e, type: 3}
+    CastVFX: {fileID: 0}
+    HitVFX: {fileID: 0}
+    CastSFX: {fileID: 8300000, guid: 89c7353f9cd19884181e8bf03c09dc91, type: 3}
+    HitSFX: {fileID: 0}
+    UltimateColor: {r: 1, g: 0, b: 0, a: 1}
+    TitleBgColor: {r: 1, g: 1, b: 1, a: 0}
+    SkillNameBgColor: {r: 0.95294124, g: 0, b: 0, a: 1}
+    RangeIndicatorColor: {r: 0, g: 0, b: 0, a: 0}
+    AnimationTriggerName: CastSkill
+  OwnerUnit: {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
   ChargeCost: 100
   BonusHpPerLevel: 0
   BonusAtkPerLevel: 0
   BonusDefPerLevel: 0
-  UltimatePrefab: {fileID: 1105572606693206307, guid: f3076b7deb92d6f4fbc2bf6fc410253e, type: 3}
-  UltimateColor: {r: 1, g: 0, b: 0, a: 1}
-  TitleBgColor: {r: 1, g: 1, b: 1, a: 1}
-  SkillNameBgColor: {r: 1, g: 0, b: 0, a: 1}
+  SkinOverrides:
+  - SkinID: poolparty_ignis
+    Visuals:
+      UltimatePrefab: {fileID: 0}
+      CastVFX: {fileID: 0}
+      HitVFX: {fileID: 0}
+      CastSFX: {fileID: 0}
+      HitSFX: {fileID: 0}
+      UltimateColor: {r: 0, g: 0, b: 0, a: 0}
+      TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
+      SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
+      RangeIndicatorColor: {r: 0, g: 0, b: 0, a: 0}
+      AnimationTriggerName: 
+  - SkinID: 
+    Visuals:
+      UltimatePrefab: {fileID: 0}
+      CastVFX: {fileID: 0}
+      HitVFX: {fileID: 0}
+      CastSFX: {fileID: 0}
+      HitSFX: {fileID: 0}
+      UltimateColor: {r: 0, g: 0, b: 0, a: 0}
+      TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
+      SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
+      RangeIndicatorColor: {r: 0, g: 0, b: 0, a: 0}
+      AnimationTriggerName: 

@@ -24,10 +24,11 @@ namespace MaouSamaTD.UI.Cohorts
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true;
         [SerializeField] private TMPro.TextMeshProUGUI _titleText;
-        [SerializeField] private CohortManagerUI _cohortInventoryController;
+        [SerializeField] private VassalManagerUI _vassalInventoryController;
 
         [Header("Cohort Slots")]
-        [SerializeField] private List<UnitCardSlot> _squadSlots = new List<UnitCardSlot>();
+        [SerializeField] private List<CohortSlot> _squadSlots = new List<CohortSlot>();
+        [SerializeField] private MaouSamaTD.Units.ClassScalingData _classScalingData;
 
         [Header("Cohort Selection")]
         [SerializeField] private Button[] _cohortButtons;
@@ -44,6 +45,10 @@ namespace MaouSamaTD.UI.Cohorts
         [SerializeField] private GameObject _unsavedChangesPopup;
         [SerializeField] private Button _confirmLeaveButton;
         [SerializeField] private Button _cancelLeaveButton;
+
+        [Header("Button Colors")]
+        [SerializeField] private Color _highlightColor = new Color(1f, 0.82f, 0.12f); // Gold/Yellow
+        [SerializeField] private Color _normalColor = Color.white;
         
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
         [Inject] private MaouSamaTD.Managers.GameSelectionState _selectionState;
@@ -60,9 +65,9 @@ namespace MaouSamaTD.UI.Cohorts
         #region Unity Methods
         private void Awake()
         {
-            if (_cohortInventoryController == null)
+            if (_vassalInventoryController == null)
             {
-                _cohortInventoryController = GetComponentInChildren<CohortManagerUI>(true);
+                _vassalInventoryController = GetComponentInChildren<VassalManagerUI>(true);
             }
         }
 
@@ -86,14 +91,9 @@ namespace MaouSamaTD.UI.Cohorts
             if (_visualRoot == null) return;
             _visualRoot.SetActive(true);
             
-            _isReadinessMode = false;
-            _isLockedMode = false;
-            if (_titleText != null) _titleText.text = "COHORTS";
-            if (_noEditBlocker != null) _noEditBlocker.SetActive(false);
+            if (_titleText != null && !_isReadinessMode) 
+                _titleText.text = LocalizationManager.Localize("Cohort.Title.Default");
 
-            InitializeData();
-            LoadCohortToTemp(_playerData.CurrentCohortIndex);
-            
             UpdateButtonsInteractable();
             RefreshUI();
         }
@@ -107,7 +107,17 @@ namespace MaouSamaTD.UI.Cohorts
             _currentLevel = level;
             
             if (_titleText != null)
-                _titleText.text = level != null ? level.LevelName : "MISSION READINESS";
+            {
+                if (level != null)
+                {
+                    // LevelName could be a localization key or a literal name; Localize handles both
+                    _titleText.text = LocalizationManager.Localize(level.LevelName); 
+                }
+                else
+                {
+                    _titleText.text = LocalizationManager.Localize("Cohort.Title.Readiness");
+                }
+            }
 
             InitializeData();
 
@@ -136,7 +146,9 @@ namespace MaouSamaTD.UI.Cohorts
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
             if (_unsavedChangesPopup != null) _unsavedChangesPopup.SetActive(false);
-            if (_cohortInventoryController != null) _cohortInventoryController.Close();
+            
+            // If we are closing the squad page, we should hide the inner selection panel too
+            if (_vassalInventoryController != null) _vassalInventoryController.Hide();
         }
 
         public void Preheat()
@@ -149,6 +161,12 @@ namespace MaouSamaTD.UI.Cohorts
         public void ResetState()
         {
             _isDirty = false;
+            _isReadinessMode = false;
+            _isLockedMode = false;
+            if (_noEditBlocker != null) _noEditBlocker.SetActive(false);
+            
+            InitializeData();
+            LoadCohortToTemp(_playerData.CurrentCohortIndex);
         }
 
         public bool RequestClose()
@@ -226,6 +244,8 @@ namespace MaouSamaTD.UI.Cohorts
         private void LoadCohortToTemp(int index)
         {
             _viewingCohortIndex = index;
+            if (_playerData != null) _playerData.CurrentCohortIndex = index;
+            
             var cohort = _playerData.Cohorts[index];
             _tempUnitIDs = new List<string>(cohort.UnitIDs);
             
@@ -274,10 +294,10 @@ namespace MaouSamaTD.UI.Cohorts
             if (_isLockedMode && index < 11) return;
             if (index == 11 && _currentLevel != null && _currentLevel.IsAssistantLocked) return;
 
-            if (_cohortInventoryController != null)
+            if (_vassalInventoryController != null)
             {
-                _cohortInventoryController.OpenForSingleSelect(index, OnUnitSelected);
-                UIFlowManager.Instance.OpenPanel(_cohortInventoryController);
+                UIFlowManager.Instance.OpenPanel(_vassalInventoryController);
+                _vassalInventoryController.OpenForSingleSelect(index, OnUnitSelected, _tempUnitIDs);
             }
         }
 
@@ -287,9 +307,21 @@ namespace MaouSamaTD.UI.Cohorts
             {
                 if (_tempUnitIDs[slotIndex] != unitID)
                 {
+                    // Uniqueness Check: If this unit is already in another slot, clear that slot first
+                    if (!string.IsNullOrEmpty(unitID))
+                    {
+                        int existingSlot = _tempUnitIDs.IndexOf(unitID);
+                        if (existingSlot != -1 && existingSlot != slotIndex)
+                        {
+                            Debug.Log($"[CohortSquadUI] Moving '{unitID}' from Slot {existingSlot} to Slot {slotIndex}");
+                            _tempUnitIDs[existingSlot] = ""; // Clear old slot
+                        }
+                    }
+
                     _tempUnitIDs[slotIndex] = unitID;
-                    _viewingCohortIndex = -1; 
+                    Debug.Log($"[CohortSquadUI] ASSIGN: Slot {slotIndex} = {unitID}");
                     MarkDirty();
+                    SaveCohort(); // Auto-save on every change
                 }
             }
             RefreshUI();
@@ -309,21 +341,25 @@ namespace MaouSamaTD.UI.Cohorts
                 string unitID = "";
                 bool isSlotLocked = false;
 
-                if (i < 11)
+                // Safe retrieval of ID from temp list
+                if (i < 12) 
                 {
-                    isSlotLocked = _isLockedMode;
-                    unitID = _tempUnitIDs[i];
-                }
-                else if (i == 11) // Assistant Slot
-                {
-                    if (_isReadinessMode && _currentLevel != null && _currentLevel.IsAssistantLocked)
+                    if (i < 11)
                     {
-                        unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UniqueID : "";
-                        isSlotLocked = true;
+                        isSlotLocked = _isLockedMode;
+                        unitID = (i < _tempUnitIDs.Count) ? _tempUnitIDs[i] : "";
                     }
-                    else
+                    else if (i == 11) // Assistant Slot
                     {
-                        unitID = _tempUnitIDs[i];
+                        if (_isReadinessMode && _currentLevel != null && _currentLevel.IsAssistantLocked)
+                        {
+                            unitID = (_currentLevel.SupportAssistant != null) ? _currentLevel.SupportAssistant.UniqueID : "";
+                            isSlotLocked = true;
+                        }
+                        else
+                        {
+                            unitID = (i < _tempUnitIDs.Count) ? _tempUnitIDs[i] : "";
+                        }
                     }
                 }
 
@@ -334,15 +370,46 @@ namespace MaouSamaTD.UI.Cohorts
                 else if (MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null)
                 {
                     var unitData = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(unitID);
-                    if (unitData != null) slot.SetUnit(unitData);
-                    else slot.SetEmpty();
+                    if (unitData != null) 
+                    {
+                        unitData.RefreshStats(_classScalingData);
+                        Debug.Log($"[CohortSquadUI] Refresh SLOT {i} with unit '{unitData.UnitName}' (ID: {unitID})");
+                        slot.SetUnit(unitData);
+                    }
+                    else 
+                    {
+                        Debug.LogWarning($"[CohortSquadUI] FAILED to find unitData for '{unitID}' in Database during RefreshUI at index {i}. Available unit count: {MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.AllUnits.Count}");
+                        slot.SetEmpty();
+                    }
+                }
+                else
+                {
+                    Debug.LogError("[CohortSquadUI] RefreshUI failed because LoadedUnitDatabase is NULL");
                 }
 
                 var btn = slot.GetComponent<Button>();
                 if (btn != null) btn.interactable = !isSlotLocked;
             }
 
+            UpdateCohortButtonVisuals();
             UpdateSaveButtonState();
+        }
+
+        private void UpdateCohortButtonVisuals()
+        {
+            if (_cohortButtons == null) return;
+
+            for (int i = 0; i < _cohortButtons.Length; i++)
+            {
+                var btn = _cohortButtons[i];
+                if (btn == null) continue;
+
+                var cb = btn.colors;
+                // Highlight the currently viewed cohort button
+                cb.normalColor = (i == _viewingCohortIndex) ? _highlightColor : _normalColor;
+                cb.selectedColor = (i == _viewingCohortIndex) ? _highlightColor : _normalColor;
+                btn.colors = cb;
+            }
         }
 
         private void MarkDirty()
@@ -366,10 +433,11 @@ namespace MaouSamaTD.UI.Cohorts
             }
             else
             {
-                if (_actionButtonText != null) 
-                    _actionButtonText.text = LocalizationManager.Localize("Cohort.ActionButton.Save");
-                _actionButton.interactable = _isDirty;
+                // In Management mode, we auto-save, so hide the action button
+                if (_actionButton != null) _actionButton.gameObject.SetActive(false);
             }
+
+            Debug.Log($"[CohortSquadUI] Current Cohort Size: {unitCount} / 12");
         }
 
         private void OnActionButtonClicked()
@@ -463,7 +531,11 @@ namespace MaouSamaTD.UI.Cohorts
                 }
             }
             
-            if (wasModified) MarkDirty();
+            if (wasModified) 
+            {
+                MarkDirty();
+                SaveCohort(); // Auto-save on clear
+            }
             RefreshUI();
         }
         #endregion

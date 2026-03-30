@@ -82,11 +82,13 @@ namespace MaouSamaTD.Data
     }
 
     [Serializable]
-    public struct CohortData
+    public class CohortData
     {
         public string CohortName;
         // 12 slots for unit IDs (matching UnitData.UnitID or name)
         public List<string> UnitIDs; 
+        
+        public CohortData() { }
 
         public CohortData(string name)
         {

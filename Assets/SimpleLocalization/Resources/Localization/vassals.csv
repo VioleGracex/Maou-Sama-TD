@@ -1,7 +1,7 @@
-Key,Russian,English,German,French,Portuguese,Spanish,Japanese,Chinese
-Vassals.Inspector.UpgradeSkills,УЛУЧШИТЬ НАВЫКИ,UPGRADE SKILLS,,,,,,
-Vassals.Inspector.Skins,ОБЛИКИ,SKINS,,,,,,
-Vassals.Inspector.Promote,ПОВЫСИТЬ,PROMOTE,,,,,,
-Vassals.Inspector.Stats,ХАРАКТЕРИСТИКИ,STATS,,,,,,
-Vassals.Inspector.Skills,НАВЫКИ,SKILLS,,,,,,
-Vassals.Inspector.Resonance,РЕЗОНАНС,RESONANCE,,,,,,
+Key,English,Russian,German,French,Portuguese,Spanish,Japanese,Chinese
+Vassals.Inspector.UpgradeSkills,UPGRADE SKILLS,УЛУЧШИТЬ НАВЫКИ,FÄHIGKEITEN VERBESSERN,AMÉLIORER LES COMPÉTENCES,MELHORAR HABILIDADES,MEJORAR HABILIDADES,スキルをアップグレード,升级技能
+Vassals.Inspector.Skins,SKINS,ОБЛИКИ,SKINS,APPARENCES,SKINS,SKINS,スキン,皮肤
+Vassals.Inspector.Promote,PROMOTE,ПОВЫСИТЬ,BEFÖRDERN,PROMOUVOIR,PROMOVER,PROMOCIONAR,昇進,晋级
+Vassals.Inspector.Stats,STATS,ХАРАКТЕРИСТИКИ,STATS,STATS,STATS,ESTADÍSTICAS,ステータス,属性
+Vassals.Inspector.Skills,SKILLS,НАВЫКИ,FÄHIGKEITEN,COMPÉTENCES,HABILIDADES,HABILIDADES,スキル,技能
+Vassals.Inspector.Resonance,RESONANCE,РЕЗОНАНС,RESONANZ,RÉSONANCE,RESSONÂNCIA,RESONANCIA,共鳴,共鸣

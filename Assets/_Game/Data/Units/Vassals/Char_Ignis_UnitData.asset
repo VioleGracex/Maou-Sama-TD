@@ -16,12 +16,28 @@ MonoBehaviour:
   UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
   UnitName: Ignis
   UnitTitle: The Crimson Bastion
-  UnitAvatar: {fileID: 21300000, guid: 2ee969558738c8947813acd12636bf16, type: 3}
-  UnitChibi: {fileID: 21300000, guid: 2b7269185b2d93f4bb6017781c2f99a0, type: 3}
-  UnitWaistUp: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
-  UnitSplashArt: {fileID: 0}
-  UnitFullSprite: {fileID: 21300000, guid: 27d88e95005001640970c417ed541b79, type: 3}
-  AnimatorController: {fileID: 9100000, guid: a021d6c8141c30b4b89ccb2bfb26dccc, type: 2}
+  BaseSkin:
+    Avatar: {fileID: 21300000, guid: 7574f7ea97aaa0a45936d69a523867b5, type: 3}
+    Chibi: {fileID: 21300000, guid: 2b7269185b2d93f4bb6017781c2f99a0, type: 3}
+    WaistUp: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: ef280dc03b43ad049a18d04668dc0367, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 27d88e95005001640970c417ed541b79, type: 3}
+    AnimatorController: {fileID: 0}
+  Rank2Art: {fileID: 0}
+  Skins:
+  - SkinID: poolparty_ignis
+    SkinThemeName: PoolParty Ignis
+    SeriesName: Pool Party
+    Avatar: {fileID: 21300000, guid: b78d0f8107098744cb389768e2f3371b, type: 3}
+    Chibi: {fileID: 21300000, guid: 980180b5d282d2845b35c8e923379466, type: 3}
+    WaistUp: {fileID: 21300000, guid: be9509d7898dfef4dbd6d596bb5ed2e6, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: a502bf3aea3f2cb4eafd820481a7fa5a, type: 3}
+    FullBodyCutout: {fileID: 0}
+    AnimatorController: {fileID: 0}
+    IsDefault: 0
+    UnlockCost: 0
+    IsPremium: 0
+  _equippedSkinID: 
   CardSlotImageType: 2
   ButtonImageType: 2
   Level: 1
@@ -51,9 +67,7 @@ MonoBehaviour:
   ChargePerAttack: 2
   PassiveSkill: {fileID: 0}
   ActiveSkill: {fileID: 0}
-  UltimateSkill: {fileID: 0}
+  UltimateSkill: {fileID: 11400000, guid: e20c62474bbc31f40a06dc66077f2aaa, type: 2}
   AscensionNodes: []
-  Rank2Art: {fileID: 0}
-  AlternateSkins: []
-  EquippedSkin: {fileID: 0}
   _viableTiles: 01000000
+  _unlockedSkinIDs: []

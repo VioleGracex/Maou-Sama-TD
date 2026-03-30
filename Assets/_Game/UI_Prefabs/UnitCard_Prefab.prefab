@@ -1148,11 +1148,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.MainMenu.UnitCardUI
   _visualRoot: {fileID: 7374341446210197962}
   _data: {fileID: 0}
+  _noneIcon: {fileID: 21300000, guid: 707ab23416bedfe44a989d2b4bad719f, type: 3}
   _portraitImage: {fileID: 7296285425569007160}
   _nameText: {fileID: 9018287062709027812}
   _classIconImage: {fileID: 2898171888961847348}
   _levelText: {fileID: 5087372955206462934}
   _starsContainer: {fileID: 4686698412929306182}
+  _button: {fileID: 0}
   _selectedOverlay: {fileID: 325526884053710534}
   _selectionOrderText: {fileID: 7401999834541889267}
   _checkMarkIcon: {fileID: 1240397729914026854}

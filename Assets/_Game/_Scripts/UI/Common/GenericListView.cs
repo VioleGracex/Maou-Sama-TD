@@ -57,7 +57,7 @@ namespace MaouSamaTD.UI.Common
         /// Updates the list content. Reuses existing items, instantiates new ones if needed,
         /// and hides surplus. Performs "Smart Update" to avoid redundant UI bindings.
         /// </summary>
-        public void UpdateContent(IEnumerable<TData> dataList, Action<TView> onClick = null, bool forceRefresh = false)
+        public void UpdateContent(IEnumerable<TData> dataList, Action<TView> onClick = null, bool forceRefresh = false, Action<TView, TData> itemSetup = null)
         {
             if (_container == null || _prefab == null) return;
 
@@ -69,11 +69,18 @@ namespace MaouSamaTD.UI.Common
                     TView item = GetOrSpawn(index);
                     item.gameObject.SetActive(true);
                     
-                    // Smart Update: Check if we actually need to call Setup
-                    // We compare the view's current content with the new data
+                    // If a custom setup is provided, we skip the default Setup to avoid redundant calls 
+                    // and allow the caller to pass custom dependencies (like ClassScalingData).
                     if (forceRefresh || ShouldUpdate(item, data))
                     {
-                        item.Setup(data, (comp) => onClick?.Invoke(comp as TView));
+                        if (itemSetup == null)
+                        {
+                            item.Setup(data, (comp) => onClick?.Invoke(comp as TView));
+                        }
+                        else
+                        {
+                            itemSetup.Invoke(item, data);
+                        }
                     }
                     
                     index++;
@@ -102,6 +109,13 @@ namespace MaouSamaTD.UI.Common
                 TView newItem = UnityEngine.Object.Instantiate(_prefab, _container);
                 _pool.Add(newItem);
             }
+
+            // Defensively check if the pooled object was destroyed externally
+            if (_pool[index] == null)
+            {
+                _pool[index] = UnityEngine.Object.Instantiate(_prefab, _container);
+            }
+
             return _pool[index];
         }
 

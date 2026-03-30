@@ -13,12 +13,12 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private UnitData _data;
 
         [Header("Data")]
-        [SerializeField] private ClassScalingData _classScalingData;
         [SerializeField] private Image _portraitImage;
         [SerializeField] private TextMeshProUGUI _nameText;
         [SerializeField] private Image _classIconImage;
         [SerializeField] private TextMeshProUGUI _levelText;
         [SerializeField] private RectTransform _starsContainer;
+        [SerializeField] private Button _button;
 
         [Header("Selection Visuals")]
         [SerializeField] private GameObject _selectedOverlay; // The dark overlay when selected
@@ -35,10 +35,30 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void Start()
         {
-            Button btn = GetComponent<Button>();
-            if (btn)
+            if (_button == null) _button = GetComponent<Button>();
+            if (_button != null)
             {
-                btn.onClick.AddListener(OnClick);
+                _button.onClick.AddListener(OnClick);
+            }
+        }
+
+        public void SetInteractable(bool interactable)
+        {
+            if (_button != null) _button.enabled = interactable;
+            
+            // Set all background images to raycastTarget = interactable
+            // This allows clicks to "pass through" to the button behind if disabled
+            if (_portraitImage) _portraitImage.raycastTarget = interactable;
+            if (_classIconImage) _classIconImage.raycastTarget = interactable;
+            
+            // Background image usually on VisualRoot or this object
+            var img = GetComponent<Image>();
+            if (img != null) img.raycastTarget = interactable;
+            
+            if (_visualRoot != null)
+            {
+                var rootImg = _visualRoot.GetComponent<Image>();
+                if (rootImg != null) rootImg.raycastTarget = interactable;
             }
         }
 
@@ -48,18 +68,57 @@ namespace MaouSamaTD.UI.MainMenu
             InternalSetup(unit);
         }
 
-        private void InternalSetup(UnitData unit)
+        /// <summary>
+        /// Explicit setup for a "None" or "Removal" card with an icon override.
+        /// </summary>
+        public void SetupNone(Sprite icon, Action<UnityEngine.Component> onClick = null)
         {
-            Debug.Log($"[UnitCardUI] Setup called for unit: {(unit != null ? unit.UnitName : "NULL")}.");
-            _data = unit;
+            _onClickCallback = onClick != null ? (card) => onClick(card) : null;
+            InternalSetup(null, icon);
+        }
 
-            if (_visualRoot != null)
+        [Obsolete("Use Setup(unit, onClick) instead. ClassScalingData is now handled by UnitData (Source of Truth).")]
+        public void Setup(UnitData unit, ClassScalingData scalingData, Action<UnityEngine.Component> onClick = null)
+        {
+            Setup(unit, onClick);
+        }
+    
+        private void InternalSetup(UnitData unit, Sprite iconOverride = null)
+        {
+            _data = unit;
+            UpdateVisuals(unit, iconOverride);
+        }
+
+        public void UpdateVisuals(UnitData unit, Sprite iconOverride = null)
+        {
+            if (_visualRoot != null) 
             {
-                _visualRoot.SetActive(unit != null);
+                _visualRoot.SetActive(true);
+            }
+            else 
+            {
+                Debug.LogWarning($"[UnitCardUI] {gameObject.name} is missing _visualRoot reference!");
             }
 
+            // Determine which icon to use for the None state
+            Sprite displayIcon = iconOverride;
+
+            // NONE / REMOVAL special case
             if (unit == null)
             {
+                if (_nameText) _nameText.text = ""; 
+                
+                if (_portraitImage) 
+                {
+                    _portraitImage.sprite = displayIcon;
+                    _portraitImage.gameObject.SetActive(displayIcon != null);
+                    _portraitImage.preserveAspect = true;
+                    _portraitImage.raycastTarget = false;
+                }
+                
+                if (_classIconImage) _classIconImage.gameObject.SetActive(false);
+                if (_levelText) _levelText.gameObject.SetActive(false);
+                
                 if (_starsContainer != null)
                 {
                     for (int i = 0; i < _starsContainer.childCount; i++)
@@ -70,35 +129,26 @@ namespace MaouSamaTD.UI.MainMenu
                 return;
             }
 
+            var stats = unit.CalculatedStats;
+
             // Visuals
             if (_nameText) _nameText.text = unit.UnitName;
             if (_portraitImage) 
             {
-                _portraitImage.sprite = unit.GetSprite(unit.CardSlotImageType);
-                _portraitImage.gameObject.SetActive(_portraitImage.sprite != null);
+                var portrait = unit.GetSprite(UnitData.UnitImageType.WaistUp);
+                _portraitImage.sprite = portrait;
+                _portraitImage.gameObject.SetActive(portrait != null);
+                
+                string vrStatus = (_visualRoot != null) ? $"Root:{_visualRoot.activeSelf}" : "Root:MISSING";
+                Debug.Log($"[UnitCardUI] {gameObject.name} (ID:{gameObject.GetInstanceID()}) Setup '{unit.UnitName}'. {vrStatus}, Portrait:{(portrait != null ? portrait.name : "NULL")}");
             }
+
             if (_classIconImage)
             {
-                if (_classScalingData == null)
-                    _classScalingData = Resources.Load<ClassScalingData>("ClassScalingData");
-
-                if (_classScalingData != null && _classScalingData.TryGetMultipliers(unit.Class, out var multipliers))
-                {
-                    if (multipliers.ClassIcon != null)
-                    {
-                        _classIconImage.sprite = multipliers.ClassIcon;
-                        _classIconImage.gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        _classIconImage.gameObject.SetActive(false);
-                    }
-                }
-                else
-                {
-                    _classIconImage.gameObject.SetActive(false);
-                }
+                _classIconImage.sprite = stats.ClassIcon;
+                _classIconImage.gameObject.SetActive(stats.ClassIcon != null);
             }
+
             if (_levelText) 
             {
                 _levelText.text = $"LV. {unit.Level}";
@@ -107,18 +157,17 @@ namespace MaouSamaTD.UI.MainMenu
             
             if (_starsContainer != null)
             {
-                int starCount = (int)unit.Rarity + 1; // Rarity is 0-indexed enum
+                int starCount = (int)unit.Rarity + 1;
                 for (int i = 0; i < _starsContainer.childCount; i++)
                 {
                     _starsContainer.GetChild(i).gameObject.SetActive(i < starCount);
                 }
             }
             
-            // Default State
             SetSelectionState(-1);
         }
 
-        public void SetSelectionState(int selectionIndex)
+        public void SetSelectionState(int selectionIndex, bool showCheckmark = true)
         {
             bool isSelected = selectionIndex >= 0;
 
@@ -133,7 +182,7 @@ namespace MaouSamaTD.UI.MainMenu
                 }
             }
 
-            if (_checkMarkIcon) _checkMarkIcon.SetActive(isSelected);
+            if (_checkMarkIcon) _checkMarkIcon.SetActive(isSelected && showCheckmark);
         }
 
         private void OnClick()

@@ -5,6 +5,16 @@ namespace MaouSamaTD.Skills
     [CreateAssetMenu(fileName = "NewUnitSkill", menuName = "MaouSamaTD/Skills/Unit Skill")]
     public class UnitSkillData : SkillBase
     {
+        [Header("System References")]
+        public MaouSamaTD.Units.UnitData OwnerUnit; // Linked to this unit for skin ID logic
+
+        [System.Serializable]
+        public struct SkillSkinOverride
+        {
+            public string SkinID;
+            public SkillVisuals Visuals;
+        }
+
         [Header("Unit Costs")]
         public float ChargeCost = 100f; // SP/Charge needed
 
@@ -13,10 +23,19 @@ namespace MaouSamaTD.Skills
         public float BonusAtkPerLevel = 0f;
         public float BonusDefPerLevel = 0f;
 
-        [Header("Assets")]
-        public GameObject UltimatePrefab;
-        public Color UltimateColor = Color.red; // Banner color
-        public Color TitleBgColor = Color.black;
-        public Color SkillNameBgColor = Color.black;
+        [Header("Skins & Overrides")]
+        public System.Collections.Generic.List<SkillSkinOverride> SkinOverrides = new System.Collections.Generic.List<SkillSkinOverride>();
+
+        public SkillVisuals GetVisuals(string equippedSkinID)
+        {
+            if (!string.IsNullOrEmpty(equippedSkinID))
+            {
+                foreach (var sOverride in SkinOverrides)
+                {
+                    if (sOverride.SkinID == equippedSkinID) return sOverride.Visuals;
+                }
+            }
+            return BaseVisuals;
+        }
     }
 }

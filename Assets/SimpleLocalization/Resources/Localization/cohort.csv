@@ -1,3 +1,5 @@
-Key,Russian,English,German,French,Portuguese,Spanish,Japanese,Chinese
-Cohort.ActionButton.Save,СОХРАНИТЬ ОТРЯД,SAVE SQUAD,,,,,,
-Cohort.ActionButton.StartBattle,В БОЙ,START BATTLE,,,,,,
+Key,English,Russian,German,French,Portuguese,Spanish,Japanese,Chinese
+Cohort.ActionButton.Save,SAVE SQUAD,СОХРАНИТЬ ОТРЯД,TRUPP SPEICHERN,SAUVER L'ESCOUADE,SALVAR ESQUADRÃO,GUARDAR ESCUADRÓN,分隊を保存,保存分队
+Cohort.ActionButton.StartBattle,START BATTLE,В БОЙ,KAMPF STARTEN,COMMENCER LA BATAILLE,INICIAR BATALHA,INICIAR BATALLA,戦闘開始,开始战斗
+Cohort.Title.Default,COHORTS,КОГОРТЫ,KOHORTEN,COHORTES,COORTES,COHORTES,コホート,队列
+Cohort.Title.Readiness,MISSION READINESS,ГОТОВНОСТЬ К МИССИИ,MISSIONSBEREITSCHAFT,PRÉPARATION DE MISSION,PRONTIDÃO PARA MISSÃO,PREPARACIÓN DE MISIÓN,作戦準備,任务准备

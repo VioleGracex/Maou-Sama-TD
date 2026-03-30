@@ -11,13 +11,13 @@ using MaouSamaTD.UI;
 using MaouSamaTD.UI.Vassals;
 using MaouSamaTD.UI.Common;
 
-namespace MaouSamaTD.UI.Cohorts
+namespace MaouSamaTD.UI.Vassals
 {
     /// <summary>
-    /// Management page for all owned units (formerly Vassals, now referred to as Cohort Inventory).
-    /// Handles inspection, leveling, upgrading, and selection for squad assignment.
+    /// Management page for all owned units (Vassals).
+    /// Handles inspection, filtering, and standalone selection for squad assignment.
     /// </summary>
-    public class CohortManagerUI : MonoBehaviour, IUIController
+    public class VassalManagerUI : MonoBehaviour, IUIController
     {
         public enum OperationMode { View, SingleSelect, MultiSelect }
 
@@ -25,11 +25,13 @@ namespace MaouSamaTD.UI.Cohorts
         [SerializeField] private GameObject _visualRoot;
         [SerializeField] private Transform _cardContainer;
         [SerializeField] private UnitCardUI _cardPrefab; // Use UnitCardUI directly for inventory items
+        [SerializeField] private Sprite _removalIcon;
         [SerializeField] private ClassScalingData _classScalingData;
         [SerializeField] private GameObject _filterContainer;
 
-        [Header("Multi-Select UI")]
+        [Header("Selection & Navigation")]
         [SerializeField] private Button _btnConfirmSelection;
+        [SerializeField] private Button _btnCancel;
 
         [Header("Layout Animation")]
         [SerializeField] private RectTransform _scrollViewRect;
@@ -51,14 +53,27 @@ namespace MaouSamaTD.UI.Cohorts
 
         private System.Action<List<string>> _onMultiSelectComplete;
         private List<string> _tempSelectedIds = new List<string>();
+        private List<string> _currentCohortUnitIDs = new List<string>(); // Tracks the current squad for highlighting
         private int _maxMultiSelectLimit = 12;
 
         public GameObject VisualRoot => _visualRoot;
-        public bool AddsToHistory => true;
+        public bool AddsToHistory => true; // Essential for "Back" button to return from selection to squad
 
         public void Awake()
         {
             if (_btnConfirmSelection != null) _btnConfirmSelection.onClick.AddListener(OnConfirmMultiSelection);
+            if (_btnCancel != null) _btnCancel.onClick.AddListener(() => UIFlowManager.Instance.GoBack());
+
+            // Clean the container once on Awake to remove design-time artifacts
+            if (_cardContainer != null)
+            {
+                foreach (Transform child in _cardContainer)
+                {
+                    if (child.gameObject == _cardPrefab.gameObject) continue;
+                    Destroy(child.gameObject);
+                }
+            }
+
             _listView = new GenericListView<UnitData, UnitCardUI>(_cardContainer, _cardPrefab);
         }
 
@@ -66,6 +81,11 @@ namespace MaouSamaTD.UI.Cohorts
         {
             _currentMode = OperationMode.View;
             if (_visualRoot != null) _visualRoot.SetActive(true);
+            
+            // Ensure parent page is also active if we are managed by one
+            if (transform.parent != null) transform.parent.gameObject.SetActive(true);
+
+            if (_fullScreenInspector != null) _fullScreenInspector.gameObject.SetActive(false);
             
             // Connect inspector close button if not already
             if (_inspectorPanel != null && _inspectorPanel.CloseButton != null)
@@ -78,15 +98,22 @@ namespace MaouSamaTD.UI.Cohorts
             RefreshInventory();
         }
 
-        public void OpenForSingleSelect(int slotIndex, System.Action<int, string> onComplete)
+        public void OpenForSingleSelect(int slotIndex, System.Action<int, string> onComplete, List<string> currentCohort = null)
         {
             _currentMode = OperationMode.SingleSelect;
             _currentSlotIndex = slotIndex;
             _onSingleSelectComplete = onComplete;
             
+            // Store the current cohort for highlighting in the inventory
+            _currentCohortUnitIDs = currentCohort != null ? new List<string>(currentCohort) : new List<string>();
+            
             if (_inspectorPanel != null) _inspectorPanel.SetLayout(true); // Left side for selection
 
             if (_visualRoot != null) _visualRoot.SetActive(true);
+            // Ensure parent page is active for selection overlay
+            if (transform.parent != null) transform.parent.gameObject.SetActive(true);
+
+            if (_fullScreenInspector != null) _fullScreenInspector.gameObject.SetActive(false);
             UpdateMultiSelectUI();
             RefreshInventory();
         }
@@ -103,6 +130,10 @@ namespace MaouSamaTD.UI.Cohorts
             _tempSelectedIds.RemoveAll(string.IsNullOrEmpty);
 
             if (_visualRoot != null) _visualRoot.SetActive(true);
+            // Ensure parent page is active for selection overlay
+            if (transform.parent != null) transform.parent.gameObject.SetActive(true);
+
+            if (_fullScreenInspector != null) _fullScreenInspector.gameObject.SetActive(false);
             UpdateMultiSelectUI();
             RefreshInventory();
         }
@@ -111,7 +142,13 @@ namespace MaouSamaTD.UI.Cohorts
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
             if (_inspectorPanel != null) _inspectorPanel.Close();
+            // If we are a child of a page, don't necessarily disable the parent unless we are the main page
             UpdateScrollRectLayout(false);
+        }
+
+        public void Hide()
+        {
+             if (_visualRoot != null) _visualRoot.SetActive(false);
         }
     
         public bool RequestClose()
@@ -134,8 +171,10 @@ namespace MaouSamaTD.UI.Cohorts
                 _inspectorPanel.ResetState();
                 _inspectorPanel.SetLayout(false); // Default to right side
             }
-            _currentMode = OperationMode.View;
+            // We no longer force _currentMode to View here, as OpenForSingleSelect
+            // might be called right before OpenPanel triggers this reset.
             _tempSelectedIds.Clear();
+            _currentCohortUnitIDs.Clear();
             _onSingleSelectComplete = null;
             _onMultiSelectComplete = null;
         }
@@ -153,7 +192,7 @@ namespace MaouSamaTD.UI.Cohorts
                     // Accessing the database ensures the SOs are referenced/loaded if they weren't already
                     MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(id);
                 }
-                Debug.Log($"[CohortManagerUI] Preheated {ownedIDs.Count} unit data references.");
+                Debug.Log($"[VassalManagerUI] Preheated {ownedIDs.Count} unit data references.");
             }
         }
 
@@ -172,8 +211,32 @@ namespace MaouSamaTD.UI.Cohorts
                 }
             }
 
-            // Use the optimized list view
-            _listView.UpdateContent(ownedUnits, OnCardClicked);
+            // Insert a "NONE" slot if we are in single-select mode to allow unsetting a cohort slot
+            if (_currentMode == OperationMode.SingleSelect)
+            {
+                ownedUnits.Insert(0, null);
+                Debug.Log($"[VassalManagerUI] Inserted NONE card. Total units: {ownedUnits.Count}");
+            }
+            else
+            {
+                Debug.Log($"[VassalManagerUI] Skipping NONE card (Mode: {_currentMode}). Total units: {ownedUnits.Count}");
+            }
+
+            // Use the optimized list view and ensure stats are fresh per Source of Truth refactor
+            _listView.UpdateContent(ownedUnits, OnCardClicked, false, (card, unit) => {
+                if (unit == null)
+                {
+                    card.SetupNone(_removalIcon, (comp) => OnCardClicked(comp as UnitCardUI));
+                    card.name = "UnitCard_Removal";
+                }
+                else
+                {
+                    // Update scaling right before display to ensure accuracy
+                    unit.RefreshStats(_classScalingData);
+                    card.Setup(unit, (comp) => OnCardClicked(comp as UnitCardUI));
+                    card.name = $"UnitCard_{unit.UnitName}";
+                }
+            });
 
             UpdateCardSelectionStates();
         }
@@ -188,25 +251,43 @@ namespace MaouSamaTD.UI.Cohorts
         {
             foreach (var card in _listView.ActiveItems)
             {
-                if (card.Data != null)
+                if (card == null) continue;
+
+                if (card.Data == null)
                 {
-                    int index = -1;
-                    if (_currentMode == OperationMode.MultiSelect && _tempSelectedIds.Contains(card.Data.UniqueID))
-                    {
-                        index = _tempSelectedIds.IndexOf(card.Data.UniqueID);
-                    }
+                    card.SetSelectionState(-1);
+                    continue;
+                }
+
+                string unitID = card.Data.UniqueID;
+
+                if (_currentMode == OperationMode.MultiSelect)
+                {
+                    int index = _tempSelectedIds.IndexOf(unitID);
                     card.SetSelectionState(index);
+                }
+                else if (_currentMode == OperationMode.SingleSelect)
+                {
+                    // If in single select, show selection number (if in cohort) but hide the checkmark
+                    int indexInCohort = _currentCohortUnitIDs.IndexOf(unitID);
+                    card.SetSelectionState(indexInCohort, showCheckmark: false);
+                }
+                else
+                {
+                    card.SetSelectionState(-1);
                 }
             }
         }
 
         private void OnCardClicked(UnitCardUI cardUI)
         {
-            if (cardUI == null || cardUI.Data == null) return;
+            if (cardUI == null) return;
             var data = cardUI.Data;
 
             if (_currentMode == OperationMode.View)
             {
+                if (data == null) return; // Cannot view "None"
+
                 if (_fullScreenInspector != null)
                 {
                     _fullScreenInspector.Open(data);
@@ -218,15 +299,13 @@ namespace MaouSamaTD.UI.Cohorts
                     UpdateScrollRectLayout(true);
                 }
             }
-            else if (_currentMode == OperationMode.SingleSelect)
+            if (_currentMode == OperationMode.SingleSelect)
             {
-                if (_inspectorPanel != null)
-                {
-                    _inspectorPanel.Open(data);
-                    UpdateScrollRectLayout(true);
-                }
+                // Direct assignment: skip sidebar inspector and close immediately
+                string unitID = data != null ? data.UniqueID : string.Empty;
+                Debug.Log($"[VassalManagerUI] SELECTING: '{(data != null ? data.UnitName : "NONE")}' (ID: '{unitID}') for SlotIndex: {_currentSlotIndex}");
                 
-                _onSingleSelectComplete?.Invoke(_currentSlotIndex, data.UniqueID);
+                _onSingleSelectComplete?.Invoke(_currentSlotIndex, unitID);
                 UIFlowManager.Instance.GoBack();
             }
             else if (_currentMode == OperationMode.MultiSelect)

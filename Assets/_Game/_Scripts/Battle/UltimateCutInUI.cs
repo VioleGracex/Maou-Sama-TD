@@ -19,6 +19,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _ultimateText;
         [SerializeField] private Image _skillNameBgImage;
         [SerializeField] private Image _titleBgImage;
+        [SerializeField] private Image _portraitImage;
         private GameObject _backgroundDim;
 
         [Header("Animation Settings")]
@@ -48,13 +49,13 @@ namespace MaouSamaTD.UI
             if (_identityContainer != null) _identityContainer.alpha = 0;
         }
 
-        public void Play(string unitName, string unitTitle, string skillName, Color bannerColor, Color titleBgColor, Color skillBgColor)
+        public void Play(string unitName, string unitTitle, string skillName, Color bannerColor, Color titleBgColor, Color skillBgColor, Sprite portrait)
         {
             StopAllCoroutines();
-            StartCoroutine(PlayAnimation(unitName, unitTitle, skillName, bannerColor, titleBgColor, skillBgColor));
+            StartCoroutine(PlayAnimation(unitName, unitTitle, skillName, bannerColor, titleBgColor, skillBgColor, portrait));
         }
 
-        public IEnumerator PlayAnimation(string unitName, string unitTitle, string skillName, Color bannerColor, Color titleBgColor, Color skillBgColor)
+        public IEnumerator PlayAnimation(string unitName, string unitTitle, string skillName, Color bannerColor, Color titleBgColor, Color skillBgColor, Sprite portrait)
         {
             // Initial State
             if (_canvasGroup != null)
@@ -89,6 +90,16 @@ namespace MaouSamaTD.UI
             if (_nameText != null) _nameText.text = unitName.ToUpper();
             if (_titleText != null) _titleText.text = unitTitle.ToUpper();
             if (_skillNameText != null) _skillNameText.text = skillName.ToUpper();
+
+            if (_portraitImage != null)
+            {
+                _portraitImage.sprite = portrait;
+                _portraitImage.color = new Color(1, 1, 1, 0);
+                // Position portrait slightly off-screen to the left
+                _portraitImage.rectTransform.anchoredPosition = new Vector2(-500, 0);
+                _portraitImage.DOFade(1, _animationDuration).SetUpdate(true);
+                _portraitImage.rectTransform.DOAnchorPos(Vector2.zero, _animationDuration).SetEase(Ease.OutCubic).SetUpdate(true);
+            }
 
             // 1. Simultaneous: Identity Scales Down & Fades In + Banner Slides In diagonally
             if (_identityContainer != null)
@@ -128,6 +139,11 @@ namespace MaouSamaTD.UI
                 _identityContainer.DOFade(0, 0.3f).SetUpdate(true);
                 _identityContainer.transform.DOScale(_identityStartScale * 0.8f, 0.3f).SetUpdate(true);
             }
+            if (_portraitImage != null)
+            {
+                _portraitImage.DOFade(0, 0.3f).SetUpdate(true);
+                _portraitImage.rectTransform.DOAnchorPos(new Vector2(-500, 0), 0.3f).SetUpdate(true);
+            }
             _ultimateText.DOFade(0, 0.3f).SetUpdate(true);
             yield return _canvasGroup.DOFade(0, 0.5f).SetUpdate(true).WaitForCompletion();
             
@@ -139,7 +155,7 @@ namespace MaouSamaTD.UI
         {
             // Now works because GameObject is active
             StopAllCoroutines();
-            StartCoroutine(PlayAnimation("IGNIS", "THE CRIMSON BASTION", "PHOENIX Radiance", Color.red, Color.black, Color.black));
+            StartCoroutine(PlayAnimation("IGNIS", "THE CRIMSON BASTION", "PHOENIX Radiance", Color.red, Color.black, Color.black, null));
         }
     }
 }

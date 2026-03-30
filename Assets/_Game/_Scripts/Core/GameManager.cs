@@ -217,6 +217,10 @@ namespace MaouSamaTD.Managers
 
             PlayerLives = 20;
             OnLivesChanged?.Invoke(PlayerLives);
+
+            // Signal the loading screen that the level is ready
+            var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>();
+            if (loader != null) loader.NotifyLevelReady();
         }
         #endregion
 

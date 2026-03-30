@@ -1,7 +1,7 @@
-Key,Russian,English,German,French,Portuguese,Spanish,Japanese,Chinese
-UI_COHORT_1_LABEL,КОГОРТА 1,COHORT 1,,,,,,
-UI_COHORT_2_LABEL,КОГОРТА 2,COHORT 2,,,,,,
-UI_COHORT_3_LABEL,КОГОРТА 3,COHORT 3,,,,,,
-UI_COHORT_4_LABEL,КОГОРТА 4,COHORT 4,,,,,,
-UI_COHORT_MANAGEMENT_TITLE,УПРАВЛЕНИЕ КОГОРТОЙ,COHORT MANAGEMENT,,,,,,
-UI_COHORT_SLOT_ASSIGN,НАЗНАЧИТЬ СЛОТ {0},ASSIGN SLOT {0},,,,,,
+Key,English,Russian,German,French,Portuguese,Spanish,Japanese,Chinese
+UI_COHORT_1_LABEL,COHORT 1,КОГОРТА 1,KOHORTE 1,COHORTE 1,COORTE 1,COHORTE 1,コホート 1,队列 1
+UI_COHORT_2_LABEL,COHORT 2,КОГОРТА 2,KOHORTE 2,COHORTE 2,COORTE 2,COHORTE 2,コホート 2,队列 2
+UI_COHORT_3_LABEL,COHORT 3,КОГОРТА 3,KOHORTE 3,COHORTE 3,COORTE 3,COHORTE 3,コホート 3,队列 3
+UI_COHORT_4_LABEL,COHORT 4,КОГОРТА 4,KOHORTE 4,COHORTE 4,COORTE 4,COHORTE 4,コホート 4,队列 4
+UI_COHORT_MANAGEMENT_TITLE,COHORT MANAGEMENT,УПРАВЛЕНИЕ КОГОРТОЙ,,,,,,
+UI_COHORT_SLOT_ASSIGN,ASSIGN SLOT {0},НАЗНАЧИТЬ СЛОТ {0},SLOT {0} ZUWEISEN,ASSIGNER EMPLACEMENT {0},ATRIBUIR SLOT {0},ASIGNAR RANURA {0},スロット {0} を割り当てる,分配槽位 {0}

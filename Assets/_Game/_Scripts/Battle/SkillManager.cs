@@ -140,9 +140,9 @@ namespace MaouSamaTD.Skills
         private void ApplySkillEffect(SovereignRiteData skill, Vector3 pos, UnitBase unit)
         {
             // Spawn VFX
-            if (skill.HitVFX != null)
+            if (skill.BaseVisuals.HitVFX != null)
             {
-                Instantiate(skill.HitVFX, pos, Quaternion.identity);
+                Instantiate(skill.BaseVisuals.HitVFX, pos, Quaternion.identity);
             }
 
             if (skill.Radius > 0)

@@ -19,6 +19,7 @@ namespace MaouSamaTD.Core
         
         // This is a static reference we can use universally since it will be loaded from Addressables
         public static UnitDatabase LoadedUnitDatabase { get; private set; }
+        public static MaouSamaTD.Units.ClassScalingData LoadedScalingData { get; private set; }
 
         public void StartBootSequence(Action<float> onProgress, Action onComplete)
         {
@@ -31,7 +32,7 @@ namespace MaouSamaTD.Core
             var initHandle = Addressables.InitializeAsync();
             while (!initHandle.IsDone)
             {
-                onProgress?.Invoke(initHandle.PercentComplete * 0.2f);
+                onProgress?.Invoke(initHandle.PercentComplete * 0.1f);
                 yield return null;
             }
 
@@ -39,7 +40,7 @@ namespace MaouSamaTD.Core
             var dbHandle = Addressables.LoadAssetAsync<UnitDatabase>("UnitDatabase");
             while (!dbHandle.IsDone)
             {
-                onProgress?.Invoke(0.2f + dbHandle.PercentComplete * 0.7f);
+                onProgress?.Invoke(0.1f + dbHandle.PercentComplete * 0.4f);
                 yield return null;
             }
 
@@ -48,9 +49,27 @@ namespace MaouSamaTD.Core
                 LoadedUnitDatabase = dbHandle.Result;
                 Debug.Log($"[AppEntryPoint] Successfully loaded UnitDatabase. Units found: {LoadedUnitDatabase.AllUnits.Count}");
             }
-            else
+
+            Debug.Log("[AppEntryPoint] Loading ClassScalingData from Addressables...");
+            // Use the full path as seen in the Unity Editor screenshot to ensure the key matches
+            var scalingHandle = Addressables.LoadAssetAsync<MaouSamaTD.Units.ClassScalingData>("Assets/_Game/Data/ClassScalingData.asset");
+            while (!scalingHandle.IsDone)
             {
-                Debug.LogError("[AppEntryPoint] Failed to load UnitDatabase from Addressables!");
+                onProgress?.Invoke(0.5f + scalingHandle.PercentComplete * 0.4f);
+                yield return null;
+            }
+
+            if (scalingHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                LoadedScalingData = scalingHandle.Result;
+                Debug.Log($"[AppEntryPoint] Successfully loaded ClassScalingData.");
+
+                // Trigger an initial refresh of all loaded unit data properties
+                if (LoadedUnitDatabase != null)
+                {
+                    foreach (var unit in LoadedUnitDatabase.AllUnits)
+                        unit.RefreshStats(LoadedScalingData);
+                }
             }
 
             Debug.Log("[AppEntryPoint] Initializing Save Data...");

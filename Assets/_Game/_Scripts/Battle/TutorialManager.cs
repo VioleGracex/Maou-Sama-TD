@@ -351,15 +351,37 @@ namespace MaouSamaTD.Managers
 
             foreach (var ut in uiTargets)
             {
-                RectTransform rt = FindTargetRect(ut.Name);
-                if (rt != null) 
+                string unitName = ut.Name;
+                if (unitName.StartsWith("Enemy_")) unitName = unitName.Replace("Enemy_", "");
+                else if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
+
+                PlayerUnit pu = PlayerUnit.ActiveUnits.FirstOrDefault(u => u.name == unitName || u.name.Contains(unitName) || u.gameObject.name == ut.Name);
+                EnemyUnit eu = pu == null ? EnemyUnit.ActiveEnemies.FirstOrDefault(u => u.name == ut.Name || u.name.Contains(unitName)) : null;
+
+                if (pu != null || eu != null)
                 {
-                    uiHits.Add(new UIPopupBlocker.UIHighlightData 
-                    { 
-                         Target = rt, 
-                         Size = (ut.Size != Vector2.zero) ? ut.Size : Vector2.one,
-                         Offset = ut.SizeOffset
+                    Transform t = pu != null ? pu.transform : eu.transform;
+                    Vector2 size = (ut.Size != Vector2.zero) ? ut.Size : _unitWorldHoleSizeDefault;
+                    // Multiply size by specific offset if needed, or just use default unit settings.
+                    worldHighlights.Add(new UIPopupBlocker.WorldHighlightData
+                    {
+                        Position = t.position + new Vector3(0, _unitWorldHoleYOffset, 0),
+                        Size = size,
+                        Height = 0f
                     });
+                }
+                else
+                {
+                    RectTransform rt = FindTargetRect(ut.Name);
+                    if (rt != null) 
+                    {
+                        uiHits.Add(new UIPopupBlocker.UIHighlightData 
+                        { 
+                             Target = rt, 
+                             Size = (ut.Size != Vector2.zero) ? ut.Size : Vector2.one,
+                             Offset = ut.SizeOffset
+                        });
+                    }
                 }
             }
 
@@ -461,24 +483,6 @@ namespace MaouSamaTD.Managers
                 if (rt != null) return rt;
                 
                 Canvas canvas = go.GetComponentInChildren<Canvas>(true);
-                if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
-            }
-
-            string unitName = name;
-            if (unitName.StartsWith("Enemy_")) unitName = unitName.Replace("Enemy_", "");
-            else if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
-
-            PlayerUnit pu = PlayerUnit.ActiveUnits.FirstOrDefault(u => u.name == unitName || u.name.Contains(unitName));
-            if (pu != null)
-            {
-                Canvas canvas = pu.GetComponentInChildren<Canvas>(true);
-                if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
-            }
-
-            EnemyUnit eu = EnemyUnit.ActiveEnemies.FirstOrDefault(u => u.name == name || u.name.Contains(unitName));
-            if (eu != null)
-            {
-                Canvas canvas = eu.GetComponentInChildren<Canvas>(true);
                 if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
             }
 

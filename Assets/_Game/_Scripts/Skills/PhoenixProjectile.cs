@@ -57,14 +57,14 @@ namespace MaouSamaTD.Skills
             }
 
             // Orientation logic: Lie flat on XZ plane (90 on X). 
-            // Rotate on Y to face the movement direction.
-            float angleY = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(90, angleY, 0);
+            // Instead of rotating on Y to face the movement direction, default faces (-X) Left. We just set scale.x.
+            // If facing right (_direction.x > 0), flip Scale X to -1.
+            transform.rotation = Quaternion.Euler(90, 0, 0);
 
             Vector3 scale = transform.localScale;
-            // No need for complicated flipping if we rotate on Y
-            scale.x = Mathf.Abs(scale.x);
-            scale.y = Mathf.Abs(scale.y);
+            bool isTargetRight = _direction.x > 0;
+            scale.x = isTargetRight ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+            scale.y = Mathf.Abs(scale.y); // Ensure Y is always positive
             transform.localScale = scale;
             
             if (_showDebugLogs) Debug.Log($"[Phoenix] Executing. Direction: {_direction}, Scale: {transform.localScale}, Rot: {transform.rotation.eulerAngles}");

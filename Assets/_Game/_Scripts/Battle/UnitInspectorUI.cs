@@ -41,6 +41,7 @@ namespace MaouSamaTD.UI
         public bool IsLocked { get; set; } = false;
         
         [Inject] private DeploymentUI _deploymentUI;
+        [Inject] private MaouSamaTD.Managers.GameSelectionState _gameSelectionState;
 
         public void Init()
         {
@@ -131,37 +132,48 @@ namespace MaouSamaTD.UI
             float current = _selectedUnit.CurrentCharge;
             float max = _selectedUnit.MaxCharge;
             bool isFull = current >= max;
+            bool isFirstTutorial = false;
 
-            // Toggle Button vs Charge Display
-            if (_ultButton)
+            if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
             {
-                // If we want to hide the button object entirely or just disable it?
-                // User said: "if full charge we show button... if empty we show image fill and label"
-                // Assuming "show button" means the interactable part.
-                
-                // Let's assume the Button Object contains the button interaction. 
-                // And we have a separate "Charging" value object (Fill + Label).
-                // Or maybe they overlap. 
-                
-                // If they are separate:
-                _ultButton.gameObject.SetActive(isFull);
-            }
-            
-            if (_ultChargeParent)
-            {
-                _ultChargeParent.gameObject.SetActive(!isFull);
-                if (!isFull && max > 0)
+                if (_gameSelectionState.SelectedLevel.LevelIndex == 1 || 
+                    _gameSelectionState.SelectedLevel.LevelName == "Level 1" || 
+                    _gameSelectionState.SelectedLevel.LevelID == "1-1")
                 {
-                    _ultChargeFill.fillAmount = current / max;
+                    isFirstTutorial = true;
                 }
             }
-            
-            if (_ultChargeLabel)
+
+            if (isFirstTutorial)
             {
-                _ultChargeLabel.gameObject.SetActive(!isFull);
-                if (!isFull && max > 0)
+                if (_ultButton) _ultButton.gameObject.SetActive(false);
+                if (_ultChargeParent) _ultChargeParent.gameObject.SetActive(false);
+                if (_ultChargeLabel) _ultChargeLabel.gameObject.SetActive(false);
+            }
+            else
+            {
+                // Toggle Button vs Charge Display
+                if (_ultButton)
                 {
-                    _ultChargeLabel.text = $"{(current/max):P0} Charging Skill";
+                    _ultButton.gameObject.SetActive(isFull);
+                }
+                
+                if (_ultChargeParent)
+                {
+                    _ultChargeParent.gameObject.SetActive(!isFull);
+                    if (!isFull && max > 0)
+                    {
+                        _ultChargeFill.fillAmount = current / max;
+                    }
+                }
+                
+                if (_ultChargeLabel)
+                {
+                    _ultChargeLabel.gameObject.SetActive(!isFull);
+                    if (!isFull && max > 0)
+                    {
+                        _ultChargeLabel.text = $"{(current/max):P0} Charging Skill";
+                    }
                 }
             }
         }

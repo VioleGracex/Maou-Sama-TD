@@ -104,7 +104,8 @@ namespace MaouSamaTD.Managers.Interaction
                         }
                     }
 
-                    sr.flipX = closestSpawn.x < unitCoord.x;
+                    // Face true if spawn is to the right
+                    sr.flipX = closestSpawn.x > unitCoord.x;
                 }
             }
         }

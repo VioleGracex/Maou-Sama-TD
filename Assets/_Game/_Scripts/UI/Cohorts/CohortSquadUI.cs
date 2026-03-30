@@ -40,6 +40,7 @@ namespace MaouSamaTD.UI.Cohorts
 
         [Header("Locked Mode")]
         [SerializeField] private GameObject _noEditBlocker;
+        [SerializeField] private Button _selectMultipleButton;
 
         [Header("Unsaved Changes Popup")]
         [SerializeField] private GameObject _unsavedChangesPopup;
@@ -280,6 +281,7 @@ namespace MaouSamaTD.UI.Cohorts
                     if (btn != null) btn.interactable = canEdit;
             }
             if (_removeAllButton != null) _removeAllButton.interactable = canEdit;
+            if (_selectMultipleButton != null) _selectMultipleButton.interactable = canEdit;
         }
 
         private void OnCohortButtonClicked(int index)

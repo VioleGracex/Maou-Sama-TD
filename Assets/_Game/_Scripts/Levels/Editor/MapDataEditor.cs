@@ -254,12 +254,39 @@ namespace MaouSamaTD.Editor
             }
         }
 
+        private bool _showSidesOverrides = false;
+        private bool _showEdgesOverrides = false;
+
         private void DrawSideOverrides(MapData data)
         {
             SerializedProperty sideOverridesProp = serializedObject.FindProperty("SideVisualOverrides");
-            System.Array sides = System.Enum.GetValues(typeof(WallSide));
+            
+            // Define groups
+            WallSide[] sides = new WallSide[] { WallSide.North, WallSide.South, WallSide.East, WallSide.West };
+            WallSide[] edges = new WallSide[] { WallSide.NorthWest, WallSide.NorthEast, WallSide.SouthWest, WallSide.SouthEast };
 
-            foreach (WallSide side in sides)
+            EditorGUI.indentLevel++;
+            _showSidesOverrides = EditorGUILayout.Foldout(_showSidesOverrides, "Sides (N, S, E, W)", true, EditorStyles.foldoutHeader);
+            if (_showSidesOverrides)
+            {
+                EditorGUI.indentLevel--;
+                DrawWallSideGroup(data, sideOverridesProp, sides);
+                EditorGUI.indentLevel++;
+            }
+            
+            _showEdgesOverrides = EditorGUILayout.Foldout(_showEdgesOverrides, "Edges (NW, NE, SW, SE)", true, EditorStyles.foldoutHeader);
+            if (_showEdgesOverrides)
+            {
+                EditorGUI.indentLevel--;
+                DrawWallSideGroup(data, sideOverridesProp, edges);
+                EditorGUI.indentLevel++;
+            }
+            EditorGUI.indentLevel--;
+        }
+
+        private void DrawWallSideGroup(MapData data, SerializedProperty sideOverridesProp, WallSide[] group)
+        {
+            foreach (WallSide side in group)
             {
                 int idx = data.SideVisualOverrides.FindIndex(o => o.Side == side);
                 if (idx == -1)

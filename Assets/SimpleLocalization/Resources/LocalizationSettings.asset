@@ -44,4 +44,7 @@ MonoBehaviour:
   - Name: settings
     Id: 1773483364
     TextAsset: {fileID: 4900000, guid: f9e52b57da0140c42ac3d6219494fa24, type: 3}
+  - Name: cohort
+    Id: 1773483365
+    TextAsset: {fileID: 4900000, guid: a4e6cd1a918ec5843a61256a488eba13, type: 3}
   SaveFolder: {fileID: 102900000, guid: c392831e85f928548b8494fefd912562, type: 3}

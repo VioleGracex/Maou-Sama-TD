@@ -173,6 +173,8 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
+        private bool _startButtonClicked = false;
+
         private void OnLoadComplete()
         {
             if (_progressBar != null) _progressBar.gameObject.SetActive(false);
@@ -181,13 +183,21 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnStartClicked()
         {
-            // Proceed
-            if (_visualRoot != null) _visualRoot.SetActive(false);
-            else gameObject.SetActive(false);
-
-            if (_appEntryPoint != null)
+            if (_isTransitioning)
             {
-                _appEntryPoint.ProceedToGame();
+                _startButtonClicked = true;
+                if (_startButton != null) _startButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                // Proceed from initial boot
+                if (_visualRoot != null) _visualRoot.SetActive(false);
+                else gameObject.SetActive(false);
+
+                if (_appEntryPoint != null)
+                {
+                    _appEntryPoint.ProceedToGame();
+                }
             }
         }
 
@@ -302,6 +312,23 @@ namespace MaouSamaTD.UI.MainMenu
             }
 
             if (!_isLevelReady) Debug.LogWarning("[LoadingScreenPanel] Level ready signal timed out! Hiding anyway.");
+
+            if (sceneName == "BattleScene")
+            {
+                if (_progressBar != null) _progressBar.gameObject.SetActive(false);
+                if (_startButton != null) 
+                {
+                    _startButton.gameObject.SetActive(true);
+                    // Ensure the button is fully interactable and positioned up front
+                    _startButton.interactable = true;
+                }
+
+                _startButtonClicked = false;
+                while (!_startButtonClicked)
+                {
+                    yield return null;
+                }
+            }
 
             CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();
             if (cg == null) cg = gameObject.AddComponent<CanvasGroup>();

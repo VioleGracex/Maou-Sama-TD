@@ -161,10 +161,8 @@ namespace MaouSamaTD.Units
 
         private Vector3 FindBestUltimateDirection()
         {
-            // Align with Grid Axes: Forward (+Z), Back (-Z), Right (+X), Left (-X)
+            // Align with Grid Axes: Right (+X), Left (-X)
             Vector3[] directions = { 
-                Vector3.forward, 
-                Vector3.back,    
                 Vector3.right,  
                 Vector3.left    
             };
@@ -339,7 +337,8 @@ namespace MaouSamaTD.Units
         {
              if (_spriteRenderer == null) return;
              bool isTargetRight = targetPos.x > transform.position.x;
-             _spriteRenderer.flipX = !isTargetRight; 
+             _spriteRenderer.flipX = isTargetRight; 
+             if (_showDebugLogs) Debug.Log($"[Facing] {gameObject.name} facing {(isTargetRight ? "Right (+x)" : "Left (-x)")}. Target X: {targetPos.x:F2}, My X: {transform.position.x:F2}");
         }
 
 

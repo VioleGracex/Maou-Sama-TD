@@ -237,7 +237,8 @@ namespace MaouSamaTD.Units
              if (Mathf.Abs(diff) < 0.05f) return;
 
              bool isTargetRight = diff > 0;
-             _spriteRenderer.flipX = !isTargetRight; // Corrected flip for orientation
+             _spriteRenderer.flipX = isTargetRight; // Sprites face left by default, flipX=true makes them face right (+x)
+             if (_showDebugLogs) Debug.Log($"[Facing] {gameObject.name} facing {(isTargetRight ? "Right (+x)" : "Left (-x)")}. Target X: {targetPos.x:F2}, My X: {transform.position.x:F2}");
         }
 
         private void HandleAttack(UnitBase target)

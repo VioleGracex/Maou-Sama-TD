@@ -426,6 +426,8 @@ namespace MaouSamaTD.UI.Cohorts
 
             if (_isReadinessMode)
             {
+                if (_actionButton != null) _actionButton.gameObject.SetActive(true);
+
                 if (_actionButtonText != null) 
                     _actionButtonText.text = LocalizationManager.Localize("Cohort.ActionButton.StartBattle");
                 

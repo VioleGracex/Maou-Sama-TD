@@ -218,8 +218,8 @@ MonoBehaviour:
     Type: 5
     Dialogue: {fileID: 0}
     TargetUI:
-      Name: Unit_Ignis
-      Size: {x: 1, y: 1}
+      Name: 
+      Size: {x: 0, y: 0}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles: []

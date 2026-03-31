@@ -30,6 +30,7 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private Button _btnRanks;
         [SerializeField] private Button _btnDaily;
         [SerializeField] private Button _btnGrimoire;
+        [SerializeField] private Button _btnManifest;
 
         [Header("Global Header Buttons")]
         [SerializeField] private Button _btnSettings;
@@ -57,6 +58,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnRanks != null) _btnRanks.onClick.AddListener(OnRanksClicked);
             if (_btnDaily != null) _btnDaily.onClick.AddListener(OnDailyClicked);
             if (_btnGrimoire != null) _btnGrimoire.onClick.AddListener(OnGrimoireClicked);
+            if (_btnManifest != null) _btnManifest.onClick.AddListener(OnManifestClicked);
 
             if (_btnSettings != null) _btnSettings.onClick.AddListener(OnSettingsClicked);
             if (_btnCitadel != null) _btnCitadel.onClick.AddListener(OnCitadelClicked);

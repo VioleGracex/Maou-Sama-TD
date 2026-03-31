@@ -4,6 +4,7 @@
   <Project Path="NaughtyAttributes.Core.csproj" />
   <Project Path="Zenject-IntegrationTests-Editor.csproj" />
   <Project Path="Zenject-ReflectionBaking-Editor.csproj" />
+  <Project Path="asset-store-tools-editor.csproj" />
   <Project Path="Zenject-UnitTests-Editor.csproj" />
   <Project Path="Zenject-Editor.csproj" />
   <Project Path="Zenject-IntegrationTests.csproj" />

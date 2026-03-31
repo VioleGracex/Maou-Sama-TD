@@ -1,0 +1,19 @@
+{
+  "name": "com.ouikidev.swiftselect",
+  "version": "1.0.0",
+  "displayName": "Swift Select",
+  "description": "Swift Select - Precision Object Selection. Instantly pick overlapping objects in the Scene view with a customizable popup menu, real-time highlights, and fuzzy filtering.",
+  "unity": "2021.3",
+  "author": {
+    "name": "OuikiDev",
+    "url": "https://github.com/VioleGracex"
+  },
+  "keywords": [
+    "editor",
+    "utility",
+    "selection",
+    "workflow",
+    "productivity"
+  ],
+  "category": "Editor Extensions"
+}

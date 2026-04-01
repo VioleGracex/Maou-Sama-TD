@@ -15,7 +15,9 @@ namespace MaouSamaTD.UI
         public UINavigationOverlay NavigationOverlay;
         public UnitInspectorFullScreenUI UnitInspector;
 
+        [SerializeField] private bool _debug = true;
         private Stack<IUIController> _panelStack = new Stack<IUIController>();
+        private bool _isProcessing = false;
 
         private void Awake()
         {
@@ -52,18 +54,25 @@ namespace MaouSamaTD.UI
             // Reset overlay whenever we change panels
             if (NavigationOverlay != null) NavigationOverlay.Hide();
 
+            if (_isProcessing) return;
+            _isProcessing = true;
+
             if (newPanel.AddsToHistory)
             {
                 if (_panelStack.Count > 0)
                 {
                     var currentTop = _panelStack.Peek();
+                    if (_debug) Debug.Log($"[UIFlow] Closing current top: {currentTop.GetType().Name}");
                     if (currentTop != null) currentTop.Close();
                 }
                 _panelStack.Push(newPanel);
             }
 
+            if (_debug) Debug.Log($"[UIFlow] Opening panel: {newPanel.GetType().Name}. Stack size: {_panelStack.Count}");
             newPanel.ResetState();
             newPanel.Open();
+
+            _isProcessing = false;
 
             if (NavigationOverlay != null) NavigationOverlay.UpdateHighlight(newPanel.GetType());
             UpdateGlobalButtons();
@@ -74,25 +83,42 @@ namespace MaouSamaTD.UI
             // Reset overlay whenever we change panels
             if (NavigationOverlay != null) NavigationOverlay.Hide();
 
+            if (_isProcessing) return;
+            _isProcessing = true;
+
             if (_panelStack.Count <= 1)
             {
+                if (_debug) Debug.Log("[UIFlow] GoBack called on root or empty stack. Clearing history.");
+                _isProcessing = false; // Must reset before calling ClearHistory which also uses it
                 ClearHistory(true, force);
                 UpdateGlobalButtons();
                 return;
             }
 
             var topPanel = _panelStack.Peek();
-            if (!force && topPanel != null && !topPanel.RequestClose()) return;
+            if (!force && topPanel != null && !topPanel.RequestClose()) 
+            {
+                _isProcessing = false;
+                return;
+            }
 
             var closingPanel = _panelStack.Pop();
+            if (_debug) Debug.Log($"[UIFlow] Popped: {closingPanel.GetType().Name}. Stack remaining: {_panelStack.Count}");
+            
             if (closingPanel != null) closingPanel.Close();
 
-            var previousPanel = _panelStack.Peek();
-            if (previousPanel != null)
+            if (_panelStack.Count > 0)
             {
-                previousPanel.Open();
-                if (NavigationOverlay != null) NavigationOverlay.UpdateHighlight(previousPanel.GetType());
+                var previousPanel = _panelStack.Peek();
+                if (previousPanel != null)
+                {
+                    if (_debug) Debug.Log($"[UIFlow] Returning to: {previousPanel.GetType().Name}");
+                    previousPanel.Open();
+                    if (NavigationOverlay != null) NavigationOverlay.UpdateHighlight(previousPanel.GetType());
+                }
             }
+            
+            _isProcessing = false;
             UpdateGlobalButtons();
         }
         

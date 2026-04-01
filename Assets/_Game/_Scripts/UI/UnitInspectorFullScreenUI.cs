@@ -22,7 +22,7 @@ namespace MaouSamaTD.UI
         [Header("UI Controller Architecture")]
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
-        public bool AddsToHistory => true;
+        public bool AddsToHistory => false;
 
         [Header("Animation")]
         [SerializeField] private CanvasGroup _canvasGroup;
@@ -90,6 +90,9 @@ namespace MaouSamaTD.UI
         [SerializeField] private Button _btnLevelUp;
         [SerializeField] private Button _btnChamber;
 
+        [Header("Debug")]
+        [SerializeField] private bool _debug = true;
+
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
 
         private UnitData _currentUnit;
@@ -99,7 +102,8 @@ namespace MaouSamaTD.UI
 
         private void Start()
         {
-            if (_btnClose) _btnClose.onClick.AddListener(Close);
+            if (_btnClose) _btnClose.onClick.AddListener(() => UIFlowManager.Instance.GoBack());
+            if (_btnHome) _btnHome.onClick.AddListener(() => UIFlowManager.Instance.ClearHistory());
             
             // Interaction points to open specific sub-panels
             if (_btnEXP) _btnEXP.onClick.AddListener(() => SwitchTab(4)); // XP Panel
@@ -164,6 +168,7 @@ namespace MaouSamaTD.UI
             if (unitChanged) RefreshSkinsPage();
             
             SwitchTab(0); // Default to Stats
+            if (_debug) Debug.Log($"[UnitInspector] Opening for: {unit.UnitName}");
             Open();
         }
 
@@ -190,6 +195,8 @@ namespace MaouSamaTD.UI
             {
                 if (_visualRoot != null) _visualRoot.SetActive(false);
             }
+
+            if (_debug) Debug.Log("[UnitInspector] Visuals hidden via Close().");
         }
 
         public void ResetState()

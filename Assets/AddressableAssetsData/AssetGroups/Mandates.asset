@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Mandates
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Mandates
+  m_GUID: 2be5baf1368dbd048a652e4885c7d49c
+  m_SerializeEntries:
+  - m_GUID: 3c7ba8d424fa80c41b225d0178b86646
+    m_Address: Assets/_Game/Data/Mandates/Mandate_BloodTithe.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1f39cda7b5ef93429791058233caf4b
+    m_Address: Assets/_Game/Data/Mandates/Mandate_GrowthVassal.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec78959987e29044cb3f66d9f050dff2
+    m_Address: Assets/_Game/Data/Mandates/Mandate_DailyHunt.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 19b417a427e1a474d9e81fbe4eae59a7, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: c16d506cedce4b246bd411284fe8a659, type: 2}
+    - {fileID: 11400000, guid: b886460ee2961c64fb4a4ed76b964736, type: 2}

@@ -2,6 +2,8 @@ using UnityEngine;
 using Zenject;
 using MaouSamaTD.Managers;
 using MaouSamaTD.Data;
+using MaouSamaTD.Mandates;
+
 
 namespace MaouSamaTD.Installers
 {
@@ -11,7 +13,9 @@ namespace MaouSamaTD.Installers
         [SerializeField] private SettingsManager _settingsManagerPrefab;
         [SerializeField] private EconomyManager _economyManagerPrefab;
         [SerializeField] private AudioSettingsManager _audioSettingsManagerPrefab;
+        [SerializeField] private MandateManager _mandateManagerPrefab;
         [SerializeField] private UnitDatabase _unitDatabase;
+
 
         public override void InstallBindings()
         {
@@ -92,6 +96,25 @@ namespace MaouSamaTD.Installers
             Container.Bind<GameSelectionState>()
                 .AsSingle()
                 .NonLazy();
+
+            // Bind MandateManager
+            if (_mandateManagerPrefab != null)
+            {
+                Container.Bind<MandateManager>()
+                    .FromComponentInNewPrefab(_mandateManagerPrefab)
+                    .AsSingle()
+                    .NonLazy();
+            }
+            else
+            {
+                Debug.LogWarning("[ProjectGlobalInstaller] MandateManager Prefab missing! Creating empty instance to prevent crash.");
+                Container.Bind<MandateManager>()
+                    .FromNewComponentOnNewGameObject()
+                    .AsSingle()
+                    .NonLazy();
+            }
+
+
                 
             Debug.Log("[ProjectGlobalInstaller] Global Services Bound.");
         }

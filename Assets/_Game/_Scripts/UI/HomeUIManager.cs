@@ -7,6 +7,8 @@ using MaouSamaTD.UI.Common;
 using MaouSamaTD.UI.MainMenu;
 using MaouSamaTD.UI.Cohorts;
 using MaouSamaTD.UI.Vassals;
+using MaouSamaTD.UI.Mandates;
+
 
 namespace MaouSamaTD.UI.MainMenu
 {
@@ -44,6 +46,9 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("Nav Overlay")]
         public UINavigationOverlay _navOverlay;
 
+        [Header("Debug")]
+        [SerializeField] private bool _debug = true;
+
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
 
         private void Start()
@@ -80,6 +85,10 @@ namespace MaouSamaTD.UI.MainMenu
 
             var cohortSquad = Object.FindAnyObjectByType<CohortSquadUI>(FindObjectsInactive.Include);
             if (cohortSquad != null) cohortSquad.Preheat();
+
+            var mandates = Object.FindAnyObjectByType<MandatesPanel>(FindObjectsInactive.Include);
+            if (mandates != null) mandates.Preheat();
+
 
             Debug.Log("[HomeUIManager] UI Data Preheating Complete.");
         }
@@ -143,11 +152,28 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
-        private void OnMandatesClicked() { Debug.Log("[HomeUIManager] Mandates clicked (Not Implemented Yet)"); }
+        private void OnMandatesClicked()
+        {
+            var panel = Object.FindAnyObjectByType<MandatesPanel>(FindObjectsInactive.Include);
+            if (panel != null)
+            {
+                UIFlowManager.Instance.OpenPanel(panel);
+            }
+        }
+
         private void OnThroneClicked() { Debug.Log("[HomeUIManager] Throne clicked (Not Implemented Yet)"); }
         private void OnVaultClicked() { Debug.Log("[HomeUIManager] Vault clicked (Not Implemented Yet)"); }
         private void OnRanksClicked() { Debug.Log("[HomeUIManager] Ranks clicked (Not Implemented Yet)"); }
-        private void OnDailyClicked() { Debug.Log("[HomeUIManager] Daily clicked (Not Implemented Yet)"); }
+        private void OnDailyClicked()
+        {
+            var panel = Object.FindAnyObjectByType<MandatesPanel>(FindObjectsInactive.Include);
+            if (panel != null)
+            {
+                // Both buttons currently go to Mandates, which defaults to Daily.
+                UIFlowManager.Instance.OpenPanel(panel);
+            }
+        }
+
         private void OnGrimoireClicked() { Debug.Log("[HomeUIManager] Grimoire clicked (Not Implemented Yet)"); }
 
         private void OnSettingsClicked()

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b64e8978f38f8484b9de7780752e6644, type: 3}
+  m_Name: Mandate_BloodTithe
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.MandateData
+  useDefaultInspector: 0
+  UniqueID: 113ea9b6-da23-49b9-9dc1-57c936cc68fa
+  Title: Blood Tithe
+  Description: Spend 100 BloodCrests in the Manifest or Rituals.
+  Type: 3
+  RequirementKey: SpendBloodCrest
+  RequiredAmount: 100
+  Rewards:
+  - Type: 0
+    Amount: 500
+  Icon: {fileID: 0}

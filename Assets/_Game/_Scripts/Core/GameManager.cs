@@ -270,12 +270,12 @@ namespace MaouSamaTD.Managers
                 {
                     foreach (var reward in _currentLevelData.WinRewards)
                     {
-                        if (reward.Type == MaouSamaTD.Levels.RewardType.GoldCoins)
+                        if (reward.Type == MaouSamaTD.Data.RewardType.GoldCoins)
                         {
                             if (_economyManager != null) _economyManager.AddGold(reward.Amount);
                             else _saveManager.AddGold(reward.Amount);
                         }
-                        else if (reward.Type == MaouSamaTD.Levels.RewardType.BloodCrests)
+                        else if (reward.Type == MaouSamaTD.Data.RewardType.BloodCrests)
                         {
                             if (_economyManager != null) _economyManager.AddBloodCrest(reward.Amount);
                             else _saveManager.AddBloodCrest(reward.Amount);

@@ -48,4 +48,5 @@ MonoBehaviour:
   _settingsManagerPrefab: {fileID: 5318909517765026839, guid: 188a0e235d43cd442a1c1b638e27de99, type: 3}
   _economyManagerPrefab: {fileID: 5343967134544262478, guid: 6327befe2d22bcf4ebf68e808c43d83e, type: 3}
   _audioSettingsManagerPrefab: {fileID: 1793303780317830032, guid: a0edf2b1089f57843a0c056f5fff761f, type: 3}
+  _mandateManagerPrefab: {fileID: 0}
   _unitDatabase: {fileID: 11400000, guid: 30760c1cf17c6a84ea8f3d9493c5ca88, type: 2}

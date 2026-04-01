@@ -6,6 +6,8 @@ using System;
 
 namespace MaouSamaTD.UI.MainMenu
 {
+    public enum CardInteractionMode { Inspect, Select }
+
     public class UnitCardUI : MonoBehaviour, MaouSamaTD.UI.Common.IListItem<UnitData>
     {
         [Header("General")]
@@ -24,8 +26,13 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private GameObject _selectedOverlay; // The dark overlay when selected
         [SerializeField] private TextMeshProUGUI _selectionOrderText; // "1", "2", "3"
         [SerializeField] private GameObject _checkMarkIcon; // Optional checkmark
+        [SerializeField] private GameObject _inspectIcon; // Magnifying glass or similar
+
+        [Header("Debug")]
+        [SerializeField] private bool _debug = true;
 
         private Action<UnitCardUI> _onClickCallback;
+        private CardInteractionMode _currentMode = CardInteractionMode.Inspect;
 
         public UnitData Data => _data;
 
@@ -64,6 +71,12 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Setup(UnitData unit, Action<UnityEngine.Component> onClick = null)
         {
+            Setup(unit, CardInteractionMode.Inspect, onClick);
+        }
+
+        public void Setup(UnitData unit, CardInteractionMode mode, Action<UnityEngine.Component> onClick = null)
+        {
+            _currentMode = mode;
             _onClickCallback = onClick != null ? (card) => onClick(card) : null;
             InternalSetup(unit);
         }
@@ -73,6 +86,7 @@ namespace MaouSamaTD.UI.MainMenu
         /// </summary>
         public void SetupNone(Sprite icon, Action<UnityEngine.Component> onClick = null)
         {
+            _currentMode = CardInteractionMode.Select; // Assumed for removal slots
             _onClickCallback = onClick != null ? (card) => onClick(card) : null;
             InternalSetup(null, icon);
         }
@@ -163,6 +177,8 @@ namespace MaouSamaTD.UI.MainMenu
                     _starsContainer.GetChild(i).gameObject.SetActive(i < starCount);
                 }
             }
+            
+            if (_inspectIcon) _inspectIcon.SetActive(_currentMode == CardInteractionMode.Inspect);
             
             SetSelectionState(-1);
         }

@@ -13,6 +13,11 @@ namespace MaouSamaTD.Data
         public List<string> UnlockedUnits = new List<string>(); // Legacy / Discovery list
         public List<UnitInventoryEntry> UnitInventory = new List<UnitInventoryEntry>();
         
+        [Header("Mandates/Quests")]
+        public List<MandateProgressData> MandateProgress = new List<MandateProgressData>();
+        public List<string> ClaimedMandates = new List<string>();
+
+        
         public int Gold;
         public int BloodCrest;
         public bool IsLilithAwakened;
@@ -122,6 +127,20 @@ namespace MaouSamaTD.Data
             Count = count;
         }
     }
+
+    [Serializable]
+    public struct MandateProgressData
+    {
+        public string MandateID;
+        public int Progress;
+
+        public MandateProgressData(string mandateID, int progress)
+        {
+            MandateID = mandateID;
+            Progress = progress;
+        }
+    }
+
 
     [Serializable]
     public class UnitInventoryEntry

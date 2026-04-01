@@ -22,7 +22,7 @@ namespace MaouSamaTD.Levels
         public string LevelID = "1-1";
 
         [Tooltip("List of rewards granted upon clearing the level for the first time or repeatedly (depending on logic).")]
-        public List<LevelReward> WinRewards = new List<LevelReward>();
+        public List<MaouSamaTD.Data.RewardData> WinRewards = new List<MaouSamaTD.Data.RewardData>();
         
         [Tooltip("If populated, forces the player to use this specific cohort for the first 11 slots. Existing cohort selection is ignored.")]
         public List<MaouSamaTD.Units.UnitData> PremadeCohort;
@@ -63,18 +63,5 @@ namespace MaouSamaTD.Levels
         public bool HasTutorial;
         [ShowIf("HasTutorial")]
         public MaouSamaTD.Tutorial.TutorialDataSO TutorialData;
-    }
-
-    public enum RewardType
-    {
-        GoldCoins,
-        BloodCrests // Currency used for gacha/rituals
-    }
-
-    [System.Serializable]
-    public struct LevelReward
-    {
-        public RewardType Type;
-        public int Amount;
     }
 }

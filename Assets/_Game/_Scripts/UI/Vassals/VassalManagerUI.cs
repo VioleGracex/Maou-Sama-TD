@@ -44,6 +44,9 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private VassalDetailPanel _inspectorPanel; // Side Bar
         public UnitInspectorFullScreenUI _fullScreenInspector;
 
+        [Header("Debug")]
+        [SerializeField] private bool _debug = true;
+
         private GenericListView<UnitData, UnitCardUI> _listView;
 
         // Operational State
@@ -153,7 +156,15 @@ namespace MaouSamaTD.UI.Vassals
     
         public bool RequestClose()
         {
-            // If inspector is open, close it first
+            // If full screen inspector is active, close it and return false to intercept the navigation
+            if (_fullScreenInspector != null && _fullScreenInspector.VisualRoot != null && _fullScreenInspector.VisualRoot.activeSelf)
+            {
+                if (_debug) Debug.Log("[VassalManager] Intercepting GoBack: Closing Full Screen Inspector.");
+                _fullScreenInspector.Close();
+                return false;
+            }
+
+            // If side inspector is open, close it first
             if (_inspectorPanel != null && _inspectorPanel.VisualRoot != null && _inspectorPanel.VisualRoot.activeSelf)
             {
                 _inspectorPanel.Close();
@@ -233,7 +244,12 @@ namespace MaouSamaTD.UI.Vassals
                 {
                     // Update scaling right before display to ensure accuracy
                     unit.RefreshStats(_classScalingData);
-                    card.Setup(unit, (comp) => OnCardClicked(comp as UnitCardUI));
+                    
+                    var cardMode = (_currentMode == OperationMode.SingleSelect || _currentMode == OperationMode.MultiSelect) 
+                        ? CardInteractionMode.Select 
+                        : CardInteractionMode.Inspect;
+                        
+                    card.Setup(unit, cardMode, (comp) => OnCardClicked(comp as UnitCardUI));
                     card.name = $"UnitCard_{unit.UnitName}";
                 }
             });
@@ -288,15 +304,21 @@ namespace MaouSamaTD.UI.Vassals
             {
                 if (data == null) return; // Cannot view "None"
 
+                // Always use Full Screen Inspector for View mode, per user refinement
                 if (_fullScreenInspector != null)
                 {
+                    if (_debug) Debug.Log($"[VassalManager] Inspecting unit: {data.UnitName}");
                     _fullScreenInspector.Open(data);
-                    UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
+                    // UIFlowManager.Instance.OpenPanel(_fullScreenInspector); // REMOVED: Now managed as a child-state
                 }
-                else if (_inspectorPanel != null)
+                else
                 {
-                    _inspectorPanel.Open(data);
-                    UpdateScrollRectLayout(true);
+                    Debug.LogWarning("[VassalManagerUI] Full screen inspector not assigned! Falling back to sidebar.");
+                    if (_inspectorPanel != null)
+                    {
+                        _inspectorPanel.Open(data);
+                        // UpdateScrollRectLayout(true); // Disable sidebar animation
+                    }
                 }
             }
             if (_currentMode == OperationMode.SingleSelect)
@@ -310,10 +332,11 @@ namespace MaouSamaTD.UI.Vassals
             }
             else if (_currentMode == OperationMode.MultiSelect)
             {
+                // Multi-select still uses side panel for quick toggling info if needed, but we keep it simpler
                 if (_inspectorPanel != null)
                 {
                     _inspectorPanel.Open(data);
-                    UpdateScrollRectLayout(true);
+                    // UpdateScrollRectLayout(true); // Disable sidebar animation
                 }
 
                 string id = data.UniqueID;
@@ -340,6 +363,10 @@ namespace MaouSamaTD.UI.Vassals
 
         private void UpdateScrollRectLayout(bool isDetailsOpen)
         {
+            // Disable sidebar squeeze animation per user request
+            return;
+
+            /*
             if (_scrollViewRect == null) return;
             DOTween.Kill(_scrollViewRect);
 
@@ -351,6 +378,7 @@ namespace MaouSamaTD.UI.Vassals
 
             DOTween.To(() => _scrollViewRect.offsetMin, x => _scrollViewRect.offsetMin = x, targetMin, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
             DOTween.To(() => _scrollViewRect.offsetMax, x => _scrollViewRect.offsetMax = x, targetMax, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
+            */
         }
     }
 }

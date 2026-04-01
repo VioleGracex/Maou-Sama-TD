@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b64e8978f38f8484b9de7780752e6644, type: 3}
+  m_Name: Mandate_GrowthVassal
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.MandateData
+  useDefaultInspector: 0
+  UniqueID: 58e259be-db10-4e12-9b3a-ba6c4e09bb5a
+  Title: Vassal Growth
+  Description: Level up any unit one time.
+  Type: 2
+  RequirementKey: LevelUpUnit
+  RequiredAmount: 1
+  Rewards:
+  - Type: 1
+    Amount: 50
+  Icon: {fileID: 0}

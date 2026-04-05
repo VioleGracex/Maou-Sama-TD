@@ -47,5 +47,6 @@ namespace MaouSamaTD.Units
         public Color Tint = Color.white; // Optional tint
         public float VisualYOffset = 0f; // Offset for sprite height (e.g. to stand on top of tiles)
         public float BaseVisualHeight = 1f; // Base height to lift sprite (default 1 to sit on tile)
+        public float HpBarYOffset = 2f; // New field to control HP bar float height
     }
 }

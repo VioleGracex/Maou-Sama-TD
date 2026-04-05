@@ -13,6 +13,8 @@ namespace MaouSamaTD.UI.Gacha
         [SerializeField] private global::UnityEngine.GameObject _visualRoot;
         public global::UnityEngine.GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true;
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.BackButton | NavigationFeatures.CitadelButton;
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
 
         [Header("Tabs")]
         [SerializeField] private List<GachaTabButton> _tabs;

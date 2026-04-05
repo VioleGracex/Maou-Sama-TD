@@ -154,7 +154,7 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 2
     UseBlocker: 1
-    FullBlocker: 0
+    FullBlocker: 1
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
@@ -208,9 +208,9 @@ MonoBehaviour:
     HandTargetTileOverride: {x: 0, y: 0}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 1
-    RequiredCount: 5
+    RequiredCount: 2
     UseBlocker: 1
-    FullBlocker: 0
+    FullBlocker: 1
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
@@ -218,7 +218,7 @@ MonoBehaviour:
     Type: 5
     Dialogue: {fileID: 0}
     TargetUI:
-      Name: 
+      Name: Unit_Ignis
       Size: {x: 0, y: 0}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
@@ -237,13 +237,13 @@ MonoBehaviour:
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
-    UseBlocker: 0
-    FullBlocker: 0
+    UseBlocker: 1
+    FullBlocker: 1
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
   - StepName: Select Ignis Prompt
-    Type: 0
+    Type: 3
     Dialogue: {fileID: 11400000, guid: a3034f72b4714f94d870862c3abaac68, type: 2}
     TargetUI:
       Name: Unit_Ignis
@@ -254,11 +254,11 @@ MonoBehaviour:
     DelayBefore: 0
     Duration: 0
     ActionKey: UnitSelected
-    ShowHand: 0
+    ShowHand: 1
     HandScale: 1
     DragShowHand: 0
     HandTargetUIOverride:
-      Name: 
+      Name: Unit_Ignis
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
     HandTargetTileOverride: {x: 0, y: 0}
@@ -301,8 +301,8 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
-    FullBlocker: 0
-    ResetBlocker: 0
+    FullBlocker: 1
+    ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
   - StepName: Activate Ignis Skill

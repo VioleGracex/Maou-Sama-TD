@@ -14,6 +14,8 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => false;
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.BackButton;
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
         [SerializeField] private TextMeshProUGUI _titleText;
         [SerializeField] private TextMeshProUGUI _descriptionText;
         [SerializeField] private TextMeshProUGUI _rewardValueText;

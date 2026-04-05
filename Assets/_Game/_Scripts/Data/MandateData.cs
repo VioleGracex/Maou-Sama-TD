@@ -7,9 +7,9 @@ namespace MaouSamaTD.Data
     public enum MandateType
     {
         Daily,
-        Event,
-        Permanent,
-        OneTime
+        Weekly,
+        StoryAndLegacy,
+        Event 
     }
 
     [CreateAssetMenu(fileName = "NewMandate", menuName = "MaouSamaTD/Mandate Data")]
@@ -32,5 +32,7 @@ namespace MaouSamaTD.Data
 
         // Metadata for Page Flow
         public bool IsLimitedTime => Type == MandateType.Event;
+        
+        public string CategoryTag => Type == MandateType.StoryAndLegacy ? "STORY & LEGACY" : Type.ToString().ToUpper();
     }
 }

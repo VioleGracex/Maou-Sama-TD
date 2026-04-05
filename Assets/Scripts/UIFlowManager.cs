@@ -40,10 +40,14 @@ namespace MaouSamaTD.UI
             if (_citadelBtnRoot != null)
             {
                 var btn = _citadelBtnRoot.GetComponent<UnityEngine.UI.Button>();
-                if (btn != null) btn.onClick.AddListener(() => 
+                if (btn != null)
                 {
-                    if (NavigationOverlay != null) NavigationOverlay.Toggle();
-                });
+                    btn.onClick.RemoveAllListeners();
+                    btn.onClick.AddListener(() => 
+                    {
+                        if (NavigationOverlay != null) NavigationOverlay.Toggle();
+                    });
+                }
             }
         }
 
@@ -143,32 +147,19 @@ namespace MaouSamaTD.UI
         {
             if (_panelStack.Count == 0)
             {
-                // Root/Home state
                 if (_backBtnRoot != null) _backBtnRoot.SetActive(false);
                 if (_citadelBtnRoot != null) _citadelBtnRoot.SetActive(false);
                 return;
             }
 
             var top = _panelStack.Peek();
-            bool isHome = top is HomeUIManager;
-            bool isSettings = top.GetType().Name.Contains("Settings"); // Use flexible check
+            var features = top.ConfiguredNavFeatures;
 
-            if (isHome)
-            {
-                if (_backBtnRoot != null) _backBtnRoot.SetActive(false);
-                if (_citadelBtnRoot != null) _citadelBtnRoot.SetActive(false);
-            }
-            else if (isSettings)
-            {
-                if (_backBtnRoot != null) _backBtnRoot.SetActive(true);
-                if (_citadelBtnRoot != null) _citadelBtnRoot.SetActive(false);
-            }
-            else
-            {
-                // Any other page
-                if (_backBtnRoot != null) _backBtnRoot.SetActive(true);
-                if (_citadelBtnRoot != null) _citadelBtnRoot.SetActive(true);
-            }
+            if (_backBtnRoot != null) 
+                _backBtnRoot.SetActive((features & NavigationFeatures.BackButton) != 0);
+            
+            if (_citadelBtnRoot != null) 
+                _citadelBtnRoot.SetActive((features & NavigationFeatures.CitadelButton) != 0);
         }
     }
 }

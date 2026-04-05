@@ -14,6 +14,8 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => false; // Overlay doesn't hide back stack
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.None;
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
 
         [Header("Navigation Buttons")]
         [SerializeField] private Button _btnHome;

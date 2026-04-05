@@ -28,17 +28,23 @@ namespace MaouSamaTD.UI
         [SerializeField] public Button _btnManifest;
 
         [Header("Indicators")]
-        [SerializeField] public GameObject[] _indicators;
+        [SerializeField] private GameObject _indicatorHome;
+        [SerializeField] private GameObject _indicatorCampaign;
+        [SerializeField] private GameObject _indicatorShop;
+        [SerializeField] private GameObject _indicatorVassals;
+        [SerializeField] private GameObject _indicatorCohorts;
+        [SerializeField] private GameObject _indicatorManifest;
 
         private bool _isOpen = false;
 
         private void Start()
         {
             if (_menuPanel != null) 
+            {
                 _menuPanel.anchoredPosition = new Vector2(_menuPanel.anchoredPosition.x, _hiddenY);
+                _menuPanel.gameObject.SetActive(false);
+            }
             
-            gameObject.SetActive(false);
-
             if (_btnHome) _btnHome.onClick.AddListener(() => NavigateToHome());
             if (_btnCampaign) _btnCampaign.onClick.AddListener(() => NavigateTo<CampaignPage>());
             if (_btnVassals) _btnVassals.onClick.AddListener(() => NavigateTo<VassalManagerUI>());
@@ -67,41 +73,41 @@ namespace MaouSamaTD.UI
         {
             if (_isOpen) return;
             _isOpen = true;
-            gameObject.SetActive(true);
-            _menuPanel.DOKill();
-            _menuPanel.DOAnchorPosY(_shownY, _duration).SetEase(_ease).SetUpdate(true);
+
+            if (_menuPanel != null)
+            {
+                _menuPanel.gameObject.SetActive(true);
+                _menuPanel.DOKill();
+                _menuPanel.anchoredPosition = new Vector2(_menuPanel.anchoredPosition.x, _hiddenY);
+                _menuPanel.DOAnchorPosY(_shownY, _duration).SetEase(_ease).SetUpdate(true);
+            }
         }
 
         public void Hide()
         {
             if (!_isOpen) return;
             _isOpen = false;
-            _menuPanel.DOKill();
-            _menuPanel.DOAnchorPosY(_hiddenY, _duration).SetEase(Ease.InBack).SetUpdate(true)
-                .OnComplete(() => gameObject.SetActive(false));
+
+            if (_menuPanel != null)
+            {
+                _menuPanel.DOKill();
+                _menuPanel.DOAnchorPosY(_hiddenY, _duration).SetEase(Ease.InBack).SetUpdate(true)
+                    .OnComplete(() => 
+                    {
+                        _menuPanel.gameObject.SetActive(false);
+                    });
+            }
         }
 
         public void UpdateHighlight(System.Type pageType)
         {
-            if (_indicators == null) return;
-
-            // Mapping: 0:Campaign, 1:Shop, 2:Vassals, 3:Cohorts, 4:Manifest
-            bool[] targets = new bool[] 
-            {
-                pageType == typeof(CampaignPage),
-                false, // Shop
-                pageType == typeof(MaouSamaTD.UI.Vassals.VassalManagerUI),
-                pageType == typeof(CohortSquadUI),
-                pageType == typeof(GachaPanel)
-            };
-
-            for (int i = 0; i < _indicators.Length && i < targets.Length; i++)
-            {
-                if (_indicators[i] != null)
-                {
-                    _indicators[i].SetActive(targets[i]);
-                }
-            }
+            // Reset all
+            if (_indicatorHome) _indicatorHome.SetActive(pageType == typeof(HomeUIManager));
+            if (_indicatorCampaign) _indicatorCampaign.SetActive(pageType == typeof(CampaignPage));
+            if (_indicatorShop) _indicatorShop.SetActive(false); // Placeholder for Shop
+            if (_indicatorVassals) _indicatorVassals.SetActive(pageType == typeof(MaouSamaTD.UI.Vassals.VassalManagerUI));
+            if (_indicatorCohorts) _indicatorCohorts.SetActive(pageType == typeof(CohortSquadUI));
+            if (_indicatorManifest) _indicatorManifest.SetActive(pageType == typeof(GachaPanel));
         }
 
         private void NavigateTo<T>() where T : MonoBehaviour, IUIController
@@ -114,7 +120,7 @@ namespace MaouSamaTD.UI
         private void NavigateToHome()
         {
             Hide();
-            UIFlowManager.Instance.ClearHistory(true);
+            UIFlowManager.Instance.ClearHistory(true, true);
             var home = Object.FindAnyObjectByType<HomeUIManager>(FindObjectsInactive.Include);
             if (home != null) home.Open();
         }

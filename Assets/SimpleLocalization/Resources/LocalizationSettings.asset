@@ -47,4 +47,10 @@ MonoBehaviour:
   - Name: cohort
     Id: 1773483365
     TextAsset: {fileID: 4900000, guid: a4e6cd1a918ec5843a61256a488eba13, type: 3}
+  - Name: vassals
+    Id: 1773483366
+    TextAsset: {fileID: 4900000, guid: 60b2b72e5d01dc04a98f45c14517de89, type: 3}
+  - Name: mandates
+    Id: 1773483367
+    TextAsset: {fileID: 4900000, guid: 7e8aedc417db46a4e9edc3f0292b2fc9, type: 3}
   SaveFolder: {fileID: 102900000, guid: c392831e85f928548b8494fefd912562, type: 3}

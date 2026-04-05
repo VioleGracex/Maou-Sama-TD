@@ -64,10 +64,10 @@ namespace MaouSamaTD.Utils
             }
             else
             {
-                Vector3 direction = _camTransform.position - transform.position;
+                Vector3 direction = transform.position - _camTransform.position;
                 if (direction != Vector3.zero)
                 {
-                    ApplyRotation(Quaternion.LookRotation(-direction));
+                    ApplyRotation(Quaternion.LookRotation(direction));
                 }
             }
         }

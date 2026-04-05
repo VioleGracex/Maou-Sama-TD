@@ -16,16 +16,20 @@ MonoBehaviour:
   UniqueID: b68ba9e9-e8ca-4840-ad0d-8f9057759224
   EnemyName: Lesser Shadow
   EnemySprite: {fileID: 21300000, guid: ac5da49679f49414eb1bf820d5cdc715, type: 3}
-  MaxHp: 30
+  AnimatorController: {fileID: 0}
+  MaxHp: 300
   MoveSpeed: 1
-  AttackPower: 3
+  AttackPower: 30
   AttackInterval: 1.5
   AttackRange: 1
   DamageToPlayerBase: 1
   AttackPattern: 3
   MovementType: 0
   CollisionType: 0
+  PhasingCharges: 0
+  Immunities: 
   CurrencyReward: 10
   Tint: {r: 1, g: 1, b: 1, a: 1}
   VisualYOffset: 0
   BaseVisualHeight: 1
+  HpBarYOffset: 2

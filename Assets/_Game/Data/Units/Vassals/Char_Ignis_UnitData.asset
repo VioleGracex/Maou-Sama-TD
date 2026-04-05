@@ -14,6 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
   UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
+  CalculatedStats:
+    MaxHp: 2700
+    Attack: 55
+    Defense: 225
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    ClassName: Bastion
   UnitName: Ignis
   UnitTitle: The Crimson Bastion
   BaseSkin:
@@ -25,8 +31,8 @@ MonoBehaviour:
     AnimatorController: {fileID: 0}
   Rank2Art: {fileID: 0}
   Skins:
-  - SkinID: poolparty_ignis
-    SkinThemeName: PoolParty Ignis
+  - SkinID: pool_party_ignis
+    SkinThemeName: Pool Party Ignis
     SeriesName: Pool Party
     Avatar: {fileID: 21300000, guid: b78d0f8107098744cb389768e2f3371b, type: 3}
     Chibi: {fileID: 21300000, guid: 980180b5d282d2845b35c8e923379466, type: 3}
@@ -65,6 +71,7 @@ MonoBehaviour:
   MaxCharge: 100
   ChargePerSecond: 1
   ChargePerAttack: 2
+  UltimateDamageResistance: 0.9
   PassiveSkill: {fileID: 0}
   ActiveSkill: {fileID: 0}
   UltimateSkill: {fileID: 11400000, guid: e20c62474bbc31f40a06dc66077f2aaa, type: 2}

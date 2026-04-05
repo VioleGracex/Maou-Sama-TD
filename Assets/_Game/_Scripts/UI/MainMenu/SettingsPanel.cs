@@ -18,6 +18,8 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true;
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.BackButton; // Settings usually don't show Citadel
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
         #endregion
 
         #region Tabs

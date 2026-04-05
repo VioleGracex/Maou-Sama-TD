@@ -95,6 +95,17 @@ namespace MaouSamaTD.Units
             {
                 _animator.runtimeAnimatorController = _enemyData.AnimatorController;
             }
+
+            // Apply HP Bar height from EnemyData
+            if (_hpBarRoot != null)
+            {
+                _hpBarRoot.localPosition = new Vector3(0, _enemyData.HpBarYOffset, 0);
+            }
+            else if (_hpFillImage != null && _hpFillImage.canvas != null)
+            {
+                // Fallback for older prefabs where root isn't assigned
+                _hpFillImage.canvas.transform.localPosition = new Vector3(0, _enemyData.HpBarYOffset, 0);
+            }
         }
 
         public override float Range => _enemyData != null ? _enemyData.AttackRange : 1f; 

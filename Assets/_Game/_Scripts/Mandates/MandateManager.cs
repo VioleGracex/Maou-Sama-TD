@@ -120,6 +120,23 @@ namespace MaouSamaTD.Mandates
             return true;
         }
 
+        public int ClaimAll(MandateType? type = null)
+        {
+            var filter = _allMandates.Where(m => CanClaim(m));
+            if (type.HasValue)
+            {
+                filter = filter.Where(m => m.Type == type.Value);
+            }
+
+            var toClaim = filter.ToList();
+            int count = 0;
+            foreach (var m in toClaim)
+            {
+                if (ClaimReward(m)) count++;
+            }
+            return count;
+        }
+
         private void GrantReward(RewardData reward)
         {
             switch (reward.Type)

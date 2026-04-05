@@ -164,6 +164,7 @@ namespace MaouSamaTD.Units
         public float MaxCharge = 100f;
         public float ChargePerSecond = 5f;
         public float ChargePerAttack = 10f;
+        public float UltimateDamageResistance = 0f; // Percentage reduction (0-1)
 
         [Header("Skills")]
         public MaouSamaTD.Skills.UnitSkillData PassiveSkill;

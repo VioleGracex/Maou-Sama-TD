@@ -42,14 +42,7 @@ namespace MaouSamaTD.UI.Skills
 
         private void Start()
         {
-            if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
-            {
-                if (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1")
-                {
-                    gameObject.SetActive(false);
-                    return;
-                }
-            }
+            CheckTutorialDock();
 
             if (_panelRect != null) 
             {
@@ -65,8 +58,31 @@ namespace MaouSamaTD.UI.Skills
             }
         }
 
+        private void CheckTutorialDock()
+        {
+            if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
+            {
+                if (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1")
+                {
+                    // Fully dock and disable
+                    if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
+                    gameObject.SetActive(false);
+                }
+            }
+        }
+
         public void Init(List<SovereignRiteData> skills)
         {
+            CheckTutorialDock();
+
+            if (skills == null || skills.Count == 0)
+            {
+                if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
+                gameObject.SetActive(false);
+            }
+
+            if (!gameObject.activeSelf) return;
+
             _skillsToDisplay.Clear();
             if (skills != null)
             {

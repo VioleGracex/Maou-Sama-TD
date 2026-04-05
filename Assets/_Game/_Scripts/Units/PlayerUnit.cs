@@ -133,6 +133,7 @@ namespace MaouSamaTD.Units
             }
 
             if (_animator != null) _animator.Play("Ultimate", 0, 0f);
+            IsCastingUltimate = true;
 
             Vector3 bestDir = FindBestUltimateDirection();
             if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {visuals.UltimatePrefab.name} towards {bestDir}");
@@ -148,6 +149,8 @@ namespace MaouSamaTD.Units
                 // Wait for the local ultimate animation to finish before going back to idle
                 // Usually ultimate animations have a fixed duration or we can wait for state end
                 yield return new WaitForSeconds(1.5f); // Approximation or wait for state
+                
+                IsCastingUltimate = false;
                 if (_animator != null && !_isDead)
                 {
                     _animator.Play("Idle", 0, 0f);

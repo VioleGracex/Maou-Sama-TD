@@ -13,6 +13,8 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true;
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.BackButton | NavigationFeatures.CitadelButton;
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
 
         [Header("References")]
         [SerializeField] private Transform _levelContainer;

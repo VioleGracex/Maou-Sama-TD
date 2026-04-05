@@ -23,6 +23,8 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => false;
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.BackButton | NavigationFeatures.CitadelButton;
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
 
         [Header("Animation")]
         [SerializeField] private CanvasGroup _canvasGroup;
@@ -103,7 +105,7 @@ namespace MaouSamaTD.UI
         private void Start()
         {
             if (_btnClose) _btnClose.onClick.AddListener(() => UIFlowManager.Instance.GoBack());
-            if (_btnHome) _btnHome.onClick.AddListener(() => UIFlowManager.Instance.ClearHistory());
+            if (_btnHome) _btnHome.onClick.AddListener(() => UIFlowManager.Instance.ClearHistory(true, true));
             
             // Interaction points to open specific sub-panels
             if (_btnEXP) _btnEXP.onClick.AddListener(() => SwitchTab(4)); // XP Panel
@@ -404,7 +406,7 @@ namespace MaouSamaTD.UI
                 _skinSplashPreview.sprite = isBase ? _currentUnit.BaseSkin.FullSplashArt : skin.FullSplashArt;
             
             if (_skinNameText) 
-                _skinNameText.text = isBase ? $"{_currentUnit.UnitName} (Default)" : $"{skin.SkinThemeName} {_currentUnit.UnitName}";
+                _skinNameText.text = isBase ? _currentUnit.UnitName.ToUpper() : (skin != null ? skin.SkinThemeName.ToUpper() : "DEFAULT");
             
             // Visual Preview (Chibi)
             if (_skinChibiPreview != null)
@@ -424,8 +426,11 @@ namespace MaouSamaTD.UI
                 var txt = _btnApplySkin.GetComponentInChildren<TextMeshProUGUI>();
                 string skinID = skin != null ? skin.SkinID : null;
                 bool alreadyEquipped = (_currentUnit.EquippedSkinID == skinID) || (string.IsNullOrEmpty(skinID) && string.IsNullOrEmpty(_currentUnit.EquippedSkinID));
+                bool isUnlocked = _currentUnit.IsSkinUnlocked(skinID);
                 
-                if (txt) txt.text = alreadyEquipped ? "EQUIPPED" : "APPLY";
+                if (alreadyEquipped) txt.text = "EQUIPPED";
+                else if (!isUnlocked) txt.text = "UNLOCK";
+                else txt.text = "APPLY";
                 _btnApplySkin.interactable = !alreadyEquipped;
             }
         }

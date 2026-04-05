@@ -161,6 +161,13 @@ namespace MaouSamaTD.Managers
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
                         if (step.StopTime) _gameManager.SetSpeed(0); 
                         
+                        if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
+                        {
+                            bool actionDialogueDone = false;
+                            _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
+                            yield return new WaitUntil(() => actionDialogueDone);
+                        }
+
                         HandleUIHighlight(step);
                         
                         _waitingForAction = true;
@@ -169,13 +176,6 @@ namespace MaouSamaTD.Managers
                         if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)
                         {
                             _unitInspectorUI.IsLocked = true;
-                        }
-
-                        if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
-                        {
-                            bool actionDialogueDone = false;
-                            _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
-                            yield return new WaitUntil(() => actionDialogueDone);
                         }
 
                         if (_triggeredActionsBuffer.Contains(step.ActionKey))
@@ -408,15 +408,9 @@ namespace MaouSamaTD.Managers
 
                 if (step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
                 {
-                    RectTransform drt = FindTargetRect(step.HandTargetUIOverride.Name);
-                    if (drt != null) 
+                    if (GetTargetScreenPositionAndScale(step.HandTargetUIOverride, out Vector2 targetPos, out float scaleMult))
                     {
-                        Vector3[] corners = new Vector3[4];
-                        drt.GetWorldCorners(corners);
-                        Vector3 center = (corners[0] + corners[2]) * 0.5f;
-                        Vector3 size = corners[2] - corners[0];
-                        Vector2 targetPos = (Vector2)center + new Vector2(size.x * step.HandTargetUIOverride.SizeOffset.x, size.y * step.HandTargetUIOverride.SizeOffset.y);
-                        float finalScale = step.HandScale * step.HandTargetUIOverride.Size.x;
+                        float finalScale = step.HandScale * scaleMult;
                         _handUI.MoveHand(startPos, targetPos, finalScale);
                     }
                     else _handUI.MoveHand(startPos, Vector2.zero, step.HandScale);
@@ -435,15 +429,10 @@ namespace MaouSamaTD.Managers
 
                 if (step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
                 {
-                    RectTransform drt = FindTargetRect(step.HandTargetUIOverride.Name);
-                    if (drt != null) 
+                    if (GetTargetScreenPositionAndScale(step.HandTargetUIOverride, out Vector2 targetPos, out float scaleMult))
                     {
-                        Vector3[] corners = new Vector3[4];
-                        drt.GetWorldCorners(corners);
-                        Vector3 center = (corners[0] + corners[2]) * 0.5f;
-                        Vector3 size = corners[2] - corners[0];
-                        handPos = (Vector2)center + new Vector2(size.x * step.HandTargetUIOverride.SizeOffset.x, size.y * step.HandTargetUIOverride.SizeOffset.y);
-                        handScale *= step.HandTargetUIOverride.Size.x;
+                        handPos = targetPos;
+                        handScale *= scaleMult;
                     }
                 }
                 else if (step.HandTargetTileOverride != Vector2Int.zero)
@@ -487,6 +476,42 @@ namespace MaouSamaTD.Managers
             }
 
             return null;
+        }
+
+        private bool GetTargetScreenPositionAndScale(UITarget ut, out Vector2 screenPos, out float scaleMultiplier)
+        {
+            screenPos = Vector2.zero;
+            scaleMultiplier = 1f;
+
+            string unitName = ut.Name;
+            if (unitName.StartsWith("Enemy_")) unitName = unitName.Replace("Enemy_", "");
+            else if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
+
+            PlayerUnit pu = PlayerUnit.ActiveUnits.FirstOrDefault(u => u.name == unitName || u.name.Contains(unitName) || u.gameObject.name == ut.Name);
+            EnemyUnit eu = pu == null ? EnemyUnit.ActiveEnemies.FirstOrDefault(u => u.name == ut.Name || u.name.Contains(unitName)) : null;
+
+            if (pu != null || eu != null)
+            {
+                Transform t = pu != null ? pu.transform : eu.transform;
+                Vector3 worldPos = t.position + new Vector3(0, _unitWorldHoleYOffset, 0);
+                screenPos = Camera.main.WorldToScreenPoint(worldPos);
+                scaleMultiplier = ut.Size.x != 0 ? ut.Size.x : 1f;
+                return true;
+            }
+
+            RectTransform drt = FindTargetRect(ut.Name);
+            if (drt != null)
+            {
+                Vector3[] corners = new Vector3[4];
+                drt.GetWorldCorners(corners);
+                Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                Vector3 size = corners[2] - corners[0];
+                screenPos = (Vector2)center + new Vector2(size.x * ut.SizeOffset.x, size.y * ut.SizeOffset.y);
+                scaleMultiplier = ut.Size.x != 0 ? ut.Size.x : 1f;
+                return true;
+            }
+
+            return false;
         }
         #endregion
 

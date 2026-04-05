@@ -252,7 +252,8 @@ namespace MaouSamaTD.UI
             overlayRaycaster.SetWorldHighlights(isWorldHighlight, worldHighlights);
             
             canvasGroup.DOKill();
-            canvasGroup.alpha = 1; 
+            if (canvasGroup.alpha < 1) canvasGroup.DOFade(1f, transitionDuration).SetUpdate(true);
+            else canvasGroup.alpha = 1f;
         }
 
         private void CreateOverlay()

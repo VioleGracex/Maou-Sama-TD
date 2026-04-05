@@ -23,6 +23,8 @@ namespace MaouSamaTD.UI.Cohorts
         [SerializeField] private GameObject _visualRoot;
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true;
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.BackButton | NavigationFeatures.CitadelButton;
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
         [SerializeField] private TMPro.TextMeshProUGUI _titleText;
         [SerializeField] private VassalManagerUI _vassalInventoryController;
 

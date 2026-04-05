@@ -35,7 +35,7 @@ MonoBehaviour:
   BonusAtkPerLevel: 0
   BonusDefPerLevel: 0
   SkinOverrides:
-  - SkinID: poolparty_ignis
+  - SkinID: 
     Visuals:
       UltimatePrefab: {fileID: 0}
       CastVFX: {fileID: 0}

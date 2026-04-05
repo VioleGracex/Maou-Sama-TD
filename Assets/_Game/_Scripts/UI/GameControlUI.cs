@@ -172,7 +172,14 @@ namespace MaouSamaTD.UI
             // Speed Text
             if (_speedText != null)
             {
-                _speedText.text = $"{_gameManager.CurrentSpeed}x";
+                if (_gameManager.IsPaused || _gameManager.CurrentSpeed <= 0f)
+                {
+                    _speedText.text = "";
+                }
+                else
+                {
+                    _speedText.text = $"{_gameManager.CurrentSpeed}x";
+                }
             }
 
             // Pause Overlay Logic

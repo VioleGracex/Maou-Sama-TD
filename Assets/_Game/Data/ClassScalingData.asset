@@ -18,7 +18,7 @@ MonoBehaviour:
   ClassScalings:
   - ClassType: 0
     OverrideClassName: Bastion
-    ClassIcon: {fileID: 21300000, guid: 33b39977cf7fa404194b18d31210c071, type: 3}
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     BaseHpMultiplier: 1.5
     BaseAtkMultiplier: 1
     BaseDefMultiplier: 1.5

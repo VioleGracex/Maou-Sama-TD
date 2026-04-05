@@ -25,8 +25,8 @@ namespace MaouSamaTD.UI
         [Header("Animation Settings")]
         [SerializeField] private float _snapDuration = 0.3f;
         [SerializeField] private Ease _snapEase = Ease.OutBack;
-        [SerializeField] private float _dragSensitivity = 1.0f;
-        [SerializeField] private float _scrollWheelSensitivity = 0.5f;
+        [SerializeField] private float _dragSensitivity = 0.5f;
+        [SerializeField] private float _scrollWheelSensitivity = 0.2f;
 
         [Header("References")]
         [SerializeField] private RectTransform _content;
@@ -44,6 +44,7 @@ namespace MaouSamaTD.UI
         private bool _isDragging = false;
         private int _selectedIndex = -1;
         private bool _needsLayout = false;
+        private bool _isInfinite = true;
 
         private void OnEnable()
         {
@@ -71,6 +72,7 @@ namespace MaouSamaTD.UI
             
             _currentScroll = 0;
             _targetScroll = 0;
+            _isInfinite = _items.Count >= 3;
             ApplyLayout();
             NotifySelection(0);
         }
@@ -121,8 +123,11 @@ namespace MaouSamaTD.UI
                 float offset = i - _currentScroll;
                 
                 // Infinite wrap logic
-                while (offset > count / 2f) offset -= count;
-                while (offset < -count / 2f) offset += count;
+                if (_isInfinite)
+                {
+                    while (offset > count / 2.0f) offset -= count;
+                    while (offset < -count / 2.0f) offset += count;
+                }
 
                 item.anchoredPosition = new Vector2(offset * _itemSpacing, 0);
 
@@ -150,13 +155,17 @@ namespace MaouSamaTD.UI
 
         public void MoveNext()
         {
-            _targetScroll = Mathf.Round(_targetScroll + 1);
+            float target = _targetScroll + 1;
+            if (!_isInfinite) target = Mathf.Clamp(target, 0f, _items.Count - 1);
+            _targetScroll = Mathf.Round(target);
             PerformSnap();
         }
 
         public void MovePrev()
         {
-            _targetScroll = Mathf.Round(_targetScroll - 1);
+            float target = _targetScroll - 1;
+            if (!_isInfinite) target = Mathf.Clamp(target, 0f, _items.Count - 1);
+            _targetScroll = Mathf.Round(target);
             PerformSnap();
         }
 
@@ -172,8 +181,11 @@ namespace MaouSamaTD.UI
             }, _targetScroll, _snapDuration)
             .SetEase(_snapEase)
             .OnComplete(() => {
-                _targetScroll = Mathf.Repeat(_targetScroll, count);
-                _currentScroll = _targetScroll;
+                if (_isInfinite)
+                {
+                    _targetScroll = Mathf.Repeat(_targetScroll, count);
+                    _currentScroll = _targetScroll;
+                }
                 CheckSelectionUpdate();
             });
         }
@@ -181,7 +193,10 @@ namespace MaouSamaTD.UI
         private void CheckSelectionUpdate()
         {
             if (_items.Count == 0) return;
-            int index = Mathf.RoundToInt(Mathf.Repeat(_currentScroll, _items.Count));
+            int index = _isInfinite 
+                ? Mathf.RoundToInt(Mathf.Repeat(_currentScroll, _items.Count))
+                : Mathf.RoundToInt(Mathf.Clamp(_currentScroll, 0, _items.Count - 1));
+            
             if (index != _selectedIndex)
             {
                 NotifySelection(index);
@@ -212,14 +227,17 @@ namespace MaouSamaTD.UI
         public void OnEndDrag(PointerEventData eventData)
         {
             _isDragging = false;
-            _targetScroll = Mathf.Round(_currentScroll);
+            float target = Mathf.Round(_currentScroll);
+            if (!_isInfinite) target = Mathf.Clamp(target, 0, _items.Count - 1);
+            _targetScroll = target;
             PerformSnap();
         }
 
         public void OnScroll(PointerEventData eventData)
         {
-            _targetScroll -= eventData.scrollDelta.y * _scrollWheelSensitivity;
-            _targetScroll = Mathf.Round(_targetScroll);
+            float target = _targetScroll - eventData.scrollDelta.y * _scrollWheelSensitivity;
+            if (!_isInfinite) target = Mathf.Clamp(target, 0, _items.Count - 1);
+            _targetScroll = Mathf.Round(target);
             PerformSnap();
         }
         #endregion

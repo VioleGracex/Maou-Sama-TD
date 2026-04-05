@@ -4,6 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using TMPro;
+using NaughtyAttributes;
 
 namespace MaouSamaTD.UI.Common
 {
@@ -15,13 +16,13 @@ namespace MaouSamaTD.UI.Common
     public class CustomToggle : MonoBehaviour, IPointerClickHandler
     {
         [Header("References (GameObjects)")]
-        [SerializeField] private GameObject _handleObject;
+        [SerializeField, Required] private GameObject _handleObject;
         [SerializeField] private GameObject _textONObject;
         [SerializeField] private GameObject _textOFFObject;
         [SerializeField] private GameObject _backgroundObject;
 
         [Header("Animation Settings")]
-        [SerializeField] private float _animationDuration = 0.25f;
+        [SerializeField, Range(0.01f, 1f)] private float _animationDuration = 0.25f;
         [SerializeField] private Ease _easeType = Ease.OutQuad;
         
         [Header("Handle Positions")]
@@ -44,6 +45,28 @@ namespace MaouSamaTD.UI.Common
         private TextMeshProUGUI _textON;
         private TextMeshProUGUI _textOFF;
         private Image _bgImage;
+
+        [Button("Capture Current as ON")]
+        private void CaptureON()
+        {
+            if (_handleObject == null) { Debug.LogWarning("Handle Object missing!"); return; }
+            _posON = _handleObject.GetComponent<RectTransform>().anchoredPosition.x;
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        [Button("Capture Current as OFF")]
+        private void CaptureOFF()
+        {
+            if (_handleObject == null) { Debug.LogWarning("Handle Object missing!"); return; }
+            _posOFF = _handleObject.GetComponent<RectTransform>().anchoredPosition.x;
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        [Button("Preview Toggle")]
+        private void PreviewToggle()
+        {
+            SetIsOn(!_isOn, Application.isPlaying);
+        }
 
         private void Reset()
         {

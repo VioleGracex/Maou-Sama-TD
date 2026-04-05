@@ -18,17 +18,20 @@ MonoBehaviour:
   Description: Lilith releases a wave of dark energy, dealing damage to all enemies
     in an area multiple times and charming survivors.
   Icon: {fileID: 0}
-  CastVFX: {fileID: 0}
-  HitVFX: {fileID: 0}
-  RangeIndicatorColor: {r: 0.5, g: 0, b: 0.8, a: 1}
-  AnimationTriggerName: CastSkill
-  CastSFX: {fileID: 0}
-  HitSFX: {fileID: 0}
+  BaseVisuals:
+    UltimatePrefab: {fileID: 0}
+    CastVFX: {fileID: 0}
+    HitVFX: {fileID: 0}
+    CastSFX: {fileID: 0}
+    HitSFX: {fileID: 0}
+    UltimateColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    RangeIndicatorColor: {r: 0, g: 0, b: 0, a: 0}
+    AnimationTriggerName: 
+  OwnerUnit: {fileID: 11400000, guid: be5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b, type: 2}
   ChargeCost: 100
   BonusHpPerLevel: 0
   BonusAtkPerLevel: 0
   BonusDefPerLevel: 0
-  UltimatePrefab: {fileID: 1100000, guid: c1c2c3c4c5c6c7c8c9c0c1c2c3c4c5c6, type: 3}
-  UltimateColor: {r: 0.8, g: 0.2, b: 1, a: 1}
-  TitleBgColor: {r: 1, g: 1, b: 1, a: 1}
-  SkillNameBgColor: {r: 0.8, g: 0.2, b: 1, a: 1}
+  SkinOverrides: []

@@ -28,6 +28,15 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private Sprite _removalIcon;
         [SerializeField] private ClassScalingData _classScalingData;
         [SerializeField] private GameObject _filterContainer;
+        [SerializeField] private ClassFilterToggleUI _classTogglePrefab;
+        [SerializeField] private Transform _classFilterRoot;
+
+        private struct FilterToggleEntry
+        {
+            public UnitClass? Class;
+            public ClassFilterToggleUI Toggle;
+        }
+        private List<FilterToggleEntry> _filterToggles = new List<FilterToggleEntry>();
 
         [Header("Selection & Navigation")]
         [SerializeField] private Button _btnConfirmSelection;
@@ -59,8 +68,13 @@ namespace MaouSamaTD.UI.Vassals
         private List<string> _currentCohortUnitIDs = new List<string>(); // Tracks the current squad for highlighting
         private int _maxMultiSelectLimit = 12;
 
+        private UnitClass? _currentClassFilter = null;
+        private bool _filtersInitialized = false;
+
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true; // Essential for "Back" button to return from selection to squad
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.BackButton | NavigationFeatures.CitadelButton;
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
 
         public void Awake()
         {
@@ -78,6 +92,8 @@ namespace MaouSamaTD.UI.Vassals
             }
 
             _listView = new GenericListView<UnitData, UnitCardUI>(_cardContainer, _cardPrefab);
+            
+            InitializeClassFilters();
         }
 
         public void Open()
@@ -145,6 +161,7 @@ namespace MaouSamaTD.UI.Vassals
         {
             if (_visualRoot != null) _visualRoot.SetActive(false);
             if (_inspectorPanel != null) _inspectorPanel.Close();
+            if (_fullScreenInspector != null) _fullScreenInspector.Close();
             // If we are a child of a page, don't necessarily disable the parent unless we are the main page
             UpdateScrollRectLayout(false);
         }
@@ -207,6 +224,57 @@ namespace MaouSamaTD.UI.Vassals
             }
         }
 
+        public void InitializeClassFilters()
+        {
+            if (_filtersInitialized) return;
+            if (_classFilterRoot == null || _classTogglePrefab == null || _classScalingData == null) return;
+
+            // Clear all existing children (leftovers from editor or previous runs)
+            foreach (Transform child in _classFilterRoot)
+            {
+                Destroy(child.gameObject);
+            }
+            _filterToggles.Clear();
+
+            // 1. Create "ALL" Toggle
+            CreateFilterToggle(null, null, "ALL");
+
+            // 2. Create class-specific toggles
+            foreach (var scaling in _classScalingData.ClassScalings)
+            {
+                CreateFilterToggle(scaling.ClassType, scaling.ClassIcon);
+            }
+
+            _filtersInitialized = true;
+            UpdateFilterVisuals();
+        }
+
+        private void CreateFilterToggle(UnitClass? classType, Sprite icon, string label = null)
+        {
+            var filterObj = Instantiate(_classTogglePrefab, _classFilterRoot);
+            filterObj.gameObject.name = classType.HasValue ? $"Filter_{classType.Value}" : "Filter_All";
+
+            filterObj.Setup(icon, label);
+            filterObj.OnClicked = () => {
+                _currentClassFilter = classType;
+                UpdateFilterVisuals();
+                RefreshInventory();
+            };
+
+            _filterToggles.Add(new FilterToggleEntry { Class = classType, Toggle = filterObj });
+        }
+
+        private void UpdateFilterVisuals()
+        {
+            foreach (var entry in _filterToggles)
+            {
+                if (entry.Toggle != null)
+                {
+                    entry.Toggle.SetActiveState(entry.Class == _currentClassFilter);
+                }
+            }
+        }
+
         public void RefreshInventory()
         {
             if (_cardContainer == null || _cardPrefab == null) return;
@@ -218,7 +286,14 @@ namespace MaouSamaTD.UI.Vassals
                 foreach (var id in _saveManager.CurrentData.UnlockedUnits)
                 {
                     var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(id);
-                    if (unit != null) ownedUnits.Add(unit);
+                    if (unit != null)
+                    {
+                        // Apply Filter
+                        if (_currentClassFilter.HasValue && unit.Class != _currentClassFilter.Value)
+                            continue;
+
+                        ownedUnits.Add(unit);
+                    }
                 }
             }
 
@@ -259,8 +334,11 @@ namespace MaouSamaTD.UI.Vassals
 
         private void UpdateMultiSelectUI()
         {
+            bool isSelectionMode = _currentMode != OperationMode.View;
             bool isMulti = _currentMode == OperationMode.MultiSelect;
+            
             if (_btnConfirmSelection != null) _btnConfirmSelection.gameObject.SetActive(isMulti);
+            if (_btnCancel != null) _btnCancel.gameObject.SetActive(isSelectionMode);
         }
 
         private void UpdateCardSelectionStates()

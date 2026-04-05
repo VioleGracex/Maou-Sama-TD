@@ -1,5 +1,13 @@
 namespace MaouSamaTD.UI
 {
+    [System.Flags]
+    public enum NavigationFeatures
+    {
+        None = 0,
+        BackButton = 1 << 0,
+        CitadelButton = 1 << 1
+    }
+
     /// <summary>
     /// Interface for full screen UI Panels managed by the UIFlowManager.
     /// </summary>
@@ -12,6 +20,11 @@ namespace MaouSamaTD.UI
         /// If false, this panel simply opens as an overlay (popup) without affecting the back stack.
         /// </summary>
         bool AddsToHistory { get; }
+
+        /// <summary>
+        /// Specifies which global navigation features (Back, Citadel) are allowed on this particular page.
+        /// </summary>
+        NavigationFeatures ConfiguredNavFeatures { get; }
         
         void Open();
         void Close();

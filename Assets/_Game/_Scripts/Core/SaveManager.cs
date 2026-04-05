@@ -16,14 +16,39 @@ namespace MaouSamaTD.Managers
 
         public PlayerData CurrentData { get; private set; }
         
-        private string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
+        private string SaveFolder => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "Maou-Sama-TD");
+        private string SavePath => Path.Combine(SaveFolder, SaveFileName);
+        
+        private string LegacySavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
         #endregion
 
         #region Lifecycle
         [Inject]
         public void Construct()
         {
+            CheckAndMigrateSave();
             Load();
+        }
+
+        private void CheckAndMigrateSave()
+        {
+            if (File.Exists(LegacySavePath) && !File.Exists(SavePath))
+            {
+                try 
+                {
+                    if (!Directory.Exists(SaveFolder)) Directory.CreateDirectory(SaveFolder);
+                    File.Move(LegacySavePath, SavePath);
+                    Debug.Log($"[SaveManager] Migrated save data from {LegacySavePath} to {SavePath}");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[SaveManager] Failed to migrate save data: {e.Message}");
+                }
+            }
+            else if (!Directory.Exists(SaveFolder))
+            {
+                Directory.CreateDirectory(SaveFolder);
+            }
         }
         #endregion
 
@@ -105,6 +130,7 @@ namespace MaouSamaTD.Managers
                 }
             }
             CurrentData = null;
+            CreateNewSave();
         }
 
         public void AddGold(int amount)

@@ -30,6 +30,7 @@ namespace MaouSamaTD.Units
         [SerializeField] protected Animator _animator;
         [SerializeField] protected TextMeshProUGUI _textFallback; 
         [SerializeField] protected Image _hpFillImage;
+        [SerializeField] protected RectTransform _hpBarRoot;
         
         [Header("Effects")]
         [SerializeField] protected ParticleSystem _healParticle;
@@ -176,6 +177,8 @@ namespace MaouSamaTD.Units
             _spriteRenderer.SetPropertyBlock(_mpb);
         }
 
+        public bool IsCastingUltimate { get; set; } = false;
+
         [Header("Combat (Dynamics)")]
         public System.Collections.Generic.List<DamageType> Immunities = new System.Collections.Generic.List<DamageType>();
 
@@ -185,6 +188,14 @@ namespace MaouSamaTD.Units
 
             float finalAmount = amount;
 
+            // Apply Ultimate Damage Resistance if casting
+            if (IsCastingUltimate && _data != null && _data.UltimateDamageResistance > 0)
+            {
+                float reduction = finalAmount * _data.UltimateDamageResistance;
+                if (_showDebugLogs) Debug.Log($"[Ultimate Resistance] {gameObject.name} reduced damage by {reduction} ({_data.UltimateDamageResistance * 100}%).");
+                finalAmount -= reduction;
+            }
+
             // Skills/Ultimates bypass regular damage type immunities
             if (!isSkill && Immunities.Contains(damageType))
             {
@@ -193,7 +204,7 @@ namespace MaouSamaTD.Units
             }
 
             float damageTaken = Mathf.Max(finalAmount > 0 ? 1 : 0, finalAmount - _defense); 
-            if (_showDebugLogs) Debug.Log($"[Damage] {gameObject.name} taking {damageTaken} ({amount} {damageType} - {_defense} def, isSkill: {isSkill}). HP: {_currentHp} -> {_currentHp - damageTaken}");
+            if (_showDebugLogs) Debug.Log($"[Damage] {gameObject.name} taking {damageTaken} ({amount} {damageType} - {_defense} def, isSkill: {isSkill}, after resistance: {finalAmount}). HP: {_currentHp} -> {_currentHp - damageTaken}");
             _currentHp -= damageTaken;
             
             if (_hpFillImage != null)

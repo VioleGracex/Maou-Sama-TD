@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b64e8978f38f8484b9de7780752e6644, type: 3}
+  m_Name: MD_Story_Origin
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.MandateData
+  useDefaultInspector: 0
+  UniqueID: 6e6e9ecb-74cc-4a14-910f-5a7b571f5e94
+  Title: The Darkness Rises
+  Description: Clear stage 1-1 to begin your conquest.
+  Type: 2
+  RequirementKey: StageClear_1-1
+  RequiredAmount: 1
+  Rewards:
+  - Type: 0
+    Amount: 1000
+  - Type: 1
+    Amount: 100
+  Icon: {fileID: 0}

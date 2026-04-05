@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Mandate
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Mandate
+  m_GUID: e2d85f8c642de76409fd24d63bdb7334
+  m_SerializeEntries:
+  - m_GUID: 8258c7001a0a39343b45f982d1c090ac
+    m_Address: Assets/_Game/Data/Mandates/MD_Story_Origin.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9db77f925112ea74daf64b961afa969f
+    m_Address: Assets/_Game/Data/Mandates/MD_Weekly_Tactician.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e8f6ed791ca722044a4678c3461d4c74
+    m_Address: Assets/_Game/Data/Mandates/MD_Daily_Login.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 19b417a427e1a474d9e81fbe4eae59a7, type: 2}
+  m_SchemaSet:
+    m_Schemas: []

@@ -14,14 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
   UniqueID: c7b8e2d4-1a2b-4c3d-8e5f-6a7b8c9d0e1f
+  CalculatedStats:
+    MaxHp: 850
+    Attack: 110
+    Defense: 40
+    ClassIcon: {fileID: 0}
+    ClassName: Warlock
   UnitName: Lilith
   UnitTitle: Matriarch of Lust
-  UnitSprite: {fileID: 21300000, guid: f446520f4c8860b48bfaacf1dc42c71e, type: 3}
-  UnitIcon: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
-  AnimatorController: {fileID: 0}
+  BaseSkin:
+    Avatar: {fileID: 0}
+    Chibi: {fileID: 0}
+    WaistUp: {fileID: 0}
+    FullSplashArt: {fileID: 0}
+    FullBodyCutout: {fileID: 0}
+    AnimatorController: {fileID: 0}
+  Rank2Art: {fileID: 0}
+  Skins:
+  - SkinID: pool_party_lilith
+    SkinThemeName: Pool Party Lilith
+    SeriesName: 
+    Avatar: {fileID: 0}
+    Chibi: {fileID: 0}
+    WaistUp: {fileID: 0}
+    FullSplashArt: {fileID: 0}
+    FullBodyCutout: {fileID: 0}
+    AnimatorController: {fileID: 0}
+    IsDefault: 0
+    UnlockCost: 0
+    IsPremium: 0
+  _equippedSkinID: 
+  CardSlotImageType: 2
+  ButtonImageType: 0
   Level: 1
   Experience: 0
   StarRating: 6
+  Amity: 0
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
@@ -75,9 +103,10 @@ MonoBehaviour:
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10
-  Skill: {fileID: 11400000, guid: a1a2a3a4a5a6a7a8a9a0a1a2a3a4a5a6, type: 2}
+  UltimateDamageResistance: 0
+  PassiveSkill: {fileID: 0}
+  ActiveSkill: {fileID: 0}
+  UltimateSkill: {fileID: 0}
   AscensionNodes: []
-  Rank2Art: {fileID: 0}
-  AlternateSkins: []
-  EquippedSkin: {fileID: 0}
   _viableTiles: 
+  _unlockedSkinIDs: []

@@ -162,6 +162,19 @@ namespace MaouSamaTD.Units.Editor
             DrawProperty("MaxCharge", "Max SP");
             DrawProperty("ChargePerSecond", "SP/Sec");
             DrawProperty("ChargePerAttack", "SP/Attack");
+            
+            EditorGUILayout.Space(5);
+            SerializedProperty resistProp = serializedObject.FindProperty("UltimateDamageResistance");
+            if (resistProp != null)
+            {
+                float percent = resistProp.floatValue * 100f;
+                EditorGUI.BeginChangeCheck();
+                percent = EditorGUILayout.Slider("Ult Damage Resist %", percent, 0f, 100f);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    resistProp.floatValue = percent / 100f;
+                }
+            }
             EndSection();
 
             BeginSection("Resonance & Advancement");

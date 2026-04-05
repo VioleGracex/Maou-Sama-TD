@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67fb7510c9efe894d8fe5721a9e8473a, type: 3}
+  m_Name: Offering_LegionEndowment
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.BloodCrestOfferingSO
+  PackageName: Legion Endowment
+  Description: Massive supply for citadel expansion.
+  BloodCrestAmount: 16000
+  USDPrice: 160
+  PackageIcon: {fileID: 21300000, guid: 261d1a5bc92d1224ca0b6de54a90f257, type: 3}
+  IsOfficialOffering: 1

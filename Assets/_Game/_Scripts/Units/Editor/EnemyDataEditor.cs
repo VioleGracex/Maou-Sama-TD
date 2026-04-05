@@ -8,6 +8,8 @@ namespace MaouSamaTD.Units.Editor
     public class EnemyDataEditor : UnityEditor.Editor
     {
         private EnemyData _target;
+        private int _selectedTab = 0;
+        private readonly string[] _tabNames = { "General", "Combat", "Visuals" };
 
         private void OnEnable()
         {
@@ -18,34 +20,103 @@ namespace MaouSamaTD.Units.Editor
         {
             serializedObject.Update();
 
+            // Toggle between default and custom editor
             GUIStyle buttonStyle = new GUIStyle(GUI.skin.button)
             {
                 fontStyle = FontStyle.Bold,
-                fontSize = 12
+                fontSize = 11
             };
             buttonStyle.normal.textColor = _target.useDefaultInspector ? Color.gray : new Color(0.1f, 0.7f, 0.2f);
 
-            if (GUILayout.Button(_target.useDefaultInspector ? "Switch to Custom Editor" : "Switch to Default Editor", buttonStyle, GUILayout.Height(30)))
+            if (GUILayout.Button(_target.useDefaultInspector ? "Switch to Custom Editor" : "Switch to Default Editor", buttonStyle, GUILayout.Height(25)))
             {
                 _target.useDefaultInspector = !_target.useDefaultInspector;
                 EditorUtility.SetDirty(_target);
             }
 
-            EditorGUILayout.Space();
-
             if (_target.useDefaultInspector)
             {
                 DrawDefaultInspectorWithReadOnlyID();
+                serializedObject.ApplyModifiedProperties();
                 return;
             }
+
+            EditorGUILayout.Space(5);
+            _selectedTab = GUILayout.Toolbar(_selectedTab, _tabNames, GUILayout.Height(25));
+            EditorGUILayout.Space(10);
 
             float originalLabelWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = 160f;
 
-            DrawCustomInspector();
+            switch (_selectedTab)
+            {
+                case 0: DrawGeneralTab(); break;
+                case 1: DrawCombatTab(); break;
+                case 2: DrawVisualsTab(); break;
+            }
 
             EditorGUIUtility.labelWidth = originalLabelWidth;
+            EditorGUILayout.Space(10);
+            
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawGeneralTab()
+        {
+            BeginSection("Identity");
+            using (new EditorGUI.DisabledScope(true))
+            {
+                DrawProperty("UniqueID", "Unique ID");
+            }
+            DrawProperty("EnemyName", "Enemy Name");
+            
+            GUILayout.Space(5);
+            DrawSpritePreviewField(serializedObject.FindProperty("EnemySprite"), "Enemy Sprite");
+            EndSection();
+
+            BeginSection("Behavior & Rules");
+            DrawProperty("MovementType", "Movement Type");
+            DrawProperty("CollisionType", "Collision Rules");
+            DrawProperty("PhasingCharges", "Phasing Charges");
+            EndSection();
+
+            BeginSection("Rewards");
+            DrawProperty("CurrencyReward", "Gold/Drops Reward");
+            EndSection();
+        }
+
+        private void DrawCombatTab()
+        {
+            BeginSection("Stats");
+            DrawProperty("MaxHp", "Max Health Points");
+            DrawProperty("MoveSpeed", "Movement Speed");
+            DrawProperty("AttackPower", "Attack Power");
+            DrawProperty("AttackInterval", "Attack Interval (Sec)");
+            DrawProperty("AttackRange", "Attack Range (Tiles)");
+            DrawProperty("DamageToPlayerBase", "Damage to Player Base");
+            EndSection();
+
+            BeginSection("Combat Pattern");
+            DrawProperty("AttackPattern", "Targeting Pattern");
+            EndSection();
+            
+            BeginSection("Immunities");
+            DrawProperty("Immunities", "Damage Immunities");
+            EndSection();
+        }
+
+        private void DrawVisualsTab()
+        {
+            BeginSection("Sprite Settings");
+            DrawProperty("Tint", "Sprite Color Tint");
+            DrawProperty("VisualYOffset", "Sprite Y Offset");
+            DrawProperty("BaseVisualHeight", "Base Visual Height");
+            DrawProperty("AnimatorController", "Animator Controller");
+            EndSection();
+
+            BeginSection("UI Settings");
+            DrawProperty("HpBarYOffset", "HP Bar Vertical Offset");
+            EndSection();
         }
 
         private void DrawDefaultInspectorWithReadOnlyID()
@@ -60,69 +131,51 @@ namespace MaouSamaTD.Units.Editor
                 }
                 enterChildren = false;
             }
-            serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawCustomInspector()
+        private void DrawSpritePreviewField(SerializedProperty prop, string label)
         {
-            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Identity", headerStyle);
-            EditorGUI.indentLevel++;
+            if (prop == null) return;
             
-            using (new EditorGUI.DisabledScope(true))
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(prop, GUIContent.none);
+            EditorGUILayout.EndVertical();
+            
+            GUILayout.Space(10);
+            
+            Rect rect = GUILayoutUtility.GetRect(64, 64, GUILayout.ExpandWidth(false));
+            GUI.Box(rect, GUIContent.none, EditorStyles.helpBox);
+            
+            if (prop.objectReferenceValue != null)
             {
-                DrawProperty("UniqueID", "Unique ID");
+                Texture2D tex = AssetPreview.GetAssetPreview(prop.objectReferenceValue);
+                if (tex == null && prop.objectReferenceValue is Sprite s) tex = s.texture;
+                if (tex != null)
+                    GUI.DrawTexture(rect, tex, ScaleMode.ScaleToFit);
             }
-            DrawProperty("EnemyName", "Enemy Name");
+            else
+            {
+                GUI.Label(rect, "None", new GUIStyle(EditorStyles.centeredGreyMiniLabel) { alignment = TextAnchor.MiddleCenter });
+            }
+            EditorGUILayout.EndHorizontal();
+        }
 
-            GUILayout.Space(5);
-            GUILayout.BeginHorizontal();
-            
-            GUILayout.BeginVertical();
-            EditorGUILayout.LabelField("Enemy Sprite", GUILayout.Width(100));
-            SerializedProperty spriteProp = serializedObject.FindProperty("EnemySprite");
-            spriteProp.objectReferenceValue = EditorGUILayout.ObjectField(spriteProp.objectReferenceValue, typeof(Sprite), false, GUILayout.Width(80), GUILayout.Height(80));
-            GUILayout.EndVertical();
-            GUILayout.EndHorizontal();
+        private void BeginSection(string title)
+        {
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            GUILayout.Space(2);
+        }
 
+        private void EndSection()
+        {
+            GUILayout.Space(2);
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
             GUILayout.Space(10);
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Stats & Combat", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("MaxHp", "Max Health Points");
-            DrawProperty("MoveSpeed", "Movement Speed");
-            DrawProperty("AttackPower", "Attack Power");
-            DrawProperty("AttackInterval", "Attack Interval (Sec)");
-            DrawProperty("AttackRange", "Attack Range (Tiles)");
-            DrawProperty("DamageToPlayerBase", "Damage to Player Base");
-            DrawProperty("AttackPattern", "Targeting Pattern");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Behavior & Rules", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("MovementType", "Movement Type");
-            DrawProperty("CollisionType", "Collision Rules");
-            DrawProperty("CurrencyReward", "Gold/Drops Reward");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Visuals", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("Tint", "Sprite Color Tint");
-            DrawProperty("VisualYOffset", "Sprite Y Offset");
-            DrawProperty("BaseVisualHeight", "Base Visual Height");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
         }
 
         private void DrawProperty(string propName, string label = null)

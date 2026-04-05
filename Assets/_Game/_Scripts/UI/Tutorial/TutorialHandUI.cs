@@ -9,9 +9,9 @@ namespace MaouSamaTD.UI.Tutorial
         [SerializeField] private RectTransform _handTransform;
         [SerializeField] private GameObject _panel;
 
-        [SerializeField] private float _pulseAmount = 0.2f;
-        [SerializeField] private float _pulseDuration = 0.6f;
-        [SerializeField] private float _returnDuration = 0.4f;
+        [SerializeField] private float _pulseAmount = 0.1f;
+        [SerializeField] private float _pulseDuration = 0.5f;
+        [SerializeField] private float _returnDuration = 0.5f;
 
         private void Awake()
         {
@@ -39,9 +39,8 @@ namespace MaouSamaTD.UI.Tutorial
             _handTransform.localScale = Vector3.one * baseScale;
             
             Sequence pulseSeq = DOTween.Sequence();
-            pulseSeq.Append(_handTransform.DOScale(baseScale + _pulseAmount, _pulseDuration).SetEase(Ease.OutSine))
-                    .Append(_handTransform.DOScale(baseScale, _returnDuration).SetEase(Ease.InSine))
-                    .AppendInterval(0.5f)
+            pulseSeq.Append(_handTransform.DOScale(baseScale + _pulseAmount, _pulseDuration).SetEase(Ease.InOutSine))
+                    .Append(_handTransform.DOScale(baseScale, _returnDuration).SetEase(Ease.InOutSine))
                     .SetLoops(-1, LoopType.Restart)
                     .SetUpdate(true);
         }

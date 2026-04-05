@@ -42,6 +42,11 @@ namespace MaouSamaTD.Skills
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
             if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.sortingOrder = 5;
+            }
+
             if (_animator != null) _animator.Play("Rise", 0, 0f);
 
             // Determine if we are on a Column or Row based on direction
@@ -56,10 +61,16 @@ namespace MaouSamaTD.Skills
                 _laneCoordinate = transform.position.z;
             }
 
-            // Orientation logic: Lie flat on XZ plane (90 on X). 
-            // Instead of rotating on Y to face the movement direction, default faces (-X) Left. We just set scale.x.
-            // If facing right (_direction.x > 0), flip Scale X to -1.
-            transform.rotation = Quaternion.Euler(90, 0, 0);
+            // Orientation logic: Face the camera directly for isometric view.
+            if (Camera.main != null)
+            {
+                transform.rotation = Camera.main.transform.rotation;
+            }
+            
+            // Bump Y slightly to avoid clipping into ground tiles
+            Vector3 pos = transform.position;
+            pos.y += 0.5f;
+            transform.position = pos;
 
             Vector3 scale = transform.localScale;
             bool isTargetRight = _direction.x > 0;

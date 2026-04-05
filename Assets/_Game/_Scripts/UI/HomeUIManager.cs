@@ -18,7 +18,9 @@ namespace MaouSamaTD.UI.MainMenu
     /// </summary>
     public class HomeUIManager : MonoBehaviour
     {
-        [Header("Roots")]
+        [Header("System Panels")]
+        [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.None;
+        public NavigationFeatures ConfiguredNavFeatures => _navFeatures;
         [Tooltip("The actual UI Canvas or Panel object that represents the Home Page graphics.")]
         [SerializeField] private GameObject _visualRoot;
 
@@ -66,7 +68,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnManifest != null) _btnManifest.onClick.AddListener(OnManifestClicked);
 
             if (_btnSettings != null) _btnSettings.onClick.AddListener(OnSettingsClicked);
-            if (_btnCitadel != null) _btnCitadel.onClick.AddListener(OnCitadelClicked);
+
 
             UpdateAccountInfo();
             PreheatData();
@@ -183,18 +185,6 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 UIFlowManager.Instance.OpenPanel(panel);
             }
-        }
-
-        private void OnCitadelClicked()
-        {
-            if (_navOverlay != null) _navOverlay.Toggle();
-        }
-
-        private void OnHomeClicked()
-        {
-            // Clear all panel history and return to Home root
-            UIFlowManager.Instance.ClearHistory(true);
-            Open();
         }
 
         private void OnManifestClicked()

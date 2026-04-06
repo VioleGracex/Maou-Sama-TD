@@ -72,6 +72,12 @@ namespace MaouSamaTD.UI.MainMenu
 
             UpdateAccountInfo();
             PreheatData();
+
+            // Ensure the navigation history is cleared when we are back at the Home Page
+            if (UIFlowManager.Instance != null)
+            {
+                UIFlowManager.Instance.ClearHistory(false, true);
+            }
         }
 
         private void PreheatData()

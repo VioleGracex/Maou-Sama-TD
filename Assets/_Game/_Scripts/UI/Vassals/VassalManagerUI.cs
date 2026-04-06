@@ -101,10 +101,9 @@ namespace MaouSamaTD.UI.Vassals
             _currentMode = OperationMode.View;
             if (_visualRoot != null) _visualRoot.SetActive(true);
             
-            // Ensure parent page is also active if we are managed by one
             if (transform.parent != null) transform.parent.gameObject.SetActive(true);
 
-            if (_fullScreenInspector != null) _fullScreenInspector.gameObject.SetActive(false);
+            if (_fullScreenInspector != null) _fullScreenInspector.Close();
             
             // Connect inspector close button if not already
             if (_inspectorPanel != null && _inspectorPanel.CloseButton != null)
@@ -132,7 +131,7 @@ namespace MaouSamaTD.UI.Vassals
             // Ensure parent page is active for selection overlay
             if (transform.parent != null) transform.parent.gameObject.SetActive(true);
 
-            if (_fullScreenInspector != null) _fullScreenInspector.gameObject.SetActive(false);
+            if (_fullScreenInspector != null) _fullScreenInspector.Close();
             UpdateMultiSelectUI();
             RefreshInventory();
         }
@@ -152,7 +151,7 @@ namespace MaouSamaTD.UI.Vassals
             // Ensure parent page is active for selection overlay
             if (transform.parent != null) transform.parent.gameObject.SetActive(true);
 
-            if (_fullScreenInspector != null) _fullScreenInspector.gameObject.SetActive(false);
+            if (_fullScreenInspector != null) _fullScreenInspector.Close();
             UpdateMultiSelectUI();
             RefreshInventory();
         }
@@ -173,13 +172,6 @@ namespace MaouSamaTD.UI.Vassals
     
         public bool RequestClose()
         {
-            // If full screen inspector is active, close it and return false to intercept the navigation
-            if (_fullScreenInspector != null && _fullScreenInspector.VisualRoot != null && _fullScreenInspector.VisualRoot.activeSelf)
-            {
-                if (_debug) Debug.Log("[VassalManager] Intercepting GoBack: Closing Full Screen Inspector.");
-                _fullScreenInspector.Close();
-                return false;
-            }
 
             // If side inspector is open, close it first
             if (_inspectorPanel != null && _inspectorPanel.VisualRoot != null && _inspectorPanel.VisualRoot.activeSelf)
@@ -386,8 +378,8 @@ namespace MaouSamaTD.UI.Vassals
                 if (_fullScreenInspector != null)
                 {
                     if (_debug) Debug.Log($"[VassalManager] Inspecting unit: {data.UnitName}");
-                    _fullScreenInspector.Open(data);
-                    // UIFlowManager.Instance.OpenPanel(_fullScreenInspector); // REMOVED: Now managed as a child-state
+                    _fullScreenInspector.SetUnit(data);
+                    UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
                 }
                 else
                 {

@@ -170,7 +170,7 @@ namespace MaouSamaTD.UI
         private void PopulateHeader(UnitData u)
         {
             if (_nameText)   _nameText.text   = u.UnitName?.ToUpper();
-            if (_rarityText) _rarityText.text = $"{u.Rarity.ToString().ToUpper()} CLASS SOUL";
+            if (_rarityText) _rarityText.text = $"{u.Rarity.GetShortName()} CLASS SOUL";
             if (_classIcon)
             {
                 _classIcon.sprite = u.GetSprite(UnitData.UnitImageType.Avatar);

@@ -5,12 +5,29 @@ namespace MaouSamaTD.Units
 {
     public enum UnitRarity
     {
-        Common, // 1 Star
-        Uncommon, // 2 Star
-        Rare, // 3 Star
-        Elite, // 4 Star
-        Master, // 5 Star
-        Legendary // 6 Star
+        [InspectorName("C")] Common, // 1 Star
+        [InspectorName("UC")] Uncommon, // 2 Star
+        [InspectorName("R")] Rare, // 3 Star
+        [InspectorName("SR")] Elite, // 4 Star
+        [InspectorName("SSR")] Master, // 5 Star
+        [InspectorName("UR")] Legendary // 6 Star
+    }
+
+    public static class UnitRarityExtensions
+    {
+        public static string GetShortName(this UnitRarity rarity)
+        {
+            return rarity switch
+            {
+                UnitRarity.Common => "C",
+                UnitRarity.Uncommon => "UC",
+                UnitRarity.Rare => "R",
+                UnitRarity.Elite => "SR",
+                UnitRarity.Master => "SSR",
+                UnitRarity.Legendary => "UR",
+                _ => "SSR"
+            };
+        }
     }
 
     public enum DamageType
@@ -128,8 +145,13 @@ namespace MaouSamaTD.Units
         public RuntimeAnimatorController GetAnimatorController()
         {
             var equippedSkin = GetSkinByID(_equippedSkinID);
-            if (equippedSkin != null && equippedSkin.AnimatorController != null)
-                return equippedSkin.AnimatorController;
+            return GetAnimatorController(equippedSkin);
+        }
+
+        public RuntimeAnimatorController GetAnimatorController(SkinData skin)
+        {
+            if (skin != null && skin.AnimatorController != null)
+                return skin.AnimatorController;
             
             return BaseSkin.AnimatorController;
         }
@@ -218,10 +240,19 @@ namespace MaouSamaTD.Units
         [Header("Unlock Tracking")]
         [SerializeField] private System.Collections.Generic.List<string> _unlockedSkinIDs = new System.Collections.Generic.List<string>();
 
+        public event System.Action OnSkinChanged;
+
         public string EquippedSkinID 
         {
             get => _equippedSkinID;
-            set => _equippedSkinID = value;
+            set 
+            {
+                if (_equippedSkinID != value)
+                {
+                    _equippedSkinID = value;
+                    OnSkinChanged?.Invoke();
+                }
+            }
         }
 
         /// <summary>

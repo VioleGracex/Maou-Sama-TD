@@ -94,6 +94,7 @@ namespace MaouSamaTD.Units
             if (_animator != null && _enemyData.AnimatorController != null)
             {
                 _animator.runtimeAnimatorController = _enemyData.AnimatorController;
+                _animator.Play("Idle", 0, 0f);
             }
 
             // Apply HP Bar height from EnemyData

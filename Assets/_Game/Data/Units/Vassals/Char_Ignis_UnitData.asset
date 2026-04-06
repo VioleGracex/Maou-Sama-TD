@@ -28,7 +28,7 @@ MonoBehaviour:
     WaistUp: {fileID: 21300000, guid: 3367a4aeeb2276f47a84d637af474fb5, type: 3}
     FullSplashArt: {fileID: 21300000, guid: ef280dc03b43ad049a18d04668dc0367, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 27d88e95005001640970c417ed541b79, type: 3}
-    AnimatorController: {fileID: 0}
+    AnimatorController: {fileID: 9100000, guid: a021d6c8141c30b4b89ccb2bfb26dccc, type: 2}
   Rank2Art: {fileID: 0}
   Skins:
   - SkinID: pool_party_ignis
@@ -38,7 +38,7 @@ MonoBehaviour:
     Chibi: {fileID: 21300000, guid: 980180b5d282d2845b35c8e923379466, type: 3}
     WaistUp: {fileID: 21300000, guid: be9509d7898dfef4dbd6d596bb5ed2e6, type: 3}
     FullSplashArt: {fileID: 21300000, guid: a502bf3aea3f2cb4eafd820481a7fa5a, type: 3}
-    FullBodyCutout: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: f5b35e4ce0a2e0d42a6b6de21518f2d5, type: 3}
     AnimatorController: {fileID: 0}
     IsDefault: 0
     UnlockCost: 0

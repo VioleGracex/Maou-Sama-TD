@@ -17,7 +17,7 @@ MonoBehaviour:
   Type: 1
   USDPrice: 19.99
   GemPrice: 0
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 1039cb406a2c3ad428666dd9d1b6d938, type: 3}
   IsOfficialOffering: 0
   CurrencyAmount: 0
   SkinID: Ignis_PoolParty,Lilith_PoolParty

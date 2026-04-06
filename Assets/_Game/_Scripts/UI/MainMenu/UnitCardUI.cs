@@ -97,9 +97,22 @@ namespace MaouSamaTD.UI.MainMenu
             Setup(unit, onClick);
         }
     
+        private void OnDestroy()
+        {
+            if (_data != null) _data.OnSkinChanged -= HandleSkinChanged;
+        }
+
+        private void HandleSkinChanged()
+        {
+            UpdateVisuals(_data);
+        }
+
         private void InternalSetup(UnitData unit, Sprite iconOverride = null)
         {
+            if (_data != null) _data.OnSkinChanged -= HandleSkinChanged;
             _data = unit;
+            if (_data != null) _data.OnSkinChanged += HandleSkinChanged;
+
             UpdateVisuals(unit, iconOverride);
         }
 

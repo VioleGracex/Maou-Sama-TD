@@ -49,6 +49,8 @@ namespace MaouSamaTD.UI
                     });
                 }
             }
+
+            UpdateGlobalButtons();
         }
 
         public void OpenPanel(IUIController newPanel)
@@ -66,8 +68,17 @@ namespace MaouSamaTD.UI
                 if (_panelStack.Count > 0)
                 {
                     var currentTop = _panelStack.Peek();
-                    if (_debug) Debug.Log($"[UIFlow] Closing current top: {currentTop.GetType().Name}");
-                    if (currentTop != null) currentTop.Close();
+                    bool isNested = IsChildOf(newPanel, currentTop);
+                    
+                    if (!isNested)
+                    {
+                        if (_debug) Debug.Log($"[UIFlow] Closing current top: {currentTop.GetType().Name}");
+                        if (currentTop != null) currentTop.Close();
+                    }
+                    else
+                    {
+                        if (_debug) Debug.Log($"[UIFlow] New panel is NESTED. Keeping parent {currentTop.GetType().Name} active.");
+                    }
                 }
                 _panelStack.Push(newPanel);
             }
@@ -84,6 +95,7 @@ namespace MaouSamaTD.UI
 
         public void GoBack(bool force = false)
         {
+            if (_debug) Debug.Log($"[UIFlow] GoBack called. Force: {force}. Stack count: {_panelStack.Count}");
             // Reset overlay whenever we change panels
             if (NavigationOverlay != null) NavigationOverlay.Hide();
 
@@ -116,8 +128,16 @@ namespace MaouSamaTD.UI
                 var previousPanel = _panelStack.Peek();
                 if (previousPanel != null)
                 {
-                    if (_debug) Debug.Log($"[UIFlow] Returning to: {previousPanel.GetType().Name}");
-                    previousPanel.Open();
+                    bool alreadyActive = previousPanel.VisualRoot != null && previousPanel.VisualRoot.activeInHierarchy;
+                    if (!alreadyActive)
+                    {
+                        if (_debug) Debug.Log($"[UIFlow] Returning to: {previousPanel.GetType().Name}");
+                        previousPanel.Open();
+                    }
+                    else
+                    {
+                        if (_debug) Debug.Log($"[UIFlow] Returning to already active parent: {previousPanel.GetType().Name}");
+                    }
                     if (NavigationOverlay != null) NavigationOverlay.UpdateHighlight(previousPanel.GetType());
                 }
             }
@@ -160,6 +180,12 @@ namespace MaouSamaTD.UI
             
             if (_citadelBtnRoot != null) 
                 _citadelBtnRoot.SetActive((features & NavigationFeatures.CitadelButton) != 0);
+        }
+        private bool IsChildOf(IUIController child, IUIController parent)
+        {
+            if (child == null || parent == null) return false;
+            if (child.VisualRoot == null || parent.VisualRoot == null) return false;
+            return child.VisualRoot.transform.IsChildOf(parent.VisualRoot.transform);
         }
     }
 }

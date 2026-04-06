@@ -93,8 +93,9 @@ namespace MaouSamaTD.UI.Vassals
         public bool   IsOpen        { get; private set; }
         public GameObject VisualRoot => _visualRoot;
 
-        private UnitData _currentUnit;
-        private int      _activeTab = 0;
+        private UnitData        _currentUnit;
+        private int             _activeTab = 0;
+        private UnitData.SkinData _selectedSkin; // The skin being previewed (not necessarily equipped)
         #endregion
 
         #region Unity Methods
@@ -253,7 +254,7 @@ namespace MaouSamaTD.UI.Vassals
         {
             if (_nameText)   _nameText.text   = u.UnitName?.ToUpper();
             if (_levelText)  _levelText.text  = $"LV. {u.Level}/{u.MaxLevel}";
-            if (_rarityText) _rarityText.text = u.Rarity.ToString().ToUpper();
+            if (_rarityText) _rarityText.text = u.Rarity.GetShortName();
             if (_portraitImage) { _portraitImage.sprite = u.GetCurrentVisualArt(); _portraitImage.color = Color.white; }
             if (_classIcon)        { _classIcon.sprite = u.GetSprite(UnitData.UnitImageType.Avatar);       _classIcon.color = Color.white; }
             if (_starsRoot != null)
@@ -352,7 +353,24 @@ namespace MaouSamaTD.UI.Vassals
             var cardUI = go.GetComponent<SkinCardUI>();
             if (cardUI != null)
             {
+                // Find skin data if name matches (needed for selection)
+                UnitData.SkinData s = null;
+                if (_currentUnit != null)
+                {
+                    if (name != (LocalizationManager.Localize("Skins.Default") ?? "BASE SKIN"))
+                        s = _currentUnit.Skins.Find(x => x.SkinThemeName == name);
+                }
+
                 cardUI.SetState(name, sprite, isEquipped, isLocked, price);
+                
+                // Add click listener
+                var btn = go.GetComponent<Button>();
+                if (btn == null) btn = go.AddComponent<Button>();
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() => OnSkinCardSelected(s, cardUI));
+
+                // If this is the currently selected preview, highlight it
+                if (_selectedSkin == s) cardUI.SetHighlighted(true);
             }
             else
             {
@@ -360,6 +378,36 @@ namespace MaouSamaTD.UI.Vassals
                 var img = go.GetComponentInChildren<Image>(true);
                 if (img) { img.sprite = sprite; img.color = isLocked ? new Color(0.2f, 0.2f, 0.2f) : Color.white; }
             }
+        }
+
+        private void OnSkinCardSelected(UnitData.SkinData skin, SkinCardUI card)
+        {
+            _selectedSkin = skin;
+            
+            // Refresh all cards' highlight state
+            foreach (Transform t in _skinsContainer)
+            {
+                var ui = t.GetComponent<SkinCardUI>();
+                if (ui) ui.SetHighlighted(ui == card);
+            }
+
+            // Update Preview Portrait
+            if (_portraitImage && _currentUnit != null)
+            {
+                // Use FullBodyCutout for high-res preview
+                Sprite art = (skin == null) ? _currentUnit.BaseSkin.FullBodyCutout : skin.FullBodyCutout;
+                
+                // Fallback to WaistUp if FullBody is missing
+                if (art == null) art = (skin == null) ? _currentUnit.BaseSkin.WaistUp : skin.WaistUp;
+
+                _portraitImage.sprite = art;
+                _portraitImage.color = art != null ? Color.white : new Color(0.2f, 0.2f, 0.2f);
+                
+                // Update Name
+                if (_nameText) _nameText.text = (skin?.SkinThemeName ?? LocalizationManager.Localize("Skins.Default") ?? "BASE SKIN").ToUpper();
+            }
+
+            Debug.Log($"Skin Selected: {(skin?.SkinThemeName ?? "Base")}");
         }
         #endregion
 

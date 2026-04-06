@@ -137,6 +137,18 @@ namespace MaouSamaTD.Units
             if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
             
+            // Set up animator
+            if (_animator != null)
+            {
+                var controller = _data.GetAnimatorController();
+                if (controller != null)
+                {
+                    _animator.runtimeAnimatorController = controller;
+                    _animator.Play("Idle", 0, 0f);
+                }
+            }
+
+            // Set up sprite or fallback
             if (_data.GetSprite(UnitData.UnitImageType.Chibi) != null)
             {
                 if (_spriteRenderer != null) 
@@ -157,11 +169,7 @@ namespace MaouSamaTD.Units
                     else
                         _textFallback.text = "?";
                 }
-                if (_animator != null && _data.GetAnimatorController() != null)
-                {
-                    _animator.runtimeAnimatorController = _data.GetAnimatorController();
-                }
-        }
+            }
         }
 
         public void SetHighlight(bool active, Color color)

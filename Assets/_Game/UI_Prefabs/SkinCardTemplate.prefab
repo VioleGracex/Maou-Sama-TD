@@ -516,8 +516,8 @@ MonoBehaviour:
   _portraitImage: {fileID: 1379154509304339609}
   _equippedRoot: {fileID: 4221270986184806462}
   _lockedRoot: {fileID: 1481709074748527925}
-  _priceRoot: {fileID: 0}
-  _priceText: {fileID: 0}
+  _priceRoot: {fileID: 7030371972164266959}
+  _priceText: {fileID: 1927029642059123215}
   _lockedColor: {r: 1, g: 1, b: 1, a: 1}
   _ownedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4221270986184806462

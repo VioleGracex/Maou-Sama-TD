@@ -169,6 +169,27 @@ namespace MaouSamaTD.UI
             PerformSnap();
         }
 
+        /// <summary>
+        /// Programmatically focus on an item.
+        /// </summary>
+        public void ScrollTo(int index, bool immediate = false)
+        {
+            if (index < 0 || _items == null || index >= _items.Count) return;
+
+            _targetScroll = index;
+            if (immediate)
+            {
+                _snapTween?.Kill();
+                _currentScroll = _targetScroll;
+                ApplyLayout();
+                CheckSelectionUpdate();
+            }
+            else
+            {
+                PerformSnap();
+            }
+        }
+
         private void PerformSnap()
         {
             int count = _items.Count;

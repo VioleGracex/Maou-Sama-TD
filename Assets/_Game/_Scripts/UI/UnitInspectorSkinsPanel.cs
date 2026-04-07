@@ -18,7 +18,6 @@ namespace MaouSamaTD.UI
         [SerializeField] private Image _skinSplashPreview;        // Full-screen art
         [SerializeField] private Animator _skinChibiPreview;       // Idle animator
         [SerializeField] private TextMeshProUGUI _skinNameText;
-        [SerializeField] private TextMeshProUGUI _skinBrandText;
         [SerializeField] private Button _btnApplySkin;
         [SerializeField] private GameObject _skinItemPrefab;
 
@@ -26,6 +25,7 @@ namespace MaouSamaTD.UI
 
         private UnitData _currentUnit;
         private List<UnitData.SkinData> _skinDataList = new List<UnitData.SkinData>();
+        private List<SkinCardUI> _spawnedCards = new List<SkinCardUI>();
         private UnitData.SkinData _selectedSkin;
         private UnitData _lastSkinUnit;
 
@@ -64,6 +64,7 @@ namespace MaouSamaTD.UI
             if (content == null) return;
 
             foreach (Transform child in content) Destroy(child.gameObject);
+            _spawnedCards.Clear();
                 
             _skinDataList.Add(null); // Base Skin
             items.Add(CreateSkinItem(null, content)); 
@@ -98,17 +99,27 @@ namespace MaouSamaTD.UI
 
         private void UpdateSkinItemsStatus(int activeIndex = -1)
         {
-            if (_skinInfiniteScroll == null || _skinInfiniteScroll.Content == null) return;
+            if (_skinInfiniteScroll == null || _currentUnit == null) return;
             
-            int i = 0;
-            foreach (Transform child in _skinInfiniteScroll.Content)
+            for (int i = 0; i < _spawnedCards.Count; i++)
             {
-                var cardUI = child.GetComponent<SkinCardUI>();
+                var cardUI = _spawnedCards[i];
                 if (cardUI != null)
                 {
-                    if (activeIndex != -1) cardUI.SetEquipped(i == activeIndex);
+                    UnitData.SkinData skin = (i < _skinDataList.Count) ? _skinDataList[i] : null;
+                    string skinID = (skin != null) ? skin.SkinID : null;
+
+                    // FIX: Check actual equipped status on the unit, not just the scroll index
+                    bool isEquipped = (skinID == _currentUnit.EquippedSkinID) || (string.IsNullOrEmpty(skinID) && string.IsNullOrEmpty(_currentUnit.EquippedSkinID));
+                    cardUI.SetEquipped(isEquipped);
+
+                    // Highlight the 'selected' card in the scroll view for centering feedback
+                    if (activeIndex != -1) cardUI.SetHighlighted(i == activeIndex);
+                    
+                    // Sync the locked status whenever we refresh.
+                    bool isLocked = !_currentUnit.IsSkinUnlocked(skinID);
+                    cardUI.SetLocked(isLocked);
                 }
-                i++;
             }
         }
 
@@ -119,6 +130,7 @@ namespace MaouSamaTD.UI
             var cardUI = go.GetComponent<SkinCardUI>();
             if (cardUI != null)
             {
+                _spawnedCards.Add(cardUI);
                 string theme = (skin != null) ? skin.SkinThemeName : "Default";
                 // PER USER: "use waist up for card not avatar"
                 Sprite icon = (skin != null) ? skin.WaistUp : _currentUnit.BaseSkin.WaistUp;
@@ -147,13 +159,8 @@ namespace MaouSamaTD.UI
             bool isBase = (skin == null);
             
             string skinName = isBase ? _currentUnit.UnitName : (skin != null ? skin.SkinThemeName : "DEFAULT");
-            string skinBrand = isBase ? _currentUnit.UnitTitle : _currentUnit.UnitName;
-
-            Debug.Log($"[Skins] Selecting Skin: {skinName} | Brand: {skinBrand} for {_currentUnit?.UnitName}");
-
             if (_skinSplashPreview) _skinSplashPreview.sprite = isBase ? _currentUnit.BaseSkin.FullSplashArt : skin.FullSplashArt;
             if (_skinNameText) _skinNameText.text = skinName.ToUpper();
-            if (_skinBrandText) _skinBrandText.text = isBase ? skinBrand : skinBrand.ToLower(); // "pool party" style for DLC
             
             if (_skinChibiPreview != null)
             {

@@ -80,6 +80,9 @@ namespace MaouSamaTD.UI.Vassals
         public void SetLocked(bool isLocked)
         {
             if (_lockedRoot) _lockedRoot.SetActive(isLocked);
+            // PER USER: "fix price is turned off and when unlocked"
+            if (!isLocked && _priceRoot) _priceRoot.SetActive(false);
+
             if (_portraitImage) _portraitImage.color = isLocked ? _lockedColor : _ownedColor;
         }
     }

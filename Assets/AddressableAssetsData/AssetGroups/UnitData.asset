@@ -16,19 +16,39 @@ MonoBehaviour:
   m_GUID: 04cd9117d50264444baef4519d7d9bf4
   m_SerializeEntries:
   - m_GUID: 11d7389b4f79aa7478880b2f1f893615
-    m_Address: Assets/_Game/Data/ClassScalingData.asset
+    m_Address: ClassScalingData
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - ClassScaleData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 30760c1cf17c6a84ea8f3d9493c5ca88
     m_Address: UnitDatabase
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: be5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b
-    m_Address: Assets/_Game/Data/Units/Vassals/Lilith_UnitData.asset
+  - m_GUID: 33511f7128f395c4a90766f9f9ef83e2
+    m_Address: Shade
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9e76e17abe68654bbd7e05e190711da
+    m_Address: Astaroth
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: be5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b
+    m_Address: Lilith
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d81b5880e4a1aa04a8f8eab0f29a6f7c
+    m_Address: Aquila
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fc288bac2fbb05147ae9f01dd64f25a7
     m_Address: Ignis

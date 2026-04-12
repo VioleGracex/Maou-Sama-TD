@@ -17,7 +17,4 @@ The head smith of the Obsidian Citadel. He forged most of the weapons used by th
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Heavy Shield / Warhammer
-- **Stance**: Defensive stance, ground planted, shield/weapon raised to guard.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Massive muscular smith, Flaming beard that pulses with the heat of his core.
-- **Chibi Prompt**: Chibi style, cute anime Magnus, Male Construct (Steel Golem) Bastion, holding Heavy Shield / Warhammer. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Massive muscular smith, Flaming beard that pulses with the heat of his core, holding Heavy Shield / Warhammer

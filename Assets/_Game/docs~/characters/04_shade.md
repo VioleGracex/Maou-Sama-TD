@@ -32,7 +32,4 @@ A pragmatist and survivor. Shade prefers the silence of the abyss to the hypocri
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Whisper of the Abyss
-- **Stance**: Aiming down sights, crouching slightly or drawing bowstring.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Male, 5'10", Lean / Tactical, Fully masked lower face, eyes visible under a deep hood., Messy black (usually hidden by hood), Glowing Green, Pointed ears, shadow-weave cloak.
-- **Chibi Prompt**: Chibi style, cute anime Shade, Male Trueborn Demon Ranger, holding Whisper of the Abyss. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, 5'10", Lean / Tactical, Fully masked lower face, eyes visible under a deep hood, Messy black (usually hidden by hood), Glowing Green, Pointed ears, shadow-weave cloak, holding Whisper of the Abyss

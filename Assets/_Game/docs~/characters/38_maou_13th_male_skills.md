@@ -21,7 +21,4 @@
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Sword and Shield
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: 
-- **Chibi Prompt**: Chibi style, cute anime Maou_13th_male_skills, Male Unknown Race Overlord (Vanguard / Berserker), holding Sword and Shield. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, holding Sword and Shield

@@ -29,7 +29,4 @@ A former Saint Knight of the Sanctus Empire. She defected after witnessing the "
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Crimson Sovereign's Reach
-- **Stance**: Defensive stance, ground planted, shield/weapon raised to guard.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: 5'11", Athletic / Knightly, Long scarlet ponytail, Amber, Obsidian "Crown Horns" manifested in combat.
-- **Chibi Prompt**: Chibi style, cute anime Ignis, Female Human Betrayer Bastion, holding Crimson Sovereign's Reach. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, 5'11", Athletic / Knightly, Long scarlet ponytail, Amber, Obsidian "Crown Horns" manifested in combat, holding Crimson Sovereign's Reach

@@ -17,7 +17,4 @@ A high-ranking angel who was cast out for questioning the Luminary's "Final Purg
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Signature Weapon
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Tattered gold-white wings, Radiates a soft, rebellious light.
-- **Chibi Prompt**: Chibi style, cute anime Raphael, Male The Fallen Support, holding Signature Weapon. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Tattered gold-white wings, Radiates a soft, rebellious light, holding Signature Weapon

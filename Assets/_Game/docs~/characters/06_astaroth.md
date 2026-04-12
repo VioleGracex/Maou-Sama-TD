@@ -17,7 +17,4 @@ The Citadel's chief enforcer. She is tasked with "cleaning" any insubordination 
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Scythe / Twin Daggers
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Leathery shadow wings, Manifests obsidian chains that lash out during combat.
-- **Chibi Prompt**: Chibi style, cute anime Astaroth, Female Trueborn Demon Executioner, holding Scythe / Twin Daggers. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Leathery shadow wings, Manifests obsidian chains that lash out during combat, holding Scythe / Twin Daggers

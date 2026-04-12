@@ -17,7 +17,4 @@ A primordial spirit bound to the Dark Throne since its foundation. He does not s
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Heavy Shield / Warhammer
-- **Stance**: Defensive stance, ground planted, shield/weapon raised to guard.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Mountain-sized runic stone titan, Moves so slowly he appears stationary.
-- **Chibi Prompt**: Chibi style, cute anime Atlas, Male Familiar (Prime Titan) Bastion (Familiar), holding Heavy Shield / Warhammer. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Mountain-sized runic stone titan, Moves so slowly he appears stationary, holding Heavy Shield / Warhammer

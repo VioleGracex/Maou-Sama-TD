@@ -17,7 +17,4 @@ Summoned from 21st-century Tokyo by the Holy Empire, Kenji quickly realized they
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Signature Weapon
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Modern Techwear, VR Goggles, Holographic Pistols
-- **Chibi Prompt**: Chibi style, cute anime Kenji, Male Interloper (Terra Prime) Gunner, holding Signature Weapon. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Modern Techwear, VR Goggles, Holographic Pistols, holding Signature Weapon

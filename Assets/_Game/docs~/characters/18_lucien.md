@@ -17,7 +17,4 @@ A master infiltrator who protected immortal secrets for centuries. He joined the
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Dual ghost blades.
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Shadowlined dark tuxedo, mist-shrouded figure., Dual ghost blades.
-- **Chibi Prompt**: Chibi style, cute anime Lucien, Male Undead (Phantom) Executioner, holding Dual ghost blades.. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Shadowlined dark tuxedo, mist-shrouded figure, Dual ghost blades, holding Dual ghost blades.

@@ -32,7 +32,4 @@ The Sovereign of Force is an elite magic-melee Berserker vanguard. Though slende
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Signature Weapon
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: 
-- **Chibi Prompt**: Chibi style, cute anime Maou_13th_male_halfmask, Male Demon Lord Overlord (Melee / Bruiser), holding Signature Weapon. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, holding Signature Weapon

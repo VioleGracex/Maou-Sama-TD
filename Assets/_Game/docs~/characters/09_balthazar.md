@@ -18,7 +18,4 @@ One of the original Demon Lords. He claims that managing the Citadel's budget is
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Heavy Shield / Warhammer
-- **Stance**: Defensive stance, ground planted, shield/weapon raised to guard.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Massive curled ram horns, High-fashion silk robes, Perpetually sleepy expression even while fighting.
-- **Chibi Prompt**: Chibi style, cute anime Balthazar, Male Trueborn Demon Bastion, holding Heavy Shield / Warhammer. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Massive curled ram horns, High-fashion silk robes, Perpetually sleepy expression even while fighting, holding Heavy Shield / Warhammer

@@ -18,7 +18,4 @@ Once the leader of the Moon-Eater tribe, Lupa pledged her life to the 13th Maou 
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Sword and Shield
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Silvery gray, wild and layered., Piercing yellow with bestial slits., Lupine ears and a thick bushy tail., Wears a hooded cloak made from the fur of an ancient alpha she defeated.
-- **Chibi Prompt**: Chibi style, cute anime Lupa, Female Unknown Race Vanguard, holding Sword and Shield. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Silvery gray, wild and layered, Piercing yellow with bestial slits, Lupine ears and a thick bushy tail, Wears a hooded cloak made from the fur of an ancient alpha she defeated, holding Sword and Shield

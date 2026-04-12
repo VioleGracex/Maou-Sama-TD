@@ -18,7 +18,4 @@ A general from the First Era who slept in the volcanic depths until the 13th Mao
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Heavy Shield / Warhammer
-- **Stance**: Defensive stance, ground planted, shield/weapon raised to guard.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Raven black, Black lacquer with sharp horned helmet, Molten shield that drips demon-fire.
-- **Chibi Prompt**: Chibi style, cute anime Malina, Female Trueborn Demon Bastion, holding Heavy Shield / Warhammer. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Raven black, Black lacquer with sharp horned helmet, Molten shield that drips demon-fire, holding Heavy Shield / Warhammer

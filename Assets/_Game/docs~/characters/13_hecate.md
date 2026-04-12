@@ -16,7 +16,4 @@ A goddess of the old world who prefers the "aesthetic" of the Dark Citadel to th
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Dark Catalyst
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Goat horns, gothic lolita dress.
-- **Chibi Prompt**: Chibi style, cute anime Hecate, Female Trueborn Demon (Goddess) Warlock, holding Dark Catalyst. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Goat horns, gothic lolita dress, holding Dark Catalyst

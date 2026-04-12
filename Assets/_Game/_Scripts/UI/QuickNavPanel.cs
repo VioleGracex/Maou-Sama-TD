@@ -30,6 +30,8 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private CampaignPage _campaignPage;
         [SerializeField] private MaouSamaTD.UI.Cohorts.CohortSquadUI _cohortSquadPanel;
         [SerializeField] private MaouSamaTD.UI.Vassals.VassalManagerUI _vassalInventoryPanel;
+        [SerializeField] private MaouSamaTD.UI.Gacha.GachaPanel _gachaPanel;
+        [SerializeField] private MaouSamaTD.UI.Treasury.TreasuryVaultUI _treasuryPanel;
 
         private void Start()
         {
@@ -37,8 +39,8 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnConquest != null) _btnConquest.onClick.AddListener(() => NavigateTo(HomeTab.Conquest));
             if (_btnCohorts != null) _btnCohorts.onClick.AddListener(() => NavigateTo(HomeTab.Cohorts));
             if (_btnVassals != null) _btnVassals.onClick.AddListener(() => NavigateTo(HomeTab.Vassals));
-            
-            // Note: Manifest and Treasury would need their respective pages assigned if they exist
+            if (_btnManifest != null) _btnManifest.onClick.AddListener(() => NavigateTo(HomeTab.Manifest));
+            if (_btnTreasury != null) _btnTreasury.onClick.AddListener(() => NavigateTo(HomeTab.Treasury));
         }
 
         public void Open()
@@ -66,10 +68,13 @@ namespace MaouSamaTD.UI.MainMenu
             // Clear history and jump to the target
             UIFlowManager.Instance.ClearHistory(true);
 
+            // Ensure the Home UI visual root is opened (so it's behind whatever we open)
+            if (_homeUI != null) _homeUI.Open();
+
             switch (tab)
             {
                 case HomeTab.Home:
-                    if (_homeUI != null) _homeUI.Open();
+                    // Home is already opened above
                     break;
                 case HomeTab.Conquest:
                     if (_campaignPage != null) UIFlowManager.Instance.OpenPanel(_campaignPage);
@@ -80,6 +85,12 @@ namespace MaouSamaTD.UI.MainMenu
                 case HomeTab.Vassals:
                     if (_vassalInventoryPanel != null) UIFlowManager.Instance.OpenPanel(_vassalInventoryPanel);
                     break;
+                case HomeTab.Manifest:
+                    if (_gachaPanel != null) UIFlowManager.Instance.OpenPanel(_gachaPanel);
+                    break;
+                case HomeTab.Treasury:
+                    if (_treasuryPanel != null) UIFlowManager.Instance.OpenPanel(_treasuryPanel);
+                    break;
             }
         }
 
@@ -88,7 +99,9 @@ namespace MaouSamaTD.UI.MainMenu
             Home,
             Conquest,
             Cohorts,
-            Vassals
+            Vassals,
+            Manifest,
+            Treasury
         }
     }
 }

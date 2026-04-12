@@ -17,7 +17,4 @@ Said to be the offspring of a Great Red Dragon and a human hero. He joined the M
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Sword and Shield
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Crimson spiky hair, Red dragon scales visible on his arms and neck.
-- **Chibi Prompt**: Chibi style, cute anime Kael, Male Mythological Hybrid (Dragonoid) Vanguard, holding Sword and Shield. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Crimson spiky hair, Red dragon scales visible on his arms and neck, holding Sword and Shield

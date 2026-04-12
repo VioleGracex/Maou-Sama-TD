@@ -21,8 +21,26 @@ MonoBehaviour:
     m_SerializedLabels:
     - Mandate
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8258c7001a0a39343b45f982d1c090ac
+    m_Address: Assets/_Game/Data/Mandates/MD_Story_Origin.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9db77f925112ea74daf64b961afa969f
+    m_Address: Assets/_Game/Data/Mandates/MD_Weekly_Tactician.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d1f39cda7b5ef93429791058233caf4b
     m_Address: Assets/_Game/Data/Mandates/Mandate_GrowthVassal.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Mandate
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e8f6ed791ca722044a4678c3461d4c74
+    m_Address: Assets/_Game/Data/Mandates/MD_Daily_Login.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Mandate

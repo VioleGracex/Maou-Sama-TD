@@ -17,7 +17,4 @@ An ancient spirit of the wild who predates the current nations of Aethelgard. Th
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Signature Weapon
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Living garland, antler crown., Earthy, primordial aura.
-- **Chibi Prompt**: Chibi style, cute anime Oberon, Male Familiar (Fae) Support, holding Signature Weapon. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Living garland, antler crown, Earthy, primordial aura, holding Signature Weapon

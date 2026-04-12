@@ -109,6 +109,9 @@ MonoBehaviour:
     - UnitData
     - SplashScreen
     - Mandate
+    - Shop
+    - LevelData
+    - ClassScaleData
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 2f133958f2fada243a13c7df30439b3b, type: 2}

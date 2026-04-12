@@ -32,7 +32,4 @@ The Sovereign of Guile is a supreme magic-ranged battlefield controller. Rather 
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Magic Staff
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: 
-- **Chibi Prompt**: Chibi style, cute anime Maou_13th_female_fullmask, Female Demon Lord Overlord (Caster / Tactician), holding Magic Staff. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, holding Magic Staff

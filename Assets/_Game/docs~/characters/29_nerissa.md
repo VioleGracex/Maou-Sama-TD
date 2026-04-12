@@ -17,7 +17,4 @@ The caretaker of the Citadel's Forbidden Library. She knows the true names of th
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Signature Weapon
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Floating runic books that circle her at all times., Indigo glowing pupils.
-- **Chibi Prompt**: Chibi style, cute anime Nerissa, Female Trueborn Demon Sage, holding Signature Weapon. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Floating runic books that circle her at all times, Indigo glowing pupils, holding Signature Weapon

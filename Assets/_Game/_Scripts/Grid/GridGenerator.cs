@@ -706,6 +706,8 @@ namespace MaouSamaTD.Grid
         {
             if (data == null) return;
             
+            Debug.Log($"[GridGenerator] LoadMapData called with asset: {data.name} ({data.Width}x{data.Height})");
+
 #if UNITY_EDITOR
             if (!Application.isPlaying) UnityEditor.Undo.RecordObject(this, "Load Map Data");
 #endif
@@ -714,6 +716,8 @@ namespace MaouSamaTD.Grid
             _highGroundChance = data.HighGroundChance;
             _spawnPoints = new List<SpawnPointData>(data.SpawnPoints);
             _exitPoints = new List<Vector2Int>(data.ExitPoints);
+
+            _mapData = data; // Ensure GenerateMap uses the newly loaded data
 
             // Sync Wall Settings
             _wallNorth = data.Walls.North;
@@ -739,6 +743,11 @@ namespace MaouSamaTD.Grid
             }
             
             GenerateMap();
+
+            if (_gridManager != null)
+            {
+                _gridManager.RecalculateBounds();
+            }
 
 #if UNITY_EDITOR
             if (!Application.isPlaying)

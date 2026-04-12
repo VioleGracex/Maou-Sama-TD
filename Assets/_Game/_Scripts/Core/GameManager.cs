@@ -58,8 +58,13 @@ namespace MaouSamaTD.Managers
 
             if (_gridGenerator != null && levelData.MapData != null)
             {
-                Debug.Log($"[GameManager] Loading MapData from {levelData.LevelName}");
+                Debug.Log($"[GameManager] Loading Level: {levelData.LevelName} (ID: {levelData.LevelID})");
+                Debug.Log($"[GameManager] Loading MapData Asset: {levelData.MapData.name} ({levelData.MapData.Width}x{levelData.MapData.Height})");
                 _gridGenerator.LoadMapData(levelData.MapData);
+            }
+            else if (levelData.MapData == null)
+            {
+                Debug.LogError($"[GameManager] LevelData '{levelData.LevelName}' has NO MapData assigned!");
             }
 
             if (_gridManager != null) 

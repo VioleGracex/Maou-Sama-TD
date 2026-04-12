@@ -6,6 +6,8 @@ using MaouSamaTD.Data;
 using MaouSamaTD.Managers;
 using Zenject;
 using DG.Tweening;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace MaouSamaTD.UI.Treasury
 {
@@ -47,11 +49,14 @@ namespace MaouSamaTD.UI.Treasury
         [SerializeField] private Color _hoverTabColor = new Color(0.5f, 0.97f, 1f, 1f); // Brighter Cyan
         [SerializeField] private Color _inactiveTabColor = Color.white;
 
-        [Header("Data")]
-        [SerializeField] private List<StoreItemSO> _offerings;
-        [SerializeField] private List<StoreItemSO> _skins;
-        [SerializeField] private List<StoreItemSO> _gifts;
+        [Header("Data (Addressables)")]
+        [SerializeField] private string _shopLabel = "Shop";
+        
+        private List<StoreItemSO> _offerings = new List<StoreItemSO>();
+        private List<StoreItemSO> _skins = new List<StoreItemSO>();
+        private List<StoreItemSO> _gifts = new List<StoreItemSO>();
 
+        private AsyncOperationHandle<IList<StoreItemSO>> _loadHandle;
         private EconomyManager _economyManager;
         private List<Button> _tabButtons;
         private List<GameObject> _windows;
@@ -71,8 +76,53 @@ namespace MaouSamaTD.UI.Treasury
 
             SetupTabListeners();
             SwitchTab(0); // Default to Offerings
-            SetupAllGrids();
+            
+            LoadShopItems();
+        }
 
+        private void OnDestroy()
+        {
+            if (_loadHandle.IsValid())
+            {
+                Addressables.Release(_loadHandle);
+            }
+        }
+
+        private void LoadShopItems()
+        {
+            _offerings.Clear();
+            _skins.Clear();
+            _gifts.Clear();
+
+            _loadHandle = Addressables.LoadAssetsAsync<StoreItemSO>(_shopLabel, null);
+            _loadHandle.Completed += handle =>
+            {
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    foreach (var item in handle.Result)
+                    {
+                        switch (item.Type)
+                        {
+                            case StoreItemType.Currency:
+                                _offerings.Add(item);
+                                break;
+                            case StoreItemType.Skin:
+                                _skins.Add(item);
+                                break;
+                            case StoreItemType.Gift:
+                                _gifts.Add(item);
+                                break;
+                        }
+                    }
+
+                    Debug.Log($"[TreasuryVaultUI] Successfully loaded {handle.Result.Count} items from Addressables label '{_shopLabel}'.");
+                    SetupAllGrids();
+                }
+                else
+                {
+                    Debug.LogError($"[TreasuryVaultUI] Failed to load shop items from label '{_shopLabel}'.");
+                }
+            };
         }
 
         private void SetupTabListeners()

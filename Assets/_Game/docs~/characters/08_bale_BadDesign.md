@@ -17,7 +17,4 @@ The ultimate achievement of the Citadel's artificers. He was built from the wrec
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Heavy Shield / Warhammer
-- **Stance**: Defensive stance, ground planted, shield/weapon raised to guard.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Towering iron frame, obsidian plating., Infernal core visible in chest.
-- **Chibi Prompt**: Chibi style, cute anime Bale, Male Construct (Mech) Bastion, holding Heavy Shield / Warhammer. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Towering iron frame, obsidian plating, Infernal core visible in chest, holding Heavy Shield / Warhammer

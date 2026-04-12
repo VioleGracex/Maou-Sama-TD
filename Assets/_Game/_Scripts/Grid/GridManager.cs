@@ -96,7 +96,7 @@ namespace MaouSamaTD.Grid
                 Debug.LogWarning("GridManager: WallContainer is not assigned in Inspector!");
             }
 
-            if (_gridContainer.childCount > 0)
+            if (_grid.Count == 0 && _gridContainer.childCount > 0)
             {
                 var existingTiles = _gridContainer.GetComponentsInChildren<Tile>();
                 foreach (var tile in existingTiles)
@@ -228,6 +228,7 @@ namespace MaouSamaTD.Grid
                 for (int i = _gridContainer.childCount - 1; i >= 0; i--)
                 {
                     GameObject child = _gridContainer.GetChild(i).gameObject;
+                    child.transform.SetParent(null);
                     if (Application.isPlaying) Destroy(child);
                     else DestroyImmediate(child);
                 }
@@ -238,6 +239,7 @@ namespace MaouSamaTD.Grid
                  for (int i = _wallContainer.childCount - 1; i >= 0; i--)
                 {
                     GameObject child = _wallContainer.GetChild(i).gameObject;
+                    child.transform.SetParent(null);
                     if (Application.isPlaying) Destroy(child);
                     else DestroyImmediate(child);
                 }

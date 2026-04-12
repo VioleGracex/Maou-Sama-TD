@@ -51,8 +51,8 @@ namespace MaouSamaTD.Core
             }
 
             Debug.Log("[AppEntryPoint] Loading ClassScalingData from Addressables...");
-            // Use the full path as seen in the Unity Editor screenshot to ensure the key matches
-            var scalingHandle = Addressables.LoadAssetAsync<MaouSamaTD.Units.ClassScalingData>("Assets/_Game/Data/ClassScalingData.asset");
+            // As requested, use the label 'ClassScaleData' instead of the full path
+            var scalingHandle = Addressables.LoadAssetAsync<MaouSamaTD.Units.ClassScalingData>("ClassScaleData");
             while (!scalingHandle.IsDone)
             {
                 onProgress?.Invoke(0.5f + scalingHandle.PercentComplete * 0.4f);

@@ -41,7 +41,7 @@ MonoBehaviour:
     FullBodyCutout: {fileID: 21300000, guid: f5b35e4ce0a2e0d42a6b6de21518f2d5, type: 3}
     AnimatorController: {fileID: 0}
     IsDefault: 0
-    UnlockCost: 0
+    UnlockCost: 100
     IsPremium: 0
   _equippedSkinID: 
   CardSlotImageType: 2
@@ -77,4 +77,5 @@ MonoBehaviour:
   UltimateSkill: {fileID: 11400000, guid: e20c62474bbc31f40a06dc66077f2aaa, type: 2}
   AscensionNodes: []
   _viableTiles: 01000000
-  _unlockedSkinIDs: []
+  _unlockedSkinIDs:
+  - pool_party_ignis

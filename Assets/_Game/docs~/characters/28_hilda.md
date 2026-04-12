@@ -17,7 +17,4 @@ A veteran of the Citadel Guard. She takes her duty seriously and refers to her s
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Living shield with an eye that tracks intruders.
-- **Stance**: Defensive stance, ground planted, shield/weapon raised to guard.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Tall, black horns., Living shield with an eye that tracks intruders.
-- **Chibi Prompt**: Chibi style, cute anime Hilda, Female Trueborn Demon Bastion, holding Living shield with an eye that tracks intruders.. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Tall, black horns, Living shield with an eye that tracks intruders, holding Living shield with an eye that tracks intruders.

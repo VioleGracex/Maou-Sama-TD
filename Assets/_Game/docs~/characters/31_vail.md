@@ -17,7 +17,4 @@ A human composer who was banished for writing songs that humanized demons. He no
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Whispering lyre.
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Shadow-dyed cloak, silver thread hat., Whispering lyre.
-- **Chibi Prompt**: Chibi style, cute anime Vail, Male Human Betrayer Support, holding Whispering lyre.. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Shadow-dyed cloak, silver thread hat, Whispering lyre, holding Whispering lyre.

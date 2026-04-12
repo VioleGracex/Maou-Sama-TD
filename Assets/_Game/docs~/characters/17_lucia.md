@@ -17,7 +17,4 @@ A high-ranking seraph who was cast down for refusing to bless the "Holy Wall" th
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Signature Weapon
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Tattered, ashen white, leaking golden particles., perpetually weeping golden mana., A halo of sharp obsidian thorns.
-- **Chibi Prompt**: Chibi style, cute anime Lucia, Female Unknown Race Sage, holding Signature Weapon. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Tattered, ashen white, leaking golden particles, perpetually weeping golden mana, A halo of sharp obsidian thorns, holding Signature Weapon

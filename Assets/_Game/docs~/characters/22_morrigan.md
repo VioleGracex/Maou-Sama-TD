@@ -18,7 +18,4 @@ A mysterious sorceress who claims to have witnessed the birth of the 1st Maou. S
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Dark Catalyst
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Reptilian slit pupils, Emerald-and-gold silk bodysuit, Her mana staff ignites into a flaming spear.
-- **Chibi Prompt**: Chibi style, cute anime Morrigan, Female Trueborn Demon Warlock, holding Dark Catalyst. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Reptilian slit pupils, Emerald-and-gold silk bodysuit, Her mana staff ignites into a flaming spear, holding Dark Catalyst

@@ -92,7 +92,4 @@ Every AI prompt should start with or include these modifiers to ensure a unified
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Signature Weapon
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: 
-- **Chibi Prompt**: Chibi style, cute anime Profiles, Female Unknown Race Unknown Class, holding Signature Weapon. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, holding Signature Weapon

@@ -17,7 +17,4 @@ Ruler of the Northern Shifter tribes. He only joined the Maou's legion after a l
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Heavy Shield / Warhammer
-- **Stance**: Defensive stance, ground planted, shield/weapon raised to guard.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Muscular / Rugged, Spectral wolf fangs manifested on his pauldrons.
-- **Chibi Prompt**: Chibi style, cute anime Fenris, Male Shifter (Lupine) Bastion, holding Heavy Shield / Warhammer. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Muscular / Rugged, Spectral wolf fangs manifested on his pauldrons, holding Heavy Shield / Warhammer

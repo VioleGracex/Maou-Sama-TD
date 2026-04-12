@@ -4,9 +4,11 @@ using DG.Tweening;
 using Assets.SimpleLocalization.Scripts;
 using MaouSamaTD.UI.MainMenu;
 using MaouSamaTD.UI.Gacha;
-using MaouSamaTD.UI.Vassals;
 using MaouSamaTD.UI.Cohorts;
+using MaouSamaTD.UI.Treasury;
+using MaouSamaTD.UI.Vassals;
 using TMPro;
+using UnityEngine.Serialization;
 
 namespace MaouSamaTD.UI
 {
@@ -22,7 +24,8 @@ namespace MaouSamaTD.UI
         [Header("Nav Buttons")]
         [SerializeField] public Button _btnHome;
         [SerializeField] public Button _btnCampaign;
-        [SerializeField] private Button _btnShop;
+        [FormerlySerializedAs("_btnShop")]
+        [SerializeField] private Button _btnTreasury;
         [SerializeField] public Button _btnVassals;
         [SerializeField] public Button _btnCohorts;
         [SerializeField] public Button _btnManifest;
@@ -30,7 +33,8 @@ namespace MaouSamaTD.UI
         [Header("Indicators")]
         [SerializeField] private GameObject _indicatorHome;
         [SerializeField] private GameObject _indicatorCampaign;
-        [SerializeField] private GameObject _indicatorShop;
+        [FormerlySerializedAs("_indicatorShop")]
+        [SerializeField] private GameObject _indicatorTreasury;
         [SerializeField] private GameObject _indicatorVassals;
         [SerializeField] private GameObject _indicatorCohorts;
         [SerializeField] private GameObject _indicatorManifest;
@@ -50,6 +54,7 @@ namespace MaouSamaTD.UI
             if (_btnVassals) _btnVassals.onClick.AddListener(() => NavigateTo<VassalManagerUI>());
             if (_btnCohorts) _btnCohorts.onClick.AddListener(() => NavigateTo<CohortSquadUI>());
             if (_btnManifest) _btnManifest.onClick.AddListener(() => NavigateTo<GachaPanel>());
+            if (_btnTreasury) _btnTreasury.onClick.AddListener(() => NavigateTo<TreasuryVaultUI>());
             
             LocalizeUI();
         }
@@ -57,7 +62,7 @@ namespace MaouSamaTD.UI
         private void LocalizeUI()
         {
             if (_btnCampaign) _btnCampaign.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Campaign");
-            if (_btnShop) _btnShop.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Shop");
+            if (_btnTreasury) _btnTreasury.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Treasury");
             if (_btnVassals) _btnVassals.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Vassals");
             if (_btnCohorts) _btnCohorts.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Cohorts");
             if (_btnManifest) _btnManifest.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Manifest");
@@ -104,7 +109,7 @@ namespace MaouSamaTD.UI
             // Reset all
             if (_indicatorHome) _indicatorHome.SetActive(pageType == typeof(HomeUIManager));
             if (_indicatorCampaign) _indicatorCampaign.SetActive(pageType == typeof(CampaignPage));
-            if (_indicatorShop) _indicatorShop.SetActive(false); // Placeholder for Shop
+            if (_indicatorTreasury) _indicatorTreasury.SetActive(pageType == typeof(TreasuryVaultUI));
             if (_indicatorVassals) _indicatorVassals.SetActive(pageType == typeof(MaouSamaTD.UI.Vassals.VassalManagerUI));
             if (_indicatorCohorts) _indicatorCohorts.SetActive(pageType == typeof(CohortSquadUI));
             if (_indicatorManifest) _indicatorManifest.SetActive(pageType == typeof(GachaPanel));

@@ -17,7 +17,4 @@ A demon noble who spent a century in chains for refusing to bow to the previous 
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Sword and Shield
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Silver with dark highlights, Razor-sharp obsidian chains that she wields like whips.
-- **Chibi Prompt**: Chibi style, cute anime Camilla, Female Trueborn Demon Vanguard, holding Sword and Shield. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Silver with dark highlights, Razor-sharp obsidian chains that she wields like whips, holding Sword and Shield

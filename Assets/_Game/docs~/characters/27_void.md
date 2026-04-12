@@ -17,7 +17,4 @@ A cosmic anomaly that drifted through "The Bleed" and was anchored to reality by
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Dark Catalyst
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Silhouette filled with moving nebula stars., No true physical form.
-- **Chibi Prompt**: Chibi style, cute anime Void, Female Spirit (Cosmic) Warlock, holding Dark Catalyst. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Silhouette filled with moving nebula stars, No true physical form, holding Dark Catalyst

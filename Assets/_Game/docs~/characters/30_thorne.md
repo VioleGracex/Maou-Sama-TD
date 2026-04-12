@@ -17,7 +17,4 @@ A half-demon who grew up in the lawless Free Cities. He sold his sword to the hi
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Sword and Shield
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Messy hair, rugged features., Obsidian blades manifesting from his skin.
-- **Chibi Prompt**: Chibi style, cute anime Thorne, Male Mythological Hybrid (Demon) Vanguard, holding Sword and Shield. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Messy hair, rugged features, Obsidian blades manifesting from his skin, holding Sword and Shield

@@ -30,7 +30,4 @@ A high-ranking Trueborn and Matriarch of the Lust lineage. Lilith isn't just a s
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: The Obsidian Mirror of Avarice
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: 5'6", Curvy / Voluptuous / Elegant, Pure Blonde, Creamy Pale, Glowing Violet, Thin, elegant obsidian horns curving back. She wears a form-fitting, elegant ensemble in alluring red and violet, complemented by matching opera-length gloves and sheer dark stockings that accentuate her mature, curvy silhouette.
-- **Chibi Prompt**: Chibi style, cute anime Lilith, Female Trueborn Demon Warlock, holding The Obsidian Mirror of Avarice. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, 5'6", Curvy / Voluptuous / Elegant, Pure Blonde, Creamy Pale, Glowing Violet, Thin, elegant obsidian horns curving back. She wears a form-fitting, elegant ensemble in alluring red and violet, complemented by matching opera-length gloves and sheer dark stockings that accentuate her mature, curvy silhouette, holding The Obsidian Mirror of Avarice

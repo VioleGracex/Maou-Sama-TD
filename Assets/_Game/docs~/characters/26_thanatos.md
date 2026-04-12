@@ -17,7 +17,4 @@ A primordial spirit of the end. He does not serve out of loyalty to a person, bu
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Massive necrotic scythe.
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Obsidian horns, tattered silks., Massive necrotic scythe.
-- **Chibi Prompt**: Chibi style, cute anime Thanatos, Male Trueborn Demon Executioner, holding Massive necrotic scythe.. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Obsidian horns, tattered silks, Massive necrotic scythe, holding Massive necrotic scythe.

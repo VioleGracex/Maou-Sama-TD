@@ -17,7 +17,4 @@ Your closest advisor and the actual brain behind the Citadel's logistics. She wa
 ## AI Generation & Prompting
 - **Gender**: Female
 - **Weapon**: Signature Weapon
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing elegantly, weapon resting gracefully.
-- **Base Visual Prompt**: Formal dark silk officer uniform, tactical tablet., Circle of floating runic monitors in combat.
-- **Chibi Prompt**: Chibi style, cute anime Hecatina, Female Trueborn Demon Support, holding Signature Weapon. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1girl, female, Formal dark silk officer uniform, tactical tablet, Circle of floating runic monitors in combat, holding Signature Weapon

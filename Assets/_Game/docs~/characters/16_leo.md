@@ -17,7 +17,4 @@ Prince of the Sun-Lion tribe of the Southern Savanna. He seeks to prove that his
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Sword and Shield
-- **Stance**: Combat ready, dynamic action pose, weapon drawn and aimed.
-- **Idle Pose**: Standing tall and confident, holding weapon casually.
-- **Base Visual Prompt**: Golden mane-like hair, feline fangs., Radiant fire aura.
-- **Chibi Prompt**: Chibi style, cute anime Leo, Male Shifter (Lion) Vanguard, holding Sword and Shield. full body portrait, flat colors, sprite art style.
+- **General Prompt**: 1boy, male, Golden mane-like hair, feline fangs, Radiant fire aura, holding Sword and Shield

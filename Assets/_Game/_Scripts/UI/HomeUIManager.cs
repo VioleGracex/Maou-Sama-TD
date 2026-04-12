@@ -8,6 +8,7 @@ using MaouSamaTD.UI.MainMenu;
 using MaouSamaTD.UI.Cohorts;
 using MaouSamaTD.UI.Vassals;
 using MaouSamaTD.UI.Mandates;
+using MaouSamaTD.UI.Treasury;
 
 
 namespace MaouSamaTD.UI.MainMenu
@@ -30,6 +31,7 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private Button _btnVassals;
         [SerializeField] private Button _btnMandates;
         [SerializeField] private Button _btnThrone;
+        [SerializeField] private Button _btnTreasury;
         [SerializeField] private Button _btnVault;
         [SerializeField] private Button _btnRanks;
         [SerializeField] private Button _btnDaily;
@@ -61,6 +63,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnVassals != null) _btnVassals.onClick.AddListener(OnVassalsClicked);
             if (_btnMandates != null) _btnMandates.onClick.AddListener(OnMandatesClicked);
             if (_btnThrone != null) _btnThrone.onClick.AddListener(OnThroneClicked);
+            if (_btnTreasury != null) _btnTreasury.onClick.AddListener(OnVaultClicked);
             if (_btnVault != null) _btnVault.onClick.AddListener(OnVaultClicked);
             if (_btnRanks != null) _btnRanks.onClick.AddListener(OnRanksClicked);
             if (_btnDaily != null) _btnDaily.onClick.AddListener(OnDailyClicked);
@@ -170,7 +173,14 @@ namespace MaouSamaTD.UI.MainMenu
         }
 
         private void OnThroneClicked() { Debug.Log("[HomeUIManager] Throne clicked (Not Implemented Yet)"); }
-        private void OnVaultClicked() { Debug.Log("[HomeUIManager] Vault clicked (Not Implemented Yet)"); }
+        private void OnVaultClicked()
+        {
+            var panel = Object.FindAnyObjectByType<TreasuryVaultUI>(FindObjectsInactive.Include);
+            if (panel != null)
+            {
+                UIFlowManager.Instance.OpenPanel(panel);
+            }
+        }
         private void OnRanksClicked() { Debug.Log("[HomeUIManager] Ranks clicked (Not Implemented Yet)"); }
         private void OnDailyClicked()
         {

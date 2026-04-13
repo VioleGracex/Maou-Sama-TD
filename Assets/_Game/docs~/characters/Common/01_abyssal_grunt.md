@@ -7,11 +7,11 @@
 
 
 ## Visual Identity
-- **Build**: Demonic traits, horns, masked features
+- **Build**: Demonic traits, horns, sharp features
 - **Style**: Heavy armor, robust build
-- **Unique**: Generic mob appearance. Wears a full mask, cowl, or closed helmet; completely faceless with no unique identity.
+- **Unique**: Distinctive features based on their rank and origin.
 
 ## AI Generation & Prompting
 - **Gender**: Male
 - **Weapon**: Heavy Sword / Shield
-- **General Prompt**: 1boy, male, demonic horns, masked features, fantasy armor, glowing eyes, heavy armor, robust build, holding sword and shield, dark fantasy setting, masterpiece, best quality, full face mask, closed helmet, faceless, generic foot soldier, non-distinct face, uniform design
+- **General Prompt**: 1boy, male, demonic horns, sharp features, fantasy armor, heavy armor, robust build, holding sword and shield, dark fantasy setting, masterpiece, best quality

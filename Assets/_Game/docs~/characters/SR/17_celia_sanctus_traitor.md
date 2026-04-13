@@ -1,0 +1,17 @@
+# Vassal: Celia, Sanctus Traitor
+**Rarity**: SR
+**Race**: Human
+**Class**: Blood Sage
+
+## Lore Fragment
+Demon Apostle
+
+## Visual Identity
+- **Build**: Standard human build, diverse features
+- **Style**: Crimson robes, blood magic aura
+- **Unique**: Distinctive features based on their rank and origin.
+
+## AI Generation & Prompting
+- **Gender**: Female
+- **Weapon**: Blood Ritual Blade
+- **General Prompt**: 1girl, female, human, detailed fantasy clothing, crimson robes, blood magic aura, sinister, holding ritual blade, dark fantasy setting, masterpiece, best quality

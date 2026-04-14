@@ -231,8 +231,14 @@ namespace MaouSamaTD.Units.Editor
                 EditorGUILayout.LabelField("Base Animation (Required for Chibi Preview)", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(baseSkinProp.FindPropertyRelative("AnimatorController"), new GUIContent("Chibi Animator"));
                 
-                EditorGUILayout.Space(5);
-                DrawResponsiveSpriteField(serializedObject.FindProperty("Rank2Art"), "Elite / Rank 2 Art");
+                EditorGUILayout.Space(10);
+                bool starAdvState = BeginSubSection("Star Advancement Visual Overrides", "skin_star_advancement");
+                if (starAdvState)
+                {
+                    SerializedProperty starAdvProps = serializedObject.FindProperty("StarAdvancementVisuals");
+                    EditorGUILayout.PropertyField(starAdvProps, new GUIContent("Visuals by Star Rank"), true);
+                }
+                EndSubSection(starAdvState);
             }
             EndSection(baseVisState);
 

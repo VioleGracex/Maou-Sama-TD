@@ -8,7 +8,7 @@ created: "2026-04-03T10:02:00.000Z"
 modified: "2026-04-03T10:02:00.000Z"
 completedAt: "2026-04-03T10:02:00.000Z"
 labels: []
-order: "a3"
+order: "a0"
 ---
 # Building Mandates UI System
 

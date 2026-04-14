@@ -1,17 +1,25 @@
 # Vassal: Camilla, Ebon Lady of Chains
 **Rarity**: SR
-**Race**: Trueborn Demon
+**Race**: Vampire
 **Class**: Vanguard
 
 ## Lore Fragment
-
+A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Demonic traits, horns, sharp features
-- **Style**: Heavy armor, robust build
-- **Unique**: Distinctive features based on their rank and origin.
+- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
+- **Hair**: Slicked back Sapphire Blue hair
+- **Eyes**: Cat-like Green
+- **Skin**: Sun-kissed
+- **Nails**: Beastly claws
+- **Distinguishing Details**: Prominent fangs, elongated ears, extremely pale skin.
+- **Style**: High fantasy armor, red and black accents
+- **Weapon**: Bladed Whip
 
 ## AI Generation & Prompting
-- **Gender**: Female
-- **Weapon**: Heavy Sword / Shield
-- **General Prompt**: 1girl, female, demonic horns, sharp features, fantasy armor, glowing eyes, heavy armor, robust build, holding sword and shield, dark fantasy setting, masterpiece, best quality
+- **Gender**: Any
+- **Weapon**: Bladed Whip
+- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Camilla, Ebon Lady of Chains, Vampire Vanguard, holding Bladed Whip. Slicked back Sapphire Blue hair, Cat-like Green eyes, Sun-kissed skin, Beastly claws, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Camilla, Ebon Lady of Chains, Vampire Vanguard, holding Bladed Whip. Slicked back Sapphire Blue hair, Cat-like Green eyes, Sun-kissed skin, Beastly claws, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Camilla, Ebon Lady of Chains, Vampire Vanguard, holding Bladed Whip. Slicked back Sapphire Blue hair, Cat-like Green eyes, Sun-kissed skin, Beastly claws, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Camilla, Ebon Lady of Chains, Vampire Vanguard, holding Bladed Whip. Slicked back Sapphire Blue hair, Cat-like Green eyes, Sun-kissed skin, Beastly claws, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.

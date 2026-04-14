@@ -88,9 +88,18 @@ namespace MaouSamaTD.Units
             public RuntimeAnimatorController AnimatorController;
         }
 
+        [System.Serializable]
+        public class StarVisualOverride
+        {
+            public int RequiredStarRating = 2; // e.g., 2, 3, 4, 5, 6
+            public SkinFields Visuals;
+        }
+
         [Header("Base Skin (Required)")]
         public SkinFields BaseSkin;
-        public Sprite Rank2Art; // Elite art style - Only available for Base skin
+
+        [Header("Star Advancement Visuals")]
+        public System.Collections.Generic.List<StarVisualOverride> StarAdvancementVisuals = new System.Collections.Generic.List<StarVisualOverride>();
 
         [Header("Skins Collection")]
         public System.Collections.Generic.List<SkinData> Skins = new System.Collections.Generic.List<SkinData>();
@@ -127,9 +136,34 @@ namespace MaouSamaTD.Units
                 };
             }
 
-            // Otherwise get from Base (considering Rank 2 art if applicable)
-            if (type == UnitImageType.WaistUp && StarRating >= 4 && Rank2Art != null)
-                return Rank2Art;
+            // Otherwise get from Base (considering Star Advancement visual overrides)
+            if (StarAdvancementVisuals != null && StarAdvancementVisuals.Count > 0)
+            {
+                StarVisualOverride highestMatch = null;
+                foreach(var adv in StarAdvancementVisuals)
+                {
+                    if (StarRating >= adv.RequiredStarRating)
+                    {
+                        if (highestMatch == null || adv.RequiredStarRating > highestMatch.RequiredStarRating)
+                        {
+                            highestMatch = adv;
+                        }
+                    }
+                }
+
+                if (highestMatch != null)
+                {
+                    return type switch
+                    {
+                        UnitImageType.Avatar => highestMatch.Visuals.Avatar != null ? highestMatch.Visuals.Avatar : BaseSkin.Avatar,
+                        UnitImageType.Chibi => highestMatch.Visuals.Chibi != null ? highestMatch.Visuals.Chibi : BaseSkin.Chibi,
+                        UnitImageType.WaistUp => highestMatch.Visuals.WaistUp != null ? highestMatch.Visuals.WaistUp : BaseSkin.WaistUp,
+                        UnitImageType.SplashArt => highestMatch.Visuals.FullSplashArt != null ? highestMatch.Visuals.FullSplashArt : BaseSkin.FullSplashArt,
+                        UnitImageType.FullSprite => highestMatch.Visuals.FullBodyCutout != null ? highestMatch.Visuals.FullBodyCutout : BaseSkin.FullBodyCutout,
+                        _ => highestMatch.Visuals.Avatar != null ? highestMatch.Visuals.Avatar : BaseSkin.Avatar
+                    };
+                }
+            }
 
             return type switch
             {
@@ -153,6 +187,27 @@ namespace MaouSamaTD.Units
             if (skin != null && skin.AnimatorController != null)
                 return skin.AnimatorController;
             
+            // Check Star Advancement visual overrides
+            if (StarAdvancementVisuals != null && StarAdvancementVisuals.Count > 0)
+            {
+                StarVisualOverride highestMatch = null;
+                foreach(var adv in StarAdvancementVisuals)
+                {
+                    if (StarRating >= adv.RequiredStarRating)
+                    {
+                        if (highestMatch == null || adv.RequiredStarRating > highestMatch.RequiredStarRating)
+                        {
+                            highestMatch = adv;
+                        }
+                    }
+                }
+
+                if (highestMatch != null && highestMatch.Visuals.AnimatorController != null)
+                {
+                    return highestMatch.Visuals.AnimatorController;
+                }
+            }
+
             return BaseSkin.AnimatorController;
         }
 

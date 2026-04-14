@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Outcast_Archer_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: db92037f-544e-43fb-9b9c-fe6e049a658e
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -24,10 +24,10 @@ MonoBehaviour:
   UnitTitle: 
   BaseSkin:
     Avatar: {fileID: 0}
-    Chibi: {fileID: 0}
+    Chibi: {fileID: 21300000, guid: fd9bc2ea3fd8c8e152eab79b8154a041, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: 5871dc06560d5e04bbdcdb15226b9471, type: 3}
     AnimatorController: {fileID: 0}
   Rank2Art: {fileID: 0}
   Skins: []

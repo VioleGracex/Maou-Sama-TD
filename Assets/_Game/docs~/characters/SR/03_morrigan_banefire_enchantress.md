@@ -4,14 +4,22 @@
 **Class**: Warlock
 
 ## Lore Fragment
-
+A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Demonic traits, horns, sharp features
-- **Style**: Mystical robes, floating tomes or orbs
-- **Unique**: Distinctive features based on their rank and origin.
+- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
+- **Hair**: Long flowing Ashen Grey hair
+- **Eyes**: Glowing Yellow
+- **Skin**: Dusk
+- **Nails**: Silver-painted nails
+- **Distinguishing Details**: Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.
+- **Style**: High fantasy armor, red and black accents
+- **Weapon**: Pyromancer's Flame
 
 ## AI Generation & Prompting
-- **Gender**: Female
-- **Weapon**: Magic Staff / Tome
-- **General Prompt**: 1girl, female, demonic horns, sharp features, fantasy armor, glowing eyes, mystical robes, magical aura, holding magic staff, dark fantasy setting, masterpiece, best quality
+- **Gender**: Any
+- **Weapon**: Pyromancer's Flame
+- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Morrigan, Banefire Enchantress, Trueborn Demon Warlock, holding Pyromancer's Flame. Long flowing Ashen Grey hair, Glowing Yellow eyes, Dusk skin, Silver-painted nails, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Morrigan, Banefire Enchantress, Trueborn Demon Warlock, holding Pyromancer's Flame. Long flowing Ashen Grey hair, Glowing Yellow eyes, Dusk skin, Silver-painted nails, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Morrigan, Banefire Enchantress, Trueborn Demon Warlock, holding Pyromancer's Flame. Long flowing Ashen Grey hair, Glowing Yellow eyes, Dusk skin, Silver-painted nails, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Morrigan, Banefire Enchantress, Trueborn Demon Warlock, holding Pyromancer's Flame. Long flowing Ashen Grey hair, Glowing Yellow eyes, Dusk skin, Silver-painted nails, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.

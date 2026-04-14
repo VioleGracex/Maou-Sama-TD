@@ -1,7 +1,7 @@
 # Drakmora Kingdom: Master Character Tier List
 
 ## Rarity Tier Guide
-- **N (Normal / Common)**: The standard forces of the kingdom. High population.
+- **N (Normal / Common)**: The standard forces of the kingdom. High population, generic grunts.
 - **UC (Uncommon)**: Specialized troops and junior officers.
 - **R (Rare)**: Veteran forces, elite guards, and capable lieutenants.
 - **SR (Super Rare)**: High-end elites, commanders, and distinguished vassal lords.
@@ -9,142 +9,154 @@
 - **UR (Ultra Rare)**: Mythological beings of unparalleled, kingdom-altering power.
 
 ## Lore Clarification
-- **Race vs. Lore**:
-  - **Human** is treated as a foundational race.
-  - **Demon Apostle** is no longer a race; instead, it serves as a **Lore/Faction descriptor** for Humans (or other mortals) who have defected from the Light/Sanctus and chosen to serve Drakmora.
+Strictly utilizes the primary approved demon races: Trueborn Demon, Demon Apostle (fully transformed humans), Demonized Human (partially transformed humans), Vampire, Succubus, Harpy, Werewolf, Beastkin, Undead, Lich, and Skeletons.
 
 ---
 
 ## Ultra Rare (UR) — 2 Characters
 *The pinnacle entities bound to the Maou's service.*
 
-1. **Zephyr, Eternal Wind**
-   - **Race/Class**: Familiar (Mythic Sprite) / Ranger
-   - **Lore**: The oldest wind spirit. Legends say Zephyr taught the first Demon King how to soar. A tempest given playful form.
-2. **Khaos, the Primal Engine**
-   - **Race/Class**: Construct (World-Soul) / Vanguard
-   - **Lore**: A terrifyingly majestic mechanical beast forged from the continent's own crust, awakened only in times of catastrophic peril.
+1. **Balthazar, Lord of Sloth**
+   - **Race/Class**: Trueborn Demon / Warlock
+   - **Weapon**: Floating Grimoire of the Abyss
+   - **Lore**: Oldest of the Demon Lords. His dreams foresee the future. Unstoppable when roused.
+2. **Lilith, Duchess of Crimson Allure**
+   - **Race/Class**: Succubus / Warlock
+   - **Weapon**: Crimson Heart Whip
+   - **Lore**: Legendary temptress and master strategist, absolute ruler of the Succubi. Highly devoted to Maou-sama.
 
 ---
 
-## Specially Super Rare (SSR) — 8 Characters
+## Specially Super Rare (SSR) — 9 Characters
 *The commanders, the supreme nobles, and the ultimate legends.*
 
-1. **Balthazar, Lord of Sloth**
-   - **Race/Class**: Trueborn Demon / Warlock
-   - **Lore**: Oldest of the Demon Lords. His dreams foresee the future. Unstoppable when roused.
-2. **Lilith, Duchess of Crimson Allure**
-   - **Race/Class**: Trueborn Demon / Warlock (Succubus)
-   - **Lore**: Legendary temptress and master strategist. Highly devoted to Maou-sama.
-3. **Fenris, Wolf King of the North**
-   - **Race/Class**: Shifter (Lupine) / Bastion
-   - **Lore**: Ancient ruler of the wolf tribes. Swore fealty after being defeated in single combat.
+1. **Eidon, Archlich Supreme**
+   - **Race/Class**: Lich / Warlock
+   - **Weapon**: Staff of the Damned
+   - **Lore**: Prehistoric king-lich ruling the dead north.
+2. **Vladislav, Crimson Duke**
+   - **Race/Class**: Vampire / Assassin
+   - **Weapon**: Dual Blood-Ruby Rapiers
+   - **Lore**: The progenitor of the vampire courts in Drakmora.
+3. **Fenris, Alpha of the North**
+   - **Race/Class**: Werewolf / Bastion
+   - **Weapon**: Primal Claws (Fists)
+   - **Lore**: Ancient ruler of the werewolf tribes, utterly loyal to strength.
 4. **Victor, Fallen Paladin**
-   - **Race/Class**: Human / Vanguard
-   - **Lore**: *Demon Apostle.* Led a failed rebellion against Sanctus. Now acts as the Maou’s absolute shield.
-5. **Eidon, Archlich Supreme**
-   - **Race/Class**: Undead (Lich) / Warlock
-   - **Lore**: Prehistoric king-lich ruling the dead north. Seekers of lost knowledge revere him.
-6. **Raphael, Golden Exile**
-   - **Race/Class**: The Fallen (Angel) / Tactician
-   - **Lore**: Brilliant strategist cast out from the heavens for his merciful ideals.
-7. **Malina, Infernal Countess**
+   - **Race/Class**: Demon Apostle / Vanguard
+   - **Weapon**: Corrupted Greatsword
+   - **Lore**: Led a failed rebellion against the light. Now acts as the Maou’s absolute shield.
+5. **Malina, Infernal Countess**
    - **Race/Class**: Trueborn Demon / Bastion
+   - **Weapon**: Abyssal Tower Shield
    - **Lore**: Unbroken general whose greatshield has repulsed crusader sieges for centuries.
-8. **Kael, Dragonblood Duelist**
-   - **Race/Class**: Mythological Hybrid (Dragonoid) / Vanguard
-   - **Lore**: Sired by a progenitor dragon. Charismatic and peerless in aerial combat.
+6. **Aquila, The Harpy Queen**
+   - **Race/Class**: Harpy / Ranger
+   - **Weapon**: Greatbow of Gales
+   - **Lore**: Ruler of the highest peaks, commands the storms with a flap of her wings.
+7. **Nyx, Phantom Beastkin**
+   - **Race/Class**: Beastkin / Assassin
+   - **Weapon**: Twin Obsidian Daggers
+   - **Lore**: A lethal stray, the finest assassin in the Maou's spy network.
+8. **Valerius, Crimson Defector**
+   - **Race/Class**: Demon Apostle / Tactician
+   - **Weapon**: Enchanted Bastard Sword
+   - **Lore**: A master strategist who abandoned humanity out of pure disgust.
+9. **Shade, The Phantom Stalker**
+   - **Race/Class**: Beastkin / Ranger
+   - **Weapon**: Twin Shadow-Daggers
+   - **Lore**: A ghostly presence within the forests, striking from the shadows before her enemies even realize they are being hunted.
 
 ---
 
 ## Super Rare (SR) — 20 Characters
 *Elite lieutenants and specialized masters.*
 
-1. **Nerissa, Midnight Archivist** (Trueborn Demon / Blood Sage)
-2. **Astaroth, Queen of Pain** (Trueborn Demon / Executioner)
-3. **Morrigan, Banefire Enchantress** (Trueborn Demon / Warlock)
-4. **Camilla, Ebon Lady of Chains** (Trueborn Demon / Vanguard)
-5. **Zephyra, Storm-Bound Duchess** (Trueborn Demon / Ranger)
-6. **Seraphine, Pale Empress** (Trueborn Demon / Tactician)
-7. **Isolde, Dusk-Bound Reaver** (Trueborn Demon / Executioner)
-8. **Azalea, Scarlet Viceroy** (Trueborn Demon / Bastion)
-9. **Lucien, Phantom Operative** (Undead / Assassin)
-10. **Magnus, Iron Forgemaster** (Construct / Bastion)
-11. **Valerius, Crimson Defector** (Human / Tactician) - *Demon Apostle*
-12. **Lyra, Blood-Moon Sentinel** (Shifter / Ranger)
-13. **Azazel, Ruined Choirboy** (The Fallen / Warlock)
-14. **Blight, The Rotting King** (Undead / Executioner)
-15. **Nyx, Shadow Weaver** (Familiar / Assassin)
-16. **Gorm, Abyssal Dreadnought** (Trueborn Demon / Bastion)
-17. **Celia, Sanctus Traitor** (Human / Blood Sage) - *Demon Apostle*
-18. **Toros, Minotaur Chieftain** (Shifter / Vanguard)
-19. **Kaelen, Cursed Blademaster** (Human / Executioner) - *Demon Apostle*
-20. **Vesper, Void-Caller** (Trueborn Demon / Warlock)
+1. **Nerissa, Midnight Archivist** (Trueborn Demon / Blood Sage) - *Weapon: Blood Vial & Quill*
+2. **Astaroth, Queen of Pain** (Succubus / Executioner) - *Weapon: Spiked Chain*
+3. **Morrigan, Banefire Enchantress** (Trueborn Demon / Warlock) - *Weapon: Pyromancer's Flame*
+4. **Camilla, Ebon Lady of Chains** (Vampire / Vanguard) - *Weapon: Bladed Whip*
+5. **Zephyra, Storm-Bound Duchess** (Harpy / Ranger) - *Weapon: Razor Feathers*
+6. **Seraphine, Pale Empress** (Lich / Tactician) - *Weapon: Skull-topped Scepter*
+7. **Isolde, Dusk-Bound Reaver** (Demon Apostle / Executioner) - *Weapon: Heavy Scythe*
+8. **Azalea, Scarlet Viceroy** (Vampire / Bastion) - *Weapon: Blood Shield*
+9. **Lucien, Phantom Operative** (Undead / Assassin) - *Weapon: Shadow Daggers*
+10. **Toros, Savage Packleader** (Werewolf / Vanguard) - *Weapon: Dual Waraxes*
+11. **Lyra, Blood-Moon Sentinel** (Werewolf / Ranger) - *Weapon: Heavy Crossbow*
+12. **Azazel, Ruined Choirboy** (Demon Apostle / Warlock) - *Weapon: Corrupted Censer*
+13. **Blight, The Rotting King** (Undead / Executioner) - *Weapon: Rusted Claymore*
+14. **Selene, Stray Hunter** (Beastkin / Assassin) - *Weapon: Chakrams*
+15. **Gorm, Abyssal Dreadnought** (Trueborn Demon / Bastion) - *Weapon: Mace & Pavise*
+16. **Celia, Sanctus Traitor** (Demon Apostle / Blood Sage) - *Weapon: Tainted Chalice*
+17. **Kaelen, Cursed Blademaster** (Demon Apostle / Executioner) - *Weapon: Cursed Nodachi*
+18. **Vesper, Void-Caller** (Lich / Warlock) - *Weapon: Nether Orb*
+19. **Drusilla, Seductive Spy** (Succubus / Assassin) - *Weapon: Hidden Blades*
+20. **Talon, Sky Piercer** (Harpy / Vanguard) - *Weapon: Wind Spear*
 
 ---
 
 ## Rare (R) — 20 Characters
 *Veteran commanders, the skilled vanguard.*
 
-1. **Ignis Guard Captain** (Trueborn Demon / Vanguard)
-2. **Frostbane Sniper** (Shifter / Ranger)
-3. **Heretic Priest** (Human / Blood Sage) - *Demon Apostle*
-4. **Bone Golem Warden** (Construct / Bastion)
-5. **Fallen Squire** (The Fallen / Vanguard)
-6. **Wraith Executioner** (Undead / Executioner)
-7. **Lunar Stalker** (Shifter / Assassin)
-8. **Hellfire Alchemist** (Human / Support) - *Demon Apostle*
-9. **Abyssal Tactician** (Trueborn Demon / Tactician)
-10. **Tomb Guardian** (Undead / Bastion)
-11. **Rune-Scarred Gladiator** (Human / Vanguard) - *Demon Apostle*
-12. **Nightwing Familiar** (Familiar / Support)
-13. **Plague Doctor** (Undead / Blood Sage)
-14. **Desert Serpent Shifter** (Shifter / Assassin)
-15. **Ironclad Juggernaut** (Construct / Bastion)
-16. **Dusk Knight** (Human / Vanguard) - *Demon Apostle*
-17. **Gargoyle Sentry** (Construct / Ranger)
-18. **Bloodied Oracle** (Human / Warlock) - *Demon Apostle*
-19. **Vampiric Aristocrat** (Undead / Warlock)
-20. **Lava-Bender** (Trueborn Demon / Support)
+1. **Ignis Guard Captain** (Trueborn Demon / Vanguard) - *Weapon: Longsword*
+2. **Frostbane Sniper** (Harpy / Ranger) - *Weapon: Longbow*
+3. **Heretic Priest** (Demon Apostle / Blood Sage) - *Weapon: Dark Tome*
+4. **Skeletal Warden** (Skeleton / Bastion) - *Weapon: Heavy Shield*
+5. **Wraith Executioner** (Undead / Executioner) - *Weapon: Executioner Axe*
+6. **Lunar Stalker** (Werewolf / Assassin) - *Weapon: Claws*
+7. **Hellfire Alchemist** (Demon Apostle / Support) - *Weapon: Exploding Flasks*
+8. **Abyssal Tactician** (Trueborn Demon / Tactician) - *Weapon: Command Baton*
+9. **Tomb Guardian** (Undead / Bastion) - *Weapon: Halberd*
+10. **Rune-Scarred Gladiator** (Demon Apostle / Vanguard) - *Weapon: Gladius*
+11. **Plague Doctor** (Undead / Blood Sage) - *Weapon: Syringe Polearm*
+12. **Feral Alley-Cat** (Beastkin / Assassin) - *Weapon: Claws & Daggers*
+13. **Bone Juggernaut** (Skeleton / Bastion) - *Weapon: Tower Shield*
+14. **Dusk Knight** (Demon Apostle / Vanguard) - *Weapon: Lance*
+15. **Vampiric Aristocrat** (Vampire / Warlock) - *Weapon: Rapier*
+16. **Lava-Bender** (Trueborn Demon / Support) - *Weapon: Magma Staff*
+17. **Bloodied Oracle** (Demon Apostle / Warlock) - *Weapon: Crystal Ball*
+18. **Wind Rider** (Harpy / Ranger) - *Weapon: Throwing Knives*
+19. **Howling Marauder** (Werewolf / Vanguard) - *Weapon: Club*
+20. **Charming Novice** (Succubus / Support) - *Weapon: Magic Hand-Mirror*
 
 ---
 
 ## Uncommon (UC) — 10 Characters
 *Specialists and advanced foot soldiers.*
 
-1. **Shadow Stalker** (Trueborn Demon / Assassin)
-2. **Defected Marksman** (Human / Ranger) - *Demon Apostle*
-3. **Armored Direwolf** (Shifter / Vanguard)
-4. **Reanimated Shieldbearer** (Undead / Bastion)
-5. **Clockwork Medic** (Construct / Support)
-6. **Scorned Adept** (Human / Warlock) - *Demon Apostle*
-7. **Imp Prankster** (Familiar / Ranger)
-8. **Ember Bruiser** (Trueborn Demon / Vanguard)
-9. **Feral Feline** (Shifter / Assassin)
-10. **Exiled Cleric** (Human / Blood Sage) - *Demon Apostle*
+1. **Shadow Stalker** (Trueborn Demon / Assassin) - *Weapon: Daggers*
+2. **Defected Marksman** (Demonized Human / Ranger) - *Weapon: Crossbow*
+3. **Armored Dire-Wolf** (Werewolf / Vanguard) - *Weapon: Bite/Armor Spikes*
+4. **Reanimated Shieldbearer** (Undead / Bastion) - *Weapon: Rotted Shield*
+5. **Scorned Adept** (Demonized Human / Warlock) - *Weapon: Wand*
+6. **Ember Bruiser** (Trueborn Demon / Vanguard) - *Weapon: Flaming Fists*
+7. **Feline Scout** (Beastkin / Assassin) - *Weapon: Shortbow*
+8. **Exiled Cleric** (Demonized Human / Blood Sage) - *Weapon: Broken Mace*
+9. **Skeletal Archer** (Skeleton / Ranger) - *Weapon: Shortbow*
+10. **Nightwing Harpy** (Harpy / Ranger) - *Weapon: Talons*
 
 ---
 
 ## Normal (N) / Common — 20 Characters
-*The rank and file of the kingdom's mighty army.*
+*The rank and file of the kingdom's mighty army. Generally generic, wearing helmets or masks.*
 
-1. **Abyssal Grunt** (Trueborn Demon / Vanguard)
-2. **Skeleton Militia** (Undead / Vanguard)
-3. **Goblin Scrounger** (Familiar / Support)
-4. **Renegade Peasant** (Human / Vanguard) - *Demon Apostle*
-5. **Fledgling Imp** (Trueborn Demon / Warlock)
-6. **Lesser Harpy** (Shifter / Ranger)
-7. **Clockwork Drone** (Construct / Support)
-8. **Grave Digger** (Undead / Bastion)
-9. **Corrupt Acolyte** (Human / Blood Sage) - *Demon Apostle*
-10. **Bat Swarm** (Familiar / Assassin)
-11. **Slime Ooze** (Familiar / Bastion)
-12. **Forsaken Conscript** (Human / Vanguard) - *Demon Apostle*
-13. **Hellhound Pup** (Shifter / Ranger)
-14. **Apprentice Cultist** (Human / Warlock) - *Demon Apostle*
-15. **Scrap Golem** (Construct / Bastion)
-16. **Cursed Bandit** (Human / Assassin) - *Demon Apostle*
-17. **Lesser Succubus** (Trueborn Demon / Support)
-18. **Zombie Footman** (Undead / Vanguard)
-19. **Outcast Archer** (Human / Ranger) - *Demon Apostle*
-20. **Infernal Watcher** (Familiar / Tactician)
+1. **Abyssal Grunt** (Trueborn Demon / Vanguard) - *Weapon: Spear*
+2. **Skeleton Militia** (Skeleton / Vanguard) - *Weapon: Rusty Sword*
+3. **Renegade Peasant** (Demonized Human / Vanguard) - *Weapon: Pitchfork*
+4. **Fledgling Succubus** (Succubus / Support) - *Weapon: Short Staff*
+5. **Lesser Harpy** (Harpy / Ranger) - *Weapon: Slingshot*
+6. **Grave Digger** (Undead / Bastion) - *Weapon: Shovel*
+7. **Corrupt Acolyte** (Demonized Human / Blood Sage) - *Weapon: Wooden Wand*
+8. **Forsaken Conscript** (Demonized Human / Vanguard) - *Weapon: Dented Sword*
+9. **Wolf Pup** (Werewolf / Ranger) - *Weapon: Small Claws*
+10. **Apprentice Cultist** (Demonized Human / Warlock) - *Weapon: Ritual Dagger*
+11. **Cursed Bandit** (Demonized Human / Assassin) - *Weapon: Shiv*
+12. **Zombie Footman** (Undead / Vanguard) - *Weapon: Bare Hands*
+13. **Outcast Archer** (Demonized Human / Ranger) - *Weapon: Hunting Bow*
+14. **Skeleton Bowman** (Skeleton / Ranger) - *Weapon: Crude Bow*
+15. **Lesser Vampire** (Vampire / Assassin) - *Weapon: Stiletto*
+16. **Undead Guard** (Undead / Bastion) - *Weapon: Buckler*
+17. **Stray Kitten** (Beastkin / Support) - *Weapon: Claws*
+18. **Demonized Thug** (Demonized Human / Vanguard) - *Weapon: Club*
+19. **Skeleton Guard** (Skeleton / Bastion) - *Weapon: Planks (Shield)*
+20. **Feral Ghoul** (Undead / Executioner) - *Weapon: Fangs*

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Abyssal_Grunt_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: d2060cc8-6b4e-4936-9566-a07ed03a0424
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -24,10 +24,10 @@ MonoBehaviour:
   UnitTitle: 
   BaseSkin:
     Avatar: {fileID: 0}
-    Chibi: {fileID: 0}
+    Chibi: {fileID: 21300000, guid: e40f1dbb2eae7a9537b2ad8715e57001, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: bff43970a72f9404da1b6f756ddf8040, type: 3}
     AnimatorController: {fileID: 0}
   Rank2Art: {fileID: 0}
   Skins: []

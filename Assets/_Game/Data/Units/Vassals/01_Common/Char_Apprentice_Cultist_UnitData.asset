@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Apprentice_Cultist_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: 18702022-26de-435a-8fa5-38d41919a915
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -24,10 +24,10 @@ MonoBehaviour:
   UnitTitle: 
   BaseSkin:
     Avatar: {fileID: 0}
-    Chibi: {fileID: 0}
+    Chibi: {fileID: 21300000, guid: bdf992bb48ce34f292f6ab0cb2a88e54, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: 975b48572838f5140b03991deda50b5b, type: 3}
     AnimatorController: {fileID: 0}
   Rank2Art: {fileID: 0}
   Skins: []

@@ -53,7 +53,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
-  Rarity: 3
+  Rarity: 4
   Class: 3
   AttackPattern: 0
   AttackType: 0

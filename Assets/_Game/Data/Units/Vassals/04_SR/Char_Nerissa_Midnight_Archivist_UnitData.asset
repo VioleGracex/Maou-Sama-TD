@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Nerissa_Midnight_Archivist_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: a6da1d5a-c10a-40e2-98f4-6d3af7f6e9c8
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -24,16 +24,16 @@ MonoBehaviour:
   UnitTitle: 
   BaseSkin:
     Avatar: {fileID: 0}
-    Chibi: {fileID: 0}
+    Chibi: {fileID: 21300000, guid: 866396d9ccfcc8c4caf4a79c9559289e, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: 702e86efcccb93b40b121b1e42ae7ba6, type: 3}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 2
-  ButtonImageType: 0
+  CardSlotImageType: 4
+  ButtonImageType: 1
   Level: 1
   Experience: 0
   StarRating: 1
@@ -41,7 +41,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
-  Rarity: 0
+  Rarity: 3
   Class: 0
   AttackPattern: 0
   AttackType: 0

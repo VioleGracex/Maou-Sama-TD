@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Seraphine_Pale_Empress_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: b12b0531-8835-4053-8f7e-e11ee9f48a2e
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -24,16 +24,16 @@ MonoBehaviour:
   UnitTitle: 
   BaseSkin:
     Avatar: {fileID: 0}
-    Chibi: {fileID: 0}
+    Chibi: {fileID: 21300000, guid: cdaa675b0dc1ce649b711a0af0e30c8b, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: 715829921efd5774eb6b6db5a7c26da8, type: 3}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 2
-  ButtonImageType: 0
+  CardSlotImageType: 4
+  ButtonImageType: 1
   Level: 1
   Experience: 0
   StarRating: 1
@@ -41,7 +41,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
-  Rarity: 0
+  Rarity: 3
   Class: 0
   AttackPattern: 0
   AttackType: 0

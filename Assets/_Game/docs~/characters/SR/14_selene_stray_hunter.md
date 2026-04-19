@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Beastkin
 **Class**: Assassin
+**Weapon**: Chakrams
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Twin tails Ashen Grey hair
-- **Eyes**: Silver
-- **Skin**: Dusk
-- **Nails**: Sharp black talons
-- **Distinguishing Details**: Feline ears, twin cat tails, whiskers, agile posture.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Chakrams
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: emerald green with jade, intricately braided hair
+- **Eyes**: solid gold eyes
+- **Skin**: warm sun-kissed skin
+- **Clothing / Armor**: Gold/Ruby sleek assassin's cloth, dark hood, flawless geometric metal etchings
+- **Distinguishing Details**: feline ears, cat tail, whiskers, beastkin
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Chakrams (Dark Iron, sharp obsidian volcanic glass)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Chakrams
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Selene, Stray Hunter, Beastkin Assassin, holding Chakrams. Twin tails Ashen Grey hair, Silver eyes, Dusk skin, Sharp black talons, Feline ears, twin cat tails, whiskers, agile posture.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Selene, Stray Hunter, Beastkin Assassin, holding Chakrams. Twin tails Ashen Grey hair, Silver eyes, Dusk skin, Sharp black talons, Feline ears, twin cat tails, whiskers, agile posture.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Selene, Stray Hunter, Beastkin Assassin, holding Chakrams. Twin tails Ashen Grey hair, Silver eyes, Dusk skin, Sharp black talons, Feline ears, twin cat tails, whiskers, agile posture.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Selene, Stray Hunter, Beastkin Assassin, holding Chakrams. Twin tails Ashen Grey hair, Silver eyes, Dusk skin, Sharp black talons, Feline ears, twin cat tails, whiskers, agile posture.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Selene, Stray Hunter, Beastkin Assassin. Holding Chakrams (Dark Iron, sharp obsidian volcanic glass). Hair: emerald green with jade, intricately braided hair. Eyes: solid gold eyes. Skin: warm sun-kissed skin. Wearing attire: sleek assassin's cloth, dark hood, flawless geometric metal etchings. Traits: feline ears, cat tail, whiskers, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Selene, Stray Hunter, Beastkin Assassin. Holding Chakrams (Dark Iron, sharp obsidian volcanic glass). Hair: emerald green with jade, intricately braided hair. Eyes: solid gold eyes. Skin: warm sun-kissed skin. Wearing attire: sleek assassin's cloth, dark hood, flawless geometric metal etchings. Traits: feline ears, cat tail, whiskers, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Selene, Stray Hunter, Beastkin Assassin. Holding Chakrams (Dark Iron, sharp obsidian volcanic glass). Hair: emerald green with jade, intricately braided hair. Eyes: solid gold eyes. Skin: warm sun-kissed skin. Wearing attire: sleek assassin's cloth, dark hood, flawless geometric metal etchings. Traits: feline ears, cat tail, whiskers, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Selene, Stray Hunter, Beastkin Assassin. Holding Chakrams (Dark Iron, sharp obsidian volcanic glass). Hair: emerald green with jade, intricately braided hair. Eyes: solid gold eyes. Skin: warm sun-kissed skin. Wearing attire: sleek assassin's cloth, dark hood, flawless geometric metal etchings. Traits: feline ears, cat tail, whiskers, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

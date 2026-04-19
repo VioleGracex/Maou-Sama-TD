@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Frostbane_Sniper_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: 11328411-6d42-43cb-ae2e-bcd65165f316
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -24,16 +24,16 @@ MonoBehaviour:
   UnitTitle: 
   BaseSkin:
     Avatar: {fileID: 0}
-    Chibi: {fileID: 0}
+    Chibi: {fileID: 21300000, guid: 4cb2cb75ecd8660d97733e52c87c4549, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: b7dad43f8c3376c4795eb24f5734ec06, type: 3}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 2
-  ButtonImageType: 0
+  CardSlotImageType: 4
+  ButtonImageType: 1
   Level: 1
   Experience: 0
   StarRating: 1
@@ -41,7 +41,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
-  Rarity: 0
+  Rarity: 2
   Class: 0
   AttackPattern: 0
   AttackType: 0

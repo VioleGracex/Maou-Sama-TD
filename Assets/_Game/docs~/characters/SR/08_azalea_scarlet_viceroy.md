@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Vampire
 **Class**: Bastion
+**Weapon**: Blood Shield
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Wild and untamed Obsidian Black hair
-- **Eyes**: Gold
-- **Skin**: Dusk
-- **Nails**: Elegant purple polish
-- **Distinguishing Details**: Prominent fangs, elongated ears, extremely pale skin.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Blood Shield
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: rust red, intricately braided hair
+- **Eyes**: predatory emerald eyes
+- **Skin**: fair smooth skin
+- **Clothing / Armor**: Crimson/Gold thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings
+- **Distinguishing Details**: vampire fangs, pointed ears, pale skin
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Blood Shield (Blood Red, thick blackened bronze)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Blood Shield
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Azalea, Scarlet Viceroy, Vampire Bastion, holding Blood Shield. Wild and untamed Obsidian Black hair, Gold eyes, Dusk skin, Elegant purple polish, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Azalea, Scarlet Viceroy, Vampire Bastion, holding Blood Shield. Wild and untamed Obsidian Black hair, Gold eyes, Dusk skin, Elegant purple polish, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Azalea, Scarlet Viceroy, Vampire Bastion, holding Blood Shield. Wild and untamed Obsidian Black hair, Gold eyes, Dusk skin, Elegant purple polish, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Azalea, Scarlet Viceroy, Vampire Bastion, holding Blood Shield. Wild and untamed Obsidian Black hair, Gold eyes, Dusk skin, Elegant purple polish, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Azalea, Scarlet Viceroy, Vampire Bastion. Holding Blood Shield (Blood Red, thick blackened bronze). Hair: rust red, intricately braided hair. Eyes: predatory emerald eyes. Skin: fair smooth skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Azalea, Scarlet Viceroy, Vampire Bastion. Holding Blood Shield (Blood Red, thick blackened bronze). Hair: rust red, intricately braided hair. Eyes: predatory emerald eyes. Skin: fair smooth skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Azalea, Scarlet Viceroy, Vampire Bastion. Holding Blood Shield (Blood Red, thick blackened bronze). Hair: rust red, intricately braided hair. Eyes: predatory emerald eyes. Skin: fair smooth skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Azalea, Scarlet Viceroy, Vampire Bastion. Holding Blood Shield (Blood Red, thick blackened bronze). Hair: rust red, intricately braided hair. Eyes: predatory emerald eyes. Skin: fair smooth skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

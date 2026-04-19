@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Wraith_Executioner_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: 67df1e55-029d-4587-8341-ad2e56e512b5
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -24,16 +24,16 @@ MonoBehaviour:
   UnitTitle: 
   BaseSkin:
     Avatar: {fileID: 0}
-    Chibi: {fileID: 0}
+    Chibi: {fileID: 21300000, guid: 977fc9cce9d6a974aa3496c096375734, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: 41c46a7d672f5474199650c7448097b7, type: 3}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 2
-  ButtonImageType: 0
+  CardSlotImageType: 4
+  ButtonImageType: 1
   Level: 1
   Experience: 0
   StarRating: 1
@@ -41,7 +41,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
-  Rarity: 0
+  Rarity: 2
   Class: 0
   AttackPattern: 0
   AttackType: 0

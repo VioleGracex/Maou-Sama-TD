@@ -2,24 +2,26 @@
 **Rarity**: Common
 **Race**: Demonized Human
 **Class**: Assassin
+**Weapon**: Shiv
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of Common.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Neatly braided Crimson hair
-- **Eyes**: Violet
-- **Skin**: Dusk
-- **Nails**: Chipped and worn
-- **Distinguishing Details**: Chipped cracked horns (scarred), no tail, worn black nails
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Shiv
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: platinum blonde, intricately braided hair
+- **Eyes**: metallic silver eyes
+- **Skin**: copper weathered skin
+- **Clothing / Armor**: Obsidian/Silver heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Shiv (Polished Silver, ornate glittering gold and steel)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Shiv
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Cursed Bandit, Demonized Human Assassin, holding Shiv. Neatly braided Crimson hair, Violet eyes, Dusk skin, Chipped and worn, Chipped cracked horns (scarred), no tail, worn black nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Cursed Bandit, Demonized Human Assassin, holding Shiv. Neatly braided Crimson hair, Violet eyes, Dusk skin, Chipped and worn, Chipped cracked horns (scarred), no tail, worn black nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Cursed Bandit, Demonized Human Assassin, holding Shiv. Neatly braided Crimson hair, Violet eyes, Dusk skin, Chipped and worn, Chipped cracked horns (scarred), no tail, worn black nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Cursed Bandit, Demonized Human Assassin, holding Shiv. Neatly braided Crimson hair, Violet eyes, Dusk skin, Chipped and worn, Chipped cracked horns (scarred), no tail, worn black nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Cursed Bandit, Demonized Human Assassin. Holding Shiv (Polished Silver, ornate glittering gold and steel). Hair: platinum blonde, intricately braided hair. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Cursed Bandit, Demonized Human Assassin. Holding Shiv (Polished Silver, ornate glittering gold and steel). Hair: platinum blonde, intricately braided hair. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Cursed Bandit, Demonized Human Assassin. Holding Shiv (Polished Silver, ornate glittering gold and steel). Hair: platinum blonde, intricately braided hair. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Cursed Bandit, Demonized Human Assassin. Holding Shiv (Polished Silver, ornate glittering gold and steel). Hair: platinum blonde, intricately braided hair. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

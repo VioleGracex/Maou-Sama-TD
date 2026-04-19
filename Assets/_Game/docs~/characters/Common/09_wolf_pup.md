@@ -2,24 +2,26 @@
 **Rarity**: Common
 **Race**: Werewolf
 **Class**: Ranger
+**Weapon**: Small Claws
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of Common.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Neatly braided Crimson hair
-- **Eyes**: Glowing Yellow
-- **Skin**: Crimson-tinted
-- **Nails**: Reinforced metallic tips
-- **Distinguishing Details**: Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Small Claws
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: crimson red with black lowlights, straight shoulder-length blunt cut
+- **Eyes**: narrowed cat-like green eyes
+- **Skin**: warm sun-kissed skin
+- **Clothing / Armor**: Grey/Neon Cyan heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls
+- **Distinguishing Details**: wolf ears, bushy tail, sharp teeth, beastkin
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Small Claws (Demonic Purple, thick blackened bronze)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Small Claws
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Wolf Pup, Werewolf Ranger, holding Small Claws. Neatly braided Crimson hair, Glowing Yellow eyes, Crimson-tinted skin, Reinforced metallic tips, Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Wolf Pup, Werewolf Ranger, holding Small Claws. Neatly braided Crimson hair, Glowing Yellow eyes, Crimson-tinted skin, Reinforced metallic tips, Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Wolf Pup, Werewolf Ranger, holding Small Claws. Neatly braided Crimson hair, Glowing Yellow eyes, Crimson-tinted skin, Reinforced metallic tips, Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Wolf Pup, Werewolf Ranger, holding Small Claws. Neatly braided Crimson hair, Glowing Yellow eyes, Crimson-tinted skin, Reinforced metallic tips, Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Wolf Pup, Werewolf Ranger. Holding Small Claws (Demonic Purple, thick blackened bronze). Hair: crimson red with black lowlights, straight shoulder-length blunt cut. Eyes: narrowed cat-like green eyes. Skin: warm sun-kissed skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls. Traits: wolf ears, bushy tail, sharp teeth, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Wolf Pup, Werewolf Ranger. Holding Small Claws (Demonic Purple, thick blackened bronze). Hair: crimson red with black lowlights, straight shoulder-length blunt cut. Eyes: narrowed cat-like green eyes. Skin: warm sun-kissed skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls. Traits: wolf ears, bushy tail, sharp teeth, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Wolf Pup, Werewolf Ranger. Holding Small Claws (Demonic Purple, thick blackened bronze). Hair: crimson red with black lowlights, straight shoulder-length blunt cut. Eyes: narrowed cat-like green eyes. Skin: warm sun-kissed skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls. Traits: wolf ears, bushy tail, sharp teeth, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Wolf Pup, Werewolf Ranger. Holding Small Claws (Demonic Purple, thick blackened bronze). Hair: crimson red with black lowlights, straight shoulder-length blunt cut. Eyes: narrowed cat-like green eyes. Skin: warm sun-kissed skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls. Traits: wolf ears, bushy tail, sharp teeth, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

@@ -128,7 +128,7 @@
 ## Normal (N) / Common — 20 Characters
 *The rank and file of the kingdom's mighty army.*
 
-1. **Abyssal Grunt** (Trueborn Demon / Vanguard)
+1. **Drakmora Infantry** (Trueborn Demon / Vanguard)
 2. **Skeleton Militia** (Undead / Vanguard)
 3. **Goblin Scrounger** (Familiar / Support)
 4. **Renegade Peasant** (Human / Vanguard) - *Demon Apostle*

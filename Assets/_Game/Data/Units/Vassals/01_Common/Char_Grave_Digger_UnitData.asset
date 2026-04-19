@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Grave_Digger_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 1bedf070-48d1-4780-a959-13b9650f3d41
+  UniqueID: 2dbe1729-df19-4e56-984b-1ba76c2b6cf0
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -27,13 +27,13 @@ MonoBehaviour:
     Chibi: {fileID: 21300000, guid: ff466f2cadf845b7abd75b34dc843e0f, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: 77c0c23c71d9e5b4eb8ebe68bbe7e12d, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 97c2b09d2cc528b4f96b1bf557b41e24, type: 3}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 2
-  ButtonImageType: 0
+  CardSlotImageType: 4
+  ButtonImageType: 1
   Level: 1
   Experience: 0
   StarRating: 1

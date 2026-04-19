@@ -20,10 +20,7 @@ Strictly utilizes the primary approved demon races: Trueborn Demon, Demon Apostl
    - **Race/Class**: Trueborn Demon / Warlock
    - **Weapon**: Floating Grimoire of the Abyss
    - **Lore**: Oldest of the Demon Lords. His dreams foresee the future. Unstoppable when roused.
-2. **Lilith, Duchess of Crimson Allure**
-   - **Race/Class**: Succubus / Warlock
-   - **Weapon**: Crimson Heart Whip
-   - **Lore**: Legendary temptress and master strategist, absolute ruler of the Succubi. Highly devoted to Maou-sama.
+2. **Lilith, Duchess of Crimson Allure** (MOVED TO SSR)
 
 ---
 
@@ -62,10 +59,10 @@ Strictly utilizes the primary approved demon races: Trueborn Demon, Demon Apostl
    - **Race/Class**: Demon Apostle / Tactician
    - **Weapon**: Enchanted Bastard Sword
    - **Lore**: A master strategist who abandoned humanity out of pure disgust.
-9. **Shade, The Phantom Stalker**
-   - **Race/Class**: Beastkin / Ranger
-   - **Weapon**: Twin Shadow-Daggers
-   - **Lore**: A ghostly presence within the forests, striking from the shadows before her enemies even realize they are being hunted.
+9. **Shade, The Phantom Stalker** (Beastkin / Ranger) - *Weapon: Twin Shadow-Daggers*
+10. **Ignis Guard Captain** (Trueborn Demon / Vanguard) - *Weapon: Longsword*
+11. **Lilith, Duchess of Crimson Allure** (Succubus / Warlock) - *Weapon: Crimson Heart Whip*
+12. **Aquila, The Harpy Queen** (Harpy / Ranger) - *Weapon: Greatbow of Gales*
 
 ---
 
@@ -98,26 +95,25 @@ Strictly utilizes the primary approved demon races: Trueborn Demon, Demon Apostl
 ## Rare (R) — 20 Characters
 *Veteran commanders, the skilled vanguard.*
 
-1. **Ignis Guard Captain** (Trueborn Demon / Vanguard) - *Weapon: Longsword*
-2. **Frostbane Sniper** (Harpy / Ranger) - *Weapon: Longbow*
-3. **Heretic Priest** (Demon Apostle / Blood Sage) - *Weapon: Dark Tome*
-4. **Skeletal Warden** (Skeleton / Bastion) - *Weapon: Heavy Shield*
-5. **Wraith Executioner** (Undead / Executioner) - *Weapon: Executioner Axe*
-6. **Lunar Stalker** (Werewolf / Assassin) - *Weapon: Claws*
-7. **Hellfire Alchemist** (Demon Apostle / Support) - *Weapon: Exploding Flasks*
-8. **Abyssal Tactician** (Trueborn Demon / Tactician) - *Weapon: Command Baton*
-9. **Tomb Guardian** (Undead / Bastion) - *Weapon: Halberd*
-10. **Rune-Scarred Gladiator** (Demon Apostle / Vanguard) - *Weapon: Gladius*
-11. **Plague Doctor** (Undead / Blood Sage) - *Weapon: Syringe Polearm*
-12. **Feral Alley-Cat** (Beastkin / Assassin) - *Weapon: Claws & Daggers*
-13. **Bone Juggernaut** (Skeleton / Bastion) - *Weapon: Tower Shield*
-14. **Dusk Knight** (Demon Apostle / Vanguard) - *Weapon: Lance*
-15. **Vampiric Aristocrat** (Vampire / Warlock) - *Weapon: Rapier*
-16. **Lava-Bender** (Trueborn Demon / Support) - *Weapon: Magma Staff*
-17. **Bloodied Oracle** (Demon Apostle / Warlock) - *Weapon: Crystal Ball*
-18. **Wind Rider** (Harpy / Ranger) - *Weapon: Throwing Knives*
-19. **Howling Marauder** (Werewolf / Vanguard) - *Weapon: Club*
-20. **Charming Novice** (Succubus / Support) - *Weapon: Magic Hand-Mirror*
+1. **Frostbane Sniper** (Harpy / Ranger) - *Weapon: Longbow*
+2. **Heretic Priest** (Demon Apostle / Blood Sage) - *Weapon: Dark Tome*
+3. **Skeletal Warden** (Skeleton / Bastion) - *Weapon: Heavy Shield*
+4. **Wraith Executioner** (Undead / Executioner) - *Weapon: Executioner Axe*
+5. **Lunar Stalker** (Werewolf / Assassin) - *Weapon: Claws*
+6. **Hellfire Alchemist** (Demon Apostle / Support) - *Weapon: Exploding Flasks*
+7. **Abyssal Tactician** (Trueborn Demon / Tactician) - *Weapon: Command Baton*
+8. **Tomb Guardian** (Undead / Bastion) - *Weapon: Halberd*
+9. **Rune-Scarred Gladiator** (Demon Apostle / Vanguard) - *Weapon: Gladius*
+10. **Plague Doctor** (Undead / Blood Sage) - *Weapon: Syringe Polearm*
+11. **Feral Alley-Cat** (Beastkin / Assassin) - *Weapon: Claws & Daggers*
+12. **Bone Juggernaut** (Skeleton / Bastion) - *Weapon: Tower Shield*
+13. **Dusk Knight** (Demon Apostle / Vanguard) - *Weapon: Lance*
+14. **Vampiric Aristocrat** (Vampire / Warlock) - *Weapon: Rapier*
+15. **Lava-Bender** (Trueborn Demon / Support) - *Weapon: Magma Staff*
+16. **Bloodied Oracle** (Demon Apostle / Warlock) - *Weapon: Crystal Ball*
+17. **Wind Rider** (Harpy / Ranger) - *Weapon: Throwing Knives*
+18. **Howling Marauder** (Werewolf / Vanguard) - *Weapon: Club*
+19. **Charming Novice** (Succubus / Support) - *Weapon: Magic Hand-Mirror*
 
 ---
 
@@ -140,7 +136,7 @@ Strictly utilizes the primary approved demon races: Trueborn Demon, Demon Apostl
 ## Normal (N) / Common — 20 Characters
 *The rank and file of the kingdom's mighty army. Generally generic, wearing helmets or masks.*
 
-1. **Abyssal Grunt** (Trueborn Demon / Vanguard) - *Weapon: Spear*
+1. **Drakmora Infantry** (Trueborn Demon / Vanguard) - *Weapon: Spear*
 2. **Skeleton Militia** (Skeleton / Vanguard) - *Weapon: Rusty Sword*
 3. **Renegade Peasant** (Demonized Human / Vanguard) - *Weapon: Pitchfork*
 4. **Fledgling Succubus** (Succubus / Support) - *Weapon: Short Staff*

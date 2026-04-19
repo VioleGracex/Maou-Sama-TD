@@ -2,24 +2,26 @@
 **Rarity**: SSR
 **Race**: Harpy
 **Class**: Ranger
+**Weapon**: Greatbow of Gales
 
 ## Lore Fragment
 Ruler of the highest peaks, commands the storms with a flap of her wings.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Long flowing Emerald Green hair
-- **Eyes**: Violet
-- **Skin**: Onyx
-- **Nails**: Pointed claws
-- **Distinguishing Details**: Feathered wings along the arms, talon-like legs, feather hair ornaments.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Greatbow of Gales
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: violet amethyst roots, sleek slicked back hair
+- **Eyes**: narrowed cat-like green eyes
+- **Skin**: pale ivory skin
+- **Clothing / Armor**: Grey/Neon Cyan thick fur-lined gear, metal-reinforced boots, smooth unadorned surfaces
+- **Distinguishing Details**: harpy feathered wings, talon legs
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Greatbow of Gales (Blood Red, petrified ancient wood, dark rivets)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Greatbow of Gales
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Aquila, The Harpy Queen, Harpy Ranger, holding Greatbow of Gales. Long flowing Emerald Green hair, Violet eyes, Onyx skin, Pointed claws, Feathered wings along the arms, talon-like legs, feather hair ornaments.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Aquila, The Harpy Queen, Harpy Ranger, holding Greatbow of Gales. Long flowing Emerald Green hair, Violet eyes, Onyx skin, Pointed claws, Feathered wings along the arms, talon-like legs, feather hair ornaments.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Aquila, The Harpy Queen, Harpy Ranger, holding Greatbow of Gales. Long flowing Emerald Green hair, Violet eyes, Onyx skin, Pointed claws, Feathered wings along the arms, talon-like legs, feather hair ornaments.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Aquila, The Harpy Queen, Harpy Ranger, holding Greatbow of Gales. Long flowing Emerald Green hair, Violet eyes, Onyx skin, Pointed claws, Feathered wings along the arms, talon-like legs, feather hair ornaments.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Aquila, The Harpy Queen, Harpy Ranger. Holding Greatbow of Gales (Blood Red, petrified ancient wood, dark rivets). Hair: violet amethyst roots, sleek slicked back hair. Eyes: narrowed cat-like green eyes. Skin: pale ivory skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, smooth unadorned surfaces. Traits: harpy feathered wings, talon legs. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Aquila, The Harpy Queen, Harpy Ranger. Holding Greatbow of Gales (Blood Red, petrified ancient wood, dark rivets). Hair: violet amethyst roots, sleek slicked back hair. Eyes: narrowed cat-like green eyes. Skin: pale ivory skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, smooth unadorned surfaces. Traits: harpy feathered wings, talon legs. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Aquila, The Harpy Queen, Harpy Ranger. Holding Greatbow of Gales (Blood Red, petrified ancient wood, dark rivets). Hair: violet amethyst roots, sleek slicked back hair. Eyes: narrowed cat-like green eyes. Skin: pale ivory skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, smooth unadorned surfaces. Traits: harpy feathered wings, talon legs. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Aquila, The Harpy Queen, Harpy Ranger. Holding Greatbow of Gales (Blood Red, petrified ancient wood, dark rivets). Hair: violet amethyst roots, sleek slicked back hair. Eyes: narrowed cat-like green eyes. Skin: pale ivory skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, smooth unadorned surfaces. Traits: harpy feathered wings, talon legs. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

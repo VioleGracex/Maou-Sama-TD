@@ -2,24 +2,26 @@
 **Rarity**: R
 **Race**: Vampire
 **Class**: Warlock
+**Weapon**: Rapier
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of R.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Wild and untamed Snow White hair
-- **Eyes**: Abyssal Black
-- **Skin**: Porcelain
-- **Nails**: Polished red nails
-- **Distinguishing Details**: Prominent fangs, elongated ears, extremely pale skin.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Rapier
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: crimson red with black lowlights, high flowing ponytail
+- **Eyes**: metallic silver eyes
+- **Skin**: tanned lightly scarred skin
+- **Clothing / Armor**: Gold/Ruby heavy steel plate, reinforced cuirass, heavy gauntlets, smooth unadorned surfaces
+- **Distinguishing Details**: vampire fangs, pointed ears, pale skin
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Rapier (Demonic Purple, heavy studded iron)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Rapier
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Vampiric Aristocrat, Vampire Warlock, holding Rapier. Wild and untamed Snow White hair, Abyssal Black eyes, Porcelain skin, Polished red nails, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Vampiric Aristocrat, Vampire Warlock, holding Rapier. Wild and untamed Snow White hair, Abyssal Black eyes, Porcelain skin, Polished red nails, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Vampiric Aristocrat, Vampire Warlock, holding Rapier. Wild and untamed Snow White hair, Abyssal Black eyes, Porcelain skin, Polished red nails, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Vampiric Aristocrat, Vampire Warlock, holding Rapier. Wild and untamed Snow White hair, Abyssal Black eyes, Porcelain skin, Polished red nails, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Vampiric Aristocrat, Vampire Warlock. Holding Rapier (Demonic Purple, heavy studded iron). Hair: crimson red with black lowlights, high flowing ponytail. Eyes: metallic silver eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, smooth unadorned surfaces. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Vampiric Aristocrat, Vampire Warlock. Holding Rapier (Demonic Purple, heavy studded iron). Hair: crimson red with black lowlights, high flowing ponytail. Eyes: metallic silver eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, smooth unadorned surfaces. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Vampiric Aristocrat, Vampire Warlock. Holding Rapier (Demonic Purple, heavy studded iron). Hair: crimson red with black lowlights, high flowing ponytail. Eyes: metallic silver eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, smooth unadorned surfaces. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Vampiric Aristocrat, Vampire Warlock. Holding Rapier (Demonic Purple, heavy studded iron). Hair: crimson red with black lowlights, high flowing ponytail. Eyes: metallic silver eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, smooth unadorned surfaces. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

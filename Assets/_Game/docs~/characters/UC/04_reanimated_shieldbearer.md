@@ -2,24 +2,26 @@
 **Rarity**: UC
 **Race**: Undead
 **Class**: Bastion
+**Weapon**: Rotted Shield
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of UC.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Twin tails Crimson hair
-- **Eyes**: Silver
-- **Skin**: Pale
-- **Nails**: Reinforced metallic tips
-- **Distinguishing Details**: Exposed bone, stitched skin, hollow eyes, decaying form.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Rotted Shield
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: bald, no hair
+- **Eyes**: empty black eye sockets, piercing pinprick eyes
+- **Skin**: rotting pale ashen flesh
+- **Clothing / Armor**: Crimson/Gold heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces
+- **Distinguishing Details**: undead skeleton, exposed bone, stitched skin, sunken eyes
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Rotted Shield (Rusted Brown, dense dark steel)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Rotted Shield
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Reanimated Shieldbearer, Undead Bastion, holding Rotted Shield. Twin tails Crimson hair, Silver eyes, Pale skin, Reinforced metallic tips, Exposed bone, stitched skin, hollow eyes, decaying form.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Reanimated Shieldbearer, Undead Bastion, holding Rotted Shield. Twin tails Crimson hair, Silver eyes, Pale skin, Reinforced metallic tips, Exposed bone, stitched skin, hollow eyes, decaying form.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Reanimated Shieldbearer, Undead Bastion, holding Rotted Shield. Twin tails Crimson hair, Silver eyes, Pale skin, Reinforced metallic tips, Exposed bone, stitched skin, hollow eyes, decaying form.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Reanimated Shieldbearer, Undead Bastion, holding Rotted Shield. Twin tails Crimson hair, Silver eyes, Pale skin, Reinforced metallic tips, Exposed bone, stitched skin, hollow eyes, decaying form.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Reanimated Shieldbearer, Undead Bastion. Holding Rotted Shield (Rusted Brown, dense dark steel). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: rotting pale ashen flesh. Wearing attire: heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces. Traits: undead skeleton, exposed bone, stitched skin, sunken eyes. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Reanimated Shieldbearer, Undead Bastion. Holding Rotted Shield (Rusted Brown, dense dark steel). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: rotting pale ashen flesh. Wearing attire: heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces. Traits: undead skeleton, exposed bone, stitched skin, sunken eyes. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Reanimated Shieldbearer, Undead Bastion. Holding Rotted Shield (Rusted Brown, dense dark steel). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: rotting pale ashen flesh. Wearing attire: heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces. Traits: undead skeleton, exposed bone, stitched skin, sunken eyes. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Reanimated Shieldbearer, Undead Bastion. Holding Rotted Shield (Rusted Brown, dense dark steel). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: rotting pale ashen flesh. Wearing attire: heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces. Traits: undead skeleton, exposed bone, stitched skin, sunken eyes. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

@@ -2,24 +2,26 @@
 **Rarity**: UC
 **Race**: Demonized Human
 **Class**: Warlock
+**Weapon**: Wand
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of UC.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Long flowing Obsidian Black hair
-- **Eyes**: Violet
-- **Skin**: Deep Bronze
-- **Nails**: Clean and trim
-- **Distinguishing Details**: Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Wand
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: ashen grey and white, feral spiky hair
+- **Eyes**: metallic silver eyes
+- **Skin**: alabaster smooth skin
+- **Clothing / Armor**: Obsidian/Silver tight leather armor, asymmetric spiked pauldrons, heavily dented battle-scarred rusted
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Wand (Rusted Brown, mechanical brass alloys)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Wand
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Scorned Adept, Demonized Human Warlock, holding Wand. Long flowing Obsidian Black hair, Violet eyes, Deep Bronze skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Scorned Adept, Demonized Human Warlock, holding Wand. Long flowing Obsidian Black hair, Violet eyes, Deep Bronze skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Scorned Adept, Demonized Human Warlock, holding Wand. Long flowing Obsidian Black hair, Violet eyes, Deep Bronze skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Scorned Adept, Demonized Human Warlock, holding Wand. Long flowing Obsidian Black hair, Violet eyes, Deep Bronze skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Scorned Adept, Demonized Human Warlock. Holding Wand (Rusted Brown, mechanical brass alloys). Hair: ashen grey and white, feral spiky hair. Eyes: metallic silver eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, heavily dented battle-scarred rusted. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Scorned Adept, Demonized Human Warlock. Holding Wand (Rusted Brown, mechanical brass alloys). Hair: ashen grey and white, feral spiky hair. Eyes: metallic silver eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, heavily dented battle-scarred rusted. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Scorned Adept, Demonized Human Warlock. Holding Wand (Rusted Brown, mechanical brass alloys). Hair: ashen grey and white, feral spiky hair. Eyes: metallic silver eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, heavily dented battle-scarred rusted. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Scorned Adept, Demonized Human Warlock. Holding Wand (Rusted Brown, mechanical brass alloys). Hair: ashen grey and white, feral spiky hair. Eyes: metallic silver eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, heavily dented battle-scarred rusted. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

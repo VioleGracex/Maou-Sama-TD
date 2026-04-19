@@ -26,10 +26,10 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: a98245ed863a80241b030f041eb697d7, type: 3}
     Chibi: {fileID: 0}
     WaistUp: {fileID: 21300000, guid: a98245ed863a80241b030f041eb697d7, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: a98245ed863a80241b030f041eb697d7, type: 3}
     FullBodyCutout: {fileID: 0}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins:
   - SkinID: Base
     SkinThemeName: 

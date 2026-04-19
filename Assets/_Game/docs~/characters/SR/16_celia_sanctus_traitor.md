@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Demon Apostle
 **Class**: Blood Sage
+**Weapon**: Tainted Chalice
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Twin tails Silver hair
-- **Eyes**: Ice Blue
-- **Skin**: Porcelain
-- **Nails**: Natural
-- **Distinguishing Details**: Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Tainted Chalice
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: crimson red with black lowlights, straight shoulder-length blunt cut
+- **Eyes**: metallic silver eyes
+- **Skin**: tanned lightly scarred skin
+- **Clothing / Armor**: Midnight Blue/Violet boiled-leather chest piece, chainmail underlay, flawless geometric metal etchings
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Tainted Chalice (Blood Red, heavy studded iron)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Tainted Chalice
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Celia, Sanctus Traitor, Demon Apostle Blood Sage, holding Tainted Chalice. Twin tails Silver hair, Ice Blue eyes, Porcelain skin, Natural, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Celia, Sanctus Traitor, Demon Apostle Blood Sage, holding Tainted Chalice. Twin tails Silver hair, Ice Blue eyes, Porcelain skin, Natural, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Celia, Sanctus Traitor, Demon Apostle Blood Sage, holding Tainted Chalice. Twin tails Silver hair, Ice Blue eyes, Porcelain skin, Natural, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Celia, Sanctus Traitor, Demon Apostle Blood Sage, holding Tainted Chalice. Twin tails Silver hair, Ice Blue eyes, Porcelain skin, Natural, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Celia, Sanctus Traitor, Demon Apostle Blood Sage. Holding Tainted Chalice (Blood Red, heavy studded iron). Hair: crimson red with black lowlights, straight shoulder-length blunt cut. Eyes: metallic silver eyes. Skin: tanned lightly scarred skin. Wearing attire: boiled-leather chest piece, chainmail underlay, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Celia, Sanctus Traitor, Demon Apostle Blood Sage. Holding Tainted Chalice (Blood Red, heavy studded iron). Hair: crimson red with black lowlights, straight shoulder-length blunt cut. Eyes: metallic silver eyes. Skin: tanned lightly scarred skin. Wearing attire: boiled-leather chest piece, chainmail underlay, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Celia, Sanctus Traitor, Demon Apostle Blood Sage. Holding Tainted Chalice (Blood Red, heavy studded iron). Hair: crimson red with black lowlights, straight shoulder-length blunt cut. Eyes: metallic silver eyes. Skin: tanned lightly scarred skin. Wearing attire: boiled-leather chest piece, chainmail underlay, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Celia, Sanctus Traitor, Demon Apostle Blood Sage. Holding Tainted Chalice (Blood Red, heavy studded iron). Hair: crimson red with black lowlights, straight shoulder-length blunt cut. Eyes: metallic silver eyes. Skin: tanned lightly scarred skin. Wearing attire: boiled-leather chest piece, chainmail underlay, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

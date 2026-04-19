@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Undead
 **Class**: Assassin
+**Weapon**: Shadow Daggers
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Messy spikes Amethyst hair
-- **Eyes**: Ice Blue
-- **Skin**: Deep Bronze
-- **Nails**: Pointed claws
-- **Distinguishing Details**: Exposed bone, stitched skin, hollow eyes, decaying form.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Shadow Daggers
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: bald, no hair
+- **Eyes**: empty black eye sockets, piercing pinprick eyes
+- **Skin**: rotting pale ashen flesh
+- **Clothing / Armor**: Gold/Ruby thick fur-lined gear, metal-reinforced boots, covered in jagged spikes and scrawls
+- **Distinguishing Details**: undead skeleton, exposed bone, stitched skin, sunken eyes
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Shadow Daggers (Polished Silver, deadwood staff, dark gemstone)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Shadow Daggers
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Lucien, Phantom Operative, Undead Assassin, holding Shadow Daggers. Messy spikes Amethyst hair, Ice Blue eyes, Deep Bronze skin, Pointed claws, Exposed bone, stitched skin, hollow eyes, decaying form.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Lucien, Phantom Operative, Undead Assassin, holding Shadow Daggers. Messy spikes Amethyst hair, Ice Blue eyes, Deep Bronze skin, Pointed claws, Exposed bone, stitched skin, hollow eyes, decaying form.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Lucien, Phantom Operative, Undead Assassin, holding Shadow Daggers. Messy spikes Amethyst hair, Ice Blue eyes, Deep Bronze skin, Pointed claws, Exposed bone, stitched skin, hollow eyes, decaying form.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Lucien, Phantom Operative, Undead Assassin, holding Shadow Daggers. Messy spikes Amethyst hair, Ice Blue eyes, Deep Bronze skin, Pointed claws, Exposed bone, stitched skin, hollow eyes, decaying form.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Lucien, Phantom Operative, Undead Assassin. Holding Shadow Daggers (Polished Silver, deadwood staff, dark gemstone). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: rotting pale ashen flesh. Wearing attire: thick fur-lined gear, metal-reinforced boots, covered in jagged spikes and scrawls. Traits: undead skeleton, exposed bone, stitched skin, sunken eyes. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Lucien, Phantom Operative, Undead Assassin. Holding Shadow Daggers (Polished Silver, deadwood staff, dark gemstone). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: rotting pale ashen flesh. Wearing attire: thick fur-lined gear, metal-reinforced boots, covered in jagged spikes and scrawls. Traits: undead skeleton, exposed bone, stitched skin, sunken eyes. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Lucien, Phantom Operative, Undead Assassin. Holding Shadow Daggers (Polished Silver, deadwood staff, dark gemstone). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: rotting pale ashen flesh. Wearing attire: thick fur-lined gear, metal-reinforced boots, covered in jagged spikes and scrawls. Traits: undead skeleton, exposed bone, stitched skin, sunken eyes. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Lucien, Phantom Operative, Undead Assassin. Holding Shadow Daggers (Polished Silver, deadwood staff, dark gemstone). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: rotting pale ashen flesh. Wearing attire: thick fur-lined gear, metal-reinforced boots, covered in jagged spikes and scrawls. Traits: undead skeleton, exposed bone, stitched skin, sunken eyes. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

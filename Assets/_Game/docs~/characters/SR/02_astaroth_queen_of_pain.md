@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Succubus
 **Class**: Executioner
+**Weapon**: Spiked Chain
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Neatly braided Crimson hair
-- **Eyes**: Emerald
-- **Skin**: Crimson-tinted
-- **Nails**: Pointed claws
-- **Distinguishing Details**: Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Spiked Chain
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: violet amethyst roots, short asymmetric bob
+- **Eyes**: lifeless abyssal black eyes
+- **Skin**: alabaster smooth skin
+- **Clothing / Armor**: Crimson/Gold fine silk robes, long draping sleeves, polished with ornate floral etchings
+- **Distinguishing Details**: succubus horns, bat wings, heart tail
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Spiked Chain (Blood Red, mechanical brass alloys)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Spiked Chain
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Astaroth, Queen of Pain, Succubus Executioner, holding Spiked Chain. Neatly braided Crimson hair, Emerald eyes, Crimson-tinted skin, Pointed claws, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Astaroth, Queen of Pain, Succubus Executioner, holding Spiked Chain. Neatly braided Crimson hair, Emerald eyes, Crimson-tinted skin, Pointed claws, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Astaroth, Queen of Pain, Succubus Executioner, holding Spiked Chain. Neatly braided Crimson hair, Emerald eyes, Crimson-tinted skin, Pointed claws, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Astaroth, Queen of Pain, Succubus Executioner, holding Spiked Chain. Neatly braided Crimson hair, Emerald eyes, Crimson-tinted skin, Pointed claws, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Astaroth, Queen of Pain, Succubus Executioner. Holding Spiked Chain (Blood Red, mechanical brass alloys). Hair: violet amethyst roots, short asymmetric bob. Eyes: lifeless abyssal black eyes. Skin: alabaster smooth skin. Wearing attire: fine silk robes, long draping sleeves, polished with ornate floral etchings. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Astaroth, Queen of Pain, Succubus Executioner. Holding Spiked Chain (Blood Red, mechanical brass alloys). Hair: violet amethyst roots, short asymmetric bob. Eyes: lifeless abyssal black eyes. Skin: alabaster smooth skin. Wearing attire: fine silk robes, long draping sleeves, polished with ornate floral etchings. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Astaroth, Queen of Pain, Succubus Executioner. Holding Spiked Chain (Blood Red, mechanical brass alloys). Hair: violet amethyst roots, short asymmetric bob. Eyes: lifeless abyssal black eyes. Skin: alabaster smooth skin. Wearing attire: fine silk robes, long draping sleeves, polished with ornate floral etchings. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Astaroth, Queen of Pain, Succubus Executioner. Holding Spiked Chain (Blood Red, mechanical brass alloys). Hair: violet amethyst roots, short asymmetric bob. Eyes: lifeless abyssal black eyes. Skin: alabaster smooth skin. Wearing attire: fine silk robes, long draping sleeves, polished with ornate floral etchings. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

@@ -2,24 +2,26 @@
 **Rarity**: Common
 **Race**: Vampire
 **Class**: Assassin
+**Weapon**: Stiletto
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of Common.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Tied up in a ponytail Emerald Green hair
-- **Eyes**: Cat-like Green
-- **Skin**: Ashy Gray
-- **Nails**: Sharp black talons
-- **Distinguishing Details**: Prominent fangs, elongated ears, extremely pale skin.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Stiletto
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: obsidian black, faint purple sheen, long waving hair
+- **Eyes**: metallic silver eyes
+- **Skin**: pale ivory skin
+- **Clothing / Armor**: Midnight Blue/Violet heavy canvas mercenary gear, iron chest-plate, flawless geometric metal etchings
+- **Distinguishing Details**: vampire fangs, pointed ears, pale skin
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Stiletto (Polished Silver, dense dark steel)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Stiletto
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Lesser Vampire, Vampire Assassin, holding Stiletto. Tied up in a ponytail Emerald Green hair, Cat-like Green eyes, Ashy Gray skin, Sharp black talons, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Lesser Vampire, Vampire Assassin, holding Stiletto. Tied up in a ponytail Emerald Green hair, Cat-like Green eyes, Ashy Gray skin, Sharp black talons, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Lesser Vampire, Vampire Assassin, holding Stiletto. Tied up in a ponytail Emerald Green hair, Cat-like Green eyes, Ashy Gray skin, Sharp black talons, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Lesser Vampire, Vampire Assassin, holding Stiletto. Tied up in a ponytail Emerald Green hair, Cat-like Green eyes, Ashy Gray skin, Sharp black talons, Prominent fangs, elongated ears, extremely pale skin.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Lesser Vampire, Vampire Assassin. Holding Stiletto (Polished Silver, dense dark steel). Hair: obsidian black, faint purple sheen, long waving hair. Eyes: metallic silver eyes. Skin: pale ivory skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, flawless geometric metal etchings. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Lesser Vampire, Vampire Assassin. Holding Stiletto (Polished Silver, dense dark steel). Hair: obsidian black, faint purple sheen, long waving hair. Eyes: metallic silver eyes. Skin: pale ivory skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, flawless geometric metal etchings. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Lesser Vampire, Vampire Assassin. Holding Stiletto (Polished Silver, dense dark steel). Hair: obsidian black, faint purple sheen, long waving hair. Eyes: metallic silver eyes. Skin: pale ivory skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, flawless geometric metal etchings. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Lesser Vampire, Vampire Assassin. Holding Stiletto (Polished Silver, dense dark steel). Hair: obsidian black, faint purple sheen, long waving hair. Eyes: metallic silver eyes. Skin: pale ivory skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, flawless geometric metal etchings. Traits: vampire fangs, pointed ears, pale skin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

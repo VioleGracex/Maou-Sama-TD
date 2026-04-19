@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Lesser_Harpy_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 8fde1be2-f163-49de-b33f-888253ec9206
+  UniqueID: 66a59297-0123-4fff-b333-e9d423a1eddf
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -27,13 +27,13 @@ MonoBehaviour:
     Chibi: {fileID: 21300000, guid: 6df540751b555c311d60fb88d49261cc, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: 15d3595da68bf184aa8cacda58551ad0, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 1615fe37838959e4ca589f0aff4b87d7, type: 3}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 2
-  ButtonImageType: 0
+  CardSlotImageType: 4
+  ButtonImageType: 1
   Level: 1
   Experience: 0
   StarRating: 1

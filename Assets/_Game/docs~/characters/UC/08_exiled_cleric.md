@@ -2,24 +2,26 @@
 **Rarity**: UC
 **Race**: Demonized Human
 **Class**: Blood Sage
+**Weapon**: Broken Mace
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of UC.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Waist-length straight Rose Pink hair
-- **Eyes**: Cat-like Green
-- **Skin**: Sun-kissed
-- **Nails**: Clean and trim
-- **Distinguishing Details**: Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Broken Mace
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: rust red, messy twin tails
+- **Eyes**: pale yellow cat eyes
+- **Skin**: warm sun-kissed skin
+- **Clothing / Armor**: Crimson/Gold polished scale mail, tattered tabard, intricate runic scribes
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Broken Mace (Demonic Purple, mechanical brass alloys)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Broken Mace
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Exiled Cleric, Demonized Human Blood Sage, holding Broken Mace. Waist-length straight Rose Pink hair, Cat-like Green eyes, Sun-kissed skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Exiled Cleric, Demonized Human Blood Sage, holding Broken Mace. Waist-length straight Rose Pink hair, Cat-like Green eyes, Sun-kissed skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Exiled Cleric, Demonized Human Blood Sage, holding Broken Mace. Waist-length straight Rose Pink hair, Cat-like Green eyes, Sun-kissed skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Exiled Cleric, Demonized Human Blood Sage, holding Broken Mace. Waist-length straight Rose Pink hair, Cat-like Green eyes, Sun-kissed skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Exiled Cleric, Demonized Human Blood Sage. Holding Broken Mace (Demonic Purple, mechanical brass alloys). Hair: rust red, messy twin tails. Eyes: pale yellow cat eyes. Skin: warm sun-kissed skin. Wearing attire: polished scale mail, tattered tabard, intricate runic scribes. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Exiled Cleric, Demonized Human Blood Sage. Holding Broken Mace (Demonic Purple, mechanical brass alloys). Hair: rust red, messy twin tails. Eyes: pale yellow cat eyes. Skin: warm sun-kissed skin. Wearing attire: polished scale mail, tattered tabard, intricate runic scribes. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Exiled Cleric, Demonized Human Blood Sage. Holding Broken Mace (Demonic Purple, mechanical brass alloys). Hair: rust red, messy twin tails. Eyes: pale yellow cat eyes. Skin: warm sun-kissed skin. Wearing attire: polished scale mail, tattered tabard, intricate runic scribes. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Exiled Cleric, Demonized Human Blood Sage. Holding Broken Mace (Demonic Purple, mechanical brass alloys). Hair: rust red, messy twin tails. Eyes: pale yellow cat eyes. Skin: warm sun-kissed skin. Wearing attire: polished scale mail, tattered tabard, intricate runic scribes. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

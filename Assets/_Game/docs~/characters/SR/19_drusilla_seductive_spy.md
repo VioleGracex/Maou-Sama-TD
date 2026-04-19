@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Succubus
 **Class**: Assassin
+**Weapon**: Hidden Blades
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Long flowing Blonde hair
-- **Eyes**: Abyssal Black
-- **Skin**: Pale
-- **Nails**: Sharp black talons
-- **Distinguishing Details**: Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Hidden Blades
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: platinum blonde, straight shoulder-length blunt cut
+- **Eyes**: metallic silver eyes
+- **Skin**: copper weathered skin
+- **Clothing / Armor**: Green/Copper tight leather armor, asymmetric spiked pauldrons, covered in jagged spikes and scrawls
+- **Distinguishing Details**: succubus horns, bat wings, heart tail
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Hidden Blades (Ghostly Cyan, curved dark wood, intricate strings)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Hidden Blades
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Drusilla, Seductive Spy, Succubus Assassin, holding Hidden Blades. Long flowing Blonde hair, Abyssal Black eyes, Pale skin, Sharp black talons, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Drusilla, Seductive Spy, Succubus Assassin, holding Hidden Blades. Long flowing Blonde hair, Abyssal Black eyes, Pale skin, Sharp black talons, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Drusilla, Seductive Spy, Succubus Assassin, holding Hidden Blades. Long flowing Blonde hair, Abyssal Black eyes, Pale skin, Sharp black talons, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Drusilla, Seductive Spy, Succubus Assassin, holding Hidden Blades. Long flowing Blonde hair, Abyssal Black eyes, Pale skin, Sharp black talons, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Drusilla, Seductive Spy, Succubus Assassin. Holding Hidden Blades (Ghostly Cyan, curved dark wood, intricate strings). Hair: platinum blonde, straight shoulder-length blunt cut. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, covered in jagged spikes and scrawls. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Drusilla, Seductive Spy, Succubus Assassin. Holding Hidden Blades (Ghostly Cyan, curved dark wood, intricate strings). Hair: platinum blonde, straight shoulder-length blunt cut. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, covered in jagged spikes and scrawls. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Drusilla, Seductive Spy, Succubus Assassin. Holding Hidden Blades (Ghostly Cyan, curved dark wood, intricate strings). Hair: platinum blonde, straight shoulder-length blunt cut. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, covered in jagged spikes and scrawls. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Drusilla, Seductive Spy, Succubus Assassin. Holding Hidden Blades (Ghostly Cyan, curved dark wood, intricate strings). Hair: platinum blonde, straight shoulder-length blunt cut. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, covered in jagged spikes and scrawls. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

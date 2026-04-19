@@ -2,24 +2,26 @@
 **Rarity**: UC
 **Race**: Trueborn Demon
 **Class**: Vanguard
+**Weapon**: Flaming Fists
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of UC.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Tied up in a ponytail Obsidian Black hair
-- **Eyes**: Abyssal Black
-- **Skin**: Ashy Gray
-- **Nails**: Chipped and worn
-- **Distinguishing Details**: Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Flaming Fists
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: platinum blonde, short asymmetric bob
+- **Eyes**: icy blue eyes
+- **Skin**: tanned lightly scarred skin
+- **Clothing / Armor**: Gold/Ruby heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Flaming Fists (Polished Silver, curved dark wood, intricate strings)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Flaming Fists
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Ember Bruiser, Trueborn Demon Vanguard, holding Flaming Fists. Tied up in a ponytail Obsidian Black hair, Abyssal Black eyes, Ashy Gray skin, Chipped and worn, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Ember Bruiser, Trueborn Demon Vanguard, holding Flaming Fists. Tied up in a ponytail Obsidian Black hair, Abyssal Black eyes, Ashy Gray skin, Chipped and worn, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Ember Bruiser, Trueborn Demon Vanguard, holding Flaming Fists. Tied up in a ponytail Obsidian Black hair, Abyssal Black eyes, Ashy Gray skin, Chipped and worn, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Ember Bruiser, Trueborn Demon Vanguard, holding Flaming Fists. Tied up in a ponytail Obsidian Black hair, Abyssal Black eyes, Ashy Gray skin, Chipped and worn, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Ember Bruiser, Trueborn Demon Vanguard. Holding Flaming Fists (Polished Silver, curved dark wood, intricate strings). Hair: platinum blonde, short asymmetric bob. Eyes: icy blue eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Ember Bruiser, Trueborn Demon Vanguard. Holding Flaming Fists (Polished Silver, curved dark wood, intricate strings). Hair: platinum blonde, short asymmetric bob. Eyes: icy blue eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Ember Bruiser, Trueborn Demon Vanguard. Holding Flaming Fists (Polished Silver, curved dark wood, intricate strings). Hair: platinum blonde, short asymmetric bob. Eyes: icy blue eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Ember Bruiser, Trueborn Demon Vanguard. Holding Flaming Fists (Polished Silver, curved dark wood, intricate strings). Hair: platinum blonde, short asymmetric bob. Eyes: icy blue eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, smooth unadorned surfaces. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

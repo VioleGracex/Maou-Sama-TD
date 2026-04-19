@@ -2,24 +2,26 @@
 **Rarity**: Common
 **Race**: Demonized Human
 **Class**: Vanguard
+**Weapon**: Dented Sword
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of Common.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Shoulder-length Crimson hair
-- **Eyes**: Glowing Yellow
-- **Skin**: Porcelain
-- **Nails**: Silver-painted nails
-- **Distinguishing Details**: Blunt nub horns barely visible through hair (newly demonized), no tail, natural nails
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Dented Sword
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: pure silver, wild untamed mane
+- **Eyes**: heterochromia red and blue eyes
+- **Skin**: pale porcelain skin
+- **Clothing / Armor**: Green/Copper sleek assassin's cloth, dark hood, covered in jagged spikes and scrawls
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Dented Sword (Demonic Purple, thick blackened bronze)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Dented Sword
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Forsaken Conscript, Demonized Human Vanguard, holding Dented Sword. Shoulder-length Crimson hair, Glowing Yellow eyes, Porcelain skin, Silver-painted nails, Blunt nub horns barely visible through hair (newly demonized), no tail, natural nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Forsaken Conscript, Demonized Human Vanguard, holding Dented Sword. Shoulder-length Crimson hair, Glowing Yellow eyes, Porcelain skin, Silver-painted nails, Blunt nub horns barely visible through hair (newly demonized), no tail, natural nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Forsaken Conscript, Demonized Human Vanguard, holding Dented Sword. Shoulder-length Crimson hair, Glowing Yellow eyes, Porcelain skin, Silver-painted nails, Blunt nub horns barely visible through hair (newly demonized), no tail, natural nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Forsaken Conscript, Demonized Human Vanguard, holding Dented Sword. Shoulder-length Crimson hair, Glowing Yellow eyes, Porcelain skin, Silver-painted nails, Blunt nub horns barely visible through hair (newly demonized), no tail, natural nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Forsaken Conscript, Demonized Human Vanguard. Holding Dented Sword (Demonic Purple, thick blackened bronze). Hair: pure silver, wild untamed mane. Eyes: heterochromia red and blue eyes. Skin: pale porcelain skin. Wearing attire: sleek assassin's cloth, dark hood, covered in jagged spikes and scrawls. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Forsaken Conscript, Demonized Human Vanguard. Holding Dented Sword (Demonic Purple, thick blackened bronze). Hair: pure silver, wild untamed mane. Eyes: heterochromia red and blue eyes. Skin: pale porcelain skin. Wearing attire: sleek assassin's cloth, dark hood, covered in jagged spikes and scrawls. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Forsaken Conscript, Demonized Human Vanguard. Holding Dented Sword (Demonic Purple, thick blackened bronze). Hair: pure silver, wild untamed mane. Eyes: heterochromia red and blue eyes. Skin: pale porcelain skin. Wearing attire: sleek assassin's cloth, dark hood, covered in jagged spikes and scrawls. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Forsaken Conscript, Demonized Human Vanguard. Holding Dented Sword (Demonic Purple, thick blackened bronze). Hair: pure silver, wild untamed mane. Eyes: heterochromia red and blue eyes. Skin: pale porcelain skin. Wearing attire: sleek assassin's cloth, dark hood, covered in jagged spikes and scrawls. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

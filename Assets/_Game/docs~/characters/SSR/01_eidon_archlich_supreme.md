@@ -2,24 +2,26 @@
 **Rarity**: SSR
 **Race**: Lich
 **Class**: Warlock
+**Weapon**: Staff of the Damned
 
 ## Lore Fragment
 Prehistoric king-lich ruling the dead north.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Slicked back Blonde hair
-- **Eyes**: Gold
-- **Skin**: Onyx
-- **Nails**: Beastly claws
-- **Distinguishing Details**: Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Staff of the Damned
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: bald, no hair
+- **Eyes**: empty black eye sockets, piercing pinprick eyes
+- **Skin**: bare white skeleton dry bones, no flesh
+- **Clothing / Armor**: Obsidian/Silver heavy canvas mercenary gear, iron chest-plate, covered in jagged spikes and scrawls
+- **Distinguishing Details**: lich, skull face, dark aura, bandages
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Staff of the Damned (Dark Iron, thick blackened bronze)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Staff of the Damned
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Eidon, Archlich Supreme, Lich Warlock, holding Staff of the Damned. Slicked back Blonde hair, Gold eyes, Onyx skin, Beastly claws, Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Eidon, Archlich Supreme, Lich Warlock, holding Staff of the Damned. Slicked back Blonde hair, Gold eyes, Onyx skin, Beastly claws, Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Eidon, Archlich Supreme, Lich Warlock, holding Staff of the Damned. Slicked back Blonde hair, Gold eyes, Onyx skin, Beastly claws, Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Eidon, Archlich Supreme, Lich Warlock, holding Staff of the Damned. Slicked back Blonde hair, Gold eyes, Onyx skin, Beastly claws, Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Eidon, Archlich Supreme, Lich Warlock. Holding Staff of the Damned (Dark Iron, thick blackened bronze). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: bare white skeleton dry bones, no flesh. Wearing attire: heavy canvas mercenary gear, iron chest-plate, covered in jagged spikes and scrawls. Traits: lich, skull face, dark aura, bandages. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Eidon, Archlich Supreme, Lich Warlock. Holding Staff of the Damned (Dark Iron, thick blackened bronze). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: bare white skeleton dry bones, no flesh. Wearing attire: heavy canvas mercenary gear, iron chest-plate, covered in jagged spikes and scrawls. Traits: lich, skull face, dark aura, bandages. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Eidon, Archlich Supreme, Lich Warlock. Holding Staff of the Damned (Dark Iron, thick blackened bronze). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: bare white skeleton dry bones, no flesh. Wearing attire: heavy canvas mercenary gear, iron chest-plate, covered in jagged spikes and scrawls. Traits: lich, skull face, dark aura, bandages. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Eidon, Archlich Supreme, Lich Warlock. Holding Staff of the Damned (Dark Iron, thick blackened bronze). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: bare white skeleton dry bones, no flesh. Wearing attire: heavy canvas mercenary gear, iron chest-plate, covered in jagged spikes and scrawls. Traits: lich, skull face, dark aura, bandages. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

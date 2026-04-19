@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Corrupt_Acolyte_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 78b05ea5-2c60-42d5-b1fd-7b575e6262db
+  UniqueID: d47ebcf5-9ba3-4eb7-8da6-c1696d910da2
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -24,16 +24,16 @@ MonoBehaviour:
   UnitTitle: 
   BaseSkin:
     Avatar: {fileID: 0}
-    Chibi: {fileID: 21300000, guid: 2bd695c82cf3c477c729211d8666f70e, type: 3}
+    Chibi: {fileID: 21300000, guid: cdd3c46d0921b7748b40d1fdbe4d1f7b, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: f860be69cb5a9e0459c286399c1660b4, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 9946c990c69636e448f1f7853d625045, type: 3}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 2
-  ButtonImageType: 0
+  CardSlotImageType: 4
+  ButtonImageType: 1
   Level: 1
   Experience: 0
   StarRating: 1

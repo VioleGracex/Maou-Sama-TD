@@ -2,24 +2,26 @@
 **Rarity**: Common
 **Race**: Demonized Human
 **Class**: Blood Sage
+**Weapon**: Wooden Wand
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of Common.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Short bob Rose Pink hair
-- **Eyes**: Silver
-- **Skin**: Crimson-tinted
-- **Nails**: Sharp black talons
-- **Distinguishing Details**: Short curved horns, spade-tipped tail, black fingernails with faint runic tattoos on forearms
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Wooden Wand
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: sapphire blue, intricately braided hair
+- **Eyes**: solid gold eyes
+- **Skin**: alabaster smooth skin
+- **Clothing / Armor**: Bone/Rust tight leather armor, asymmetric spiked pauldrons, flawless geometric metal etchings
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Wooden Wand (Polished Silver, sharp obsidian volcanic glass)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Wooden Wand
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Corrupt Acolyte, Demonized Human Blood Sage, holding Wooden Wand. Short bob Rose Pink hair, Silver eyes, Crimson-tinted skin, Sharp black talons, Short curved horns, spade-tipped tail, black fingernails with faint runic tattoos on forearms.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Corrupt Acolyte, Demonized Human Blood Sage, holding Wooden Wand. Short bob Rose Pink hair, Silver eyes, Crimson-tinted skin, Sharp black talons, Short curved horns, spade-tipped tail, black fingernails with faint runic tattoos on forearms.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Corrupt Acolyte, Demonized Human Blood Sage, holding Wooden Wand. Short bob Rose Pink hair, Silver eyes, Crimson-tinted skin, Sharp black talons, Short curved horns, spade-tipped tail, black fingernails with faint runic tattoos on forearms.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Corrupt Acolyte, Demonized Human Blood Sage, holding Wooden Wand. Short bob Rose Pink hair, Silver eyes, Crimson-tinted skin, Sharp black talons, Short curved horns, spade-tipped tail, black fingernails with faint runic tattoos on forearms.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Corrupt Acolyte, Demonized Human Blood Sage. Holding Wooden Wand (Polished Silver, sharp obsidian volcanic glass). Hair: sapphire blue, intricately braided hair. Eyes: solid gold eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Corrupt Acolyte, Demonized Human Blood Sage. Holding Wooden Wand (Polished Silver, sharp obsidian volcanic glass). Hair: sapphire blue, intricately braided hair. Eyes: solid gold eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Corrupt Acolyte, Demonized Human Blood Sage. Holding Wooden Wand (Polished Silver, sharp obsidian volcanic glass). Hair: sapphire blue, intricately braided hair. Eyes: solid gold eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Corrupt Acolyte, Demonized Human Blood Sage. Holding Wooden Wand (Polished Silver, sharp obsidian volcanic glass). Hair: sapphire blue, intricately braided hair. Eyes: solid gold eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

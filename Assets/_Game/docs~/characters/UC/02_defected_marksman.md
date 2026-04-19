@@ -2,24 +2,26 @@
 **Rarity**: UC
 **Race**: Demonized Human
 **Class**: Ranger
+**Weapon**: Crossbow
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of UC.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Neatly braided Silver hair
-- **Eyes**: Cat-like Green
-- **Skin**: Porcelain
-- **Nails**: Sharp black talons
-- **Distinguishing Details**: Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Crossbow
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: violet amethyst roots, waist-length silky hair
+- **Eyes**: metallic silver eyes
+- **Skin**: fair smooth skin
+- **Clothing / Armor**: Crimson/Gold heavy steel plate, reinforced cuirass, heavy gauntlets, polished with ornate floral etchings
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Crossbow (Ghostly Cyan, ornate glittering gold and steel)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Crossbow
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Defected Marksman, Demonized Human Ranger, holding Crossbow. Neatly braided Silver hair, Cat-like Green eyes, Porcelain skin, Sharp black talons, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Defected Marksman, Demonized Human Ranger, holding Crossbow. Neatly braided Silver hair, Cat-like Green eyes, Porcelain skin, Sharp black talons, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Defected Marksman, Demonized Human Ranger, holding Crossbow. Neatly braided Silver hair, Cat-like Green eyes, Porcelain skin, Sharp black talons, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Defected Marksman, Demonized Human Ranger, holding Crossbow. Neatly braided Silver hair, Cat-like Green eyes, Porcelain skin, Sharp black talons, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Defected Marksman, Demonized Human Ranger. Holding Crossbow (Ghostly Cyan, ornate glittering gold and steel). Hair: violet amethyst roots, waist-length silky hair. Eyes: metallic silver eyes. Skin: fair smooth skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, polished with ornate floral etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Defected Marksman, Demonized Human Ranger. Holding Crossbow (Ghostly Cyan, ornate glittering gold and steel). Hair: violet amethyst roots, waist-length silky hair. Eyes: metallic silver eyes. Skin: fair smooth skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, polished with ornate floral etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Defected Marksman, Demonized Human Ranger. Holding Crossbow (Ghostly Cyan, ornate glittering gold and steel). Hair: violet amethyst roots, waist-length silky hair. Eyes: metallic silver eyes. Skin: fair smooth skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, polished with ornate floral etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Defected Marksman, Demonized Human Ranger. Holding Crossbow (Ghostly Cyan, ornate glittering gold and steel). Hair: violet amethyst roots, waist-length silky hair. Eyes: metallic silver eyes. Skin: fair smooth skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, polished with ornate floral etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

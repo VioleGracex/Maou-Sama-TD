@@ -1,14 +1,14 @@
 {
   "dependencies": {
     "com.coplaydev.unity-mcp": {
-      "version": "https://github.com/VioleGracex/unity-mcp.git?path=/MCPForUnity#beta",
+      "version": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.0.2",
         "com.unity.test-framework": "1.1.31"
       },
-      "hash": "318144dbac3a6a6161fb65369e765ac5e7b98a62"
+      "hash": "73eb27aeccfa8e0676eaf3304136e9b85953d913"
     },
     "com.unity.2d.animation": {
       "version": "13.0.4",

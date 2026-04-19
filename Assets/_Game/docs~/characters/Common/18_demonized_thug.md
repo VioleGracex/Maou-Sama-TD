@@ -2,24 +2,26 @@
 **Rarity**: Common
 **Race**: Demonized Human
 **Class**: Vanguard
+**Weapon**: Club
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of Common.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Tied up in a ponytail Obsidian Black hair
-- **Eyes**: Ruby Red
-- **Skin**: Deep Bronze
-- **Nails**: Elegant purple polish
-- **Distinguishing Details**: Thick stubby horns (brute strength, broader demonization), no tail, ragged black nails
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Club
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: violet amethyst roots, feral spiky hair
+- **Eyes**: pale yellow cat eyes
+- **Skin**: alabaster smooth skin
+- **Clothing / Armor**: Purple/Void Black tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Club (Ghostly Cyan, deadwood staff, dark gemstone)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Club
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Demonized Thug, Demonized Human Vanguard, holding Club. Tied up in a ponytail Obsidian Black hair, Ruby Red eyes, Deep Bronze skin, Elegant purple polish, Thick stubby horns (brute strength, broader demonization), no tail, ragged black nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Demonized Thug, Demonized Human Vanguard, holding Club. Tied up in a ponytail Obsidian Black hair, Ruby Red eyes, Deep Bronze skin, Elegant purple polish, Thick stubby horns (brute strength, broader demonization), no tail, ragged black nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Demonized Thug, Demonized Human Vanguard, holding Club. Tied up in a ponytail Obsidian Black hair, Ruby Red eyes, Deep Bronze skin, Elegant purple polish, Thick stubby horns (brute strength, broader demonization), no tail, ragged black nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Demonized Thug, Demonized Human Vanguard, holding Club. Tied up in a ponytail Obsidian Black hair, Ruby Red eyes, Deep Bronze skin, Elegant purple polish, Thick stubby horns (brute strength, broader demonization), no tail, ragged black nails.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Demonized Thug, Demonized Human Vanguard. Holding Club (Ghostly Cyan, deadwood staff, dark gemstone). Hair: violet amethyst roots, feral spiky hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Demonized Thug, Demonized Human Vanguard. Holding Club (Ghostly Cyan, deadwood staff, dark gemstone). Hair: violet amethyst roots, feral spiky hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Demonized Thug, Demonized Human Vanguard. Holding Club (Ghostly Cyan, deadwood staff, dark gemstone). Hair: violet amethyst roots, feral spiky hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Demonized Thug, Demonized Human Vanguard. Holding Club (Ghostly Cyan, deadwood staff, dark gemstone). Hair: violet amethyst roots, feral spiky hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

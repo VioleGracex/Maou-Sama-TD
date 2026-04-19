@@ -2,24 +2,26 @@
 **Rarity**: R
 **Race**: Succubus
 **Class**: Support
+**Weapon**: Magic Hand-Mirror
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of R.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Waist-length straight Emerald Green hair
-- **Eyes**: Abyssal Black
-- **Skin**: Porcelain
-- **Nails**: Silver-painted nails
-- **Distinguishing Details**: Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Magic Hand-Mirror
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: violet amethyst roots, intricately braided hair
+- **Eyes**: predatory emerald eyes
+- **Skin**: warm beige skin
+- **Clothing / Armor**: Grey/Neon Cyan tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces
+- **Distinguishing Details**: succubus horns, bat wings, heart tail
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Magic Hand-Mirror (Blood Red, curved dark wood, intricate strings)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Magic Hand-Mirror
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Charming Novice, Succubus Support, holding Magic Hand-Mirror. Waist-length straight Emerald Green hair, Abyssal Black eyes, Porcelain skin, Silver-painted nails, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Charming Novice, Succubus Support, holding Magic Hand-Mirror. Waist-length straight Emerald Green hair, Abyssal Black eyes, Porcelain skin, Silver-painted nails, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Charming Novice, Succubus Support, holding Magic Hand-Mirror. Waist-length straight Emerald Green hair, Abyssal Black eyes, Porcelain skin, Silver-painted nails, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Charming Novice, Succubus Support, holding Magic Hand-Mirror. Waist-length straight Emerald Green hair, Abyssal Black eyes, Porcelain skin, Silver-painted nails, Curved horns, leathery bat wings, heart-shaped tail tip, alluring aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Charming Novice, Succubus Support. Holding Magic Hand-Mirror (Blood Red, curved dark wood, intricate strings). Hair: violet amethyst roots, intricately braided hair. Eyes: predatory emerald eyes. Skin: warm beige skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Charming Novice, Succubus Support. Holding Magic Hand-Mirror (Blood Red, curved dark wood, intricate strings). Hair: violet amethyst roots, intricately braided hair. Eyes: predatory emerald eyes. Skin: warm beige skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Charming Novice, Succubus Support. Holding Magic Hand-Mirror (Blood Red, curved dark wood, intricate strings). Hair: violet amethyst roots, intricately braided hair. Eyes: predatory emerald eyes. Skin: warm beige skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Charming Novice, Succubus Support. Holding Magic Hand-Mirror (Blood Red, curved dark wood, intricate strings). Hair: violet amethyst roots, intricately braided hair. Eyes: predatory emerald eyes. Skin: warm beige skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, smooth unadorned surfaces. Traits: succubus horns, bat wings, heart tail. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

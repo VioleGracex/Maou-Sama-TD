@@ -2,24 +2,26 @@
 **Rarity**: R
 **Race**: Harpy
 **Class**: Ranger
+**Weapon**: Longbow
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of R.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Shoulder-length Snow White hair
-- **Eyes**: Gold
-- **Skin**: Copper
-- **Nails**: Clean and trim
-- **Distinguishing Details**: Feathered wings along the arms, talon-like legs, feather hair ornaments.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Longbow
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: crimson red with black lowlights, high flowing ponytail
+- **Eyes**: solid gold eyes
+- **Skin**: tanned lightly scarred skin
+- **Clothing / Armor**: Grey/Neon Cyan heavy canvas mercenary gear, iron chest-plate, polished with ornate floral etchings
+- **Distinguishing Details**: harpy feathered wings, talon legs
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Longbow (Dark Iron, light-weight silver metal, dark wood)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Longbow
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Frostbane Sniper, Harpy Ranger, holding Longbow. Shoulder-length Snow White hair, Gold eyes, Copper skin, Clean and trim, Feathered wings along the arms, talon-like legs, feather hair ornaments.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Frostbane Sniper, Harpy Ranger, holding Longbow. Shoulder-length Snow White hair, Gold eyes, Copper skin, Clean and trim, Feathered wings along the arms, talon-like legs, feather hair ornaments.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Frostbane Sniper, Harpy Ranger, holding Longbow. Shoulder-length Snow White hair, Gold eyes, Copper skin, Clean and trim, Feathered wings along the arms, talon-like legs, feather hair ornaments.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Frostbane Sniper, Harpy Ranger, holding Longbow. Shoulder-length Snow White hair, Gold eyes, Copper skin, Clean and trim, Feathered wings along the arms, talon-like legs, feather hair ornaments.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Frostbane Sniper, Harpy Ranger. Holding Longbow (Dark Iron, light-weight silver metal, dark wood). Hair: crimson red with black lowlights, high flowing ponytail. Eyes: solid gold eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, polished with ornate floral etchings. Traits: harpy feathered wings, talon legs. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Frostbane Sniper, Harpy Ranger. Holding Longbow (Dark Iron, light-weight silver metal, dark wood). Hair: crimson red with black lowlights, high flowing ponytail. Eyes: solid gold eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, polished with ornate floral etchings. Traits: harpy feathered wings, talon legs. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Frostbane Sniper, Harpy Ranger. Holding Longbow (Dark Iron, light-weight silver metal, dark wood). Hair: crimson red with black lowlights, high flowing ponytail. Eyes: solid gold eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, polished with ornate floral etchings. Traits: harpy feathered wings, talon legs. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Frostbane Sniper, Harpy Ranger. Holding Longbow (Dark Iron, light-weight silver metal, dark wood). Hair: crimson red with black lowlights, high flowing ponytail. Eyes: solid gold eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy canvas mercenary gear, iron chest-plate, polished with ornate floral etchings. Traits: harpy feathered wings, talon legs. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

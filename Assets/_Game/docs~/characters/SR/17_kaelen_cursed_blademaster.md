@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Demon Apostle
 **Class**: Executioner
+**Weapon**: Cursed Nodachi
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Twin tails Rose Pink hair
-- **Eyes**: Ruby Red
-- **Skin**: Porcelain
-- **Nails**: Sharp black talons
-- **Distinguishing Details**: Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Cursed Nodachi
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: rust red, long waving hair
+- **Eyes**: metallic silver eyes
+- **Skin**: copper weathered skin
+- **Clothing / Armor**: Purple/Void Black sleek assassin's cloth, dark hood, intricate runic scribes
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Cursed Nodachi (Ghostly Cyan, sharp obsidian volcanic glass)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Cursed Nodachi
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Kaelen, Cursed Blademaster, Demon Apostle Executioner, holding Cursed Nodachi. Twin tails Rose Pink hair, Ruby Red eyes, Porcelain skin, Sharp black talons, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Kaelen, Cursed Blademaster, Demon Apostle Executioner, holding Cursed Nodachi. Twin tails Rose Pink hair, Ruby Red eyes, Porcelain skin, Sharp black talons, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Kaelen, Cursed Blademaster, Demon Apostle Executioner, holding Cursed Nodachi. Twin tails Rose Pink hair, Ruby Red eyes, Porcelain skin, Sharp black talons, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Kaelen, Cursed Blademaster, Demon Apostle Executioner, holding Cursed Nodachi. Twin tails Rose Pink hair, Ruby Red eyes, Porcelain skin, Sharp black talons, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Kaelen, Cursed Blademaster, Demon Apostle Executioner. Holding Cursed Nodachi (Ghostly Cyan, sharp obsidian volcanic glass). Hair: rust red, long waving hair. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: sleek assassin's cloth, dark hood, intricate runic scribes. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Kaelen, Cursed Blademaster, Demon Apostle Executioner. Holding Cursed Nodachi (Ghostly Cyan, sharp obsidian volcanic glass). Hair: rust red, long waving hair. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: sleek assassin's cloth, dark hood, intricate runic scribes. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Kaelen, Cursed Blademaster, Demon Apostle Executioner. Holding Cursed Nodachi (Ghostly Cyan, sharp obsidian volcanic glass). Hair: rust red, long waving hair. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: sleek assassin's cloth, dark hood, intricate runic scribes. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Kaelen, Cursed Blademaster, Demon Apostle Executioner. Holding Cursed Nodachi (Ghostly Cyan, sharp obsidian volcanic glass). Hair: rust red, long waving hair. Eyes: metallic silver eyes. Skin: copper weathered skin. Wearing attire: sleek assassin's cloth, dark hood, intricate runic scribes. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

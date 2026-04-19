@@ -61,7 +61,7 @@ File,Name,Rarity,Class,Base HP,Base ATK,Base DEF,Range,Final HP,Final ATK,Final 
 11_cursed_bandit.md,Cursed Bandit,Common,Assassin,800,100,15,1,800,100,15,470
 15_lesser_vampire.md,Lesser Vampire,Common,Assassin,800,100,15,1,800,100,15,470
 20_feral_ghoul.md,Feral Ghoul,Common,Executioner,800,100,15,1,800,100,15,470
-01_abyssal_grunt.md,Abyssal Grunt,Common,Vanguard,1500,60,30,1,1500,60,30,462
+01_abyssal_grunt.md,Drakmora Infantry,Common,Vanguard,1500,60,30,1,1500,60,30,462
 02_skeleton_militia.md,Skeleton Militia,Common,Vanguard,1500,60,30,1,1500,60,30,462
 03_renegade_peasant.md,Renegade Peasant,Common,Vanguard,1500,60,30,1,1500,60,30,462
 08_forsaken_conscript.md,Forsaken Conscript,Common,Vanguard,1500,60,30,1,1500,60,30,462

@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Demon Apostle
 **Class**: Warlock
+**Weapon**: Corrupted Censer
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Shoulder-length Obsidian Black hair
-- **Eyes**: Emerald
-- **Skin**: Sun-kissed
-- **Nails**: Clean and trim
-- **Distinguishing Details**: Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Corrupted Censer
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: obsidian black, faint purple sheen, long waving hair
+- **Eyes**: heterochromia red and blue eyes
+- **Skin**: tanned lightly scarred skin
+- **Clothing / Armor**: Midnight Blue/Violet heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Corrupted Censer (Dark Iron, curved dark wood, intricate strings)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Corrupted Censer
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Azazel, Ruined Choirboy, Demon Apostle Warlock, holding Corrupted Censer. Shoulder-length Obsidian Black hair, Emerald eyes, Sun-kissed skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Azazel, Ruined Choirboy, Demon Apostle Warlock, holding Corrupted Censer. Shoulder-length Obsidian Black hair, Emerald eyes, Sun-kissed skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Azazel, Ruined Choirboy, Demon Apostle Warlock, holding Corrupted Censer. Shoulder-length Obsidian Black hair, Emerald eyes, Sun-kissed skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Azazel, Ruined Choirboy, Demon Apostle Warlock, holding Corrupted Censer. Shoulder-length Obsidian Black hair, Emerald eyes, Sun-kissed skin, Clean and trim, Prominent demonic horns, spade-tipped tail, subtle glowing runic tattoos.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Azazel, Ruined Choirboy, Demon Apostle Warlock. Holding Corrupted Censer (Dark Iron, curved dark wood, intricate strings). Hair: obsidian black, faint purple sheen, long waving hair. Eyes: heterochromia red and blue eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Azazel, Ruined Choirboy, Demon Apostle Warlock. Holding Corrupted Censer (Dark Iron, curved dark wood, intricate strings). Hair: obsidian black, faint purple sheen, long waving hair. Eyes: heterochromia red and blue eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Azazel, Ruined Choirboy, Demon Apostle Warlock. Holding Corrupted Censer (Dark Iron, curved dark wood, intricate strings). Hair: obsidian black, faint purple sheen, long waving hair. Eyes: heterochromia red and blue eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Azazel, Ruined Choirboy, Demon Apostle Warlock. Holding Corrupted Censer (Dark Iron, curved dark wood, intricate strings). Hair: obsidian black, faint purple sheen, long waving hair. Eyes: heterochromia red and blue eyes. Skin: tanned lightly scarred skin. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

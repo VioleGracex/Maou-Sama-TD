@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Apprentice_Cultist_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 18702022-26de-435a-8fa5-38d41919a915
+  UniqueID: a85c7f2b-4104-45dd-9c3a-2e0ba01b5eea
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -27,13 +27,13 @@ MonoBehaviour:
     Chibi: {fileID: 21300000, guid: bdf992bb48ce34f292f6ab0cb2a88e54, type: 3}
     WaistUp: {fileID: 0}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: 975b48572838f5140b03991deda50b5b, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 36852f8065f81f845b7404cf2d470913, type: 3}
     AnimatorController: {fileID: 0}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 2
-  ButtonImageType: 0
+  CardSlotImageType: 4
+  ButtonImageType: 1
   Level: 1
   Experience: 0
   StarRating: 1

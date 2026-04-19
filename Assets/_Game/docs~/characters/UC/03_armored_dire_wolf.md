@@ -2,24 +2,26 @@
 **Rarity**: UC
 **Race**: Werewolf
 **Class**: Vanguard
+**Weapon**: Bite/Armor Spikes
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of UC.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Neatly braided Amethyst hair
-- **Eyes**: Emerald
-- **Skin**: Porcelain
-- **Nails**: Pointed claws
-- **Distinguishing Details**: Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Bite/Armor Spikes
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: pure silver, wild untamed mane
+- **Eyes**: predatory emerald eyes
+- **Skin**: tanned lightly scarred skin
+- **Clothing / Armor**: Grey/Neon Cyan tight leather armor, asymmetric spiked pauldrons, polished with ornate floral etchings
+- **Distinguishing Details**: wolf ears, bushy tail, sharp teeth, beastkin
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Bite/Armor Spikes (Dark Iron, thick blackened bronze)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Bite/Armor Spikes
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Armored Dire-Wolf, Werewolf Vanguard, holding Bite/Armor Spikes. Neatly braided Amethyst hair, Emerald eyes, Porcelain skin, Pointed claws, Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Armored Dire-Wolf, Werewolf Vanguard, holding Bite/Armor Spikes. Neatly braided Amethyst hair, Emerald eyes, Porcelain skin, Pointed claws, Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Armored Dire-Wolf, Werewolf Vanguard, holding Bite/Armor Spikes. Neatly braided Amethyst hair, Emerald eyes, Porcelain skin, Pointed claws, Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Armored Dire-Wolf, Werewolf Vanguard, holding Bite/Armor Spikes. Neatly braided Amethyst hair, Emerald eyes, Porcelain skin, Pointed claws, Fluffy wolf ears, thick bushy tail, sharp teeth, primal aura.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Armored Dire-Wolf, Werewolf Vanguard. Holding Bite/Armor Spikes (Dark Iron, thick blackened bronze). Hair: pure silver, wild untamed mane. Eyes: predatory emerald eyes. Skin: tanned lightly scarred skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, polished with ornate floral etchings. Traits: wolf ears, bushy tail, sharp teeth, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Armored Dire-Wolf, Werewolf Vanguard. Holding Bite/Armor Spikes (Dark Iron, thick blackened bronze). Hair: pure silver, wild untamed mane. Eyes: predatory emerald eyes. Skin: tanned lightly scarred skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, polished with ornate floral etchings. Traits: wolf ears, bushy tail, sharp teeth, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Armored Dire-Wolf, Werewolf Vanguard. Holding Bite/Armor Spikes (Dark Iron, thick blackened bronze). Hair: pure silver, wild untamed mane. Eyes: predatory emerald eyes. Skin: tanned lightly scarred skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, polished with ornate floral etchings. Traits: wolf ears, bushy tail, sharp teeth, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Armored Dire-Wolf, Werewolf Vanguard. Holding Bite/Armor Spikes (Dark Iron, thick blackened bronze). Hair: pure silver, wild untamed mane. Eyes: predatory emerald eyes. Skin: tanned lightly scarred skin. Wearing attire: tight leather armor, asymmetric spiked pauldrons, polished with ornate floral etchings. Traits: wolf ears, bushy tail, sharp teeth, beastkin. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

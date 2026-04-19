@@ -2,24 +2,26 @@
 **Rarity**: Common
 **Race**: Demonized Human
 **Class**: Ranger
+**Weapon**: Hunting Bow
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of Common.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Messy spikes Crimson hair
-- **Eyes**: Silver
-- **Skin**: Alabaster
-- **Nails**: Natural
-- **Distinguishing Details**: Thin tapered horns swept back, no tail, faint tattoo lines on shoulders
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Hunting Bow
+- **Gender**: male
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: pure silver, messy twin tails
+- **Eyes**: predatory emerald eyes
+- **Skin**: warm beige skin
+- **Clothing / Armor**: Purple/Void Black bone-carved macabre armor, covered in jagged spikes and scrawls
+- **Distinguishing Details**: demon horns, runic tattoos
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Hunting Bow (Rusted Brown, heavy studded iron)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: male
 - **Weapon**: Hunting Bow
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Outcast Archer, Demonized Human Ranger, holding Hunting Bow. Messy spikes Crimson hair, Silver eyes, Alabaster skin, Natural, Thin tapered horns swept back, no tail, faint tattoo lines on shoulders.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Outcast Archer, Demonized Human Ranger, holding Hunting Bow. Messy spikes Crimson hair, Silver eyes, Alabaster skin, Natural, Thin tapered horns swept back, no tail, faint tattoo lines on shoulders.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Outcast Archer, Demonized Human Ranger, holding Hunting Bow. Messy spikes Crimson hair, Silver eyes, Alabaster skin, Natural, Thin tapered horns swept back, no tail, faint tattoo lines on shoulders.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Outcast Archer, Demonized Human Ranger, holding Hunting Bow. Messy spikes Crimson hair, Silver eyes, Alabaster skin, Natural, Thin tapered horns swept back, no tail, faint tattoo lines on shoulders.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Outcast Archer, Demonized Human Ranger. Holding Hunting Bow (Rusted Brown, heavy studded iron). Hair: pure silver, messy twin tails. Eyes: predatory emerald eyes. Skin: warm beige skin. Wearing attire: bone-carved macabre armor, covered in jagged spikes and scrawls. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Outcast Archer, Demonized Human Ranger. Holding Hunting Bow (Rusted Brown, heavy studded iron). Hair: pure silver, messy twin tails. Eyes: predatory emerald eyes. Skin: warm beige skin. Wearing attire: bone-carved macabre armor, covered in jagged spikes and scrawls. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Outcast Archer, Demonized Human Ranger. Holding Hunting Bow (Rusted Brown, heavy studded iron). Hair: pure silver, messy twin tails. Eyes: predatory emerald eyes. Skin: warm beige skin. Wearing attire: bone-carved macabre armor, covered in jagged spikes and scrawls. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Outcast Archer, Demonized Human Ranger. Holding Hunting Bow (Rusted Brown, heavy studded iron). Hair: pure silver, messy twin tails. Eyes: predatory emerald eyes. Skin: warm beige skin. Wearing attire: bone-carved macabre armor, covered in jagged spikes and scrawls. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

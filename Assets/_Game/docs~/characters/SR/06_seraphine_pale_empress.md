@@ -2,24 +2,26 @@
 **Rarity**: SR
 **Race**: Lich
 **Class**: Tactician
+**Weapon**: Skull-topped Scepter
 
 ## Lore Fragment
 A loyal combatant in the Maou's forces holding the rank of SR.
 
 ## Visual Identity
-- **Build**: Canonical normal proportions, Ufotable/Fate Series anime style
-- **Hair**: Shoulder-length Amethyst hair
-- **Eyes**: Abyssal Black
-- **Skin**: Dusk
-- **Nails**: Pointed claws
-- **Distinguishing Details**: Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.
-- **Style**: High fantasy armor, red and black accents
-- **Weapon**: Skull-topped Scepter
+- **Gender**: female
+- **Build**: Normal canonical proportions, detailed figure.
+- **Hair**: bald, no hair
+- **Eyes**: empty black eye sockets, piercing pinprick eyes
+- **Skin**: bare white skeleton dry bones, no flesh
+- **Clothing / Armor**: Midnight Blue/Violet heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls
+- **Distinguishing Details**: lich, skull face, dark aura, bandages
+- **Style**: High fantasy dark-themed.
+- **Weapon Details**: Skull-topped Scepter (Blood Red, deadwood staff, dark gemstone)
 
 ## AI Generation & Prompting
-- **Gender**: Any
+- **Gender**: female
 - **Weapon**: Skull-topped Scepter
-- **General / Normal Art (Any Aspect Ratio)**: Ufotable anime style, high detail. Seraphine, Pale Empress, Lich Tactician, holding Skull-topped Scepter. Shoulder-length Amethyst hair, Abyssal Black eyes, Dusk skin, Pointed claws, Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Sprite / Portrait (3:4)**: Character portrait focus, white background, standalone character design, 3:4 aspect ratio. Seraphine, Pale Empress, Lich Tactician, holding Skull-topped Scepter. Shoulder-length Amethyst hair, Abyssal Black eyes, Dusk skin, Pointed claws, Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, standalone character design, cute big head small body chibi proportions, looking left, no shadow, full entire body fully in frame uncropped. Seraphine, Pale Empress, Lich Tactician, holding Skull-topped Scepter. Shoulder-length Amethyst hair, Abyssal Black eyes, Dusk skin, Pointed claws, Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
-- **Splash Art (16:9)**: Dynamic action pose, full background, masterpiece composition, 16:9 aspect ratio. Seraphine, Pale Empress, Lich Tactician, holding Skull-topped Scepter. Shoulder-length Amethyst hair, Abyssal Black eyes, Dusk skin, Pointed claws, Skeletal features, glowing socket eyes, floating magical aura, decaying bandages.. Elite fantasy character, highly detailed armor, vivid colors, red and black accents, anime style, 8k resolution, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, female, Seraphine, Pale Empress, Lich Tactician. Holding Skull-topped Scepter (Blood Red, deadwood staff, dark gemstone). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: bare white skeleton dry bones, no flesh. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls. Traits: lich, skull face, dark aura, bandages. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, female, Seraphine, Pale Empress, Lich Tactician. Holding Skull-topped Scepter (Blood Red, deadwood staff, dark gemstone). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: bare white skeleton dry bones, no flesh. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls. Traits: lich, skull face, dark aura, bandages. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, female, Seraphine, Pale Empress, Lich Tactician. Holding Skull-topped Scepter (Blood Red, deadwood staff, dark gemstone). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: bare white skeleton dry bones, no flesh. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls. Traits: lich, skull face, dark aura, bandages. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, female, Seraphine, Pale Empress, Lich Tactician. Holding Skull-topped Scepter (Blood Red, deadwood staff, dark gemstone). Hair: bald, no hair. Eyes: empty black eye sockets, piercing pinprick eyes. Skin: bare white skeleton dry bones, no flesh. Wearing attire: heavy steel plate, reinforced cuirass, heavy gauntlets, covered in jagged spikes and scrawls. Traits: lich, skull face, dark aura, bandages. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.

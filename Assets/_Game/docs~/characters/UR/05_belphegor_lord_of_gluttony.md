@@ -1,27 +1,27 @@
-# Vassal: Belphegor Lord of Gluttony
+# Vassal: Belphegor, Lord of Gluttony
 **Rarity**: UR
-**Race**: Demon
+**Race**: Abyssal Singularity
 **Class**: Tank
-**Weapon**: Devouring Maw
+**Weapon**: The World-Eater's Maw
 
 ## Lore Fragment
-A very powerful and ancient combatant of the Maou's forces.
+The Devouring Void. She represents a hunger that is not of the flesh, but of the soul. She is a walking singularity, consuming all magic and light that dares to approach her.
 
 ## Visual Identity
-- **Gender**: male
-- **Build**: Normal canonical proportions, detailed figure.
-- **Hair**: rose pink, feral spiky hair
-- **Eyes**: pale yellow cat eyes
-- **Skin**: alabaster smooth skin
-- **Clothing / Armor**: Purple/Void Black polished scale mail, tattered tabard, heavily dented battle-scarred rusted
-- **Distinguishing Details**: demon horns, runic tattoos
+- **Gender**: female
+- **Build**: Imposing and immovable godlike presence.
+- **Hair**: rose pink, long feral hair that flows towards a gravity point at her back
+- **Eyes**: pale yellow cat eyes, glowing with a hunger that spans dimensions
+- **Skin**: alabaster smooth skin, flawless
+- **Clothing / Armor**: Regal plate armor made of solid dark-matter, silver trim, surrounded by a clean swirling vortex of gravity energy
+- **Distinguishing Details**: a clean black-hole halo behind her head, a silhouette that slightly warps the light around it, supreme gluttonous deity presence
 - **Style**: High fantasy dark-themed.
-- **Weapon Details**: Devouring Maw (Blood Red, mechanical brass alloys)
+- **Weapon Details**: The World-Eater's Maw (A massive shield made of compressed neutron star material)
 
 ## AI Generation & Prompting
-- **Gender**: male
-- **Weapon**: Devouring Maw
-- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Belphegor Lord of Gluttony, Demon Tank. Holding Devouring Maw (Blood Red, mechanical brass alloys). Hair: rose pink, feral spiky hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: polished scale mail, tattered tabard, heavily dented battle-scarred rusted. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Belphegor Lord of Gluttony, Demon Tank. Holding Devouring Maw (Blood Red, mechanical brass alloys). Hair: rose pink, feral spiky hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: polished scale mail, tattered tabard, heavily dented battle-scarred rusted. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Belphegor Lord of Gluttony, Demon Tank. Holding Devouring Maw (Blood Red, mechanical brass alloys). Hair: rose pink, feral spiky hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: polished scale mail, tattered tabard, heavily dented battle-scarred rusted. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Belphegor Lord of Gluttony, Demon Tank. Holding Devouring Maw (Blood Red, mechanical brass alloys). Hair: rose pink, feral spiky hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: polished scale mail, tattered tabard, heavily dented battle-scarred rusted. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Gender**: female
+- **Weapon**: The World-Eater's Maw
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, female, Belphegor Lord of Gluttony, supreme omnipotent deity, Abyssal Singularity Tank. Immovable and massive presence. Holding The World-Eater's Maw shield. Hair: rose pink, long feral hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: regal dark-matter armor with silver trim. Traits: clean gravity vortex, black-hole halo, supreme gluttonous godlike presence. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, female, Belphegor Lord of Gluttony, supreme omnipotent deity, Abyssal Singularity Tank. Immovable and massive presence. Holding The World-Eater's Maw shield. Hair: rose pink, long feral hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: regal dark-matter armor with silver trim. Traits: clean gravity vortex, black-hole halo, supreme gluttonous godlike presence. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, female, Belphegor Lord of Gluttony, supreme omnipotent deity, Abyssal Singularity Tank. Immovable and massive presence. Holding The World-Eater's Maw shield. Hair: rose pink, long feral hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: regal dark-matter armor with silver trim. Traits: clean gravity vortex, black-hole halo, supreme gluttonous godlike presence. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, female, Belphegor Lord of Gluttony, supreme omnipotent deity, Abyssal Singularity Tank. Immovable and massive presence. Holding The World-Eater's Maw shield. Hair: rose pink, long feral hair. Eyes: pale yellow cat eyes. Skin: alabaster smooth skin. Wearing attire: regal dark-matter armor with silver trim. Traits: clean gravity vortex, black-hole halo, supreme gluttonous godlike presence. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.

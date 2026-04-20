@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
+  m_Name: Char_Balthazar_Lord_Of_Sloth_UnitData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
+  useDefaultInspector: 0
+  UniqueID: 9fb6bb04-3959-41fc-9a73-0c66d1be03e0
+  CalculatedStats:
+    MaxHp: 0
+    Attack: 0
+    Defense: 0
+    ClassIcon: {fileID: 0}
+    ClassName: 
+  UnitName: Balthazar
+  UnitTitle: Lord Of Sloth
+  BriefDescription: The Dreamweaver.
+  LoreEntries:
+  - Title: Origin
+    Content: The Dreamweaver. He who commands the space between waking and sleep.
+      His silence is a weapon that can unmake empires, and his apathy is a shield
+      that turns aside any blow.
+  BaseSkin:
+    Avatar: {fileID: 21300000, guid: 9c112a9cf50b91840a3f490e33844a9b, type: 3}
+    Chibi: {fileID: 21300000, guid: b15659fdfbce0a84996cae1229372c7c, type: 3}
+    WaistUp: {fileID: 21300000, guid: 371e8bc70519eb143a8804c49faa9449, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: 9a0b0c1c2eac0844f9057c50117580da, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 9c112a9cf50b91840a3f490e33844a9b, type: 3}
+    AnimatorController: {fileID: 0}
+  StarAdvancementVisuals: []
+  Skins: []
+  _equippedSkinID: 
+  CardSlotImageType: 2
+  ButtonImageType: 0
+  Level: 1
+  Experience: 0
+  StarRating: 1
+  Amity: 0
+  SkillLevel: 1
+  BaseStatMultiplier: 1
+  AcquisitionDate: 0
+  Rarity: 5
+  Class: 4
+  AttackPattern: 0
+  AttackType: 0
+  DamageType: 0
+  DeploymentCost: 10
+  BlockCount: 1
+  CustomPatternOffsets: []
+  MaxHp: 100
+  AttackPower: 10
+  AttackInterval: 1
+  Defense: 0
+  Resistance: 0
+  RespawnTime: 5
+  Range: 1
+  MaxCharge: 100
+  ChargePerSecond: 5
+  ChargePerAttack: 10
+  UltimateDamageResistance: 0
+  PassiveSkill: {fileID: 0}
+  ActiveSkill: {fileID: 0}
+  UltimateSkill: {fileID: 0}
+  AscensionNodes: []
+  _viableTiles: 
+  _unlockedSkinIDs: []

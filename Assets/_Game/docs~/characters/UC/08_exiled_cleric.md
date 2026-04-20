@@ -1,4 +1,4 @@
-# Vassal: Exiled Cleric
+# Vassal: Elowen (Exiled Cleric)
 **Rarity**: UC
 **Race**: Demonized Human
 **Class**: Blood Sage

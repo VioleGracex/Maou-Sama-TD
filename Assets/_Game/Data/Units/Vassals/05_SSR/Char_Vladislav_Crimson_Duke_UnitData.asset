@@ -20,8 +20,12 @@ MonoBehaviour:
     Defense: 0
     ClassIcon: {fileID: 0}
     ClassName: 
-  UnitName: Vladislav Crimson Duke
-  UnitTitle: 
+  UnitName: Vladislav
+  UnitTitle: Crimson Duke
+  BriefDescription: The progenitor of the vampire courts in Drakmora.
+  LoreEntries:
+  - Title: Origin
+    Content: The progenitor of the vampire courts in Drakmora.
   BaseSkin:
     Avatar: {fileID: 0}
     Chibi: {fileID: 21300000, guid: 87bd304f8f7736640a43ddd01b307813, type: 3}

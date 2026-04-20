@@ -1,4 +1,4 @@
-# Vassal: Shadow Stalker
+# Vassal: Viona (Shadow Stalker)
 **Rarity**: UC
 **Race**: Trueborn Demon
 **Class**: Assassin

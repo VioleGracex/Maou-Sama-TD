@@ -20,8 +20,12 @@ MonoBehaviour:
     Defense: 0
     ClassIcon: {fileID: 0}
     ClassName: 
-  UnitName: Drusilla Seductive Spy
-  UnitTitle: 
+  UnitName: Drusilla
+  UnitTitle: Seductive Spy
+  BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
+  LoreEntries:
+  - Title: Origin
+    Content: A loyal combatant in the Maou's forces holding the rank of SR.
   BaseSkin:
     Avatar: {fileID: 0}
     Chibi: {fileID: 21300000, guid: a61dd358624fd734a8bd7fc82c24b7af, type: 3}

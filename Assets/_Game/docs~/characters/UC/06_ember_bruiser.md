@@ -1,4 +1,4 @@
-# Vassal: Ember Bruiser
+# Vassal: Fyr (Ember Bruiser)
 **Rarity**: UC
 **Race**: Trueborn Demon
 **Class**: Vanguard

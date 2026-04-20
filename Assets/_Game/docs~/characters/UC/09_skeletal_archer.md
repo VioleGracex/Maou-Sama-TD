@@ -1,4 +1,4 @@
-# Vassal: Skeletal Archer
+# Vassal: Korr (Skeletal Archer)
 **Rarity**: UC
 **Race**: Skeleton
 **Class**: Ranger

@@ -20,8 +20,12 @@ MonoBehaviour:
     Defense: 0
     ClassIcon: {fileID: 0}
     ClassName: 
-  UnitName: Zephyra Storm Bound Duchess
-  UnitTitle: 
+  UnitName: Zephyra
+  UnitTitle: Storm Bound Duchess
+  BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
+  LoreEntries:
+  - Title: Origin
+    Content: A loyal combatant in the Maou's forces holding the rank of SR.
   BaseSkin:
     Avatar: {fileID: 0}
     Chibi: {fileID: 21300000, guid: 2a63bd54d6417744ab33bd08cba7c7d9, type: 3}

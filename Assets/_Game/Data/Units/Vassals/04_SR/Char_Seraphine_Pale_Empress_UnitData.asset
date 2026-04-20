@@ -20,8 +20,12 @@ MonoBehaviour:
     Defense: 0
     ClassIcon: {fileID: 0}
     ClassName: 
-  UnitName: Seraphine Pale Empress
-  UnitTitle: 
+  UnitName: Seraphine
+  UnitTitle: Pale Empress
+  BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
+  LoreEntries:
+  - Title: Origin
+    Content: A loyal combatant in the Maou's forces holding the rank of SR.
   BaseSkin:
     Avatar: {fileID: 0}
     Chibi: {fileID: 21300000, guid: cdaa675b0dc1ce649b711a0af0e30c8b, type: 3}

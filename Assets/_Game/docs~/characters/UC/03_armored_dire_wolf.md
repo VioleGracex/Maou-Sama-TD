@@ -1,4 +1,4 @@
-# Vassal: Armored Dire-Wolf
+# Vassal: Ulf (Armored Dire-Wolf)
 **Rarity**: UC
 **Race**: Werewolf
 **Class**: Vanguard

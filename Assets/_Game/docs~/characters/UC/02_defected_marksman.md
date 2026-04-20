@@ -1,4 +1,4 @@
-# Vassal: Defected Marksman
+# Vassal: Callum (Defected Marksman)
 **Rarity**: UC
 **Race**: Demonized Human
 **Class**: Ranger

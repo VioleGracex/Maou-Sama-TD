@@ -1,4 +1,4 @@
-# Vassal: Feline Scout
+# Vassal: Tika (Feline Scout)
 **Rarity**: UC
 **Race**: Beastkin
 **Class**: Assassin

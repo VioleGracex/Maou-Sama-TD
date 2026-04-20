@@ -22,6 +22,12 @@ MonoBehaviour:
     ClassName: Warlock
   UnitName: Lilith
   UnitTitle: Matriarch of Lust
+  BriefDescription: Legendary temptress and master strategist, absolute ruler of
+    the Succubi.
+  LoreEntries:
+  - Title: Origin
+    Content: Legendary temptress and master strategist, absolute ruler of the Succubi.
+      Highly devoted to Maou-sama.
   BaseSkin:
     Avatar: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
     Chibi: {fileID: 21300000, guid: f446520f4c8860b48bfaacf1dc42c71e, type: 3}

@@ -20,8 +20,12 @@ MonoBehaviour:
     Defense: 0
     ClassIcon: {fileID: 0}
     ClassName: 
-  UnitName: Eidon Archlich Supreme
-  UnitTitle: 
+  UnitName: Eidon
+  UnitTitle: Archlich Supreme
+  BriefDescription: Prehistoric king-lich ruling the dead north.
+  LoreEntries:
+  - Title: Origin
+    Content: Prehistoric king-lich ruling the dead north.
   BaseSkin:
     Avatar: {fileID: 0}
     Chibi: {fileID: 21300000, guid: b94beb58691e59042906cbf2672d45cb, type: 3}

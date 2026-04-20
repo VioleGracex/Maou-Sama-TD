@@ -20,8 +20,12 @@ MonoBehaviour:
     Defense: 0
     ClassIcon: {fileID: 0}
     ClassName: 
-  UnitName: Kaelen Cursed Blademaster
-  UnitTitle: 
+  UnitName: Kaelen
+  UnitTitle: Cursed Blademaster
+  BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
+  LoreEntries:
+  - Title: Origin
+    Content: A loyal combatant in the Maou's forces holding the rank of SR.
   BaseSkin:
     Avatar: {fileID: 0}
     Chibi: {fileID: 21300000, guid: 53b1030d7d4d2e8409fa55a4eaa9b462, type: 3}

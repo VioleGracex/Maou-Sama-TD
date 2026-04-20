@@ -2,26 +2,26 @@
 **Rarity**: UR
 **Race**: Trueborn Demon
 **Class**: Warlock
-**Weapon**: Floating Grimoire of the Abyss
+**Weapon**: The Slumbering Tome
 
 ## Lore Fragment
-Oldest of the Demon Lords. His dreams foresee the future. Unstoppable when roused.
+The Dreamweaver. He who commands the space between waking and sleep. His silence is a weapon that can unmake empires, and his apathy is a shield that turns aside any blow.
 
 ## Visual Identity
 - **Gender**: male
-- **Build**: Normal canonical proportions, detailed figure.
-- **Hair**: rust red, waist-length silky hair
-- **Eyes**: hypnotic violet eyes
-- **Skin**: pale porcelain skin
-- **Clothing / Armor**: Bone/Rust thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings
-- **Distinguishing Details**: demon horns, runic tattoos
+- **Build**: Majestic and calm godlike presence, levitating slightly.
+- **Hair**: rust red, waist-length silky hair that flows gently
+- **Eyes**: serene silver eyes, calm and ancient
+- **Skin**: pale porcelain skin, flawless
+- **Clothing / Armor**: Ethereal starlight weave robes in deep indigo, silver runic jewelry that glows softly, no heavy armor
+- **Distinguishing Details**: levitating seated, a faint shimmering aura of silver dust, supreme godlike presence of absolute calm
 - **Style**: High fantasy dark-themed.
-- **Weapon Details**: Floating Grimoire of the Abyss (Blood Red, heavy studded iron)
+- **Weapon Details**: The Slumbering Tome (A massive floating book bound in ancient leather and silver chains)
 
 ## AI Generation & Prompting
 - **Gender**: male
-- **Weapon**: Floating Grimoire of the Abyss
-- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Balthazar, Lord of Sloth, Trueborn Demon Warlock. Holding Floating Grimoire of the Abyss (Blood Red, heavy studded iron). Hair: rust red, waist-length silky hair. Eyes: hypnotic violet eyes. Skin: pale porcelain skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Balthazar, Lord of Sloth, Trueborn Demon Warlock. Holding Floating Grimoire of the Abyss (Blood Red, heavy studded iron). Hair: rust red, waist-length silky hair. Eyes: hypnotic violet eyes. Skin: pale porcelain skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Balthazar, Lord of Sloth, Trueborn Demon Warlock. Holding Floating Grimoire of the Abyss (Blood Red, heavy studded iron). Hair: rust red, waist-length silky hair. Eyes: hypnotic violet eyes. Skin: pale porcelain skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Balthazar, Lord of Sloth, Trueborn Demon Warlock. Holding Floating Grimoire of the Abyss (Blood Red, heavy studded iron). Hair: rust red, waist-length silky hair. Eyes: hypnotic violet eyes. Skin: pale porcelain skin. Wearing attire: thick fur-lined gear, metal-reinforced boots, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Weapon**: The Slumbering Tome
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, male, Balthazar Lord of Sloth, supreme omnipotent deity, Trueborn Demon Warlock. Levitating slightly. Holding a massive floating book bound in ancient leather and silver chains. Hair: rust red, long silky hair. Eyes: serene silver eyes. Skin: pale porcelain skin. Wearing attire: ethereal indigo starlight robes, silver runic jewelry. Traits: faint silver shimmering aura, supreme godlike presence of calm. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, male, Balthazar Lord of Sloth, supreme omnipotent deity, Trueborn Demon Warlock. Levitating slightly. Holding a massive floating book bound in ancient leather and silver chains. Hair: rust red, long silky hair. Eyes: serene silver eyes. Skin: pale porcelain skin. Wearing attire: ethereal indigo starlight robes, silver runic jewelry. Traits: faint silver shimmering aura, supreme godlike presence of calm. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, male, Balthazar Lord of Sloth, supreme omnipotent deity, Trueborn Demon Warlock. Levitating slightly. Holding a massive floating book bound in ancient leather and silver chains. Hair: rust red, long silky hair. Eyes: serene silver eyes. Skin: pale porcelain skin. Wearing attire: ethereal indigo starlight robes, silver runic jewelry. Traits: faint silver shimmering aura, supreme godlike presence of calm. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, male, Balthazar Lord of Sloth, supreme omnipotent deity, Trueborn Demon Warlock. Levitating slightly. Holding a massive floating book bound in ancient leather and silver chains. Hair: rust red, long silky hair. Eyes: serene silver eyes. Skin: pale porcelain skin. Wearing attire: ethereal indigo starlight robes, silver runic jewelry. Traits: faint silver shimmering aura, supreme godlike presence of calm. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.

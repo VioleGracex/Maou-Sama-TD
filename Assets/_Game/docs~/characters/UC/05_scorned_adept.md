@@ -1,4 +1,4 @@
-# Vassal: Scorned Adept
+# Vassal: Xylia (Scorned Adept)
 **Rarity**: UC
 **Race**: Demonized Human
 **Class**: Warlock

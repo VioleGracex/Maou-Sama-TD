@@ -1,4 +1,4 @@
-# Vassal: Reanimated Shieldbearer
+# Vassal: Tarkus (Reanimated Shieldbearer)
 **Rarity**: UC
 **Race**: Undead
 **Class**: Bastion

@@ -1,27 +1,27 @@
-# Vassal: Lucifer Lord of Pride
+# Vassal: Lucifer, Lord of Pride
 **Rarity**: UR
-**Race**: Demon
+**Race**: Fallen Seraph
 **Class**: Vanguard
 **Weapon**: Morningstar of Pride
 
 ## Lore Fragment
-A very powerful and ancient combatant of the Maou's forces.
+The Fallen Morning Star. He bowed to no one, and now even the heavens tremble at his name. His pride is the anvil upon which reality breaks.
 
 ## Visual Identity
 - **Gender**: male
-- **Build**: Normal canonical proportions, detailed figure.
-- **Hair**: rust red, messy twin tails
-- **Eyes**: intense ruby eyes, slit pupils
-- **Skin**: warm sun-kissed skin
-- **Clothing / Armor**: Bone/Rust sleek assassin's cloth, dark hood, flawless geometric metal etchings
-- **Distinguishing Details**: demon horns, runic tattoos
+- **Build**: Majestic and arrogant godlike presence, levitating majestically.
+- **Hair**: rust red, flowing elegantly as if in a divine wind
+- **Eyes**: intense ruby eyes, piercing and proud
+- **Skin**: warm sun-kissed skin, radiant
+- **Clothing / Armor**: Regal obsidian plate armor with liquid gold filigree, ethereal high-collar capes, clean geometric gold etchings
+- **Distinguishing Details**: six majestic seraphim wings of black fire with crisp edges, a blinding white celestial halo, levitating, supreme arrogant deity presence
 - **Style**: High fantasy dark-themed.
-- **Weapon Details**: Morningstar of Pride (Ghostly Cyan, deadwood staff, dark gemstone)
+- **Weapon Details**: Morningstar of Pride (A massive celestial mace made of abyssal glass and glowing gold)
 
 ## AI Generation & Prompting
 - **Gender**: male
 - **Weapon**: Morningstar of Pride
-- **General / Normal Art (Any Aspect Ratio)**: standalone design, no shadow, no glow, male, Lucifer Lord of Pride, Demon Vanguard. Holding Morningstar of Pride (Ghostly Cyan, deadwood staff, dark gemstone). Hair: rust red, messy twin tails. Eyes: intense ruby eyes, slit pupils. Skin: warm sun-kissed skin. Wearing attire: sleek assassin's cloth, dark hood, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, no shadow, no glow, male, Lucifer Lord of Pride, Demon Vanguard. Holding Morningstar of Pride (Ghostly Cyan, deadwood staff, dark gemstone). Hair: rust red, messy twin tails. Eyes: intense ruby eyes, slit pupils. Skin: warm sun-kissed skin. Wearing attire: sleek assassin's cloth, dark hood, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, no shadow, no glow, male, Lucifer Lord of Pride, Demon Vanguard. Holding Morningstar of Pride (Ghostly Cyan, deadwood staff, dark gemstone). Hair: rust red, messy twin tails. Eyes: intense ruby eyes, slit pupils. Skin: warm sun-kissed skin. Wearing attire: sleek assassin's cloth, dark hood, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
-- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, no shadow, no glow, male, Lucifer Lord of Pride, Demon Vanguard. Holding Morningstar of Pride (Ghostly Cyan, deadwood staff, dark gemstone). Hair: rust red, messy twin tails. Eyes: intense ruby eyes, slit pupils. Skin: warm sun-kissed skin. Wearing attire: sleek assassin's cloth, dark hood, flawless geometric metal etchings. Traits: demon horns, runic tattoos. Highly detailed elite fantasy character, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **General / Normal Art (Any Aspect Ratio)**: standalone design, male, Lucifer Lord of Pride, supreme omnipotent deity, Fallen Seraph Vanguard. Levitating majestically. Holding a celestial Morningstar of Pride made of abyssal glass. Hair: rust red, flowing elegantly. Eyes: intense ruby eyes. Skin: warm sun-kissed skin. Wearing attire: regal obsidian armor with liquid gold filigree, ethereal high-collar capes. Traits: six majestic seraphim wings of crisp black fire, blinding white halo, supreme arrogant godlike presence. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Sprite / Portrait (3:4)**: portrait focus, white background, 3:4 aspect ratio, standalone design, male, Lucifer Lord of Pride, supreme omnipotent deity, Fallen Seraph Vanguard. Levitating majestically. Holding a celestial Morningstar of Pride made of abyssal glass. Hair: rust red, flowing elegantly. Eyes: intense ruby eyes. Skin: warm sun-kissed skin. Wearing attire: regal obsidian armor with liquid gold filigree, ethereal high-collar capes. Traits: six majestic seraphim wings of crisp black fire, blinding white halo, supreme arrogant godlike presence. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Chibi (1:1 & 3:4)**: chibi style, white background, cute big head small body chibi proportions, looking left, full body in frame, standalone design, male, Lucifer Lord of Pride, supreme omnipotent deity, Fallen Seraph Vanguard. Levitating majestically. Holding a celestial Morningstar of Pride made of abyssal glass. Hair: rust red, flowing elegantly. Eyes: intense ruby eyes. Skin: warm sun-kissed skin. Wearing attire: regal obsidian armor with liquid gold filigree, ethereal high-collar capes. Traits: six majestic seraphim wings of crisp black fire, blinding white halo, supreme arrogant godlike presence. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.
+- **Splash Art (16:9)**: dynamic action pose, full background, 16:9 aspect ratio, standalone design, male, Lucifer Lord of Pride, supreme omnipotent deity, Fallen Seraph Vanguard. Levitating majestically. Holding a celestial Morningstar of Pride made of abyssal glass. Hair: rust red, flowing elegantly. Eyes: intense ruby eyes. Skin: warm sun-kissed skin. Wearing attire: regal obsidian armor with liquid gold filigree, ethereal high-collar capes. Traits: six majestic seraphim wings of crisp black fire, blinding white halo, supreme arrogant godlike presence. Highly detailed elite fantasy character, terrifying prestige, vibrant silhouette, fate ufotable anime style, masterpiece.

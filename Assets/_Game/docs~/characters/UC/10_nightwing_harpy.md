@@ -1,4 +1,4 @@
-# Vassal: Nightwing Harpy
+# Vassal: Skyra (Nightwing Harpy)
 **Rarity**: UC
 **Race**: Harpy
 **Class**: Ranger

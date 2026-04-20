@@ -20,8 +20,12 @@ MonoBehaviour:
     Defense: 0
     ClassIcon: {fileID: 0}
     ClassName: 
-  UnitName: Toros Savage Packleader
-  UnitTitle: 
+  UnitName: Toros
+  UnitTitle: Savage Packleader
+  BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
+  LoreEntries:
+  - Title: Origin
+    Content: A loyal combatant in the Maou's forces holding the rank of SR.
   BaseSkin:
     Avatar: {fileID: 0}
     Chibi: {fileID: 21300000, guid: 07f49b8fe3a55e34291d90093a960908, type: 3}

@@ -22,6 +22,10 @@ MonoBehaviour:
     ClassName: Bastion
   UnitName: Ignis
   UnitTitle: The Crimson Bastion
+  BriefDescription: A loyal combatant in the Maou's forces holding the rank of R.
+  LoreEntries:
+  - Title: Origin
+    Content: A loyal combatant in the Maou's forces holding the rank of R.
   BaseSkin:
     Avatar: {fileID: 21300000, guid: 7574f7ea97aaa0a45936d69a523867b5, type: 3}
     Chibi: {fileID: 21300000, guid: 2b7269185b2d93f4bb6017781c2f99a0, type: 3}
@@ -29,7 +33,7 @@ MonoBehaviour:
     FullSplashArt: {fileID: 21300000, guid: ef280dc03b43ad049a18d04668dc0367, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 27d88e95005001640970c417ed541b79, type: 3}
     AnimatorController: {fileID: 9100000, guid: a021d6c8141c30b4b89ccb2bfb26dccc, type: 2}
-  Rank2Art: {fileID: 0}
+  StarAdvancementVisuals: []
   Skins:
   - SkinID: pool_party_ignis
     SkinThemeName: Pool Party Ignis

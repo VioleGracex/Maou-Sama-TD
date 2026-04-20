@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: GachaBanner_AbyssalRitual
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.GachaBannerSO
   BannerID: UR
-  BannerName: 'Abyssal Ritual: Lords of the Void'
-  BannerArt: {fileID: 0}
-  TabImage: {fileID: 0}
-  Description: 'Limited Rate-Up: Lucifer & Satan'
+  BannerName: Abyssal Ritual
+  BannerArt: {fileID: 21300000, guid: 66e475374e1227848a9ba8f7d89cda5b, type: 3}
+  TabImage: {fileID: 21300000, guid: 628c1a8738aa76b448d2bd06cfd6e42f, type: 3}
+  Description: Lords of the Void
   Currency: 0
   SingleCost: 160
   MultiCost: 1600
@@ -27,7 +27,7 @@ MonoBehaviour:
   Pool: {fileID: 11400000, guid: f41de782567eac84eb1990bd64329c94, type: 2}
   HasPity: 1
   PityThreshold: 50
-  FeaturedUnitName: Lucifer & Satan
+  FeaturedUnitName: Lucifer, Satan
   FeaturedUnitTitle: 
   DetailedDescription: 
   ProbabilityDetails: 

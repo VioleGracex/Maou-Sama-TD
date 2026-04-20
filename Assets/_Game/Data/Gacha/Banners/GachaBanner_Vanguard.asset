@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.GachaBannerSO
   BannerID: SSR
   BannerName: Unbreakable Vanguards
-  BannerArt: {fileID: 0}
-  TabImage: {fileID: 0}
-  Description: 'Battlefield Resilience: Blademasters and Guardians.'
+  BannerArt: {fileID: 21300000, guid: fbff0956703f95547a73f412aea1a152, type: 3}
+  TabImage: {fileID: 21300000, guid: 8d4f0ac9b50940541803ce271a670687, type: 3}
+  Description: The Unyielding Wall
   Currency: 0
   SingleCost: 160
   MultiCost: 1600
@@ -27,7 +27,7 @@ MonoBehaviour:
   Pool: {fileID: 11400000, guid: f41de782567eac84eb1990bd64329c94, type: 2}
   HasPity: 1
   PityThreshold: 50
-  FeaturedUnitName: Ignis, Kaelia
+  FeaturedUnitName: Ignis, Kaelia, Karrow
   FeaturedUnitTitle: The Unyielding Swords
   DetailedDescription: Features Ignis (Longsword) and Kaelia (Cursed Nodachi) as
     they hold the line against the human crusade.

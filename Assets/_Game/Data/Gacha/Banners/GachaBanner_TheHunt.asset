@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9891819c423869440bed8d8e982e741b, type: 3}
   m_Name: GachaBanner_TheHunt
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.GachaBannerSO
-  BannerID: 
-  BannerName: 'The Hunt: Silent Predators'
-  BannerArt: {fileID: 0}
+  BannerID: 8C0F4E1F
+  BannerName: The Hunt
+  BannerArt: {fileID: 21300000, guid: 3520d6724e7216242a7f9c81a15f27c3, type: 3}
   TabImage: {fileID: 0}
-  Description: Beastkin & Elven Elite Trackers
+  Description: Silent Predators
   Currency: 0
   SingleCost: 160
   MultiCost: 1600
@@ -27,7 +27,7 @@ MonoBehaviour:
   Pool: {fileID: 0}
   HasPity: 1
   PityThreshold: 50
-  FeaturedUnitName: Shade, Nyx
+  FeaturedUnitName: Shade, Nyx, Selene
   FeaturedUnitTitle: Shadow Stalkers
   DetailedDescription: A tactical banner featuring Shade (Phantom Stalker) and Nyx
     (Phantom Beastkin). High rate-up for stealth and ranger units.

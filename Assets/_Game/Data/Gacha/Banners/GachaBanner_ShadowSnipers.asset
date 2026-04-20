@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.GachaBannerSO
   BannerID: 
   BannerName: Shadow Snipers
-  BannerArt: {fileID: 0}
-  TabImage: {fileID: 0}
-  Description: Precision Marksman & Ambush Specialists
+  BannerArt: {fileID: 21300000, guid: 71ae83e44523433499ea9fe846bd80c2, type: 3}
+  TabImage: {fileID: 21300000, guid: 80efd527b109ade4cbcf49a1c310febb, type: 3}
+  Description: Precision Void Volleys
   Currency: 0
   SingleCost: 160
   MultiCost: 1600
@@ -27,7 +27,7 @@ MonoBehaviour:
   Pool: {fileID: 0}
   HasPity: 1
   PityThreshold: 50
-  FeaturedUnitName: Lyra
+  FeaturedUnitName: Lyra, Noire
   FeaturedUnitTitle: Blood Moon Sentinel
   DetailedDescription: 
   ProbabilityDetails: 

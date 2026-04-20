@@ -69,6 +69,18 @@ namespace MaouSamaTD.UI.Gacha
             if (_btnIntent != null) _btnIntent.onClick.AddListener(() => OnIntentClicked());
             if (_btnDetails != null) _btnDetails.onClick.AddListener(() => OnDetailsClicked());
 
+            if (_tabs != null)
+            {
+                foreach (var tab in _tabs)
+                {
+                    if (tab.Button != null)
+                    {
+                        var t = tab;
+                        tab.Button.onClick.AddListener(() => OnTabSelected(t));
+                    }
+                }
+            }
+
             ResetState();
         }
 
@@ -100,6 +112,14 @@ namespace MaouSamaTD.UI.Gacha
             if (_btnMulti != null) _btnMulti.onClick.RemoveAllListeners();
             if (_btnIntent != null) _btnIntent.onClick.RemoveAllListeners();
             if (_btnDetails != null) _btnDetails.onClick.RemoveAllListeners();
+
+            if (_tabs != null)
+            {
+                foreach (var tab in _tabs)
+                {
+                    if (tab.Button != null) tab.Button.onClick.RemoveAllListeners();
+                }
+            }
         }
 
         public bool RequestClose() => true;

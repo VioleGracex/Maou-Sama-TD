@@ -56,6 +56,17 @@ namespace MaouSamaTD.Units
         [Header("Identity (Data)")]
         public string UnitName;
         public string UnitTitle;
+        [TextArea(2, 5)]
+        public string BriefDescription;
+        public System.Collections.Generic.List<UnitLoreEntry> LoreEntries = new System.Collections.Generic.List<UnitLoreEntry>();
+
+        [System.Serializable]
+        public class UnitLoreEntry
+        {
+            public string Title;
+            [TextArea(5, 15)]
+            public string Content;
+        }
 
         [System.Serializable]
         public class SkinData

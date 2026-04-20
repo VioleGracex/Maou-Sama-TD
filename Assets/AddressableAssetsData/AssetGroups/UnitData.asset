@@ -16,19 +16,31 @@ MonoBehaviour:
   m_GUID: 04cd9117d50264444baef4519d7d9bf4
   m_SerializeEntries:
   - m_GUID: 016c5f2015994244199944594fe84d43
-    m_Address: Char_Goblin_Scout_UnitData
+    m_Address: Char_Zit_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 035b011619e43f142b24a0c0d0d3ea5c
+    m_Address: Char_Lucifer_Lord_Of_Pride_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 03e6df3680f62e548995ccc5a650f7e9
-    m_Address: Char_Corrupt_Acolyte_UnitData
+    m_Address: Char_Vesper_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 041cb24383a5a1146b10d61ee3ea6226
+    m_Address: Char_Callum_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 04f0ab3274d2a804583ae5098f6b636d
-    m_Address: Char_Skeletal_Warden_UnitData
+    m_Address: Char_Vex_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -40,7 +52,7 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 08c53f63e4006d848b406afb0811cde6
-    m_Address: Char_Fledgling_Succubus_UnitData
+    m_Address: Char_Lila_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -64,13 +76,25 @@ MonoBehaviour:
     - ClassScaleData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1482f27d8c88e8f45ae45e6df25d8175
-    m_Address: Char_Cursed_Bandit_UnitData
+    m_Address: Char_Jax_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 14daa3720cfc0f54cbb8e90c9210c40d
     m_Address: Char_Celia_Sanctus_Traitor_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 158674e38d75e3c48917c4e63493ba48
+    m_Address: Char_Tika_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 169d2b3196d80b641b0106501aabde2b
+    m_Address: Char_Belphegor_Lord_Of_Gluttony_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -82,13 +106,13 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 18d4431678fb6824da4eb55c83351df6
-    m_Address: Char_Bone_Juggernaut_UnitData
+    m_Address: Char_Grim_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1a681a2d7a23147419c6fda577dfd97b
-    m_Address: Char_Plague_Doctor_UnitData
+    m_Address: Char_Corvus_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -99,8 +123,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2a7c6b91435c1b14983b78e8b1acc05a
+    m_Address: Char_Asmodeus_Lord_Of_Lust_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2dc19232c1acb1f4f965562ad8f672ce
-    m_Address: Char_Stray_Kitten_UnitData
+    m_Address: Char_Luna_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -111,7 +141,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 31ccab229f980ab4aa5f2a5138ebf0ff
-    m_Address: Char_Hellfire_Alchemist_UnitData
+    m_Address: Char_Pyrrhus_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -122,8 +152,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3320561927af58a4ba697296412c8b1d
+    m_Address: Char_Balthazar_Lord_Of_Sloth_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 33511f7128f395c4a90766f9f9ef83e2
-    m_Address: Shade
+    m_Address: Char_Shade_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -135,19 +171,31 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c4361602ad444247b734407fb311808
-    m_Address: Char_Wind_Rider_UnitData
+    m_Address: Char_Zephyr_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d07b659436794241aec998286ea9f1f
-    m_Address: Char_Charming_Novice_UnitData
+    m_Address: Char_Mina_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 453c4140c292f8b4cb338d8a7b9dc3db
+    m_Address: Char_Leviathan_Lord_Of_Envy_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4bb389411d0b9fd4bb284152cfbd4a91
+    m_Address: Char_Satan_Lord_Of_Wrath_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4be428b009a986f4193ba06864aa3870
-    m_Address: Char_Swamp_Slime_UnitData
+    m_Address: Char_Gloo_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -159,7 +207,7 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5531527db5f679146ae1e71545b42a2c
-    m_Address: Char_Zombie_Footman_UnitData
+    m_Address: Char_Stubbs_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -182,8 +230,32 @@ MonoBehaviour:
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68b671eccec0d0d45a26b8344fe6aad9
+    m_Address: Char_Ulf_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6d45f18dfb799644386c8b17031795b4
+    m_Address: Char_Tarkus_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6dd4aee5fc482034db789f9e69d172a4
-    m_Address: Char_Outcast_Archer_UnitData
+    m_Address: Char_Nyx_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72ce7c34095d0f648b7458d59b9fa408
+    m_Address: Char_Skyra_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 73b98775f3d5b2343b58dd10cfa9331a
+    m_Address: Char_Viona_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -194,8 +266,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 752ae0310feb0754a9fbd443064d82fe
+    m_Address: Char_Xylia_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 75a335729ea90fe40abc99e479a7bb61
-    m_Address: Char_Vampiric_Aristocrat_UnitData
+    m_Address: Char_Draco_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -213,13 +291,25 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7f3e64bbd0a623e40af8ca7bb3e12cc2
-    m_Address: Char_Abyssal_Tactician_UnitData
+    m_Address: Char_Malphas_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 81f083e440ea3014ea4d0119de138369
+    m_Address: Char_Elowen_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 886ecaab5114c94408cd824bdefbbd76
-    m_Address: Char_Grave_Digger_UnitData
+    m_Address: Char_Mort_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a4a224767f7f224691eff14bede4a7d
+    m_Address: Char_Kaldor_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -231,25 +321,25 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 97c484ac699e53b4688051b3555c105d
-    m_Address: Char_Undead_Guard_UnitData
+    m_Address: Char_Cinder_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9dc986097f9e2184dab3c9f26843ce0d
-    m_Address: Char_Plague_Rat_UnitData
+    m_Address: Char_Verm_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9dd5332e68d169d4d8db2a43ff245e68
-    m_Address: Char_Rune_Scarred_Gladiator_UnitData
+    m_Address: Char_Thrax_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a30fec547fd55c8428214175f87b73f4
-    m_Address: Char_Forsaken_Conscript_UnitData
+    m_Address: Char_Elias_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -260,32 +350,44 @@ MonoBehaviour:
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: adc73eedb330d584db64eff75aaa6fb2
+    m_Address: Char_Korr_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: adedada1a1f716e42bcb7392b6a141a3
+    m_Address: Char_Fyr_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: aeed564a6a504f04e8100cb552aabd9b
-    m_Address: Char_Wraith_Executioner_UnitData
+    m_Address: Char_Thresh_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b1c468393bf003046816b10ba9f8c8a4
-    m_Address: Char_Demonized_Thug_UnitData
+    m_Address: Char_Grog_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b30180f8e9166c04b94d751b02ee9537
-    m_Address: Char_Lunar_Stalker_UnitData
+    m_Address: Char_Selene_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b41784347a6e8bf44b9b71f86d653060
-    m_Address: Char_Feral_Alley_Cat_UnitData
+    m_Address: Char_Shadow_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b564f739740ab654f9e48176357333a3
-    m_Address: Char_Skeleton_Guard_UnitData
+    m_Address: Char_Kaelen_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -309,13 +411,19 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: be5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b
-    m_Address: Lilith
+    m_Address: Char_Lilith_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c1886ef87faf720409e881ecfb156ab3
     m_Address: Char_Zephyria_Cloud_Scout_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c458e672b4b75d04597410d146fa8414
+    m_Address: Char_Aria_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -327,25 +435,25 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c931bfd534af05d439fa482c03769551
-    m_Address: Char_Lesser_Harpy_UnitData
+    m_Address: Char_Skye_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cc467e18d14e227478a1334b8ff1a1bb
-    m_Address: Char_Lesser_Vampire_UnitData
+    m_Address: Char_Val_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cf5c2c92c9ee1b74ab7b0d9e7b3ac283
-    m_Address: Char_Wolf_Pup_UnitData
+    m_Address: Char_Fang_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d3abce502c6fd414891b407458643b42
-    m_Address: Char_Shadow_Assassin_UnitData
+    m_Address: Char_Vane_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -357,7 +465,13 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d468b0fad12646848a248cc776b79e29
-    m_Address: Char_Bloodied_Oracle_UnitData
+    m_Address: Char_Sibyl_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d81b5880e4a1aa04a8f8eab0f29a6f7c
+    m_Address: Char_Aquila_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -375,13 +489,13 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e102da0c32872594ba2903264a863d38
-    m_Address: Char_Heretic_Priest_UnitData
+    m_Address: Char_Caius_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e1185cc33dac27e4d95e2fdddbba38dd
-    m_Address: Char_Lava_Bender_UnitData
+    m_Address: Char_Magma_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -393,7 +507,7 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e18bbf4ec3e5ed1449dd506b7e2c3420
-    m_Address: Char_Skeleton_Bowman_UnitData
+    m_Address: Char_Dusk_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -405,13 +519,13 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: edaaaddb80943304a85836442ca92856
-    m_Address: Char_Apprentice_Cultist_UnitData
+    m_Address: Char_Solas_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f1f0768ae54b35948bb1f97eb5123a6f
-    m_Address: Char_Frostbane_Sniper_UnitData
+    m_Address: Char_Eira_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
@@ -435,31 +549,37 @@ MonoBehaviour:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fb9e1f54030148a4f9f09a1d9fd8447a
-    m_Address: Char_Feral_Ghoul_UnitData
+    m_Address: Char_Gnaw_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fc288bac2fbb05147ae9f01dd64f25a7
-    m_Address: Ignis
+    m_Address: Char_Ignis_UnitData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd6243d1b9d255b499ead54d1dfc0c6e
+    m_Address: Char_Mammon_Lord_Of_Greed_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fe5bc36cba42a9241851def71bb81468
-    m_Address: Char_Howling_Marauder_UnitData
+    m_Address: Char_Lupus_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: feabaa34fb709c945bb6d6a87e9ba689
-    m_Address: Char_Tomb_Guardian_UnitData
+    m_Address: Char_Anubis_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ff11a4fa3855f134f931d520947734d6
-    m_Address: Char_Dusk_Knight_UnitData
+    m_Address: Char_Alaric_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData

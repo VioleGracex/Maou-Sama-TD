@@ -14,6 +14,7 @@ namespace MaouSamaTD.Editor
         private List<UnitData> _allUnits = new List<UnitData>();
         private List<UnitData> _filteredUnits = new List<UnitData>();
         private string _searchText = "";
+        private int _rarityFilter = -1; // -1 for All
         
         // Layout & Paging
         private ViewMode _currentViewMode = ViewMode.List;
@@ -34,6 +35,11 @@ namespace MaouSamaTD.Editor
         
         private float _browserWidth = 450f;
         private bool _isResizingDetails = false;
+        
+        // Zoom & Settings
+        private float _zoomFactor = 1.0f;
+        private bool _showTitles = true;
+        private bool _sortAscending = true;
         
         // Caching
         private Dictionary<string, string> _characterLore = new Dictionary<string, string>();
@@ -69,16 +75,19 @@ namespace MaouSamaTD.Editor
 
         private void ApplyFilter()
         {
-            if (string.IsNullOrEmpty(_searchText))
+            _filteredUnits = _allUnits.Where(u => 
             {
-                _filteredUnits = new List<UnitData>(_allUnits);
-            }
-            else
-            {
-                _filteredUnits = _allUnits.Where(u => 
-                    u.UnitName.ToLower().Contains(_searchText.ToLower()) || 
-                    u.UnitTitle.ToLower().Contains(_searchText.ToLower())).ToList();
-            }
+                // Search filter
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || 
+                                     u.UnitName.ToLower().Contains(_searchText.ToLower()) || 
+                                     u.UnitTitle.ToLower().Contains(_searchText.ToLower());
+                
+                // Rarity filter
+                bool matchesRarity = _rarityFilter == -1 || (int)u.Rarity == _rarityFilter;
+                
+                return matchesSearch && matchesRarity;
+            }).ToList();
+
             ApplySort();
             _currentPage = 0;
         }
@@ -88,13 +97,13 @@ namespace MaouSamaTD.Editor
             switch (_sortMode)
             {
                 case SortMode.Name:
-                    _filteredUnits = _filteredUnits.OrderBy(u => u.UnitName).ToList();
+                    _filteredUnits = _sortAscending ? _filteredUnits.OrderBy(u => u.UnitName).ToList() : _filteredUnits.OrderByDescending(u => u.UnitName).ToList();
                     break;
                 case SortMode.Rarity:
-                    _filteredUnits = _filteredUnits.OrderByDescending(u => u.Rarity).ThenBy(u => u.UnitName).ToList();
+                    _filteredUnits = _sortAscending ? _filteredUnits.OrderBy(u => u.Rarity).ThenBy(u => u.UnitName).ToList() : _filteredUnits.OrderByDescending(u => u.Rarity).ThenBy(u => u.UnitName).ToList();
                     break;
                 case SortMode.Class:
-                    _filteredUnits = _filteredUnits.OrderBy(u => u.Class).ThenBy(u => u.UnitName).ToList();
+                    _filteredUnits = _sortAscending ? _filteredUnits.OrderBy(u => u.Class).ThenBy(u => u.UnitName).ToList() : _filteredUnits.OrderByDescending(u => u.Class).ThenBy(u => u.UnitName).ToList();
                     break;
             }
         }
@@ -131,6 +140,9 @@ namespace MaouSamaTD.Editor
 
             // --- Toolbar ---
             DrawToolbar();
+            
+            // --- Input Handling ---
+            HandleGlobalInput();
 
             EditorGUILayout.BeginHorizontal();
 
@@ -145,6 +157,18 @@ namespace MaouSamaTD.Editor
             }
 
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void HandleGlobalInput()
+        {
+            Event e = Event.current;
+            if (e.type == EventType.ScrollWheel && (e.control || e.command))
+            {
+                float delta = -e.delta.y * 0.05f;
+                _zoomFactor = Mathf.Clamp(_zoomFactor + delta, 0.5f, 2.5f);
+                e.Use();
+                Repaint();
+            }
         }
 
         private void InitializeStyles()
@@ -181,6 +205,18 @@ namespace MaouSamaTD.Editor
                 ApplyFilter();
             }
 
+            GUILayout.Space(10);
+
+            // Rarity Filter
+            GUILayout.Label("Rarity:", GUILayout.Width(45));
+            string[] rarityOptions = new string[] { "All", "C", "UC", "R", "SR", "SSR", "UR" };
+            int newRarity = EditorGUILayout.Popup(_rarityFilter + 1, rarityOptions, GUILayout.Width(60)) - 1;
+            if (newRarity != _rarityFilter)
+            {
+                _rarityFilter = newRarity;
+                ApplyFilter();
+            }
+
             GUILayout.FlexibleSpace();
 
             // Sort Mode Option
@@ -191,6 +227,15 @@ namespace MaouSamaTD.Editor
                 _sortMode = newSort;
                 ApplySort();
             }
+            
+            // Asc/Desc Toggle
+            string sortIcon = _sortAscending ? "d_ToolHandleLocal" : "d_ToolHandleGlobal"; // Just using some icons as placeholders for arrows
+            if (GUILayout.Button(EditorGUIUtility.IconContent(_sortAscending ? "d_ViewToolMove" : "d_ViewToolMove"), EditorStyles.toolbarButton, GUILayout.Width(25)))
+            {
+                _sortAscending = !_sortAscending;
+                ApplySort();
+            }
+            
             GUILayout.Space(10);
             
             // Items Per Page
@@ -232,6 +277,11 @@ namespace MaouSamaTD.Editor
             _showDetails = GUILayout.Toggle(_showDetails, _showDetails ? "Hide Details" : "Show Details", EditorStyles.toolbarButton, GUILayout.Width(100));
 
             GUILayout.Space(5);
+            
+            // Show Titles Toggle
+            _showTitles = GUILayout.Toggle(_showTitles, "Titles", EditorStyles.toolbarButton, GUILayout.Width(50));
+            
+            GUILayout.Space(5);
             _thumbnailType = (ThumbnailType)EditorGUILayout.EnumPopup(_thumbnailType, GUILayout.Width(80));
 
             EditorGUILayout.EndHorizontal();
@@ -271,17 +321,31 @@ namespace MaouSamaTD.Editor
                 UnitData unit = _filteredUnits[i];
                 bool isSelected = _selectedUnit == unit;
                 
-                Rect rect = EditorGUILayout.BeginHorizontal(isSelected ? _selectionStyle : GUIStyle.none, GUILayout.Height(40));
+                Rect rect = EditorGUILayout.BeginHorizontal(isSelected ? _selectionStyle : GUIStyle.none, GUILayout.Height(45 * _zoomFactor));
+                GUILayout.Space(10 * _zoomFactor); // Side padding
                 
                 // Avatar thumbnail
-                Rect iconRect = GUILayoutUtility.GetRect(35, 35);
-                iconRect.y += 2.5f;
+                float thumbSize = 35 * _zoomFactor;
+                Rect iconRect = GUILayoutUtility.GetRect(thumbSize, thumbSize);
+                iconRect.y += ( (40 * _zoomFactor) - thumbSize) / 2f;
                 DrawUnitThumbnail(iconRect, unit);
                 
                 EditorGUILayout.BeginVertical();
-                GUILayout.Space(5);
-                EditorGUILayout.LabelField(unit.UnitName, isSelected ? EditorStyles.whiteBoldLabel : EditorStyles.boldLabel);
-                EditorGUILayout.LabelField(unit.UnitTitle, EditorStyles.miniLabel);
+                GUILayout.FlexibleSpace();
+                
+                GUIStyle nameStyle = new GUIStyle(isSelected ? EditorStyles.whiteBoldLabel : EditorStyles.boldLabel);
+                nameStyle.fontSize = (int)(12 * _zoomFactor);
+                EditorGUILayout.LabelField(unit.UnitName, nameStyle);
+                
+                if (_showTitles && !string.IsNullOrEmpty(unit.UnitTitle))
+                {
+                    GUILayout.Space(4 * _zoomFactor);
+                    GUIStyle titleStyle = new GUIStyle(EditorStyles.miniLabel);
+                    titleStyle.fontSize = (int)(9 * _zoomFactor);
+                    EditorGUILayout.LabelField(unit.UnitTitle, titleStyle);
+                }
+                
+                GUILayout.FlexibleSpace();
                 EditorGUILayout.EndVertical();
 
                 if (Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition))
@@ -300,30 +364,47 @@ namespace MaouSamaTD.Editor
             int startIdx = _currentPage * _itemsPerPage;
             int endIdx = Mathf.Min(startIdx + _itemsPerPage, _filteredUnits.Count);
             
-            int cellWidth = 120;
-            int cellHeight = 155;
-            
-            int columns = Mathf.FloorToInt((containerWidth - 20) / (cellWidth + 10));
-            if (columns < 1) columns = 1;
-
-            int count = endIdx - startIdx;
-            for (int i = 0; i < count; i += columns)
-            {
-                EditorGUILayout.BeginHorizontal();
-                for (int c = 0; c < columns; c++)
+                int cellWidth = (int)(120 * _zoomFactor);
+                int cellHeight = (int)(155 * _zoomFactor);
+                
+                int columns = Mathf.FloorToInt((containerWidth - 20) / (cellWidth + 10));
+                if (columns < 1) columns = 1;
+    
+                int count = endIdx - startIdx;
+                for (int i = 0; i < count; i += columns)
                 {
-                    int index = startIdx + i + c;
-                    if (index < endIdx)
+                    EditorGUILayout.BeginHorizontal();
+                    for (int c = 0; c < columns; c++)
                     {
-                        UnitData unit = _filteredUnits[index];
-                        bool isSelected = _selectedUnit == unit;
-                        
-                        Rect cardRect = EditorGUILayout.BeginVertical(isSelected ? _selectionStyle : _cardStyle, GUILayout.Width(cellWidth), GUILayout.Height(cellHeight));
-                        
-                        Rect thumbnailRect = GUILayoutUtility.GetRect(cellWidth - 10, cellWidth - 10);
-                        DrawUnitThumbnail(thumbnailRect, unit);
-                        
-                        EditorGUILayout.LabelField(unit.UnitName, EditorStyles.miniLabel, GUILayout.Width(cellWidth - 5));
+                        int index = startIdx + i + c;
+                        if (index < endIdx)
+                        {
+                            UnitData unit = _filteredUnits[index];
+                            bool isSelected = _selectedUnit == unit;
+                            
+                            Rect cardRect = EditorGUILayout.BeginVertical(isSelected ? _selectionStyle : _cardStyle, GUILayout.Width(cellWidth), GUILayout.Height(cellHeight));
+                            
+                            float thumbSize = cellWidth - 10;
+                            Rect thumbnailRect = GUILayoutUtility.GetRect(thumbSize, thumbSize);
+                            DrawUnitThumbnail(thumbnailRect, unit);
+                            
+                            GUIStyle nameStyle = new GUIStyle(EditorStyles.miniLabel);
+                            nameStyle.fontSize = (int)(10 * _zoomFactor);
+                            nameStyle.alignment = TextAnchor.MiddleCenter;
+                            
+                            EditorGUILayout.LabelField(unit.UnitName, nameStyle, GUILayout.Width(cellWidth - 10));
+                            
+                            if (_showTitles && !string.IsNullOrEmpty(unit.UnitTitle))
+                            {
+                                GUILayout.Space(4 * _zoomFactor);
+                                GUIStyle titleStyle = new GUIStyle(EditorStyles.miniLabel);
+                                titleStyle.fontSize = (int)(9 * _zoomFactor);
+                                titleStyle.alignment = TextAnchor.MiddleCenter;
+                                titleStyle.normal.textColor = new Color(0.6f, 0.6f, 0.6f);
+                                EditorGUILayout.LabelField(unit.UnitTitle, titleStyle, GUILayout.Width(cellWidth - 10));
+                            }
+                            
+                            GUILayout.Space(10 * _zoomFactor); 
 
                         // Overlay button for selection
                         if (GUI.Button(cardRect, "", GUIStyle.none))
@@ -422,60 +503,57 @@ namespace MaouSamaTD.Editor
         private void DrawVisuals()
         {
             EditorGUILayout.LabelField("Visuals", EditorStyles.boldLabel);
-            EditorGUILayout.BeginHorizontal();
             
-            // Full Splash Art (Lazy Loaded)
-            float splashWidth = position.width * 0.35f;
-            Rect splashRect = GUILayoutUtility.GetRect(splashWidth, splashWidth * 1.5f, GUILayout.Width(splashWidth));
-            if (_tempSplash != null)
-                GUI.DrawTexture(splashRect, _tempSplash, ScaleMode.ScaleToFit);
-            else
-                GUI.Box(splashRect, "No Splash Loaded");
-
-            EditorGUILayout.BeginVertical();
-            
-            // Base Skin explicitly drawn
+            // 1. Default Base Visuals (NOW ABOVE)
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.LabelField("Default Base Visuals", EditorStyles.miniBoldLabel);
             EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
             DrawVariantIcon("Avatar", _selectedUnit.BaseSkin.Avatar);
             DrawVariantIcon("Chibi", _selectedUnit.BaseSkin.Chibi);
             DrawVariantIcon("Portrait", _selectedUnit.BaseSkin.WaistUp);
             DrawVariantIcon("Full Body", _selectedUnit.BaseSkin.FullBodyCutout);
+            GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
-            if (GUILayout.Button("View Details", EditorStyles.miniButton))
-            {
-                _tempSplash = _selectedUnit.BaseSkin.FullSplashArt?.texture 
-                    ?? _selectedUnit.BaseSkin.FullBodyCutout?.texture
-                    ?? _selectedUnit.BaseSkin.WaistUp?.texture
-                    ?? _selectedUnit.BaseSkin.Chibi?.texture;
-            }
             EditorGUILayout.EndVertical();
 
-            // Variants List
-            if (_selectedUnit.Skins != null)
+            EditorGUILayout.Space(10);
+
+            // 2. Main Preview (Centered)
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            float splashWidth = position.width * 0.45f;
+            Rect splashRect = GUILayoutUtility.GetRect(splashWidth, splashWidth * 1.4f, GUILayout.Width(splashWidth));
+            if (_tempSplash != null)
+                GUI.DrawTexture(splashRect, _tempSplash, ScaleMode.ScaleToFit);
+            else
+                GUI.Box(splashRect, "No Splash Loaded");
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(10);
+
+            // 3. Skin / Art Variants (NOW BELOW)
+            if (_selectedUnit.Skins != null && _selectedUnit.Skins.Count > 0)
             {
                 EditorGUILayout.LabelField("Skin / Art Variants", EditorStyles.miniBoldLabel);
                 foreach (var skin in _selectedUnit.Skins)
                 {
                     EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                    EditorGUILayout.LabelField(skin.SkinThemeName, EditorStyles.miniBoldLabel);
-                    
                     EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField(skin.SkinThemeName, EditorStyles.miniBoldLabel, GUILayout.Width(150));
+                    GUILayout.FlexibleSpace();
                     DrawVariantIcon("Avatar", skin.Avatar);
                     DrawVariantIcon("Chibi", skin.Chibi);
                     DrawVariantIcon("Portrait", skin.WaistUp);
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button("View Full", EditorStyles.miniButton, GUILayout.Width(80))) 
+                        _tempSplash = GetSpriteTexture(skin.FullSplashArt) ?? GetSpriteTexture(skin.FullBodyCutout);
                     EditorGUILayout.EndHorizontal();
-                    
-                    if (GUILayout.Button("View Full Splash", EditorStyles.miniButton)) 
-                        _tempSplash = skin.FullSplashArt != null ? skin.FullSplashArt.texture : null;
-                    
                     EditorGUILayout.EndVertical();
                 }
             }
             
-            EditorGUILayout.EndVertical();
-            EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space(10);
         }
 
@@ -485,12 +563,17 @@ namespace MaouSamaTD.Editor
             Rect r = GUILayoutUtility.GetRect(50, 50);
             if (sprite != null) 
             {
-                GUI.DrawTexture(r, sprite.texture, ScaleMode.ScaleToFit);
-                if (Event.current.type == EventType.MouseDown && r.Contains(Event.current.mousePosition))
+                Texture2D tex = GetSpriteTexture(sprite);
+                if (tex != null)
                 {
-                    _tempSplash = sprite.texture;
-                    Event.current.Use();
+                    GUI.DrawTexture(r, tex, ScaleMode.ScaleToFit);
+                    if (Event.current.type == EventType.MouseDown && r.Contains(Event.current.mousePosition))
+                    {
+                        _tempSplash = tex;
+                        Event.current.Use();
+                    }
                 }
+                else GUI.Box(r, "Err");
             }
             else GUI.Box(r, "N/A");
             EditorGUILayout.LabelField(name, EditorStyles.miniLabel, GUILayout.Width(50), GUILayout.Height(15));
@@ -499,16 +582,63 @@ namespace MaouSamaTD.Editor
 
         private void DrawLore()
         {
-            EditorGUILayout.LabelField("Lore & Story", EditorStyles.boldLabel);
-            string lore = GetLoreForUnit(_selectedUnit);
-            
-            GUIStyle loreStyle = new GUIStyle(EditorStyles.wordWrappedLabel);
-            loreStyle.fontSize = 12;
-            loreStyle.padding = new RectOffset(10, 10, 10, 10);
-            
+            EditorGUILayout.Space(10);
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField(lore, loreStyle);
+            EditorGUILayout.LabelField("Character Lore & Development", EditorStyles.boldLabel);
+            EditorGUILayout.Space(5);
+
+            EditorGUI.BeginChangeCheck();
+
+            // 1. Brief Description
+            EditorGUILayout.LabelField("Brief Summary", EditorStyles.miniBoldLabel);
+            _selectedUnit.BriefDescription = EditorGUILayout.TextArea(_selectedUnit.BriefDescription, GUILayout.Height(60));
+            
+            EditorGUILayout.Space(10);
+            
+            // 2. Lore Entries
+            EditorGUILayout.LabelField("Story Fragments / Chambers", EditorStyles.miniBoldLabel);
+            
+            if (_selectedUnit.LoreEntries == null) _selectedUnit.LoreEntries = new System.Collections.Generic.List<UnitData.UnitLoreEntry>();
+            
+            for (int i = 0; i < _selectedUnit.LoreEntries.Count; i++)
+            {
+                var entry = _selectedUnit.LoreEntries[i];
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                
+                EditorGUILayout.BeginHorizontal();
+                entry.Title = EditorGUILayout.TextField("Title", entry.Title);
+                if (GUILayout.Button("X", GUILayout.Width(20)))
+                {
+                    _selectedUnit.LoreEntries.RemoveAt(i);
+                    i--;
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.EndVertical();
+                    continue;
+                }
+                EditorGUILayout.EndHorizontal();
+                
+                entry.Content = EditorGUILayout.TextArea(entry.Content, GUILayout.Height(100));
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.Space(5);
+            }
+
+            if (GUILayout.Button("+ Add Lore Story", EditorStyles.miniButton))
+            {
+                _selectedUnit.LoreEntries.Add(new UnitData.UnitLoreEntry() { Title = "New Fragment", Content = "Write story here..." });
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                UnityEditor.EditorUtility.SetDirty(_selectedUnit);
+            }
+
             EditorGUILayout.EndVertical();
+        }
+
+        private Texture2D GetSpriteTexture(Sprite sprite)
+        {
+            if (sprite == null) return null;
+            try { return sprite.texture; } catch { return null; }
         }
 
         private void SelectUnit(UnitData unit)
@@ -517,16 +647,13 @@ namespace MaouSamaTD.Editor
             _tempSplash = null;
             
             // Lazy load first art variant appropriately
-            if (unit.BaseSkin.FullSplashArt != null)
-                _tempSplash = unit.BaseSkin.FullSplashArt.texture;
-            else if (unit.BaseSkin.FullBodyCutout != null)
-                _tempSplash = unit.BaseSkin.FullBodyCutout.texture;
-            else if (unit.BaseSkin.WaistUp != null)
-                _tempSplash = unit.BaseSkin.WaistUp.texture;
-            else if (unit.BaseSkin.Chibi != null)
-                _tempSplash = unit.BaseSkin.Chibi.texture;
-            else if (unit.Skins != null && unit.Skins.Count > 0)
-                _tempSplash = unit.Skins[0].FullSplashArt?.texture;
+            _tempSplash = GetSpriteTexture(unit.BaseSkin.FullSplashArt)
+                ?? GetSpriteTexture(unit.BaseSkin.FullBodyCutout)
+                ?? GetSpriteTexture(unit.BaseSkin.WaistUp)
+                ?? GetSpriteTexture(unit.BaseSkin.Chibi);
+
+            if (_tempSplash == null && unit.Skins != null && unit.Skins.Count > 0)
+                _tempSplash = GetSpriteTexture(unit.Skins[0].FullSplashArt);
         }
 
         private string GetLoreForUnit(UnitData unit)

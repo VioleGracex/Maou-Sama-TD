@@ -10,7 +10,7 @@ namespace MaouSamaTD.Units.Editor
     {
         private UnitData _target;
         private int _selectedTab = 0;
-        private readonly string[] _tabNames = { "General", "Combat", "Skills & SP", "Skins Collection" };
+        private readonly string[] _tabNames = { "General", "Combat", "Skills & SP", "Skins Collection", "Lore" };
 
         private int _skinSubTab = 0;
         private GUIStyle _tabStyle;
@@ -60,6 +60,7 @@ namespace MaouSamaTD.Units.Editor
                 case 1: DrawCombatTab(); break;
                 case 2: DrawSkillsTab(); break;
                 case 3: DrawSkinsTab(); break;
+                case 4: DrawLoreTab(); break;
             }
 
             EditorGUILayout.Space(20);
@@ -563,6 +564,50 @@ namespace MaouSamaTD.Units.Editor
                 UnitRarity.Legendary => "★★★★★★ (UR)",
                 _ => ""
             };
+        }
+
+        private void DrawLoreTab()
+        {
+            bool loreState = BeginSection("Unit Narrative & Lore", "lore_main");
+            if (loreState)
+            {
+                EditorGUILayout.LabelField("Brief Description (Summary)", EditorStyles.boldLabel);
+                SerializedProperty briefProp = serializedObject.FindProperty("BriefDescription");
+                briefProp.stringValue = EditorGUILayout.TextArea(briefProp.stringValue, GUILayout.Height(60));
+                
+                EditorGUILayout.Space(10);
+                
+                SerializedProperty entriesProp = serializedObject.FindProperty("LoreEntries");
+                EditorGUILayout.LabelField($"Story Fragments ({entriesProp.arraySize})", EditorStyles.boldLabel);
+                
+                for (int i = 0; i < entriesProp.arraySize; i++)
+                {
+                    SerializedProperty entry = entriesProp.GetArrayElementAtIndex(i);
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                    
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.PropertyField(entry.FindPropertyRelative("Title"), GUIContent.none);
+                    if (GUILayout.Button("X", GUILayout.Width(20)))
+                    {
+                        entriesProp.DeleteArrayElementAtIndex(i);
+                        break;
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    
+                    EditorGUILayout.PropertyField(entry.FindPropertyRelative("Content"), GUIContent.none, GUILayout.Height(80));
+                    EditorGUILayout.EndVertical();
+                    EditorGUILayout.Space(5);
+                }
+                
+                if (GUILayout.Button("+ Add Lore Entry"))
+                {
+                    entriesProp.InsertArrayElementAtIndex(entriesProp.arraySize);
+                    SerializedProperty newEntry = entriesProp.GetArrayElementAtIndex(entriesProp.arraySize - 1);
+                    newEntry.FindPropertyRelative("Title").stringValue = "New Chapter";
+                    newEntry.FindPropertyRelative("Content").stringValue = "";
+                }
+            }
+            EndSection(loreState);
         }
 
         private string Slugify(string text)

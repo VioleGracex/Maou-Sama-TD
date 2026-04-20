@@ -29,7 +29,7 @@ MonoBehaviour:
   BaseSkin:
     Avatar: {fileID: 21300000, guid: a13595f8420d9844b89719c5bdce19c7, type: 3}
     Chibi: {fileID: 21300000, guid: a13595f8420d9844b89719c5bdce19c7, type: 3}
-    WaistUp: {fileID: 21300000, guid: 811c2bb690a0cd343b6450d225d98904, type: 3}
+    WaistUp: {fileID: 21300000, guid: 5b083b6d9be35644391982a4e7299a70, type: 3}
     FullSplashArt: {fileID: 21300000, guid: 811c2bb690a0cd343b6450d225d98904, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 811c2bb690a0cd343b6450d225d98904, type: 3}
     AnimatorController: {fileID: 0}

@@ -29,7 +29,7 @@ MonoBehaviour:
       but of the soul. She is a walking singularity, consuming all magic and light
       that dares to approach her.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: f7cd93853b2c02d47bc438d85fd91ad2, type: 3}
+    Avatar: {fileID: 21300000, guid: 09061327985e5b146a3a81e382fd5cb6, type: 3}
     Chibi: {fileID: 21300000, guid: 6429dbc3a3c6f5e4080b4b4043813c21, type: 3}
     WaistUp: {fileID: 21300000, guid: 2bd470d73f4502e4ead737d0284e704a, type: 3}
     FullSplashArt: {fileID: 21300000, guid: 4cabbfddb674b1c40a96d84e0d615015, type: 3}

@@ -27,9 +27,9 @@ MonoBehaviour:
   - Title: Origin
     Content: A very powerful and ancient combatant of the Maou's forces.
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: bc3436e77a735ec46a5cc1bd58e30561, type: 3}
     Chibi: {fileID: 21300000, guid: d8f392e7a1266fe4b8c371d8df3deecb, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 36305a66b38959349b9a256b3c4130a7, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: 9598616cb1befea4492d34798fca343a, type: 3}
     AnimatorController: {fileID: 0}

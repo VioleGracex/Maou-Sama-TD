@@ -30,9 +30,9 @@ MonoBehaviour:
       Maou's shadow. He now serves as the silent hand, striking from the darkness
       with ethereal green arrows before his enemies even realize they are being hunted.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: a98245ed863a80241b030f041eb697d7, type: 3}
+    Avatar: {fileID: 21300000, guid: f7c4fd480865db843b65a8004706a7f8, type: 3}
     Chibi: {fileID: 21300000, guid: 6c6b604ad4b96c54284baf63542f9925, type: 3}
-    WaistUp: {fileID: 21300000, guid: a98245ed863a80241b030f041eb697d7, type: 3}
+    WaistUp: {fileID: 21300000, guid: 168d484e5c48a074aaeb30b4e902038c, type: 3}
     FullSplashArt: {fileID: 21300000, guid: a98245ed863a80241b030f041eb697d7, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 9a8e5b602e866254c97116b34c8a760f, type: 3}
     AnimatorController: {fileID: 0}

@@ -22,10 +22,12 @@ MonoBehaviour:
     ClassName: 
   UnitName: Malphas
   UnitTitle: Abyssal Tactician
+  BriefDescription: 
+  LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: cd9a4381a0f5011459d13847aaa33b58, type: 3}
     Chibi: {fileID: 21300000, guid: 7a88f6efcc9596546b1ceff2f97675a5, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 77c134f397a035b42963b6ba7adf5be5, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: a5b48aa609cf0324bb57e0d9e67a403b, type: 3}
     AnimatorController: {fileID: 0}

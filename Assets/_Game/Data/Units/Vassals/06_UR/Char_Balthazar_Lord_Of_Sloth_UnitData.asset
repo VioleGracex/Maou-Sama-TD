@@ -29,7 +29,7 @@ MonoBehaviour:
       His silence is a weapon that can unmake empires, and his apathy is a shield
       that turns aside any blow.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: 9c112a9cf50b91840a3f490e33844a9b, type: 3}
+    Avatar: {fileID: 21300000, guid: b851799b128c8e2478c7efa9770924ca, type: 3}
     Chibi: {fileID: 21300000, guid: b15659fdfbce0a84996cae1229372c7c, type: 3}
     WaistUp: {fileID: 21300000, guid: 371e8bc70519eb143a8804c49faa9449, type: 3}
     FullSplashArt: {fileID: 21300000, guid: 9a0b0c1c2eac0844f9057c50117580da, type: 3}

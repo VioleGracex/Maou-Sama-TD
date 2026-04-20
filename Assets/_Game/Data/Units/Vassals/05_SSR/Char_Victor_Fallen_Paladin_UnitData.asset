@@ -28,9 +28,9 @@ MonoBehaviour:
     Content: Led a failed rebellion against the light. Now acts as the Maous absolute
       shield.
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: 8b71c498997a14345b6e6dbcbcc5417d, type: 3}
     Chibi: {fileID: 21300000, guid: 2cf57686dce0ebe42a52a24219c9c8ad, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 8e5bbe19114531248b669e7f71fc8aba, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: 30e1390a3e524494eb0a662a54dffb3b, type: 3}
     AnimatorController: {fileID: 0}

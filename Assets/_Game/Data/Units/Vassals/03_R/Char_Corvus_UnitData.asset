@@ -22,10 +22,12 @@ MonoBehaviour:
     ClassName: 
   UnitName: Corvus
   UnitTitle: Plague Doctor
+  BriefDescription: 
+  LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: e56335254f94a35439a4fe6fcd5f922d, type: 3}
     Chibi: {fileID: 21300000, guid: d76ff78f7c371a842a439da6685fc8d1, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 25fac84323660a741bc60ae97154f8c1, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: 7563c43c0e173b5468851917f906409f, type: 3}
     AnimatorController: {fileID: 0}

@@ -28,7 +28,7 @@ MonoBehaviour:
     Content: The Fallen Morning Star. He bowed to no one, and now even the heavens
       tremble at his name. His pride is the anvil upon which reality breaks.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: 9908b6c848e39584b9cd858f97fa0a44, type: 3}
+    Avatar: {fileID: 21300000, guid: 07f5a3e3cbf859b41b41bbd41f7db2b0, type: 3}
     Chibi: {fileID: 21300000, guid: fbb0ef53f1abb514f9329511ab9ed6c9, type: 3}
     WaistUp: {fileID: 21300000, guid: 0428962da996d454badf9ee63fd5912f, type: 3}
     FullSplashArt: {fileID: 21300000, guid: 13e5ab50f735c6044bba516026236739, type: 3}

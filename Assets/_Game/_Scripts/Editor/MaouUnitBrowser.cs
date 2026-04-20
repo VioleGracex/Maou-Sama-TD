@@ -27,7 +27,7 @@ namespace MaouSamaTD.Editor
         private Vector2 _scrollPos;
         private Vector2 _detailScrollPos;
         
-        public enum ThumbnailType { Avatar, Chibi, Portrait, FullBody }
+        public enum ThumbnailType { Avatar, Chibi, WaistUp, FullBody, SplashArt }
         public enum SortMode { Name, Rarity, Class }
         
         private ThumbnailType _thumbnailType = ThumbnailType.Avatar;
@@ -431,10 +431,11 @@ namespace MaouSamaTD.Editor
             {
                 case ThumbnailType.Avatar: s = unit.BaseSkin.Avatar; break;
                 case ThumbnailType.Chibi: s = unit.BaseSkin.Chibi; break;
-                case ThumbnailType.Portrait: s = unit.BaseSkin.WaistUp; break;
+                case ThumbnailType.WaistUp: s = unit.BaseSkin.WaistUp; break;
                 case ThumbnailType.FullBody: s = unit.BaseSkin.FullBodyCutout; break;
+                case ThumbnailType.SplashArt: s = unit.BaseSkin.FullSplashArt; break;
             }
-            if (s == null) s = unit.BaseSkin.Avatar ?? unit.BaseSkin.Chibi ?? unit.BaseSkin.WaistUp ?? unit.BaseSkin.FullBodyCutout;
+            if (s == null) s = unit.BaseSkin.Avatar ?? unit.BaseSkin.Chibi ?? unit.BaseSkin.WaistUp ?? unit.BaseSkin.FullBodyCutout ?? unit.BaseSkin.FullSplashArt;
 
             if (s != null)
                 GUI.DrawTexture(r, s.texture, ScaleMode.ScaleToFit);
@@ -511,8 +512,9 @@ namespace MaouSamaTD.Editor
             GUILayout.FlexibleSpace();
             DrawVariantIcon("Avatar", _selectedUnit.BaseSkin.Avatar);
             DrawVariantIcon("Chibi", _selectedUnit.BaseSkin.Chibi);
-            DrawVariantIcon("Portrait", _selectedUnit.BaseSkin.WaistUp);
-            DrawVariantIcon("Full Body", _selectedUnit.BaseSkin.FullBodyCutout);
+            DrawVariantIcon("WaistUp", _selectedUnit.BaseSkin.WaistUp);
+            DrawVariantIcon("FullBody", _selectedUnit.BaseSkin.FullBodyCutout);
+            DrawVariantIcon("Splash", _selectedUnit.BaseSkin.FullSplashArt);
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
@@ -545,7 +547,9 @@ namespace MaouSamaTD.Editor
                     GUILayout.FlexibleSpace();
                     DrawVariantIcon("Avatar", skin.Avatar);
                     DrawVariantIcon("Chibi", skin.Chibi);
-                    DrawVariantIcon("Portrait", skin.WaistUp);
+                    DrawVariantIcon("WaistUp", skin.WaistUp);
+                    DrawVariantIcon("FullBody", skin.FullBodyCutout);
+                    DrawVariantIcon("Splash", skin.FullSplashArt);
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button("View Full", EditorStyles.miniButton, GUILayout.Width(80))) 
                         _tempSplash = GetSpriteTexture(skin.FullSplashArt) ?? GetSpriteTexture(skin.FullBodyCutout);

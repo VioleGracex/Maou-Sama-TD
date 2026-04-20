@@ -22,10 +22,12 @@ MonoBehaviour:
     ClassName: 
   UnitName: Lupus
   UnitTitle: Howling Marauder
+  BriefDescription: 
+  LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: ae6138ce16d00aa4f8460536f8b1c2e1, type: 3}
     Chibi: {fileID: 21300000, guid: 36db92d62bc66314b941cdf1198e811e, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: d5c86d1d2557d3947a01eab801b931bd, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: f34001b8cb863c84190a297896402eb6, type: 3}
     AnimatorController: {fileID: 0}

@@ -24,7 +24,7 @@ MonoBehaviour:
   MasterRate: 8
   EliteRate: 50
   RareRate: 40
-  Pool: {fileID: 0}
+  Pool: {fileID: 11400000, guid: f41de782567eac84eb1990bd64329c94, type: 2}
   HasPity: 1
   PityThreshold: 50
   FeaturedUnitName: AQUILA

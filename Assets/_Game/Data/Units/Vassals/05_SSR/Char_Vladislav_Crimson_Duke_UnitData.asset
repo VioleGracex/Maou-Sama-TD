@@ -27,9 +27,9 @@ MonoBehaviour:
   - Title: Origin
     Content: The progenitor of the vampire courts in Drakmora.
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: 1a19183c89e7e3248853b13d27df9044, type: 3}
     Chibi: {fileID: 21300000, guid: 87bd304f8f7736640a43ddd01b307813, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 19f1fd82d99e3fd468f710d9548e620a, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: 49e72ae6f28e791489404124d9367606, type: 3}
     AnimatorController: {fileID: 0}

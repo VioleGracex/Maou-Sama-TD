@@ -22,10 +22,12 @@ MonoBehaviour:
     ClassName: 
   UnitName: Vex
   UnitTitle: Skeletal Warden
+  BriefDescription: 
+  LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: 05452aba81d0a154295dad12bbdb341b, type: 3}
     Chibi: {fileID: 21300000, guid: 29a119d59099cd54180003add4efcc10, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 4bb935f1486cbef419903f14c0a1a3c8, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: a28efa7491df7074c803f59902392e1a, type: 3}
     AnimatorController: {fileID: 0}

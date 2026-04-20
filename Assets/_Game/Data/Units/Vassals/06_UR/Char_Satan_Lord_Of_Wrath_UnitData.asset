@@ -29,7 +29,7 @@ MonoBehaviour:
       causes the earth to crack and burn. She is the final sun, the fire that cleanses
       the universe for the next cycle.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: 23481d65134ac1e4091f3963d5f91a71, type: 3}
+    Avatar: {fileID: 21300000, guid: 4d249d9a6c9ee8348b909d993bdcd654, type: 3}
     Chibi: {fileID: 21300000, guid: ec0e5a0dfe02be944afc1a89ad7953e5, type: 3}
     WaistUp: {fileID: 21300000, guid: e4a56375452ea1b47898f655ed63cac8, type: 3}
     FullSplashArt: {fileID: 21300000, guid: a576666868dff0b45b3d54f929151a99, type: 3}

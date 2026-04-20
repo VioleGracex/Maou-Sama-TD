@@ -29,7 +29,7 @@ MonoBehaviour:
       does not glitter, she will turn to gold. She owns the wealth of worlds and
       the souls of those who crave them.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: fae0017af3129a54cb5f3e7f51eabc98, type: 3}
+    Avatar: {fileID: 21300000, guid: 013fd41c2e84c6549aa910cac61a824d, type: 3}
     Chibi: {fileID: 21300000, guid: 28feb81b29cb3ae43842dadaa352e096, type: 3}
     WaistUp: {fileID: 21300000, guid: e8300a8668be0f041a82141c79e8a38b, type: 3}
     FullSplashArt: {fileID: 21300000, guid: f8c2ec142445928448efc1b45725105e, type: 3}

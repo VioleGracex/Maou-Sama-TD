@@ -28,7 +28,7 @@ MonoBehaviour:
   - Title: Origin
     Content: Ruler of the highest peaks, commands the storms with a flap of her wings.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: 5ce6f2a2fdb42474081f7f6c046c06ef, type: 3}
+    Avatar: {fileID: 21300000, guid: b0ebda7fb0a56f4478cf8311800df6e9, type: 3}
     Chibi: {fileID: 21300000, guid: 50a484f1d84de134ebea55eac775df8d, type: 3}
     WaistUp: {fileID: 21300000, guid: ad21cbd4a0bcf74449bba31d40560dca, type: 3}
     FullSplashArt: {fileID: 21300000, guid: 5ce6f2a2fdb42474081f7f6c046c06ef, type: 3}

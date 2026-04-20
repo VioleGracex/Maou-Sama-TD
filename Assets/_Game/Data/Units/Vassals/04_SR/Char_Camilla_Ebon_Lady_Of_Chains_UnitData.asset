@@ -27,9 +27,9 @@ MonoBehaviour:
   - Title: Origin
     Content: A loyal combatant in the Maou's forces holding the rank of SR.
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: 6543ffba5c5acbe4091bc80e6aa3b453, type: 3}
     Chibi: {fileID: 21300000, guid: 7eaec238e662a0a4f9548ff1aaa3431a, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: b2576358684f3c8479968b8a59e73088, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: be12015495a9aa24a9587f16885c34b9, type: 3}
     AnimatorController: {fileID: 0}

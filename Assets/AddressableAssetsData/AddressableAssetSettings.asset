@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 120de0bf40785dc4580a92dd7760eca0
   m_currentHash:
     serializedVersion: 2
-    Hash: 9154c0d73b92d58a4b8ca0b53d37ea9c
+    Hash: 00000000000000000000000000000000
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_CatalogRequestsTimeout: 0
@@ -112,6 +112,12 @@ MonoBehaviour:
     - Shop
     - LevelData
     - ClassScaleData
+    - Unit_Common
+    - Unit_Uncommon
+    - Unit_Rare
+    - Unit_Elite
+    - Unit_Master
+    - Unit_Legendary
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 2f133958f2fada243a13c7df30439b3b, type: 2}

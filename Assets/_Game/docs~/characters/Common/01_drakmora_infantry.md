@@ -1,4 +1,4 @@
-# Vassal: Drakmora Infantry
+# Vassal: Kaldor, Drakmora Infantry
 **Rarity**: Common
 **Race**: Trueborn Demon
 **Class**: Vanguard

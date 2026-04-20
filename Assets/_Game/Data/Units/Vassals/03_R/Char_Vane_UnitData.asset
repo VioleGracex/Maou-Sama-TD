@@ -22,10 +22,12 @@ MonoBehaviour:
     ClassName: 
   UnitName: Vane
   UnitTitle: Shadow Assassin
+  BriefDescription: 
+  LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: 8f695416f43450943ba8cd2a1bea5de8, type: 3}
     Chibi: {fileID: 21300000, guid: af5dbf9749778d441b097ff042b8326e, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 2bfcd5eedd298e34fbb2ba08cb7f9306, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: a865257cdb8ca8f44982d8e713cbb0d7, type: 3}
     AnimatorController: {fileID: 0}

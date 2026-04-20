@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9891819c423869440bed8d8e982e741b, type: 3}
+  m_Name: GachaBanner_TheHunt
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.GachaBannerSO
+  BannerID: 
+  BannerName: 'The Hunt: Silent Predators'
+  BannerArt: {fileID: 0}
+  TabImage: {fileID: 0}
+  Description: Beastkin & Elven Elite Trackers
+  Currency: 0
+  SingleCost: 160
+  MultiCost: 1600
+  LegendaryRate: 2
+  MasterRate: 8
+  EliteRate: 50
+  RareRate: 40
+  Pool: {fileID: 0}
+  HasPity: 1
+  PityThreshold: 50
+  FeaturedUnitName: Shade, Nyx
+  FeaturedUnitTitle: Shadow Stalkers
+  DetailedDescription: A tactical banner featuring Shade (Phantom Stalker) and Nyx
+    (Phantom Beastkin). High rate-up for stealth and ranger units.
+  ProbabilityDetails: 

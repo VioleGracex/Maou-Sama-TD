@@ -25,9 +25,9 @@ MonoBehaviour:
   BriefDescription: 
   LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: d42986730d99ed5479ca768c99151238, type: 3}
     Chibi: {fileID: 21300000, guid: 653f5b10eb4685d46ab26b386be9d744, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 551a58a7851fc4e48a9881a2847e43e7, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: b7dad43f8c3376c4795eb24f5734ec06, type: 3}
     AnimatorController: {fileID: 0}

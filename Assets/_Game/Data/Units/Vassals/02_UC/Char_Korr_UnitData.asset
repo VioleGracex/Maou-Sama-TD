@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Korr_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: 3e4e5596-5e80-43de-b456-b42c51af2a7a
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -26,9 +26,9 @@ MonoBehaviour:
     Uncommon.
   LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: e5aaa129a5a189745a2ad9771d2a87a2, type: 3}
     Chibi: {fileID: 21300000, guid: 00c4272f48625574dadcef72b944159d, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 22c53d8b25c5c054b808faf22d5df83f, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: 8930cdbbf419ea741a3d341dda9361a1, type: 3}
     AnimatorController: {fileID: 0}

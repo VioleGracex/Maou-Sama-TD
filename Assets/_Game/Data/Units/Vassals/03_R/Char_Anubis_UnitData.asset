@@ -22,10 +22,12 @@ MonoBehaviour:
     ClassName: 
   UnitName: Anubis
   UnitTitle: Tomb Guardian
+  BriefDescription: 
+  LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: 7281c38dd6e9c3a41bfb2134f3e5b099, type: 3}
     Chibi: {fileID: 21300000, guid: 3c5c927107fa3b046818df3e404c59fe, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: f2cf9fd9190c5f24c85ce3fe46d153c1, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: 379f1f222a3f9e84f9e6287523ec877b, type: 3}
     AnimatorController: {fileID: 0}

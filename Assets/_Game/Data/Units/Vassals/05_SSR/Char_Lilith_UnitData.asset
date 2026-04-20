@@ -29,9 +29,9 @@ MonoBehaviour:
     Content: Legendary temptress and master strategist, absolute ruler of the Succubi.
       Highly devoted to Maou-sama.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
+    Avatar: {fileID: 21300000, guid: d4e7ca56c750ecf4897784ee0203e769, type: 3}
     Chibi: {fileID: 21300000, guid: f446520f4c8860b48bfaacf1dc42c71e, type: 3}
-    WaistUp: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
+    WaistUp: {fileID: 21300000, guid: 0b82564b3496e84438d8102ab3d0df70, type: 3}
     FullSplashArt: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
     AnimatorController: {fileID: 0}

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Char_Elowen_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: fcfd7312-fe1d-457f-ba87-1dfb5f3655ea
   CalculatedStats:
     MaxHp: 0
     Attack: 0
@@ -26,9 +26,9 @@ MonoBehaviour:
     Uncommon.
   LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 0}
+    Avatar: {fileID: 21300000, guid: f3b445935fdd76c4a96d89368149ece1, type: 3}
     Chibi: {fileID: 21300000, guid: 7eb68dc6bf156884eaf9006e4bd05066, type: 3}
-    WaistUp: {fileID: 0}
+    WaistUp: {fileID: 21300000, guid: 53c72226c2e67ba4dab3cf64a32ddd51, type: 3}
     FullSplashArt: {fileID: 0}
     FullBodyCutout: {fileID: 21300000, guid: 80d9d8157e84a764491daf7b17188951, type: 3}
     AnimatorController: {fileID: 0}

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using MaouSamaTD.Units;
@@ -232,3 +233,4 @@ namespace MaouSamaTD.Editor
         }
     }
 }
+#endif

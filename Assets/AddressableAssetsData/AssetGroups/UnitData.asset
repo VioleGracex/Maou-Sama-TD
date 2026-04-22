@@ -50,6 +50,13 @@ MonoBehaviour:
     - UnitData
     - Unit_Master
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 06fb21cfb26ed994a9461dc3af248245
+    m_Address: Char_Vesta_UnitData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UnitData
+    - Unit_Common
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 08c53f63e4006d848b406afb0811cde6
     m_Address: Char_Lila_UnitData
     m_ReadOnly: 0

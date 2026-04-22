@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Data.GachaBannerSO
   BannerID: 8C0F4E1F
   BannerName: The Hunt
-  BannerArt: {fileID: 21300000, guid: 3520d6724e7216242a7f9c81a15f27c3, type: 3}
+  BannerArt: {fileID: 21300000, guid: 71ae83e44523433499ea9fe846bd80c2, type: 3}
   TabImage: {fileID: 0}
   Description: Silent Predators
   Currency: 0

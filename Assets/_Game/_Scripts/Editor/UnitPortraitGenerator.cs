@@ -175,12 +175,23 @@ namespace MaouSamaTD.Editor
             int cropHeight = (int)(subjectHeight * _cropPercent);
             int cropWidth = (int)(cropHeight * _aspectRatio);
             
+            // Allow crop to be wider than the character bounds to preserve AR
             int centerX = minX + (subjectWidth / 2);
-            int startX = Mathf.Clamp(centerX - (cropWidth / 2), 0, texWidth - cropWidth);
-            int startY = Mathf.Clamp(visualTop - cropHeight, 0, texHeight - cropHeight);
+            int startX = centerX - (cropWidth / 2);
+            int startY = visualTop - cropHeight;
 
-            if (startX + cropWidth > texWidth) cropWidth = texWidth - startX;
-            if (startY + cropHeight > texHeight) cropHeight = texHeight - startY;
+            // Clamp but don't shrink W/H unless they exceed original texture
+            startX = Mathf.Max(0, startX);
+            startY = Mathf.Max(0, startY);
+            
+            if (startX + cropWidth > texWidth) startX = texWidth - cropWidth;
+            if (startY + cropHeight > texHeight) startY = texHeight - cropHeight;
+            
+            // Final safety clamp to texture size
+            startX = Mathf.Clamp(startX, 0, texWidth - 1);
+            startY = Mathf.Clamp(startY, 0, texHeight - 1);
+            cropWidth = Mathf.Min(cropWidth, texWidth - startX);
+            cropHeight = Mathf.Min(cropHeight, texHeight - startY);
 
             return new RectInt(startX, startY, cropWidth, cropHeight);
         }

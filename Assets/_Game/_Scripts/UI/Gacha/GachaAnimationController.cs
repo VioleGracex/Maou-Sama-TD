@@ -59,9 +59,6 @@ namespace MaouSamaTD.UI.Gacha
 
         [Header("Compensation UI")]
         [SerializeField] private GameObject _duplicateBadge; // Show if duplicate
-        [SerializeField] private GameObject _compensationRoot; // Container for gold/crest
-        [SerializeField] private TMPro.TextMeshProUGUI _txtGoldAmount;
-        [SerializeField] private TMPro.TextMeshProUGUI _txtCrestAmount;
 
         [Inject] private UnitDatabase _unitDatabase;
         
@@ -249,9 +246,6 @@ namespace MaouSamaTD.UI.Gacha
             
             // Compensation UI Reset
             if (_duplicateBadge != null) _duplicateBadge.SetActive(result.IsDuplicate);
-            if (_compensationRoot != null) _compensationRoot.SetActive(result.IsDuplicate);
-            if (_txtGoldAmount != null) _txtGoldAmount.text = result.CompensationGold.ToString();
-            if (_txtCrestAmount != null) _txtCrestAmount.text = result.CompensationBloodCrest.ToString();
 
             var unit = _unitDatabase.GetUnitByID(result.UnitID);
             if (unit != null)
@@ -281,8 +275,8 @@ namespace MaouSamaTD.UI.Gacha
             // Duplicate Compensation POP animation
             if (result.IsDuplicate && _compensationPopGroup != null)
             {
-                if (_popGoldText != null) _popGoldText.text = result.CompensationGold.ToString();
-                if (_popCrestText != null) _popCrestText.text = result.CompensationBloodCrest.ToString();
+                if (_popGoldText != null) _popGoldText.text = "X" + result.CompensationGold.ToString();
+                if (_popCrestText != null) _popCrestText.text = "X" + result.CompensationBloodCrest.ToString();
                 
                 // Setup animation
                 _compensationPopGroup.alpha = 0;

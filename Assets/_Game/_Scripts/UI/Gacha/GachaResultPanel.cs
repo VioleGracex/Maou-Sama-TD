@@ -25,19 +25,35 @@ namespace MaouSamaTD.UI.Gacha
         [SerializeField] private GameObject _compensationOverallRoot;
         [SerializeField] private TMPro.TextMeshProUGUI _txtTotalGold;
         [SerializeField] private TMPro.TextMeshProUGUI _txtTotalBloodCrest;
+
+        [Header("Rarity Appearance Settings")]
+        [SerializeField] private List<RarityColorConfig> _rarityConfigs = new List<RarityColorConfig>();
+        [SerializeField] private float _defaultGlowIntensity = 2.0f;
+        [SerializeField] private float _glowOffsetScale = 1.15f; 
+
+        [System.Serializable]
+        public struct RarityColorConfig
+        {
+            public UnitRarity Rarity;
+            public Color Color;
+            public float IntensityOverride;
+        }
         
         [Inject] private UnitDatabase _unitDatabase;
 
         private void Awake()
         {
-            // Do NOT hide gameObject here if we want to call methods on it, 
-            // but we can hide the visual root.
             if (_visualRoot != null) _visualRoot.SetActive(false);
+            
+            if (_btnConfirm != null)
+            {
+                _btnConfirm.onClick.RemoveAllListeners();
+                _btnConfirm.onClick.AddListener(Close);
+            }
         }
 
         public void DisplayResults(List<UnitInventoryEntry> results)
         {
-            // CRITICAL: Ensure the GameObject itself is active before starting coroutines
             this.gameObject.SetActive(true);
             
             if (_visualRoot != null) _visualRoot.SetActive(true);
@@ -60,9 +76,10 @@ namespace MaouSamaTD.UI.Gacha
                 }
             }
 
-            if (_compensationOverallRoot != null) _compensationOverallRoot.SetActive(hasAnyDuplicate);
-            if (_txtTotalGold != null) _txtTotalGold.text = totalGold.ToString();
-            if (_txtTotalBloodCrest != null) _txtTotalBloodCrest.text = totalCrest.ToString();
+            bool showCompensation = totalGold > 0 || totalCrest > 0;
+            if (_compensationOverallRoot != null) _compensationOverallRoot.SetActive(showCompensation);
+            if (_txtTotalGold != null) _txtTotalGold.text = "X" + totalGold.ToString();
+            if (_txtTotalBloodCrest != null) _txtTotalBloodCrest.text = "X" + totalCrest.ToString();
             
             if (results.Count == 1)
             {
@@ -128,25 +145,32 @@ namespace MaouSamaTD.UI.Gacha
                 cardUI.SetInteractable(false);
                 
                 var effect = go.AddComponent<GachaResultCardEffect>();
-                effect.ApplyGlow(GetGlowColor(data.Rarity));
+                
+                var config = _rarityConfigs.Find(x => x.Rarity == data.Rarity);
+                Color rarityColor = config.Color != default ? config.Color : GetFallbackColor(data.Rarity);
+                float intensity = config.IntensityOverride > 0 ? config.IntensityOverride : _defaultGlowIntensity;
+
+                effect.ApplyGlow(rarityColor, intensity, _glowOffsetScale);
             }
         }
 
-        private Color GetGlowColor(UnitRarity rarity)
+        private Color GetFallbackColor(UnitRarity rarity)
         {
             return rarity switch
             {
-                UnitRarity.Legendary => new Color(1f, 0.5f, 0f, 1f),
-                UnitRarity.Master => new Color(0.7f, 0.2f, 1f, 1f),
-                UnitRarity.Elite => new Color(0.2f, 0.6f, 1f, 1f),
-                UnitRarity.Rare => new Color(0.2f, 1f, 0.4f, 1f),
-                _ => new Color(1f, 1f, 1f, 0.5f)
+                UnitRarity.Legendary => new Color(1f, 0.5f, 0f, 1f),    // Orange/Gold (High End)
+                UnitRarity.Master => new Color(0.7f, 0.2f, 1f, 1f),    // Purple (Mythic)
+                UnitRarity.Elite => new Color(0.2f, 0.6f, 1f, 1f),     // Blue (Rare/Elite)
+                UnitRarity.Rare => new Color(0.2f, 1f, 0.4f, 1f),      // Green (Common/Uncommon)
+                _ => new Color(1f, 1f, 1f, 0.5f)                       // White/Gray (Basic)
             };
         }
 
+
+
         public void Close()
         {
-            if (_visualRoot != null) _visualRoot.SetActive(false);
+            this.gameObject.SetActive(false);
         }
 
         [ContextMenu("Auto-Assign Result UI")]

@@ -57,6 +57,8 @@ namespace MaouSamaTD.Units
         public string UnitName;
         public string UnitTitle;
         [TextArea(2, 5)]
+        public string SummonQuote; // Quote shown when summoned
+        [TextArea(2, 5)]
         public string BriefDescription;
         public System.Collections.Generic.List<UnitLoreEntry> LoreEntries = new System.Collections.Generic.List<UnitLoreEntry>();
 

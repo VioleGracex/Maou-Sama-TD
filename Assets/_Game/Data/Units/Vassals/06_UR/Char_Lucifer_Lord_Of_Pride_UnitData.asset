@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Lucifer
   UnitTitle: Lord Of Pride
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The Fallen Morning Star.
   LoreEntries:
   - Title: Origin

@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Lyra
   UnitTitle: Blood Moon Sentinel
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
   LoreEntries:
   - Title: Origin

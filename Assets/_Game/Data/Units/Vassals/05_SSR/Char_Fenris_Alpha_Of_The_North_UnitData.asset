@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Fenris
   UnitTitle: Alpha Of The North
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: Ancient ruler of the werewolf tribes, utterly loyal to strength.
   LoreEntries:
   - Title: Origin

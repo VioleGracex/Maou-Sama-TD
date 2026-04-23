@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Callum
   UnitTitle: Defected Marksman
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A dedicated combatant in the Maou's forces holding the rank of
     Uncommon.
   LoreEntries: []

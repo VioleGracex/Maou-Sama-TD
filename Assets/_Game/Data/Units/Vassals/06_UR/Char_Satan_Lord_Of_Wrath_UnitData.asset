@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Satan
   UnitTitle: Lord Of Wrath
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The incarnation of the world's fury.
   LoreEntries:
   - Title: Origin

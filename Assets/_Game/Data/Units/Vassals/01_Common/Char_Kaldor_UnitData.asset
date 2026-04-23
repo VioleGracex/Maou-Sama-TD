@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Kaldor
   UnitTitle: Infantry of Drakmora
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A disciplined vanguard of the Drakmora empire, Kaldor carries
     the weight of his kingdom on his shield.
   LoreEntries:

@@ -3,31 +3,45 @@
 Our summoning system is designed to be the most "Fair and User-Friendly" in the genre, ensuring players eventually get exactly who they want without extreme RNG frustration.
 
 ## 1. Summoning Rates
-- **6-Star (SSR/Legendary)**: 2.0%
-- **5-Star (SR/Epic)**: 8.0%
-- **4-Star (R/Rare)**: 50.0%
-- **3-Star (Common)**: 40.0%
+- **UR (Legendary)**: 2.0%
+- **SSR (Master)**: 8.0%
+- **SR (Elite)**: 30.0%
+- **R (Rare)**: 40.0%
+- **UC (Uncommon)**: 15.0%
+- **C (Common)**: 5.0% (Guarantee Buffed Pity)
 
-## 2. Fair Pity System
-- **10-Pull Guarantee**: Every 10 pulls is guaranteed to contain at least one 4-star character or higher.
-- **Soft Pity**: If no 6-star is pulled within 50 rolls, the rate increases by 2.0% every subsequent roll until a 6-star is obtained.
-- **Featured Guarantee**: If you pull a 6-star and it is NOT the featured banner character, the NEXT 6-star is guaranteed to be the featured one.
+## 2. Duplicate Compensation (Liquification)
+When you pull a character you already own, you receive automatic compensation in **Gold** and **Blood Crests**.
 
-## 3. The "Chosen One" Guarantee (Unique Mechanic)
+| Rarity | Gold Refund | Blood Crest Refund |
+| :--- | :--- | :--- |
+| **UR (Legendary)** | **5,000** | **200** |
+| **SSR (Master)** | **2,000** | **50** |
+| **SR (Elite)** | **500** | **10** |
+| **R (Rare)** | **200** | **2** |
+| **UC (Uncommon)** | **100** | **1** |
+| **C (Common)** | **50** | **0** |
+
+## 3. Fair Pity System
+- **10-Pull Guarantee**: Every 10 pulls is guaranteed to contain at least one SR (Elite) character or higher.
+- **Soft Pity**: If no UR is pulled within 50 rolls, the rate increases by 2.0% every subsequent roll until a UR is obtained.
+- **Featured Guarantee**: If you pull a UR and it is NOT the featured banner character, the NEXT UR is guaranteed to be the featured one.
+
+## 4. The "Chosen One" Guarantee (Unique Mechanic)
 This mechanic provides a clear path to specifically desired characters through "Selector Milestones."
 
 | Milestone | Reward |
 | :--- | :--- |
-| **50 Pulls** | **4-Star Selector**: Choose any 4-star character currently in the pool. |
-| **100 Pulls** | **5-Star Selector**: Choose any 5-star character currently in the pool. |
-| **150 Pulls** | **Featured 6-Star Selector**: Choose any 6-star character currently featured on the banner. |
-| **300 Pulls** | **Grand Selector**: Choose any 6-star character from the entire permanent pool. |
+| **50 Pulls** | **SR Selector**: Choose any SR character currently in the pool. |
+| **100 Pulls** | **SSR Selector**: Choose any SSR character currently in the pool. |
+| **150 Pulls** | **Featured UR Selector**: Choose any UR character currently featured on the banner. |
+| **300 Pulls** | **Grand Selector**: Choose any UR character from the entire permanent pool. |
 
 *Note: Milestones reset when the Grand Selector is claimed or the banner rotation ends.*
 
-## 4. Wishlist System (Permanent Banner Only)
-On the standard permanent banner, players can select up to 5 characters from the 5/6 star pool for their "Wishlist."
-- Any 5 or 6 star pulled has an **80% chance** to be one of the characters on your wishlist.
+## 5. Wishlist System (Permanent Banner Only)
+On the standard permanent banner, players can select up to 5 characters from the SSR/UR pool for their "Wishlist."
+- Any SSR/UR pulled has an **80% chance** to be one of the characters on your wishlist.
 - This allows players to target specific builds or favorite characters even outside of limited banners.
 
 ---

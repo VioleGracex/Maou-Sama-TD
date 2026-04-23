@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Vex
   UnitTitle: Skeletal Warden
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: 
   LoreEntries: []
   BaseSkin:

@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Asmodeus
   UnitTitle: Lord Of Lust
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The Sovereign of Desire.
   LoreEntries:
   - Title: Origin

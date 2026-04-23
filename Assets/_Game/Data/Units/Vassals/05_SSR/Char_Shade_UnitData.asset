@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Shade
   UnitTitle: The Phantom Stalker
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A ghostly presence within the Drakmora forests.
   LoreEntries:
   - Title: Origin

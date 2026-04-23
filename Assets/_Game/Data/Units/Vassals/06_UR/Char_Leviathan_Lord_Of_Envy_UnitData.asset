@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Leviathan
   UnitTitle: Lord Of Envy
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The Sovereign of the Depths.
   LoreEntries:
   - Title: Origin

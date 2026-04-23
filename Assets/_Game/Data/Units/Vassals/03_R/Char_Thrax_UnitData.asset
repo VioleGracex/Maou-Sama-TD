@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Thrax
   UnitTitle: Rune Scarred Gladiator
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: 
   LoreEntries: []
   BaseSkin:

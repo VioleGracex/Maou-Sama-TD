@@ -93,20 +93,53 @@ namespace MaouSamaTD.Managers
             for (int i = 0; i < count; i++)
             {
                 UnitData drawnUnit = RollUnit(banner);
-                UnitInventoryEntry entry = new UnitInventoryEntry(drawnUnit.UniqueID ?? drawnUnit.name);
+                string unitID = drawnUnit.UniqueID ?? drawnUnit.name;
+                UnitInventoryEntry entry = new UnitInventoryEntry(unitID);
+                
+                // Duplicate Detection
+                bool alreadyOwned = _saveManager.CurrentData.UnlockedUnits.Contains(unitID);
+                if (alreadyOwned)
+                {
+                    entry.IsDuplicate = true;
+                    var (gold, crest) = GetCompensationValues(drawnUnit.Rarity);
+                    entry.CompensationGold = gold;
+                    entry.CompensationBloodCrest = crest;
+                    
+                    _economyManager.AddGold(gold);
+                    _economyManager.AddBloodCrest(crest);
+                    
+                    // Note: We still add it to inventory for Arknights-style Potential system
+                    // or the user might want it auto-removed. The user mentioned "compensation image"
+                    // and "liquify" in the code, but also "Duplicates (already owned)".
+                    // We'll keep it in inventory for now as the current system adds it.
+                }
+
                 results.Add(entry);
                 
                 // Add to inventory
                 _saveManager.CurrentData.UnitInventory.Add(entry);
-                if (!_saveManager.CurrentData.UnlockedUnits.Contains(entry.UnitID))
+                if (!alreadyOwned)
                 {
-                    _saveManager.CurrentData.UnlockedUnits.Add(entry.UnitID);
+                    _saveManager.CurrentData.UnlockedUnits.Add(unitID);
                 }
             }
 
             _saveManager.Save();
             LastSummonResults = results;
             OnSummonCompleted?.Invoke(results);
+        }
+
+        private (int gold, int bloodCrest) GetCompensationValues(UnitRarity rarity)
+        {
+            return rarity switch
+            {
+                UnitRarity.Legendary => (5000, 200),
+                UnitRarity.Master => (2000, 50),
+                UnitRarity.Elite => (500, 10),
+                UnitRarity.Rare => (200, 2),
+                UnitRarity.Uncommon => (100, 1),
+                _ => (50, 0)
+            };
         }
 
         private UnitData RollUnit(GachaBannerSO banner)

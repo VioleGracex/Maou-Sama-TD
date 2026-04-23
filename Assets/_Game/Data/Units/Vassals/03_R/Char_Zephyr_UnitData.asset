@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Zephyr
   UnitTitle: Wind Rider
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
   LoreEntries:
   - Title: Origin

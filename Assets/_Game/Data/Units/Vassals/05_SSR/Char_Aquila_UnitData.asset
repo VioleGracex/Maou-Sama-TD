@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Aquila
   UnitTitle: The Harpy Queen
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: Ruler of the highest peaks, commands the storms with a flap of
     her wings.
   LoreEntries:

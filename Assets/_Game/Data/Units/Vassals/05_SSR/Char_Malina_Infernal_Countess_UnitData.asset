@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Malina
   UnitTitle: Infernal Countess
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: Unbroken general whose greatshield has repulsed crusader sieges
     for centuries.
   LoreEntries:

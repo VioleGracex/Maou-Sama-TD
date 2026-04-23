@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Cinder
   UnitTitle: Undead Guard
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: 
   LoreEntries: []
   BaseSkin:

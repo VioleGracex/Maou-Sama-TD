@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Grim
   UnitTitle: Bone Juggernaut
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: 
   LoreEntries: []
   BaseSkin:

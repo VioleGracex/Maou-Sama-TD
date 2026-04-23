@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Balthazar
   UnitTitle: Lord Of Sloth
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The Dreamweaver.
   LoreEntries:
   - Title: Origin

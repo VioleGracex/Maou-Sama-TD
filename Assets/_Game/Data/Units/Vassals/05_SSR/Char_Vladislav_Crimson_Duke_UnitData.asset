@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Vladislav
   UnitTitle: Crimson Duke
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The progenitor of the vampire courts in Drakmora.
   LoreEntries:
   - Title: Origin

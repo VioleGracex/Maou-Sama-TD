@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Shadow
   UnitTitle: Feral Alley Cat
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A very powerful and ancient combatant of the Maou's forces.
   LoreEntries:
   - Title: Origin

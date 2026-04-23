@@ -152,6 +152,11 @@ namespace MaouSamaTD.Data
         public int Experience = 0;
         public long AcquisitionDate;
 
+        [Header("Gacha Metadata")]
+        public bool IsDuplicate;
+        public int CompensationGold;
+        public int CompensationBloodCrest;
+
         public UnitInventoryEntry(string unitID)
         {
             InstanceID = Guid.NewGuid().ToString();

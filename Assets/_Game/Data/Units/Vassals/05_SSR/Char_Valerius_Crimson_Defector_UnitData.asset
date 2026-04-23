@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Valerius
   UnitTitle: Crimson Defector
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A master strategist who abandoned humanity out of pure disgust.
   LoreEntries:
   - Title: Origin

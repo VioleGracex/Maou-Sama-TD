@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Aria
   UnitTitle: Renegade Peasant
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A survivor of the lower districts who has taken up arms to defend
     what remains.
   LoreEntries:

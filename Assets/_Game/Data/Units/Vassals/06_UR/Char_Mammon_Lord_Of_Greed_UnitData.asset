@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Mammon
   UnitTitle: Lord Of Greed
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The Sovereign of Avarice.
   LoreEntries:
   - Title: Origin

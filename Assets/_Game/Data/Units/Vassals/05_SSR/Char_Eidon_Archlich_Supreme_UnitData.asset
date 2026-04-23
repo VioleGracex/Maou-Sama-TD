@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Eidon
   UnitTitle: Archlich Supreme
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: Prehistoric king-lich ruling the dead north.
   LoreEntries:
   - Title: Origin

@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: 
   UnitName: Victor
   UnitTitle: Fallen Paladin
+  SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: Led a failed rebellion against the light.
   LoreEntries:
   - Title: Origin

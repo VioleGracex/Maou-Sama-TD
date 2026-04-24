@@ -248,17 +248,32 @@ namespace MaouSamaTD.UI.MainMenu
                 return;
             }
 
+            // Persist the player's choices
             _saveManager.CurrentData.PlayerName = _nameInputField.text.Trim();
             _saveManager.CurrentData.Gender = _selectedGender;
             _saveManager.CurrentData.TrueName = _selectedTrueName;
             
-            if (_saveManager.CurrentData.UnlockedUnits == null) _saveManager.CurrentData.UnlockedUnits = new System.Collections.Generic.List<string>();
-            if (!_saveManager.CurrentData.UnlockedUnits.Contains("Ignis")) _saveManager.CurrentData.UnlockedUnits.Add("Ignis");
+            if (_saveManager.CurrentData.UnlockedUnits == null)
+                _saveManager.CurrentData.UnlockedUnits = new System.Collections.Generic.List<string>();
+            if (!_saveManager.CurrentData.UnlockedUnits.Contains("Ignis"))
+                _saveManager.CurrentData.UnlockedUnits.Add("Ignis");
 
             _saveManager.Save();
-            
-            if (_visualRoot != null) _visualRoot.SetActive(false);
-            if (_homeScreenRoot != null) _homeScreenRoot.SetActive(true);
+
+            // Disable the button so the player can't double-click
+            if (_ariseButton != null) _ariseButton.interactable = false;
+
+            // Launch BattleScene through the loading screen
+            var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+            if (loader != null)
+            {
+                loader.LoadSceneTransition("BattleScene");
+            }
+            else
+            {
+                Debug.LogWarning("[AscensionPanel] LoadingScreenPanel not found – loading BattleScene directly.");
+                UnityEngine.SceneManagement.SceneManager.LoadScene("BattleScene");
+            }
         }
         #endregion
     }

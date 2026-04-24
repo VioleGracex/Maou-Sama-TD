@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using Assets.SimpleLocalization.Scripts;
 using Zenject;
 using MaouSamaTD.UI;
@@ -50,6 +51,12 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("Nav Overlay")]
         public UINavigationOverlay _navOverlay;
 
+        [Header("Tutorial")]
+        [Tooltip("The blocker / tutorial hand overlay used for home-screen tutorials.")]
+        [SerializeField] private UIPopupBlocker _tutorialBlocker;
+        [Tooltip("The RectTransform of the Manifest Vassals button, used to show the tutorial pointer.")]
+        [SerializeField] private RectTransform _manifestButtonRect;
+
         [Header("Debug")]
         [SerializeField] private bool _debug = true;
 
@@ -81,6 +88,72 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 UIFlowManager.Instance.ClearHistory(false, true);
             }
+
+            // Check if we should trigger the Gacha Tutorial (post Level 2)
+            StartCoroutine(CheckGachaTutorial());
+        }
+
+        /// <summary>
+        /// Waits one frame to let all systems initialise, then checks whether
+        /// the player has just completed Level 2 for the first time and hasn't
+        /// yet seen the Gacha tutorial. If so, it starts the guided flow.
+        /// </summary>
+        private IEnumerator CheckGachaTutorial()
+        {
+            yield return null; // Wait one frame for all injects / Awake to finish
+
+            if (_saveManager == null || _saveManager.CurrentData == null) yield break;
+            if (_saveManager.CurrentData.GachaTutorialShown) yield break;
+            if (!_saveManager.IsLevelCompleted("1-2")) yield break;
+
+            Debug.Log("[HomeUIManager] Level 2 cleared – starting Gacha tutorial flow.");
+
+            if (_manifestButtonRect != null && _tutorialBlocker != null)
+            {
+                // Step 1: Show blocker with a hole over the Manifest button
+                _tutorialBlocker.ShowBlockerWithTarget(_manifestButtonRect);
+
+                // Step 2: Wire a one-shot click on the Manifest button to open tutorial gacha
+                if (_btnManifest != null)
+                {
+                    _btnManifest.onClick.RemoveAllListeners();
+                    _btnManifest.onClick.AddListener(StartGachaTutorialPull);
+                }
+            }
+            else
+            {
+                // No blocker configured – jump straight into tutorial mode
+                StartGachaTutorialPull();
+            }
+        }
+
+        private void StartGachaTutorialPull()
+        {
+            // Hide the home blocker
+            if (_tutorialBlocker != null) _tutorialBlocker.HideBlocker();
+
+            // Re-wire the Manifest button back to normal
+            if (_btnManifest != null)
+            {
+                _btnManifest.onClick.RemoveAllListeners();
+                _btnManifest.onClick.AddListener(OnManifestClicked);
+            }
+
+            var gachaPanel = Object.FindFirstObjectByType<MaouSamaTD.UI.Gacha.GachaPanel>(FindObjectsInactive.Include);
+            if (gachaPanel == null)
+            {
+                Debug.LogWarning("[HomeUIManager] GachaPanel not found for tutorial!");
+                return;
+            }
+
+            // Open through flow manager first so history is correct
+            UIFlowManager.Instance.OpenPanel(gachaPanel);
+
+            // Then switch it into tutorial mode (this re-uses the already-opened panel)
+            gachaPanel.OpenInTutorialMode(() =>
+            {
+                Debug.Log("[HomeUIManager] Gacha tutorial complete – welcome to Manifest Vassals!");
+            });
         }
 
         private void PreheatData()

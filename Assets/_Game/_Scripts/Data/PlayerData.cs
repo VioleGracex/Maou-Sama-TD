@@ -22,6 +22,7 @@ namespace MaouSamaTD.Data
         public int BloodCrest;
         public bool IsLilithAwakened;
         public int MaxSeals;
+        public bool GachaTutorialShown; // Set true after the forced post-L2 gacha tutorial
 
         [Header("Ascension Identity")]
         public string PlayerName = "Mephisto"; // Custom input

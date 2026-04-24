@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Zenject;
 using MaouSamaTD.Data;
 using MaouSamaTD.UI;
+using MaouSamaTD.Managers;
 
 namespace MaouSamaTD.UI.Gacha
 {
@@ -46,11 +47,48 @@ namespace MaouSamaTD.UI.Gacha
         // SoulIntentPanel _intentPanel; // Placeholder if needed later
         
         private GachaBannerSO _currentBanner;
+        private bool _isTutorialMode = false;
+        private System.Action _onTutorialConfirmed;
 
         [Header("Injection Fallbacks")]
         [SerializeField] private MaouSamaTD.Managers.GachaManager _gachaManager;
 
+        [Inject(Optional = true)] private SaveManager _saveManager;
+
         public void Open()
+        {
+            _isTutorialMode = false;
+            _onTutorialConfirmed = null;
+            OpenInternal();
+        }
+
+        /// <summary>
+        /// Switches the (already-open) Gacha panel into tutorial mode.
+        /// Call this AFTER UIFlowManager.OpenPanel() so the panel is already
+        /// initialised. Hides the single-pull button and locks tab-switching
+        /// until the player confirms their first 10-pull result.
+        /// </summary>
+        public void OpenInTutorialMode(System.Action onConfirmed)
+        {
+            _isTutorialMode = true;
+            _onTutorialConfirmed = onConfirmed;
+
+            // Disable distractions during tutorial
+            if (_btnSingle != null) _btnSingle.gameObject.SetActive(false);
+            if (_btnIntent != null) _btnIntent.interactable = false;
+            if (_btnDetails != null) _btnDetails.interactable = false;
+
+            // Lock all tabs so the player can't switch banners
+            if (_tabs != null)
+            {
+                foreach (var tab in _tabs) 
+                {
+                    if (tab.Button != null) tab.Button.interactable = false;
+                }
+            }
+        }
+
+        private void OpenInternal()
         {
             if (_visualRoot != null) _visualRoot.SetActive(true);
             
@@ -145,9 +183,43 @@ namespace MaouSamaTD.UI.Gacha
 
         private void OnSummonResults(List<UnitInventoryEntry> results)
         {
+            // Lock Navigation UI during ritual
+            if (UIFlowManager.Instance != null)
+            {
+                UIFlowManager.Instance.UpdateNavigationFeatures(NavigationFeatures.None);
+            }
+
             if (_animController != null)
             {
                 _animController.PlayRitual(results);
+            }
+        }
+
+        public void RestoreNavigation()
+        {
+            // Restore Navigation UI after result confirmation
+            if (UIFlowManager.Instance != null)
+            {
+                UIFlowManager.Instance.UpdateNavigationFeatures(ConfiguredNavFeatures);
+            }
+
+            // If this was the tutorial, mark it done and fire the callback
+            if (_isTutorialMode)
+            {
+                _isTutorialMode = false;
+
+                // Re-show the single pull button for future normal session use
+                if (_btnSingle != null) _btnSingle.gameObject.SetActive(true);
+
+                if (_saveManager != null && _saveManager.CurrentData != null)
+                {
+                    _saveManager.CurrentData.GachaTutorialShown = true;
+                    _saveManager.Save();
+                    Debug.Log("[GachaPanel] Gacha tutorial marked as complete.");
+                }
+
+                _onTutorialConfirmed?.Invoke();
+                _onTutorialConfirmed = null;
             }
         }
 

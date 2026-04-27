@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using MaouSamaTD.Tutorial;
 using MaouSamaTD.Managers;
 using MaouSamaTD.UI;
+using MaouSamaTD.Story;
 using Zenject;
 using DG.Tweening;
 
@@ -38,11 +39,14 @@ namespace MaouSamaTD.UI.Tutorial
         [SerializeField] private Button _miniNextButton;
         [SerializeField] private Button _miniSkipButton;
 
-        [Header("Background Dim")]
+        [Header("Background")]
+        [SerializeField] private Image _backgroundImage;
         [SerializeField] private CanvasGroup _fullScreenDim;
 
         private System.Action _onComplete;
         private List<DialogueLine> _currentLines;
+        private List<MaouSamaTD.Story.StoryLine> _currentStoryLines;
+        private bool _isStoryMode;
         private int _currentIndex;
         private bool _isTyping;
         private float _charsPerSecond = 30f;
@@ -133,6 +137,8 @@ namespace MaouSamaTD.UI.Tutorial
 
             _onComplete = onComplete;
             _currentLines = data.Lines;
+            _currentStoryLines = null;
+            _isStoryMode = false;
             _currentIndex = 0;
             _currentStyle = data.Style;
             _bgType = data.Background;
@@ -152,24 +158,117 @@ namespace MaouSamaTD.UI.Tutorial
             CheckAndShowNextLine();
         }
 
+        public void ShowStory(StoryDataSO data, System.Action onComplete = null)
+        {
+            Debug.Log($"[story] ShowStory called: {data?.name}");
+            if (data == null || data.Lines == null || data.Lines.Count == 0)
+            {
+                onComplete?.Invoke();
+                return;
+            }
+
+            _onComplete = onComplete;
+            _currentLines = null;
+            _currentStoryLines = data.Lines;
+            _isStoryMode = true;
+            _currentIndex = 0;
+            _currentStyle = DialogueStyle.FullScreen;
+            _bgType = DialogueBackground.None; // Background is handled per line in story
+            _charsPerSecond = 30f;
+
+            _fullScreenPanel?.SetActive(true);
+            _miniTopPanel?.SetActive(false);
+
+            if (_fullNextButton != null) _fullNextButton.gameObject.SetActive(true);
+            if (_fullSkipButton != null) _fullSkipButton.gameObject.SetActive(true);
+
+            CheckAndShowNextLine();
+        }
+
         private void CheckAndShowNextLine()
         {
-            if (_currentLines == null || _currentIndex >= _currentLines.Count)
+            if (_isStoryMode)
             {
-                Hide();
-                return;
+                if (_currentStoryLines == null || _currentIndex >= _currentStoryLines.Count)
+                {
+                    Hide();
+                    return;
+                }
+                ShowStoryLine(_currentStoryLines[_currentIndex]);
+            }
+            else
+            {
+                if (_currentLines == null || _currentIndex >= _currentLines.Count)
+                {
+                    Hide();
+                    return;
+                }
+
+                var line = _currentLines[_currentIndex];
+                if (string.IsNullOrEmpty(line.Text))
+                {
+                    Debug.Log($"[tutorial] Skipping empty line at index {_currentIndex}");
+                    _currentIndex++;
+                    CheckAndShowNextLine();
+                    return;
+                }
+
+                ShowLine(line);
+            }
+        }
+
+        private void ShowStoryLine(MaouSamaTD.Story.StoryLine line)
+        {
+            Debug.Log($"[story] ShowLine: {line.SpeakerName}");
+            var speakerText = ActiveSpeakerText;
+            var contentText = ActiveContentText;
+
+            if (speakerText != null) speakerText.text = line.SpeakerName;
+            
+            if (_backgroundImage != null)
+            {
+                _backgroundImage.sprite = line.Background;
+                _backgroundImage.enabled = line.Background != null;
             }
 
-            var line = _currentLines[_currentIndex];
-            if (string.IsNullOrEmpty(line.Text))
-            {
-                Debug.Log($"[tutorial] Skipping empty line at index {_currentIndex}");
-                _currentIndex++;
-                CheckAndShowNextLine();
-                return;
-            }
+            // Portraits
+            UpdatePortrait(_leftPortrait, line.PortraitLeft, line.Focus == MaouSamaTD.Story.PortraitFocus.Left || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
+            UpdatePortrait(_middlePortrait, line.PortraitMiddle, line.Focus == MaouSamaTD.Story.PortraitFocus.Middle || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
+            UpdatePortrait(_rightPortrait, line.PortraitRight, line.Focus == MaouSamaTD.Story.PortraitFocus.Right || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
 
-            ShowLine(line);
+            StartTyping(line.DialogueText);
+        }
+
+        private void UpdatePortrait(Image image, Sprite sprite, bool isFocused)
+        {
+            if (image == null) return;
+            image.sprite = sprite;
+            image.gameObject.SetActive(sprite != null);
+            if (sprite != null)
+            {
+                image.color = isFocused ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1f);
+            }
+        }
+
+        private void StartTyping(string text)
+        {
+            var contentText = ActiveContentText;
+            if (contentText != null)
+            {
+                _isTyping = true;
+                contentText.text = text;
+                contentText.maxVisibleCharacters = 0;
+                
+                float duration = text.Length / _charsPerSecond;
+                _typingTween = DOTween.To(() => 0, x => contentText.maxVisibleCharacters = x, text.Length, duration)
+                    .SetEase(Ease.Linear)
+                    .SetUpdate(true)
+                    .OnComplete(() => _isTyping = false);
+            }
+            else
+            {
+                _isTyping = false;
+            }
         }
 
         private void ShowLine(DialogueLine line)
@@ -179,7 +278,6 @@ namespace MaouSamaTD.UI.Tutorial
             var contentText = ActiveContentText;
 
             if (speakerText != null) speakerText.text = line.SpeakerName;
-            if (contentText != null) contentText.text = "";
             
             if (_currentStyle == DialogueStyle.FullScreen)
             {
@@ -188,17 +286,18 @@ namespace MaouSamaTD.UI.Tutorial
                 { 
                     _leftPortrait.gameObject.SetActive(line.PortraitOnLeft); 
                     if (line.PortraitOnLeft) _leftPortrait.sprite = line.SpeakerPortrait; 
+                    _leftPortrait.color = Color.white;
                 }
                 
                 if (_rightPortrait != null) 
                 { 
                     _rightPortrait.gameObject.SetActive(!line.PortraitOnLeft && line.SpeakerPortrait != null); // Simplistic fallback
                     if (!line.PortraitOnLeft) _rightPortrait.sprite = line.SpeakerPortrait; 
+                    _rightPortrait.color = Color.white;
                 }
 
                 if (_middlePortrait != null)
                 {
-                    // This script's DialogueLine doesn't have a middle flag, but I'll add the field to the script anyway
                     _middlePortrait.gameObject.SetActive(false); 
                 }
             }
@@ -211,30 +310,14 @@ namespace MaouSamaTD.UI.Tutorial
                 }
             }
 
-            // Typing effect
-            if (contentText != null)
-            {
-                _isTyping = true;
-                contentText.text = line.Text;
-                contentText.maxVisibleCharacters = 0;
-                
-                float duration = line.Text.Length / _charsPerSecond;
-                _typingTween = DOTween.To(() => 0, x => contentText.maxVisibleCharacters = x, line.Text.Length, duration)
-                    .SetEase(Ease.Linear)
-                    .SetUpdate(true)
-                    .OnComplete(() => _isTyping = false);
-            }
-            else
-            {
-                _isTyping = false;
-            }
+            StartTyping(line.Text);
         }
 
         private void ApplyBackground()
         {
             // Reset
             _uiBlocker?.HideBlocker();
-            if (_fullScreenDim != null) _fullScreenDim.gameObject.SetActive(false);
+            if (_backgroundImage != null) _backgroundImage.enabled = false;
 
             switch (_bgType)
             {

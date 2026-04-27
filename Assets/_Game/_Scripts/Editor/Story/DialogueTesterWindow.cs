@@ -21,6 +21,9 @@ namespace MaouSamaTD.Editor.Story
         // UI State
         private bool isMenuOpen = true;
         private float menuAnimValue = 1f; 
+        private float sideMenuWidth = 250f;
+        private bool isResizing = false;
+        private bool wasDragging = false;
         private bool isFullScreen = false;
         private float previewScale = 0.35f; 
 
@@ -162,7 +165,7 @@ namespace MaouSamaTD.Editor.Story
 
         private void DrawSideMenu()
         {
-            float width = 250 * menuAnimValue;
+            float width = sideMenuWidth * menuAnimValue;
             EditorGUILayout.BeginVertical(GUILayout.Width(width), GUILayout.ExpandHeight(true));
             
             if (menuAnimValue > 0.8f) 
@@ -182,29 +185,41 @@ namespace MaouSamaTD.Editor.Story
                 {
                     if (asset == null) continue;
                     
-                    EditorGUILayout.BeginHorizontal();
+                    Rect itemRect = EditorGUILayout.BeginHorizontal();
                     
                     bool isSelected = selectedAsset == asset;
                     GUI.backgroundColor = isSelected ? new Color(0.2f, 0.7f, 0.7f) : Color.white;
-                    string prefix = asset is StoryDataSO ? "[S] " : "[T] ";
+                    string prefix = asset is StoryDataSO ? "[Story] " : "[Tutorial] ";
                     
-                    if (GUILayout.Button(prefix + asset.name, GUILayout.Height(30)))
+                    GUIStyle itemStyle = new GUIStyle(GUI.skin.button);
+                    itemStyle.alignment = TextAnchor.MiddleLeft;
+                    itemStyle.fontSize = 11;
+                    
+                    // Fixed width for button to leave room for trash icon even when names are long
+                    float labelWidth = (sideMenuWidth * menuAnimValue) - 65; 
+                    if (GUILayout.Button(prefix + asset.name, itemStyle, GUILayout.Height(30), GUILayout.Width(labelWidth)))
                     {
                         selectedAsset = asset;
                         selectedLineIndex = 0;
                         GUI.FocusControl(null);
                     }
                     
-                    if (GUILayout.Button(EditorGUIUtility.IconContent("TreeEditor.Trash"), GUILayout.Width(30), GUILayout.Height(30)))
+                    // Right click menu
+                    if (Event.current.type == EventType.ContextClick && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
                     {
-                        if (EditorUtility.DisplayDialog("Delete Asset", $"Are you sure you want to delete '{asset.name}'? This cannot be undone.", "Delete", "Cancel"))
-                        {
-                            string path = AssetDatabase.GetAssetPath(asset);
-                            AssetDatabase.DeleteAsset(path);
-                            RefreshAssetList();
-                            if (selectedAsset == asset) selectedAsset = null;
-                            GUIUtility.ExitGUI();
-                        }
+                        GenericMenu menu = new GenericMenu();
+                        menu.AddItem(new GUIContent("Ping Asset"), false, () => EditorGUIUtility.PingObject(asset));
+                        menu.AddItem(new GUIContent("Select in Project"), false, () => Selection.activeObject = asset);
+                        menu.AddSeparator("");
+                        menu.AddItem(new GUIContent("Delete Asset"), false, () => DeleteAsset(asset));
+                        menu.ShowAsContext();
+                        Event.current.Use();
+                    }
+                    
+                    GUI.backgroundColor = Color.white;
+                    if (GUILayout.Button(EditorGUIUtility.IconContent("TreeEditor.Trash"), GUILayout.Width(28), GUILayout.Height(30)))
+                    {
+                        DeleteAsset(asset);
                     }
                     
                     EditorGUILayout.EndHorizontal();
@@ -216,19 +231,60 @@ namespace MaouSamaTD.Editor.Story
             EditorGUILayout.EndVertical();
         }
 
+        private void DeleteAsset(ScriptableObject asset)
+        {
+            if (EditorUtility.DisplayDialog("Delete Asset", $"Are you sure you want to delete '{asset.name}'? This cannot be undone.", "Delete", "Cancel"))
+            {
+                string path = AssetDatabase.GetAssetPath(asset);
+                AssetDatabase.DeleteAsset(path);
+                RefreshAssetList();
+                if (selectedAsset == asset) selectedAsset = null;
+                GUIUtility.ExitGUI();
+            }
+        }
+
         private void DrawMenuToggle()
         {
             // Wider handle for better "dock" feel
             Rect toggleRect = GUILayoutUtility.GetRect(22, position.height);
             GUI.Box(toggleRect, "", EditorStyles.helpBox);
             
-            if (GUI.Button(toggleRect, isMenuOpen ? "◀" : "▶", EditorStyles.label))
+            // Resize handling
+            EditorGUIUtility.AddCursorRect(toggleRect, MouseCursor.ResizeHorizontal);
+            
+            if (Event.current.type == EventType.MouseDown && toggleRect.Contains(Event.current.mousePosition))
             {
-                isMenuOpen = !isMenuOpen;
+                isResizing = true;
             }
             
-            // Highlight on hover
-            EditorGUIUtility.AddCursorRect(toggleRect, MouseCursor.Link);
+            if (isResizing)
+            {
+                if (Event.current.type == EventType.MouseDrag)
+                {
+                    sideMenuWidth = Mathf.Clamp(Event.current.mousePosition.x, 150, 600);
+                    wasDragging = true;
+                    Repaint();
+                }
+                else if (Event.current.type == EventType.MouseUp)
+                {
+                    isResizing = false;
+                    if (wasDragging)
+                    {
+                        wasDragging = false;
+                        Event.current.Use(); // Consume event if we were dragging
+                    }
+                }
+            }
+
+            // Click to toggle (only if not resizing)
+            if (!isResizing && Event.current.type == EventType.MouseUp && toggleRect.Contains(Event.current.mousePosition))
+            {
+                // Simple toggle logic moved here to avoid button consuming events
+                isMenuOpen = !isMenuOpen;
+                Event.current.Use();
+            }
+
+            GUI.Label(toggleRect, isMenuOpen ? "◀" : "▶", EditorStyles.centeredGreyMiniLabel);
         }
 
         private void DrawMainEditor()
@@ -250,7 +306,7 @@ namespace MaouSamaTD.Editor.Story
                 return;
             }
 
-            mainScrollPos = EditorGUILayout.BeginScrollView(mainScrollPos);
+            mainScrollPos = EditorGUILayout.BeginScrollView(mainScrollPos, false, true);
 
             // Visual Preview Area
             DrawVisualPreview(false);

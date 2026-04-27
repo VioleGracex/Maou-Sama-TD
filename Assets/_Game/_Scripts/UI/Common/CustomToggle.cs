@@ -46,6 +46,7 @@ namespace MaouSamaTD.UI.Common
         private TextMeshProUGUI _textOFF;
         private Image _bgImage;
 
+#if UNITY_EDITOR
         [Button("Capture Current as ON")]
         private void CaptureON()
         {
@@ -61,6 +62,7 @@ namespace MaouSamaTD.UI.Common
             _posOFF = _handleObject.GetComponent<RectTransform>().anchoredPosition.x;
             UnityEditor.EditorUtility.SetDirty(this);
         }
+#endif
 
         [Button("Preview Toggle")]
         private void PreviewToggle()

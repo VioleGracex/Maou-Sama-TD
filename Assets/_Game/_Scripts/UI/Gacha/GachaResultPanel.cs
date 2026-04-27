@@ -176,6 +176,7 @@ namespace MaouSamaTD.UI.Gacha
             _visualRoot.SetActive(false);
         }
 
+#if UNITY_EDITOR
         [ContextMenu("Auto-Assign Result UI")]
         public void AutoAssign()
         {
@@ -187,5 +188,6 @@ namespace MaouSamaTD.UI.Gacha
             var prefabPath = "Assets/_Game/Prefabs/UI/campaign/UnitCardGacha.prefab";
             _unitCardGachaPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
         }
+#endif
     }
 }

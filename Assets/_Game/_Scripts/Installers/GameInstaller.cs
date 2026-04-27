@@ -5,7 +5,7 @@ using MaouSamaTD.UI;
 using MaouSamaTD.Grid;
 using MaouSamaTD.Skills;
 using MaouSamaTD.UI.Tutorial;
-using MaouSamaTD.UI.Story;
+using MaouSamaTD.Story;
 
 namespace MaouSamaTD.Installers
 {
@@ -31,7 +31,6 @@ namespace MaouSamaTD.Installers
         [SerializeField] private DialogueManager _dialogueManager;
         [SerializeField] private UIPopupBlocker _uiPopupBlocker;
         [Header("Story")]
-        [SerializeField] private StoryUI _storyUI;
         [SerializeField] private StoryManager _storyManager;
 
         public override void InstallBindings()
@@ -70,10 +69,11 @@ namespace MaouSamaTD.Installers
             else Container.Bind<TutorialManager>().FromComponentInHierarchy().AsSingle();
 
             // Story
-            if (_storyUI) Container.Bind<StoryUI>().FromInstance(_storyUI).AsSingle();
-            else Container.Bind<StoryUI>().FromComponentInHierarchy().AsSingle();
-
-            if (_storyManager) Container.Bind<StoryManager>().FromInstance(_storyManager).AsSingle();
+            if (_storyManager) 
+            {
+                Container.Bind<StoryManager>().FromInstance(_storyManager).AsSingle();
+                Container.QueueForInject(_storyManager);
+            }
             else Container.Bind<StoryManager>().FromComponentInHierarchy().AsSingle();
 
             Container.Bind<GridGenerator>().FromComponentInHierarchy().AsSingle();

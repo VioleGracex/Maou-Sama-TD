@@ -849,7 +849,7 @@ MonoBehaviour:
   - Coordinate: {x: 14, y: 4}
     Texture: {fileID: 0}
     Decorations: []
-  WallCascadeOnHoles: 0
+  WallCascadeOnHoles: 1
   Walls:
     North: 1
     South: 1

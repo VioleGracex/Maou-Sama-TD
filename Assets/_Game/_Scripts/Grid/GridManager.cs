@@ -57,11 +57,30 @@ namespace MaouSamaTD.Grid
         public Vector2Int GetTargetExitForSpawn(Vector2Int spawnCoord)
         {
             var spawnData = SpawnPoints.Find(s => s.Coordinate == spawnCoord);
+            
+            // Check if spawn point is high ground
+            Tile spawnTile = GetTileAt(spawnCoord);
+            bool isHighGroundSpawn = spawnTile != null && (spawnTile.Type == TileType.SpawnPointHigh || spawnTile.Type == TileType.HighGround);
+
             if (spawnData.Coordinate == spawnCoord && spawnData.TargetExitIndex >= 0 && spawnData.TargetExitIndex < ExitPoints.Count)
             {
                 return ExitPoints[spawnData.TargetExitIndex];
             }
-            return ExitPoint; // Default fallback
+            
+            // Fallback: If it's a high ground spawn, look for the first high ground exit
+            if (isHighGroundSpawn)
+            {
+                foreach (var ep in ExitPoints)
+                {
+                    Tile et = GetTileAt(ep);
+                    if (et != null && (et.Type == TileType.ExitPointHigh || et.Type == TileType.HighGround))
+                    {
+                        return ep;
+                    }
+                }
+            }
+
+            return ExitPoint; // Default fallback (usually the first exit found)
         }
 
         public void SetSpawnMapping(Vector2Int spawnCoord, int exitIndex)
@@ -540,10 +559,9 @@ namespace MaouSamaTD.Grid
                     }
                     else if (moveType == MaouSamaTD.Units.EnemyMovementType.Flying)
                     {
-                        // Flying MUST be on high ground or special tiles (cannot be on normal walkable tiles)
-                        // Unless "Mixed" is specified.
-                        if (tile.Type == TileType.Walkable || 
-                            tile.Type == TileType.None)
+                        // Flying can move over Walkable, HighGround, and most other tiles.
+                        // Only 'None' (void) blocks them in this implementation.
+                        if (tile.Type == TileType.None)
                             isWalkable = false;
                     }
                     // Mixed can walk on both Ground and HighGround

@@ -10,7 +10,7 @@ namespace MaouSamaTD.Levels.Editor
         private LevelData _target;
 
         private static int _selectedTab = 0;
-        private readonly string[] _tabNames = { "General", "Economy", "Units", "Encounter" };
+        private readonly string[] _tabNames = { "General", "Economy", "Units", "Encounter", "Story" };
 
         private void OnEnable()
         {
@@ -54,6 +54,7 @@ namespace MaouSamaTD.Levels.Editor
                 case 1: DrawEconomyTab(); break;
                 case 2: DrawUnitsTab(); break;
                 case 3: DrawEncounterTab(); break;
+                case 4: DrawStoryTab(); break;
             }
 
             EditorGUIUtility.labelWidth = originalLabelWidth;
@@ -191,6 +192,30 @@ namespace MaouSamaTD.Levels.Editor
             EditorGUILayout.LabelField("Enemy Waves", headerStyle);
             EditorGUI.indentLevel++;
             DrawProperty("Waves", "Wave List");
+            EditorGUILayout.Space(10);
+            DrawProperty("StarConditions", "Star Clear Conditions");
+            EditorGUI.indentLevel--;
+            GUILayout.EndVertical();
+        }
+
+        private void DrawStoryTab()
+        {
+            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
+
+            GUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Story Settings", headerStyle);
+            EditorGUI.indentLevel++;
+            
+            SerializedProperty hasStoryProp = serializedObject.FindProperty("HasStory");
+            EditorGUILayout.PropertyField(hasStoryProp, new GUIContent("Enable Story Cutscenes"));
+
+            if (hasStoryProp.boolValue)
+            {
+                EditorGUILayout.Space(5);
+                DrawProperty("IntroStory", "Intro Sequence (Start)");
+                DrawProperty("OutroStory", "Outro Sequence (End)");
+            }
+            
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
         }

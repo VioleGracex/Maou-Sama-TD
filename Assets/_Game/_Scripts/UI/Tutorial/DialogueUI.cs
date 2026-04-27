@@ -21,6 +21,7 @@ namespace MaouSamaTD.UI.Tutorial
         [SerializeField] private TextMeshProUGUI _fullSpeakerText;
         [SerializeField] private TextMeshProUGUI _fullContentText;
         [SerializeField] private Image _leftPortrait;
+        [SerializeField] private Image _middlePortrait;
         [SerializeField] private Image _rightPortrait;
 
         [Header("Mini Top Layout")]
@@ -183,23 +184,22 @@ namespace MaouSamaTD.UI.Tutorial
             if (_currentStyle == DialogueStyle.FullScreen)
             {
                 // Portraits
-                if (line.PortraitOnLeft)
-                {
-                    if (_leftPortrait != null) 
-                    { 
-                        _leftPortrait.gameObject.SetActive(line.SpeakerPortrait != null); 
-                        _leftPortrait.sprite = line.SpeakerPortrait; 
-                    }
-                    if (_rightPortrait != null) _rightPortrait.gameObject.SetActive(false);
+                if (_leftPortrait != null) 
+                { 
+                    _leftPortrait.gameObject.SetActive(line.PortraitOnLeft); 
+                    if (line.PortraitOnLeft) _leftPortrait.sprite = line.SpeakerPortrait; 
                 }
-                else
+                
+                if (_rightPortrait != null) 
+                { 
+                    _rightPortrait.gameObject.SetActive(!line.PortraitOnLeft && line.SpeakerPortrait != null); // Simplistic fallback
+                    if (!line.PortraitOnLeft) _rightPortrait.sprite = line.SpeakerPortrait; 
+                }
+
+                if (_middlePortrait != null)
                 {
-                    if (_rightPortrait != null) 
-                    { 
-                        _rightPortrait.gameObject.SetActive(line.SpeakerPortrait != null); 
-                        _rightPortrait.sprite = line.SpeakerPortrait; 
-                    }
-                    if (_leftPortrait != null) _leftPortrait.gameObject.SetActive(false);
+                    // This script's DialogueLine doesn't have a middle flag, but I'll add the field to the script anyway
+                    _middlePortrait.gameObject.SetActive(false); 
                 }
             }
             else

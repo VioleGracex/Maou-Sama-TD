@@ -178,7 +178,13 @@ namespace MaouSamaTD.UI.MainMenu
         private void OnLoadComplete()
         {
             if (_progressBar != null) _progressBar.gameObject.SetActive(false);
-            if (_startButton != null) _startButton.gameObject.SetActive(true);
+
+            // Wait for start game button click during initial boot
+            if (_startButton != null)
+            {
+                _startButton.gameObject.SetActive(true);
+                _startButton.interactable = true;
+            }
         }
 
         private void OnStartClicked()

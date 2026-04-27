@@ -16,18 +16,18 @@ MonoBehaviour:
   Background: 1
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "At last... the seal is being undone. My Sovereign, are you awake?"
     PortraitOnLeft: 0
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Forgive my intrusion, but sacrilege is afoot. Feral echoes and human interlopers
       have breached the outer corridors."
     PortraitOnLeft: 0
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Your strength is still recovering, but your command over the Obsidian Aegis
       remains. Command Ignis to hold the bottleneck against these vermin."

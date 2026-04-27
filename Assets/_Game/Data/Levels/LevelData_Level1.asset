@@ -21,9 +21,9 @@ MonoBehaviour:
   LevelID: 1-1
   WinRewards:
   - Type: 0
-    Amount: 500
+    Amount: 800
   - Type: 1
-    Amount: 100
+    Amount: 800
   PremadeCohort:
   - {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
   IsCohortLocked: 1
@@ -62,3 +62,22 @@ MonoBehaviour:
     WaveMessage: 'Final Wave: Darkness erupts!'
   HasTutorial: 1
   TutorialData: {fileID: 11400000, guid: 82c6c0a664a64034e81cbd9127cb1407, type: 2}
+  HasStory: 1
+  IntroStory: {fileID: 11400000, guid: 0a8882664ba016b4bbf79e8f1bdfa3c1, type: 2}
+  OutroStory: {fileID: 11400000, guid: a7ae6edde34a3ae49931c12439405891, type: 2}
+  StarConditions:
+  - Description: Complete the battle
+    Type: 0
+    TargetValue: 0
+    BonusRewards: []
+    AutoGrantInTutorial: 1
+  - Description: Finish within 5 minutes
+    Type: 1
+    TargetValue: 300
+    BonusRewards: []
+    AutoGrantInTutorial: 1
+  - Description: Keep the base above 30% health
+    Type: 2
+    TargetValue: 30
+    BonusRewards: []
+    AutoGrantInTutorial: 1

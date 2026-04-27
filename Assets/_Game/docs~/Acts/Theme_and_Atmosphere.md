@@ -5,7 +5,7 @@ The game visualizes a clash between ancient dark fantasy and modern anime aesthe
 
 *   **Keywords:** Regal, Forbidden, Stylish, Kinetic, Melancholy but Powerful.
 *   **Visual Pillars:**
-    *   **Gothic Architecture vs. Holographic UI:** The Maou's castle is ancient stone and iron, but the tactical interface is a sleek, glowing magical projection (Hecatina's HUD).
+    *   **Gothic Architecture vs. Holographic UI:** The Maou's castle is ancient stone and iron, but the tactical interface is a sleek, glowing magical projection (Tina's HUD).
     *   **Shadows & Neon:** Deep blacks (Void) punctuated by glowing crimson (Demon Mana), gold (Royalty), and cyan (Souls).
     *   **"Diorama" Perspective:** The battlefield looks like a meticulously crafted board game or battlefield mode, emphasizing the Maou's perspective as a commander looking down.
 

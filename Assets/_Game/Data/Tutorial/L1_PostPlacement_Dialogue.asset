@@ -16,7 +16,7 @@ MonoBehaviour:
   Background: 1
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Exquisite. She stands as an unbreakable wall of shadow. I have woven her
       soul-link into your Authority Seals; she is now a direct extension of your divine

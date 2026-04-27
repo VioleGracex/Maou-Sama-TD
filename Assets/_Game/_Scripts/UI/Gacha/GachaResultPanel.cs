@@ -48,14 +48,17 @@ namespace MaouSamaTD.UI.Gacha
             if (_btnConfirm != null)
             {
                 _btnConfirm.onClick.RemoveAllListeners();
-                _btnConfirm.onClick.AddListener(Close);
+                _btnConfirm.onClick.AddListener(() => {
+                    Close();
+                    // Restore navigation in the main GachaPanel
+                    var parentPanel = Object.FindAnyObjectByType<GachaPanel>(FindObjectsInactive.Include);
+                    if (parentPanel != null) parentPanel.RestoreNavigation();
+                });
             }
         }
 
         public void DisplayResults(List<UnitInventoryEntry> results)
-        {
-            this.gameObject.SetActive(true);
-            
+        {  
             if (_visualRoot != null) _visualRoot.SetActive(true);
             
             // Clear old icons
@@ -170,7 +173,7 @@ namespace MaouSamaTD.UI.Gacha
 
         public void Close()
         {
-            this.gameObject.SetActive(false);
+            _visualRoot.SetActive(false);
         }
 
         [ContextMenu("Auto-Assign Result UI")]

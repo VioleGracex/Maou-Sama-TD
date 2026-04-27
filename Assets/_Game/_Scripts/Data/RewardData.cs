@@ -6,7 +6,10 @@ namespace MaouSamaTD.Data
     public enum RewardType
     {
         GoldCoins,
-        BloodCrests // Currency used for gacha/rituals
+        BloodCrests,
+        PlayerXP,
+        UnitXP,
+        Gems
     }
 
     [Serializable]

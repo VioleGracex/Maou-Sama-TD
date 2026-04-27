@@ -16,12 +16,12 @@ MonoBehaviour:
   Background: 0
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "My Sovereign... it is time to unleash your true authority. Lilith's presence has resonated with the ancient mana here."
     PortraitOnLeft: 0
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Focus your intent... use your Rite to end this shadow once and for all."
     PortraitOnLeft: 0

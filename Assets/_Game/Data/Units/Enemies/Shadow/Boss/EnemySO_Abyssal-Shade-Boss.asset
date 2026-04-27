@@ -15,7 +15,10 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d
   EnemyName: Abyssal Shade
-  EnemySprite: {fileID: 21300000, guid: ac5da49679f49414eb1bf820d5cdc715, type: 3}
+  EnemySprite: {fileID: 21300000, guid: b17fd2b41f4846f45836740f6c775f16, type: 3}
+  FullBodyArt: {fileID: 21300000, guid: f88325c97d4eac5419a01d7b3e5dd9f9, type: 3}
+  FullSplashArt: {fileID: 21300000, guid: f88325c97d4eac5419a01d7b3e5dd9f9, type: 3}
+  AnimatorController: {fileID: 0}
   MaxHp: 500
   MoveSpeed: 0.5
   AttackPower: 20
@@ -25,9 +28,10 @@ MonoBehaviour:
   AttackPattern: 4
   MovementType: 0
   CollisionType: 0
-  PhasingCharges: 2
+  PhasingCharges: 1
   Immunities: 00000000
   CurrencyReward: 200
   Tint: {r: 0.2, g: 0, b: 0.2, a: 1}
   VisualYOffset: 0
   BaseVisualHeight: 1.5
+  HpBarYOffset: 2

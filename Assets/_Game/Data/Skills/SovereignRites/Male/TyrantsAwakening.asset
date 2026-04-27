@@ -19,17 +19,22 @@ MonoBehaviour:
     wreathing the blade in dark, magical flames. Significantly increases his own
     ATK and Attack Speed... drains his own HP.
   Icon: {fileID: 0}
-  CastVFX: {fileID: 0}
-  HitVFX: {fileID: 0}
-  RangeIndicatorColor: {r: 1, g: 0, b: 0, a: 1}
-  AnimationTriggerName: CastSkill
-  CastSFX: {fileID: 0}
-  HitSFX: {fileID: 0}
+  BaseVisuals:
+    UltimatePrefab: {fileID: 0}
+    CastVFX: {fileID: 0}
+    HitVFX: {fileID: 0}
+    CastSFX: {fileID: 0}
+    HitSFX: {fileID: 0}
+    UltimateColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    RangeIndicatorColor: {r: 0, g: 0, b: 0, a: 0}
+    AnimationTriggerName: 
+  SealCost: 99
+  Cooldown: 30
   TargetType: 2
   Range: 100
   Radius: 0
   EffectType: 1
   Value: 1.5
   Duration: 5
-  SealCost: 50
-  Cooldown: 30

@@ -12,5 +12,5 @@ The tormented soul of a long-dead cultist or minor demon. It floats wrapped in t
 - **Ethereal Body**: Can float over some ground obstacles.
 
 ## Lore
-"Their whispers are more dangerous than their bolts. They speak of a home that no longer exists." — Hecatina
+"Their whispers are more dangerous than their bolts. They speak of a home that no longer exists." — Tina
 鼓

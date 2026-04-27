@@ -225,7 +225,8 @@ namespace MaouSamaTD.Units
             // Set dynamic name for tutorial targeting (e.g., Unit_Ignis)
             gameObject.name = "Unit_" + data.UnitName;
             
-            UpdateVisuals(data);
+            // Base handles Sprite and Animator (including destruction if missing)
+            // No need for separate UpdateVisuals call here
             
             // Face nearest spawn point automatically upon deployment
             if (_gridManager == null) _gridManager = FindFirstObjectByType<Grid.GridManager>();
@@ -258,26 +259,14 @@ namespace MaouSamaTD.Units
             ActiveUnits.Remove(this);
         }
 
-        private void UpdateVisuals(UnitData data)
+        protected override void UpdateVisuals()
         {
-            if (_spriteRenderer == null) _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            base.UpdateVisuals();
             
+            if (_data == null) return;
+
+            // Ensure Billboard is assigned (PlayerUnit specific field)
             if (_billboard == null) _billboard = GetComponentInChildren<Billboard>();
-
-            if (data.GetSprite(UnitData.UnitImageType.Chibi) != null)
-            {
-                if (_spriteRenderer != null) 
-                {
-                    _spriteRenderer.enabled = true;
-                    _spriteRenderer.sprite = data.GetSprite(UnitData.UnitImageType.Chibi);
-                }
-            }
-
-            if (_animator == null) _animator = GetComponentInChildren<Animator>();
-            if (_animator != null && data.GetAnimatorController() != null)
-            {
-                _animator.runtimeAnimatorController = data.GetAnimatorController();
-            }
         }
 
         [Zenject.Inject] private Managers.InteractionManager _interactionManager;

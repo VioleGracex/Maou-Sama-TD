@@ -14,7 +14,7 @@ The World agreed because it *needs* you. Not to fight each other, but to fight w
 **Antagonist:** The Adventurer Guilds
 
 ### Plot Points
-1.  **The Tomb:** You awaken. Hecatina reveals the world has changed, but the Pact holds.
+1.  **The Tomb:** You awaken. Tina reveals the world has changed, but the Pact holds.
 2.  **Ignis (The Truth):**
     *   **Encounter:** You find Ignis defending your old tomb. She fights you, thinking you are an imposter.
     *   **The Reveal:** Ignis isn't just a Demon General. She was a **Human Hero** from 50 years ago. After the war, the Church feared her power and tried to assassinate her. You (in your past life) saved her, showing her the Church's corruption.

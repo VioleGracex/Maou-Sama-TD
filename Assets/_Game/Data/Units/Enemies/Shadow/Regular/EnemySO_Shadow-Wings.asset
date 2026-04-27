@@ -10,21 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7b31a72eef118a4894ec51bcb43d5fa, type: 3}
-  m_Name: EnemySO_Lesser-Shadow
+  m_Name: EnemySO_Shadow-Wings
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.EnemyData
   useDefaultInspector: 0
-  UniqueID: b68ba9e9-e8ca-4840-ad0d-8f9057759224
-  EnemyName: Lesser Shadow
-  EnemySprite: {fileID: 21300000, guid: ac5da49679f49414eb1bf820d5cdc715, type: 3}
+  UniqueID: f1a2b3c4-d5e6-4f7a-8b9c-d0e1f2a3b4c5
+  EnemyName: Shadow Wings
+  EnemySprite: {fileID: 21300000, guid: aea4462737bffe84fa0f896acf2ad035, type: 3}
+  FullBodyArt: {fileID: 21300000, guid: 38ab77ec4ef118a4895e8a8233d5c25f, type: 3}
+  FullSplashArt: {fileID: 21300000, guid: 38ab77ec4ef118a4895e8a8233d5c25f, type: 3}
   AnimatorController: {fileID: 0}
-  MaxHp: 300
-  MoveSpeed: 1
-  AttackPower: 30
-  AttackInterval: 1.5
-  AttackRange: 1
+  MaxHp: 50
+  MoveSpeed: 2.5
+  AttackPower: 5
+  AttackInterval: 1
+  AttackRange: 0.5
   DamageToPlayerBase: 1
-  AttackPattern: 3
-  MovementType: 0
+  AttackPattern: 4
+  MovementType: 1
   CollisionType: 0
   PhasingCharges: 0
   Immunities: 

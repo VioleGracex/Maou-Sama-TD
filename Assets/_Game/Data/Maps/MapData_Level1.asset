@@ -101,7 +101,7 @@ MonoBehaviour:
   - Coordinate: {x: 5, y: 6}
     Type: 7
   - Coordinate: {x: 14, y: 4}
-    Type: 1
+    Type: 7
   - Coordinate: {x: 5, y: 4}
     Type: 1
   - Coordinate: {x: 5, y: 8}
@@ -272,11 +272,30 @@ MonoBehaviour:
     Type: 7
   - Coordinate: {x: 1, y: 8}
     Type: 7
+  - Coordinate: {x: 2, y: 4}
+    Type: 1
+  - Coordinate: {x: 4, y: 4}
+    Type: 1
+  - Coordinate: {x: 6, y: 4}
+    Type: 1
+  - Coordinate: {x: 7, y: 4}
+    Type: 1
+  - Coordinate: {x: 11, y: 4}
+    Type: 1
+  - Coordinate: {x: 8, y: 4}
+    Type: 1
+  - Coordinate: {x: 9, y: 4}
+    Type: 1
+  - Coordinate: {x: 10, y: 4}
+    Type: 1
+  - Coordinate: {x: 0, y: 4}
+    Type: 7
   SpawnPoints:
   - Coordinate: {x: 14, y: 2}
     TargetExitIndex: 0
   ExitPoints:
   - {x: 5, y: 4}
+  ShowPathing: 1
   VisualOverrides:
   - Coordinate: {x: 4, y: 9}
     Texture: {fileID: 0}

@@ -56,6 +56,7 @@ namespace MaouSamaTD.Levels
         public List<Vector2Int> ExitPoints = new List<Vector2Int>();
 
         [Header("Visuals")]
+        public bool ShowPathing = false;
         public List<TileVisualOverride> VisualOverrides = new List<TileVisualOverride>();
 
         [Header("Global Wall Settings")]

@@ -62,9 +62,9 @@ namespace MaouSamaTD.UI.Skills
         {
             if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
             {
+                // Level 1: No Sovereign Rites allowed/visible (Tutorial)
                 if (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1")
                 {
-                    // Fully dock and disable
                     if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
                     gameObject.SetActive(false);
                 }

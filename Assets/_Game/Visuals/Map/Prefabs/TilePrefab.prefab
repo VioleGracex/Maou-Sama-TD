@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3414118812463920919}
   - component: {fileID: 961863415363111276}
   m_Layer: 0
-  m_Name: TilePrefab-1unit
+  m_Name: TilePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -128,3 +128,5 @@ MonoBehaviour:
   _coordinate: {x: 0, y: 0}
   _type: 0
   _occupant: {fileID: 0}
+  _defaultMaterial: {fileID: 0}
+  _glowMaterial: {fileID: 2100000, guid: 678a9a8d3db89a3429461fa0188428cf, type: 2}

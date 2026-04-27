@@ -181,6 +181,15 @@ namespace MaouSamaTD.UI
             if (_citadelBtnRoot != null) 
                 _citadelBtnRoot.SetActive((features & NavigationFeatures.CitadelButton) != 0);
         }
+
+        public void UpdateNavigationFeatures(NavigationFeatures features)
+        {
+            if (_backBtnRoot != null) 
+                _backBtnRoot.SetActive((features & NavigationFeatures.BackButton) != 0);
+            
+            if (_citadelBtnRoot != null) 
+                _citadelBtnRoot.SetActive((features & NavigationFeatures.CitadelButton) != 0);
+        }
         private bool IsChildOf(IUIController child, IUIController parent)
         {
             if (child == null || parent == null) return false;

@@ -1,4 +1,4 @@
-Shader "MaouSamaTD/TileGlow"
+Shader "Custom/TileGlow"
 {
     Properties
     {
@@ -18,16 +18,20 @@ Shader "MaouSamaTD/TileGlow"
         Pass
         {
             Name "ForwardLit"
-            Tags { "LightMode"="UniversalForward" }
+            Tags { "LightMode" = "UniversalForward" }
 
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             
-            // Defines for Shadows
+            // Defines for Shadows and Lighting
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
-            #pragma multi_compile _ _SHADOWS_SOFT
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            #pragma multi_compile_fog
 
             // Core URP Includes
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
@@ -46,7 +50,6 @@ Shader "MaouSamaTD/TileGlow"
                 float3 positionWS   : TEXCOORD1;
                 float3 normalWS     : TEXCOORD2;
                 float2 uv           : TEXCOORD0;
-                float4 shadowCoord  : TEXCOORD3;
             };
 
             // Material Properties
@@ -65,13 +68,11 @@ Shader "MaouSamaTD/TileGlow"
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
-                output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
+                output.positionCS = vertexInput.positionCS;
+                output.positionWS = vertexInput.positionWS;
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
-                
-                // Shadow Coord
-                output.shadowCoord = TransformWorldToShadowCoord(output.positionWS);
                 
                 return output;
             }
@@ -81,29 +82,38 @@ Shader "MaouSamaTD/TileGlow"
                 half4 texColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv) * _BaseColor;
 
                 // Lighting with Shadows
-                Light mainLight = GetMainLight(input.shadowCoord);
+                float3 normalWS = normalize(input.normalWS);
+                float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
                 
-                float3 N = normalize(input.normalWS);
-                float3 L = normalize(mainLight.direction);
-                float NdotL = max(0, dot(N, L));
+                Light mainLight = GetMainLight(shadowCoord);
                 
-                // Apply Shadow Attenuation
-                float shadowAtten = mainLight.shadowAttenuation;
-                float3 lighting = mainLight.color * (NdotL * shadowAtten);
+                // Diffuse Lighting (Main)
+                float NdotL = saturate(dot(normalWS, mainLight.direction));
+                float3 lighting = mainLight.color * (NdotL * mainLight.shadowAttenuation);
                 
-                // Simple Ambient
-                lighting += float3(0.1, 0.1, 0.1); 
+                // Additional Lights
+                #if defined(_ADDITIONAL_LIGHTS)
+                uint pixelLightCount = GetAdditionalLightsCount();
+                for (uint i = 0u; i < pixelLightCount; ++i)
+                {
+                    Light light = GetAdditionalLight(i, input.positionWS, shadowCoord);
+                    lighting += light.color * (saturate(dot(normalWS, light.direction)) * light.distanceAttenuation * light.shadowAttenuation);
+                }
+                #endif
 
-                float3 finalRGB = texColor.rgb * lighting;
+                // Ambient lighting (SH)
+                float3 ambient = SampleSH(normalWS);
+
+                float3 finalRGB = texColor.rgb * (lighting + ambient);
 
                 // --- Top Face Outline Glow Logic ---
-                if (N.y > 0.9)
+                // Only apply glow to faces pointing upwards
+                if (normalWS.y > 0.5)
                 {
                     float2 centeredUV = abs(input.uv - 0.5) * 2.0;
                     float maxDist = max(centeredUV.x, centeredUV.y);
                     
                     float isBorder = (maxDist > (1.0 - _BorderWidth)) ? 1.0 : 0.0;
-                    // _UseFullFill is 1.0 for full tile, 0.0 for outline
                     float glowFactor = lerp(isBorder, 1.0, _UseFullFill);
                     
                     finalRGB += (_GlowColor.rgb * _GlowIntensity * glowFactor);
@@ -143,17 +153,18 @@ Shader "MaouSamaTD/TileGlow"
                 float4 positionCS   : SV_POSITION;
             };
 
-            float3 _LightDirection;
-
             Varyings ShadowPassVertex(Attributes input)
             {
                 Varyings output;
                 float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
                 float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
 
-                // Manual Shadow Bias Application
-                // _LightDirection is set by URP for ShadowCaster pass
-                float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _LightDirection));
+                // Standard URP Shadow Bias handling
+                // Note: _MainLightPosition is not always available in ShadowCaster pass in older URP
+                // We use ApplyShadowBias with GetMainLight().direction as fallback if needed
+                // But typically _MainLightPosition is defined in Input.hlsl
+                float3 lightDir = _MainLightPosition.xyz;
+                float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, lightDir));
 
                 #if UNITY_REVERSED_Z
                     positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);

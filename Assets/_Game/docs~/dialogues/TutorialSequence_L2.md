@@ -1,31 +1,54 @@
 # Level 2: Tomb of Lilith - Tutorial Flow
 
 **Setting**: Deep within the Tomb of Lilith.
-**Characters**: Hecatina (Guide), Lilith (Void Matriarch), Maou (Player), Ignis (The Crimson Bastion).
+**Characters**: Tina (Guide), Lilith (Void Matriarch), Maou (Player), Ignis (The Crimson Bastion).
+
+## Technical Specifications: Resource Math
+
+In Level 2, the Sovereign's authority is initially fragmented due to the sealed chambers. The following parameters define the resource economy:
+
+### 1. Authority Capacity Logic
+- **Stage 1 (Pre-Unsealing)**: Max Authority Seals = **50**.
+- **Stage 2 (Post-Lilith)**: Max Authority Seals = **99** (Restoration of the First Seal).
+
+### 2. Regeneration & Accumulation
+- **Base Regen Rate ($R_{gen}$)**: 1.5 Seals per second.
+- **Starting Seals ($A_{start}$)**: 20.
+- **Authority Equation**: $A(t) = \min(A_{start} + R_{gen} \cdot t, A_{max})$
+  - *Example*: At $t=20s$ into Wave 1, $A(20) = \min(20 + 1.5 \cdot 20, 50) = 50$ (Capped).
+
+### 3. Deployment Efficiency
+- **Ignis (SSR Bastion)**: 10 Seals.
+- **Lilith (SSR Warlock)**: 15 Seals.
+- **Math**: With restored authority (99), the Sovereign can maintain a deployment saturation of up to **6 Lilith-equivalent units** simultaneously, compared to only **3 units** during the fragmented state.
 
 ## Dialogue & Sequence Flow
 
 ### Step 0: The Silent Tomb
+- **Action**: **UI Blocker Active**.
 - **Action**: **CustomCommand**: `SetUnitButtonActive` (Target: "Lilith", Count: 0).
+- **Action**: **CustomCommand**: `SetMaxAuthoritySeals` (Value: 50).
 - **Dialogue**:
-  - Hecatina: "The air is heavy with ancient magic... stay alert, My Sovereign."
+  - Tina: "The air is heavy with ancient magic... stay alert, My Sovereign."
 
 ### Step 1: Holding the Line
 - **Action**: Game starts. Wave 1 begins immediately.
 - **Enemies**: 4 Lesser Melee Shadows.
 - **Dialogue**:
-  - Hecatina: "My Sovereign, the unsealing process is delicate. We must buy time for the ritual to complete."
-  - Hecatina: "Ignis, hold the southern corridor. Do not let those shades interrupt the flow of mana."
+  - Tina: "My Sovereign, the unsealing process is delicate. We must buy time for the ritual to complete."
+  - Tina: "Ignis, hold the corridor. Do not let those shades interrupt the flow of mana."
   - Ignis: "By the Crimson Flame... they shall not pass!"
 
 ### Step 2: The Unsealing
 - **Trigger**: Wave 1 cleared.
+- **Action**: **UI Blocker Active**.
 - **Action**: A dark magenta light erupts from the central sarcophagus.
 - **Action**: **CustomCommand**: `SetUnitButtonActive` (Target: "Lilith", Count: 1).
+- **Action**: **CustomCommand**: `SetMaxAuthoritySeals` (Value: 99).
 - **Audio**: A playful, smug laugh echoes through the chamber.
 - **Dialogue**:
-  - Lilith: "Mmm, such a sweet, delicious smell... is that you, Hecatina? Still playing the dutiful little maid?"
-  - Hecatina: "Lilith. Your teasing is as poorly timed as ever. The Sovereign has returned."
+  - Lilith: "Mmm, such a sweet, delicious smell... is that you, Tina? Still playing the dutiful little maid?"
+  - Tina: "Lilith. Your teasing is as poorly timed as ever. The Sovereign has returned."
   - Lilith: "Oh? The little Maou? My, how you've... changed. So adorably small now."
 
 ### Step 3: Aerial Interruption
@@ -41,7 +64,7 @@
 - **Action**: **TIME STOPS.** Placement tutorial for Lilith.
 - **Objective**: Place **Lilith** on the **High Ground** tile.
 - **Dialogue**:
-  - Hecatina: "Lilith is a Warlock. Place her on the High Ground to maximize her reach and Magical damage."
+  - Tina: "Lilith is a Warlock. Place her on the High Ground to maximize her reach and Magical damage."
   - *Tutorial Hand points to Lilith icon and then to High Ground tile.*
 
 ### Step 5: The Battle Continues
@@ -54,7 +77,7 @@
 - **Mechanic**: The Boss has a phase where it becomes **Invulnerable to Melee** after losing 30% HP.
 - **Dialogue (When Boss reaches 70% HP)**:
   - Ignis: "Tch! My blade... it's passing straight through him! He's turned into pure shadow!"
-  - Hecatina: "He's entered an ethereal state. Melee strikes are useless now. Only Magic and Rites can harm him."
+  - Tina: "He's entered an ethereal state. Melee strikes are useless now. Only Magic and Rites can harm him."
 
 ### Step 7: Regaining Authority (Rite Tutorial)
 - **Trigger**: Boss invulnerable phase active.
@@ -71,7 +94,7 @@
 - **Action**: **Wait for Action**: `RiteMenuOpened`.
 - **UI Highlight**: `SovereignRiteToggle` (Highlight only if menu is hidden).
 - **Dialogue**:
-  - Hecatina: "Our Sovereign's Rites are sealed away for safety. Open the menu to prepare the ritual."
+  - Tina: "Our Sovereign's Rites are sealed away for safety. Open the menu to prepare the ritual."
   - *Tutorial Hand points to the 'Show' button on the skill panel.*
 
 ### Step 8: The Fatal Rite
@@ -80,12 +103,13 @@
 - **Action**: Damage of the Rite is secretly boosted to ensure a one-shot.
 - **Dialogue (Post-Execution)**:
   - Lilith: "Mmm... what a magnificent display. I might have to reconsider my opinion of you, Sovereign."
-  - Hecatina: "The first seal of your authority is restored. Well done, My Sovereign."
+  - Tina: "The first seal of your authority is restored. Well done, My Sovereign."
 
 ### Step 9: Level Completion
 - **Trigger**: Boss Defeated.
+- **Action**: **UI Blocker Active**.
 - **Dialogue**:
-  - Lilith: "Don't look so stiff, Hecatina. We're all on the same side... for now."
-  - Hecatina: "We proceed to the next chamber. There are more sisters to awaken."
-  - Hecatina: "And then... we return to the surface. Your kingdom awaits, My Sovereign. It is time the world remembered who truly rules these lands."
+  - Lilith: "Don't look so stiff, Tina. We're all on the same side... for now."
+  - Tina: "We proceed to the next chamber. There are more sisters to awaken."
+  - Tina: "And then... we return to the surface. Your kingdom awaits, My Sovereign. It is time the world remembered who truly rules these lands."
 

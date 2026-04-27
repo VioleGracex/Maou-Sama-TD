@@ -22,6 +22,7 @@ namespace MaouSamaTD.Managers
         [Inject] private GridGenerator _gridGenerator;
         [InjectOptional] private MaouSamaTD.Skills.SkillManager _skillManager;
         [InjectOptional] private MaouSamaTD.UI.Skills.SkillPanelUI _skillPanelUI;
+        [Inject] private StoryManager _storyManager;
 
         [Inject] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer; 
 
@@ -128,12 +129,37 @@ namespace MaouSamaTD.Managers
 
             if (_deploymentUI != null)
             {
-                _deploymentUI.Init(levelData.PremadeCohort, levelData.SupportAssistant);
+                System.Collections.Generic.List<UnitData> cohortToLoad = levelData.PremadeCohort;
+                UnitData supportToLoad = levelData.SupportAssistant;
+                string source = "LevelData Asset (Premade)";
+
+                if (_gameSelectionState != null && _gameSelectionState.SelectedCohort != null && _gameSelectionState.SelectedCohort.Count > 0)
+                {
+                    cohortToLoad = _gameSelectionState.SelectedCohort;
+                    supportToLoad = null; // Included in list
+                    source = "GameSelectionState (Player Choice)";
+                }
+
+                Debug.Log($"[GameManager] Initializing DeploymentUI from {source}. Total units in cohort list: {cohortToLoad?.Count ?? 0}");
+                
+                if (cohortToLoad != null)
+                {
+                    for (int i = 0; i < cohortToLoad.Count; i++)
+                    {
+                        var u = cohortToLoad[i];
+                        if (u != null)
+                            Debug.Log($"[GameManager] Cohort Unit [{i}]: {u.UnitName} (ID: {u.UniqueID})");
+                        else
+                            Debug.LogWarning($"[GameManager] Cohort Unit [{i}] is NULL!");
+                    }
+                }
+
+                _deploymentUI.Init(cohortToLoad, supportToLoad);
                 Debug.Log("[GameManager] DeploymentUI Initialized.");
             }
             else
             {
-                 Debug.Log("[GameManager] DeploymentUI is NULL (or not injected).");
+                 Debug.LogWarning("[GameManager] DeploymentUI is NULL (or not injected). Cannot show unit bar!");
             }
 
             System.Collections.Generic.List<MaouSamaTD.Skills.SovereignRiteData> ritesToLoad = new System.Collections.Generic.List<MaouSamaTD.Skills.SovereignRiteData>();
@@ -288,11 +314,22 @@ namespace MaouSamaTD.Managers
                     }
                 }
 
-                Debug.Log($"[GameManager] Progress Saved. Level: {_currentLevelData.LevelID}, Stars: {stars}");
+            Debug.Log($"[GameManager] Progress Saved. Level: {_currentLevelData.LevelID}, Stars: {stars}");
             }
 
-            OnVictory?.Invoke();
-            SetSpeed(0);
+            if (_currentLevelData != null && _currentLevelData.HasStory && _currentLevelData.OutroStory != null)
+            {
+                _storyManager.PlayStory(_currentLevelData.OutroStory, () => 
+                {
+                    OnVictory?.Invoke();
+                    SetSpeed(0);
+                });
+            }
+            else
+            {
+                OnVictory?.Invoke();
+                SetSpeed(0);
+            }
         }
 
         public void SetSpeed(float speed)
@@ -327,8 +364,20 @@ namespace MaouSamaTD.Managers
             if (IsGameEnded) return;
             IsGameEnded = true;
             Debug.Log("[GameManager] Game Over!");
-            OnGameOver?.Invoke();
-            SetSpeed(0);
+            
+            if (_currentLevelData != null && _currentLevelData.HasStory && _currentLevelData.OutroStory != null)
+            {
+                _storyManager.PlayStory(_currentLevelData.OutroStory, () => 
+                {
+                    OnGameOver?.Invoke();
+                    SetSpeed(0);
+                });
+            }
+            else
+            {
+                OnGameOver?.Invoke();
+                SetSpeed(0);
+            }
         }
         #endregion
     }

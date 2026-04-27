@@ -298,9 +298,21 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnConfirmWipeClicked()
         {
+            Debug.Log("[SettingsPanel] Performing Full Data Wipe...");
+            
+            // 1. Wipe Game Data via Manager
             _settingsManager.WipeData();
+            
+            // 2. Clear System Data
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+            Caching.ClearCache();
+
             if (_wipeConfirmationPopup != null) _wipeConfirmationPopup.SetActive(false);
-            RefreshUI();
+            
+            // 3. Reload the game from the initial boot scene (index 0)
+            // This will trigger AppEntryPoint to show the loading screen and re-initialize everything.
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
 
         private void OnCancelWipeClicked()

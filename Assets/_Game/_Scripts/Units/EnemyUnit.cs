@@ -91,10 +91,18 @@ namespace MaouSamaTD.Units
                 _spriteRenderer.transform.localPosition = new Vector3(0, finalY, 0);
             }
 
-            if (_animator != null && _enemyData.AnimatorController != null)
+            if (_animator != null)
             {
-                _animator.runtimeAnimatorController = _enemyData.AnimatorController;
-                _animator.Play("Idle", 0, 0f);
+                if (_enemyData.AnimatorController != null)
+                {
+                    _animator.runtimeAnimatorController = _enemyData.AnimatorController;
+                    _animator.Play("Idle", 0, 0f);
+                }
+                else
+                {
+                    Destroy(_animator);
+                    _animator = null;
+                }
             }
 
             // Apply HP Bar height from EnemyData

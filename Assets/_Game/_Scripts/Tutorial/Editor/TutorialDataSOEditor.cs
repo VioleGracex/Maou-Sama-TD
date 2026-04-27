@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using MaouSamaTD.Editor.Story;
 
 namespace MaouSamaTD.Tutorial
 {
@@ -108,6 +109,19 @@ namespace MaouSamaTD.Tutorial
                 _selectedStepIndex = newIndex;
             }
             GUILayout.EndHorizontal();
+
+            // ADDED: Test Dialogue Button
+            var dialogueProp = selectedStep.FindPropertyRelative("Dialogue");
+            if (dialogueProp != null && dialogueProp.objectReferenceValue != null)
+            {
+                EditorGUILayout.Space(5);
+                GUI.backgroundColor = new Color(0.3f, 0.6f, 0.9f);
+                if (GUILayout.Button("TEST DIALOGUE", GUILayout.Height(30)))
+                {
+                    DialogueTesterWindow.ShowWithAsset((ScriptableObject)dialogueProp.objectReferenceValue);
+                }
+                GUI.backgroundColor = Color.white;
+            }
 
             GUILayout.EndVertical();
 

@@ -10,19 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7b31a72eef118a4894ec51bcb43d5fa, type: 3}
-  m_Name: EnemySO_Shadow-Wings
+  m_Name: EnemySO_Ancient-Spirit
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.EnemyData
   useDefaultInspector: 0
-  UniqueID: f1a2b3c4-d5e6-4f7a-8b9c-d0e1f2a3b4c5
-  EnemyName: Shadow Wings
-  EnemySprite: {fileID: 21300000, guid: ac5da49679f49414eb1bf820d5cdc715, type: 3}
-  MaxHp: 50
-  MoveSpeed: 2.5
-  AttackPower: 5
-  AttackInterval: 1
-  AttackRange: 0.5
+  UniqueID: b68ba9e9-e8ca-4840-ad0d-8f9057759224
+  EnemyName: Ancient Spirit
+  EnemySprite: {fileID: 21300000, guid: 99add749d1c013c48a4c3288e9ec740c, type: 3}
+  FullBodyArt: {fileID: 21300000, guid: b175fd134434c634c812910fffc0533e, type: 3}
+  FullSplashArt: {fileID: 21300000, guid: b175fd134434c634c812910fffc0533e, type: 3}
+  AnimatorController: {fileID: 0}
+  MaxHp: 300
+  MoveSpeed: 1
+  AttackPower: 30
+  AttackInterval: 1.5
+  AttackRange: 1
   DamageToPlayerBase: 1
-  AttackPattern: 4
+  AttackPattern: 3
   MovementType: 0
   CollisionType: 0
   PhasingCharges: 0
@@ -31,3 +34,4 @@ MonoBehaviour:
   Tint: {r: 1, g: 1, b: 1, a: 1}
   VisualYOffset: 0
   BaseVisualHeight: 1
+  HpBarYOffset: 2

@@ -1516,6 +1516,7 @@ GameObject:
   - component: {fileID: 8910726762499646700}
   - component: {fileID: 9141532903201988205}
   - component: {fileID: 7271203900064019929}
+  - component: {fileID: 5385487721986906364}
   m_Layer: 0
   m_Name: UnitCardGacha
   m_TagString: Untagged
@@ -1590,7 +1591,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8743284321488027943}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
@@ -1627,3 +1628,28 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5385487721986906364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8743284321488027943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c201e10330f7e4c4a9674582eaffdf4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.MainMenu.UnitCardUI
+  _visualRoot: {fileID: 8743284321488027943}
+  _data: {fileID: 0}
+  _portraitImage: {fileID: 3751108895014725321}
+  _nameText: {fileID: 2581567603498324666}
+  _classIconImage: {fileID: 2319635127683627166}
+  _levelText: {fileID: 7831377982639309289}
+  _starsContainer: {fileID: 2471742757189325087}
+  _button: {fileID: 0}
+  _selectedOverlay: {fileID: 0}
+  _selectionOrderText: {fileID: 0}
+  _checkMarkIcon: {fileID: 0}
+  _inspectIcon: {fileID: 0}
+  _debug: 0

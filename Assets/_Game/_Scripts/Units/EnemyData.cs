@@ -20,7 +20,9 @@ namespace MaouSamaTD.Units
     {
         [Header("Identity")]
         public string EnemyName;
-        public Sprite EnemySprite;
+        public Sprite EnemySprite; // Chibi / In-game
+        public Sprite FullBodyArt; // Portrait / Full Body
+        public Sprite FullSplashArt; // Splash / Full Screen
         public RuntimeAnimatorController AnimatorController;
 
         [Header("Stats")]

@@ -63,5 +63,38 @@ namespace MaouSamaTD.Levels
         public bool HasTutorial;
         [ShowIf("HasTutorial")]
         public MaouSamaTD.Tutorial.TutorialDataSO TutorialData;
+
+        [Header("Story")]
+        public bool HasStory;
+        [ShowIf("HasStory")]
+        public MaouSamaTD.Story.StoryDataSO IntroStory;
+        [ShowIf("HasStory")]
+        public MaouSamaTD.Story.StoryDataSO OutroStory;
+
+        [Header("Clear Conditions (Stars)")]
+        [Tooltip("The conditions to earn stars on this level. Tutorial levels usually grant all stars automatically.")]
+        public List<StarCondition> StarConditions = new List<StarCondition>();
+    }
+
+    [System.Serializable]
+    public class StarCondition
+    {
+
+        public enum ConditionType
+        {
+            CompleteLevel,        // Just finishing
+            TimeLimit,           // Finish within X seconds
+            BaseHealth,          // Base health remains above X%
+            UnitLossLimit,       // Lost fewer than X units
+            SpecificUnitSurvived // A mandatory unit did not retreat
+        }
+
+        public string Description;
+        public ConditionType Type;
+        public float TargetValue; // Time, HP %, or Unit Count
+        public List<MaouSamaTD.Data.RewardData> BonusRewards = new List<MaouSamaTD.Data.RewardData>();
+        
+        [Tooltip("If true, this star is automatically granted if the level is marked as Tutorial.")]
+        public bool AutoGrantInTutorial = true;
     }
 }

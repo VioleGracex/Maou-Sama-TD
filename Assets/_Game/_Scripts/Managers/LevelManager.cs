@@ -11,6 +11,7 @@ namespace MaouSamaTD.Managers
         [Inject] private GameManager _gameManager;
         [Inject] private GameSelectionState _gameSelectionState;
         [Inject] private TutorialManager _tutorialManager;
+        [Inject] private StoryManager _storyManager;
         [Inject] private EnemyManager _enemyManager;
         [Inject] private BattleCurrencyManager _currencyManager;
 
@@ -43,24 +44,38 @@ namespace MaouSamaTD.Managers
                     _currencyManager.Init(dataToLoad);
                 }
 
-                bool hasTutorial = dataToLoad.HasTutorial && dataToLoad.TutorialData != null;
-
-                if (_enemyManager != null && dataToLoad != null)
+                // Story Intro Check
+                if (dataToLoad.HasStory && dataToLoad.IntroStory != null)
                 {
-                    float gracePeriod = dataToLoad.GracePeriod;
-                    Debug.Log($"[LevelManager] Initializing Enemy Manager. Tutorial Active: {hasTutorial}");
-                    _enemyManager.Initialize(dataToLoad.Waves, gracePeriod, !hasTutorial);
+                    Debug.Log($"[LevelManager] Level has intro story: {dataToLoad.IntroStory.name}. Starting...");
+                    _storyManager.PlayStory(dataToLoad.IntroStory, () => OnIntroFinished(dataToLoad));
                 }
-
-                if (hasTutorial)
+                else
                 {
-                    Debug.Log($"[LevelManager] Level has tutorial: {dataToLoad.TutorialData.name}. Starting...");
-                    _tutorialManager.StartTutorial(dataToLoad.TutorialData);
+                    OnIntroFinished(dataToLoad);
                 }
             }
             else
             {
                 Debug.LogWarning("[LevelManager] No LevelData found!");
+            }
+        }
+
+        private void OnIntroFinished(LevelData dataToLoad)
+        {
+            bool hasTutorial = dataToLoad.HasTutorial && dataToLoad.TutorialData != null;
+
+            if (_enemyManager != null && dataToLoad != null)
+            {
+                float gracePeriod = dataToLoad.GracePeriod;
+                Debug.Log($"[LevelManager] Initializing Enemy Manager. Tutorial Active: {hasTutorial}");
+                _enemyManager.Initialize(dataToLoad.Waves, gracePeriod, !hasTutorial);
+            }
+
+            if (hasTutorial)
+            {
+                Debug.Log($"[LevelManager] Level has tutorial: {dataToLoad.TutorialData.name}. Starting...");
+                _tutorialManager.StartTutorial(dataToLoad.TutorialData);
             }
         }
         #endregion

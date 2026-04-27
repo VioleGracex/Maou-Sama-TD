@@ -16,7 +16,7 @@ MonoBehaviour:
   Background: 0
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Lilith is a Warlock. Place her on the High Ground to maximize her reach and Magical damage."
     PortraitOnLeft: 0

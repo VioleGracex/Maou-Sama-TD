@@ -2,7 +2,7 @@
 
 ## 1. Design Philosophy
 **"The Overseer's HUD"**
-The UI represents the magical interface projected by **Lady Hecatina**, your Seneschal. It should feel diegetic—part of the world's magic system.
+The UI represents the magical interface projected by **Lady Tina**, your Seneschal. It should feel diegetic—part of the world's magic system.
 
 *   **Style:** Flat design with subtle depth (glassmorphism). Sharp angles (45-degree cuts).
 *   **Font:** *Rajdhani* (Headers/Numbers) for a tech/magic feel, *Inter* (Body) for readability.

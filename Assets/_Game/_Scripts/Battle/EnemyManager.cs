@@ -22,6 +22,7 @@ namespace MaouSamaTD.Managers
         private bool _isSpawning = false;
         private bool _allWavesFinished = false;
         private bool _victoryTriggered = false;
+        private bool _isInitialized = false;
         
         private List<WaveData> _waves;
 
@@ -43,7 +44,9 @@ namespace MaouSamaTD.Managers
 
         private void Update()
         {
-            if (!_victoryTriggered && _allWavesFinished)
+            if (!_isInitialized) return;
+
+            if (!_victoryTriggered && _allWavesFinished && !_isSpawning)
             {
                 if (EnemyUnit.ActiveEnemies.Count == 0)
                 {
@@ -72,6 +75,7 @@ namespace MaouSamaTD.Managers
             _waves = waves;
             _allWavesFinished = false;
             _victoryTriggered = false;
+            _isInitialized = true;
 
             if (_gridManager != null)
             {
@@ -124,7 +128,6 @@ namespace MaouSamaTD.Managers
                 }
             }
             _isSpawning = false;
-            _allWavesFinished = true; // Set to true so victory check in Update() can trigger
         }
 
 
@@ -133,46 +136,71 @@ namespace MaouSamaTD.Managers
             if (_gridManager == null || _enemyPrefab == null || data == null) return;
 
             Vector2Int spawnPoint = _gridManager.SpawnPoints[spawnPointIndex].Coordinate;
-            Vector2Int exitPoint = _gridManager.GetTargetExitForSpawn(spawnPoint);
             
-            // Validate Spawning Constraints
+            // 1. Validate Spawning Constraints & Get Correct Exit
             Tile spawnTile = _gridManager.GetTileAt(spawnPoint);
+            Vector2Int exitPoint = _gridManager.GetTargetExitForSpawn(spawnPoint);
+
             if (spawnTile != null)
             {
+                // Ground units must spawn on Ground tiles (Walkable, SpawnPoint, etc.)
+                bool isHighGroundTile = spawnTile.Type == TileType.HighGround || 
+                                       spawnTile.Type == TileType.DecoHighGround || 
+                                       spawnTile.Type == TileType.SpawnPointHigh || 
+                                       spawnTile.Type == TileType.ExitPointHigh;
+
                 if (data.MovementType == MaouSamaTD.Units.EnemyMovementType.Ground)
                 {
-                    if (spawnTile.Type == TileType.HighGround || spawnTile.Type == TileType.DecoHighGround)
+                    if (isHighGroundTile)
                     {
-                        Debug.LogWarning($"EnemyManager: Cannot spawn Ground enemy at {spawnPoint} (HighGround). Skipping.");
+                        Debug.LogWarning($"[EnemyManager] Cannot spawn Ground enemy '{data.EnemyName}' at {spawnPoint} (High Ground Tile: {spawnTile.Type}). Skipping.");
                         return;
                     }
                 }
-                // Add more constraints if needed (e.g. Flying only on HighGround?)
+                else if (isHighGroundTile)
+                {
+                    // If it's a high ground spawn and it's a flying/mixed unit, ensure it targets a high ground exit
+                    // Actually GetTargetExitForSpawn should handle this, but we can double check or force it.
+                    // If the current exit is not a high ground exit, try to find one.
+                    Tile exitTile = _gridManager.GetTileAt(exitPoint);
+                    if (exitTile != null && exitTile.Type != TileType.ExitPointHigh)
+                    {
+                         // Search for a high ground exit
+                         foreach(var ep in _gridManager.ExitPoints)
+                         {
+                             var et = _gridManager.GetTileAt(ep);
+                             if (et != null && et.Type == TileType.ExitPointHigh)
+                             {
+                                 exitPoint = ep;
+                                 break;
+                             }
+                         }
+                    }
+                }
             }
 
-            // 1. Get Path (Normal)
+            // 2. Get Path
             Queue<Tile> path = _gridManager.GetPath(spawnPoint, exitPoint, data.MovementType, false);
             
             // Fallback: If blocked, path ignoring occupants (so they spawn and fight)
             if (path == null || path.Count == 0)
             {
-                Debug.Log("[EnemyManager] Spawn Path Blocked! Attempting fallback (Ignore Occupants)...");
+                Debug.Log($"[EnemyManager] Spawn Path Blocked for {data.EnemyName} from {spawnPoint} to {exitPoint}! Attempting fallback...");
                 path = _gridManager.GetPath(spawnPoint, exitPoint, data.MovementType, true);
             }
 
             if (path == null || path.Count == 0)
             {
-                Debug.LogWarning("[EnemyManager] No path found even ignoring occupants!");
+                Debug.LogWarning($"[EnemyManager] No path found for {data.EnemyName} even ignoring occupants! Skipping spawn.");
                 return;
             }
 
-            // 2. Instantiate
+            // 3. Instantiate
             Vector3 startPos = _gridManager.GridToWorldPosition(spawnPoint);
-            
             MaouSamaTD.Units.EnemyUnit enemy = Instantiate(_enemyPrefab, startPos, Quaternion.identity, _enemyContainer);
             
-            // 3. Initialize
-            enemy.gameObject.SetActive(true); // Ensure active
+            // 4. Initialize
+            enemy.gameObject.SetActive(true);
             enemy.Initialize(data, waveIndex, enemyIndex);
             enemy.GoalCoord = exitPoint;
             enemy.SetPath(path);
@@ -226,25 +254,17 @@ namespace MaouSamaTD.Managers
                     Debug.Log($"[EnemyManager] Starting Wave: {wave.WaveMessage}");
                 }
                 
-                int enemyCounter = 0;
+                List<Coroutine> groupRoutines = new List<Coroutine>();
                 foreach (var group in wave.Groups)
                 {
                     if (!_isSpawning) yield break;
-                    
-                    if (group.InitialDelay > 0)
-                        yield return new WaitForSeconds(group.InitialDelay);
+                    groupRoutines.Add(StartCoroutine(SpawnGroupRoutine(group, waveCounter)));
+                }
 
-                    for (int i = 0; i < group.Count; i++)
-                    {
-                        if (!_isSpawning) yield break;
-
-                        if (waveCounter == 0 && enemyCounter == 0 && _pathVisualizer != null) _pathVisualizer.Hide();
-                        SpawnEnemy(group.EnemyType, waveCounter, enemyCounter, group.SpawnPointIndex);
-                        enemyCounter++;
-                        
-                        if (group.SpawnInterval > 0)
-                            yield return new WaitForSeconds(group.SpawnInterval);
-                    }
+                // Wait for all groups in this wave to finish their spawning sequence
+                foreach (var routine in groupRoutines)
+                {
+                    yield return routine;
                 }
 
                 if (wave.DelayBeforeNextWave > 0)
@@ -252,10 +272,29 @@ namespace MaouSamaTD.Managers
                 
                 waveCounter++;
             }
-            
+
             _isSpawning = false;
-            _allWavesFinished = true; 
+            _allWavesFinished = true;
             Debug.Log("[EnemyManager] All waves finished.");
+        }
+
+        private IEnumerator SpawnGroupRoutine(WaveGroup group, int waveCounter)
+        {
+            if (group.InitialDelay > 0)
+                yield return new WaitForSeconds(group.InitialDelay);
+
+            for (int i = 0; i < group.Count; i++)
+            {
+                if (!_isSpawning) yield break;
+
+                // On the very first enemy of the level, hide the visualizer if it was still showing
+                if (waveCounter == 0 && i == 0 && _pathVisualizer != null) _pathVisualizer.Hide();
+                
+                SpawnEnemy(group.EnemyType, waveCounter, i, group.SpawnPointIndex);
+                
+                if (group.SpawnInterval > 0)
+                    yield return new WaitForSeconds(group.SpawnInterval);
+            }
         }
         #endregion
     }

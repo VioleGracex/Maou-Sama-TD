@@ -146,6 +146,12 @@ namespace MaouSamaTD.Units
                     _animator.runtimeAnimatorController = controller;
                     _animator.Play("Idle", 0, 0f);
                 }
+                else
+                {
+                    // No controller? Remove the animator component to save resources as requested
+                    Destroy(_animator);
+                    _animator = null;
+                }
             }
 
             // Set up sprite or fallback

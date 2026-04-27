@@ -22,7 +22,7 @@ MonoBehaviour:
       You've certainly taken your time."
     PortraitOnLeft: 1
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Control your tongue, creature. The Sovereign requires your strength, not
       your insolence."
@@ -30,7 +30,7 @@ MonoBehaviour:
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
-    Text: "Jealous as ever, Hecatina? Don't worry, there’s enough of our Master to
+    Text: "Jealous as ever, Tina? Don't worry, there’s enough of our Master to
       go around. Now, Sovereign... let us deal with these uninvited guests."
     PortraitOnLeft: 1
     EventID: 

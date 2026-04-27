@@ -7,6 +7,10 @@ namespace MaouSamaTD.Data
     public class UnitDatabase : ScriptableObject
     {
         public List<MaouSamaTD.Units.UnitData> AllUnits;
+        
+        [Header("Global UI Settings")]
+        public MaouSamaTD.Units.UnitData.UnitImageType GlobalButtonImageType = MaouSamaTD.Units.UnitData.UnitImageType.Avatar;
+        public bool UseGlobalButtonOverride = true;
 
         public MaouSamaTD.Units.UnitData GetUnitByID(string id)
         {

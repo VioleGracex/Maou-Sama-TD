@@ -12,5 +12,5 @@ A humanoid shape roughly formed from coalesced shadows. It mimics the form of a 
 - **Unstable Core**: Occasional bursts of shadow energy when damaged.
 
 ## Lore
-"They are crude attempts at mimicry. The Void trying to remember what a soldier looks like, only to fail in every detail but the violence." — Hecatina
+"They are crude attempts at mimicry. The Void trying to remember what a soldier looks like, only to fail in every detail but the violence." — Tina
 鼓

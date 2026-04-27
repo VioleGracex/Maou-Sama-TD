@@ -69,7 +69,16 @@ namespace MaouSamaTD.UI
 
             if (_unitIcon != null)
             {
-                _unitIcon.sprite = _data.GetSprite(_data.ButtonImageType);
+                var imageType = _data.ButtonImageType;
+                
+                // Check if we have a global override active in the UnitDatabase
+                if (MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null && 
+                    MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.UseGlobalButtonOverride)
+                {
+                    imageType = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GlobalButtonImageType;
+                }
+
+                _unitIcon.sprite = _data.GetSprite(imageType);
                 _unitIcon.enabled = _unitIcon.sprite != null;
             }
 

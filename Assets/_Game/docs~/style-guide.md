@@ -12,7 +12,7 @@ The application uses a high-contrast dark palette with vibrant primary accents r
 | :--- | :--- | :--- |
 | **Maou Dark** | `#0f1014` | Primary background, deep shadows. |
 | **Maou Base** | `#1a1d26` | Component backgrounds, card backings. |
-| **Maou Accent** | `#eb4d4b` | Crimson. Alerts, Lady Hecatina, high-intensity buttons. |
+| **Maou Accent** | `#eb4d4b` | Crimson. Alerts, Lady Tina, high-intensity buttons. |
 | **Maou Gold** | `#f9ca24` | SSR Rarity, Gold currency, highlights, active selections. |
 | **Maou Cyan** | `#00d2d3` | Crystal currency, tech/circuit elements, support effects. |
 | **Maou Purple** | `#6c5ce7` | SR Rarity, magic effects, Tower of Babel theme. |

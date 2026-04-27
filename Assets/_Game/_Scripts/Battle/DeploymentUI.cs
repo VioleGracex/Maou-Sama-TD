@@ -155,8 +155,15 @@ namespace MaouSamaTD.UI
             _deployedUnits.Clear();
             _cooldownTimers.Clear();
 
+            Debug.Log($"[DeploymentUI] Starting GenerateButtons for {_availableUnits.Count} units.");
             foreach (var unit in _availableUnits)
             {
+                if (unit == null)
+                {
+                    Debug.LogWarning("[DeploymentUI] Found NULL unit in available units list during button generation!");
+                    continue;
+                }
+
                 GameObject btnObj = _container.InstantiatePrefab(_buttonPrefab, _barContainer);
                 
                 UnitButtonUI btnUI = btnObj.GetComponent<UnitButtonUI>();
@@ -164,7 +171,9 @@ namespace MaouSamaTD.UI
 
                 btnUI.Initialize(unit);
                 _unitButtons.Add(btnUI);
+                Debug.Log($"[DeploymentUI] Generated button for unit: {unit.UnitName} (Cost: {unit.DeploymentCost})");
             }
+            Debug.Log($"[DeploymentUI] Finished GenerateButtons. Total buttons in bar: {_unitButtons.Count}");
         }
 
         private void RefreshButtonsState()

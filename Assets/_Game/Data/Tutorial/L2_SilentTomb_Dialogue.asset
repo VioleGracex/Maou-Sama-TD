@@ -16,7 +16,7 @@ MonoBehaviour:
   Background: 0
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "The air is heavy with ancient magic... stay alert, My Sovereign."
     PortraitOnLeft: 0

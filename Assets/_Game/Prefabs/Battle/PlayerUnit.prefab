@@ -5201,7 +5201,7 @@ Animator:
   m_GameObject: {fileID: 4985976560161923535}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a021d6c8141c30b4b89ccb2bfb26dccc, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5448,6 +5448,7 @@ MonoBehaviour:
   _animator: {fileID: 768856445354762737}
   _textFallback: {fileID: 2958040010651701506}
   _hpFillImage: {fileID: 1312120414639121609}
+  _hpBarRoot: {fileID: 0}
   _healParticle: {fileID: 4384362147522370408}
   _showDebugLogs: 1
   Immunities: 

@@ -2,7 +2,7 @@
 
 **Project:** Maou-Sama TD
 **Document Type:** UI Source Data for LLM Context
-**Purpose:** This document provides a granular breakdown of every User Interface (UI) scene in the game, intended for use as a primary source for NotebookLLM. It details the visual hierarchy, state transitions, and interaction logic for "Hecatina's HUD" (the diegetic interface).
+**Purpose:** This document provides a granular breakdown of every User Interface (UI) scene in the game, intended for use as a primary source for NotebookLLM. It details the visual hierarchy, state transitions, and interaction logic for "Tina's HUD" (the diegetic interface).
 
 ---
 

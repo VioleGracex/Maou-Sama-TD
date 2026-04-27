@@ -22,17 +22,17 @@ MonoBehaviour:
       once more, Sovereign... as is everything else."
     PortraitOnLeft: 1
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "The unsealing is complete. Lilith is with us once more."
     PortraitOnLeft: 0
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Come, My Sovereign. We have what we came for. Our journey back is long, but necessary."
     PortraitOnLeft: 0
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "On our way back from the tomb... the kingdom, your kingdom, awaits."
     PortraitOnLeft: 0

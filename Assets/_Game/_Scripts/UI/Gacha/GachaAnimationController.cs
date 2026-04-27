@@ -211,8 +211,8 @@ namespace MaouSamaTD.UI.Gacha
                     }
                 }
                 
-                // Final wait if not skipped
-                if (!_ritualSkipped && !_isSkippingAll) yield return new WaitForSeconds(0.2f);
+                // Final wait if not skipped to let player see the background/pillars
+                if (!_ritualSkipped && !_isSkippingAll) yield return new WaitForSeconds(1.5f);
             }
 
             // If skipped, ensure all active pillars are full

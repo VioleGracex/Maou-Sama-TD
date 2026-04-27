@@ -19,7 +19,7 @@ namespace MaouSamaTD.Editor
                 "Zephyria",
                 "Kaelia",
                 "Vespera",
-                "Hecatina"
+                "Tina"
             };
 
             string folderPath = "Assets/_Game/Data/Units/Vassals/05_SSR";

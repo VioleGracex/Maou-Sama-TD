@@ -21,7 +21,7 @@ MonoBehaviour:
     Text: "Tch! My blade... it's passing straight through him! He's turned into pure shadow!"
     PortraitOnLeft: 0
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "He's entered an ethereal state. Melee strikes are useless now. Only Magic and Rites can harm him."
     PortraitOnLeft: 0

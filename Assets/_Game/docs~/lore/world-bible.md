@@ -20,7 +20,7 @@ The 13th in the line of Maous. Resurrected but bound by a Pact that prevents him
 *   **The Betrayal**: After the Great War, the Holy Empire feared her and tried to assassinate her. The past Maou saved her life.
 *   **Role**: The first General to rejoin the Player. She guarded the Maou's tomb for five decades.
 
-### Hecatina (The Shadow Guide)
+### Tina (The Shadow Guide)
 The high-ranking wraith/succubus who orchestrated the Great Awakening. She serves as the tactical voice and devoted servant of the Maou.
 
 ### The Rival (The True Hero)

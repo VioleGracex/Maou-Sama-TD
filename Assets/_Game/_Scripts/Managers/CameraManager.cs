@@ -3,6 +3,7 @@ using DG.Tweening;
 using Zenject;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
+using NaughtyAttributes;
 
 namespace MaouSamaTD.Managers
 {
@@ -43,6 +44,9 @@ namespace MaouSamaTD.Managers
         [Header("Controls")]
         [SerializeField] private float _moveSpeed = 20f;
         [SerializeField] private float _rotateSpeed = 100f; 
+        
+        [Header("Testing")]
+        [SerializeField] private Vector3 _testMapPosition;
 
         [Inject] private Grid.GridManager _gridManager;
         [Inject] private InteractionManager _interactionManager;
@@ -249,6 +253,85 @@ namespace MaouSamaTD.Managers
             if (_gridManager != null && _cameraAnchor != null)
             {
                 _cameraAnchor.position = _gridManager.GetGridCenter();
+            }
+        }
+
+        [Button("Apply Current View Settings")]
+        private void Editor_ApplySettings()
+        {
+            if (_battleCamera == null) return;
+            if (_cmOrbital == null) _cmOrbital = _battleCamera.GetComponent<CinemachineOrbitalFollow>();
+            
+            SetView(CurrentMode, true);
+        }
+
+        [Button("Center Camera On Map")]
+        private void Editor_CenterCamera()
+        {
+            if (_cameraAnchor == null && _gridManager != null)
+            {
+                _cameraAnchor = _gridManager.CameraAnchor;
+            }
+            
+            if (_cameraAnchor == null)
+            {
+                // Fallback for editor if Zenject hasn't run
+                var gm = FindFirstObjectByType<Grid.GridManager>();
+                if (gm != null)
+                {
+                    gm.EnsureCameraAnchor();
+                    _cameraAnchor = gm.CameraAnchor;
+                    _cameraAnchor.position = gm.GetGridCenter();
+                    return;
+                }
+            }
+
+            ResetToCenter();
+        }
+
+        [Button("Assign Anchor Targets")]
+        private void Editor_AssignTargets()
+        {
+            if (_battleCamera == null) return;
+            
+            if (_cameraAnchor == null)
+            {
+                var gm = FindFirstObjectByType<Grid.GridManager>();
+                if (gm != null)
+                {
+                    gm.EnsureCameraAnchor();
+                    _cameraAnchor = gm.CameraAnchor;
+                }
+            }
+
+            if (_cameraAnchor != null)
+            {
+                _battleCamera.Follow = _cameraAnchor;
+                _battleCamera.LookAt = _cameraAnchor;
+            }
+        }
+
+        [Button("Adjust Camera for Testing")]
+        private void Editor_AdjustForTesting()
+        {
+            if (_cameraAnchor == null) Editor_AssignTargets();
+            if (_cameraAnchor == null) return;
+
+            IsLocked = false;
+            CenterOnMap = false;
+            _cameraAnchor.position = _testMapPosition;
+            
+            Debug.Log($"[CameraManager] Adjusted for testing. Position: {_testMapPosition}. Camera Unlocked, Auto-Center Disabled.");
+        }
+
+        [Button("Save Current as Test Position")]
+        private void Editor_SaveCurrentAsTestPosition()
+        {
+            if (_cameraAnchor == null) Editor_AssignTargets();
+            if (_cameraAnchor != null)
+            {
+                _testMapPosition = _cameraAnchor.position;
+                Debug.Log($"[CameraManager] Saved current position {_testMapPosition} as test position.");
             }
         }
         #endregion

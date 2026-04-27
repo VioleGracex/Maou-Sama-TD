@@ -16,7 +16,7 @@ MonoBehaviour:
   Background: 0
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Our Sovereign's Rites are sealed away for safety. Open the menu to prepare the ritual."
     PortraitOnLeft: 0

@@ -16,13 +16,13 @@ MonoBehaviour:
   Background: 1
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "We have reached the heart of the lower sanctum. The air here is... sickeningly
       sweet. Her presence still lingers."
     PortraitOnLeft: 0
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
     Text: "Steel yourself, My Sovereign. To reclaim your Crests, we must endure her...
       antics."

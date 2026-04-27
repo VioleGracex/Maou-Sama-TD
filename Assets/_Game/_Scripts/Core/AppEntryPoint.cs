@@ -21,6 +21,20 @@ namespace MaouSamaTD.Core
         public static UnitDatabase LoadedUnitDatabase { get; private set; }
         public static MaouSamaTD.Units.ClassScalingData LoadedScalingData { get; private set; }
 
+        [Header("Debug")]
+        [SerializeField] private bool _grantDebugResources;
+
+        private void OnValidate()
+        {
+            if (_grantDebugResources && Application.isPlaying && _saveManager != null)
+            {
+                _grantDebugResources = false;
+                _saveManager.AddGold(10000);
+                _saveManager.AddBloodCrest(10000);
+                Debug.Log("<color=green>[DEBUG]</color> Granted 10,000 Gold and 10,000 Bloodcrest.");
+            }
+        }
+
         public void StartBootSequence(Action<float> onProgress, Action onComplete)
         {
             StartCoroutine(InitializeGameDataCoroutine(onProgress, onComplete));
@@ -93,18 +107,44 @@ namespace MaouSamaTD.Core
         public void ProceedToGame()
         {
             Debug.Log("[AppEntryPoint] App Initialization Complete. Proceeding to destination...");
-            
-            // Check if this is a fresh new save
-            if (_saveManager.CurrentData != null && _saveManager.CurrentData.PlayerName == "Mephisto" && _ascensionPanel != null)
+
+            if (_saveManager.CurrentData == null)
             {
-                Debug.Log("[AppEntryPoint] Fresh save detected. Triggering Ascension Sequence.");
+                Debug.LogError("[AppEntryPoint] SaveData is null in ProceedToGame!");
+                return;
+            }
+
+            bool isNewPlayer = _saveManager.CurrentData.PlayerName == "Mephisto";
+            bool level1Done  = _saveManager.IsLevelCompleted("1-1");
+
+            // ── Fresh account: show Ascension screen (Arise button will load BattleScene)
+            if (isNewPlayer && _ascensionPanel != null)
+            {
+                Debug.Log("[AppEntryPoint] Fresh save – opening Ascension.");
                 _ascensionPanel.Open();
                 if (_homeUIManager != null) _homeUIManager.Close();
+                return;
             }
-            else
+
+            // ── Ascension done but Level 1 not yet cleared: go straight to Battle
+            if (!level1Done)
             {
-                if (_homeUIManager != null) _homeUIManager.Open();
+                Debug.Log("[AppEntryPoint] Level 1-1 not completed – routing to BattleScene.");
+                var loader = UnityEngine.Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+                if (loader != null)
+                {
+                    loader.LoadSceneTransition("BattleScene");
+                }
+                else
+                {
+                    Debug.LogWarning("[AppEntryPoint] LoadingScreenPanel missing – direct scene load.");
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("BattleScene");
+                }
+                return;
             }
+
+            // ── Normal returning player: open Home hub
+            if (_homeUIManager != null) _homeUIManager.Open();
         }
     }
 }

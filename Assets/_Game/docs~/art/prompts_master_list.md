@@ -1,7 +1,7 @@
 # Legion Art Generation: Master Prompt List (60 Characters)
 
 ## 0. The Style Foundation (Always use this)
-**Positive Base**: `(Arknights art style:1.2), (Zenless Zone Zero aesthetic:1.1), high-quality anime illustration, masterwork, clean cel-shaded, sharp outlines, vibrant colors, dynamic dramatic lighting, intricate details, sharp focus, 8k resolution, cinematic composition.`
+**Positive Base**: `(Fate series anime style:1.2), (ufotable studio style:1.1), high-end digital animation, cinematic lighting, sharp shadows, high contrast, epic fantasy, masterpiece, vibrant magical effects, sharp outlines, vibrant colors, intricate details, sharp focus, 8k resolution, cinematic composition.`
 **Negative Base**: `(3d:1.5), realistic, blurry, messy lines, low-res, multiple characters, text, signature, western art style, distorted face, extra fingers.`
 
 ---

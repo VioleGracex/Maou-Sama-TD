@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEditor;
 using MaouSamaTD.Levels;
+using MaouSamaTD.Grid;
+using MaouSamaTD.Units;
 using System.Collections.Generic;
 
 namespace MaouSamaTD.Editor
@@ -134,6 +136,21 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Editor Visualization", EditorStyles.boldLabel);
+            data.ShowPathing = EditorGUILayout.Toggle("Show Pathing Paths", data.ShowPathing);
+            if (data.ShowPathing)
+            {
+                EditorGUILayout.HelpBox("Showing Ground (Orange) and Flying (Cyan) paths from Spawns to Exits.", MessageType.None);
+            }
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Map Generation", EditorStyles.boldLabel);
+            if (GUILayout.Button("Generate Map Prefab", GUILayout.Height(30)))
+            {
+                GenerateMapPrefab(data);
+            }
+
+            EditorGUILayout.Space();
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear Manual Layout"))
             {
@@ -148,6 +165,27 @@ namespace MaouSamaTD.Editor
             if (GUILayout.Button("Capture Random to Manual"))
             {
                 CaptureRandomToManual(data);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Sync Data Points"))
+            {
+                Undo.RecordObject(data, "Sync Data Points");
+                SyncPointsFromLayout(data);
+                EditorUtility.SetDirty(data);
+            }
+            if (GUILayout.Button("Force Auto-Assign All Nearest"))
+            {
+                Undo.RecordObject(data, "Auto-Assign All Nearest Exits");
+                // Reset all to -1 and then sync
+                for (int i = 0; i < data.SpawnPoints.Count; i++) {
+                    var s = data.SpawnPoints[i];
+                    s.TargetExitIndex = -1;
+                    data.SpawnPoints[i] = s;
+                }
+                SyncPointsFromLayout(data);
+                EditorUtility.SetDirty(data);
             }
             EditorGUILayout.EndHorizontal();
 
@@ -951,7 +989,344 @@ namespace MaouSamaTD.Editor
                 }
             }
 
+            if (data.ShowPathing)
+            {
+                DrawPathingVisualization(data, tileGridRect, cellW, cellH);
+            }
+
             Random.state = oldState;
+        }
+
+        private void DrawPathingVisualization(MapData data, Rect tileGridRect, float cellW, float cellH)
+        {
+            // Gather all spawns and exits
+            List<Vector2Int> actualSpawns = new List<Vector2Int>();
+            List<Vector2Int> actualExits = new List<Vector2Int>();
+
+            if (data.UseManualLayout)
+            {
+                foreach (var tile in data.ManualLayoutData)
+                {
+                    if (tile.Type == TileType.SpawnPoint || tile.Type == TileType.SpawnPointHigh)
+                        actualSpawns.Add(tile.Coordinate);
+                    if (tile.Type == TileType.ExitPoint || tile.Type == TileType.ExitPointHigh)
+                        actualExits.Add(tile.Coordinate);
+                }
+            }
+            else
+            {
+                // Fallback to legacy lists if not manual
+                foreach (var s in data.SpawnPoints) actualSpawns.Add(s.Coordinate);
+                foreach (var e in data.ExitPoints) actualExits.Add(e);
+            }
+
+            if (actualSpawns.Count == 0 || actualExits.Count == 0) return;
+
+            Handles.BeginGUI();
+            foreach (var start in actualSpawns)
+            {
+                // Get type at start
+                TileType startType = TileType.None;
+                if (data.UseManualLayout)
+                {
+                    var tile = data.ManualLayoutData.Find(d => d.Coordinate == start);
+                    startType = tile.Type;
+                }
+
+                // Try to find target index from legacy SpawnPoints list if coordinate matches
+                int targetIndex = -1;
+                var legacySpawn = data.SpawnPoints.Find(s => s.Coordinate == start);
+                if (legacySpawn.Coordinate == start) targetIndex = legacySpawn.TargetExitIndex;
+
+                List<Vector2Int> targets = new List<Vector2Int>();
+                
+                // Smart pairing: Only match Ground to Ground, High to High
+                bool isHighStart = startType == TileType.SpawnPointHigh;
+                
+                if (targetIndex >= 0 && targetIndex < actualExits.Count)
+                {
+                    // User specified a specific exit. Check if it matches.
+                    Vector2Int exitCoord = actualExits[targetIndex];
+                    TileType exitType = TileType.None;
+                    if (data.UseManualLayout)
+                    {
+                        var tile = data.ManualLayoutData.Find(d => d.Coordinate == exitCoord);
+                        exitType = tile.Type;
+                    }
+                    
+                    bool isHighExit = exitType == TileType.ExitPointHigh;
+                    if (isHighStart == isHighExit)
+                    {
+                        targets.Add(exitCoord);
+                    }
+                }
+                
+                // If no valid target yet, find the NEAREST matching one
+                if (targets.Count == 0)
+                {
+                    Vector2Int nearestExit = Vector2Int.zero;
+                    float minSqrDist = float.MaxValue;
+                    bool found = false;
+
+                    foreach (var exitCoord in actualExits)
+                    {
+                        TileType exitType = TileType.None;
+                        if (data.UseManualLayout)
+                        {
+                            var tile = data.ManualLayoutData.Find(d => d.Coordinate == exitCoord);
+                            if (tile.Coordinate == exitCoord) exitType = tile.Type;
+                        }
+
+                        bool isHighExit = exitType == TileType.ExitPointHigh;
+                        if (isHighStart == isHighExit)
+                        {
+                            float sqrDist = (start - exitCoord).sqrMagnitude;
+                            if (sqrDist < minSqrDist)
+                            {
+                                minSqrDist = sqrDist;
+                                nearestExit = exitCoord;
+                                found = true;
+                            }
+                        }
+                    }
+
+                    if (found)
+                    {
+                        targets.Add(nearestExit);
+                    }
+                }
+
+                foreach (var target in targets)
+                {
+                    // Only show the path relevant to the spawn type to reduce clutter
+                    if (isHighStart)
+                    {
+                        // High Ground Spawn -> High Ground Exit: Usually for Flying or High-path units
+                        var flyingPath = GetPathInEditor(data, start, target, MaouSamaTD.Units.EnemyMovementType.Flying);
+                        if (flyingPath != null) DrawPathLine(flyingPath, Color.cyan, 2f, data, tileGridRect, cellW, cellH, 0);
+                    }
+                    else
+                    {
+                        // Regular Spawn -> Regular Exit: Ground path
+                        var groundPath = GetPathInEditor(data, start, target, MaouSamaTD.Units.EnemyMovementType.Ground);
+                        if (groundPath != null) DrawPathLine(groundPath, Color.orange, 2f, data, tileGridRect, cellW, cellH, 0);
+                        
+                        // If user specifically wants to see flying paths from ground spawns, 
+                        // we could add a toggle, but for now we follow the "don't show 2 arrows" request.
+                    }
+                }
+            }
+            Handles.EndGUI();
+
+            // Add Legend Hint
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Pathing Legend:", EditorStyles.boldLabel);
+            var rectOrange = EditorGUILayout.GetControlRect(false, 16);
+            EditorGUI.DrawRect(new Rect(rectOrange.x, rectOrange.y + 4, 12, 8), Color.orange);
+            EditorGUI.LabelField(new Rect(rectOrange.x + 20, rectOrange.y, rectOrange.width - 20, 16), "Ground Path (Spawn -> Exit)");
+            
+            var rectCyan = EditorGUILayout.GetControlRect(false, 16);
+            EditorGUI.DrawRect(new Rect(rectCyan.x, rectCyan.y + 4, 12, 8), Color.cyan);
+            EditorGUI.LabelField(new Rect(rectCyan.x + 20, rectCyan.y, rectCyan.width - 20, 16), "Flying/High Path (SpawnHigh -> ExitHigh)");
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawPathLine(List<Vector2Int> path, Color color, float width, MapData data, Rect tileGridRect, float cellW, float cellH, float offset)
+        {
+            if (path == null || path.Count < 2) return;
+
+            for (int i = 0; i < path.Count - 1; i++)
+            {
+                Vector2 p1 = GetCellCenter(path[i], data, tileGridRect, cellW, cellH) + new Vector2(offset, offset);
+                Vector2 p2 = GetCellCenter(path[i + 1], data, tileGridRect, cellW, cellH) + new Vector2(offset, offset);
+                Handles.color = color;
+                Handles.DrawAAConvexPolygon(
+                    p1 + new Vector2(-width, -width),
+                    p1 + new Vector2(width, width),
+                    p2 + new Vector2(width, width),
+                    p2 + new Vector2(-width, -width)
+                );
+            }
+            
+            // Draw arrow at end
+            Vector2 end = GetCellCenter(path[path.Count - 1], data, tileGridRect, cellW, cellH) + new Vector2(offset, offset);
+            Vector2 prev = GetCellCenter(path[path.Count - 2], data, tileGridRect, cellW, cellH) + new Vector2(offset, offset);
+            Vector2 dir = (end - prev).normalized;
+            Vector2 side = new Vector2(-dir.y, dir.x);
+            Handles.DrawAAConvexPolygon(
+                end,
+                end - dir * 10 + side * 5,
+                end - dir * 10 - side * 5
+            );
+        }
+
+        private Vector2 GetCellCenter(Vector2Int coord, MapData data, Rect tileGridRect, float cellW, float cellH)
+        {
+            return new Vector2(
+                tileGridRect.x + (coord.x * cellW) + cellW * 0.5f,
+                tileGridRect.y + ((data.Height - 1 - coord.y) * cellH) + cellH * 0.5f
+            );
+        }
+
+        private List<Vector2Int> GetPathInEditor(MapData data, Vector2Int start, Vector2Int end, MaouSamaTD.Units.EnemyMovementType moveType)
+        {
+            // Simple BFS for editor pathing
+            Queue<Vector2Int> frontier = new Queue<Vector2Int>();
+            frontier.Enqueue(start);
+
+            Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+            cameFrom[start] = start;
+
+            bool found = false;
+            while (frontier.Count > 0)
+            {
+                Vector2Int current = frontier.Dequeue();
+                if (current == end) { found = true; break; }
+
+                foreach (Vector2Int next in GetNeighborsInEditor(data, current, moveType))
+                {
+                    if (!cameFrom.ContainsKey(next))
+                    {
+                        frontier.Enqueue(next);
+                        cameFrom[next] = current;
+                    }
+                }
+            }
+
+            if (!found) return null;
+
+            List<Vector2Int> path = new List<Vector2Int>();
+            Vector2Int curr = end;
+            while (curr != start)
+            {
+                path.Add(curr);
+                curr = cameFrom[curr];
+            }
+            path.Add(start);
+            path.Reverse();
+            return path;
+        }
+
+        private IEnumerable<Vector2Int> GetNeighborsInEditor(MapData data, Vector2Int current, MaouSamaTD.Units.EnemyMovementType moveType)
+        {
+            Vector2Int[] dirs = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
+            foreach (var dir in dirs)
+            {
+                Vector2Int next = current + dir;
+                if (next.x < 0 || next.x >= data.Width || next.y < 0 || next.y >= data.Height) continue;
+
+                TileType type = TileType.Walkable;
+                if (data.UseManualLayout)
+                {
+                    int idx = data.ManualLayoutData.FindIndex(d => d.Coordinate == next);
+                    if (idx != -1) type = data.ManualLayoutData[idx].Type;
+                    else type = TileType.None;
+                }
+                else
+                {
+                    Random.State tempState = Random.state;
+                    Random.InitState(data.MapSeed + next.x * 1000 + next.y);
+                    bool isHighGround = Random.value < data.HighGroundChance;
+                    if (next.y == 0 || next.y == data.Height - 1) isHighGround = true;
+                    Random.state = tempState;
+                    type = isHighGround ? TileType.HighGround : TileType.Walkable;
+                }
+
+                bool isWalkable = true;
+                if (moveType == MaouSamaTD.Units.EnemyMovementType.Ground)
+                {
+                    // Ground can only walk on low ground (Walkable, LowTile, SpawnPoint, ExitPoint)
+                    // High ground, Walls, and Void are blocked.
+                    if (type == TileType.HighGround || type == TileType.DecoHighGround || 
+                        type == TileType.SpawnPointHigh || type == TileType.ExitPointHigh ||
+                        type == TileType.None || type == TileType.Wall || type == TileType.NonWalkableDecor)
+                    {
+                        isWalkable = false;
+                    }
+                }
+                else if (moveType == MaouSamaTD.Units.EnemyMovementType.Mixed)
+                {
+                    // Mixed can walk on both low and high ground, but blocked by walls and void
+                    if (type == TileType.None || type == TileType.Wall || type == TileType.NonWalkableDecor)
+                        isWalkable = false;
+                }
+                else if (moveType == MaouSamaTD.Units.EnemyMovementType.Flying)
+                {
+                    // Flying can go anywhere except out of bounds (None)
+                    if (type == TileType.None) isWalkable = false;
+                }
+
+                if (isWalkable) yield return next;
+            }
+        }
+
+        private void GenerateMapPrefab(MapData data)
+        {
+            string path = EditorUtility.SaveFilePanelInProject("Save Map Prefab", $"Map_{data.name}", "prefab", "Select where to save the generated map prefab", "Assets/_Game/Prefabs/Maps");
+            if (string.IsNullOrEmpty(path)) return;
+
+            // Create temporary generation root
+            GameObject root = new GameObject($"Map_{data.name}_Root");
+            
+            // Create Containers
+            GameObject gridContainer = new GameObject("Grid");
+            gridContainer.transform.SetParent(root.transform);
+            GameObject wallContainer = new GameObject("Walls");
+            wallContainer.transform.SetParent(root.transform);
+
+            // Add GridManager
+            MaouSamaTD.Grid.GridManager gridManager = root.AddComponent<MaouSamaTD.Grid.GridManager>();
+            
+            // Find default tile prefab
+            Tile tilePrefab = AssetDatabase.LoadAssetAtPath<Tile>("Assets/_Game/Visuals/Map/Prefabs/TilePrefab.prefab");
+            if (tilePrefab == null)
+            {
+                // Try searching as fallback
+                string[] guids = AssetDatabase.FindAssets("t:GameObject TilePrefab");
+                if (guids.Length == 0) guids = AssetDatabase.FindAssets("t:GameObject Tile");
+                foreach (var guid in guids)
+                {
+                    string p = AssetDatabase.GUIDToAssetPath(guid);
+                    if (p.EndsWith("TilePrefab.prefab") || p.EndsWith("Tile.prefab"))
+                    {
+                        tilePrefab = AssetDatabase.LoadAssetAtPath<Tile>(p);
+                        break;
+                    }
+                }
+            }
+
+            // Private field access via reflection since they are serialized but private
+            var managerType = typeof(MaouSamaTD.Grid.GridManager);
+            managerType.GetField("_tilePrefab", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(gridManager, tilePrefab);
+            managerType.GetField("_gridContainer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(gridManager, gridContainer.transform);
+            managerType.GetField("_wallContainer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(gridManager, wallContainer.transform);
+
+            // Add GridGenerator
+            MaouSamaTD.Grid.GridGenerator gridGenerator = root.AddComponent<MaouSamaTD.Grid.GridGenerator>();
+            var genType = typeof(MaouSamaTD.Grid.GridGenerator);
+            genType.GetField("_gridManager", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(gridGenerator, gridManager);
+            genType.GetField("_mapData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(gridGenerator, data);
+
+            // Generate
+            gridGenerator.GenerateMap();
+
+            // Cleanup components we don't want in the final prefab
+            DestroyImmediate(gridGenerator);
+            // gridManager.RecalculateBounds(); 
+
+            // Save Prefab
+            GameObject prefabAsset = PrefabUtility.SaveAsPrefabAsset(root, path);
+            
+            // Cleanup scene
+            DestroyImmediate(root);
+
+            AssetDatabase.Refresh();
+            
+            if (prefabAsset != null)
+            {
+                EditorGUIUtility.PingObject(prefabAsset);
+                EditorUtility.DisplayDialog("Map Prefab Created", $"Successfully generated and saved map prefab to:\n{path}", "OK");
+            }
         }
 
         private void ShowContextMenu(MapData data, SelectionItem targetItem)
@@ -1069,7 +1444,7 @@ namespace MaouSamaTD.Editor
                 {
                     return GetTileColor(data.ManualLayoutData[idx].Type);
                 }
-                return Color.white;
+                return GetTileColor(TileType.None); // Match pathfinder fallback
             }
 
             Random.State tempState = Random.state;
@@ -1152,7 +1527,94 @@ namespace MaouSamaTD.Editor
             }
 
             data.UseManualLayout = true;
+            SyncPointsFromLayout(data); // Sync lists and auto-pair nearest exits
             EditorUtility.SetDirty(data);
+        }
+
+        private void SyncPointsFromLayout(MapData data)
+        {
+            if (!data.UseManualLayout) return;
+
+            // 1. Discovery from Layout
+            List<Vector2Int> foundExits = new List<Vector2Int>();
+            List<Vector2Int> foundExitsHigh = new List<Vector2Int>();
+            List<Vector2Int> foundSpawns = new List<Vector2Int>();
+            List<Vector2Int> foundSpawnsHigh = new List<Vector2Int>();
+
+            foreach (var tile in data.ManualLayoutData)
+            {
+                if (tile.Type == TileType.SpawnPoint) foundSpawns.Add(tile.Coordinate);
+                else if (tile.Type == TileType.SpawnPointHigh) foundSpawnsHigh.Add(tile.Coordinate);
+                else if (tile.Type == TileType.ExitPoint) foundExits.Add(tile.Coordinate);
+                else if (tile.Type == TileType.ExitPointHigh) foundExitsHigh.Add(tile.Coordinate);
+            }
+
+            // 2. Update ExitPoints list
+            List<Vector2Int> allFoundExits = new List<Vector2Int>();
+            allFoundExits.AddRange(foundExits);
+            allFoundExits.AddRange(foundExitsHigh);
+            data.ExitPoints = allFoundExits;
+
+            // 3. Update SpawnPoints list (keeping existing data for TargetExitIndex)
+            List<SpawnPointData> newSpawnList = new List<SpawnPointData>();
+            List<Vector2Int> allFoundSpawns = new List<Vector2Int>();
+            allFoundSpawns.AddRange(foundSpawns);
+            allFoundSpawns.AddRange(foundSpawnsHigh);
+
+            foreach (var coord in allFoundSpawns)
+            {
+                int existingIdx = data.SpawnPoints.FindIndex(s => s.Coordinate == coord);
+                if (existingIdx != -1)
+                {
+                    newSpawnList.Add(data.SpawnPoints[existingIdx]);
+                }
+                else
+                {
+                    newSpawnList.Add(new SpawnPointData { Coordinate = coord, TargetExitIndex = -1 });
+                }
+            }
+            data.SpawnPoints = newSpawnList;
+
+            // 4. Auto-assign nearest for those with -1
+            for (int i = 0; i < data.SpawnPoints.Count; i++)
+            {
+                var s = data.SpawnPoints[i];
+                if (s.TargetExitIndex == -1)
+                {
+                    // Find type of this spawn
+                    var tile = data.ManualLayoutData.Find(t => t.Coordinate == s.Coordinate);
+                    bool isHigh = tile.Type == TileType.SpawnPointHigh;
+
+                    // Search for nearest exit of same type
+                    Vector2Int nearestExit = Vector2Int.zero;
+                    float minSqrDist = float.MaxValue;
+                    int nearestIdx = -1;
+
+                    for (int j = 0; j < data.ExitPoints.Count; j++)
+                    {
+                        var exitCoord = data.ExitPoints[j];
+                        var exitTile = data.ManualLayoutData.Find(t => t.Coordinate == exitCoord);
+                        bool isExitHigh = exitTile.Type == TileType.ExitPointHigh;
+
+                        if (isHigh == isExitHigh)
+                        {
+                            float sqrDist = (s.Coordinate - exitCoord).sqrMagnitude;
+                            if (sqrDist < minSqrDist)
+                            {
+                                minSqrDist = sqrDist;
+                                nearestExit = exitCoord;
+                                nearestIdx = j;
+                            }
+                        }
+                    }
+
+                    if (nearestIdx != -1)
+                    {
+                        s.TargetExitIndex = nearestIdx;
+                        data.SpawnPoints[i] = s;
+                    }
+                }
+            }
         }
 
         private void CaptureRandomToManual(MapData data)

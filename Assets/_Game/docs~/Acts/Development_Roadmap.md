@@ -6,7 +6,7 @@
     *   [ ] Finalize Unit State Machine (Idle, Block, Attack, Skill, Die).
     *   [ ] Implement **Maou Skill System** (using **Authority Seals**).
 *   **UI Framework:**
-    *   [ ] Build "Hecatina's HUD" (Main Menu, Unit Select, Battle HUD).
+    *   [ ] Build "Tina's HUD" (Main Menu, Unit Select, Battle HUD).
     *   [ ] Implement "Neon-Gothic" shader for UI panels (Blur + Vignette).
 *   **Content (Prologue):**
     *   [ ] Build Map 1-1 (The Crypt).

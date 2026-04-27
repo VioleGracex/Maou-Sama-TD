@@ -16,16 +16,23 @@ MonoBehaviour:
   Background: 1
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Hecatina
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
-    Text: "The corridor is cleansed. A mere nuisance, though it confirms the 'Holy'
-      interlopers have marked our sanctuary."
+    Text: "The corridor is cleansed, My Sovereign. A mere nuisance, though it confirms the 'Holy' interlopers have marked our sanctuary."
+    PortraitOnLeft: 0
+    EventID: Kneel
+  - SpeakerName: Ignis
+    SpeakerPortrait: {fileID: 0}
+    Text: "Your strength returns, My Lord. But the sanctuary is still compromised. We cannot hold this position indefinitely."
+    PortraitOnLeft: 1
+    EventID: Kneel
+  - SpeakerName: Tina
+    SpeakerPortrait: {fileID: 0}
+    Text: "She is right. To truly reclaim your authority and restore the Obsidian Throne, we must awaken the Matriarch of Lust... Lilith."
     PortraitOnLeft: 0
     EventID: 
-  - SpeakerName: Hecatina
+  - SpeakerName: Ignis
     SpeakerPortrait: {fileID: 0}
-    Text: "It pains me to suggest it, but we must locate the chamber of *that* creature...
-      Lilith. Unfortunately, unsealing the First Succubus is the only way to reclaim
-      your lost Crests and replenishing your Authority Seals, My Sovereign."
-    PortraitOnLeft: 0
+    Text: "Lilith... A dangerous gamble, but a necessary one. Her siphoning abilities are the only way to fully replenish your Seals and reclaim your lost Crests."
+    PortraitOnLeft: 1
     EventID: 

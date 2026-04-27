@@ -12,21 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73136369cd15dfb418701e320cfd0df5, type: 3}
   m_Name: SovereignRite_Empower
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.SovereignRiteData
-  SkillName: Sovereign Rite: Empower
-  Description: "Infuse a vassal with your divine Authority, greatly increasing their
-    combat prowess."
+  useDefaultInspector: 0
+  UniqueID: 94a35db9-575a-42ea-abb0-33c3e6e56fc9
+  SkillName: 
+  Description: Infuse a vassal with your divine Authority, greatly increasing their
+    combat prowess.
   Icon: {fileID: 0}
-  CastVFX: {fileID: 0}
-  HitVFX: {fileID: 0}
-  RangeIndicatorColor: {r: 1, g: 0.2, b: 0.8, a: 1}
-  AnimationTriggerName: CastSkill
-  CastSFX: {fileID: 0}
-  HitSFX: {fileID: 0}
-  TargetType: 1 # Assuming 1 is Vassal
+  BaseVisuals:
+    UltimatePrefab: {fileID: 0}
+    CastVFX: {fileID: 0}
+    HitVFX: {fileID: 0}
+    CastSFX: {fileID: 0}
+    HitSFX: {fileID: 0}
+    UltimateColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    RangeIndicatorColor: {r: 0, g: 0, b: 0, a: 0}
+    AnimationTriggerName: 
+  SealCost: 15
+  Cooldown: 15
+  TargetType: 1
   Range: 100
   Radius: 0
-  EffectType: 1 # Buff
+  EffectType: 1
   Value: 50
   Duration: 10
-  SealCost: 20
-  Cooldown: 15

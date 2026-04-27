@@ -9,8 +9,8 @@
     *   **Objective:** Hold the bottleneck against feral spirits.
     *   **Featured Unit:** **Ignis (The Crimson Bastion)**.
     *   **Enemies:** **Lesser Shadows**, **Feral Echoes**.
-    *   **Story:** Hecatina breaks the initial seal. You awaken as the Sovereign. Ignis stands as your shield. 
-    *   **Outcome:** Hecatina reveals that the "Holy" interlopers have marked the sanctuary, and Lilith's awakening is now required.
+    *   **Story:** Tina breaks the initial seal. You awaken as the Sovereign. Ignis stands as your shield. 
+    *   **Outcome:** Tina reveals that the "Holy" interlopers have marked the sanctuary, and Lilith's awakening is now required.
 
 *   **1-2: The Outer Sanctum**
     *   **Objective:** Clear the corridor to the Tower of Silence.
@@ -18,7 +18,7 @@
     *   **Story:** You encounter the first humans. They fear the "Maou" and seek to destroy your recovering spirit.
 
 *   **1-3: The Sealed Tower**
-    *   **Objective:** Protect the Ritual Pillars while Hecatina breaks the Seal of Silence.
+    *   **Objective:** Protect the Ritual Pillars while Tina breaks the Seal of Silence.
     *   **Interactive:** Pillars boost **Authority Seal** generation but attract more Shadows.
     *   **Story:** You reach the chamber of Lilith. The seals are complex, requiring a mass sacrifice of captured Shadow souls.
 
@@ -35,7 +35,7 @@
 
 ## Chapter 3: The Ruined Kingdom
 *   **1-6: Path to the Surface**
-    *   **Story:** The trio (Hecatina, Ignis, Lilith) prepares to leave the subterranean sanctuary.
+    *   **Story:** The trio (Tina, Ignis, Lilith) prepares to leave the subterranean sanctuary.
     *   **Theme:** Transition from shadows to the ruins of the surface world.
 
 *   **1-7: The Mourning Shadows**

@@ -34,28 +34,4 @@ MonoBehaviour:
   BonusHpPerLevel: 0
   BonusAtkPerLevel: 0
   BonusDefPerLevel: 0
-  SkinOverrides:
-  - SkinID: 
-    Visuals:
-      UltimatePrefab: {fileID: 0}
-      CastVFX: {fileID: 0}
-      HitVFX: {fileID: 0}
-      CastSFX: {fileID: 0}
-      HitSFX: {fileID: 0}
-      UltimateColor: {r: 0, g: 0, b: 0, a: 0}
-      TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
-      SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
-      RangeIndicatorColor: {r: 0, g: 0, b: 0, a: 0}
-      AnimationTriggerName: 
-  - SkinID: 
-    Visuals:
-      UltimatePrefab: {fileID: 0}
-      CastVFX: {fileID: 0}
-      HitVFX: {fileID: 0}
-      CastSFX: {fileID: 0}
-      HitSFX: {fileID: 0}
-      UltimateColor: {r: 0, g: 0, b: 0, a: 0}
-      TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
-      SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
-      RangeIndicatorColor: {r: 0, g: 0, b: 0, a: 0}
-      AnimationTriggerName: 
+  SkinOverrides: []

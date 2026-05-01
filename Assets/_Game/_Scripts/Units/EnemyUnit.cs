@@ -398,7 +398,7 @@ namespace MaouSamaTD.Units
             Managers.GameManager gm = FindFirstObjectByType<Managers.GameManager>();
             if (gm != null)
             {
-                gm.TakeBaseDamage(Mathf.RoundToInt(_enemyData.DamageToPlayerBase));
+                gm.EnemyEscaped();
             }
 
             GridManager gridMgr = FindFirstObjectByType<GridManager>(); 

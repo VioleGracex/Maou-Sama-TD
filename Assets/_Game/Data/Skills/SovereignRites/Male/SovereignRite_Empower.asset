@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.SovereignRiteData
   useDefaultInspector: 0
   UniqueID: 94a35db9-575a-42ea-abb0-33c3e6e56fc9
-  SkillName: 
-  Description: Infuse a vassal with your divine Authority, greatly increasing their
+  SkillName: Empower
+  Description: Infuse a vassal with your demonic Authority, greatly increasing their
     combat prowess.
   Icon: {fileID: 0}
   BaseVisuals:

@@ -54,6 +54,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         private IList<Sprite> _splashScreens;
         private int _currentSplashIndex = -1;
+        private static bool _hasFinishedFirstBoot = false;
         private bool _isTransitioning = false;
         private bool _isLevelReady = false;
 
@@ -179,6 +180,14 @@ namespace MaouSamaTD.UI.MainMenu
         {
             if (_progressBar != null) _progressBar.gameObject.SetActive(false);
 
+            // If this is NOT the first boot (e.g. returning from a level), auto-proceed
+            if (_hasFinishedFirstBoot)
+            {
+                Debug.Log("[LoadingScreenPanel] Returning to menu - auto-proceeding.");
+                OnStartClicked();
+                return;
+            }
+
             // Wait for start game button click during initial boot
             if (_startButton != null)
             {
@@ -189,6 +198,8 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnStartClicked()
         {
+            _hasFinishedFirstBoot = true;
+
             if (_isTransitioning)
             {
                 _startButtonClicked = true;
@@ -322,18 +333,8 @@ namespace MaouSamaTD.UI.MainMenu
             if (sceneName == "BattleScene")
             {
                 if (_progressBar != null) _progressBar.gameObject.SetActive(false);
-                if (_startButton != null) 
-                {
-                    _startButton.gameObject.SetActive(true);
-                    // Ensure the button is fully interactable and positioned up front
-                    _startButton.interactable = true;
-                }
-
-                _startButtonClicked = false;
-                while (!_startButtonClicked)
-                {
-                    yield return null;
-                }
+                // No longer waiting for _startButtonClicked here, auto-proceeding once _isLevelReady is true
+                Debug.Log("[LoadingScreenPanel] BattleScene ready - auto-proceeding to fade out.");
             }
 
             CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();

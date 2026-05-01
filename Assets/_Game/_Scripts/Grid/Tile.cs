@@ -294,7 +294,7 @@ namespace MaouSamaTD.Grid
             }
 
             // 3. Create Marker based on Type
-            if (_type == TileType.SpawnPoint || _type == TileType.ExitPoint)
+            if (_type == TileType.SpawnPoint || _type == TileType.ExitPoint || _type == TileType.SpawnPointHigh || _type == TileType.ExitPointHigh)
             {
                  // Create Container
                  _markerObject = new GameObject($"{_type}_Marker");
@@ -309,11 +309,15 @@ namespace MaouSamaTD.Grid
                  float size = 0.9f; 
                  
                  Color markerColor = Color.white;
-                 if (_type == TileType.SpawnPoint || _type == TileType.SpawnPointHigh)
+                 if (_type == TileType.SpawnPoint)
                  {
                      markerColor = Color.red; 
                  }
-                 else if (_type == TileType.ExitPoint || _type == TileType.ExitPointHigh)
+                 else if (_type == TileType.SpawnPointHigh)
+                 {
+                     markerColor = new Color(1f, 0.4f, 0.4f); 
+                 }
+                 else if (_type == TileType.ExitPoint)
                  {
                      if (ColorUtility.TryParseHtmlString("#00D2D3", out Color c))
                      {
@@ -321,6 +325,10 @@ namespace MaouSamaTD.Grid
                          markerColor.a = 0.5f; 
                      }
                      else markerColor = Color.cyan;
+                 }
+                 else if (_type == TileType.ExitPointHigh)
+                 {
+                     markerColor = new Color(0.4f, 1f, 1f, 0.5f);
                  }
                  
                  Material mat = new Material(Shader.Find("Sprites/Default"));

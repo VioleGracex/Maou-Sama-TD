@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - LevelData
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: efc467d660f6ff74ba303b6ac31f759b
+    m_Address: Assets/_Game/Data/Levels/LevelData_Level3.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 19b417a427e1a474d9e81fbe4eae59a7, type: 2}
   m_SchemaSet:

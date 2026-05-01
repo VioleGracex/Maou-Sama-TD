@@ -36,5 +36,11 @@ namespace MaouSamaTD.Managers
                 onComplete?.Invoke();
             });
         }
+
+        public void HideDialogue()
+        {
+            if (_dialogueUI != null) _dialogueUI.gameObject.SetActive(false);
+            IsDialogueActive = false;
+        }
     }
 }

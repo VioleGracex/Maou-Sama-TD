@@ -5,12 +5,15 @@ using DG.Tweening;
 using System.Collections;
 using NaughtyAttributes;
 
+using Zenject;
+
 namespace MaouSamaTD.UI
 {
     public class UltimateCutInUI : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private GameObject _visualRoot;
         [SerializeField] private RectTransform _redBanner;
         [SerializeField] private CanvasGroup _identityContainer; // Parent of Name/Title/Skill
         [SerializeField] private TextMeshProUGUI _nameText;
@@ -29,7 +32,17 @@ namespace MaouSamaTD.UI
         [SerializeField] private float _ultimateTextOffset = 800f;
         [SerializeField] private float _animationDuration = 0.7f;
 
+        private Coroutine _activeCoroutine;
+
         public static UltimateCutInUI Instance { get; private set; }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+        }
 
         private void Awake()
         {
@@ -49,18 +62,39 @@ namespace MaouSamaTD.UI
             if (_identityContainer != null) _identityContainer.alpha = 0;
         }
 
-        public void Play(string unitName, string unitTitle, string skillName, Color bannerColor, Color titleBgColor, Color skillBgColor, Sprite portrait)
+        public Coroutine Play(string unitName, string unitTitle, string skillName, 
+            Color bannerColor, Color titleBgColor, Color titleTextColor, 
+            Color skillBgColor, Color skillTextColor, Color nameTextColor, Sprite portrait)
         {
-            StopAllCoroutines();
-            StartCoroutine(PlayAnimation(unitName, unitTitle, skillName, bannerColor, titleBgColor, skillBgColor, portrait));
+            if (_activeCoroutine != null)
+            {
+                StopCoroutine(_activeCoroutine);
+                CleanupAnimationState();
+            }
+            
+            _activeCoroutine = StartCoroutine(PlayAnimation(unitName, unitTitle, skillName, bannerColor, titleBgColor, titleTextColor, skillBgColor, skillTextColor, nameTextColor, portrait));
+            return _activeCoroutine;
         }
 
-        public IEnumerator PlayAnimation(string unitName, string unitTitle, string skillName, Color bannerColor, Color titleBgColor, Color skillBgColor, Sprite portrait)
+        private void CleanupAnimationState()
         {
-            // Initial State
+            // Reset UI state if interrupted
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = 0;
+                _canvasGroup.blocksRaycasts = false;
+            }
+        }
+
+        public IEnumerator PlayAnimation(string unitName, string unitTitle, string skillName, 
+            Color bannerColor, Color titleBgColor, Color titleTextColor, 
+            Color skillBgColor, Color skillTextColor, Color nameTextColor, Sprite portrait)
+        {
+            // Initial State for this animation
             if (_canvasGroup != null)
             {
                 _canvasGroup.alpha = 1;
+                _visualRoot.SetActive(true);
                 _canvasGroup.blocksRaycasts = true;
             }
 
@@ -74,8 +108,11 @@ namespace MaouSamaTD.UI
                 if (_redBanner.GetComponent<Image>() != null) _redBanner.GetComponent<Image>().color = bannerColor;
             }
 
-            if (_titleBgImage != null) _titleBgImage.color = titleBgColor;
-            if (_skillNameBgImage != null) _skillNameBgImage.color = skillBgColor;
+            if (_titleBgImage != null) _titleBgImage.color = titleBgColor.a == 0 ? Color.white : titleBgColor;
+            if (_titleText != null) _titleText.color = titleTextColor.a == 0 ? Color.black : titleTextColor;
+            if (_skillNameBgImage != null) _skillNameBgImage.color = skillBgColor.a == 0 ? Color.black : skillBgColor;
+            if (_skillNameText != null) _skillNameText.color = skillTextColor.a == 0 ? Color.white : skillTextColor;
+            if (_nameText != null) _nameText.color = nameTextColor.a == 0 ? Color.white : nameTextColor;
 
             if (_identityContainer != null)
             {
@@ -95,7 +132,6 @@ namespace MaouSamaTD.UI
             {
                 _portraitImage.sprite = portrait;
                 _portraitImage.color = new Color(1, 1, 1, 0);
-                // Position portrait slightly off-screen to the left
                 _portraitImage.rectTransform.anchoredPosition = new Vector2(-500, 0);
                 _portraitImage.DOFade(1, _animationDuration).SetUpdate(true);
                 _portraitImage.rectTransform.DOAnchorPos(Vector2.zero, _animationDuration).SetEase(Ease.OutCubic).SetUpdate(true);
@@ -112,13 +148,6 @@ namespace MaouSamaTD.UI
             if (_redBanner != null)
             {
                 bannerTween = _redBanner.DOAnchorPos(Vector2.zero, _animationDuration).SetEase(Ease.OutQuart).SetUpdate(true);
-            }
-
-            if (_backgroundDim != null)
-            {
-                _backgroundDim.SetActive(true);
-                CanvasGroup dimCG = _backgroundDim.GetComponent<CanvasGroup>();
-                if (dimCG != null) dimCG.DOFade(0.7f, _animationDuration).SetUpdate(true);
             }
 
             // Wait for banner to fully arrive before moving the "ULTIMATE" word
@@ -145,9 +174,14 @@ namespace MaouSamaTD.UI
                 _portraitImage.rectTransform.DOAnchorPos(new Vector2(-500, 0), 0.3f).SetUpdate(true);
             }
             _ultimateText.DOFade(0, 0.3f).SetUpdate(true);
-            yield return _canvasGroup.DOFade(0, 0.5f).SetUpdate(true).WaitForCompletion();
             
-            _canvasGroup.blocksRaycasts = false;
+            if (_canvasGroup != null)
+            {
+                yield return _canvasGroup.DOFade(0, 0.5f).SetUpdate(true).WaitForCompletion();
+            }
+
+            if (_canvasGroup != null) _canvasGroup.blocksRaycasts = false;
+            _activeCoroutine = null;
         }
 
         [Button("Test Cut-In Animation")]
@@ -155,7 +189,7 @@ namespace MaouSamaTD.UI
         {
             // Now works because GameObject is active
             StopAllCoroutines();
-            StartCoroutine(PlayAnimation("IGNIS", "THE CRIMSON BASTION", "PHOENIX Radiance", Color.red, Color.black, Color.black, null));
+            StartCoroutine(PlayAnimation("IGNIS", "THE CRIMSON BASTION", "PHOENIX Radiance", Color.red, Color.white, Color.black, Color.black, Color.white, Color.white, null));
         }
     }
 }

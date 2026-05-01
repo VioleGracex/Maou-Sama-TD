@@ -33,16 +33,22 @@ namespace MaouSamaTD.Managers
         [SerializeField] private Material _pathMaterial;
 
         private LevelData _currentLevelData;
+        public LevelData CurrentLevelData => _currentLevelData;
 
         public int PlayerLives { get; private set; }
+        public int MaxLives { get; private set; } = 20;
+        public int EnemiesPassedCount { get; private set; }
         public System.Action<int> OnLivesChanged;
         public event System.Action OnVictory;
         public event System.Action OnGameOver;
+        public event System.Action OnGameFinished;
         public event System.Action<float> OnSpeedChanged;
 
         public bool IsGameEnded { get; private set; } = false;
         public float CurrentSpeed { get; private set; } = 1f;
         public bool IsPaused { get; private set; } = false;
+        public float TimeTaken { get; private set; } = 0f;
+        public int UnitsLostCount { get; private set; } = 0;
         #endregion
 
         #region Initialization
@@ -246,7 +252,9 @@ namespace MaouSamaTD.Managers
                 if (levelData == null) Debug.LogError("[GameManager] LevelData is NULL!");
             }
 
-            PlayerLives = 20;
+            MaxLives = 20; // Default or from level data
+            PlayerLives = MaxLives;
+            EnemiesPassedCount = 0;
             OnLivesChanged?.Invoke(PlayerLives);
 
             // Signal the loading screen that the level is ready
@@ -269,19 +277,80 @@ namespace MaouSamaTD.Managers
 
             if (PlayerLives <= 0)
             {
+                CheckLoseConditions(LevelConditionType.BaseHPZero);
+            }
+        }
+
+        public void EnemyEscaped()
+        {
+            if (IsGameEnded) return;
+
+            EnemiesPassedCount++;
+            Debug.Log($"[GameManager] Enemy escaped! Total passed: {EnemiesPassedCount}");
+
+            CheckLoseConditions(LevelConditionType.EnemiesPassedLimit);
+            
+            // Also take 1 damage by default if no specific HP logic is desired, 
+            // but for now we follow the "monsters pass" count as requested.
+            TakeBaseDamage(1); 
+        }
+
+        private void CheckLoseConditions(LevelConditionType triggerType)
+        {
+            if (IsGameEnded) return;
+
+            bool shouldLose = false;
+
+            // Default behavior if no conditions defined
+            if (_currentLevelData == null || _currentLevelData.LoseConditions.Count == 0)
+            {
+                if (triggerType == LevelConditionType.BaseHPZero && PlayerLives <= 0) shouldLose = true;
+            }
+            else
+            {
+                foreach (var condition in _currentLevelData.LoseConditions)
+                {
+                    switch (condition.Type)
+                    {
+                        case LevelConditionType.BaseHPZero:
+                            if (PlayerLives <= 0) shouldLose = true;
+                            break;
+                        case LevelConditionType.EnemiesPassedLimit:
+                            if (EnemiesPassedCount >= condition.Value) shouldLose = true;
+                            break;
+                    }
+                    if (shouldLose) break;
+                }
+            }
+
+            if (shouldLose)
+            {
                 GameOver();
             }
+        }
+
+        private void Update()
+        {
+            if (IsGameEnded || IsPaused) return;
+            TimeTaken += Time.deltaTime;
+        }
+
+        public void ReportUnitLost()
+        {
+            UnitsLostCount++;
         }
 
         public void Victory()
         {
             if (IsGameEnded) return;
             IsGameEnded = true;
+            OnGameFinished?.Invoke();
             Debug.Log("[GameManager] Victory!");
             
-            int stars = 1;
-            if (PlayerLives >= 20) stars = 3;
-            else if (PlayerLives >= 10) stars = 2;
+            var starResults = EvaluateStarConditions();
+            int stars = 0;
+            foreach (var res in starResults) if (res.IsAchieved) stars++;
+            if (stars == 0) stars = 1; // Always at least 1 star for victory? Or not? User said "stars also with text of rating"
             
             if (_saveManager != null && _currentLevelData != null)
             {
@@ -363,6 +432,7 @@ namespace MaouSamaTD.Managers
         {
             if (IsGameEnded) return;
             IsGameEnded = true;
+            OnGameFinished?.Invoke();
             Debug.Log("[GameManager] Game Over!");
             
             if (_currentLevelData != null && _currentLevelData.HasStory && _currentLevelData.OutroStory != null)
@@ -380,5 +450,54 @@ namespace MaouSamaTD.Managers
             }
         }
         #endregion
+        public class StarResult
+        {
+            public string Description;
+            public bool IsAchieved;
+        }
+
+        public System.Collections.Generic.List<StarResult> EvaluateStarConditions()
+        {
+            var results = new System.Collections.Generic.List<StarResult>();
+            if (_currentLevelData == null) return results;
+
+            foreach (var cond in _currentLevelData.StarConditions)
+            {
+                bool achieved = false;
+                
+                // Tutorial levels often auto-grant stars if specified
+                if (_currentLevelData.HasTutorial && cond.AutoGrantInTutorial)
+                {
+                    achieved = true;
+                }
+                else
+                {
+                    switch (cond.Type)
+                    {
+                        case StarCondition.ConditionType.CompleteLevel:
+                            achieved = true;
+                            break;
+                        case StarCondition.ConditionType.TimeLimit:
+                            achieved = TimeTaken <= cond.TargetValue;
+                            break;
+                        case StarCondition.ConditionType.BaseHealth:
+                            float hpPct = (float)PlayerLives / (float)MaxLives * 100f;
+                            achieved = hpPct >= cond.TargetValue;
+                            break;
+                        case StarCondition.ConditionType.UnitLossLimit:
+                            achieved = UnitsLostCount <= cond.TargetValue;
+                            break;
+                        case StarCondition.ConditionType.SpecificUnitSurvived:
+                            // For now, if we don't have a specific ID, we assume pass if not implemented
+                            achieved = true; 
+                            break;
+                    }
+                }
+
+                results.Add(new StarResult { Description = cond.Description, IsAchieved = achieved });
+            }
+
+            return results;
+        }
     }
 }

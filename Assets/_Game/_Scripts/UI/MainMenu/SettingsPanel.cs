@@ -329,9 +329,14 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnBackClicked()
         {
-            // Assuming UIFlowManager is available as a singleton per page-flow-manifest.md logic
-            // or simply close the panel if that's how it's managed
-            Close();
+            if (UIFlowManager.Instance != null)
+            {
+                UIFlowManager.Instance.GoBack();
+            }
+            else
+            {
+                Close();
+            }
         }
 
         private enum SettingsTab

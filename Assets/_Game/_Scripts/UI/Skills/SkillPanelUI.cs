@@ -23,6 +23,7 @@ namespace MaouSamaTD.UI.Skills
         [Inject] private InteractionManager _interactionManager;
         [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private MaouSamaTD.Managers.GameSelectionState _gameSelectionState;
+        [Inject] private TutorialManager _tutorialManager;
         
         private List<SkillButtonUI> _spawnedButtons = new List<SkillButtonUI>();
         private bool _isVisible = false; // Default: Docked/Hidden
@@ -49,6 +50,13 @@ namespace MaouSamaTD.UI.Skills
                 _visiblePos = _panelRect.anchoredPosition;
                 // Force initial position to Hidden (Docked)
                 _panelRect.anchoredPosition = _visiblePos + new Vector2(_hideOffset, 0); 
+                
+                // Only set inactive if Level 1, to prevent it from hiding the toggle entirely if it's part of the same hierarchy or breaking the softlock
+                bool isLevel1 = _gameSelectionState != null && _gameSelectionState.SelectedLevel != null && 
+                                (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1");
+                
+                // Ensure it is explicitly activated in Level 2+
+                _panelRect.gameObject.SetActive(!isLevel1);
             }
             if (_toggleButton != null)
             {
@@ -105,14 +113,8 @@ namespace MaouSamaTD.UI.Skills
                 var btn = Instantiate(_buttonPrefab, _buttonContainer);
                 btn.Initialize(skill, _skillManager, _interactionManager, _currencyManager);
                 
-                // Name the button based on skill type for Tutorial Targeting
-                string btnName = "SkillButton_Unknown";
-                string effectStr = skill.EffectType.ToString();
-                
-                if (effectStr.Contains("AOE")) btnName = "SkillButton_AOE";
-                else if (effectStr.Contains("ST_Buff")) btnName = "SkillButton_BUFF";
-                else if (effectStr.Contains("ST_")) btnName = "SkillButton_ST";
-                
+                // Name the button based on skill asset name for Tutorial Targeting
+                string btnName = "SkillButton_" + skill.name.Replace(" ", "");
                 btn.gameObject.name = btnName;
 
                 _spawnedButtons.Add(btn);
@@ -125,10 +127,15 @@ namespace MaouSamaTD.UI.Skills
             
             _isVisible = !_isVisible;
             
+            if (_isVisible && !_panelRect.gameObject.activeSelf)
+            {
+                _panelRect.gameObject.SetActive(true);
+            }
+            
             // Move Right on Hide
             Vector2 targetPos = _isVisible ? _visiblePos : _visiblePos + new Vector2(_hideOffset, 0);
             
-            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack);
+            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
             
             // Fix: Update Text
             if (_toggleButton != null)
@@ -138,6 +145,11 @@ namespace MaouSamaTD.UI.Skills
                 {
                     txt.text = _isVisible ? "Hide" : "Show"; 
                 }
+            }
+
+            if (_isVisible)
+            {
+                _tutorialManager?.OnActionTriggered("RiteMenuOpened");
             }
         }
     }

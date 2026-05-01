@@ -79,10 +79,12 @@ namespace MaouSamaTD.UI.Tutorial
 
             // Ensure Canvas is top-level overlay
             Canvas canvas = GetComponent<Canvas>();
+            if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
+            
             if (canvas != null)
             {
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvas.sortingOrder = 1000;
+                canvas.sortingOrder = 3000; // Much higher than blocker (999)
             }
             if (GetComponent<GraphicRaycaster>() == null) gameObject.AddComponent<GraphicRaycaster>();
 
@@ -282,31 +284,19 @@ namespace MaouSamaTD.UI.Tutorial
             if (_currentStyle == DialogueStyle.FullScreen)
             {
                 // Portraits
-                if (_leftPortrait != null) 
-                { 
-                    _leftPortrait.gameObject.SetActive(line.PortraitOnLeft); 
-                    if (line.PortraitOnLeft) _leftPortrait.sprite = line.SpeakerPortrait; 
-                    _leftPortrait.color = Color.white;
-                }
+                UpdatePortrait(_leftPortrait, line.LeftPortrait, line.Focus == MaouSamaTD.Tutorial.PortraitFocus.Left || line.Focus == MaouSamaTD.Tutorial.PortraitFocus.All);
                 
-                if (_rightPortrait != null) 
-                { 
-                    _rightPortrait.gameObject.SetActive(!line.PortraitOnLeft && line.SpeakerPortrait != null); // Simplistic fallback
-                    if (!line.PortraitOnLeft) _rightPortrait.sprite = line.SpeakerPortrait; 
-                    _rightPortrait.color = Color.white;
-                }
-
-                if (_middlePortrait != null)
-                {
-                    _middlePortrait.gameObject.SetActive(false); 
-                }
+                UpdatePortrait(_middlePortrait, line.CenterPortrait, line.Focus == MaouSamaTD.Tutorial.PortraitFocus.Center || line.Focus == MaouSamaTD.Tutorial.PortraitFocus.All);
+                UpdatePortrait(_rightPortrait, line.RightPortrait, line.Focus == MaouSamaTD.Tutorial.PortraitFocus.Right || line.Focus == MaouSamaTD.Tutorial.PortraitFocus.All);
             }
             else
             {
                 if (_miniTopPortrait != null)
                 {
-                    _miniTopPortrait.gameObject.SetActive(line.SpeakerPortrait != null);
-                    _miniTopPortrait.sprite = line.SpeakerPortrait;
+                    // MiniTop usually only shows one. Let's use Center, then Left, then Right as priority.
+                    Sprite s = line.CenterPortrait != null ? line.CenterPortrait : (line.LeftPortrait != null ? line.LeftPortrait : line.RightPortrait);
+                    _miniTopPortrait.gameObject.SetActive(s != null);
+                    _miniTopPortrait.sprite = s;
                 }
             }
 
@@ -315,8 +305,20 @@ namespace MaouSamaTD.UI.Tutorial
 
         private void ApplyBackground()
         {
+            // If we are in a tutorial, TutorialManager handles the blocker state and targets.
+            // DialogueUI should not interfere with it to avoid clearing world highlights or causing flickering.
+            if (_tutorialManager != null && _tutorialManager.IsInTutorial)
+            {
+                if (_backgroundImage != null) _backgroundImage.enabled = false;
+                return;
+            }
+
             // Reset
-            _uiBlocker?.HideBlocker();
+            if (_bgType != DialogueBackground.UIBlocker)
+            {
+                _uiBlocker?.HideBlocker();
+            }
+            
             if (_backgroundImage != null) _backgroundImage.enabled = false;
 
             switch (_bgType)
@@ -328,7 +330,7 @@ namespace MaouSamaTD.UI.Tutorial
                         
                     if (_uiBlocker != null)
                     {
-                        _uiBlocker.ShowBlockerWithTarget(dialogueRT); // Ensures blocker is shown, targets added
+                        _uiBlocker.ShowBlockerWithTarget(dialogueRT);
                     }
                     break;
                 case DialogueBackground.FullScreenDim:

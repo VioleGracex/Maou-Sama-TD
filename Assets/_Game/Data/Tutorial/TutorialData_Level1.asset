@@ -38,8 +38,8 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 0
     UseBlocker: 1
-    FullBlocker: 0
-    ResetBlocker: 1
+    FullBlocker: 1
+    ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
   - StepName: Drag Ignis to Field
@@ -97,8 +97,8 @@ MonoBehaviour:
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
-    UseBlocker: 0
-    FullBlocker: 0
+    UseBlocker: 1
+    FullBlocker: 1
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
@@ -127,8 +127,8 @@ MonoBehaviour:
     RequiredCount: 0
     UseBlocker: 0
     FullBlocker: 0
-    ResetBlocker: 1
-    StopTime: 1
+    ResetBlocker: 0
+    StopTime: 0
     ResumeTime: 1
   - StepName: Wait for 2 Kills
     Type: 8
@@ -153,10 +153,10 @@ MonoBehaviour:
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 2
-    UseBlocker: 1
-    FullBlocker: 1
-    ResetBlocker: 1
-    StopTime: 1
+    UseBlocker: 0
+    FullBlocker: 0
+    ResetBlocker: 0
+    StopTime: 0
     ResumeTime: 1
   - StepName: Start Cluster Wave (1)
     Type: 6
@@ -184,7 +184,7 @@ MonoBehaviour:
     UseBlocker: 0
     FullBlocker: 0
     ResetBlocker: 1
-    StopTime: 1
+    StopTime: 0
     ResumeTime: 1
   - StepName: Wait for Cluster Proximity
     Type: 8
@@ -209,14 +209,14 @@ MonoBehaviour:
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 1
     RequiredCount: 2
-    UseBlocker: 1
-    FullBlocker: 1
-    ResetBlocker: 1
-    StopTime: 1
+    UseBlocker: 0
+    FullBlocker: 0
+    ResetBlocker: 0
+    StopTime: 0
     ResumeTime: 1
   - StepName: Charge Ignis Ultimate
     Type: 5
-    Dialogue: {fileID: 0}
+    Dialogue: {fileID: 11400000, guid: a3034f72b4714f94d870862c3abaac68, type: 2}
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 0, y: 0}
@@ -244,7 +244,7 @@ MonoBehaviour:
     ResumeTime: 1
   - StepName: Select Ignis Prompt
     Type: 3
-    Dialogue: {fileID: 11400000, guid: a3034f72b4714f94d870862c3abaac68, type: 2}
+    Dialogue: {fileID: 0}
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1.2, y: 1.2}
@@ -391,7 +391,7 @@ MonoBehaviour:
     ResumeTime: 1
   - StepName: Victory Dialogue
     Type: 0
-    Dialogue: {fileID: 11400000, guid: 01ff824919311584790b7fdb247a2667, type: 2}
+    Dialogue: {fileID: 0}
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}

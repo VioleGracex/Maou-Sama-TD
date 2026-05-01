@@ -3,24 +3,39 @@
 **Setting**: Deep within the Tomb of Lilith.
 **Characters**: Tina (Guide), Lilith (Void Matriarch), Maou (Player), Ignis (The Crimson Bastion).
 
-## Technical Specifications: Resource Math
+## Technical Specifications: Resource Math & Balancing
 
-In Level 2, the Sovereign's authority is initially fragmented due to the sealed chambers. The following parameters define the resource economy:
+In Level 2, the Sovereign's authority is initially fragmented. The following parameters define the resource economy and unit scaling to ensure an **Easy** difficulty experience:
 
 ### 1. Authority Capacity Logic
 - **Stage 1 (Pre-Unsealing)**: Max Authority Seals = **50**.
 - **Stage 2 (Post-Lilith)**: Max Authority Seals = **99** (Restoration of the First Seal).
 
-### 2. Regeneration & Accumulation
-- **Base Regen Rate ($R_{gen}$)**: 1.5 Seals per second.
-- **Starting Seals ($A_{start}$)**: 20.
-- **Authority Equation**: $A(t) = \min(A_{start} + R_{gen} \cdot t, A_{max})$
-  - *Example*: At $t=20s$ into Wave 1, $A(20) = \min(20 + 1.5 \cdot 20, 50) = 50$ (Capped).
+### 2. Character Power Calculations (Optimized for Easy)
+To ensure smooth progression, Vassal power is tuned to overwhelm Lesser Shadows:
+- **Ignis (SSR Vanguard)**: 
+  - **Stats**: HP: 2100 | ATK: 84 | DEF: 42
+  - **Calculated Power**: **810**
+  - **Easy Factor**: Can sustain 20+ hits from Lesser Shadows and kills in 2 hits.
+- **Lilith (SSR Warlock)**:
+  - **Stats**: HP: 840 | ATK: 126 | DEF: 14 | Range: 2
+  - **Calculated Power**: **747**
+  - **Easy Factor**: High Magical DPS allows 1-shotting most aerial units and 3-shotting the Boss phase.
 
-### 3. Deployment Efficiency
-- **Ignis (SSR Bastion)**: 10 Seals.
-- **Lilith (SSR Warlock)**: 15 Seals.
-- **Math**: With restored authority (99), the Sovereign can maintain a deployment saturation of up to **6 Lilith-equivalent units** simultaneously, compared to only **3 units** during the fragmented state.
+### 3. Wave Composition (Total: 4 Waves)
+| Wave | Enemy Type | Count | Behavior |
+| :--- | :--- | :--- | :--- |
+| **Wave 1** | Lesser Melee Shadows | 6 | Split into two groups of 3. |
+| **Wave 2** | Shadow Wings (Flying) | 8 | Arrive in staggered pairs. |
+| **Wave 3** | Mixed Shadows | 12 | 8 Lesser, 4 Shadow Constructs (Medium). |
+| **Wave 4** | **Abyssal Shade (Boss)** | 1 + 6 | Boss arrives with Lesser Shadow escort. |
+
+### 4. Map & Placements
+- **Map Size**: 9x9 Grid
+- **Spawn Gates**: (0, 4) [Ground] and (0, 5) [High Ground]
+- **Exit Gates**: (8, 4) [Ground] and (8, 5) [High Ground]
+- **Ignis Placement**: (2, 4) [2 squares away from Ground Spawn]
+- **Lilith Placement**: (2, 5) [2 squares away from High Ground Spawn]
 
 ## Dialogue & Sequence Flow
 
@@ -33,7 +48,7 @@ In Level 2, the Sovereign's authority is initially fragmented due to the sealed 
 
 ### Step 1: Holding the Line
 - **Action**: Game starts. Wave 1 begins immediately.
-- **Enemies**: 4 Lesser Melee Shadows.
+- **Enemies**: 6 Lesser Melee Shadows (Spawned in 2 groups of 3).
 - **Dialogue**:
   - Tina: "My Sovereign, the unsealing process is delicate. We must buy time for the ritual to complete."
   - Tina: "Ignis, hold the corridor. Do not let those shades interrupt the flow of mana."
@@ -54,7 +69,7 @@ In Level 2, the Sovereign's authority is initially fragmented due to the sealed 
 ### Step 3: Aerial Interruption
 - **Trigger**: Dialogue End.
 - **Action**: Wave 2 starts.
-- **Enemies**: Shadow Wings (Flying).
+- **Enemies**: 8 Shadow Wings (Flying, staggered pairs).
 - **Dialogue**:
   - Lilith: "Look at those filthy 'Shadow Wings'—circling like vultures. They think we're easy prey."
   - Lilith: "Let me handle them, Sovereign. My magic can reach where Ignis's sword falters. Just... give me a good view."
@@ -69,11 +84,11 @@ In Level 2, the Sovereign's authority is initially fragmented due to the sealed 
 
 ### Step 5: The Battle Continues
 - **Trigger**: Lilith Placed.
-- **Action**: Time resumes. Wave 2 & 3 (Mixed Melee and Ranged Shadows).
+- **Action**: Time resumes. Wave 3 (8 Lesser Shadows, 4 Shadow Constructs).
 
 ### Step 6: The Abyssal Shade Boss
-- **Trigger**: Final Wave Starts.
-- **Enemy**: **Abyssal Shade (Boss)**.
+- **Trigger**: Wave 3 Cleared. Final Wave Starts.
+- **Enemy**: **Abyssal Shade (Boss)** + 6 Lesser Shadows.
 - **Mechanic**: The Boss has a phase where it becomes **Invulnerable to Melee** after losing 30% HP.
 - **Dialogue (When Boss reaches 70% HP)**:
   - Ignis: "Tch! My blade... it's passing straight through him! He's turned into pure shadow!"

@@ -120,12 +120,15 @@ namespace MaouSamaTD.Units
                 string sName = Data.UltimateSkill.SkillName;
                 Color bColor = visuals.UltimateColor;
                 Color tBgColor = visuals.TitleBgColor;
+                Color tTextColor = visuals.TitleTextColor;
                 Color sBgColor = visuals.SkillNameBgColor;
+                Color sTextColor = visuals.SkillNameTextColor;
+                Color nTextColor = visuals.NameTextColor;
                 Sprite portrait = Data.GetSprite(UnitData.UnitImageType.WaistUp);
 
                 if (_showDebugLogs) Debug.Log($"[Ultimate] Triggering Cut-In Animation for {uName}...");
-                // Wait for the full animation sequence (Slide In -> Hold -> Slide Out) to complete
-                yield return MaouSamaTD.UI.UltimateCutInUI.Instance.PlayAnimation(uName, uTitle, sName, bColor, tBgColor, sBgColor, portrait);
+                // Wait for the full animation sequence (Slide In -> Hold -> Slide Out) to complete on the UI singleton
+                yield return MaouSamaTD.UI.UltimateCutInUI.Instance.Play(uName, uTitle, sName, bColor, tBgColor, tTextColor, sBgColor, sTextColor, nTextColor, portrait);
             }
             else
             {
@@ -378,6 +381,9 @@ namespace MaouSamaTD.Units
             OnRetreat?.Invoke(this);
             if (_interactionManager != null) _interactionManager.NotifyUnitRemoved(this);
             
+            var gm = FindFirstObjectByType<Managers.GameManager>();
+            if (gm != null) gm.ReportUnitLost();
+
             Destroy(gameObject);
         }
 
@@ -390,6 +396,10 @@ namespace MaouSamaTD.Units
             }
 
             if (_interactionManager != null) _interactionManager.NotifyUnitRemoved(this);
+            
+            var gm = FindFirstObjectByType<Managers.GameManager>();
+            if (gm != null) gm.ReportUnitLost();
+
             base.Die();
         }
     }

@@ -208,7 +208,18 @@ namespace MaouSamaTD.Skills
             {
                 if (isPlayer)
                 {
-                    unit.Heal(skill.Value); 
+                    // If value > 1, it's likely a multiplier. If duration > 0, it's a buff.
+                    if (skill.Duration > 0)
+                    {
+                        // Interpretation: 50 means +50% (1.5x), 100 means +100% (2.0x), etc.
+                        float multiplier = 1f + (skill.Value / 100f);
+                        unit.ApplyBuff(skill.SkillName, multiplier, skill.Duration);
+                        if (_showDebugLogs) Debug.Log($"[SkillManager] Applied buff {skill.SkillName} (x{multiplier}) to {unit.gameObject.name} for {skill.Duration}s");
+                    }
+                    else
+                    {
+                        unit.Heal(skill.Value); 
+                    }
                 }
             }
         }

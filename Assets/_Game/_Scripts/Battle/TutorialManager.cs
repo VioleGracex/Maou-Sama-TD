@@ -8,6 +8,8 @@ using MaouSamaTD.UI;
 using MaouSamaTD.UI.Tutorial;
 using MaouSamaTD.Tutorial;
 using MaouSamaTD.Units;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace MaouSamaTD.Managers
 {
@@ -76,6 +78,71 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Lifecycle
+        private void Start()
+        {
+            if (_gameManager != null)
+            {
+                _gameManager.OnGameFinished += StopTutorial;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_gameManager != null)
+            {
+                _gameManager.OnGameFinished -= StopTutorial;
+            }
+        }
+
+        private void StopTutorial()
+        {
+            if (!IsInTutorial) return;
+            
+            if (_showDebugLogs) Debug.Log("[tutorial] StopTutorial called due to Game End.");
+            StopAllCoroutines();
+            
+            IsInTutorial = false;
+            _activeTutorial = null;
+            
+            if (_dialogueManager != null) _dialogueManager.HideDialogue();
+            if (_uiBlocker != null) _uiBlocker.HideBlocker(true);
+            if (_handUI != null) _handUI.Hide();
+            if (_interactionManager != null) _interactionManager.IsSelectionLocked = false;
+        }
+
+        private bool _isSkillTargetingLastFrame = false;
+        private bool _isDraggingLastFrame = false;
+        private void Update()
+        {
+            if (!IsInTutorial || _activeTutorial == null || _currentStepIndex >= _activeTutorial.Steps.Count) return;
+
+            var step = _activeTutorial.Steps[_currentStepIndex];
+            
+            // Dynamic Skill Targeting logic: Update hand and blocker when switching between skill selection and unit targeting
+            if (step.ActionKey == "SkillUsed" || step.ActionKey == "RiteMenuOpened")
+            {
+                bool isTargeting = _interactionManager != null && _interactionManager.IsSkillTargeting;
+                if (isTargeting != _isSkillTargetingLastFrame)
+                {
+                    _isSkillTargetingLastFrame = isTargeting;
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Skill targeting state changed to: {isTargeting}. Refreshing highlights.");
+                    HandleUIHighlight(step);
+                }
+            }
+
+            // Dynamic Unit Placement logic: Update hand and blocker when starting/stopping drag
+            if (step.ActionKey == "UnitPlaced")
+            {
+                bool isDragging = _interactionManager != null && _interactionManager.IsDragging;
+                if (isDragging != _isDraggingLastFrame)
+                {
+                    _isDraggingLastFrame = isDragging;
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Dragging state changed to: {isDragging}. Refreshing highlights.");
+                    HandleUIHighlight(step);
+                }
+            }
+        }
+
         private void EnsureUIComponentsActive()
         {
             if (_dialogueManager != null) _dialogueManager.gameObject.SetActive(true);
@@ -101,6 +168,14 @@ namespace MaouSamaTD.Managers
                 
                 ClearAllTileHighlights();
 
+                // Skip step if already completed (e.g., unit already placed)
+                if (CheckStepAlreadyCompleted(step))
+                {
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Skipping Step [{_currentStepIndex}] {step.StepName} because it's already completed.");
+                    _currentStepIndex++;
+                    continue;
+                }
+
                 switch (step.Type)
                 {
                     case TutorialStepType.DialogueOnly:
@@ -113,7 +188,9 @@ namespace MaouSamaTD.Managers
                             dialogueDone = true;
                         });
                         yield return new WaitUntil(() => dialogueDone);
-                        _uiBlocker.HideBlocker(); 
+                        
+                        // Hide the hand when dialogue is done so it doesn't linger
+                        _handUI.Hide();
                         break;
 
                     case TutorialStepType.HighlightUI:
@@ -134,7 +211,6 @@ namespace MaouSamaTD.Managers
                             if (_showDebugLogs) Debug.Log($"[tutorial] No dialogue for HighlightUI step: {step.StepName}, moving on.");
                         }
                         _handUI.Hide(); 
-                        _uiBlocker.HideBlocker();
                         break;
 
                     case TutorialStepType.HighlightTile:
@@ -153,7 +229,6 @@ namespace MaouSamaTD.Managers
                         });
                         yield return new WaitUntil(() => tileDialogueDone);
                         _handUI.Hide();
-                        _uiBlocker.HideBlocker();
                         ClearAllTileHighlights();
                         break;
 
@@ -161,14 +236,14 @@ namespace MaouSamaTD.Managers
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
                         if (step.StopTime) _gameManager.SetSpeed(0); 
                         
+                        HandleUIHighlight(step);
+
                         if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                         {
                             bool actionDialogueDone = false;
                             _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
                             yield return new WaitUntil(() => actionDialogueDone);
                         }
-
-                        HandleUIHighlight(step);
                         
                         _waitingForAction = true;
                         _waitingActionKey = step.ActionKey;
@@ -192,7 +267,6 @@ namespace MaouSamaTD.Managers
                         
                         if (_unitInspectorUI != null) _unitInspectorUI.IsLocked = false;
                         _handUI.Hide(); 
-                        _uiBlocker.HideBlocker();
                         ClearAllTileHighlights();
                         
                         if (step.ResumeTime) _gameManager.SetSpeed(1); 
@@ -200,11 +274,13 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.WaitTime:
+                        HandleUIHighlight(step);
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for duration: {step.Duration}s");
                         yield return new WaitForSecondsRealtime(step.Duration);
                         break;
 
                     case TutorialStepType.StartWave:
+                        HandleUIHighlight(step);
                         if (_showDebugLogs) Debug.Log($"[tutorial] Starting Wave Index: {step.WaveIndex}");
                         if (_enemyManager != null)
                         {
@@ -213,6 +289,7 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.WaitForWave:
+                        HandleUIHighlight(step);
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for Wave completion (Index: {step.WaveIndex})");
                         _gameManager.SetSpeed(1); 
                         yield return new WaitUntil(() => _enemyManager != null && _enemyManager.ActiveEnemyCount == 0 && !_enemyManager.IsSpawning);
@@ -220,6 +297,7 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.WaitForCondition:
+                        HandleUIHighlight(step);
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey} (Value: {step.RequiredCount})");
                         _gameManager.SetSpeed(1); 
                         yield return new WaitUntil(() => CheckCondition(step));
@@ -228,6 +306,7 @@ namespace MaouSamaTD.Managers
 
                     case TutorialStepType.CustomCommand:
                         {
+                            HandleUIHighlight(step);
                             string targetName = (step.TargetUI != null ? step.TargetUI.Name : "");
                             if (_showDebugLogs) Debug.Log($"[tutorial] Executing Custom Command: {step.ActionKey} for {targetName}");
                             
@@ -271,18 +350,11 @@ namespace MaouSamaTD.Managers
                                 {
                                     _saveManager.AwakenLilith();
                                     
-                                    // Also ensure her button appears in DeploymentUI if it's there
-                                    if (_deploymentUI != null)
-                                    {
-                                        var lilithData = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID("Lilith");
-                                        if (lilithData != null)
-                                        {
-                                            _deploymentUI.AddUnit(lilithData);
-                                            _deploymentUI.SetUnitButtonVisibility("Lilith", true);
-                                        }
-                                    }
+                                    // Start async load from Addressables and WAIT for it to complete
+                                    // before moving to the next tutorial step
+                                    yield return StartCoroutine(LoadAndAwakenLilith());
                                     
-                                    if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: AwakenLilith executed.");
+                                    if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: AwakenLilith started (Addressables).");
                                 }
                             }
                             else if (step.ActionKey == "SetUnitButtonActive")
@@ -314,6 +386,13 @@ namespace MaouSamaTD.Managers
             if (_showDebugLogs) Debug.Log("[tutorial] Tutorial Sequence Completed.");
             _uiBlocker.HideBlocker();
             _handUI.Hide();
+
+            // Force victory at the end of tutorial levels if it hasn't been triggered yet
+            if (_gameManager != null && !_gameManager.IsGameEnded)
+            {
+                Debug.Log("[tutorial] Tutorial ended. Triggering Level Victory.");
+                _gameManager.Victory();
+            }
         }
         #endregion
 
@@ -346,8 +425,43 @@ namespace MaouSamaTD.Managers
             List<UIPopupBlocker.WorldHighlightData> worldHighlights = new List<UIPopupBlocker.WorldHighlightData>();
 
             List<UITarget> uiTargets = new List<UITarget>();
-            if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
-            if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
+            
+            bool isSkillTargeting = _interactionManager != null && _interactionManager.IsSkillTargeting;
+            bool isSkillStep = step.ActionKey == "SkillUsed";
+            bool isPlacementStep = step.ActionKey == "UnitPlaced";
+            bool isDragging = _interactionManager != null && _interactionManager.IsDragging;
+
+            if (isSkillStep)
+            {
+                if (isSkillTargeting)
+                {
+                    // If we are targeting, ONLY show the additional targets (the units on the field)
+                    if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
+                }
+                else
+                {
+                    // If we are not targeting yet, ONLY show the primary target (the skill button)
+                    if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
+                }
+            }
+            else if (isPlacementStep)
+            {
+                if (isDragging)
+                {
+                    // While dragging, we focus on the tiles (handled in the Tiles section below)
+                    // We might still want to highlight some UI if needed, but usually we don't
+                }
+                else
+                {
+                    // Before dragging, highlight the unit button
+                    if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
+                }
+            }
+            else
+            {
+                if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
+                if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
+            }
 
             foreach (var ut in uiTargets)
             {
@@ -387,14 +501,22 @@ namespace MaouSamaTD.Managers
 
             if (step.TargetTiles != null && step.TargetTiles.Count > 0)
             {
-                foreach (var wt in step.TargetTiles)
+                // Tiles are ONLY cut if:
+                // 1. It's NOT a placement step (highlight-only steps)
+                // 2. It IS a placement step AND the player is currently dragging
+                bool shouldShowTiles = !isPlacementStep || isDragging;
+
+                if (shouldShowTiles)
                 {
-                    worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
+                    foreach (var wt in step.TargetTiles)
                     {
-                        Position = GetWorldPosForTile(wt.Coordinate) + wt.Offset,
-                        Size = wt.Size,
-                        Height = wt.Height
-                    });
+                        worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
+                        {
+                            Position = GetWorldPosForTile(wt.Coordinate) + wt.Offset,
+                            Size = wt.Size,
+                            Height = wt.Height
+                        });
+                    }
                 }
             }
 
@@ -440,10 +562,6 @@ namespace MaouSamaTD.Managers
                     Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
                     handPos = Camera.main.WorldToScreenPoint(worldTarget);
                 }
-                else if (worldHighlights.Count > 0) 
-                {
-                    handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
-                }
                 else if (uiHits.Count > 0) 
                 {
                     Vector3[] corners = new Vector3[4];
@@ -452,6 +570,10 @@ namespace MaouSamaTD.Managers
                     Vector3 size = corners[2] - corners[0];
                     handPos = (Vector2)center + new Vector2(size.x * uiHits[0].Offset.x, size.y * uiHits[0].Offset.y);
                     handScale *= uiHits[0].Size.x;
+                }
+                else if (worldHighlights.Count > 0) 
+                {
+                    handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
                 }
 
                 if (handPos != Vector2.zero) 
@@ -582,6 +704,13 @@ namespace MaouSamaTD.Managers
         public bool IsWaitingForAction(string actionKey)
         {
             return _waitingForAction && _waitingActionKey == actionKey;
+        }
+
+        public string GetCurrentStepActionKey()
+        {
+            if (!IsInTutorial || _activeTutorial == null || _currentStepIndex < 0 || _currentStepIndex >= _activeTutorial.Steps.Count)
+                return string.Empty;
+            return _activeTutorial.Steps[_currentStepIndex].ActionKey;
         }
 
         public List<Vector2Int> GetRequiredPlacementTiles()
@@ -717,6 +846,87 @@ namespace MaouSamaTD.Managers
 
                 default:
                     return false;
+            }
+        }
+
+        private bool CheckStepAlreadyCompleted(TutorialStep step)
+        {
+            if (step == null) return false;
+
+            // If it's a condition step, reuse the existing logic
+            if (step.Type == TutorialStepType.WaitForCondition)
+            {
+                return CheckCondition(step);
+            }
+
+            // If it's an action step, check the buffer or specific conditions
+            if (step.Type == TutorialStepType.WaitForAction)
+            {
+                if (_triggeredActionsBuffer.Contains(step.ActionKey))
+                {
+                    return true;
+                }
+
+                // Special case for UnitPlaced
+                if (step.ActionKey == "UnitPlaced")
+                {
+                    if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
+                    {
+                        string unitName = step.TargetUI.Name;
+                        if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
+                        if (unitName.StartsWith("Enemy_")) unitName = unitName.Replace("Enemy_", "");
+
+                        // Check if a unit with this name exists in the active units
+                        bool alreadyPlaced = PlayerUnit.ActiveUnits.Any(u => u != null && u.Data != null && 
+                            (u.Data.UnitName == unitName || u.name == unitName || u.name.Contains(unitName)));
+                        
+                        if (alreadyPlaced) return true;
+                    }
+                }
+                
+                // Special case for UnitSelected
+                if (step.ActionKey == "UnitSelected")
+                {
+                    if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
+                    {
+                        string unitName = step.TargetUI.Name;
+                        if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
+                        
+                        if (_interactionManager != null && _interactionManager.InspectedUnit != null)
+                        {
+                            var selected = _interactionManager.InspectedUnit;
+                            return selected.Data != null && (selected.Data.UnitName == unitName || selected.name.Contains(unitName));
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+        private IEnumerator LoadAndAwakenLilith()
+        {
+            if (_showDebugLogs) Debug.Log("[tutorial] Loading Lilith from Addressables (Char_Lilith_UnitData)...");
+            
+            var handle = Addressables.LoadAssetAsync<UnitData>("Char_Lilith_UnitData");
+            yield return handle;
+
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                UnitData lilithData = handle.Result;
+                if (_deploymentUI != null)
+                {
+                    _deploymentUI.AddUnit(lilithData);
+                    _deploymentUI.SetUnitButtonVisibility("Lilith", true);
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Lilith '{lilithData.UnitName}' successfully added to DeploymentUI.");
+                }
+                else
+                {
+                    Debug.LogWarning("[tutorial] DeploymentUI is missing, cannot add Lilith!");
+                }
+            }
+            else
+            {
+                Debug.LogError("[tutorial] Failed to load Lilith from Addressables! Check if 'Char_Lilith_UnitData' address is correct.");
             }
         }
         #endregion

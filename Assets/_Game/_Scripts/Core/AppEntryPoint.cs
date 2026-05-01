@@ -4,6 +4,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using MaouSamaTD.Data;
 using MaouSamaTD.Managers;
 using Zenject;
+using System.Collections.Generic;
 using System.Collections;
 using System;
 
@@ -19,6 +20,7 @@ namespace MaouSamaTD.Core
         
         // This is a static reference we can use universally since it will be loaded from Addressables
         public static UnitDatabase LoadedUnitDatabase { get; private set; }
+        public static MaouSamaTD.Data.LevelDatabase LoadedLevelDatabase { get; private set; }
         public static MaouSamaTD.Units.ClassScalingData LoadedScalingData { get; private set; }
 
         [Header("Debug")]
@@ -26,13 +28,7 @@ namespace MaouSamaTD.Core
 
         private void OnValidate()
         {
-            if (_grantDebugResources && Application.isPlaying && _saveManager != null)
-            {
-                _grantDebugResources = false;
-                _saveManager.AddGold(10000);
-                _saveManager.AddBloodCrest(10000);
-                Debug.Log("<color=green>[DEBUG]</color> Granted 10,000 Gold and 10,000 Bloodcrest.");
-            }
+            // Debug resources now handled in boot sequence to avoid being overridden by Load()
         }
 
         public void StartBootSequence(Action<float> onProgress, Action onComplete)
@@ -64,12 +60,38 @@ namespace MaouSamaTD.Core
                 Debug.Log($"[AppEntryPoint] Successfully loaded UnitDatabase. Units found: {LoadedUnitDatabase.AllUnits.Count}");
             }
 
+            Debug.Log("[AppEntryPoint] Loading all Levels by label 'LevelData'...");
+            var levelHandle = Addressables.LoadAssetsAsync<MaouSamaTD.Levels.LevelData>("LevelData", null);
+            while (!levelHandle.IsDone)
+            {
+                onProgress?.Invoke(0.5f + levelHandle.PercentComplete * 0.1f);
+                yield return null;
+            }
+
+            if (levelHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                var levels = new List<MaouSamaTD.Levels.LevelData>(levelHandle.Result);
+                levels.Sort((a, b) => a.LevelIndex.CompareTo(b.LevelIndex));
+                
+                if (LoadedLevelDatabase == null)
+                {
+                    LoadedLevelDatabase = ScriptableObject.CreateInstance<MaouSamaTD.Data.LevelDatabase>();
+                }
+                LoadedLevelDatabase.AllLevels = levels;
+                
+                Debug.Log($"[AppEntryPoint] Successfully loaded {levels.Count} levels via Addressables label.");
+            }
+            else
+            {
+                Debug.LogError("[AppEntryPoint] Failed to load levels by label 'LevelData'. Make sure levels are labeled in Addressables!");
+            }
+
             Debug.Log("[AppEntryPoint] Loading ClassScalingData from Addressables...");
             // As requested, use the label 'ClassScaleData' instead of the full path
             var scalingHandle = Addressables.LoadAssetAsync<MaouSamaTD.Units.ClassScalingData>("ClassScaleData");
             while (!scalingHandle.IsDone)
             {
-                onProgress?.Invoke(0.5f + scalingHandle.PercentComplete * 0.4f);
+            onProgress?.Invoke(0.6f + scalingHandle.PercentComplete * 0.3f);
                 yield return null;
             }
 
@@ -87,12 +109,15 @@ namespace MaouSamaTD.Core
             }
 
             Debug.Log("[AppEntryPoint] Initializing Save Data...");
-            // SaveManager automatically loaded inside its constructor/Zenject Init, but we can double check here.
             if (_saveManager != null)
             {
-                if (_saveManager.CurrentData == null)
+                _saveManager.Load();
+                
+                if (_grantDebugResources)
                 {
-                    _saveManager.Load();
+                    _saveManager.AddGold(10000);
+                    _saveManager.AddBloodCrest(10000);
+                    Debug.Log("<color=green>[DEBUG]</color> Granted 10,000 Gold and 10,000 Bloodcrest after Load.");
                 }
             }
             else

@@ -18,7 +18,18 @@ namespace MaouSamaTD.Units
         
         public float MaxHp => _maxHp;
         public float CurrentHp => _currentHp;
-        public float AttackPower => _attackPower;
+        public float AttackPower 
+        {
+            get
+            {
+                float mult = 1f;
+                if (_activeBuffs != null)
+                {
+                    foreach (var b in _activeBuffs) mult *= b.AttackMultiplier;
+                }
+                return _attackPower * mult;
+            }
+        }
         public float Defense => _defense;
         public virtual float Range => _data != null ? _data.Range : 0f;
         
@@ -50,6 +61,17 @@ namespace MaouSamaTD.Units
 
         [Header("Debug")]
         [SerializeField] protected bool _showDebugLogs = true;
+
+        protected System.Collections.Generic.List<BuffInstance> _activeBuffs = new System.Collections.Generic.List<BuffInstance>();
+
+        [System.Serializable]
+        public class BuffInstance
+        {
+            public string BuffID;
+            public float AttackMultiplier = 1f;
+            public float Duration;
+            public float RemainingTime;
+        }
 
         protected virtual void Awake()
         {
@@ -122,7 +144,19 @@ namespace MaouSamaTD.Units
 
         protected virtual void UpdateInternal()
         {
-            // Unit specific logic here
+            // Update Buffs
+            if (_activeBuffs != null && _activeBuffs.Count > 0)
+            {
+                for (int i = _activeBuffs.Count - 1; i >= 0; i--)
+                {
+                    _activeBuffs[i].RemainingTime -= Time.deltaTime;
+                    if (_activeBuffs[i].RemainingTime <= 0)
+                    {
+                        _activeBuffs.RemoveAt(i);
+                        if (_showDebugLogs) Debug.Log($"[Buff] Buff expired on {gameObject.name}");
+                    }
+                }
+            }
         }
         
         private void Update()
@@ -278,6 +312,32 @@ namespace MaouSamaTD.Units
             }
             
             OnHealthChanged?.Invoke(_currentHp / _maxHp);
+        }
+
+        public virtual void ApplyBuff(string id, float attackMult, float duration)
+        {
+            if (_activeBuffs == null) _activeBuffs = new System.Collections.Generic.List<BuffInstance>();
+
+            var existing = _activeBuffs.Find(b => b.BuffID == id);
+            if (existing != null)
+            {
+                // Toggle Logic: If cast again on same target, remove it
+                _activeBuffs.Remove(existing);
+                if (_showDebugLogs) Debug.Log($"[Buff] Toggled OFF: Removed buff {id} from {gameObject.name}");
+                return;
+            }
+
+            _activeBuffs.Add(new BuffInstance 
+            { 
+                BuffID = id, 
+                AttackMultiplier = attackMult, 
+                Duration = duration, 
+                RemainingTime = duration 
+            });
+
+            if (_showDebugLogs) Debug.Log($"[Buff] Toggled ON: Applied buff {id} to {gameObject.name} (Mult: {attackMult}, Duration: {duration}s)");
+            
+            if (_healParticle != null) _healParticle.Play(); // Visual feedback
         }
 
         protected virtual void Die()

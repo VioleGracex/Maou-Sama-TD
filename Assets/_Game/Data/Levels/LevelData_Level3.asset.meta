@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: efc467d660f6ff74ba303b6ac31f759b
+labels:
+- LevelData
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 11400000

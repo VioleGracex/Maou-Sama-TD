@@ -74,6 +74,30 @@ namespace MaouSamaTD.Levels
         [Header("Clear Conditions (Stars)")]
         [Tooltip("The conditions to earn stars on this level. Tutorial levels usually grant all stars automatically.")]
         public List<StarCondition> StarConditions = new List<StarCondition>();
+
+        [Header("Win/Lose Conditions")]
+        [Tooltip("Conditions that trigger level victory. If empty, default is AllWavesCleared.")]
+        public List<LevelCondition> WinConditions = new List<LevelCondition>();
+        
+        [Tooltip("Conditions that trigger level failure. If empty, default is BaseHPZero.")]
+        public List<LevelCondition> LoseConditions = new List<LevelCondition>();
+    }
+
+    public enum LevelConditionType
+    {
+        AllWavesCleared,      // Default Win
+        BaseHPZero,           // Default Lose
+        EnemiesPassedLimit,   // Lose if X enemies pass
+        SurvivalTime,         // Win after X seconds
+        ProtectSpecificUnit   // Lose if specific unit dies
+    }
+
+    [System.Serializable]
+    public class LevelCondition
+    {
+        public string Description;
+        public LevelConditionType Type;
+        public float Value; // Threshold for the condition
     }
 
     [System.Serializable]

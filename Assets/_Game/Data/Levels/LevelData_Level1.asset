@@ -46,7 +46,7 @@ MonoBehaviour:
   Waves:
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 2
+      Count: 3
       SpawnInterval: 2
       InitialDelay: 0
       SpawnPointIndex: 0
@@ -81,3 +81,8 @@ MonoBehaviour:
     TargetValue: 30
     BonusRewards: []
     AutoGrantInTutorial: 1
+  WinConditions: []
+  LoseConditions:
+  - Description: Lose if 2 enemies pass
+    Type: 2
+    Value: 2

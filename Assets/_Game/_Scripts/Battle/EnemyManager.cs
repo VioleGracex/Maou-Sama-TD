@@ -17,6 +17,7 @@ namespace MaouSamaTD.Managers
         [Inject] private GameManager _gameManager; 
         [Inject] private Grid.GridManager _gridManager;
         [Inject] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer;
+        [Inject] private TutorialManager _tutorialManager;
         
         private Transform _enemyContainer;
         private bool _isSpawning = false;
@@ -29,6 +30,10 @@ namespace MaouSamaTD.Managers
         public bool IsSpawning => _isSpawning;
         public bool AllWavesFinished => _allWavesFinished;
         public int ActiveEnemyCount => EnemyUnit.ActiveEnemies.Count;
+        
+        private int _currentWaveIndex = 0;
+        public int CurrentWaveIndex => _currentWaveIndex;
+        public int TotalWaves => _waves != null ? _waves.Count : 0;
         #endregion
 
         #region Lifecycle
@@ -50,6 +55,12 @@ namespace MaouSamaTD.Managers
             {
                 if (EnemyUnit.ActiveEnemies.Count == 0)
                 {
+                    // Check if tutorial is still in progress
+                    if (_tutorialManager != null && _tutorialManager.IsInTutorial)
+                    {
+                        return;
+                    }
+
                     _victoryTriggered = true;
                     Debug.Log("[EnemyManager] All enemies defeated. Victory!");
                     if (_gameManager != null)
@@ -105,6 +116,7 @@ namespace MaouSamaTD.Managers
 
         private IEnumerator SpawnSingleWaveRoutine(WaveData wave, int waveIndex)
         {
+            _currentWaveIndex = waveIndex;
             _isSpawning = true;
             if (!string.IsNullOrEmpty(wave.WaveMessage))
             {
@@ -134,6 +146,18 @@ namespace MaouSamaTD.Managers
         public void SpawnEnemy(EnemyData data, int waveIndex, int enemyIndex, int spawnPointIndex = 0)
         {
             if (_gridManager == null || _enemyPrefab == null || data == null) return;
+            
+            if (_gridManager.SpawnPoints == null || _gridManager.SpawnPoints.Count == 0)
+            {
+                Debug.LogError("[EnemyManager] No spawn points registered in GridManager!");
+                return;
+            }
+            
+            if (spawnPointIndex < 0 || spawnPointIndex >= _gridManager.SpawnPoints.Count)
+            {
+                Debug.LogWarning($"[EnemyManager] SpawnPointIndex {spawnPointIndex} is out of bounds (Count: {_gridManager.SpawnPoints.Count}). Defaulting to 0.");
+                spawnPointIndex = 0;
+            }
 
             Vector2Int spawnPoint = _gridManager.SpawnPoints[spawnPointIndex].Coordinate;
             
@@ -248,6 +272,8 @@ namespace MaouSamaTD.Managers
             foreach (var wave in _waves)
             {
                 if (!_isSpawning) yield break;
+                
+                _currentWaveIndex = waveCounter;
 
                 if (!string.IsNullOrEmpty(wave.WaveMessage))
                 {

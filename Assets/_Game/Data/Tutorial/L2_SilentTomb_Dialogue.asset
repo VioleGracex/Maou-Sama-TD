@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: L2_SilentTomb_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
-  Background: 0
+  Background: 2
   CharactersPerSecond: 30
   Lines:
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
-    Text: "The air is heavy with ancient magic... stay alert, My Sovereign."
     PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: The air is heavy with ancient magic... stay alert, My Sovereign.
     EventID: 
-鼓

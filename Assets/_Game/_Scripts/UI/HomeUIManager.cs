@@ -82,6 +82,7 @@ namespace MaouSamaTD.UI.MainMenu
 
             UpdateAccountInfo();
             PreheatData();
+            UpdateNavButtons();
 
             // Ensure the navigation history is cleared when we are back at the Home Page
             if (UIFlowManager.Instance != null)
@@ -282,6 +283,48 @@ namespace MaouSamaTD.UI.MainMenu
             if (panel != null)
             {
                 UIFlowManager.Instance.OpenPanel(panel);
+            }
+        }
+
+        private void UpdateNavButtons()
+        {
+            if (_saveManager == null || _saveManager.CurrentData == null) return;
+
+            // Logic: All buttons except Conquest are disabled until Level 1 ("1-1") is completed.
+            // Level 1-1 completed -> Progression to Level 2.
+            bool level1Cleared = _saveManager.IsLevelCompleted("1-1");
+            
+            // If Level 1 is not cleared, we restrict access
+            if (!level1Cleared)
+            {
+                Debug.Log("[HomeUIManager] Level 1-1 not completed. Locking non-essential buttons.");
+                
+                if (_btnCohorts != null) _btnCohorts.interactable = false;
+                if (_btnVassals != null) _btnVassals.interactable = false;
+                if (_btnMandates != null) _btnMandates.interactable = false;
+                if (_btnThrone != null) _btnThrone.interactable = false;
+                if (_btnTreasury != null) _btnTreasury.interactable = false;
+                if (_btnVault != null) _btnVault.interactable = false;
+                if (_btnRanks != null) _btnRanks.interactable = false;
+                if (_btnDaily != null) _btnDaily.interactable = false;
+                if (_btnGrimoire != null) _btnGrimoire.interactable = false;
+                if (_btnManifest != null) _btnManifest.interactable = false;
+
+                // Also disable the Navigation Overlay if it exists to prevent side-nav usage
+                if (_navOverlay != null)
+                {
+                    _navOverlay.gameObject.SetActive(false);
+                    Debug.Log("[HomeUIManager] Navigation Overlay disabled until Level 1-1 completion.");
+                }
+            }
+            else
+            {
+                Debug.Log("[HomeUIManager] Level 1-1 completed. All systems active.");
+                // Ensure they are interactable (default)
+                if (_btnCohorts != null) _btnCohorts.interactable = true;
+                // ... and so on, but usually they start interactable in prefab.
+                
+                if (_navOverlay != null) _navOverlay.gameObject.SetActive(true);
             }
         }
     }

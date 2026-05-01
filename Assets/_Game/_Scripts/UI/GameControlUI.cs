@@ -3,7 +3,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using MaouSamaTD.Managers;
+using MaouSamaTD.Levels;
 using Zenject;
+using DG.Tweening;
 
 namespace MaouSamaTD.UI
 {
@@ -16,6 +18,10 @@ namespace MaouSamaTD.UI
         [Header("Base HP")]
         [SerializeField] private Image _hpFillImage;
         [SerializeField] private TextMeshProUGUI _hpText;
+
+        [Header("Status Tracking")]
+        [SerializeField] private TextMeshProUGUI _waveText;
+        [SerializeField] private TextMeshProUGUI _sealsText;
 
         [Header("Pause Control")]
         [SerializeField] private Button _pauseButton;
@@ -38,9 +44,23 @@ namespace MaouSamaTD.UI
         [Header("New Navigation")]
         [SerializeField] private Button _winReturnButton;
         [SerializeField] private Button _loseReturnButton;
+        [SerializeField] private Button _winNextButton;
+        [SerializeField] private TextMeshProUGUI _levelTitleText;
+        [SerializeField] private TextMeshProUGUI _clearTimeText;
+
+        [Header("Stars & Results")]
+        [SerializeField] private Transform _starConditionContainer;
+        [SerializeField] private GameObject _starConditionPrefab;
+        [SerializeField] private Sprite _starFullSprite;
+        [SerializeField] private Sprite _starEmptySprite;
 
 
         [Inject] private GameManager _gameManager;
+        [Inject] private MaouSamaTD.UI.UIPopupBlocker _uiBlocker;
+        [Inject] private GameSelectionState _selectionState;
+
+        [Inject(Optional = true)] private EnemyManager _enemyManager;
+        [Inject(Optional = true)] private BattleCurrencyManager _currencyManager;
 
         private const float MaxBaseLives = 20f; 
 
@@ -61,6 +81,7 @@ namespace MaouSamaTD.UI
             if (_loseRestartButton != null) _loseRestartButton.onClick.AddListener(ReloadScene);
             if (_winReturnButton != null) _winReturnButton.onClick.AddListener(ReturnToMenu);
             if (_loseReturnButton != null) _loseReturnButton.onClick.AddListener(ReturnToMenu);
+            if (_winNextButton != null) _winNextButton.onClick.AddListener(OnNextLevelClicked);
 
 
             if (_gameManager != null)
@@ -78,7 +99,55 @@ namespace MaouSamaTD.UI
             if (_confirmationPanel != null) _confirmationPanel.SetActive(false);
             if (_pauseOverlay != null) _pauseOverlay.SetActive(false);
 
+            EnsureStatusTextExists();
+
             UpdateUI();
+        }
+
+        private void EnsureStatusTextExists()
+        {
+            if (_waveText == null)
+            {
+                GameObject go = new GameObject("WaveText", typeof(RectTransform), typeof(TextMeshProUGUI));
+                go.transform.SetParent(transform);
+                var rt = go.GetComponent<RectTransform>();
+                rt.anchorMin = new Vector2(0.5f, 1f);
+                rt.anchorMax = new Vector2(0.5f, 1f);
+                rt.pivot = new Vector2(0.5f, 1f);
+                rt.anchoredPosition = new Vector2(0, -100);
+                _waveText = go.GetComponent<TextMeshProUGUI>();
+                _waveText.fontSize = 24;
+                _waveText.alignment = TextAlignmentOptions.Center;
+                _waveText.enableWordWrapping = false;
+                _waveText.raycastTarget = false;
+            }
+            if (_sealsText == null)
+            {
+                GameObject go = new GameObject("SealsText", typeof(RectTransform), typeof(TextMeshProUGUI));
+                go.transform.SetParent(transform);
+                var rt = go.GetComponent<RectTransform>();
+                rt.anchorMin = new Vector2(0.5f, 1f);
+                rt.anchorMax = new Vector2(0.5f, 1f);
+                rt.pivot = new Vector2(0.5f, 1f);
+                rt.anchoredPosition = new Vector2(0, -140);
+                _sealsText = go.GetComponent<TextMeshProUGUI>();
+                _sealsText.fontSize = 24;
+                _sealsText.alignment = TextAlignmentOptions.Center;
+                _sealsText.enableWordWrapping = false;
+                _sealsText.raycastTarget = false;
+            }
+        }
+
+        private void Update()
+        {
+            if (_waveText != null && _enemyManager != null && _enemyManager.TotalWaves > 0)
+            {
+                _waveText.text = $"Wave: {_enemyManager.CurrentWaveIndex + 1} / {_enemyManager.TotalWaves}";
+            }
+            if (_sealsText != null && _currencyManager != null)
+            {
+                _sealsText.text = $"Authority: {_currencyManager.CurrentSeals} / {_currencyManager.MaxSeals}";
+            }
         }
 
         private void OnDestroy()
@@ -92,13 +161,145 @@ namespace MaouSamaTD.UI
             }
         }
 
-        private void ShowWin()
+        public void ShowWin()
         {
-            if (_winPanel != null) _winPanel.SetActive(true);
+            if (_uiBlocker != null) _uiBlocker.HideBlocker(true);
+            
+            if (_winPanel != null)
+            {
+                string sceneName = SceneManager.GetActiveScene().name;
+                int buildIndex = SceneManager.GetActiveScene().buildIndex;
+                string levelTitle = $"LEVEL {buildIndex}: {sceneName.Replace("_", " ")}".ToUpper();
+
+                var currentLevel = _gameManager.CurrentLevelData;
+                if (currentLevel == null) currentLevel = _selectionState?.SelectedLevel;
+
+                var levelDb = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase;
+                var nextLevel = (levelDb != null && currentLevel != null) ? levelDb.AllLevels.Find(l => l.LevelIndex == currentLevel.LevelIndex + 1) : null;
+                
+                // If we don't find it by index+1, try the helper method in Database
+                if (nextLevel == null && levelDb != null && currentLevel != null)
+                {
+                    nextLevel = levelDb.GetNextLevel(currentLevel);
+                }
+
+                if (_winNextButton != null)
+                {
+                    // Resolve LevelIndex (fallback to buildIndex if no data)
+                    int levelIdx = currentLevel != null ? currentLevel.LevelIndex : buildIndex;
+                    
+                    bool isFirstLevel = levelIdx == 1;
+                    bool isSecondLevel = levelIdx == 2;
+                    
+                    if (isFirstLevel) _winNextButton.gameObject.SetActive(true);
+                    else if (isSecondLevel) _winNextButton.gameObject.SetActive(false);
+                    else _winNextButton.gameObject.SetActive(nextLevel != null);
+
+                    Debug.Log($"[GameControlUI] Next Level Button: {_winNextButton.gameObject.activeSelf} (Level Index: {levelIdx})");
+                }
+
+                _winPanel.SetActive(true);
+
+                if (_levelTitleText != null)
+                {
+                    _levelTitleText.text = currentLevel != null ? currentLevel.LevelName.ToUpper() : levelTitle;
+                }
+
+                if (_clearTimeText != null)
+                {
+                    float time = _gameManager.TimeTaken;
+                    int minutes = Mathf.FloorToInt(time / 60F);
+                    int seconds = Mathf.FloorToInt(time % 60F);
+                    _clearTimeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+                    Debug.Log($"[GameControlUI] Assigned Clear Time: {_clearTimeText.text} (Raw: {time})");
+                }
+                else
+                {
+                    Debug.LogWarning("[GameControlUI] Clear Time Text is NOT assigned in Inspector!");
+                }
+
+                PopulateStarConditions();
+            }
+        }
+
+        private void PopulateStarConditions()
+        {
+            if (_starConditionContainer == null || _starConditionPrefab == null) return;
+
+            // Clear previous items
+            foreach (Transform child in _starConditionContainer)
+            {
+                Destroy(child.gameObject);
+            }
+
+            var results = _gameManager.EvaluateStarConditions();
+            Sequence starSeq = DOTween.Sequence();
+            starSeq.SetUpdate(true); // Ensure it runs even if timeScale is 0
+
+            for (int i = 0; i < results.Count; i++)
+            {
+                var res = results[i];
+                GameObject item = Instantiate(_starConditionPrefab, _starConditionContainer);
+                
+                Image icon = item.GetComponentInChildren<Image>();
+                TextMeshProUGUI text = item.GetComponentInChildren<TextMeshProUGUI>();
+
+                if (text != null) text.text = res.Description;
+                
+                if (icon != null)
+                {
+                    icon.sprite = _starEmptySprite; // Start empty
+                    icon.transform.localScale = Vector3.zero;
+
+                    if (res.IsAchieved)
+                    {
+                        float delay = 0.5f + (i * 0.4f);
+                        starSeq.InsertCallback(delay, () => {
+                            if (icon != null) icon.sprite = _starFullSprite;
+                        });
+                        starSeq.Insert(delay, icon.transform.DOScale(1.2f, 0.3f).SetEase(Ease.OutBack));
+                        starSeq.Append(icon.transform.DOScale(1f, 0.1f));
+                    }
+                    else
+                    {
+                        // Even if not achieved, show empty star with a small fade or scale
+                        float delay = 0.5f + (i * 0.4f);
+                        starSeq.Insert(delay, icon.transform.DOScale(1f, 0.3f).SetEase(Ease.OutQuad));
+                    }
+                }
+            }
+        }
+
+        private void OnNextLevelClicked()
+        {
+            Time.timeScale = 1f;
+            
+            var currentLevel = _gameManager.CurrentLevelData;
+            if (currentLevel == null) currentLevel = _selectionState?.SelectedLevel;
+
+            var levelDb = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase;
+            
+            if (currentLevel != null && levelDb != null)
+            {
+                var nextLevel = levelDb.AllLevels.Find(l => l.LevelIndex == currentLevel.LevelIndex + 1);
+                if (nextLevel == null) nextLevel = levelDb.GetNextLevel(currentLevel);
+
+                if (nextLevel != null)
+                {
+                    Debug.Log($"[GameControlUI] Loading next level: {nextLevel.LevelName} (Index: {nextLevel.LevelIndex})");
+                    _selectionState.SetLevel(nextLevel);
+                    ReloadScene();
+                    return;
+                }
+            }
+            
+            Debug.Log("[GameControlUI] No next level found, returning to menu.");
+            ReturnToMenu();
         }
 
         private void ShowLose()
         {
+            if (_uiBlocker != null) _uiBlocker.HideBlocker(true);
             if (_losePanel != null) _losePanel.SetActive(true);
         }
 

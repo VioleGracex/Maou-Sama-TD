@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
   - SpeakerName: Tina
-    DialogueText: The presence of the Holy Church is getting stronger in this region.
+    DialogueText: The ancient seals in this tomb are pulsing with a strange energy.
       We need to reclaim more Authority to restore your full power.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}

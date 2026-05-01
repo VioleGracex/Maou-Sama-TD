@@ -26,7 +26,11 @@ namespace MaouSamaTD.Skills
         public AudioClip HitSFX;
         public Color UltimateColor;
         public Color TitleBgColor;
+        public Color TitleTextColor;
+        public Color NameBgColor;
+        public Color NameTextColor;
         public Color SkillNameBgColor;
+        public Color SkillNameTextColor;
         public Color RangeIndicatorColor;
         public string AnimationTriggerName;
     }

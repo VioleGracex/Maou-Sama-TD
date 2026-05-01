@@ -389,7 +389,7 @@ namespace MaouSamaTD.Editor.Story
             Sprite portraitMiddle = null;
             Sprite portraitRight = null;
             Sprite background = null;
-            PortraitFocus focus = PortraitFocus.All;
+            MaouSamaTD.Tutorial.PortraitFocus focus = MaouSamaTD.Tutorial.PortraitFocus.All;
 
             if (selectedAsset is StoryDataSO story)
             {
@@ -401,7 +401,7 @@ namespace MaouSamaTD.Editor.Story
                 portraitMiddle = line.PortraitMiddle;
                 portraitRight = line.PortraitRight;
                 background = line.Background;
-                focus = line.Focus;
+                focus = (MaouSamaTD.Tutorial.PortraitFocus)(int)line.Focus;
             }
             else if (selectedAsset is DialogueData tutorial)
             {
@@ -409,9 +409,10 @@ namespace MaouSamaTD.Editor.Story
                 var line = tutorial.Lines[selectedLineIndex];
                 speaker = line.SpeakerName;
                 text = line.Text;
-                portraitLeft = line.PortraitOnLeft ? line.SpeakerPortrait : null;
-                portraitRight = !line.PortraitOnLeft ? line.SpeakerPortrait : null;
-                focus = PortraitFocus.All;
+                portraitLeft = line.LeftPortrait;
+                portraitMiddle = line.CenterPortrait;
+                portraitRight = line.RightPortrait;
+                focus = line.Focus;
             }
 
             float drawWidth = full ? position.width : position.width - (265 * menuAnimValue);
@@ -434,13 +435,13 @@ namespace MaouSamaTD.Editor.Story
             float yOffset = previewRect.y + (previewRect.height - portraitHeight);
 
             DrawPortrait(new Rect(previewRect.x + 20, yOffset, portraitWidth, portraitHeight), 
-                portraitLeft, focus == PortraitFocus.Left || focus == PortraitFocus.All);
+                portraitLeft, focus == MaouSamaTD.Tutorial.PortraitFocus.Left || focus == MaouSamaTD.Tutorial.PortraitFocus.All || (selectedAsset is StoryDataSO && (int)focus == (int)MaouSamaTD.Story.PortraitFocus.Left));
             
             DrawPortrait(new Rect(previewRect.x + (previewRect.width - portraitWidth) / 2, yOffset, portraitWidth, portraitHeight), 
-                portraitMiddle, focus == PortraitFocus.Middle || focus == PortraitFocus.All);
+                portraitMiddle, focus == MaouSamaTD.Tutorial.PortraitFocus.Center || focus == MaouSamaTD.Tutorial.PortraitFocus.All || (selectedAsset is StoryDataSO && (int)focus == (int)MaouSamaTD.Story.PortraitFocus.Middle));
             
             DrawPortrait(new Rect(previewRect.xMax - portraitWidth - 20, yOffset, portraitWidth, portraitHeight), 
-                portraitRight, focus == PortraitFocus.Right || focus == PortraitFocus.All);
+                portraitRight, focus == MaouSamaTD.Tutorial.PortraitFocus.Right || focus == MaouSamaTD.Tutorial.PortraitFocus.All || (selectedAsset is StoryDataSO && (int)focus == (int)MaouSamaTD.Story.PortraitFocus.Right));
 
             // 3. Draw Dialogue Overlay
             float boxWidth = previewRect.width * 0.8f;
@@ -562,7 +563,7 @@ namespace MaouSamaTD.Editor.Story
                 line.PortraitRight = (Sprite)EditorGUILayout.ObjectField("Right", line.PortraitRight, typeof(Sprite), false);
                 EditorGUILayout.EndHorizontal();
 
-                line.Focus = (PortraitFocus)EditorGUILayout.EnumPopup("Focus Position", line.Focus);
+                line.Focus = (MaouSamaTD.Story.PortraitFocus)EditorGUILayout.EnumPopup("Focus Position", line.Focus);
 
                 EditorGUILayout.Space(5);
                 EditorGUILayout.LabelField("Events & Audio", EditorStyles.boldLabel);
@@ -576,9 +577,19 @@ namespace MaouSamaTD.Editor.Story
                 line.Text = EditorGUILayout.TextArea(line.Text, GUILayout.Height(60));
                 
                 EditorGUILayout.Space(5);
-                line.SpeakerPortrait = (Sprite)EditorGUILayout.ObjectField("Portrait", line.SpeakerPortrait, typeof(Sprite), false);
-                line.PortraitOnLeft = EditorGUILayout.Toggle("Portrait on Left", line.PortraitOnLeft);
+                EditorGUILayout.LabelField("Visuals", EditorStyles.boldLabel);
+                EditorGUILayout.BeginHorizontal();
+                line.LeftPortrait = (Sprite)EditorGUILayout.ObjectField("Left", line.LeftPortrait, typeof(Sprite), false);
+                line.CenterPortrait = (Sprite)EditorGUILayout.ObjectField("Center", line.CenterPortrait, typeof(Sprite), false);
+                line.RightPortrait = (Sprite)EditorGUILayout.ObjectField("Right", line.RightPortrait, typeof(Sprite), false);
+                EditorGUILayout.EndHorizontal();
+
+                line.Focus = (MaouSamaTD.Tutorial.PortraitFocus)EditorGUILayout.EnumPopup("Focus Position", line.Focus);
+
+                EditorGUILayout.Space(5);
                 line.EventID = EditorGUILayout.TextField("Event ID", line.EventID);
+                
+                tutorialAsset.Lines[selectedLineIndex] = line; // Struct update
             }
 
             if (EditorGUI.EndChangeCheck())
@@ -653,9 +664,9 @@ namespace MaouSamaTD.Editor.Story
                 if (fullPanel != null) fullPanel.SetActive(true);
                 if (miniPanel != null) miniPanel.SetActive(false);
 
-                SetImage("_leftPortrait", line.PortraitLeft, line.Focus == PortraitFocus.Left || line.Focus == PortraitFocus.All);
-                SetImage("_middlePortrait", line.PortraitMiddle, line.Focus == PortraitFocus.Middle || line.Focus == PortraitFocus.All);
-                SetImage("_rightPortrait", line.PortraitRight, line.Focus == PortraitFocus.Right || line.Focus == PortraitFocus.All);
+                SetImage("_leftPortrait", line.PortraitLeft, line.Focus == MaouSamaTD.Story.PortraitFocus.Left || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
+                SetImage("_middlePortrait", line.PortraitMiddle, line.Focus == MaouSamaTD.Story.PortraitFocus.Middle || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
+                SetImage("_rightPortrait", line.PortraitRight, line.Focus == MaouSamaTD.Story.PortraitFocus.Right || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
 
                 SetText("_fullSpeakerText", line.SpeakerName);
                 SetText("_fullContentText", line.DialogueText);
@@ -670,15 +681,18 @@ namespace MaouSamaTD.Editor.Story
 
                 if (isFull)
                 {
-                    SetImage("_leftPortrait", line.SpeakerPortrait, line.PortraitOnLeft);
-                    SetImage("_rightPortrait", line.SpeakerPortrait, !line.PortraitOnLeft);
-                    SetImage("_middlePortrait", null, false);
+                    SetImage("_leftPortrait", line.LeftPortrait, line.Focus == MaouSamaTD.Tutorial.PortraitFocus.Left || line.Focus == MaouSamaTD.Tutorial.PortraitFocus.All);
+                    SetImage("_middlePortrait", line.CenterPortrait, line.Focus == MaouSamaTD.Tutorial.PortraitFocus.Center || line.Focus == MaouSamaTD.Tutorial.PortraitFocus.All);
+                    SetImage("_rightPortrait", line.RightPortrait, line.Focus == MaouSamaTD.Tutorial.PortraitFocus.Right || line.Focus == MaouSamaTD.Tutorial.PortraitFocus.All);
+                    
                     SetText("_fullSpeakerText", line.SpeakerName);
                     SetText("_fullContentText", line.Text);
                 }
                 else
                 {
-                    SetImage("_miniTopPortrait", line.SpeakerPortrait, true);
+                    // MiniTop usually only shows one. Let's use Center, then Left, then Right as priority.
+                    Sprite s = line.CenterPortrait != null ? line.CenterPortrait : (line.LeftPortrait != null ? line.LeftPortrait : line.RightPortrait);
+                    SetImage("_miniTopPortrait", s, true);
                     SetText("_miniTopSpeakerText", line.SpeakerName);
                     SetText("_miniTopContentText", line.Text);
                 }

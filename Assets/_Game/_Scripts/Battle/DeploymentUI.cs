@@ -132,9 +132,17 @@ namespace MaouSamaTD.UI
 
         public void AddUnit(UnitData unit)
         {
-            if (unit == null || _availableUnits.Contains(unit)) return;
+            if (unit == null) return;
             
-            _availableUnits.Add(unit);
+            if (!_availableUnits.Contains(unit))
+                _availableUnits.Add(unit);
+            
+            // Ensure button exists even if unit was already in the list (e.g. for dynamic tutorial additions)
+            if (_unitButtons.Exists(b => b.Data == unit))
+            {
+                Debug.Log($"[DeploymentUI] Button for {unit.UnitName} already exists.");
+                return;
+            }
             
             // Instantiate button
             GameObject btnObj = _container.InstantiatePrefab(_buttonPrefab, _barContainer);

@@ -63,11 +63,14 @@ namespace MaouSamaTD.UI.MainMenu
         public void Preheat()
         {
             // Ensure levels are loaded into memory
-            if (_allLevels == null || _allLevels.Count == 0)
+            if (MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase != null)
             {
-                Debug.Log("[CampaignPage] Preheating: No levels assigned in inspector, checking database...");
-                // In a real scenario, we might pull from a static database reference
-                // _allLevels = AppEntryPoint.LoadedLevelDatabase.AllLevels;
+                _allLevels = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase.AllLevels;
+                Debug.Log($"[CampaignPage] Preheating: Loaded {_allLevels.Count} levels from global database.");
+            }
+            else if (_allLevels == null || _allLevels.Count == 0)
+            {
+                Debug.LogWarning("[CampaignPage] Preheating: No levels assigned and LevelDatabase not found!");
             }
             
             // Validate save manager status
@@ -90,13 +93,18 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Refresh()
         {
-            if (_levelContainer == null || _levelButtonPrefab == null || _allLevels == null)
+            if (MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase != null)
             {
-                Debug.LogWarning("[CampaignPage] Missing references! Cannot spawn level buttons.");
+                _allLevels = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase.AllLevels;
+            }
+
+            if (_levelContainer == null || _levelButtonPrefab == null || _allLevels == null || _allLevels.Count == 0)
+            {
+                Debug.LogWarning("[CampaignPage] Missing references or levels! Cannot spawn level buttons.");
                 return;
             }
 
-            Debug.Log($"[CampaignPage] Starting Refresh. Total levels in list: {_allLevels.Count}");
+            Debug.Log($"[CampaignPage] Starting Refresh. Total levels: {_allLevels.Count}");
 
             List<LevelDisplayData> displayDataList = new List<LevelDisplayData>();
             for (int i = 0; i < _allLevels.Count; i++)

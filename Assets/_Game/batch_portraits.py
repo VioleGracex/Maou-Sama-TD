@@ -7,7 +7,7 @@ def process_portraits():
     pattern = os.path.join(root_dir, "**", "Art_*_FullBody.png")
     
     # Excluded names
-    excluded = ["ignis", "lilith", "aquila", "shade"]
+    excluded = ["ignis"]
     
     count = 0
     for fb_path in glob.iglob(pattern, recursive=True):

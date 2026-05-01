@@ -78,6 +78,7 @@ namespace MaouSamaTD.UI
                 UpdateVisuals();
                 if (_panel != null)
                 {
+                    _panel.transform.DOKill();
                     _panel.SetActive(true);
                     _panel.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack).SetUpdate(true); // Animate In
                     
@@ -98,6 +99,7 @@ namespace MaouSamaTD.UI
 
             if (_panel != null && _panel.activeSelf)
             {
+                _panel.transform.DOKill();
                 _panel.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() => 
                 {
                     _panel.SetActive(false);

@@ -30,8 +30,8 @@ namespace MaouSamaTD.UI
         [Header("Overlay Settings")]
         [SerializeField] private Material overlayMaterial;
         [SerializeField] private Color overlayColor = new Color(0, 0, 0, 0.85f);
-        [SerializeField] private int maskSize = 512;
-        [SerializeField] private float transitionDuration = 0.2f;
+        [SerializeField] private int maskSize = 256;
+        [SerializeField] private float transitionDuration = 0.1f;
 
         private List<UIHighlightData> uiHighlights = new List<UIHighlightData>();
         private List<WorldHighlightData> worldHighlights = new List<WorldHighlightData>();
@@ -42,7 +42,9 @@ namespace MaouSamaTD.UI
         private Image overlayImage;
         private HoleRaycaster overlayRaycaster;
         private bool isActive = false;
+        public bool IsActive => isActive;
         private Texture2D maskTex;
+        private Color32[] _cachedPixels;
         private CanvasGroup canvasGroup;
 
         private void Awake()
@@ -72,6 +74,9 @@ namespace MaouSamaTD.UI
             canvasGroup.alpha = 0;
             canvasGroup.blocksRaycasts = false;
             isActive = false;
+
+            // Pre-allocate pixels
+            _cachedPixels = new Color32[maskSize * maskSize];
         }
 
         public void ShowBlockerWithDetailedTargets(List<UIHighlightData> uiHits, List<WorldHighlightData> worldHits)
@@ -204,19 +209,33 @@ namespace MaouSamaTD.UI
             return false;
         }
 
-        public void HideBlocker()
+        public void HideBlocker(bool immediate = false)
         {
             if (!isActive) return;
             canvasGroup.DOKill();
-            canvasGroup.DOFade(0, transitionDuration).SetUpdate(true).OnComplete(() =>
+            
+            if (immediate)
             {
+                canvasGroup.alpha = 0;
                 canvasGroup.blocksRaycasts = false;
                 isActive = false;
                 uiHighlights.Clear();
                 worldHighlights.Clear();
                 isWorldHighlight = false;
                 _isDirty = true;
-            });
+            }
+            else
+            {
+                canvasGroup.DOFade(0, transitionDuration).SetUpdate(true).OnComplete(() =>
+                {
+                    canvasGroup.blocksRaycasts = false;
+                    isActive = false;
+                    uiHighlights.Clear();
+                    worldHighlights.Clear();
+                    isWorldHighlight = false;
+                    _isDirty = true;
+                });
+            }
         }
 
         private void Show()
@@ -291,38 +310,37 @@ namespace MaouSamaTD.UI
         {
             if (overlayImage == null || overlayImage.material == null) return;
             
-            // Only update if dirty or moving (though for now we check highlights positions every frame if we want animating holes)
-            // But if everything is static, we can save a lot.
-            // For simplicity, we'll keep updating if any world highlight exists (as they move with camera/units)
-            // But UI highlights are often static.
-            
-            if (!_isDirty && !isWorldHighlight && uiHighlights.Count > 0) return;
+            // Only update if dirty OR world highlights are active (as they move)
+            if (!_isDirty && !isWorldHighlight) return;
 
             if (maskTex == null || maskTex.width != maskSize)
             {
                 maskTex = new Texture2D(maskSize, maskSize, TextureFormat.Alpha8, false);
                 maskTex.wrapMode = TextureWrapMode.Clamp;
+                _cachedPixels = new Color32[maskSize * maskSize];
             }
 
-            Color32[] pixels = maskTex.GetPixels32();
-            for (int i = 0; i < pixels.Length; i++) pixels[i] = new Color32(255, 255, 255, 255);
+            // Fill with solid white (opaque in mask)
+            for (int i = 0; i < _cachedPixels.Length; i++) _cachedPixels[i] = new Color32(255, 255, 255, 255);
 
             var overlayRect = overlayImage.rectTransform;
 
             if (isWorldHighlight)
             {
-                DrawWorldHole(pixels, overlayRect);
+                DrawWorldHole(_cachedPixels, overlayRect);
             }
             
             foreach (var h in uiHighlights)
             {
                 if (h.Target == null) continue;
-                DrawUIHole(h, pixels, overlayRect);
+                DrawUIHole(h, _cachedPixels, overlayRect);
             }
 
-            maskTex.SetPixels32(pixels);
+            maskTex.SetPixels32(_cachedPixels);
             maskTex.Apply(false);
             overlayImage.material.SetTexture("_MaskTex", maskTex);
+            
+            _isDirty = false; // Reset dirty flag
         }
 
         private void DrawUIHole(UIHighlightData data, Color32[] pixels, RectTransform overlayRect)

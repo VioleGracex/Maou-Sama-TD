@@ -38,11 +38,14 @@ namespace MaouSamaTD.Managers
         private UnitData _activeUnitData;
         private SovereignRiteData _selectedSkill;
         private bool _isSkillTargeting;
+        public bool IsSkillTargeting => _isSkillTargeting;
+        public SovereignRiteData SelectedSkill => _selectedSkill;
         
         private Tile _currentHoverTile;
         private UnitBase _currentHoverUnit;
         private PlayerUnit _inspectedPlayerUnit;
         public UnitData SelectedUnitData => _activeUnitData;
+        public PlayerUnit InspectedUnit => _inspectedPlayerUnit;
         
         private bool _isSelectionLocked = true;
         public bool IsSelectionLocked { get => _isSelectionLocked; set => _isSelectionLocked = value; }
@@ -280,9 +283,13 @@ namespace MaouSamaTD.Managers
                     
                     if (!isAllowedByTutorial)
                     {
-                        isAllowedByTutorial = _tutorialManager.IsWaitingForAction("UnitSelected") || 
-                                              _tutorialManager.IsWaitingForAction("UnitStatsOpened") ||
-                                              _tutorialManager.IsWaitingForAction("SkillUsed");
+                        string currentAction = _tutorialManager.GetCurrentStepActionKey();
+                        isAllowedByTutorial = currentAction == "UnitSelected" || 
+                                              currentAction == "UnitStatsOpened" ||
+                                              currentAction == "SkillUsed" ||
+                                              currentAction == "UnitPlaced" ||
+                                              currentAction == "AwakenLilith" ||
+                                              currentAction == "DialogueComplete";
                     }
 
                     if (_isSelectionLocked && !isAllowedByTutorial)

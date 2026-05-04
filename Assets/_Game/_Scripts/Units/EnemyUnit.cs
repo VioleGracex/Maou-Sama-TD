@@ -218,12 +218,12 @@ namespace MaouSamaTD.Units
                 }
             }
             
-            // Re-evaluating blockers/targets while moving vs while stopped
-            if (!_isMoving && !_isCharmed)
+            // Re-evaluating blockers/targets
+            if (!_isCharmed)
             {
                 if (_blockedBy != null)
                 {
-                    if (_blockedBy == null || _blockedBy.CurrentHp <= 0)
+                    if (_blockedBy.CurrentHp <= 0 || _blockedBy.IsDead)
                     {
                         ReleaseBlock();
                     }
@@ -231,41 +231,58 @@ namespace MaouSamaTD.Units
                     {
                         HandleAttack(_blockedBy);
                         FaceTarget(_blockedBy.transform.position);
-                    }
-                }
-                else if (_attackTarget != null)
-                {
-                    if (_attackTarget == null || _attackTarget.CurrentHp <= 0)
-                    {
-                        _attackTarget = null;
-                        _isMoving = true;
-                    }
-                    else
-                    {
-                        HandleAttack(_attackTarget);
-                        FaceTarget(_attackTarget.transform.position);
-                        
-                        // Periodic re-scan while attacking to ensure they are still in pattern/range
-                        if (!ScanForTarget(out PlayerUnit nextTarget) || nextTarget != _attackTarget)
-                        {
-                            _attackTarget = nextTarget;
-                        }
+                        // Stay blocked
                     }
                 }
                 else
                 {
-                    // Not blocked, not targeting, not moving -> Idle
-                    if (_animator != null && !_isDead)
+                    // Scan for targets even while moving
+                    if (ScanForTarget(out PlayerUnit nextTarget))
                     {
-                        var state = _animator.GetCurrentAnimatorStateInfo(0);
-                        if (!state.IsName("Idle") && !state.IsName("Attack") && !state.IsName("Die") && !state.IsName("Death"))
+                        bool shouldSwitch = false;
+                        if (_attackTarget == null)
                         {
-                             _animator.Play("Idle", 0, 0f);
+                            shouldSwitch = true;
+                        }
+                        else if (nextTarget != _attackTarget)
+                        {
+                            // Priority logic for switching
+                            var curPos = _gridManager.WorldToGridCoordinates(_attackTarget.transform.position);
+                            var curTile = _gridManager.GetTileAt(curPos);
+                            var nextPos = _gridManager.WorldToGridCoordinates(nextTarget.transform.position);
+                            var nextTile = _gridManager.GetTileAt(nextPos);
+                            
+                            bool curIsHigh = curTile != null && curTile.IsHighGround;
+                            bool nextIsHigh = nextTile != null && nextTile.IsHighGround;
+                            
+                            if (nextIsHigh && !curIsHigh) shouldSwitch = true;
+                            else if (GetDamageFrom(nextTarget) > GetDamageFrom(_attackTarget) + 20f) shouldSwitch = true;
+                            else if (!IsTargetInPattern(_gridManager.WorldToGridCoordinates(transform.position), curPos, _enemyData.AttackPattern, Range)) shouldSwitch = true;
+                        }
+
+                        if (shouldSwitch) _attackTarget = nextTarget;
+
+                        if (_attackTarget != null)
+                        {
+                            Vector2Int myPos = _gridManager.WorldToGridCoordinates(transform.position);
+                            Vector2Int targetPos = _gridManager.WorldToGridCoordinates(_attackTarget.transform.position);
+                            
+                            if (IsTargetInPattern(myPos, targetPos, _enemyData.AttackPattern, Range))
+                            {
+                                HandleAttack(_attackTarget);
+                                FaceTarget(_attackTarget.transform.position);
+                                
+                                // If melee and not flying, stop to attack? 
+                                // User said 'able to attack if on same tile', suggesting they might keep moving.
+                                // For now, let's keep them moving unless blocked.
+                            }
                         }
                     }
-                    _isMoving = true;
+                    else
+                    {
+                        _attackTarget = null;
+                    }
                 }
-                return;
             }
 
             if (_isMoving)
@@ -283,6 +300,9 @@ namespace MaouSamaTD.Units
             if (_gridManager == null) return false;
 
             Collider[] hits = Physics.OverlapSphere(transform.position, Range);
+            PlayerUnit bestTarget = null;
+            float bestScore = float.MinValue;
+
             foreach (var hit in hits)
             {
                 var unit = hit.GetComponent<PlayerUnit>();
@@ -292,9 +312,9 @@ namespace MaouSamaTD.Units
                     Vector2Int targetPos = _gridManager.WorldToGridCoordinates(unit.transform.position);
                     
                     // Flying units only attack high ground, UNLESS they are on the same tile as the target (passing through)
+                    var targetTile = _gridManager.GetTileAt(targetPos);
                     if (_enemyData.MovementType == EnemyMovementType.Flying)
                     {
-                        var targetTile = _gridManager.GetTileAt(targetPos);
                         if (myPos != targetPos && (targetTile == null || !targetTile.IsHighGround))
                         {
                             continue;
@@ -303,12 +323,77 @@ namespace MaouSamaTD.Units
 
                     if (IsTargetInPattern(myPos, targetPos, _enemyData != null ? _enemyData.AttackPattern : AttackPattern.All, Range))
                     {
-                        target = unit;
-                        return true;
+                        float score = 0;
+                        
+                        // Priority 1: High Ground
+                        if (targetTile != null && targetTile.IsHighGround)
+                            score += 2000f;
+                            
+                        // Priority 2: Same Lane (Row or Column)
+                        if (myPos.x == targetPos.x || myPos.y == targetPos.y)
+                            score += 500f;
+
+                        // Priority 3: Damage Aggro (Weight based on damage taken)
+                        score += GetDamageFrom(unit);
+
+                        // Priority 4: Proximity (closer is better)
+                        score -= Vector3.Distance(transform.position, unit.transform.position);
+
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                            bestTarget = unit;
+                        }
                     }
                 }
             }
+
+            if (bestTarget != null)
+            {
+                target = bestTarget;
+                return true;
+            }
             return false;
+        }
+
+        protected override void RegisterAttacker(UnitBase attacker)
+        {
+            if (attacker is PlayerUnit player && player.CurrentHp > 0)
+            {
+                // Aggro logic: if we don't have a target, or if the current target isn't on high ground but the attacker is
+                if (_attackTarget == null && _blockedBy == null)
+                {
+                    _attackTarget = player;
+                    if (_isMoving) InitiateCentering();
+                }
+                else if (_attackTarget != null)
+                {
+                    var attPos = _gridManager.WorldToGridCoordinates(player.transform.position);
+                    var attTile = _gridManager.GetTileAt(attPos);
+                    var curPos = _gridManager.WorldToGridCoordinates(_attackTarget.transform.position);
+                    var curTile = _gridManager.GetTileAt(curPos);
+
+                    bool attIsHigh = attTile != null && attTile.IsHighGround;
+                    bool curIsHigh = curTile != null && curTile.IsHighGround;
+
+                    // Switch if attacker is on high ground and current target isn't
+                    if (attIsHigh && !curIsHigh)
+                    {
+                        _attackTarget = player;
+                    }
+                    else
+                    {
+                        // Check if the attacker has dealt enough damage to "earn" a target switch
+                        float damageFromAttacker = GetDamageFrom(player);
+                        float damageFromCurrent = GetDamageFrom(_attackTarget);
+                        
+                        if (damageFromAttacker > damageFromCurrent + 20f)
+                        {
+                            _attackTarget = player;
+                        }
+                    }
+                }
+            }
         }
 
          private void FaceTarget(Vector3 targetPos)

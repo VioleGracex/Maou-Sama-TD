@@ -58,7 +58,7 @@ MonoBehaviour:
       SpawnInterval: 1.2
       InitialDelay: 0
       SpawnPointIndex: 1
-    DelayBeforeNextWave: 15
+    DelayBeforeNextWave: 5
     WaveMessage: Shadows From the Sky
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
@@ -71,7 +71,7 @@ MonoBehaviour:
       SpawnInterval: 2
       InitialDelay: 5
       SpawnPointIndex: 1
-    DelayBeforeNextWave: 20
+    DelayBeforeNextWave: 5
     WaveMessage: Triple Front Assault
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 479fb6620cf11e341b226f03c87e44b0, type: 2}

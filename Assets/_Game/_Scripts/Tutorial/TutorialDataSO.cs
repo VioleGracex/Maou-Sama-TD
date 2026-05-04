@@ -132,7 +132,7 @@ namespace MaouSamaTD.Tutorial
         private bool HasAction => Type == TutorialStepType.WaitForAction || Type == TutorialStepType.WaitForCondition;
         private bool CanShowHand => Type != TutorialStepType.DialogueOnly && Type != TutorialStepType.WaitTime && Type != TutorialStepType.WaitForWave;
         private bool IsWaitAction => Type == TutorialStepType.WaitForAction;
-        private bool IsWaveStep => Type == TutorialStepType.StartWave || Type == TutorialStepType.WaitForWave;
+        private bool IsWaveStep => Type == TutorialStepType.StartWave || Type == TutorialStepType.WaitForWave || Type == TutorialStepType.WaitForCondition;
         private bool HasCondition => Type == TutorialStepType.WaitForCondition;
         #endregion
     }

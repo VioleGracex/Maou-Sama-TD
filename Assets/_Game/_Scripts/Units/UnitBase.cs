@@ -102,6 +102,7 @@ namespace MaouSamaTD.Units
         public event Action<float> OnHealthChanged;
 
         protected float _lastAttackTime;
+        public float TotalDamageDealt { get; protected set; } = 0f;
         private Transform _camTransform;
 
         private MaterialPropertyBlock _mpb;
@@ -113,6 +114,9 @@ namespace MaouSamaTD.Units
 
         protected System.Collections.Generic.List<BuffInstance> _activeBuffs = new System.Collections.Generic.List<BuffInstance>();
         public System.Collections.Generic.List<BuffInstance> ActiveBuffs => _activeBuffs;
+
+        protected System.Collections.Generic.Dictionary<UnitBase, float> _damageTakenByAttacker = new System.Collections.Generic.Dictionary<UnitBase, float>();
+        public float GetDamageFrom(UnitBase attacker) => (attacker != null && _damageTakenByAttacker.ContainsKey(attacker)) ? _damageTakenByAttacker[attacker] : 0f;
 
         [System.Serializable]
         public class BuffInstance
@@ -319,6 +323,16 @@ namespace MaouSamaTD.Units
             
             BattleLogManager.Instance.LogEvent(BattleLogType.Damage, attacker != null ? attacker.gameObject.name : "Unknown", gameObject.name, "Damage Taken", damageTaken);
             
+            if (attacker != null)
+            {
+                attacker.RecordDamageDealt(damageTaken);
+                
+                if (!_damageTakenByAttacker.ContainsKey(attacker)) _damageTakenByAttacker[attacker] = 0f;
+                _damageTakenByAttacker[attacker] += damageTaken;
+
+                RegisterAttacker(attacker);
+            }
+            
             if (_hpFillImage != null)
             {
                  _hpFillImage.fillAmount = _currentHp / _maxHp;
@@ -519,6 +533,15 @@ namespace MaouSamaTD.Units
                 default:
                     return false;
             }
+        }
+        public virtual void RecordDamageDealt(float amount)
+        {
+            TotalDamageDealt += amount;
+        }
+
+        protected virtual void RegisterAttacker(UnitBase attacker)
+        {
+            // Subclasses can implement aggro logic here
         }
     }
 }

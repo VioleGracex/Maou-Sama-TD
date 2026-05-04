@@ -1150,10 +1150,10 @@ private RectTransform FindTargetRect(string name)
                 case "WaveFinishedSpawning":
                     if (_enemyManager != null)
                     {
-                        // Robust check: Spawning is finished AND current wave is at least the one we expect
-                        // (WaveIndex -1 means we don't care about specific wave)
+                        // Robust check: Wave has started AND spawning is currently finished AND wave index matches
+                        bool hasStarted = step.WaveIndex < 0 || _enemyManager.HasWaveStarted(step.WaveIndex);
                         bool correctWave = step.WaveIndex < 0 || _enemyManager.CurrentWaveIndex >= step.WaveIndex;
-                        bool met = !_enemyManager.IsSpawning && correctWave;
+                        bool met = hasStarted && !_enemyManager.IsSpawning && correctWave;
                         return met;
                     }
                     return false;

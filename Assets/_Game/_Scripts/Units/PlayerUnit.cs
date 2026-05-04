@@ -241,6 +241,9 @@ namespace MaouSamaTD.Units
 
             bool canAttackFlying = _data == null || _data.CanAttackFlying;
 
+            EnemyUnit bestTarget = null;
+            float bestScore = float.MinValue;
+
             foreach (var enemy in enemies)
             {
                 if (enemy == null || enemy.CurrentHp <= 0 || enemy.IsDead) continue;
@@ -254,17 +257,46 @@ namespace MaouSamaTD.Units
                 
                 if (IsTargetInPattern(myPos, enemyPos, pattern, range))
                 {
-                     if (_animator != null) _animator.Play("Attack", 0, 0f);
-                     DamageType dType = _data != null ? _data.DamageType : DamageType.Melee;
-                     enemy.TakeDamage(AttackPower, this, dType); // Pass self as attacker and damage type
-                     attacked = true;
-                     FaceTarget(enemy.transform.position);
+                    float score = 0;
+                    
+                    // Priority 1: High Ground (Flyers are usually high ground, or enemies on specific tiles)
+                    var tile = _gridManager.GetTileAt(enemyPos);
+                    if (tile != null && tile.IsHighGround)
+                        score += 2000f;
+                        
+                    // Priority 2: Same Lane (Row or Column)
+                    Vector2Int myCoord = _gridManager.WorldToGridCoordinates(transform.position);
+                    if (enemyPos.x == myCoord.x || enemyPos.y == myCoord.y)
+                        score += 500f;
 
-                     if (type == AttackType.SingleTarget)
-                     {
-                         break;
-                     }
+                    // Priority 3: Damage Aggro (Weight based on damage taken)
+                    score += GetDamageFrom(enemy);
+
+                    // Priority 4: Last Attacker (Aggro Bonus)
+                    if (enemy == _lastAttacker)
+                        score += 500f;
+
+                    // Priority 5: Proximity
+                    score -= Vector3.Distance(transform.position, enemy.transform.position);
+
+                    if (type == AttackType.AreaOfEffect)
+                    {
+                        // AOE hits everyone in pattern
+                        ExecuteAttackOn(enemy);
+                        attacked = true;
+                    }
+                    else if (score > bestScore)
+                    {
+                        bestScore = score;
+                        bestTarget = enemy;
+                    }
                 }
+            }
+
+            if (type == AttackType.SingleTarget && bestTarget != null)
+            {
+                ExecuteAttackOn(bestTarget);
+                attacked = true;
             }
 
             if (attacked)
@@ -330,6 +362,23 @@ namespace MaouSamaTD.Units
             if (gm != null) gm.ReportUnitLost();
 
             Destroy(gameObject);
+        }
+
+        private void ExecuteAttackOn(EnemyUnit target)
+        {
+            if (_animator != null) _animator.Play("Attack", 0, 0f);
+            DamageType dType = _data != null ? _data.DamageType : DamageType.Melee;
+            target.TakeDamage(AttackPower, this, dType);
+            FaceTarget(target.transform.position);
+        }
+
+        private EnemyUnit _lastAttacker;
+        protected override void RegisterAttacker(UnitBase attacker)
+        {
+            if (attacker is EnemyUnit enemy)
+            {
+                _lastAttacker = enemy;
+            }
         }
 
         public override void Die(UnitBase attacker = null)

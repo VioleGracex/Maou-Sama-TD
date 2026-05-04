@@ -193,7 +193,7 @@ MonoBehaviour:
     FullBlocker: 0
     ResetBlocker: 1
     StopTime: 1
-    ResumeTime: 0
+    ResumeTime: 1
     Comment: 
   - StepName: Cast Empower
     Type: 3
@@ -242,7 +242,7 @@ MonoBehaviour:
     TargetTiles: []
     DelayBefore: 0
     Duration: 2
-    ActionKey: 
+    ActionKey: WaveFinishedSpawning
     ShowHand: 1
     HandScale: 1
     DragShowHand: 0

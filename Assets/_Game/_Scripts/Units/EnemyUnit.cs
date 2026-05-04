@@ -440,13 +440,19 @@ namespace MaouSamaTD.Units
             // NEW: If OnlyAttackIfBlocked is true, we ONLY target if we are actually blocked (see block detection below)
             bool isPhasing = _currentPhasingCharges > 0 || _enemyData.EvasionType == EnemyEvasionType.BypassBlockers;
             
-            if (!_isCentering && _blockedBy == null && !_isCharmed && !isPhasing && !_enemyData.OnlyAttackIfBlocked)
+            if (!_isCentering && _blockedBy == null && !_isCharmed && !_enemyData.OnlyAttackIfBlocked)
             {
                 if (ScanForTarget(out PlayerUnit target))
                 {
                     _attackTarget = target;
-                    InitiateCentering();
-                    return;
+                    
+                    // Only stop (InitiateCentering) if we are NOT phasing/bypassing
+                    // This allows the boss to attack Ignis while passing through him.
+                    if (!isPhasing)
+                    {
+                        InitiateCentering();
+                        return;
+                    }
                 }
             }
 

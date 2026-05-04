@@ -257,8 +257,8 @@ MonoBehaviour:
     UseBlocker: 0
     FullBlocker: 0
     ResetBlocker: 1
-    StopTime: 1
-    ResumeTime: 0
+    StopTime: 0
+    ResumeTime: 1
     Comment: 
   - StepName: Unseal Lilith
     Type: 0
@@ -768,8 +768,8 @@ MonoBehaviour:
     UseBlocker: 1
     FullBlocker: 0
     ResetBlocker: 0
-    StopTime: 1
-    ResumeTime: 0
+    StopTime: 0
+    ResumeTime: 1
     Comment: 
   - StepName: Victory
     Type: 0

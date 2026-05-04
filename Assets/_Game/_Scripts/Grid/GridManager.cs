@@ -52,6 +52,7 @@ namespace MaouSamaTD.Grid
         public Vector2Int SpawnPoint { get; private set; }
         public List<SpawnPointData> SpawnPoints { get; private set; } = new List<SpawnPointData>();
         public Vector2Int ExitPoint { get; private set; }
+        public bool exitIsLeft => ExitPoint.x < SpawnPoint.x;
         public List<Vector2Int> ExitPoints { get; private set; } = new List<Vector2Int>();
         
         public Vector2Int GetTargetExitForSpawn(Vector2Int spawnCoord)

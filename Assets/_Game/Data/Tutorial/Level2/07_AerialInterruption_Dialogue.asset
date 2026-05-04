@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 07_AerialInterruption_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
-  Background: 0
+  Background: 1
   CharactersPerSecond: 30
   Lines:
   - SpeakerName: Lilith

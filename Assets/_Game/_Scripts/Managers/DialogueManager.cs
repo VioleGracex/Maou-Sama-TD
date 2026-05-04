@@ -8,6 +8,7 @@ namespace MaouSamaTD.Managers
     public class DialogueManager : MonoBehaviour
     {
         [Inject] private DialogueUI _dialogueUI;
+        public DialogueUI DialogueUI => _dialogueUI;
 
         public bool IsDialogueActive { get; private set; }
 

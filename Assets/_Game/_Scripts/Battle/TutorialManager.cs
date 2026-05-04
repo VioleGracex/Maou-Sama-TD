@@ -46,10 +46,11 @@ namespace MaouSamaTD.Managers
         public bool IsInTutorial { get; private set; }
         private TutorialDataSO _activeTutorial;
         private int _currentStepIndex = -1;
+        private TutorialStep _currentStep;
         private bool _waitingForAction = false;
         private string _waitingActionKey;
         private HashSet<string> _triggeredActionsBuffer = new HashSet<string>();
-        private TutorialStep currentStep => (_activeTutorial != null && _currentStepIndex >= 0 && _currentStepIndex < _activeTutorial.Steps.Count) ? _activeTutorial.Steps[_currentStepIndex] : null;
+        private TutorialStep currentStep => _currentStep;
         #endregion
 
         #region Public API
@@ -121,6 +122,7 @@ namespace MaouSamaTD.Managers
             
             IsInTutorial = false;
             _activeTutorial = null;
+            _currentStep = null;
             
             if (_dialogueManager != null) _dialogueManager.HideDialogue();
             if (_uiBlocker != null) _uiBlocker.HideBlocker(true);
@@ -251,218 +253,256 @@ namespace MaouSamaTD.Managers
                         continue;
                     }
                 }
+                
+                _currentStep = step;
+
+                // 1. Handle StopTime for all step types at the start
+                if (step.StopTime)
+                {
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime. Pausing game.");
+                    _gameManager.SetSpeed(0);
+                }
 
                 switch (step.Type)
                 {
                     case TutorialStepType.DialogueOnly:
                         // TRIGGER: Shows a dialogue box. If an ActionKey is provided, it first waits for that condition to be met.
                         // NOTE: If dialogue is missing, it will proceed immediately or after the ActionKey condition.
-                        if (step.StopTime) _gameManager.SetSpeed(0);
-                        
-                        // Special Logic for Level 2 Boss Bypass: Lilith Refills Seals
-                        if (_activeTutorial != null && _activeTutorial.name.Contains("Level2") && step.StepName == "Boss Bypasses!")
                         {
-                            if (_currencyManager != null)
+                            // If an ActionKey is provided for a dialogue step, wait for that condition before showing it
+                            if (!string.IsNullOrEmpty(step.ActionKey))
                             {
-                                _currencyManager.SetMaxSeals(99);
-                                _currencyManager.SetSeals(99);
-                                if (_showDebugLogs) Debug.Log("[tutorial] Lilith Bonus Applied: Seals set to 99.");
+                                if (_showDebugLogs) Debug.Log($"[tutorial] DialogueOnly step {step.StepName} waiting for condition: {step.ActionKey}");
+                                
+                                // Ensure time flows if we are waiting for a dynamic condition, unless explicitly stopped
+                                if (!step.StopTime && _gameManager.CurrentSpeed < 0.1f)
+                                {
+                                    _gameManager.SetSpeed(1);
+                                }
+                                yield return new WaitUntil(() => CheckCondition(step));
                             }
-                            if (_gameManager != null)
+
+                            // Apply StopTime AFTER the condition wait, so the game pauses for the actual dialogue
+                            if (step.StopTime)
                             {
-                                _gameManager.PreventDeathForTutorial = true;
-                                if (_showDebugLogs) Debug.Log("[tutorial] Player invincibility enabled for boss encounter.");
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime. Pausing game.");
+                                _gameManager.SetSpeed(0);
                             }
-                        }
-                        
-                        // If an ActionKey is provided for a dialogue step, wait for that condition before showing it
-                        if (!string.IsNullOrEmpty(step.ActionKey))
-                        {
-                            if (_showDebugLogs) Debug.Log($"[tutorial] DialogueOnly step {step.StepName} waiting for condition: {step.ActionKey}");
-                            yield return new WaitUntil(() => CheckCondition(step));
-                        }
 
-                        HandleUIHighlight(step);
-                        bool dialogueDone = false;
-
-                        if (step.Dialogue != null)
-                        {
-                            _dialogueManager.StartDialogue(step.Dialogue, () => 
+                            // Special Logic for Level 2 Boss Bypass: Lilith Refills Seals
+                            if (_activeTutorial != null && _activeTutorial.name.Contains("Level2") && step.StepName == "Boss Bypasses!")
                             {
-                                if (_showDebugLogs) Debug.Log($"[tutorial] Dialogue completed for step: {step.StepName}");
+                                if (_currencyManager != null)
+                                {
+                                    _currencyManager.SetMaxSeals(99);
+                                    _currencyManager.SetSeals(99);
+                                    if (_showDebugLogs) Debug.Log("[tutorial] Lilith Bonus Applied: Seals set to 99.");
+                                }
+                                if (_gameManager != null)
+                                {
+                                    _gameManager.PreventDeathForTutorial = true;
+                                    if (_showDebugLogs) Debug.Log("[tutorial] Player invincibility enabled for boss encounter.");
+                                }
+                            }
+
+                            bool dialogueDone = false;
+                            if (step.Dialogue != null)
+                            {
+                                _dialogueManager.StartDialogue(step.Dialogue, () => 
+                                {
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Dialogue completed for step: {step.StepName}");
+                                    dialogueDone = true;
+                                });
+                            }
+                            else
+                            {
+                                if (_showDebugLogs) Debug.LogWarning($"[tutorial] DialogueOnly step '{step.StepName}' has no Dialogue data. Skipping dialogue.");
                                 dialogueDone = true;
-                            });
-                        }
-                        else
-                        {
-                            if (_showDebugLogs) Debug.LogWarning($"[tutorial] DialogueOnly step '{step.StepName}' has no Dialogue data. Skipping dialogue.");
-                            dialogueDone = true;
-                        }
+                            }
 
-                        yield return new WaitUntil(() => dialogueDone);
-                        
-                        // Hide the hand when dialogue is done so it doesn't linger
-                        _handUI.Hide();
+                            // Refresh highlight after starting dialogue so IsDialogueActive is true
+                            HandleUIHighlight(step);
+
+                            yield return new WaitUntil(() => dialogueDone);
+                            
+                            _handUI.Hide();
+                        }
                         break;
 
                     case TutorialStepType.HighlightUI:
                         // TRIGGER: Highlights a specific UI element and optionally shows dialogue.
-                        if (step.StopTime) _gameManager.SetSpeed(0);
-                        HandleUIHighlight(step);
-                        bool uiDialogueDone = false;
-                        if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                         {
-                            _dialogueManager.StartDialogue(step.Dialogue, () => 
+                            HandleUIHighlight(step);
+                            bool uiDialogueDone = false;
+                            if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                             {
-                                if (_showDebugLogs) Debug.Log($"[tutorial] UI Highlight Dialogue completed for step: {step.StepName}");
-                                uiDialogueDone = true;
-                            });
-                            yield return new WaitUntil(() => uiDialogueDone);
+                                _dialogueManager.StartDialogue(step.Dialogue, () => 
+                                {
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] UI Highlight Dialogue completed for step: {step.StepName}");
+                                    uiDialogueDone = true;
+                                });
+                                yield return new WaitUntil(() => uiDialogueDone);
+                            }
+                            else
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] No dialogue for HighlightUI step: {step.StepName}, moving on.");
+                            }
+                            _handUI.Hide();
                         }
-                        else
-                        {
-                            if (_showDebugLogs) Debug.Log($"[tutorial] No dialogue for HighlightUI step: {step.StepName}, moving on.");
-                        }
-                        _handUI.Hide(); 
                         break;
 
                     case TutorialStepType.HighlightTile:
                         // TRIGGER: Highlights one or more world tiles and optionally shows dialogue.
-                        if (step.StopTime) _gameManager.SetSpeed(0);
-                        HandleUIHighlight(step);
-                        if (step.TargetTiles != null)
                         {
-                            foreach (var wt in step.TargetTiles) HighlightTile(wt.Coordinate);
+                            HandleUIHighlight(step);
+                            if (step.TargetTiles != null)
+                            {
+                                foreach (var wt in step.TargetTiles) HighlightTile(wt.Coordinate);
+                            }
+                            
+                            bool tileDialogueDone = false;
+                            _dialogueManager.StartDialogue(step.Dialogue, () => 
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Tile Highlight Dialogue completed for step: {step.StepName}");
+                                tileDialogueDone = true;
+                            });
+                            yield return new WaitUntil(() => tileDialogueDone);
+                            _handUI.Hide();
+                            ClearAllTileHighlights();
                         }
-                        
-                        bool tileDialogueDone = false;
-                        _dialogueManager.StartDialogue(step.Dialogue, () => 
-                        {
-                            if (_showDebugLogs) Debug.Log($"[tutorial] Tile Highlight Dialogue completed for step: {step.StepName}");
-                            tileDialogueDone = true;
-                        });
-                        yield return new WaitUntil(() => tileDialogueDone);
-                        _handUI.Hide();
-                        ClearAllTileHighlights();
                         break;
 
                     case TutorialStepType.WaitForAction:
                         // TRIGGER: Waits for a specific ActionKey (e.g., 'UnitPlaced', 'SkillUsed') to be triggered by the game.
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
-                        if (step.StopTime) _gameManager.SetSpeed(0); 
-
-                        if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                         {
-                            if (step.UseBlocker)
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
+
+                            if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                             {
-                                _uiBlocker.ShowBlockerWithDetailedTargets(null, null);
-                                _handUI.Hide();
+                                bool actionDialogueDone = false;
+                                _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
+                                
+                                if (step.UseBlocker)
+                                {
+                                    HandleUIHighlight(step);
+                                }
+                                
+                                yield return new WaitUntil(() => actionDialogueDone);
+                            }
+
+                            HandleUIHighlight(step);
+                            
+                            _waitingForAction = true;
+                            _waitingActionKey = step.ActionKey;
+
+                            if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)
+                            {
+                                _unitInspectorUI.IsLocked = true;
+                            }
+
+                            // Ensure the player has exactly enough seals to cast the skill in this step.
+                            // We look up the actual SealCost from the loaded rite instead of using
+                            // hardcoded values, so this works for both male and female rites.
+                            if (_currencyManager != null && step.ActionKey == "SkillUsed" &&
+                                step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
+                            {
+                                int requiredCost = GetRiteSealCostFromButtonName(step.TargetUI.Name);
+                                if (requiredCost > 0 && _currencyManager.CurrentSeals < requiredCost)
+                                {
+                                    _currencyManager.SetSeals(requiredCost);
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Set seals to {requiredCost} for step '{step.StepName}' (rite: {step.TargetUI.Name})");
+                                }
+                            }
+
+                            // Auto-skip "Open Rite Menu" if it's already open
+                            if (step.ActionKey == "RiteMenuOpened")
+                            {
+                                var skillPanel = FindObjectOfType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                                if (skillPanel != null && skillPanel.IsVisible)
+                                {
+                                    if (_showDebugLogs) Debug.Log("[tutorial] Rite Menu already open, auto-completing step.");
+                                    _triggeredActionsBuffer.Add("RiteMenuOpened");
+                                }
+                            }
+
+                            // If executing the ultimate on boss, remove death prevention
+                            if (step.StepName == "Execute the Ultimate")
+                            {
+                                foreach (var boss in EnemyUnit.ActiveEnemies)
+                                {
+                                    if (boss != null && boss.PreventDeathForTutorial) boss.PreventDeathForTutorial = false;
+                                }
+                            }
+
+                            if (_triggeredActionsBuffer.Contains(step.ActionKey))
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer, proceeding.");
+                                _waitingForAction = false; 
+                                _triggeredActionsBuffer.Remove(step.ActionKey);
+                            }
+                            else
+                            {
+                                yield return new WaitUntil(() => !_waitingForAction);
+                                _triggeredActionsBuffer.Remove(step.ActionKey); 
                             }
                             
-                            bool actionDialogueDone = false;
-                            _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
-                            yield return new WaitUntil(() => actionDialogueDone);
+                            if (_unitInspectorUI != null) _unitInspectorUI.IsLocked = false;
+                            _handUI.Hide(); 
+                            ClearAllTileHighlights();
+                            
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} received.");
                         }
-
-                        HandleUIHighlight(step);
-                        
-                        _waitingForAction = true;
-                        _waitingActionKey = step.ActionKey;
-
-                        if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)
-                        {
-                            _unitInspectorUI.IsLocked = true;
-                        }
-
-                        // Ensure the player has exactly enough seals to cast the skill in this step.
-                        // We look up the actual SealCost from the loaded rite instead of using
-                        // hardcoded values, so this works for both male and female rites.
-                        if (_currencyManager != null && step.ActionKey == "SkillUsed" &&
-                            step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
-                        {
-                            int requiredCost = GetRiteSealCostFromButtonName(step.TargetUI.Name);
-                            if (requiredCost > 0 && _currencyManager.CurrentSeals < requiredCost)
-                            {
-                                _currencyManager.SetSeals(requiredCost);
-                                if (_showDebugLogs) Debug.Log($"[tutorial] Set seals to {requiredCost} for step '{step.StepName}' (rite: {step.TargetUI.Name})");
-                            }
-                        }
-
-                        // Auto-skip "Open Rite Menu" if it's already open
-                        if (step.ActionKey == "RiteMenuOpened")
-                        {
-                            var skillPanel = FindObjectOfType<MaouSamaTD.UI.Skills.SkillPanelUI>();
-                            if (skillPanel != null && skillPanel.IsVisible)
-                            {
-                                if (_showDebugLogs) Debug.Log("[tutorial] Rite Menu already open, auto-completing step.");
-                                _triggeredActionsBuffer.Add("RiteMenuOpened");
-                            }
-                        }
-
-                        // If executing the ultimate on boss, remove death prevention
-                        if (step.StepName == "Execute the Ultimate")
-                        {
-                            foreach (var boss in EnemyUnit.ActiveEnemies)
-                            {
-                                if (boss != null && boss.PreventDeathForTutorial) boss.PreventDeathForTutorial = false;
-                            }
-                        }
-
-                        if (_triggeredActionsBuffer.Contains(step.ActionKey))
-                        {
-                            if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer, proceeding.");
-                            _waitingForAction = false; 
-                            _triggeredActionsBuffer.Remove(step.ActionKey);
-                        }
-                        else
-                        {
-                            yield return new WaitUntil(() => !_waitingForAction);
-                            _triggeredActionsBuffer.Remove(step.ActionKey); 
-                        }
-                        
-                        if (_unitInspectorUI != null) _unitInspectorUI.IsLocked = false;
-                        _handUI.Hide(); 
-                        ClearAllTileHighlights();
-                        
-                        if (step.ResumeTime) _gameManager.SetSpeed(1); 
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} received.");
                         break;
 
                     case TutorialStepType.WaitTime:
                         // TRIGGER: A simple time delay in realtime seconds.
-                        HandleUIHighlight(step);
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for duration: {step.Duration}s");
-                        yield return new WaitForSecondsRealtime(step.Duration);
+                        {
+                            HandleUIHighlight(step);
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for duration: {step.Duration}s");
+                            // Ensure time flows for waiting, otherwise we hang
+                            _gameManager.SetSpeed(1);
+                            yield return new WaitForSeconds(step.Duration);
+                        }
                         break;
 
                     case TutorialStepType.StartWave:
                         // TRIGGER: Manually starts a specific wave index via EnemyManager.
-                        HandleUIHighlight(step);
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Starting Wave Index: {step.WaveIndex}");
-                        if (_enemyManager != null)
                         {
-                            _enemyManager.StartSpecificWave(step.WaveIndex);
+                            HandleUIHighlight(step);
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Starting Wave Index: {step.WaveIndex}");
+                            if (_enemyManager != null)
+                            {
+                                _enemyManager.StartSpecificWave(step.WaveIndex);
+                            }
                         }
                         break;
 
                     case TutorialStepType.WaitForWave:
                         // TRIGGER: Waits until all enemies in the current wave are defeated and spawning is finished.
-                        HandleUIHighlight(step);
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for Wave completion (Index: {step.WaveIndex})");
-                        if (step.ResumeTime) _gameManager.SetSpeed(1); 
-                        else _gameManager.SetSpeed(0); 
-                        yield return new WaitUntil(() => _enemyManager != null && _enemyManager.IsWaveCleared(step.WaveIndex));
-                        if (_showDebugLogs) Debug.Log("[tutorial] Wave cleared.");
+                        {
+                            HandleUIHighlight(step);
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for Wave completion (Index: {step.WaveIndex})");
+                            if (step.ResumeTime) _gameManager.SetSpeed(1); 
+                            else _gameManager.SetSpeed(0); 
+                            yield return new WaitUntil(() => _enemyManager != null && _enemyManager.IsWaveCleared(step.WaveIndex));
+                            if (_showDebugLogs) Debug.Log("[tutorial] Wave cleared.");
+                        }
                         break;
 
                     case TutorialStepType.WaitForCondition:
                         // TRIGGER: Waits for a dynamic game state (e.g., 'BossHealth', 'EnemiesInRange') via CheckCondition().
-                        HandleUIHighlight(step);
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey} (Value: {step.RequiredCount})");
-                        if (step.ResumeTime) _gameManager.SetSpeed(1); 
-                        else _gameManager.SetSpeed(0); 
-                        yield return new WaitUntil(() => CheckCondition(step));
-                        // REMOVED: _gameManager.SetSpeed(0); - Next step should decide if it wants to pause.
+                        {
+                            HandleUIHighlight(step);
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey}");
+                            
+                            // Ensure time flows if we are waiting for a dynamic condition, unless explicitly stopped
+                            if (!step.StopTime && _gameManager.CurrentSpeed < 0.1f)
+                            {
+                                _gameManager.SetSpeed(1);
+                            }
+
+                            yield return new WaitUntil(() => CheckCondition(step));
+                        }
                         break;
 
                     case TutorialStepType.CustomCommand:
@@ -638,9 +678,11 @@ namespace MaouSamaTD.Managers
                                     if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand SetMaxAuthoritySeals: BattleCurrencyManager is NULL!");
                                 }
                             }
-                            break;
                         }
+                        break;
                 }
+                
+                if (step.ResumeTime) _gameManager.SetSpeed(1);
 
                 if (_showDebugLogs) Debug.Log($"[tutorial] <<< Finished Step [{_currentStepIndex}]: {step.StepName}");
                 _currentStepIndex++;
@@ -648,6 +690,7 @@ namespace MaouSamaTD.Managers
 
             IsInTutorial = false;
             _activeTutorial = null;
+            _currentStep = null;
             _gameManager.SetSpeed(1);
             if (_interactionManager != null) _interactionManager.IsSelectionLocked = false;
             
@@ -684,7 +727,17 @@ namespace MaouSamaTD.Managers
 
             if (step.FullBlocker)
             {
-                _uiBlocker.ShowBlockerWithDetailedTargets(null, null);
+                List<UIPopupBlocker.UIHighlightData> fullHits = new List<UIPopupBlocker.UIHighlightData>();
+                // Even with a full blocker, we MUST allow clicking the dialogue box
+                if (_dialogueManager != null && _dialogueManager.DialogueUI != null && _dialogueManager.DialogueUI.IsShowingDialogue)
+                {
+                    RectTransform dialogueRT = _dialogueManager.DialogueUI.GetActivePanelRect();
+                    if (dialogueRT != null)
+                    {
+                        fullHits.Add(new UIPopupBlocker.UIHighlightData { Target = dialogueRT, Size = Vector2.one });
+                    }
+                }
+                _uiBlocker.ShowBlockerWithDetailedTargets(fullHits, null);
                 if (!step.ShowHand && !step.DragShowHand) _handUI.Hide();
                 return;
             }
@@ -801,6 +854,21 @@ namespace MaouSamaTD.Managers
                             Height = wt.Height
                         });
                     }
+                }
+            }
+            
+            // Ensure active dialogue is always clickable through the blocker
+            if (_dialogueManager != null && _dialogueManager.DialogueUI != null && _dialogueManager.DialogueUI.IsShowingDialogue)
+            {
+                RectTransform dialogueRT = _dialogueManager.DialogueUI.GetActivePanelRect();
+                if (dialogueRT != null && !uiHits.Exists(h => h.Target == dialogueRT))
+                {
+                    uiHits.Add(new UIPopupBlocker.UIHighlightData 
+                    { 
+                        Target = dialogueRT, 
+                        Size = Vector2.one,
+                        Offset = Vector2.zero
+                    });
                 }
             }
 
@@ -1026,7 +1094,7 @@ private RectTransform FindTargetRect(string name)
             if (_waitingForAction && _waitingActionKey == actionKey)
             {
                 _waitingForAction = false;
-                if (currentStep != null && currentStep.ResumeTime)
+                if (_currentStep != null && _currentStep.ResumeTime)
                 {
                     _gameManager.SetSpeed(1); 
                 }
@@ -1055,19 +1123,19 @@ private RectTransform FindTargetRect(string name)
         public List<Vector2Int> GetRequiredPlacementTiles()
         {
             List<Vector2Int> allowed = new List<Vector2Int>();
-            if (currentStep == null) return allowed;
+            if (_currentStep == null) return allowed;
 
-            if (currentStep.ActionKey == "UnitPlaced")
+            if (_currentStep.ActionKey == "UnitPlaced")
             {
-                if (currentStep.HandTargetTileOverride != Vector2Int.zero && currentStep.HandTargetTileOverride != new Vector2Int(-1, -1))
+                if (_currentStep.HandTargetTileOverride != Vector2Int.zero && _currentStep.HandTargetTileOverride != new Vector2Int(-1, -1))
                 {
-                    allowed.Add(currentStep.HandTargetTileOverride);
+                    allowed.Add(_currentStep.HandTargetTileOverride);
                 }
             }
 
-            if (currentStep.TargetTiles != null)
+            if (_currentStep.TargetTiles != null)
             {
-                foreach (var wt in currentStep.TargetTiles)
+                foreach (var wt in _currentStep.TargetTiles)
                 {
                     if (!allowed.Contains(wt.Coordinate))
                         allowed.Add(wt.Coordinate);
@@ -1175,23 +1243,35 @@ private RectTransform FindTargetRect(string name)
 
                 case "BossHealth":
                 {
-                    string bossName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "Abyssal Shade";
+                    string bossName = step.ActionKey.Contains("|") ? step.ActionKey.Split('|')[1] : "Abyssal Shade";
                     var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == bossName);
-
-                    // RequiredCount == 0 means "kill the boss" — allow death and wait for it
-                    if (step.RequiredCount == 0)
-                    {
-                        if (boss == null) return true; // Boss already dead/destroyed
-                        boss.PreventDeathForTutorial = false; // Lift immortality so the skill can kill it
-                        return boss.IsDead;
-                    }
-
-                    // RequiredCount > 0 is an HP-gate threshold — keep boss immortal until it fires
+                    
                     if (boss != null)
                     {
+                        // RequiredCount == 0 means "kill the boss" — allow death and wait for it
+                        if (step.RequiredCount == 0)
+                        {
+                            boss.PreventDeathForTutorial = false; // Lift immortality so the skill can kill it
+                            return boss.IsDead;
+                        }
+
+                        // RequiredCount > 0 is an HP-gate threshold — keep boss immortal until it fires
                         boss.PreventDeathForTutorial = true;
-                        float hpPercent = (boss.CurrentHp / boss.MaxHp) * 100f;
-                        return hpPercent <= step.RequiredCount;
+                        float healthPct = (boss.CurrentHp / boss.MaxHp) * 100f;
+                        bool met = healthPct <= step.RequiredCount;
+                        
+                        if (_showDebugLogs && Time.frameCount % 60 == 0) // Log occasionally
+                            Debug.Log($"[tutorial] Boss Health Check ({bossName}): {healthPct:F1}% <= {step.RequiredCount}% ? {met}");
+                            
+                        return met;
+                    }
+                    else
+                    {
+                        // RequiredCount == 0 and boss is gone = success
+                        if (step.RequiredCount == 0) return true;
+
+                        if (_showDebugLogs && Time.frameCount % 120 == 0)
+                            Debug.LogWarning($"[tutorial] BossHealth condition failed: Boss '{bossName}' not found in ActiveEnemies ({EnemyUnit.ActiveEnemies.Count} active)");
                     }
                     return false;
                 }
@@ -1219,31 +1299,62 @@ private RectTransform FindTargetRect(string name)
                 case "BossPassedUnit":
                 {
                     string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "Ignis";
-                    var targetUnit = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && (u.name.Contains(targetName) || (u.Data != null && u.Data.UnitName == targetName)));
-                    
-                    if (targetUnit == null) return true; // Fallback
-
                     string bossName = step.ActionKey.Contains("|") ? step.ActionKey.Split('|')[1] : "Abyssal Shade";
+                    
+                    var targetUnit = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && (u.name.Contains(targetName) || (u.Data != null && u.Data.UnitName == targetName)));
                     var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == bossName);
                     
-                    if (boss == null) return false;
-
-                    // If exit is at a smaller X than target, boss has passed if boss.x < target.x
-                    // For Level 2, we'll assume the standard direction based on Spawn vs Exit
-                    if (_gridManager != null)
+                    if (boss != null)
                     {
-                        bool exitIsLeft = _gridManager.ExitPoint.x < _gridManager.SpawnPoint.x;
-                        if (exitIsLeft)
+                        // Keep boss immortal while we wait for it to bypass — so Ignis can't kill it
+                        boss.PreventDeathForTutorial = true;
+
+                        if (targetUnit != null)
                         {
-                            return boss.transform.position.x < (targetUnit.transform.position.x - 0.5f);
+                            bool exitIsLeft = (_gridManager != null && _gridManager.exitIsLeft);
+                            bool passed = false;
+                            
+                            if (exitIsLeft)
+                            {
+                                // Path is Right to Left (X decreases)
+                                passed = boss.transform.position.x < (targetUnit.transform.position.x - 0.25f);
+                            }
+                            else
+                            {
+                                // Path is Left to Right (X increases)
+                                passed = boss.transform.position.x > (targetUnit.transform.position.x + 0.25f);
+                            }
+
+                            // Throttled position log so we can see the boss moving
+                            if (_showDebugLogs && Time.frameCount % 60 == 0)
+                                Debug.Log($"[tutorial] BossPassedUnit check: Boss.x={boss.transform.position.x:F2}, Ignis.x={targetUnit.transform.position.x:F2}, exitIsLeft={exitIsLeft}, passed={passed}");
+
+                            if (passed)
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Boss {bossName} passed {targetName}! (ExitIsLeft: {exitIsLeft})");
+                                return true;
+                            }
                         }
                         else
                         {
-                            return boss.transform.position.x > (targetUnit.transform.position.x + 0.5f);
+                            // Fallback if Ignis is not found
+                            bool exitIsLeft = (_gridManager != null && _gridManager.exitIsLeft);
+                            bool passed = exitIsLeft ? (boss.transform.position.x < -2.25f) : (boss.transform.position.x > 2.25f);
+                            if (passed)
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Boss {bossName} passed threshold (fallback)! (ExitIsLeft: {exitIsLeft})");
+                                return true;
+                            }
                         }
                     }
                     
-                    return Vector3.Distance(boss.transform.position, targetUnit.transform.position) < 2f; // Fallback
+                    if (_showDebugLogs && Time.frameCount % 120 == 0)
+                    {
+                        if (targetUnit == null) Debug.LogWarning($"[tutorial] BossPassedUnit: Target unit '{targetName}' not found!");
+                        if (boss == null) Debug.LogWarning($"[tutorial] BossPassedUnit: Boss '{bossName}' not found!");
+                    }
+                    
+                    return false;
                 }
 
                 default:

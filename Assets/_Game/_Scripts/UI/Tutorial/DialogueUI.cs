@@ -14,6 +14,22 @@ namespace MaouSamaTD.UI.Tutorial
 {
     public class DialogueUI : MonoBehaviour
     {
+        public bool IsShowingDialogue => (_fullScreenPanel != null && _fullScreenPanel.activeInHierarchy) || (_miniTopPanel != null && _miniTopPanel.activeInHierarchy);
+
+        public RectTransform GetPanelRect(DialogueStyle style)
+        {
+            if (style == DialogueStyle.FullScreen && _fullScreenPanel != null) return _fullScreenPanel.GetComponent<RectTransform>();
+            if (style == DialogueStyle.MiniTop && _miniTopPanel != null) return _miniTopPanel.GetComponent<RectTransform>();
+            return null;
+        }
+
+        public RectTransform GetActivePanelRect()
+        {
+            if (_fullScreenPanel != null && _fullScreenPanel.activeInHierarchy) return _fullScreenPanel.GetComponent<RectTransform>();
+            if (_miniTopPanel != null && _miniTopPanel.activeInHierarchy) return _miniTopPanel.GetComponent<RectTransform>();
+            return null;
+        }
+
         [Inject] private UIPopupBlocker _uiBlocker;
         [Inject] private GameManager _gameManager;
         [Inject] private TutorialManager _tutorialManager;

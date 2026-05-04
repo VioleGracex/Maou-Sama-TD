@@ -25,7 +25,7 @@ MonoBehaviour:
     Text: My Sovereign! That beast is bypassing your defenses! I have whispered to
       the seals to release their full power... Your Authority Seals are now restored
       to their absolute limit of 99!
-    Background: 0
+    Background: 1
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
@@ -36,5 +36,5 @@ MonoBehaviour:
     Focus: 0
     Text: Use your most powerful Sovereign Rite now. Show this 'Boss' the true meaning
       of your divine might!
-    Background: 0
+    Background: 1
     EventID: 

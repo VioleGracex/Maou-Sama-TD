@@ -119,6 +119,11 @@ namespace MaouSamaTD.Tutorial
         [Tooltip("Automatically resume game time (scale 1) after this step completes")]
         public bool ResumeTime = true;
 
+        [Header("Developer Notes")]
+        [TextArea(3, 10)]
+        [Tooltip("Internal notes about this step's purpose, triggers, or logic.")]
+        public string Comment;
+
 
         #region NaughtyAttributes Helpers
         private bool HasUITarget => Type == TutorialStepType.HighlightUI || Type == TutorialStepType.WaitForAction || Type == TutorialStepType.WaitForCondition;

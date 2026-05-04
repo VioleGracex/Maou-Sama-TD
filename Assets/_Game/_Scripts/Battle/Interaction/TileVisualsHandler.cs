@@ -99,22 +99,7 @@ namespace MaouSamaTD.Managers.Interaction
                 }
                 else if (isSkillActive && hoverTile != null)
                 {
-                    float dist = Vector2.Distance(
-                        new Vector2(tile.Coordinate.x, tile.Coordinate.y), 
-                        new Vector2(hoverTile.Coordinate.x, hoverTile.Coordinate.y));
-                    
-                    bool inRadius = dist <= selectedSkill.Radius;
-
-                    if (selectedSkill.Radius <= 0)
-                    {
-                        if (tile == hoverTile)
-                        {
-                            shouldHighlight = true;
-                            highlightColor = selectedSkill.BaseVisuals.RangeIndicatorColor;
-                            useFullFill = UseFullFillSkills;
-                        }
-                    }
-                    else if (inRadius)
+                    if (selectedSkill.IsInShape(hoverTile.Coordinate, tile.Coordinate))
                     {
                         shouldHighlight = true;
                         highlightColor = selectedSkill.BaseVisuals.RangeIndicatorColor;

@@ -30,7 +30,7 @@ namespace MaouSamaTD.UI
         [Header("Overlay Settings")]
         [SerializeField] private Material overlayMaterial;
         [SerializeField] private Color overlayColor = new Color(0, 0, 0, 0.85f);
-        [SerializeField] private int maskSize = 256;
+        [SerializeField] private int maskSize = 1024;
         [SerializeField] private float transitionDuration = 0.1f;
 
         private List<UIHighlightData> uiHighlights = new List<UIHighlightData>();
@@ -56,7 +56,7 @@ namespace MaouSamaTD.UI
             if (canvas != null)
             {
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvas.sortingOrder = 999; 
+                canvas.sortingOrder = 50; // Below game UI buttons (typically ~100) but above game world
             }
 
             gameObject.SetActive(true);
@@ -143,12 +143,17 @@ namespace MaouSamaTD.UI
 
         public bool IsPointerInHole(Vector2 screenPoint)
         {
+            return IsPointerInUIHole(screenPoint) || IsPointerInWorldHole(screenPoint);
+        }
+
+        public bool IsPointerInUIHole(Vector2 screenPoint)
+        {
             if (!this.gameObject.activeInHierarchy || !isActive) return false;
-            
+
             foreach (var h in uiHighlights)
             {
                 if (h.Target == null) continue;
-                
+
                 Camera targetCam = GetTargetCamera(h.Target);
                 Vector3[] corners = new Vector3[4];
                 h.Target.GetWorldCorners(corners);
@@ -160,49 +165,52 @@ namespace MaouSamaTD.UI
                 Vector2 sMin = RectTransformUtility.WorldToScreenPoint(targetCam, center + new Vector3(size.x * h.Offset.x, size.y * h.Offset.y, 0) - size * 0.5f);
                 Vector2 sMax = RectTransformUtility.WorldToScreenPoint(targetCam, center + new Vector3(size.x * h.Offset.x, size.y * h.Offset.y, 0) + size * 0.5f);
 
-                if (screenPoint.x >= Mathf.Min(sMin.x, sMax.x) && screenPoint.x <= Mathf.Max(sMin.x, sMax.x) && 
+                if (screenPoint.x >= Mathf.Min(sMin.x, sMax.x) && screenPoint.x <= Mathf.Max(sMin.x, sMax.x) &&
                     screenPoint.y >= Mathf.Min(sMin.y, sMax.y) && screenPoint.y <= Mathf.Max(sMin.y, sMax.y))
                 {
                     return true;
                 }
             }
+            return false;
+        }
 
-            if (isWorldHighlight)
+        public bool IsPointerInWorldHole(Vector2 screenPoint)
+        {
+            if (!this.gameObject.activeInHierarchy || !isActive || !isWorldHighlight) return false;
+
+            Camera mainCam = Camera.main;
+            if (mainCam != null)
             {
-                Camera mainCam = Camera.main;
-                if (mainCam != null)
+                foreach (var h in worldHighlights)
                 {
-                    foreach (var h in worldHighlights)
+                    float hsX = h.Size.x * 0.5f;
+                    float hsZ = h.Size.y * 0.5f;
+                    float vhs = h.Height * 0.5f;
+
+                    Vector3[] corners = new Vector3[]
                     {
-                        float hsX = h.Size.x * 0.5f;
-                        float hsZ = h.Size.y * 0.5f;
-                        float vhs = h.Height * 0.5f;
+                        h.Position + new Vector3(-hsX, -vhs, -hsZ),
+                        h.Position + new Vector3(hsX, -vhs, -hsZ),
+                        h.Position + new Vector3(hsX, -vhs, hsZ),
+                        h.Position + new Vector3(-hsX, -vhs, hsZ),
+                        h.Position + new Vector3(-hsX, vhs, -hsZ),
+                        h.Position + new Vector3(hsX, vhs, -hsZ),
+                        h.Position + new Vector3(hsX, vhs, hsZ),
+                        h.Position + new Vector3(-hsX, vhs, hsZ)
+                    };
 
-                        Vector3[] corners = new Vector3[]
-                        {
-                            h.Position + new Vector3(-hsX, -vhs, -hsZ),
-                            h.Position + new Vector3(hsX, -vhs, -hsZ),
-                            h.Position + new Vector3(hsX, -vhs, hsZ),
-                            h.Position + new Vector3(-hsX, -vhs, hsZ),
-                            h.Position + new Vector3(-hsX, vhs, -hsZ),
-                            h.Position + new Vector3(hsX, vhs, -hsZ),
-                            h.Position + new Vector3(hsX, vhs, hsZ),
-                            h.Position + new Vector3(-hsX, vhs, hsZ)
-                        };
-
-                        float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
-                        foreach (var corner in corners)
-                        {
-                            Vector2 sPos = mainCam.WorldToScreenPoint(corner);
-                            minX = Mathf.Min(minX, sPos.x);
-                            minY = Mathf.Min(minY, sPos.y);
-                            maxX = Mathf.Max(maxX, sPos.x);
-                            maxY = Mathf.Max(maxY, sPos.y);
-                        }
-
-                        if (screenPoint.x >= minX && screenPoint.x <= maxX && screenPoint.y >= minY && screenPoint.y <= maxY)
-                            return true;
+                    float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
+                    foreach (var corner in corners)
+                    {
+                        Vector2 sPos = mainCam.WorldToScreenPoint(corner);
+                        minX = Mathf.Min(minX, sPos.x);
+                        minY = Mathf.Min(minY, sPos.y);
+                        maxX = Mathf.Max(maxX, sPos.x);
+                        maxY = Mathf.Max(maxY, sPos.y);
                     }
+
+                    if (screenPoint.x >= minX && screenPoint.x <= maxX && screenPoint.y >= minY && screenPoint.y <= maxY)
+                        return true;
                 }
             }
 
@@ -310,8 +318,8 @@ namespace MaouSamaTD.UI
         {
             if (overlayImage == null || overlayImage.material == null) return;
             
-            // Only update if dirty OR world highlights are active (as they move)
-            if (!_isDirty && !isWorldHighlight) return;
+            // Update if dirty OR world highlights are active OR we have UI highlights (as they might move)
+            if (!_isDirty && !isWorldHighlight && uiHighlights.Count == 0) return;
 
             if (maskTex == null || maskTex.width != maskSize)
             {
@@ -357,22 +365,20 @@ namespace MaouSamaTD.UI
             scaledCorners[0] = center + new Vector3(-scaledSize.x * 0.5f, -scaledSize.y * 0.5f, 0);
             scaledCorners[2] = center + new Vector3(scaledSize.x * 0.5f, scaledSize.y * 0.5f, 0);
 
-            Vector2 localBL, localTR;
             Camera targetCam = GetTargetCamera(rt);
             Vector3 relativeOffset = new Vector3(size.x * data.Offset.x, size.y * data.Offset.y, 0);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[0] + relativeOffset), null, out localBL);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[2] + relativeOffset), null, out localTR);
 
-            Rect overlayPixelRect = overlayRect.rect;
-            float minX = Mathf.InverseLerp(overlayPixelRect.xMin, overlayPixelRect.xMax, localBL.x);
-            float minY = Mathf.InverseLerp(overlayPixelRect.yMin, overlayPixelRect.yMax, localBL.y);
-            float maxX = Mathf.InverseLerp(overlayPixelRect.xMin, overlayPixelRect.xMax, localTR.x);
-            float maxY = Mathf.InverseLerp(overlayPixelRect.yMin, overlayPixelRect.yMax, localTR.y);
+            // Map to screen pixel coordinates
+            Vector2 screenBL = RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[0] + relativeOffset);
+            Vector2 screenTR = RectTransformUtility.WorldToScreenPoint(targetCam, scaledCorners[2] + relativeOffset);
 
-            int pxMinX = Mathf.Clamp(Mathf.RoundToInt(minX * maskSize), 0, maskSize);
-            int pxMinY = Mathf.Clamp(Mathf.RoundToInt(minY * maskSize), 0, maskSize);
-            int pxMaxX = Mathf.Clamp(Mathf.RoundToInt(maxX * maskSize), 0, maskSize);
-            int pxMaxY = Mathf.Clamp(Mathf.RoundToInt(maxY * maskSize), 0, maskSize);
+            // Map screen pixels → mask pixels directly (correct aspect ratio)
+            float sw = Screen.width;
+            float sh = Screen.height;
+            int pxMinX = Mathf.Clamp(Mathf.RoundToInt((screenBL.x / sw) * maskSize), 0, maskSize);
+            int pxMinY = Mathf.Clamp(Mathf.RoundToInt((screenBL.y / sh) * maskSize), 0, maskSize);
+            int pxMaxX = Mathf.Clamp(Mathf.RoundToInt((screenTR.x / sw) * maskSize), 0, maskSize);
+            int pxMaxY = Mathf.Clamp(Mathf.RoundToInt((screenTR.y / sh) * maskSize), 0, maskSize);
 
             for (int y = pxMinY; y < pxMaxY; y++)
             {

@@ -41,7 +41,7 @@ namespace MaouSamaTD.UI
             if (eventData.clickCount >= 2)
             {
                 // Ensure any active drag visuals are cleared if they haven't been
-                _interactionManager?.EndDrag(false);
+                _interactionManager?.EndDrag(false, eventData.position);
 
                 // Toggle placement mode
                 bool isCurrentlySelected = (_interactionManager != null && _interactionManager.SelectedUnitData == _data);
@@ -82,12 +82,12 @@ namespace MaouSamaTD.UI
              if (releasedOnButton)
              {
                  // Cancel the Drag visuals
-                 if (_interactionManager != null) _interactionManager.EndDrag(false);
+                 if (_interactionManager != null) _interactionManager.EndDrag(false, eventData.position);
              }
              else
              {
                  // Authentic Drag -> Place
-                 if (_interactionManager != null) _interactionManager.EndDrag(true);
+                 if (_interactionManager != null) _interactionManager.EndDrag(true, eventData.position);
              }
         }
     }

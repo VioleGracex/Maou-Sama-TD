@@ -191,7 +191,7 @@ namespace MaouSamaTD.Levels.Editor
             GUILayout.BeginVertical("helpbox");
             EditorGUILayout.LabelField("Enemy Waves", headerStyle);
             EditorGUI.indentLevel++;
-            DrawProperty("Waves", "Wave List");
+            DrawWavesProperty();
             EditorGUILayout.Space(10);
             DrawProperty("StarConditions", "Star Clear Conditions");
             EditorGUI.indentLevel--;
@@ -218,6 +218,33 @@ namespace MaouSamaTD.Levels.Editor
             
             EditorGUI.indentLevel--;
             GUILayout.EndVertical();
+        }
+
+        private void DrawWavesProperty()
+        {
+            SerializedProperty wavesProp = serializedObject.FindProperty("Waves");
+            if (wavesProp == null) return;
+
+            EditorGUILayout.LabelField("Wave List", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            
+            // Header for array size
+            int newSize = EditorGUILayout.IntField("Wave Count", wavesProp.arraySize);
+            if (newSize != wavesProp.arraySize) wavesProp.arraySize = newSize;
+
+            for (int i = 0; i < wavesProp.arraySize; i++)
+            {
+                SerializedProperty waveProp = wavesProp.GetArrayElementAtIndex(i);
+                
+                // Construct a nice label: "Wave 1: [Message]"
+                string message = waveProp.FindPropertyRelative("WaveMessage").stringValue;
+                string label = $"Wave {i + 1}";
+                if (!string.IsNullOrEmpty(message)) label += $" ({message})";
+                
+                EditorGUILayout.PropertyField(waveProp, new GUIContent(label), true);
+            }
+            
+            EditorGUI.indentLevel--;
         }
 
         private void DrawProperty(string propName, string customLabel = null, string tooltip = null)

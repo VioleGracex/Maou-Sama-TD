@@ -10,7 +10,6 @@ namespace MaouSamaTD.Tutorial
     public class DialogueData : ScriptableObject
     {
         public DialogueStyle Style = DialogueStyle.FullScreen;
-        public DialogueBackground Background = DialogueBackground.None;
         public float CharactersPerSecond = 30f;
         public List<DialogueLine> Lines;
     }
@@ -34,6 +33,8 @@ namespace MaouSamaTD.Tutorial
         [TextArea(3, 10)]
         public string Text;
         
+        public DialogueBackground Background;
+
         // Optional: Trigger event or sound
         public string EventID;
     }

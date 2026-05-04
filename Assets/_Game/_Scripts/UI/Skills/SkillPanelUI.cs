@@ -27,6 +27,7 @@ namespace MaouSamaTD.UI.Skills
         
         private List<SkillButtonUI> _spawnedButtons = new List<SkillButtonUI>();
         private bool _isVisible = false; // Default: Docked/Hidden
+        public bool IsVisible => _isVisible;
         private Vector2 _visiblePos;
 
         private void OnEnable()
@@ -146,6 +147,10 @@ namespace MaouSamaTD.UI.Skills
                     txt.text = _isVisible ? "Hide" : "Show"; 
                 }
             }
+
+            // Always hide the tutorial hand when the panel state changes —
+            // the TutorialManager will re-show it on the next highlight refresh.
+            _tutorialManager?.HideHand();
 
             if (_isVisible)
             {

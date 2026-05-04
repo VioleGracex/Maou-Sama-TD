@@ -14,7 +14,14 @@ namespace MaouSamaTD.UI.Skills
         [SerializeField] private Image _cooldownOverlay;
         [SerializeField] private TextMeshProUGUI _costText;
         [SerializeField] private TextMeshProUGUI _skillNameText;
+        [SerializeField] private Image _sealsFillBar;
+        [SerializeField] private TextMeshProUGUI _cooldownText;
         [SerializeField] private GameObject _lockOverlay;
+        [SerializeField] private GameObject _toggledGlow;
+        
+        private Material _glowMat;
+        private static readonly int CustomTimeProp = Shader.PropertyToID("_CustomTime");
+        private static readonly int RandomOffsetProp = Shader.PropertyToID("_RandomOffset");
 
         private SovereignRiteData _data;
         private SkillManager _manager;
@@ -30,9 +37,25 @@ namespace MaouSamaTD.UI.Skills
 
             if (_data != null)
             {
-                if (_iconImage != null) _iconImage.sprite = _data.Icon;
+                if (_iconImage != null)
+                {
+                    _iconImage.sprite = _data.Icon;
+                    _iconImage.gameObject.SetActive(_data.Icon != null);
+                }
                 if (_costText != null) _costText.text = _data.SealCost.ToString();
                 if (_skillNameText != null) _skillNameText.text = _data.SkillName;
+
+                if (_toggledGlow != null)
+                {
+                    var img = _toggledGlow.GetComponent<Image>();
+                    if (img != null)
+                    {
+                        // Clone the material so each button can have a unique random offset
+                        img.material = new Material(img.material);
+                        _glowMat = img.material;
+                        _glowMat.SetFloat(RandomOffsetProp, Random.value * 10f);
+                    }
+                }
             }
         }
 
@@ -40,35 +63,71 @@ namespace MaouSamaTD.UI.Skills
         {
             if (_data == null || _manager == null) return;
 
-            // 1. Cooldown & Cost Overlay Logic
-            float cooldownProgress = _manager.GetCooldownProgress(_data);
-            float fillAmount = 0f;
-
-            if (cooldownProgress > 0)
+            // Shader Animation (Unscaled)
+            if (_toggledGlow != null && _toggledGlow.activeSelf && _glowMat != null)
             {
-                fillAmount = cooldownProgress;
-                if (_lockOverlay != null) _lockOverlay.SetActive(true);
+                _glowMat.SetFloat(CustomTimeProp, Time.unscaledTime);
             }
-            else
-            {
-                // Ready / Energy Phase
-                int currentSeals = _currencyManager != null ? _currencyManager.CurrentSeals : 999;
-                
-                if (currentSeals >= _data.SealCost)
-                    fillAmount = 1f;
-                else if (_data.SealCost > 0)
-                    fillAmount = (float)currentSeals / _data.SealCost;
-                else
-                    fillAmount = 1f;
 
-                // Lock only if not fully affordable
-                bool canAfford = currentSeals >= _data.SealCost;
-                if (_lockOverlay != null) _lockOverlay.SetActive(!canAfford); 
-            }
+            // 1. Cooldown Logic
+            float cooldownRemaining = _manager.GetRemainingCooldown(_data);
+            bool isOnCooldown = cooldownRemaining > 0;
 
             if (_cooldownOverlay != null)
             {
-                _cooldownOverlay.fillAmount = fillAmount;
+                float cooldownProgress = _manager.GetCooldownProgress(_data);
+                _cooldownOverlay.fillAmount = isOnCooldown ? cooldownProgress : 0f;
+            }
+
+            if (_cooldownText != null)
+            {
+                _cooldownText.gameObject.SetActive(isOnCooldown);
+                if (isOnCooldown)
+                {
+                    _cooldownText.text = cooldownRemaining.ToString("F1");
+                }
+            }
+
+            // 2. Seal Cost Logic
+            int currentSeals = _currencyManager != null ? _currencyManager.CurrentSeals : 0;
+            float sealsProgress = 0f;
+            if (_data.SealCost > 0)
+            {
+                sealsProgress = Mathf.Clamp01((float)currentSeals / _data.SealCost);
+            }
+            else
+            {
+                sealsProgress = 1f;
+            }
+
+            if (_sealsFillBar != null)
+            {
+                _sealsFillBar.fillAmount = sealsProgress;
+                
+                // Debug log to catch the 0 issue if it persists
+                if (sealsProgress <= 0 && currentSeals > 0) 
+                    Debug.LogWarning($"[SkillButtonUI] {_data.SkillName} sealsProgress is 0 but currentSeals={currentSeals}. Cost={_data.SealCost}");
+            }
+
+            // 3. Lock Overlay Logic
+            bool canAfford = currentSeals >= _data.SealCost;
+            bool isReady = !isOnCooldown && canAfford;
+            
+            bool permanentlyLocked = _currencyManager != null && _currencyManager.MaxSeals < _data.SealCost;
+
+            if (_lockOverlay != null)
+            {
+                _lockOverlay.SetActive(permanentlyLocked);
+            }
+
+            // 4. Toggle Glow Logic
+            if (_toggledGlow != null && _interactionManager != null)
+            {
+                _toggledGlow.SetActive(_interactionManager.SelectedSkill == _data && _interactionManager.IsSkillTargeting);
+                if (_toggledGlow.activeSelf && _glowMat != null)
+                {
+                    _glowMat.SetFloat(CustomTimeProp, Time.unscaledTime);
+                }
             }
         }
 

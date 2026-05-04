@@ -1315,7 +1315,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 323961795}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
@@ -1367,7 +1367,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -2519,7 +2519,8 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_UseReflectionProbes: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 1000
@@ -4127,6 +4128,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -5195,7 +5197,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1244723099}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
@@ -5247,7 +5249,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -6019,6 +6021,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -6105,6 +6108,8 @@ MonoBehaviour:
   _speedText: {fileID: 1192379712572889270}
   _hpFillImage: {fileID: 2179147595650530330}
   _hpText: {fileID: 3999868858819443050}
+  _waveText: {fileID: 0}
+  _sealsText: {fileID: 0}
   _pauseButton: {fileID: 4071333098710233992}
   _pauseOverlay: {fileID: 2094361325795564905}
   _resumeButton: {fileID: 8333727143930631319}
@@ -6740,8 +6745,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1553286235}
-  - {fileID: 1815181707}
   - {fileID: 1461024051}
+  - {fileID: 1815181707}
   - {fileID: 2008397499}
   m_Father: {fileID: 601225656}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7184,12 +7189,12 @@ GameObject:
   - component: {fileID: 1815181708}
   - component: {fileID: 1815181710}
   m_Layer: 0
-  m_Name: FullScreen_BG_Dialogue
+  m_Name: FullScreen_Dim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1815181707
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7222,7 +7227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.69803923}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8311,6 +8316,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044733996}
   m_CullTransparentMesh: 1
+--- !u!1 &2069734616
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2069734617}
+  m_Layer: 0
+  m_Name: TutorialAutoPlayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2069734617
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069734616}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!21 &2074893207
 Material:
   serializedVersion: 8
@@ -10779,6 +10815,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -10833,7 +10870,7 @@ GameObject:
   - component: {fileID: 8407750359713877208}
   - component: {fileID: 3063604161191120660}
   m_Layer: 0
-  m_Name: DockSkillPanel_Btn
+  m_Name: SovereignRiteToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15686,7 +15723,10 @@ MonoBehaviour:
   _cooldownOverlay: {fileID: 463675682757301623}
   _costText: {fileID: 3784981175090920794}
   _skillNameText: {fileID: 7139399902087744505}
+  _sealsFillBar: {fileID: 0}
+  _cooldownText: {fileID: 0}
   _lockOverlay: {fileID: 4385973655079878720}
+  _toggledGlow: {fileID: 0}
 --- !u!224 &5477858938457979766
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20180,3 +20220,4 @@ SceneRoots:
   - {fileID: 530519112}
   - {fileID: 1512268350}
   - {fileID: 1477509894}
+  - {fileID: 2069734617}

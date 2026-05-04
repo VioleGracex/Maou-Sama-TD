@@ -20,6 +20,8 @@ namespace MaouSamaTD.Story
         
         public PortraitFocus Focus = PortraitFocus.None;
         
+        public MaouSamaTD.Tutorial.DialogueBackground BackgroundOverlay;
+
         // Optional: Trigger event or sound
         public string EventID;
         public AudioClip VoiceClip;

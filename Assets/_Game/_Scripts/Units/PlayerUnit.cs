@@ -90,79 +90,9 @@ namespace MaouSamaTD.Units
 
         private IEnumerator ExecuteUltimateRoutine()
         {
-            if (Data == null)
-            {
-                Debug.LogError("[Ultimate] PlayerUnit Data is NULL at runtime!");
-                yield break;
-            }
-
-            if (Data.UltimateSkill == null)
-            {
-                Debug.LogError($"[Ultimate] {Data.UnitName} has no Skill Data assigned in IgnisUnitData.asset!");
-                yield break;
-            }
-
-            var visuals = Data.UltimateSkill.GetVisuals(Data.EquippedSkinID);
-
-            if (visuals.UltimatePrefab == null)
-            {
-                Debug.LogError($"[Ultimate] {Data.UnitName} Skill [{Data.UltimateSkill.SkillName}] exists, but UltimatePrefab is NULL! GUID check needed.");
-                yield break;
-            }
-
-            if (_showDebugLogs) Debug.Log($"[Ultimate] STARTING sequence for {Data.UnitName}. Prefab: {visuals.UltimatePrefab.name}");
-
-            // Start Cut-In Animation
-            if (MaouSamaTD.UI.UltimateCutInUI.Instance != null)
-            {
-                string uName = Data.UnitName;
-                string uTitle = Data.UnitTitle;
-                string sName = Data.UltimateSkill.SkillName;
-                Color bColor = visuals.UltimateColor;
-                Color tBgColor = visuals.TitleBgColor;
-                Color tTextColor = visuals.TitleTextColor;
-                Color sBgColor = visuals.SkillNameBgColor;
-                Color sTextColor = visuals.SkillNameTextColor;
-                Color nTextColor = visuals.NameTextColor;
-                Sprite portrait = Data.GetSprite(UnitData.UnitImageType.WaistUp);
-
-                if (_showDebugLogs) Debug.Log($"[Ultimate] Triggering Cut-In Animation for {uName}...");
-                // Wait for the full animation sequence (Slide In -> Hold -> Slide Out) to complete on the UI singleton
-                yield return MaouSamaTD.UI.UltimateCutInUI.Instance.Play(uName, uTitle, sName, bColor, tBgColor, tTextColor, sBgColor, sTextColor, nTextColor, portrait);
-            }
-            else
-            {
-                if (_showDebugLogs) Debug.LogWarning("[Ultimate] UltimateCutInUI.Instance is MISSING. Skipping animation.");
-            }
-
-            if (_animator != null) _animator.Play("Ultimate", 0, 0f);
-            IsCastingUltimate = true;
-
-            Vector3 bestDir = FindBestUltimateDirection();
-            if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {visuals.UltimatePrefab.name} towards {bestDir}");
-
-            GameObject projObj = Instantiate(visuals.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
-            
-            var ultimateEffect = projObj.GetComponent<MaouSamaTD.Skills.UltimateEffect>();
-            if (ultimateEffect != null)
-            {
-                ultimateEffect.Execute(this, bestDir);
-                if (_showDebugLogs) Debug.Log($"[Ultimate] {projObj.name} EXECUTED successfully.");
-                
-                // Wait for the local ultimate animation to finish before going back to idle
-                // Usually ultimate animations have a fixed duration or we can wait for state end
-                yield return new WaitForSeconds(1.5f); // Approximation or wait for state
-                
-                IsCastingUltimate = false;
-                if (_animator != null && !_isDead)
-                {
-                    _animator.Play("Idle", 0, 0f);
-                }
-            }
-            else
-            {
-                Debug.LogError($"[Ultimate] Prefab on {_data.UltimateSkill.SkillName} is missing an UltimateEffect component!");
-            }
+            // Ultimate system is currently disabled/simplified
+            if (_showDebugLogs) Debug.Log("[Ultimate] Ultimate execution triggered but system is currently simplified.");
+            yield break;
         }
 
         private Vector3 FindBestUltimateDirection()
@@ -309,9 +239,16 @@ namespace MaouSamaTD.Units
 
             var enemies = EnemyUnit.ActiveEnemies.ToArray();
 
+            bool canAttackFlying = _data == null || _data.CanAttackFlying;
+
             foreach (var enemy in enemies)
             {
                 if (enemy == null || enemy.CurrentHp <= 0 || enemy.IsDead) continue;
+
+                // Skip flying enemies if this unit cannot attack them
+                if (!canAttackFlying && enemy.EnemyData != null &&
+                    enemy.EnemyData.MovementType == EnemyMovementType.Flying)
+                    continue;
 
                 Vector2Int enemyPos = _gridManager.WorldToGridCoordinates(enemy.transform.position);
                 
@@ -370,6 +307,14 @@ namespace MaouSamaTD.Units
 
         public void Retreat()
         {
+            // Disallow retreat during tutorial
+            Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+            if (tm != null && tm.IsInTutorial)
+            {
+                if (_showDebugLogs) Debug.Log("[Retreat] Retreat is disabled during tutorial.");
+                return;
+            }
+
             _currentHp = 0;
             
             if (CurrentTile != null)
@@ -387,7 +332,7 @@ namespace MaouSamaTD.Units
             Destroy(gameObject);
         }
 
-        protected override void Die()
+        public override void Die(UnitBase attacker = null)
         {
             if (CurrentTile != null)
             {

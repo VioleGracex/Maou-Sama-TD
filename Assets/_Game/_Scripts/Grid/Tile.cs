@@ -17,6 +17,8 @@ namespace MaouSamaTD.Grid
         [Header("State")]
         [SerializeField] private MaouSamaTD.Units.UnitBase _occupant;
         
+        private List<TileEffect> _activeEffects = new List<TileEffect>();
+        
         private GameObject _markerObject;
         
         // Zenject Injections
@@ -49,6 +51,7 @@ namespace MaouSamaTD.Grid
         public TileType Type => _type;
         public bool IsOccupied => _occupant != null;
         public MaouSamaTD.Units.UnitBase Occupant => _occupant;
+        public bool IsHighGround => _type == TileType.HighGround || _type == TileType.DecoHighGround || _type == TileType.SpawnPointHigh || _type == TileType.ExitPointHigh;
         public Texture2D OverriddenTexture => _overriddenTexture;
         public List<DecorationData> OverriddenDecorations => _overriddenDecorations;
 
@@ -63,7 +66,73 @@ namespace MaouSamaTD.Grid
         public void SetOccupant(MaouSamaTD.Units.UnitBase unit)
         {
             _occupant = unit;
+            if (_occupant != null)
+            {
+                ApplyEffectsToUnit(_occupant);
+            }
             if (Manager != null) Manager.NotifyGridStateChanged();
+        }
+
+        public void AddEffect(MaouSamaTD.Skills.SovereignRiteData skill)
+        {
+            // Remove existing effect from same skill if any (refresh duration)
+            var existing = _activeEffects.Find(e => e.SkillID == skill.name);
+            if (existing != null)
+            {
+                if (existing.VFXInstance != null) Destroy(existing.VFXInstance);
+                _activeEffects.Remove(existing);
+            }
+
+            GameObject vfx = null;
+            if (skill.BaseVisuals.HitVFX != null)
+            {
+                vfx = Instantiate(skill.BaseVisuals.HitVFX, transform.position, Quaternion.identity, transform);
+            }
+
+            var effect = new TileEffect(skill, vfx);
+            _activeEffects.Add(effect);
+
+            if (_occupant != null)
+            {
+                ApplyEffectsToUnit(_occupant);
+            }
+        }
+
+        public void ApplyEffectsToUnit(MaouSamaTD.Units.UnitBase unit)
+        {
+            if (unit == null || _activeEffects == null) return;
+        
+            foreach (var effect in _activeEffects)
+            {
+                if (effect.Modifiers != null && effect.Modifiers.Count > 0)
+                {
+                    foreach (var mod in effect.Modifiers)
+                    {
+                        float multiplier = 1f + (mod.Value / 100f);
+                        unit.ApplyBuff(effect.SkillID + "_" + mod.Stat, mod.Stat, multiplier, effect.Duration);
+                    }
+                }
+                else if (effect.Value > 0)
+                {
+                    // Fallback for damage or simple value if list is empty
+                }
+            }
+        }
+
+        private void Update()
+        {
+            if (_activeEffects.Count > 0)
+            {
+                for (int i = _activeEffects.Count - 1; i >= 0; i--)
+                {
+                    _activeEffects[i].RemainingTime -= Time.deltaTime;
+                    if (_activeEffects[i].IsExpired)
+                    {
+                        if (_activeEffects[i].VFXInstance != null) Destroy(_activeEffects[i].VFXInstance);
+                        _activeEffects.RemoveAt(i);
+                    }
+                }
+            }
         }
 
         // Visuals

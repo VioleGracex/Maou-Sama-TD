@@ -50,9 +50,9 @@ MonoBehaviour:
     IsPremium: 0
   _equippedSkinID: 
   CardSlotImageType: 2
-  ButtonImageType: 2
-  Level: 1
-  Experience: 0
+  ButtonImageType: 0
+  Level: 2
+  Experience: 50
   StarRating: 6
   Amity: 0
   SkillLevel: 1
@@ -65,6 +65,7 @@ MonoBehaviour:
   DamageType: 0
   DeploymentCost: 10
   BlockCount: 3
+  CanAttackFlying: 0
   CustomPatternOffsets: []
   MaxHp: 1800
   AttackPower: 55

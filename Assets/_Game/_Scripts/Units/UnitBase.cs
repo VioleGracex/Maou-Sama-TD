@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
 using MaouSamaTD.Managers;
+using MaouSamaTD.Battle;
 
 namespace MaouSamaTD.Units
 {
@@ -25,16 +26,64 @@ namespace MaouSamaTD.Units
                 float mult = 1f;
                 if (_activeBuffs != null)
                 {
-                    foreach (var b in _activeBuffs) mult *= b.AttackMultiplier;
+                    foreach (var b in _activeBuffs) 
+                        if (b.Stat == MaouSamaTD.Skills.SkillStatType.Attack) mult *= b.Multiplier;
                 }
                 return _attackPower * mult;
             }
         }
-        public float Defense => _defense;
-        public virtual float Range => _data != null ? _data.Range : 0f;
+        public float Defense 
+        {
+            get
+            {
+                float mult = 1f;
+                if (_activeBuffs != null)
+                {
+                    foreach (var b in _activeBuffs) 
+                        if (b.Stat == MaouSamaTD.Skills.SkillStatType.Defense) mult *= b.Multiplier;
+                }
+                return _defense * mult;
+            }
+        }
+
+        public float AttackInterval 
+        {
+            get
+            {
+                float mult = 1f;
+                if (_activeBuffs != null)
+                {
+                    foreach (var b in _activeBuffs) 
+                        if (b.Stat == MaouSamaTD.Skills.SkillStatType.AttackSpeed) mult *= (1f / b.Multiplier); // Higher speed = lower interval
+                }
+                return _attackInterval * mult;
+            }
+        }
+
+        public virtual float Range 
+        {
+            get
+            {
+                float baseRange = _data != null ? _data.Range : 0f;
+                float mult = 1f;
+                if (_activeBuffs != null)
+                {
+                    foreach (var b in _activeBuffs) 
+                        if (b.Stat == MaouSamaTD.Skills.SkillStatType.Range) mult *= b.Multiplier;
+                }
+                return baseRange * mult;
+            }
+        }
         
         protected bool _isDead = false;
         public bool IsDead => _isDead;
+        
+        public virtual bool IsAttacking()
+        {
+            if (_animator == null) return false;
+            var state = _animator.GetCurrentAnimatorStateInfo(0);
+            return state.IsName("Attack");
+        }
 
         [Header("Visuals")]
         [SerializeField] protected SpriteRenderer _spriteRenderer;
@@ -63,12 +112,14 @@ namespace MaouSamaTD.Units
         [SerializeField] protected bool _showDebugLogs = true;
 
         protected System.Collections.Generic.List<BuffInstance> _activeBuffs = new System.Collections.Generic.List<BuffInstance>();
+        public System.Collections.Generic.List<BuffInstance> ActiveBuffs => _activeBuffs;
 
         [System.Serializable]
         public class BuffInstance
         {
             public string BuffID;
-            public float AttackMultiplier = 1f;
+            public MaouSamaTD.Skills.SkillStatType Stat;
+            public float Multiplier = 1f;
             public float Duration;
             public float RemainingTime;
         }
@@ -152,7 +203,11 @@ namespace MaouSamaTD.Units
                     _activeBuffs[i].RemainingTime -= Time.deltaTime;
                     if (_activeBuffs[i].RemainingTime <= 0)
                     {
+                        var buff = _activeBuffs[i];
                         _activeBuffs.RemoveAt(i);
+                        
+                        BattleLogManager.Instance.LogEvent(BattleLogType.BuffExpired, "", gameObject.name, $"Buff Expired: {buff.BuffID}", 0);
+                        
                         if (_showDebugLogs) Debug.Log($"[Buff] Buff expired on {gameObject.name}");
                     }
                 }
@@ -229,6 +284,7 @@ namespace MaouSamaTD.Units
 
         [Header("Combat (Dynamics)")]
         public System.Collections.Generic.List<DamageType> Immunities = new System.Collections.Generic.List<DamageType>();
+        public bool PreventDeathForTutorial { get; set; } = false;
 
         public virtual void TakeDamage(float amount, UnitBase attacker = null, DamageType damageType = DamageType.Melee, bool isSkill = false)
         {
@@ -252,8 +308,16 @@ namespace MaouSamaTD.Units
             }
 
             float damageTaken = Mathf.Max(finalAmount > 0 ? 1 : 0, finalAmount - _defense); 
+
+            if (PreventDeathForTutorial && _currentHp - damageTaken <= 1f)
+            {
+                damageTaken = Mathf.Max(0, _currentHp - 1f);
+            }
+
             if (_showDebugLogs) Debug.Log($"[Damage] {gameObject.name} taking {damageTaken} ({amount} {damageType} - {_defense} def, isSkill: {isSkill}, after resistance: {finalAmount}). HP: {_currentHp} -> {_currentHp - damageTaken}");
             _currentHp -= damageTaken;
+            
+            BattleLogManager.Instance.LogEvent(BattleLogType.Damage, attacker != null ? attacker.gameObject.name : "Unknown", gameObject.name, "Damage Taken", damageTaken);
             
             if (_hpFillImage != null)
             {
@@ -301,6 +365,8 @@ namespace MaouSamaTD.Units
 
             _currentHp = Mathf.Min(_currentHp + amount, _maxHp);
             
+            BattleLogManager.Instance.LogEvent(BattleLogType.Heal, "Unknown", gameObject.name, "Healing", amount);
+
             if (_hpFillImage != null)
             {
                  _hpFillImage.fillAmount = _currentHp / _maxHp;
@@ -314,36 +380,57 @@ namespace MaouSamaTD.Units
             OnHealthChanged?.Invoke(_currentHp / _maxHp);
         }
 
-        public virtual void ApplyBuff(string id, float attackMult, float duration)
+        public virtual void ApplyBuff(string id, MaouSamaTD.Skills.SkillStatType stat, float multiplier, float duration)
         {
             if (_activeBuffs == null) _activeBuffs = new System.Collections.Generic.List<BuffInstance>();
 
-            var existing = _activeBuffs.Find(b => b.BuffID == id);
-            if (existing != null)
+            // Non-stacking logic: If a buff for this STAT already exists, we only keep the strongest one.
+            var existingSameStat = _activeBuffs.Find(b => b.Stat == stat);
+            if (existingSameStat != null)
             {
-                // Toggle Logic: If cast again on same target, remove it
-                _activeBuffs.Remove(existing);
-                if (_showDebugLogs) Debug.Log($"[Buff] Toggled OFF: Removed buff {id} from {gameObject.name}");
-                return;
+                // If same source, refresh duration and update multiplier
+                if (existingSameStat.BuffID == id)
+                {
+                    existingSameStat.RemainingTime = duration;
+                    existingSameStat.Multiplier = multiplier;
+                    return;
+                }
+                else
+                {
+                    // Different source. Replace if the new one is stronger or equal.
+                    if (multiplier >= existingSameStat.Multiplier)
+                    {
+                        _activeBuffs.Remove(existingSameStat);
+                    }
+                    else
+                    {
+                        // New one is weaker, ignore it.
+                        return;
+                    }
+                }
             }
-
             _activeBuffs.Add(new BuffInstance 
             { 
                 BuffID = id, 
-                AttackMultiplier = attackMult, 
+                Stat = stat,
+                Multiplier = multiplier, 
                 Duration = duration, 
                 RemainingTime = duration 
             });
 
-            if (_showDebugLogs) Debug.Log($"[Buff] Toggled ON: Applied buff {id} to {gameObject.name} (Mult: {attackMult}, Duration: {duration}s)");
+            BattleLogManager.Instance.LogEvent(BattleLogType.BuffApplied, "Ability", gameObject.name, $"Buff Applied: {id} ({stat})", multiplier);
+
+            if (_showDebugLogs) Debug.Log($"[Buff] Applied: {id} to {gameObject.name} (Stat: {stat}, Mult: {multiplier}, Duration: {duration}s)");
             
-            if (_healParticle != null) _healParticle.Play(); // Visual feedback
+            if (_healParticle != null) _healParticle.Play(); 
         }
 
-        protected virtual void Die()
+        public virtual void Die(UnitBase attacker = null)
         {
             if (_isDead) return;
             _isDead = true;
+
+            BattleLogManager.Instance.LogEvent(BattleLogType.Death, attacker != null ? attacker.gameObject.name : "Unknown", gameObject.name, "Unit Died", 0);
 
             if (_showDebugLogs) Debug.Log($"[Death] {gameObject.name} has died.");
 
@@ -407,6 +494,9 @@ namespace MaouSamaTD.Units
             int dx = Mathf.Abs(origin.x - target.x);
             int dy = Mathf.Abs(origin.y - target.y);
             int iRange = Mathf.CeilToInt(range);
+
+            // Always allow attacking if on the same tile
+            if (dx == 0 && dy == 0) return true;
 
             if (dx > iRange || dy > iRange) return false;
 

@@ -48,6 +48,7 @@ namespace MaouSamaTD.Managers
         public float CurrentSpeed { get; private set; } = 1f;
         public bool IsPaused { get; private set; } = false;
         public float TimeTaken { get; private set; } = 0f;
+        public bool PreventDeathForTutorial { get; set; } = false;
         public int UnitsLostCount { get; private set; } = 0;
         #endregion
 
@@ -281,18 +282,27 @@ namespace MaouSamaTD.Managers
             }
         }
 
-        public void EnemyEscaped()
+        public void EnemyEscaped(EnemyUnit enemy)
         {
             if (IsGameEnded) return;
 
             EnemiesPassedCount++;
-            Debug.Log($"[GameManager] Enemy escaped! Total passed: {EnemiesPassedCount}");
+            
+            bool isBoss = enemy != null && enemy.EnemyData != null && enemy.EnemyData.IsBoss;
+            int damage = enemy != null && enemy.EnemyData != null ? (int)enemy.EnemyData.DamageToPlayerBase : 1;
+
+            Debug.Log($"[GameManager] Enemy escaped (Boss: {isBoss})! Total passed: {EnemiesPassedCount}");
+
+            if (isBoss)
+            {
+                Debug.LogWarning("[GameManager] BOSS ESCAPED! Triggering Game Over.");
+                GameOver();
+                return;
+            }
 
             CheckLoseConditions(LevelConditionType.EnemiesPassedLimit);
             
-            // Also take 1 damage by default if no specific HP logic is desired, 
-            // but for now we follow the "monsters pass" count as requested.
-            TakeBaseDamage(1); 
+            TakeBaseDamage(damage); 
         }
 
         private void CheckLoseConditions(LevelConditionType triggerType)
@@ -344,6 +354,7 @@ namespace MaouSamaTD.Managers
         {
             if (IsGameEnded) return;
             IsGameEnded = true;
+            MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Game", "", "Victory Achieved!", 0);
             OnGameFinished?.Invoke();
             Debug.Log("[GameManager] Victory!");
             
@@ -432,6 +443,7 @@ namespace MaouSamaTD.Managers
         {
             if (IsGameEnded) return;
             IsGameEnded = true;
+            MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Game", "", "Game Over - Defeat", 0);
             OnGameFinished?.Invoke();
             Debug.Log("[GameManager] Game Over!");
             

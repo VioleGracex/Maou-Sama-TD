@@ -204,6 +204,13 @@ namespace MaouSamaTD.UI
         {
             if (_selectedUnit != null)
             {
+                Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+                if (tm != null && tm.IsInTutorial)
+                {
+                    Debug.Log("[UnitInspector] Retreat is disabled during tutorial.");
+                    return;
+                }
+
                 _selectedUnit.Retreat();
                 IsLocked = false;
                 Hide();

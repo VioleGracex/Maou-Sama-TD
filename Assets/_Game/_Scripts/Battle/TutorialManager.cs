@@ -27,6 +27,7 @@ namespace MaouSamaTD.Managers
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
+        [InjectOptional] private MaouSamaTD.Skills.SkillManager _skillManager;
         #endregion
 
         #region Serialized Settings
@@ -69,11 +70,28 @@ namespace MaouSamaTD.Managers
             _activeTutorial = data;
             IsInTutorial = true;
             _currentStepIndex = 0;
+
+            // Level 2 Start Logic: Set initial seals to 50
+            if (_activeTutorial != null && _activeTutorial.name.Contains("Level2"))
+            {
+                if (_currencyManager != null)
+                {
+                    _currencyManager.SetMaxSeals(50);
+                    _currencyManager.SetSeals(50);
+                    if (_showDebugLogs) Debug.Log("[tutorial] Level 2 Initialized: Seals set to 50.");
+                }
+            }
             
             EnsureUIComponentsActive();
             
             if (_showDebugLogs) Debug.Log($"[tutorial] Starting Tutorial Routine with {data.Steps.Count} steps.");
             StartCoroutine(TutorialRoutine());
+        }
+
+        /// <summary>Externally hides the tutorial hand (e.g. when a panel is toggled).</summary>
+        public void HideHand()
+        {
+            if (_handUI != null) _handUI.Hide();
         }
         #endregion
 
@@ -108,16 +126,35 @@ namespace MaouSamaTD.Managers
             if (_uiBlocker != null) _uiBlocker.HideBlocker(true);
             if (_handUI != null) _handUI.Hide();
             if (_interactionManager != null) _interactionManager.IsSelectionLocked = false;
+            
+            // Cleanup invincibility
+            if (_gameManager != null) _gameManager.PreventDeathForTutorial = false;
         }
 
         private bool _isSkillTargetingLastFrame = false;
         private bool _isDraggingLastFrame = false;
+        private float _nextHighlightRefreshTime = 0f;
+
         private void Update()
         {
             if (!IsInTutorial || _activeTutorial == null || _currentStepIndex >= _activeTutorial.Steps.Count) return;
 
             var step = _activeTutorial.Steps[_currentStepIndex];
             
+            // Periodically check if targets are still valid/active (e.g. if user closes a menu)
+            if (Time.unscaledTime > _nextHighlightRefreshTime)
+            {
+                _nextHighlightRefreshTime = Time.unscaledTime + 0.5f;
+                if (step.UseBlocker && step.TargetUI != null)
+                {
+                    var rt = FindTargetRect(step.TargetUI.Name);
+                    if (rt == null || !rt.gameObject.activeInHierarchy)
+                    {
+                        HandleUIHighlight(step);
+                    }
+                }
+            }
+
             // Dynamic Skill Targeting logic: Update hand and blocker when switching between skill selection and unit targeting
             if (step.ActionKey == "SkillUsed" || step.ActionKey == "RiteMenuOpened")
             {
@@ -130,7 +167,8 @@ namespace MaouSamaTD.Managers
                 }
             }
 
-            // Dynamic Unit Placement logic: Update hand and blocker when starting/stopping drag
+            // Dynamic Unit Placement logic: Refresh highlights every frame while dragging
+            // so the tile cut-out appears immediately (not just on state transition).
             if (step.ActionKey == "UnitPlaced")
             {
                 bool isDragging = _interactionManager != null && _interactionManager.IsDragging;
@@ -138,6 +176,13 @@ namespace MaouSamaTD.Managers
                 {
                     _isDraggingLastFrame = isDragging;
                     if (_showDebugLogs) Debug.Log($"[tutorial] Dragging state changed to: {isDragging}. Refreshing highlights.");
+                    HandleUIHighlight(step);
+                }
+                
+                // Keep refreshing while dragging for smooth movement (e.g. if we add cursor follow later)
+                // but only if isDragging is true.
+                if (isDragging)
+                {
                     HandleUIHighlight(step);
                 }
             }
@@ -176,17 +221,84 @@ namespace MaouSamaTD.Managers
                     continue;
                 }
 
+                // Skip steps if the target rite button doesn't exist in the scene
+                // (handles male/female rite mismatch or loadout differences gracefully)
+                if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name) &&
+                    step.TargetUI.Name.StartsWith("SkillButton_"))
+                {
+                    bool mainRiteExists = IsRiteButtonAvailable(step.TargetUI.Name);
+                    bool anyAdditionalRiteExists = false;
+                    
+                    if (step.AdditionalTargetUI != null)
+                    {
+                        foreach (var target in step.AdditionalTargetUI)
+                        {
+                            if (!string.IsNullOrEmpty(target.Name) && target.Name.StartsWith("SkillButton_"))
+                            {
+                                if (IsRiteButtonAvailable(target.Name))
+                                {
+                                    anyAdditionalRiteExists = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!mainRiteExists && !anyAdditionalRiteExists)
+                    {
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Skipping Step [{_currentStepIndex}] {step.StepName}: no target rite buttons found in player loadout.");
+                        _currentStepIndex++;
+                        continue;
+                    }
+                }
+
                 switch (step.Type)
                 {
                     case TutorialStepType.DialogueOnly:
+                        // TRIGGER: Shows a dialogue box. If an ActionKey is provided, it first waits for that condition to be met.
+                        // NOTE: If dialogue is missing, it will proceed immediately or after the ActionKey condition.
                         if (step.StopTime) _gameManager.SetSpeed(0);
+                        
+                        // Special Logic for Level 2 Boss Bypass: Lilith Refills Seals
+                        if (_activeTutorial != null && _activeTutorial.name.Contains("Level2") && step.StepName == "Boss Bypasses!")
+                        {
+                            if (_currencyManager != null)
+                            {
+                                _currencyManager.SetMaxSeals(99);
+                                _currencyManager.SetSeals(99);
+                                if (_showDebugLogs) Debug.Log("[tutorial] Lilith Bonus Applied: Seals set to 99.");
+                            }
+                            if (_gameManager != null)
+                            {
+                                _gameManager.PreventDeathForTutorial = true;
+                                if (_showDebugLogs) Debug.Log("[tutorial] Player invincibility enabled for boss encounter.");
+                            }
+                        }
+                        
+                        // If an ActionKey is provided for a dialogue step, wait for that condition before showing it
+                        if (!string.IsNullOrEmpty(step.ActionKey))
+                        {
+                            if (_showDebugLogs) Debug.Log($"[tutorial] DialogueOnly step {step.StepName} waiting for condition: {step.ActionKey}");
+                            yield return new WaitUntil(() => CheckCondition(step));
+                        }
+
                         HandleUIHighlight(step);
                         bool dialogueDone = false;
-                        _dialogueManager.StartDialogue(step.Dialogue, () => 
+
+                        if (step.Dialogue != null)
                         {
-                            if (_showDebugLogs) Debug.Log($"[tutorial] Dialogue completed for step: {step.StepName}");
+                            _dialogueManager.StartDialogue(step.Dialogue, () => 
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Dialogue completed for step: {step.StepName}");
+                                dialogueDone = true;
+                            });
+                        }
+                        else
+                        {
+                            if (_showDebugLogs) Debug.LogWarning($"[tutorial] DialogueOnly step '{step.StepName}' has no Dialogue data. Skipping dialogue.");
                             dialogueDone = true;
-                        });
+                        }
+
                         yield return new WaitUntil(() => dialogueDone);
                         
                         // Hide the hand when dialogue is done so it doesn't linger
@@ -194,6 +306,7 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.HighlightUI:
+                        // TRIGGER: Highlights a specific UI element and optionally shows dialogue.
                         if (step.StopTime) _gameManager.SetSpeed(0);
                         HandleUIHighlight(step);
                         bool uiDialogueDone = false;
@@ -214,6 +327,7 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.HighlightTile:
+                        // TRIGGER: Highlights one or more world tiles and optionally shows dialogue.
                         if (step.StopTime) _gameManager.SetSpeed(0);
                         HandleUIHighlight(step);
                         if (step.TargetTiles != null)
@@ -233,17 +347,24 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.WaitForAction:
+                        // TRIGGER: Waits for a specific ActionKey (e.g., 'UnitPlaced', 'SkillUsed') to be triggered by the game.
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
                         if (step.StopTime) _gameManager.SetSpeed(0); 
-                        
-                        HandleUIHighlight(step);
 
                         if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                         {
+                            if (step.UseBlocker)
+                            {
+                                _uiBlocker.ShowBlockerWithDetailedTargets(null, null);
+                                _handUI.Hide();
+                            }
+                            
                             bool actionDialogueDone = false;
                             _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
                             yield return new WaitUntil(() => actionDialogueDone);
                         }
+
+                        HandleUIHighlight(step);
                         
                         _waitingForAction = true;
                         _waitingActionKey = step.ActionKey;
@@ -251,6 +372,40 @@ namespace MaouSamaTD.Managers
                         if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)
                         {
                             _unitInspectorUI.IsLocked = true;
+                        }
+
+                        // Ensure the player has exactly enough seals to cast the skill in this step.
+                        // We look up the actual SealCost from the loaded rite instead of using
+                        // hardcoded values, so this works for both male and female rites.
+                        if (_currencyManager != null && step.ActionKey == "SkillUsed" &&
+                            step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
+                        {
+                            int requiredCost = GetRiteSealCostFromButtonName(step.TargetUI.Name);
+                            if (requiredCost > 0 && _currencyManager.CurrentSeals < requiredCost)
+                            {
+                                _currencyManager.SetSeals(requiredCost);
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Set seals to {requiredCost} for step '{step.StepName}' (rite: {step.TargetUI.Name})");
+                            }
+                        }
+
+                        // Auto-skip "Open Rite Menu" if it's already open
+                        if (step.ActionKey == "RiteMenuOpened")
+                        {
+                            var skillPanel = FindObjectOfType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                            if (skillPanel != null && skillPanel.IsVisible)
+                            {
+                                if (_showDebugLogs) Debug.Log("[tutorial] Rite Menu already open, auto-completing step.");
+                                _triggeredActionsBuffer.Add("RiteMenuOpened");
+                            }
+                        }
+
+                        // If executing the ultimate on boss, remove death prevention
+                        if (step.StepName == "Execute the Ultimate")
+                        {
+                            foreach (var boss in EnemyUnit.ActiveEnemies)
+                            {
+                                if (boss != null && boss.PreventDeathForTutorial) boss.PreventDeathForTutorial = false;
+                            }
                         }
 
                         if (_triggeredActionsBuffer.Contains(step.ActionKey))
@@ -274,12 +429,14 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.WaitTime:
+                        // TRIGGER: A simple time delay in realtime seconds.
                         HandleUIHighlight(step);
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for duration: {step.Duration}s");
                         yield return new WaitForSecondsRealtime(step.Duration);
                         break;
 
                     case TutorialStepType.StartWave:
+                        // TRIGGER: Manually starts a specific wave index via EnemyManager.
                         HandleUIHighlight(step);
                         if (_showDebugLogs) Debug.Log($"[tutorial] Starting Wave Index: {step.WaveIndex}");
                         if (_enemyManager != null)
@@ -289,22 +446,27 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.WaitForWave:
+                        // TRIGGER: Waits until all enemies in the current wave are defeated and spawning is finished.
                         HandleUIHighlight(step);
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for Wave completion (Index: {step.WaveIndex})");
-                        _gameManager.SetSpeed(1); 
-                        yield return new WaitUntil(() => _enemyManager != null && _enemyManager.ActiveEnemyCount == 0 && !_enemyManager.IsSpawning);
+                        if (step.ResumeTime) _gameManager.SetSpeed(1); 
+                        else _gameManager.SetSpeed(0); 
+                        yield return new WaitUntil(() => _enemyManager != null && _enemyManager.IsWaveCleared(step.WaveIndex));
                         if (_showDebugLogs) Debug.Log("[tutorial] Wave cleared.");
                         break;
 
                     case TutorialStepType.WaitForCondition:
+                        // TRIGGER: Waits for a dynamic game state (e.g., 'BossHealth', 'EnemiesInRange') via CheckCondition().
                         HandleUIHighlight(step);
                         if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey} (Value: {step.RequiredCount})");
-                        _gameManager.SetSpeed(1); 
+                        if (step.ResumeTime) _gameManager.SetSpeed(1); 
+                        else _gameManager.SetSpeed(0); 
                         yield return new WaitUntil(() => CheckCondition(step));
-                        _gameManager.SetSpeed(0);
+                        // REMOVED: _gameManager.SetSpeed(0); - Next step should decide if it wants to pause.
                         break;
 
                     case TutorialStepType.CustomCommand:
+                        // TRIGGER: Executes specific coded actions based on ActionKey (e.g., 'SetMaxAuthoritySeals', 'ChargeUnitUlt').
                         {
                             HandleUIHighlight(step);
                             string targetName = (step.TargetUI != null ? step.TargetUI.Name : "");
@@ -337,11 +499,27 @@ namespace MaouSamaTD.Managers
                                 if (_currencyManager != null)
                                 {
                                     _currencyManager.GiveSeals(_currencyManager.MaxSeals);
-                                    if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: GrantMaxSeals executed.");
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: {step.ActionKey} executed.");
                                 }
                                 else
                                 {
-                                    if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand GrantMaxSeals: BattleCurrencyManager dependency is missing!");
+                                    if (_showDebugLogs) Debug.LogWarning($"[tutorial] CustomCommand {step.ActionKey}: BattleCurrencyManager dependency is missing!");
+                                }
+                            }
+                            else if (step.ActionKey == "SetMaxAuthoritySeals")
+                            {
+                                if (_currencyManager != null)
+                                {
+                                    _currencyManager.SetMaxSeals(step.RequiredCount);
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: Max Seals set to {step.RequiredCount}.");
+                                }
+                            }
+                            else if (step.ActionKey == "SetAuthoritySeals")
+                            {
+                                if (_currencyManager != null)
+                                {
+                                    _currencyManager.SetSeals(step.RequiredCount);
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: Current Seals set to {step.RequiredCount}.");
                                 }
                             }
                             else if (step.ActionKey == "AwakenLilith")
@@ -357,6 +535,32 @@ namespace MaouSamaTD.Managers
                                     if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: AwakenLilith started (Addressables).");
                                 }
                             }
+                            else if (step.ActionKey == "SetPhasingAndImmunity")
+                            {
+                                string bossName = string.IsNullOrEmpty(targetName) ? "Abyssal Shade" : targetName;
+                                var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == bossName);
+                                if (boss != null)
+                                {
+                                    // Set Phasing Charges
+                                    var phasingField = typeof(EnemyUnit).GetField("_currentPhasingCharges", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                    if (phasingField != null)
+                                    {
+                                        phasingField.SetValue(boss, (int)step.RequiredCount);
+                                        if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: SetPhasingCharges to {step.RequiredCount} for {bossName}");
+                                    }
+
+                                    // Add Melee Immunity
+                                    if (!boss.Immunities.Contains(DamageType.Melee))
+                                    {
+                                        boss.Immunities.Add(DamageType.Melee);
+                                        if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: Added MELEE IMMUNITY to {bossName}");
+                                    }
+                                }
+                                else
+                                {
+                                    if (_showDebugLogs) Debug.LogWarning($"[tutorial] CustomCommand SetPhasingAndImmunity: Could not find boss '{bossName}'");
+                                }
+                            }
                             else if (step.ActionKey == "SetUnitButtonActive")
                             {
                                 if (_deploymentUI != null)
@@ -368,6 +572,70 @@ namespace MaouSamaTD.Managers
                                 else
                                 {
                                     if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand SetUnitButtonActive: DeploymentUI is NULL!");
+                                }
+                            }
+                            else if (step.ActionKey == "SpawnEnemyClump")
+                            {
+                                if (_enemyManager != null)
+                                {
+                                    System.Action<EnemyData> spawnClump = (data) => 
+                                    {
+                                        if (data == null) return;
+                                        for (int i = 0; i < 15; i++)
+                                        {
+                                            _enemyManager.SpawnEnemy(data, 0, i, 0);
+                                        }
+                                        if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: SpawnEnemyClump executed (15 enemies).");
+                                    };
+
+                                    // Try loading via Addressables with full path first
+                                    string fullPath = "Assets/_Game/Data/Units/Enemies/Shadow/Regular/EnemySO_Lesser-Shadow.asset";
+                                    Addressables.LoadAssetAsync<EnemyData>(fullPath).Completed += (handle) =>
+                                    {
+                                        if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                                        {
+                                            spawnClump(handle.Result);
+                                        }
+                                        else
+                                        {
+                                            // Fallback to short name
+                                            Addressables.LoadAssetAsync<EnemyData>("EnemySO_Lesser-Shadow").Completed += (handle2) => 
+                                            {
+                                                if (handle2.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                                                {
+                                                    spawnClump(handle2.Result);
+                                                }
+                                                else
+                                                {
+                                                    #if UNITY_EDITOR
+                                                    // Final editor-only fallback
+                                                    EnemyData editorData = UnityEditor.AssetDatabase.LoadAssetAtPath<EnemyData>(fullPath);
+                                                    if (editorData != null)
+                                                    {
+                                                        spawnClump(editorData);
+                                                    }
+                                                    else
+                                                    #endif
+                                                    {
+                                                        Debug.LogError("[tutorial] CustomCommand SpawnEnemyClump: Failed to load EnemyData asset via Addressables or Path!");
+                                                    }
+                                                }
+                                            };
+                                        }
+                                    };
+                                }
+                            }
+                            else if (step.ActionKey == "SetMaxAuthoritySeals")
+                            {
+                                if (_currencyManager != null)
+                                {
+                                    int newMax = step.RequiredCount;
+                                    _currencyManager.SetMaxSeals(newMax);
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: SetMaxAuthoritySeals → {newMax}");
+                                }
+                                else
+                                {
+                                    if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand SetMaxAuthoritySeals: BattleCurrencyManager is NULL!");
                                 }
                             }
                             break;
@@ -433,15 +701,13 @@ namespace MaouSamaTD.Managers
 
             if (isSkillStep)
             {
+                // Always show the skill button so its glow/state is visible even when targeting tiles
+                if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
+
                 if (isSkillTargeting)
                 {
-                    // If we are targeting, ONLY show the additional targets (the units on the field)
+                    // While targeting, also show additional targets (e.g. Ignis or other units)
                     if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
-                }
-                else
-                {
-                    // If we are not targeting yet, ONLY show the primary target (the skill button)
-                    if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
                 }
             }
             else if (isPlacementStep)
@@ -489,12 +755,30 @@ namespace MaouSamaTD.Managers
                     RectTransform rt = FindTargetRect(ut.Name);
                     if (rt != null) 
                     {
-                        uiHits.Add(new UIPopupBlocker.UIHighlightData 
-                        { 
-                             Target = rt, 
-                             Size = (ut.Size != Vector2.zero) ? ut.Size : Vector2.one,
-                             Offset = ut.SizeOffset
-                        });
+                        if (rt.gameObject.activeInHierarchy)
+                        {
+                            uiHits.Add(new UIPopupBlocker.UIHighlightData 
+                            { 
+                                 Target = rt, 
+                                 Size = (ut.Size != Vector2.zero) ? ut.Size : Vector2.one,
+                                 Offset = ut.SizeOffset
+                            });
+                        }
+                        else if (ut.Name.Contains("SovereignRite") || ut.Name.Contains("SkillButton"))
+                        {
+                            // If a Rite button is inactive, the menu is likely closed.
+                            // Highlight the toggle button so the user can reopen it.
+                            RectTransform toggleRt = FindTargetRect("SovereignRiteToggle");
+                            if (toggleRt != null && toggleRt.gameObject.activeInHierarchy)
+                            {
+                                uiHits.Add(new UIPopupBlocker.UIHighlightData 
+                                { 
+                                     Target = toggleRt, 
+                                     Size = Vector2.one * 1.2f,
+                                     Offset = Vector2.zero
+                                });
+                            }
+                        }
                     }
                 }
             }
@@ -522,13 +806,15 @@ namespace MaouSamaTD.Managers
 
             _uiBlocker.ShowBlockerWithDetailedTargets(uiHits, worldHighlights);
 
-            if (step.DragShowHand && (uiHits.Count > 0 || worldHighlights.Count > 0))
+            bool ignoreOverride = isSkillStep && isSkillTargeting;
+
+            if (step.DragShowHand && (uiHits.Count > 0 || worldHighlights.Count > 0) && !_dialogueManager.IsDialogueActive)
             {
                 Vector2 startPos = Vector2.zero;
                 if (uiHits.Count > 0) startPos = (Vector2)uiHits[0].Target.position + uiHits[0].Offset;
                 else if (worldHighlights.Count > 0) startPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
 
-                if (step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
+                if (!ignoreOverride && step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
                 {
                     if (GetTargetScreenPositionAndScale(step.HandTargetUIOverride, out Vector2 targetPos, out float scaleMult))
                     {
@@ -544,12 +830,12 @@ namespace MaouSamaTD.Managers
                     _handUI.MoveHand(startPos, screenTarget, step.HandScale);
                 }
             }
-            else if (step.ShowHand)
+            else if (step.ShowHand && !_dialogueManager.IsDialogueActive)
             {
                 Vector2 handPos = Vector2.zero;
                 float handScale = step.HandScale;
 
-                if (step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
+                if (!ignoreOverride && step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
                 {
                     if (GetTargetScreenPositionAndScale(step.HandTargetUIOverride, out Vector2 targetPos, out float scaleMult))
                     {
@@ -557,7 +843,7 @@ namespace MaouSamaTD.Managers
                         handScale *= scaleMult;
                     }
                 }
-                else if (step.HandTargetTileOverride != Vector2Int.zero)
+                else if (step.HandTargetTileOverride != Vector2Int.zero && (isDragging || step.ActionKey != "UnitPlaced"))
                 {
                     Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
                     handPos = Camera.main.WorldToScreenPoint(worldTarget);
@@ -580,25 +866,71 @@ namespace MaouSamaTD.Managers
                 {
                     _handUI.ShowAt(handPos, handScale);
                 }
+                else
+                {
+                    _handUI.Hide();
+                }
+            }
+            else
+            {
+                _handUI.Hide();
             }
         }
 
-        private RectTransform FindTargetRect(string name)
+private RectTransform FindTargetRect(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
 
-            GameObject go = GameObject.Find(name);
+            // Gender-aware resolution: if the name contains a gender suffix (_Female/_Male),
+            // first try swapping to the player's actual gender, then fall back to the stored name.
+            string resolvedName = ResolveGenderSuffix(name);
+
+            // Try active first (fastest)
+            GameObject go = GameObject.Find(resolvedName);
+
+            // If not found with resolved name, try original name
+            if (go == null && resolvedName != name)
+                go = GameObject.Find(name);
+
+            // If still not found, search all (including inactive)
+            if (go == null)
+            {
+                var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+                go = allObjects.FirstOrDefault(o => o.name == resolvedName);
+                if (go == null && resolvedName != name)
+                    go = allObjects.FirstOrDefault(o => o.name == name);
+            }
+
             if (go != null)
             {
                 RectTransform rt = go.GetComponent<RectTransform>();
                 if (rt != null) return rt;
-                
+
                 Canvas canvas = go.GetComponentInChildren<Canvas>(true);
                 if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
             }
 
             return null;
         }
+
+/// <summary>
+        /// Replaces _Female or _Male suffix in a UI target name with the player's actual gender suffix.
+        /// Falls back to the original name if no gender-specific match exists.
+        /// </summary>
+        private string ResolveGenderSuffix(string name)
+        {
+            if (_saveManager == null || _saveManager.CurrentData == null) return name;
+
+            bool isMale = _saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male;
+            string targetSuffix = isMale ? "_Male" : "_Female";
+            string oppositeSuffix = isMale ? "_Female" : "_Male";
+
+            if (name.EndsWith(oppositeSuffix))
+                return name.Substring(0, name.Length - oppositeSuffix.Length) + targetSuffix;
+
+            return name;
+        }
+
 
         private bool GetTargetScreenPositionAndScale(UITarget ut, out Vector2 screenPos, out float scaleMultiplier)
         {
@@ -713,6 +1045,13 @@ namespace MaouSamaTD.Managers
             return _activeTutorial.Steps[_currentStepIndex].ActionKey;
         }
 
+        public string GetCurrentStepName()
+        {
+            if (!IsInTutorial || _activeTutorial == null || _currentStepIndex < 0 || _currentStepIndex >= _activeTutorial.Steps.Count)
+                return "None";
+            return _activeTutorial.Steps[_currentStepIndex].StepName;
+        }
+
         public List<Vector2Int> GetRequiredPlacementTiles()
         {
             List<Vector2Int> allowed = new List<Vector2Int>();
@@ -811,7 +1150,10 @@ namespace MaouSamaTD.Managers
                 case "WaveFinishedSpawning":
                     if (_enemyManager != null)
                     {
-                        bool met = !_enemyManager.IsSpawning;
+                        // Robust check: Spawning is finished AND current wave is at least the one we expect
+                        // (WaveIndex -1 means we don't care about specific wave)
+                        bool correctWave = step.WaveIndex < 0 || _enemyManager.CurrentWaveIndex >= step.WaveIndex;
+                        bool met = !_enemyManager.IsSpawning && correctWave;
                         return met;
                     }
                     return false;
@@ -835,13 +1177,73 @@ namespace MaouSamaTD.Managers
                 {
                     string bossName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "Abyssal Shade";
                     var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == bossName);
+
+                    // RequiredCount == 0 means "kill the boss" — allow death and wait for it
+                    if (step.RequiredCount == 0)
+                    {
+                        if (boss == null) return true; // Boss already dead/destroyed
+                        boss.PreventDeathForTutorial = false; // Lift immortality so the skill can kill it
+                        return boss.IsDead;
+                    }
+
+                    // RequiredCount > 0 is an HP-gate threshold — keep boss immortal until it fires
                     if (boss != null)
                     {
+                        boss.PreventDeathForTutorial = true;
                         float hpPercent = (boss.CurrentHp / boss.MaxHp) * 100f;
-                        bool met = hpPercent <= step.RequiredCount;
-                        return met;
+                        return hpPercent <= step.RequiredCount;
                     }
                     return false;
+                }
+
+                case "BossReachedIgnis":
+                {
+                    var ignis = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && u.name.Contains("Ignis"));
+                    if (ignis == null) return true; // Fallback to avoid soft-lock if Ignis is missing
+                    
+                    // Check if any enemy (ideally the boss) is within 5 units of Ignis
+                    return EnemyUnit.ActiveEnemies.Any(e => e != null && Vector3.Distance(e.transform.position, ignis.transform.position) < 5f);
+                }
+
+                case "EnemiesNearUnit":
+                {
+                    string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "Ignis";
+                    var targetUnit = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && (u.name.Contains(targetName) || (u.Data != null && u.Data.UnitName == targetName)));
+                    
+                    if (targetUnit == null) return true; // Fallback to avoid soft-lock
+                    
+                    float threshold = step.RequiredCount > 0 ? step.RequiredCount : 2.5f; // Default to ~1-1.5 tiles
+                    return EnemyUnit.ActiveEnemies.Any(e => e != null && Vector3.Distance(e.transform.position, targetUnit.transform.position) <= threshold);
+                }
+
+                case "BossPassedUnit":
+                {
+                    string targetName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "Ignis";
+                    var targetUnit = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && (u.name.Contains(targetName) || (u.Data != null && u.Data.UnitName == targetName)));
+                    
+                    if (targetUnit == null) return true; // Fallback
+
+                    string bossName = step.ActionKey.Contains("|") ? step.ActionKey.Split('|')[1] : "Abyssal Shade";
+                    var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == bossName);
+                    
+                    if (boss == null) return false;
+
+                    // If exit is at a smaller X than target, boss has passed if boss.x < target.x
+                    // For Level 2, we'll assume the standard direction based on Spawn vs Exit
+                    if (_gridManager != null)
+                    {
+                        bool exitIsLeft = _gridManager.ExitPoint.x < _gridManager.SpawnPoint.x;
+                        if (exitIsLeft)
+                        {
+                            return boss.transform.position.x < (targetUnit.transform.position.x - 0.5f);
+                        }
+                        else
+                        {
+                            return boss.transform.position.x > (targetUnit.transform.position.x + 0.5f);
+                        }
+                    }
+                    
+                    return Vector3.Distance(boss.transform.position, targetUnit.transform.position) < 2f; // Fallback
                 }
 
                 default:
@@ -903,6 +1305,7 @@ namespace MaouSamaTD.Managers
 
             return false;
         }
+
         private IEnumerator LoadAndAwakenLilith()
         {
             if (_showDebugLogs) Debug.Log("[tutorial] Loading Lilith from Addressables (Char_Lilith_UnitData)...");
@@ -930,5 +1333,56 @@ namespace MaouSamaTD.Managers
             }
         }
         #endregion
+
+        public int GetCurrentStepIndex() => _currentStepIndex;
+        public MaouSamaTD.Tutorial.TutorialStep GetCurrentStep() => _activeTutorial != null && _currentStepIndex >= 0 && _currentStepIndex < _activeTutorial.Steps.Count ? _activeTutorial.Steps[_currentStepIndex] : null;
+
+        /// <summary>
+        /// Returns true if a SkillButton_ UI element with this name exists and is active in the scene.
+        /// Used to skip rite tutorial steps that don't apply to the current gender/loadout.
+        /// </summary>
+        private bool IsRiteButtonAvailable(string buttonName)
+        {
+            if (string.IsNullOrEmpty(buttonName)) return false;
+
+            // Try direct name search (works if button is active)
+            GameObject go = GameObject.Find(buttonName);
+            if (go != null) return true;
+
+            // Also check all inactive objects (button might be in docked panel)
+            var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            return System.Array.Exists(allObjects, o => o.name == buttonName);
+        }
+
+        /// <summary>
+        /// Finds the SovereignRiteData whose button name matches, then returns its SealCost.
+        /// Button names are "SkillButton_" + asset name without spaces (set by SkillPanelUI.Refresh).
+        /// Returns 0 if not found.
+        /// </summary>
+        private int GetRiteSealCostFromButtonName(string buttonName)
+        {
+            if (_skillManager == null || string.IsNullOrEmpty(buttonName)) return 0;
+
+            // Button name pattern: "SkillButton_" + skill.name (no spaces)
+            string skillKey = buttonName.Replace("SkillButton_", "").ToLower();
+
+            foreach (var rite in _skillManager.AvailableSkills)
+            {
+                if (rite == null) continue;
+                string riteBtnName = rite.name.Replace(" ", "").ToLower();
+                if (riteBtnName == skillKey)
+                {
+                    // Ensure MaxSeals is high enough, then set exact amount
+                    if (_currencyManager != null && rite.SealCost > _currencyManager.MaxSeals)
+                    {
+                        _currencyManager.SetMaxSeals(rite.SealCost);
+                    }
+                    return rite.SealCost;
+                }
+            }
+
+            if (_showDebugLogs) Debug.LogWarning($"[tutorial] GetRiteSealCostFromButtonName: Could not find rite for button '{buttonName}'");
+            return 0;
+        }
     }
 }

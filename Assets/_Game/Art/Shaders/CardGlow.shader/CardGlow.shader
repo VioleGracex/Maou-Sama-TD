@@ -13,6 +13,7 @@ Shader "Custom/CardGlow"
         _GlowBaseAlpha("Base Opacity", Range(0,1)) = 1.0
         _ActiveSides("Active Sides (L,B,R,T)", Vector) = (1,1,1,1)
         _RandomOffset("Random Offset", Float) = 0.0
+        _CustomTime("Custom Time", Float) = 0.0
         
         // UI Masking
         _StencilComp("Stencil Comparison", Float) = 8
@@ -99,6 +100,7 @@ Shader "Custom/CardGlow"
             float4 _ActiveSides; // x=Left, y=Bottom, z=Right, w=Top
             float _GlowBaseAlpha;
             float _RandomOffset;
+            float _CustomTime;
 
             v2f vert(appdata_t v)
             {
@@ -151,7 +153,7 @@ Shader "Custom/CardGlow"
                 float yMask = lerp(_ActiveSides.y, _ActiveSides.w, step(0, centeredUV.y));
                 sideMask = min(xMask, yMask);
 
-                float time = _Time.y * _Speed + _RandomOffset;
+                float time = (_CustomTime > 0 ? _CustomTime : _Time.y) * _Speed + _RandomOffset;
                 float noiseVal = value_noise(uv * _NoiseScale + time * 0.5 + _RandomOffset);
                 
                 float2 bounds = float2(1.0 - _GlowWidth * 2.0, 1.0 - _GlowWidth * 2.0); 

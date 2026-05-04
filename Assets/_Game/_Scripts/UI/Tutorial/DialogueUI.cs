@@ -143,13 +143,12 @@ namespace MaouSamaTD.UI.Tutorial
             _isStoryMode = false;
             _currentIndex = 0;
             _currentStyle = data.Style;
-            _bgType = data.Background;
             _charsPerSecond = data.CharactersPerSecond > 0 ? data.CharactersPerSecond : 30f;
             
             _fullScreenPanel?.SetActive(_currentStyle == DialogueStyle.FullScreen);
             _miniTopPanel?.SetActive(_currentStyle == DialogueStyle.MiniTop);
 
-            ApplyBackground();
+            ApplyBackground(DialogueBackground.None);
 
             var isFull = _currentStyle == DialogueStyle.FullScreen;
             if (_fullNextButton != null) _fullNextButton.gameObject.SetActive(isFull);
@@ -175,11 +174,13 @@ namespace MaouSamaTD.UI.Tutorial
             _isStoryMode = true;
             _currentIndex = 0;
             _currentStyle = DialogueStyle.FullScreen;
-            _bgType = DialogueBackground.None; // Background is handled per line in story
+            _bgType = DialogueBackground.FullScreenDim; // Default to dim for story intro
             _charsPerSecond = 30f;
 
             _fullScreenPanel?.SetActive(true);
             _miniTopPanel?.SetActive(false);
+
+            ApplyBackground(DialogueBackground.FullScreenDim);
 
             if (_fullNextButton != null) _fullNextButton.gameObject.SetActive(true);
             if (_fullSkipButton != null) _fullSkipButton.gameObject.SetActive(true);
@@ -233,6 +234,8 @@ namespace MaouSamaTD.UI.Tutorial
                 _backgroundImage.enabled = line.Background != null;
             }
 
+            ApplyBackground(line.BackgroundOverlay);
+
             // Portraits
             UpdatePortrait(_leftPortrait, line.PortraitLeft, line.Focus == MaouSamaTD.Story.PortraitFocus.Left || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
             UpdatePortrait(_middlePortrait, line.PortraitMiddle, line.Focus == MaouSamaTD.Story.PortraitFocus.Middle || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
@@ -281,6 +284,8 @@ namespace MaouSamaTD.UI.Tutorial
 
             if (speakerText != null) speakerText.text = line.SpeakerName;
             
+            ApplyBackground(line.Background);
+
             if (_currentStyle == DialogueStyle.FullScreen)
             {
                 // Portraits
@@ -303,8 +308,9 @@ namespace MaouSamaTD.UI.Tutorial
             StartTyping(line.Text);
         }
 
-        private void ApplyBackground()
+        private void ApplyBackground(DialogueBackground type)
         {
+            _bgType = type;
             // If we are in a tutorial, TutorialManager handles the blocker state and targets.
             // DialogueUI should not interfere with it to avoid clearing world highlights or causing flickering.
             if (_tutorialManager != null && _tutorialManager.IsInTutorial)
@@ -337,6 +343,8 @@ namespace MaouSamaTD.UI.Tutorial
                     if (_fullScreenDim != null)
                     {
                         _fullScreenDim.gameObject.SetActive(true);
+                        var img = _fullScreenDim.GetComponent<UnityEngine.UI.Image>();
+                        if (img != null) img.color = Color.black;
                         _fullScreenDim.alpha = 0;
                         _fullScreenDim.DOFade(0.7f, 0.3f).SetUpdate(true);
                     }
@@ -344,7 +352,7 @@ namespace MaouSamaTD.UI.Tutorial
             }
         }
 
-        private void OnNextClicked()
+        public void OnNextClicked()
         {
             if (Time.frameCount == _lastClickFrame) return;
             _lastClickFrame = Time.frameCount;

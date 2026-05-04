@@ -104,7 +104,7 @@ namespace MaouSamaTD.UI
         private void UpdateSealsUI(int amount)
         {
             if (_authoritySealsText != null)
-                _authoritySealsText.text = $"{amount}";
+                _authoritySealsText.text = $"{amount} / {_currencyManager.MaxSeals}";
             
             RefreshButtonsState();
         }

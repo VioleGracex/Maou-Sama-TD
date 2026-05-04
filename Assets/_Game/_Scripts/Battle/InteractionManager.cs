@@ -122,7 +122,7 @@ namespace MaouSamaTD.Managers
                 if (isPressDown)
                 {
                     bool isOverUI = EventSystem.current.IsPointerOverGameObject();
-                    if (isOverUI && _tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.IsPointerInHole(screenPos))
+                    if (isOverUI && _tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.IsPointerInWorldHole(screenPos))
                     {
                         isOverUI = false;
                     }
@@ -172,13 +172,25 @@ namespace MaouSamaTD.Managers
             UpdateTileVisuals();
         }
 
-        public void EndDrag(bool place)
+        public void EndDrag(bool place, Vector2 pointerPos = default)
         {
             if (place && _currentHoverTile != null)
             {
-                if (_placementHandler.TryPlaceUnit(_currentHoverTile, _activeUnitData))
+                bool isBlockedByUI = false;
+                if (_tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.gameObject.activeInHierarchy)
                 {
-                    _tutorialManager?.OnActionTriggered("UnitPlaced");
+                    if (!_uiBlocker.IsPointerInHole(pointerPos))
+                    {
+                        isBlockedByUI = true;
+                    }
+                }
+
+                if (!isBlockedByUI)
+                {
+                    if (_placementHandler.TryPlaceUnit(_currentHoverTile, _activeUnitData))
+                    {
+                        _tutorialManager?.OnActionTriggered("UnitPlaced");
+                    }
                 }
             }
             SetPlacementRestriction(null);
@@ -322,6 +334,7 @@ namespace MaouSamaTD.Managers
             
             Vector3 targetPos = Vector3.zero;
             UnitBase targetUnit = null;
+            Tile targetTile = null;
             
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, ~LayerMask.GetMask("Ignore Raycast")))
             {
@@ -329,16 +342,67 @@ namespace MaouSamaTD.Managers
                 targetPos = new Vector3(hit.point.x, 0, hit.point.z);
             }
             
+            // Try to find the tile if it's a tile/ground skill
+            targetTile = _gridManager.GetTileAt(_gridManager.WorldToGridCoordinates(targetPos));
+
             if (targetUnit == null)
             {
                  Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-                 if (groundPlane.Raycast(ray, out float enter)) targetPos = ray.GetPoint(enter);
+                 if (groundPlane.Raycast(ray, out float enter)) 
+                 {
+                     targetPos = ray.GetPoint(enter);
+                     if (targetTile == null)
+                        targetTile = _gridManager.GetTileAt(_gridManager.WorldToGridCoordinates(targetPos));
+                 }
+            }
+
+            if (_selectedSkill.TargetType == SkillTargetType.Tile)
+            {
+                if (targetTile != null)
+                {
+                    // Validation: Check if tile type is valid for rites
+                    if (!IsTileValidForRite(targetTile))
+                    {
+                        // Visual feedback: briefly show invalid highlight or just ignore
+                        return;
+                    }
+
+                    if (_skillManager.TryExecuteRite(_selectedSkill, targetTile.transform.position, targetUnit))
+                    {
+                        DeselectSkill();
+                    }
+                    return;
+                }
+                else
+                {
+                    // Ray missed the grid/map entirely
+                    return;
+                }
             }
 
             if (_skillManager.TryExecuteRite(_selectedSkill, targetPos, targetUnit))
             {
                 DeselectSkill();
             }
+        }
+
+        private bool IsTileValidForRite(Tile tile)
+        {
+            if (tile == null) return false;
+            
+            // Block casting on non-gameplay tiles like decorations, walls, etc.
+            var type = tile.Type;
+            if (type == MaouSamaTD.Levels.TileType.None || 
+                type == MaouSamaTD.Levels.TileType.Wall || 
+                type == MaouSamaTD.Levels.TileType.NonWalkableDecor || 
+                type == MaouSamaTD.Levels.TileType.DecoHighGround ||
+                type == MaouSamaTD.Levels.TileType.ExitPoint ||
+                type == MaouSamaTD.Levels.TileType.ExitPointHigh)
+            {
+                return false;
+            }
+            
+            return true;
         }
 
         private void CancelAllActions()

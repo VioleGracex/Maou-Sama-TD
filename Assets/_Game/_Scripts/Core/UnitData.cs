@@ -241,6 +241,8 @@ namespace MaouSamaTD.Units
         public DamageType DamageType;
         public int DeploymentCost = 10;
         public int BlockCount = 1;
+        /// <summary>If false, this unit cannot attack enemies with Flying movement type.</summary>
+        public bool CanAttackFlying = true;
         public System.Collections.Generic.List<Vector2Int> CustomPatternOffsets = new System.Collections.Generic.List<Vector2Int>();
 
         [Header("Stats Base")]

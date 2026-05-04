@@ -15,6 +15,14 @@ namespace MaouSamaTD.Units
         IgnorePlayer
     }
 
+    public enum EnemyEvasionType
+    {
+        None,
+        BypassBlockers, // Ignores all blockers
+        AttackBehind,   // Teleports/Moves behind blocker instead of stopping
+        IgnoreIfTargetAttacking // Only blocked if target is idle/defending, ignores if target is attacking
+    }
+
     [CreateAssetMenu(fileName = "NewEnemyData", menuName = "MaouSamaTD/Enemy Data")]
     public class EnemyData : MaouSamaTD.Core.GameDataSO
     {
@@ -23,6 +31,7 @@ namespace MaouSamaTD.Units
         public Sprite EnemySprite; // Chibi / In-game
         public Sprite FullBodyArt; // Portrait / Full Body
         public Sprite FullSplashArt; // Splash / Full Screen
+        public bool IsBoss; // Boss unit special handling
         public RuntimeAnimatorController AnimatorController;
 
         [Header("Stats")]
@@ -39,8 +48,13 @@ namespace MaouSamaTD.Units
         [Header("Behavior")]
         public EnemyMovementType MovementType;
         public EnemyCollisionType CollisionType;
+        public EnemyEvasionType EvasionType;
+        public bool OnlyAttackIfBlocked;
         public int PhasingCharges = 0;
         public System.Collections.Generic.List<DamageType> Immunities = new System.Collections.Generic.List<DamageType>();
+        
+        [Header("Abilities")]
+        public System.Collections.Generic.List<EnemyAbility> Abilities = new System.Collections.Generic.List<EnemyAbility>();
 
         [Header("Rewards")]
         public int CurrencyReward = 10;

@@ -9,7 +9,8 @@ namespace MaouSamaTD.Units.Editor
     {
         private EnemyData _target;
         private int _selectedTab = 0;
-        private readonly string[] _tabNames = { "General", "Combat", "Visuals" };
+        private readonly string[] _tabNames = { "General", "Combat", "Abilities", "Visuals" };
+
 
         private void OnEnable()
         {
@@ -52,7 +53,9 @@ namespace MaouSamaTD.Units.Editor
             {
                 case 0: DrawGeneralTab(); break;
                 case 1: DrawCombatTab(); break;
-                case 2: DrawVisualsTab(); break;
+                case 2: DrawAbilitiesTab(); break;
+                case 3: DrawVisualsTab(); break;
+
             }
 
             EditorGUIUtility.labelWidth = originalLabelWidth;
@@ -104,6 +107,15 @@ namespace MaouSamaTD.Units.Editor
             DrawProperty("Immunities", "Damage Immunities");
             EndSection();
         }
+
+        private void DrawAbilitiesTab()
+        {
+            BeginSection("Special Abilities & Passives");
+            EditorGUILayout.HelpBox("Add ScriptableObject-based abilities here. These are initialized per-instance when the enemy spawns.", MessageType.Info);
+            DrawProperty("Abilities", "Unit Abilities");
+            EndSection();
+        }
+
 
         private void DrawVisualsTab()
         {

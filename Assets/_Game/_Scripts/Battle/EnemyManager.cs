@@ -34,6 +34,15 @@ namespace MaouSamaTD.Managers
         private int _currentWaveIndex = 0;
         public int CurrentWaveIndex => _currentWaveIndex;
         public int TotalWaves => _waves != null ? _waves.Count : 0;
+        
+        public event System.Action<string, int> OnWaveStarted;
+
+        private Dictionary<int, int> _waveEnemyCounts = new Dictionary<int, int>();
+        private HashSet<int> _wavesThatStartedSpawning = new HashSet<int>();
+        private HashSet<int> _wavesFinishedSpawning = new HashSet<int>();
+        
+        public bool IsWaveCleared(int waveIndex) => _wavesFinishedSpawning.Contains(waveIndex) && (!_waveEnemyCounts.ContainsKey(waveIndex) || _waveEnemyCounts[waveIndex] <= 0);
+        public bool HasWaveStarted(int waveIndex) => _wavesThatStartedSpawning.Contains(waveIndex);
         #endregion
 
         #region Lifecycle
@@ -45,6 +54,7 @@ namespace MaouSamaTD.Managers
                 if (container == null) container = new GameObject("Enemies");
                 _enemyContainer = container.transform;
             }
+            EnemyUnit.OnAnyEnemyRemoved += HandleEnemyRemoved;
         }
 
         private void Update()
@@ -76,6 +86,18 @@ namespace MaouSamaTD.Managers
             if (_gridManager != null)
             {
                 _gridManager.OnGridStateChanged -= OnGridChanged;
+            }
+            EnemyUnit.OnAnyEnemyRemoved -= HandleEnemyRemoved;
+        }
+
+        private void HandleEnemyRemoved(EnemyUnit enemy)
+        {
+            if (enemy == null) return;
+            int waveIdx = enemy.WaveIndex;
+            if (_waveEnemyCounts.ContainsKey(waveIdx))
+            {
+                _waveEnemyCounts[waveIdx]--;
+                if (_waveEnemyCounts[waveIdx] < 0) _waveEnemyCounts[waveIdx] = 0;
             }
         }
         #endregion
@@ -110,6 +132,7 @@ namespace MaouSamaTD.Managers
         {
             if (_waves == null || waveIndex < 0 || waveIndex >= _waves.Count) return;
             
+            _isSpawning = true; // Set immediately to avoid tutorial race conditions
             StopAllCoroutines();
             StartCoroutine(SpawnSingleWaveRoutine(_waves[waveIndex], waveIndex));
         }
@@ -118,6 +141,12 @@ namespace MaouSamaTD.Managers
         {
             _currentWaveIndex = waveIndex;
             _isSpawning = true;
+            _wavesThatStartedSpawning.Add(waveIndex);
+            if (!_waveEnemyCounts.ContainsKey(waveIndex)) _waveEnemyCounts[waveIndex] = 0;
+            OnWaveStarted?.Invoke(wave.WaveMessage, waveIndex);
+
+            MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.WaveStart, "Director", "", $"Wave {waveIndex + 1} Started", 0);
+            
             if (!string.IsNullOrEmpty(wave.WaveMessage))
             {
                 Debug.Log($"[EnemyManager] Tutorial Wave: {wave.WaveMessage}");
@@ -133,6 +162,7 @@ namespace MaouSamaTD.Managers
                 {
                     if (enemyCounter == 0 && _pathVisualizer != null) _pathVisualizer.Hide();
                     SpawnEnemy(group.EnemyType, waveIndex, enemyCounter, group.SpawnPointIndex);
+                    _waveEnemyCounts[waveIndex]++;
                     enemyCounter++;
                     
                     if (group.SpawnInterval > 0)
@@ -140,6 +170,13 @@ namespace MaouSamaTD.Managers
                 }
             }
             _isSpawning = false;
+            _wavesFinishedSpawning.Add(waveIndex);
+
+            // Tutorial Trigger: This wave has finished its spawning sequence
+            if (_tutorialManager != null)
+            {
+                _tutorialManager.OnActionTriggered("WaveFinishedSpawning");
+            }
         }
 
 
@@ -181,26 +218,30 @@ namespace MaouSamaTD.Managers
                         return;
                     }
                 }
-                else if (isHighGroundTile)
-                {
-                    // If it's a high ground spawn and it's a flying/mixed unit, ensure it targets a high ground exit
-                    // Actually GetTargetExitForSpawn should handle this, but we can double check or force it.
-                    // If the current exit is not a high ground exit, try to find one.
-                    Tile exitTile = _gridManager.GetTileAt(exitPoint);
-                    if (exitTile != null && exitTile.Type != TileType.ExitPointHigh)
-                    {
-                         // Search for a high ground exit
-                         foreach(var ep in _gridManager.ExitPoints)
+            }
+
+            // High Ground Logic for Flying/Mixed units: If unit is flying, force it to target the CLOSEST high ground exit if one exists
+            if (data.MovementType == MaouSamaTD.Units.EnemyMovementType.Flying || data.MovementType == MaouSamaTD.Units.EnemyMovementType.Mixed)
+            {
+                 float minDistance = float.MaxValue;
+                 Vector2Int closestHighExit = exitPoint;
+                 bool foundHighExit = false;
+
+                 foreach(var ep in _gridManager.ExitPoints)
+                 {
+                     var et = _gridManager.GetTileAt(ep);
+                     if (et != null && (et.Type == TileType.ExitPointHigh || et.IsHighGround))
+                     {
+                         float dist = Vector2.Distance(new Vector2(spawnPoint.x, spawnPoint.y), new Vector2(ep.x, ep.y));
+                         if (dist < minDistance)
                          {
-                             var et = _gridManager.GetTileAt(ep);
-                             if (et != null && et.Type == TileType.ExitPointHigh)
-                             {
-                                 exitPoint = ep;
-                                 break;
-                             }
+                             minDistance = dist;
+                             closestHighExit = ep;
+                             foundHighExit = true;
                          }
-                    }
-                }
+                     }
+                 }
+                 if (foundHighExit) exitPoint = closestHighExit;
             }
 
             // 2. Get Path
@@ -281,6 +322,10 @@ namespace MaouSamaTD.Managers
                 }
                 
                 List<Coroutine> groupRoutines = new List<Coroutine>();
+                _wavesThatStartedSpawning.Add(waveCounter);
+                if (!_waveEnemyCounts.ContainsKey(waveCounter)) _waveEnemyCounts[waveCounter] = 0;
+                OnWaveStarted?.Invoke(wave.WaveMessage, waveCounter);
+
                 foreach (var group in wave.Groups)
                 {
                     if (!_isSpawning) yield break;
@@ -293,8 +338,22 @@ namespace MaouSamaTD.Managers
                     yield return routine;
                 }
 
+                // Tutorial Trigger: This specific wave (waveCounter) has finished its spawning sequence
+                _wavesFinishedSpawning.Add(waveCounter);
+                if (_tutorialManager != null)
+                {
+                    _tutorialManager.OnActionTriggered("WaveFinishedSpawning");
+                }
+
+                // WAIT: Wait for the entire wave to be cleared (all enemies defeated/escaped) before proceeding to next wave delay
+                yield return new WaitUntil(() => IsWaveCleared(waveCounter));
+
                 if (wave.DelayBeforeNextWave > 0)
+                {
+                    _isSpawning = false; // Not spawning during the delay
                     yield return new WaitForSeconds(wave.DelayBeforeNextWave);
+                    _isSpawning = true;
+                }
                 
                 waveCounter++;
             }
@@ -317,6 +376,7 @@ namespace MaouSamaTD.Managers
                 if (waveCounter == 0 && i == 0 && _pathVisualizer != null) _pathVisualizer.Hide();
                 
                 SpawnEnemy(group.EnemyType, waveCounter, i, group.SpawnPointIndex);
+                _waveEnemyCounts[waveCounter]++;
                 
                 if (group.SpawnInterval > 0)
                     yield return new WaitForSeconds(group.SpawnInterval);

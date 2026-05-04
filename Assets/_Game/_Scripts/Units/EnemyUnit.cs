@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using MaouSamaTD.Grid;
 using MaouSamaTD.Levels;
+using MaouSamaTD.Managers;
 
 namespace MaouSamaTD.Units
 {
@@ -24,8 +25,10 @@ namespace MaouSamaTD.Units
         private float _charmTimer = 0f;
         private Stack<Tile> _retreatPath = new Stack<Tile>();
         private int _currentPhasingCharges;
+        private List<EnemyAbility> _runtimeAbilities = new List<EnemyAbility>();
 
         public static System.Collections.Generic.List<EnemyUnit> ActiveEnemies = new System.Collections.Generic.List<EnemyUnit>();
+        public static System.Action<EnemyUnit> OnAnyEnemyRemoved;
 
         private void OnEnable()
         {
@@ -35,11 +38,14 @@ namespace MaouSamaTD.Units
         private void OnDisable()
         {
             ActiveEnemies.Remove(this);
+            OnAnyEnemyRemoved?.Invoke(this);
         }
 
+        public int WaveIndex { get; private set; }
         public void Initialize(EnemyData data, int waveIndex, int enemyIndex)
         {
             _enemyData = data;
+            WaveIndex = waveIndex;
             
             _maxHp = data.MaxHp;
             _currentHp = _maxHp;
@@ -57,6 +63,22 @@ namespace MaouSamaTD.Units
             gameObject.name = $"Enemy_{data.EnemyName}_W{waveIndex}_O{enemyIndex}";
             
             UpdateVisuals();
+            InitializeAbilities();
+        }
+
+        private void InitializeAbilities()
+        {
+            _runtimeAbilities.Clear();
+            if (_enemyData != null && _enemyData.Abilities != null)
+            {
+                foreach (var abilitySource in _enemyData.Abilities)
+                {
+                    if (abilitySource == null) continue;
+                    EnemyAbility instance = Instantiate(abilitySource);
+                    instance.OnInitialize(this);
+                    _runtimeAbilities.Add(instance);
+                }
+            }
         }
 
         protected override void UpdateVisuals()
@@ -129,6 +151,29 @@ namespace MaouSamaTD.Units
                 _isCentering = false;
             }
         }
+        public override void TakeDamage(float amount, UnitBase attacker = null, DamageType damageType = DamageType.Melee, bool isSkill = false)
+        {
+            float hpBefore = _currentHp;
+            base.TakeDamage(amount, attacker, damageType, isSkill);
+            float actualDamage = hpBefore - _currentHp;
+
+            if (actualDamage > 0)
+            {
+                foreach (var ability in _runtimeAbilities)
+                {
+                    ability.OnTakeDamage(this, actualDamage, damageType);
+                }
+            }
+        }
+
+        public override void Die(UnitBase attacker = null)
+        {
+            foreach (var ability in _runtimeAbilities)
+            {
+                ability.OnDeath(this);
+            }
+            base.Die(attacker);
+        }
 
         public void RecalculatePath()
         {
@@ -156,6 +201,11 @@ namespace MaouSamaTD.Units
         {
             if (_isDead) return;
             base.UpdateInternal();
+
+            foreach (var ability in _runtimeAbilities)
+            {
+                ability.OnTick(this);
+            }
 
             if (_isCharmed)
             {
@@ -222,6 +272,8 @@ namespace MaouSamaTD.Units
             {
                  MoveTowardsTarget();
             }
+
+            // Abilities are already ticked at the start of UpdateInternal
         }
 
         private bool ScanForTarget(out PlayerUnit target)
@@ -238,6 +290,16 @@ namespace MaouSamaTD.Units
                 {
                     Vector2Int myPos = _gridManager.WorldToGridCoordinates(transform.position);
                     Vector2Int targetPos = _gridManager.WorldToGridCoordinates(unit.transform.position);
+                    
+                    // Flying units only attack high ground, UNLESS they are on the same tile as the target (passing through)
+                    if (_enemyData.MovementType == EnemyMovementType.Flying)
+                    {
+                        var targetTile = _gridManager.GetTileAt(targetPos);
+                        if (myPos != targetPos && (targetTile == null || !targetTile.IsHighGround))
+                        {
+                            continue;
+                        }
+                    }
 
                     if (IsTargetInPattern(myPos, targetPos, _enemyData != null ? _enemyData.AttackPattern : AttackPattern.All, Range))
                     {
@@ -269,20 +331,31 @@ namespace MaouSamaTD.Units
         private void HandleAttack(UnitBase target)
         {
             if (target == null) return;
+            if (Time.deltaTime <= 0f) return; // Don't attack while time is paused
             if (Time.time >= _lastAttackTime + _attackInterval)
             {
                 _lastAttackTime = Time.time;
                 if (_animator != null) _animator.Play("Attack", 0, 0f);
                 target.TakeDamage(_attackPower, this, DamageType.Melee);
+
+                foreach (var ability in _runtimeAbilities)
+                {
+                    ability.OnAttack(this, target as UnitBase);
+                }
             }
         }
 
         private void MoveTowardsTarget()
         {
             if (_enemyData == null || _targetTile == null) return;
+            if (Time.deltaTime <= 0f) return; // Game paused — skip movement and avoid log spam
 
             // 1. Check for range-based targets if not already centering/blocked
-            if (!_isCentering && _blockedBy == null && !_isCharmed)
+            // BYPASS: If we have phasing charges or Bypass evasion, we ignore units to reach the exit
+            // NEW: If OnlyAttackIfBlocked is true, we ONLY target if we are actually blocked (see block detection below)
+            bool isPhasing = _currentPhasingCharges > 0 || _enemyData.EvasionType == EnemyEvasionType.BypassBlockers;
+            
+            if (!_isCentering && _blockedBy == null && !_isCharmed && !isPhasing && !_enemyData.OnlyAttackIfBlocked)
             {
                 if (ScanForTarget(out PlayerUnit target))
                 {
@@ -298,10 +371,40 @@ namespace MaouSamaTD.Units
             {
                 if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
                 {
-                    if (_currentPhasingCharges > 0)
+                    bool canEvade = false;
+                    
+                    if (_enemyData.EvasionType == EnemyEvasionType.BypassBlockers) 
                     {
-                        // We are phasing through. Continue moving.
-                        if (_showDebugLogs) Debug.Log($"{gameObject.name} Phasing through {player.name}...");
+                        canEvade = true;
+                    }
+                    else if (_enemyData.EvasionType == EnemyEvasionType.IgnoreIfTargetAttacking && player.IsAttacking())
+                    {
+                        canEvade = true;
+                    }
+                    else if (_currentPhasingCharges > 0)
+                    {
+                        canEvade = true;
+                    }
+
+                    if (canEvade)
+                    {
+                        if (_showDebugLogs) Debug.Log($"{gameObject.name} Evasion/Phasing active: passing through {player.name}...");
+                    }
+                    else if (_enemyData.EvasionType == EnemyEvasionType.AttackBehind)
+                    {
+                        // Logic: Jump over the blocker to the next tile in path
+                        if (_path.Count > 0)
+                        {
+                            Grid.Tile nextTile = _path.Dequeue(); // This is the tile the player is on
+                            if (_path.Count > 0)
+                            {
+                                Grid.Tile jumpTile = _path.Dequeue(); // This is the tile BEHIND the player
+                                transform.position = jumpTile.transform.position; // Teleport
+                                _targetTile = jumpTile;
+                                if (_showDebugLogs) Debug.Log($"{gameObject.name} Teleported behind {player.name} to {jumpTile.Coordinate}!");
+                                return;
+                            }
+                        }
                     }
                     else
                     {
@@ -395,10 +498,10 @@ namespace MaouSamaTD.Units
             _isMoving = false;
             if (_showDebugLogs) Debug.Log($"Enemy reached exit! Dealing {(int)_enemyData.DamageToPlayerBase} damage.");
             
-            Managers.GameManager gm = FindFirstObjectByType<Managers.GameManager>();
+            var gm = FindFirstObjectByType<MaouSamaTD.Managers.GameManager>();
             if (gm != null)
             {
-                gm.EnemyEscaped();
+                gm.EnemyEscaped(this);
             }
 
             GridManager gridMgr = FindFirstObjectByType<GridManager>(); 
@@ -459,6 +562,29 @@ namespace MaouSamaTD.Units
                     if (_retreatPath.Count > 0)
                         _targetTile = _retreatPath.Pop();
                 }
+            }
+        }
+
+        public void SetPhasingCharges(int charges)
+        {
+            _currentPhasingCharges = charges;
+            if (_showDebugLogs) Debug.Log($"{gameObject.name} Phasing Charges set to: {charges}");
+            
+            if (charges > 0)
+            {
+                // Clear any engagement so it continues moving immediately
+                _attackTarget = null;
+                _blockedBy = null;
+                _isMoving = true;
+                _isCentering = false;
+                
+                // If it was attacking, it might be in an attack animation, but it will resume moving on next tick
+                if (_animator != null)
+                {
+                     _animator.SetBool("IsAttacking", false);
+                }
+                
+                RecalculatePath();
             }
         }
     }

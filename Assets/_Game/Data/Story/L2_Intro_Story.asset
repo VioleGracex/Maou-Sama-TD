@@ -12,14 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30a132a6de54d4145a7d433b58a593e4, type: 3}
   m_Name: L2_Intro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
-  Lines:
-  - SpeakerName: Tina
-    DialogueText: The ancient seals in this tomb are pulsing with a strange energy.
-      We need to reclaim more Authority to restore your full power.
-    PortraitLeft: {fileID: 0}
-    PortraitMiddle: {fileID: 0}
-    PortraitRight: {fileID: 21300000, guid: 8a35e15dd2c916d4c83e422cbda88c76, type: 3}
-    Background: {fileID: 21300000, guid: f982733abfcfb7c469df3322ae0196cb, type: 3}
-    Focus: 3
-    EventID: 
-    VoiceClip: {fileID: 0}
+  Lines: []

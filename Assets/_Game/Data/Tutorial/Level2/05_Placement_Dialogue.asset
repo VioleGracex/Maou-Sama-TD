@@ -24,7 +24,7 @@ MonoBehaviour:
     Focus: 0
     Text: Lilith is a Warlock. Place her on the High Ground to maximize her reach
       and Magical damage.
-    Background: 1
+    Background: 2
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
@@ -35,7 +35,7 @@ MonoBehaviour:
     Focus: 0
     Text: "Look at those filthy 'Shadow Wings'\u2014circling like vultures. They
       think we're easy prey."
-    Background: 1
+    Background: 2
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
@@ -46,5 +46,5 @@ MonoBehaviour:
     Focus: 0
     Text: Let me handle them, Sovereign. My magic can reach where Ignis's sword falters.
       Just... give me a good view.
-    Background: 1
+    Background: 2
     EventID: 

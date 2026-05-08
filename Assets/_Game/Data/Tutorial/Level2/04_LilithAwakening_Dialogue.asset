@@ -24,7 +24,7 @@ MonoBehaviour:
     Focus: 0
     Text: Mmm... such a powerful, cold grip. Is that you, my delicious Sovereign?
       You've certainly taken your time.
-    Background: 1
+    Background: 2
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
@@ -35,7 +35,7 @@ MonoBehaviour:
     Focus: 0
     Text: Control your tongue, creature. The Sovereign requires your strength, not
       your insolence.
-    Background: 0
+    Background: 2
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
@@ -46,5 +46,5 @@ MonoBehaviour:
     Focus: 0
     Text: "Jealous as ever, Tina? Don't worry, there\u2019s enough of our Master
       to go around. Now, Sovereign... let us deal with these uninvited guests first."
-    Background: 0
+    Background: 2
     EventID: 

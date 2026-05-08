@@ -24,7 +24,7 @@ MonoBehaviour:
     Focus: 0
     Text: My Sovereign, the unsealing process is delicate. We must buy time for the
       ritual to complete.
-    Background: 1
+    Background: 2
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
@@ -35,5 +35,5 @@ MonoBehaviour:
     Focus: 0
     Text: Ignis, hold the southern corridor. Do not let those shades interrupt the
       flow of mana.
-    Background: 1
+    Background: 2
     EventID: 

@@ -51,6 +51,7 @@ namespace MaouSamaTD.Managers
         private string _waitingActionKey;
         private HashSet<string> _triggeredActionsBuffer = new HashSet<string>();
         private TutorialStep currentStep => _currentStep;
+        private bool _isWaitingForDialogueCondition = false;
         #endregion
 
         #region Public API
@@ -143,6 +144,9 @@ namespace MaouSamaTD.Managers
         {
             if (!IsInTutorial || _activeTutorial == null || _currentStepIndex >= _activeTutorial.Steps.Count) return;
 
+            // Prevent UI highlights or blockers from activating prematurely during wait states
+            if (_isWaitingForDialogueCondition) return;
+
             var step = _activeTutorial.Steps[_currentStepIndex];
             
             // Periodically check if targets are still valid/active (e.g. if user closes a menu)
@@ -173,7 +177,7 @@ namespace MaouSamaTD.Managers
                                         EnemyUnit.ActiveEnemies.Any(u => u.name == step.TargetUI.Name || u.name.Contains(targetName));
                 }
 
-                if (hasWorldUnit || step.StepName == "One-Shot Rite" || step.StepName == "Boss Bypasses Ignis")
+                if (hasWorldUnit || step.StepName == "One-Shot Rite" || step.StepName == "Boss Bypasses!" || step.StepName == "Boss Bypasses ignis")
                 {
                     HandleUIHighlight(step);
                 }
@@ -339,7 +343,12 @@ namespace MaouSamaTD.Managers
                                 {
                                     _gameManager.SetSpeed(1);
                                 }
+
+                                _isWaitingForDialogueCondition = true;
+                                _uiBlocker?.HideBlocker(true); // Hide blocker during wait/boss walk-up
+                                _handUI?.Hide();               // Hide hand during wait
                                 yield return new WaitUntil(() => CheckCondition(step));
+                                _isWaitingForDialogueCondition = false;
                             }
 
                             // Apply StopTime AFTER the condition wait, so the game pauses for the actual dialogue
@@ -1621,8 +1630,25 @@ private RectTransform FindTargetRect(string name)
                     var boss = MaouSamaTD.Units.EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
                     if (boss == null) return false;
                     
-                    // We check if it has used its phasing charge
-                    return boss.CurrentPhasingCharges < boss.EnemyData.PhasingCharges;
+                    // 1. If boss has HP <= 70.5%, it has phased/bypassed
+                    if (boss.CurrentHp / boss.MaxHp <= 0.705f) return true;
+
+                    // 2. If boss has phasing charges (which are granted on phase)
+                    if (boss.CurrentPhasingCharges > 0) return true;
+
+                    // 3. Fallback: check if the boss has physically passed Ignis
+                    var ignis = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && u.name.Contains("Ignis"));
+                    if (ignis != null)
+                    {
+                        bool exitIsLeft = (_gridManager != null && _gridManager.exitIsLeft);
+                        if (exitIsLeft && boss.transform.position.x < (ignis.transform.position.x - 0.25f)) return true;
+                        if (!exitIsLeft && boss.transform.position.x > (ignis.transform.position.x + 0.25f)) return true;
+                    }
+
+                    // 4. Fallback: original condition (just in case)
+                    if (boss.EnemyData != null && boss.CurrentPhasingCharges < boss.EnemyData.PhasingCharges) return true;
+
+                    return false;
                 }
 
                 default:

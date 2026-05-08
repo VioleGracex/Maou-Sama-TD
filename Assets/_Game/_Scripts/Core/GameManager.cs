@@ -354,16 +354,18 @@ namespace MaouSamaTD.Managers
 
         public void Victory()
         {
+            Debug.Log($"[GameManager] Victory() called. IsGameEnded: {IsGameEnded}, HasStory: {_currentLevelData?.HasStory}, OutroStory: {_currentLevelData?.OutroStory != null}");
             if (IsGameEnded) return;
             IsGameEnded = true;
+            Time.timeScale = 0f; // Freeze game timescale immediately upon victory
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Game", "", "Victory Achieved!", 0);
             OnGameFinished?.Invoke();
-            Debug.Log("[GameManager] Victory!");
+            Debug.Log("[GameManager] Victory is being processed...");
             
             var starResults = EvaluateStarConditions();
             int stars = 0;
             foreach (var res in starResults) if (res.IsAchieved) stars++;
-            if (stars == 0) stars = 1; // Always at least 1 star for victory? Or not? User said "stars also with text of rating"
+            if (stars == 0) stars = 1; // Always at least 1 star for victory
             
             if (_saveManager != null && _currentLevelData != null)
             {
@@ -396,19 +398,22 @@ namespace MaouSamaTD.Managers
                     }
                 }
 
-            Debug.Log($"[GameManager] Progress Saved. Level: {_currentLevelData.LevelID}, Stars: {stars}");
+                Debug.Log($"[GameManager] Progress Saved. Level: {_currentLevelData.LevelID}, Stars: {stars}");
             }
 
             if (_currentLevelData != null && _currentLevelData.HasStory && _currentLevelData.OutroStory != null)
             {
+                Debug.Log("[GameManager] Playing Outro Story before calling OnVictory event...");
                 _storyManager.PlayStory(_currentLevelData.OutroStory, () => 
                 {
+                    Debug.Log("[GameManager] Outro Story finished. Invoking OnVictory event...");
                     OnVictory?.Invoke();
                     SetSpeed(0);
                 });
             }
             else
             {
+                Debug.Log("[GameManager] No Outro Story. Invoking OnVictory event immediately...");
                 OnVictory?.Invoke();
                 SetSpeed(0);
             }
@@ -443,22 +448,27 @@ namespace MaouSamaTD.Managers
         #region Internal Logic
         private void GameOver()
         {
+            Debug.Log($"[GameManager] GameOver() called. IsGameEnded: {IsGameEnded}, HasStory: {_currentLevelData?.HasStory}, OutroStory: {_currentLevelData?.OutroStory != null}");
             if (IsGameEnded) return;
             IsGameEnded = true;
+            Time.timeScale = 0f; // Freeze game timescale immediately upon defeat
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Game", "", "Game Over - Defeat", 0);
             OnGameFinished?.Invoke();
-            Debug.Log("[GameManager] Game Over!");
+            Debug.Log("[GameManager] GameOver is being processed...");
             
             if (_currentLevelData != null && _currentLevelData.HasStory && _currentLevelData.OutroStory != null)
             {
+                Debug.Log("[GameManager] Playing Defeat Outro Story before calling OnGameOver event...");
                 _storyManager.PlayStory(_currentLevelData.OutroStory, () => 
                 {
+                    Debug.Log("[GameManager] Defeat Outro Story finished. Invoking OnGameOver event...");
                     OnGameOver?.Invoke();
                     SetSpeed(0);
                 });
             }
             else
             {
+                Debug.Log("[GameManager] No Defeat Outro Story. Invoking OnGameOver event immediately...");
                 OnGameOver?.Invoke();
                 SetSpeed(0);
             }

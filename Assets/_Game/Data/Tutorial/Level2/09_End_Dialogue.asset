@@ -24,7 +24,7 @@ MonoBehaviour:
     Focus: 0
     Text: That was... satisfying. I've missed our little dances. My power is yours
       once more, Sovereign... as is everything else.
-    Background: 1
+    Background: 2
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
@@ -34,7 +34,7 @@ MonoBehaviour:
     CenterPortrait: {fileID: 0}
     Focus: 0
     Text: The unsealing is complete. Lilith is with us once more.
-    Background: 0
+    Background: 2
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
@@ -45,7 +45,7 @@ MonoBehaviour:
     Focus: 0
     Text: Come, My Sovereign. We have what we came for. Our journey back is long,
       but necessary.
-    Background: 0
+    Background: 2
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}

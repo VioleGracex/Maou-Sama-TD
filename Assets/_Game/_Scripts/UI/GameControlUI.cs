@@ -94,7 +94,29 @@ namespace MaouSamaTD.UI
                 UpdateHp(_gameManager.NexusIntegrity);
             }
 
-            // Hide panels initially
+            // Hide panels initially, dynamic find as fallback if null
+            if (_winPanel == null)
+            {
+                _winPanel = GameObject.Find("VictoryPanel");
+                if (_winPanel == null)
+                {
+                    var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+                    _winPanel = System.Array.Find(allObjects, o => o.name == "VictoryPanel" || o.name == "WinPanel");
+                }
+                if (_winPanel != null) Debug.Log($"[GameControlUI] Dynamically bound unassigned _winPanel reference to '{_winPanel.name}'");
+            }
+
+            if (_losePanel == null)
+            {
+                _losePanel = GameObject.Find("LosePanel");
+                if (_losePanel == null)
+                {
+                    var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+                    _losePanel = System.Array.Find(allObjects, o => o.name == "LosePanel");
+                }
+                if (_losePanel != null) Debug.Log($"[GameControlUI] Dynamically bound unassigned _losePanel reference to '{_losePanel.name}'");
+            }
+
             if (_winPanel != null) _winPanel.SetActive(false);
             if (_losePanel != null) _losePanel.SetActive(false);
             if (_confirmationPanel != null) _confirmationPanel.SetActive(false);
@@ -172,10 +194,20 @@ namespace MaouSamaTD.UI
 
         public void ShowWin()
         {
+            Debug.Log($"[GameControlUI] ShowWin() event triggered! _winPanel is null? {_winPanel == null}");
             if (_uiBlocker != null) _uiBlocker.HideBlocker(true);
             
+            if (_winPanel == null)
+            {
+                Debug.LogWarning("[GameControlUI] _winPanel is null inside ShowWin! Attempting emergency find...");
+                var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+                _winPanel = System.Array.Find(allObjects, o => o.name == "VictoryPanel" || o.name == "WinPanel");
+            }
+
             if (_winPanel != null)
             {
+                Debug.Log($"[GameControlUI] Activating Victory Panel '{_winPanel.name}' (current activeSelf: {_winPanel.activeSelf})");
+                
                 string sceneName = SceneManager.GetActiveScene().name;
                 int buildIndex = SceneManager.GetActiveScene().buildIndex;
                 string levelTitle = $"LEVEL {buildIndex}: {sceneName.Replace("_", " ")}".ToUpper();
@@ -208,6 +240,7 @@ namespace MaouSamaTD.UI
                 }
 
                 _winPanel.SetActive(true);
+                Debug.Log($"[GameControlUI] Activated _winPanel activeSelf is now: {_winPanel.activeSelf}");
 
                 if (_levelTitleText != null)
                 {
@@ -228,6 +261,10 @@ namespace MaouSamaTD.UI
                 }
 
                 PopulateStarConditions();
+            }
+            else
+            {
+                Debug.LogError("[GameControlUI] SHOW WIN FAILED: _winPanel is null and could not be resolved dynamically!");
             }
         }
 
@@ -308,8 +345,26 @@ namespace MaouSamaTD.UI
 
         private void ShowLose()
         {
+            Debug.Log($"[GameControlUI] ShowLose() event triggered! _losePanel is null? {_losePanel == null}");
             if (_uiBlocker != null) _uiBlocker.HideBlocker(true);
-            if (_losePanel != null) _losePanel.SetActive(true);
+            
+            if (_losePanel == null)
+            {
+                Debug.LogWarning("[GameControlUI] _losePanel is null inside ShowLose! Attempting emergency find...");
+                var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+                _losePanel = System.Array.Find(allObjects, o => o.name == "LosePanel");
+            }
+
+            if (_losePanel != null)
+            {
+                Debug.Log($"[GameControlUI] Activating Defeat Panel '{_losePanel.name}' (current activeSelf: {_losePanel.activeSelf})");
+                _losePanel.SetActive(true);
+                Debug.Log($"[GameControlUI] Activated _losePanel activeSelf is now: {_losePanel.activeSelf}");
+            }
+            else
+            {
+                Debug.LogError("[GameControlUI] SHOW LOSE FAILED: _losePanel is null and could not be resolved dynamically!");
+            }
         }
 
         private void OnRetreatClicked()

@@ -42,7 +42,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Set Seal Limit 50
     Type: 5
     Dialogue: {fileID: 0}
@@ -71,7 +71,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Intro
     Type: 0
     Dialogue: {fileID: 11400000, guid: d7743a0cd5ffe49439ec1f41c24f8f20, type: 2}
@@ -100,7 +100,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Hold the Line
     Type: 0
     Dialogue: {fileID: 11400000, guid: 4055988c3759ad545876fec42bc946c3, type: 2}
@@ -129,7 +129,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Place Ignis
     Type: 3
     Dialogue: {fileID: 0}
@@ -162,7 +162,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Teach Empower
     Type: 3
     Dialogue: {fileID: 11400000, guid: acae4862676c7bb4ca51c7bd01b29ed1, type: 2}
@@ -194,7 +194,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Cast Empower
     Type: 3
     Dialogue: {fileID: 0}
@@ -230,7 +230,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Wave 1 Clears
     Type: 7
     Dialogue: {fileID: 0}
@@ -259,7 +259,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 0
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Unseal Lilith
     Type: 0
     Dialogue: {fileID: 11400000, guid: 8b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e, type: 2}
@@ -288,7 +288,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
-    Comment:
+    Comment: 
   - StepName: Show Lilith Btn
     Type: 5
     Dialogue: {fileID: 0}
@@ -317,7 +317,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
-    Comment:
+    Comment: 
   - StepName: Place Lilith
     Type: 3
     Dialogue: {fileID: 11400000, guid: 4a9f99aba8e0d954c91df435e187f5e8, type: 2}
@@ -350,7 +350,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: All Mobs Spawned
     Type: 8
     Dialogue: {fileID: 0}
@@ -379,7 +379,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 0
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Mobs Swarming!
     Type: 0
     Dialogue: {fileID: 11400000, guid: f26ffb1b2a65dc54599a2342472b1e03, type: 2}
@@ -416,7 +416,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
-    Comment:
+    Comment: 
   - StepName: Teach AOE Rite
     Type: 3
     Dialogue: {fileID: 11400000, guid: acae4862676c7bb4ca51c7bd01b29ed1, type: 2}
@@ -445,7 +445,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 0
-    Comment:
+    Comment: 
   - StepName: Cast AOE Rite
     Type: 3
     Dialogue: {fileID: 0}
@@ -478,7 +478,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 0
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Wait for Boss Wave
     Type: 8
     Dialogue: {fileID: 0}
@@ -594,7 +594,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
-    Comment:
+    Comment: 
   - StepName: Refill Seals
     Type: 5
     Dialogue: {fileID: 0}
@@ -623,7 +623,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 0
-    Comment:
+    Comment: 
   - StepName: Open Rite Menu
     Type: 3
     Dialogue: {fileID: 0}
@@ -651,8 +651,8 @@ MonoBehaviour:
     FullBlocker: 0
     ResetBlocker: 0
     StopTime: 1
-    ResumeTime: 1
-    Comment:
+    ResumeTime: 0
+    Comment: 
   - StepName: One-Shot Rite
     Type: 8
     Dialogue: {fileID: 0}
@@ -686,9 +686,9 @@ MonoBehaviour:
     UseBlocker: 1
     FullBlocker: 0
     ResetBlocker: 0
-    StopTime: 0
+    StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 
   - StepName: Victory
     Type: 0
     Dialogue: {fileID: 11400000, guid: ad4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a, type: 2}
@@ -717,4 +717,4 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment:
+    Comment: 

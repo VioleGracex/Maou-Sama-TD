@@ -52,6 +52,7 @@ namespace MaouSamaTD.Managers
         private HashSet<string> _triggeredActionsBuffer = new HashSet<string>();
         private TutorialStep currentStep => _currentStep;
         private bool _isWaitingForDialogueCondition = false;
+        private bool _bossPhasedTriggered = false;
         #endregion
 
         #region Public API
@@ -72,6 +73,7 @@ namespace MaouSamaTD.Managers
             _activeTutorial = data;
             IsInTutorial = true;
             _currentStepIndex = 0;
+            _bossPhasedTriggered = false;
 
             // Level 2 Start Logic: Set initial seals to 50
             if (_activeTutorial != null && _activeTutorial.name.Contains("Level2"))
@@ -98,6 +100,22 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Lifecycle
+        private void OnEnable()
+        {
+            MaouSamaTD.Units.BossPhaseAbility.OnPhaseTriggered += HandleBossPhaseTriggered;
+        }
+
+        private void OnDisable()
+        {
+            MaouSamaTD.Units.BossPhaseAbility.OnPhaseTriggered -= HandleBossPhaseTriggered;
+        }
+
+        private void HandleBossPhaseTriggered(MaouSamaTD.Units.EnemyUnit boss)
+        {
+            _bossPhasedTriggered = true;
+            if (_showDebugLogs) Debug.Log("[tutorial] Boss phase triggered event received by TutorialManager!");
+        }
+
         private void Start()
         {
             if (_gameManager != null)
@@ -606,8 +624,15 @@ namespace MaouSamaTD.Managers
                             HandleUIHighlight(step);
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey}");
                             
-                            // Ensure time flows if we are waiting for a dynamic condition
-                            if (_gameManager.CurrentSpeed < 0.1f)
+                            // Ensure time flows if we are waiting for a dynamic condition, UNLESS StopTime is requested!
+                            if (step.StopTime)
+                            {
+                                if (_gameManager.CurrentSpeed > 0.1f)
+                                {
+                                    _gameManager.SetSpeed(0);
+                                }
+                            }
+                            else if (_gameManager.CurrentSpeed < 0.1f)
                             {
                                 _gameManager.SetSpeed(1);
                             }
@@ -989,6 +1014,22 @@ namespace MaouSamaTD.Managers
                             Height = wt.Height
                         });
                     }
+                }
+            }
+
+            // DYNAMIC: Highlight tile boss stands on during "Boss Bypasses!" step
+            if (step.StepName == "Boss Bypasses!" || step.StepName == "Boss Bypasses ignis")
+            {
+                var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
+                if (boss != null)
+                {
+                    Vector3 position = boss.transform.position + new Vector3(0, _unitWorldHoleYOffset, 0);
+                    worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
+                    {
+                        Position = position,
+                        Size = new Vector2(1.2f, 1.2f),
+                        Height = 2.0f
+                    });
                 }
             }
             
@@ -1626,12 +1667,14 @@ private RectTransform FindTargetRect(string name)
 
                 case "BossBypass":
                 {
+                    if (_bossPhasedTriggered) return true;
+
                     // Check if the Abyssal Shade has started phasing or completed its bypass
                     var boss = MaouSamaTD.Units.EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
                     if (boss == null) return false;
                     
-                    // 1. If boss has HP <= 70.5%, it has phased/bypassed
-                    if (boss.CurrentHp / boss.MaxHp <= 0.705f) return true;
+                    // 1. If boss has HP <= 0.701f (or 70.1%), it has phased/bypassed
+                    if (boss.CurrentHp / boss.MaxHp <= 0.701f) return true;
 
                     // 2. If boss has phasing charges (which are granted on phase)
                     if (boss.CurrentPhasingCharges > 0) return true;
@@ -1640,13 +1683,14 @@ private RectTransform FindTargetRect(string name)
                     var ignis = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && u.name.Contains("Ignis"));
                     if (ignis != null)
                     {
-                        bool exitIsLeft = (_gridManager != null && _gridManager.exitIsLeft);
-                        if (exitIsLeft && boss.transform.position.x < (ignis.transform.position.x - 0.25f)) return true;
-                        if (!exitIsLeft && boss.transform.position.x > (ignis.transform.position.x + 0.25f)) return true;
+                        if (_gridManager == null) _gridManager = FindFirstObjectByType<Grid.GridManager>();
+                        if (_gridManager != null)
+                        {
+                            bool exitIsLeft = _gridManager.exitIsLeft;
+                            if (exitIsLeft && boss.transform.position.x < (ignis.transform.position.x - 0.25f)) return true;
+                            if (!exitIsLeft && boss.transform.position.x > (ignis.transform.position.x + 0.25f)) return true;
+                        }
                     }
-
-                    // 4. Fallback: original condition (just in case)
-                    if (boss.EnemyData != null && boss.CurrentPhasingCharges < boss.EnemyData.PhasingCharges) return true;
 
                     return false;
                 }

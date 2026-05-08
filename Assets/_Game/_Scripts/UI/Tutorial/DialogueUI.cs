@@ -147,6 +147,7 @@ namespace MaouSamaTD.UI.Tutorial
 
         public void ShowDialogue(DialogueData data, System.Action onComplete = null)
         {
+            gameObject.SetActive(true);
             Debug.Log($"[tutorial] ShowDialogue called with style: {data?.Style}");
             if (data == null || data.Lines == null || data.Lines.Count == 0)
             {
@@ -179,6 +180,7 @@ namespace MaouSamaTD.UI.Tutorial
 
         public void ShowStory(StoryDataSO data, System.Action onComplete = null)
         {
+            gameObject.SetActive(true);
             Debug.Log($"[story] ShowStory called: {data?.name}");
             if (data == null || data.Lines == null || data.Lines.Count == 0)
             {

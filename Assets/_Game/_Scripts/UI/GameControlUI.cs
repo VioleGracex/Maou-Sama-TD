@@ -208,6 +208,14 @@ namespace MaouSamaTD.UI
             {
                 Debug.Log($"[GameControlUI] Activating Victory Panel '{_winPanel.name}' (current activeSelf: {_winPanel.activeSelf})");
                 
+                // Trace parent hierarchy active states
+                Transform p = _winPanel.transform.parent;
+                while (p != null)
+                {
+                    Debug.Log($"[GameControlUI] Victory Panel Parent: '{p.name}', activeSelf: {p.gameObject.activeSelf}, activeInHierarchy: {p.gameObject.activeInHierarchy}");
+                    p = p.parent;
+                }
+                
                 string sceneName = SceneManager.GetActiveScene().name;
                 int buildIndex = SceneManager.GetActiveScene().buildIndex;
                 string levelTitle = $"LEVEL {buildIndex}: {sceneName.Replace("_", " ")}".ToUpper();
@@ -358,6 +366,14 @@ namespace MaouSamaTD.UI
             if (_losePanel != null)
             {
                 Debug.Log($"[GameControlUI] Activating Defeat Panel '{_losePanel.name}' (current activeSelf: {_losePanel.activeSelf})");
+                
+                // Trace parent hierarchy active states
+                Transform p = _losePanel.transform.parent;
+                while (p != null)
+                {
+                    Debug.Log($"[GameControlUI] Defeat Panel Parent: '{p.name}', activeSelf: {p.gameObject.activeSelf}, activeInHierarchy: {p.gameObject.activeInHierarchy}");
+                    p = p.parent;
+                }
                 _losePanel.SetActive(true);
                 Debug.Log($"[GameControlUI] Activated _losePanel activeSelf is now: {_losePanel.activeSelf}");
             }

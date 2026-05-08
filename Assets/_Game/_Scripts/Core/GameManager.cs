@@ -35,10 +35,10 @@ namespace MaouSamaTD.Managers
         private LevelData _currentLevelData;
         public LevelData CurrentLevelData => _currentLevelData;
 
-        public int PlayerLives { get; private set; }
-        public int MaxLives { get; private set; } = 20;
+        public int NexusIntegrity { get; private set; }
+        public int MaxNexusIntegrity { get; private set; } = 20;
         public int EnemiesPassedCount { get; private set; }
-        public System.Action<int> OnLivesChanged;
+        public System.Action<int> OnNexusIntegrityChanged;
         public event System.Action OnVictory;
         public event System.Action OnGameOver;
         public event System.Action OnGameFinished;
@@ -253,10 +253,10 @@ namespace MaouSamaTD.Managers
                 if (levelData == null) Debug.LogError("[GameManager] LevelData is NULL!");
             }
 
-            MaxLives = 20; // Default or from level data
-            PlayerLives = MaxLives;
+            MaxNexusIntegrity = 20; // Default or from level data
+            NexusIntegrity = MaxNexusIntegrity;
             EnemiesPassedCount = 0;
-            OnLivesChanged?.Invoke(PlayerLives);
+            OnNexusIntegrityChanged?.Invoke(NexusIntegrity);
 
             // Signal the loading screen that the level is ready
             var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>();
@@ -269,14 +269,14 @@ namespace MaouSamaTD.Managers
         {
             if (IsGameEnded) return;
 
-            PlayerLives -= amount;
-            if (PlayerLives < 0) PlayerLives = 0;
+            NexusIntegrity -= amount;
+            if (NexusIntegrity < 0) NexusIntegrity = 0;
             
-            OnLivesChanged?.Invoke(PlayerLives);
+            OnNexusIntegrityChanged?.Invoke(NexusIntegrity);
             
-            Debug.Log($"[GameManager] Base taking damage! Lives remaining: {PlayerLives}");
+            Debug.Log($"[GameManager] Base taking damage! Nexus Integrity remaining: {NexusIntegrity}");
 
-            if (PlayerLives <= 0)
+            if (NexusIntegrity <= 0)
             {
                 CheckLoseConditions(LevelConditionType.BaseHPZero);
             }
@@ -296,6 +296,8 @@ namespace MaouSamaTD.Managers
             if (isBoss)
             {
                 Debug.LogWarning("[GameManager] BOSS ESCAPED! Triggering Game Over.");
+                NexusIntegrity = 0;
+                OnNexusIntegrityChanged?.Invoke(NexusIntegrity);
                 GameOver();
                 return;
             }
@@ -314,7 +316,7 @@ namespace MaouSamaTD.Managers
             // Default behavior if no conditions defined
             if (_currentLevelData == null || _currentLevelData.LoseConditions.Count == 0)
             {
-                if (triggerType == LevelConditionType.BaseHPZero && PlayerLives <= 0) shouldLose = true;
+                if (triggerType == LevelConditionType.BaseHPZero && NexusIntegrity <= 0) shouldLose = true;
             }
             else
             {
@@ -323,7 +325,7 @@ namespace MaouSamaTD.Managers
                     switch (condition.Type)
                     {
                         case LevelConditionType.BaseHPZero:
-                            if (PlayerLives <= 0) shouldLose = true;
+                            if (NexusIntegrity <= 0) shouldLose = true;
                             break;
                         case LevelConditionType.EnemiesPassedLimit:
                             if (EnemiesPassedCount >= condition.Value) shouldLose = true;
@@ -493,7 +495,7 @@ namespace MaouSamaTD.Managers
                             achieved = TimeTaken <= cond.TargetValue;
                             break;
                         case StarCondition.ConditionType.BaseHealth:
-                            float hpPct = (float)PlayerLives / (float)MaxLives * 100f;
+                            float hpPct = (float)NexusIntegrity / (float)MaxNexusIntegrity * 100f;
                             achieved = hpPct >= cond.TargetValue;
                             break;
                         case StarCondition.ConditionType.UnitLossLimit:

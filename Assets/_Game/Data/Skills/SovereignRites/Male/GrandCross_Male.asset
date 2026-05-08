@@ -25,6 +25,7 @@ MonoBehaviour:
     RangeIndicatorColor: {r: 0.6, g: 0.2, b: 0.8, a: 1}
     AnimationTriggerName: 
   Archetype: 0
+  Tag: AOE_Rite
   SealCost: 25
   Cooldown: 45
   TargetType: 1
@@ -32,16 +33,19 @@ MonoBehaviour:
   Radius: 3
   AoeShape: 5
   CustomShapeOffsets:
-  - {x: -1, y: 0}
+  - {x: 0, y: 0}
   - {x: 1, y: 0}
   - {x: 2, y: 0}
   - {x: 3, y: 0}
-  - {x: -1, y: 1}
-  - {x: -1, y: 2}
-  - {x: -1, y: -1}
-  - {x: -1, y: -2}
+  - {x: -1, y: 0}
   - {x: -2, y: 0}
   - {x: -3, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: 2}
+  - {x: 0, y: 3}
+  - {x: 0, y: -1}
+  - {x: 0, y: -2}
+  - {x: 0, y: -3}
   EffectType: 0
   Modifiers: []
   Persistence: 0

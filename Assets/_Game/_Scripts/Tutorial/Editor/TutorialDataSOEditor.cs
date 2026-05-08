@@ -198,6 +198,7 @@ namespace MaouSamaTD.Tutorial
             EditorGUILayout.LabelField($"[{_selectedIndex}]  {selClean}", EditorStyles.boldLabel);
             EditorGUILayout.Space(4);
             EditorGUILayout.PropertyField(selected, true);
+            DrawStepWarnings(selected);
             EditorGUILayout.Space(8);
 
             // ── Copy / Paste / Duplicate row ───────────────────────────
@@ -246,6 +247,47 @@ namespace MaouSamaTD.Tutorial
             GUILayout.EndVertical();
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawStepWarnings(SerializedProperty stepProp)
+        {
+            var useBlocker = stepProp.FindPropertyRelative("UseBlocker").boolValue;
+            var fullBlocker = stepProp.FindPropertyRelative("FullBlocker").boolValue;
+            var dialogue = stepProp.FindPropertyRelative("Dialogue").objectReferenceValue as DialogueData;
+
+            if (dialogue != null)
+            {
+                bool dialogueHasBlocker = false;
+                bool dialogueHasDim = false;
+                foreach (var line in dialogue.Lines)
+                {
+                    if (line.Background == DialogueBackground.UIBlocker) dialogueHasBlocker = true;
+                    if (line.Background == DialogueBackground.FullScreenDim) dialogueHasDim = true;
+                }
+
+                if (dialogueHasBlocker && useBlocker)
+                {
+                    EditorGUILayout.HelpBox("INFO: Both Tutorial Step and Dialogue have 'UI Blocker' enabled. The dialogue box will be automatically added as a hole in the blocker.", MessageType.Info);
+                }
+                else if (dialogueHasBlocker && !useBlocker)
+                {
+                    EditorGUILayout.HelpBox("WARNING: Dialogue line requests a UI Blocker, but Tutorial Step has 'Use Blocker' OFF. The blocker will activate ONLY while the dialogue is shown.", MessageType.Warning);
+                }
+
+                if (dialogueHasDim)
+                {
+                    EditorGUILayout.HelpBox("INFO: Dialogue has 'Full Screen Dim' enabled. This will dim the entire screen during dialogue.", MessageType.Info);
+                }
+            }
+
+            if (useBlocker && fullBlocker)
+            {
+                EditorGUILayout.HelpBox("FULL BLOCKER: No world or UI holes will be cut (except the dialogue box). Best for pure story moments.", MessageType.None);
+            }
+            else if (useBlocker)
+            {
+                EditorGUILayout.HelpBox("UI BLOCKER: Holes will be cut for TargetUI and TargetTiles. Game world is dimmed and blocked.", MessageType.None);
+            }
         }
     }
 }

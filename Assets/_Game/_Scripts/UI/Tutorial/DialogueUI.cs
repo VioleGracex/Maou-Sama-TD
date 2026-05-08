@@ -70,6 +70,8 @@ namespace MaouSamaTD.UI.Tutorial
         private Tween _typingTween;
         private DialogueStyle _currentStyle;
         private int _lastClickFrame = -1;
+        private DialogueBackground _lastAppliedBG = (DialogueBackground)(-1);
+        private DialogueStyle _lastAppliedStyle = (DialogueStyle)(-1);
 
         private TextMeshProUGUI ActiveContentText 
         {
@@ -326,14 +328,15 @@ namespace MaouSamaTD.UI.Tutorial
 
         private void ApplyBackground(DialogueBackground type)
         {
+            if (_lastAppliedBG == type && _lastAppliedStyle == _currentStyle) return;
+            _lastAppliedBG = type;
+            _lastAppliedStyle = _currentStyle;
+            
             _bgType = type;
-            // If we are in a tutorial, TutorialManager handles the blocker state and targets.
-            // DialogueUI should not interfere with it to avoid clearing world highlights or causing flickering.
-            if (_tutorialManager != null && _tutorialManager.IsInTutorial)
-            {
-                if (_backgroundImage != null) _backgroundImage.enabled = false;
-                return;
-            }
+            
+            // Background image (sprite) is handled separately if needed, but for tutorials 
+            // we mostly care about the Blocker/Dim.
+            if (_backgroundImage != null) _backgroundImage.enabled = false;
 
             // Reset
             if (_bgType != DialogueBackground.UIBlocker)
@@ -416,6 +419,8 @@ namespace MaouSamaTD.UI.Tutorial
             }
 
             this.gameObject.SetActive(false);
+            _lastAppliedBG = (DialogueBackground)(-1);
+            _lastAppliedStyle = (DialogueStyle)(-1);
 
             // Safe callback invocation
             var callback = _onComplete;

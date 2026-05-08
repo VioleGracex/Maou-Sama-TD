@@ -26,6 +26,7 @@ MonoBehaviour:
     RangeIndicatorColor: {r: 0.4, g: 0, b: 0.8, a: 1}
     AnimationTriggerName: 
   Archetype: 1
+  Tag: AOE_Rite
   SealCost: 25
   Cooldown: 45
   TargetType: 1

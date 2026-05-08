@@ -10,30 +10,42 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 03_HoldingLine_Dialogue
+  m_Name: 08_Abyssal_Boss_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Tina
+  - SpeakerName: Ignis
     SpeakerPortrait: {fileID: 0}
     PortraitOnLeft: 0
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: My Sovereign, the unsealing process is delicate. We must buy time for the
-      ritual to complete.
-    Background: 1
+    Text: Tch! My blade... it's passing straight through him! He's turned into pure
+      shadow!
+    Background: 2
     EventID: 
-  - SpeakerName: Tina
+  - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
+    PortraitOnLeft: 1
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Ignis, hold the southern corridor. Do not let those shades interrupt the
-      flow of mana.
-    Background: 1
+    Text: My Sovereign! That beast is bypassing your defenses! I have whispered to
+      the seals to release their full power... Your Authority Seals are now restored
+      to their absolute limit of 99!
+    Background: 2
+    EventID: 
+  - SpeakerName: Lilith
+    SpeakerPortrait: {fileID: 0}
+    PortraitOnLeft: 1
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: Use your most powerful Sovereign Rite now. Show this 'Boss' the true meaning
+      of your divine might!
+    Background: 2
     EventID: 

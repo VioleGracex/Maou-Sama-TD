@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 01_SilentTomb_Dialogue
+  m_Name: 05_Placement_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
   CharactersPerSecond: 30
@@ -22,18 +22,29 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: We have reached the heart of the lower sanctum. The air here is... sickeningly
-      sweet. Her presence still lingers.
-    Background: 2
+    Text: Lilith is a Warlock. Place her on the High Ground to maximize her reach
+      and Magical damage.
+    Background: 1
     EventID: 
-  - SpeakerName: Tina
+  - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
     PortraitOnLeft: 0
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Steel yourself, My Sovereign. To reclaim your Crests, we must endure her...
-      antics.
-    Background: 2
+    Text: "Look at those filthy 'Shadow Wings'\u2014circling like vultures. They
+      think we're easy prey."
+    Background: 1
+    EventID: 
+  - SpeakerName: Lilith
+    SpeakerPortrait: {fileID: 0}
+    PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: Let me handle them, Sovereign. My magic can reach where Ignis's sword falters.
+      Just... give me a good view.
+    Background: 1
     EventID: 

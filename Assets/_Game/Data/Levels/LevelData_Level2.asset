@@ -58,7 +58,7 @@ MonoBehaviour:
       SpawnInterval: 1.2
       InitialDelay: 0
       SpawnPointIndex: 1
-    DelayBeforeNextWave: 5
+    DelayBeforeNextWave: 2
     WaveMessage: Shadows From the Sky
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
@@ -77,7 +77,7 @@ MonoBehaviour:
     - EnemyType: {fileID: 11400000, guid: 479fb6620cf11e341b226f03c87e44b0, type: 2}
       Count: 1
       SpawnInterval: 0
-      InitialDelay: 5
+      InitialDelay: 2
       SpawnPointIndex: 0
     DelayBeforeNextWave: 0
     WaveMessage: Final Stand - The Abyssal Shade Leads

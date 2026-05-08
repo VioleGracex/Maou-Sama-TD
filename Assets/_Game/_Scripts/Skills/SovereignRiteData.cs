@@ -19,6 +19,8 @@ namespace MaouSamaTD.Skills
     {
         [Header("Identity")]
         public MaouGender Archetype;
+        [Tooltip("Tag used to identify this skill (e.g. AOE_Rite, Single_Rite)")]
+        public string Tag;
 
         [Header("Global Costs")]
         public int SealCost = 50; 
@@ -66,13 +68,13 @@ namespace MaouSamaTD.Skills
                     return Mathf.Abs(dx) <= Radius && Mathf.Abs(dy) <= Radius;
                 
                 case AoeShape.Cross:
-                    return dx == 0 || dy == 0;
+                    return (dx == 0 && Mathf.Abs(dy) <= Radius) || (dy == 0 && Mathf.Abs(dx) <= Radius);
                 
                 case AoeShape.DiagonalX:
-                    return Mathf.Abs(dx) == Mathf.Abs(dy);
+                    return Mathf.Abs(dx) == Mathf.Abs(dy) && Mathf.Abs(dx) <= Radius;
                 
                 case AoeShape.Star:
-                    return dx == 0 || dy == 0 || Mathf.Abs(dx) == Mathf.Abs(dy);
+                    return ((dx == 0 || dy == 0) || Mathf.Abs(dx) == Mathf.Abs(dy)) && Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy)) <= Radius;
                 
                 case AoeShape.Custom:
                     // For custom shapes, we just check if the offset is in our defined list

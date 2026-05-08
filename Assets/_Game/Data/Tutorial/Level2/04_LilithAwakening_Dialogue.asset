@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 10_SovereignRites_Dialogue
+  m_Name: 04_LilithAwakening_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
   CharactersPerSecond: 30
@@ -22,10 +22,20 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: My Sovereign! That beast is bypassing your defenses! I have whispered to
-      the seals to release their full power... Your Authority Seals are now restored
-      to their absolute limit of 99!
+    Text: Mmm... such a powerful, cold grip. Is that you, my delicious Sovereign?
+      You've certainly taken your time.
     Background: 1
+    EventID: 
+  - SpeakerName: Tina
+    SpeakerPortrait: {fileID: 0}
+    PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: Control your tongue, creature. The Sovereign requires your strength, not
+      your insolence.
+    Background: 0
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
@@ -34,7 +44,7 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Use your most powerful Sovereign Rite now. Show this 'Boss' the true meaning
-      of your divine might!
-    Background: 1
+    Text: "Jealous as ever, Tina? Don't worry, there\u2019s enough of our Master
+      to go around. Now, Sovereign... let us deal with these uninvited guests first."
+    Background: 0
     EventID: 

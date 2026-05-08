@@ -10,19 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 07_AerialInterruption_Dialogue
+  m_Name: 06_BigSwarmOfShadows
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
-  Background: 1
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Lilith
+  - SpeakerName: Ignis
     SpeakerPortrait: {fileID: 0}
-    Text: "Look at those filthy 'Shadow Wings'—circling like vultures. They think we're easy prey."
     PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: "Sovereign! We're being swarmed! My blade cannot keep up with these numbers!"
+    Background: 1
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
-    Text: "Let me handle them, Sovereign. My magic can reach where Ignis's sword falters. Just... give me a good view."
     PortraitOnLeft: 0
-    EventID:
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: "They're overwhelming us! Maou-sama, please... call upon your Sovereign
+      Rite and wipe them all out at once!"
+    Background: 1
+    EventID: 

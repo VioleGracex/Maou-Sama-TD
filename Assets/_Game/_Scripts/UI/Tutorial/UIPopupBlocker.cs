@@ -46,6 +46,7 @@ namespace MaouSamaTD.UI
         private Texture2D maskTex;
         private Color32[] _cachedPixels;
         private CanvasGroup canvasGroup;
+        private int _lastHash = 0;
 
         private void Awake()
         {
@@ -271,8 +272,8 @@ namespace MaouSamaTD.UI
 
             gameObject.SetActive(true);
             canvasGroup.blocksRaycasts = true;
+            if (!isActive) _isDirty = true;
             isActive = true;
-            _isDirty = true;
             
             UpdateOverlayMask();
             overlayRaycaster.SetUITargets(uiHighlights);
@@ -318,8 +319,10 @@ namespace MaouSamaTD.UI
         {
             if (overlayImage == null || overlayImage.material == null) return;
             
-            // Update if dirty OR world highlights are active OR we have UI highlights (as they might move)
-            if (!_isDirty && !isWorldHighlight && uiHighlights.Count == 0) return;
+            int currentHash = CalculateUIHash();
+            if (!_isDirty && currentHash == _lastHash) return;
+            _lastHash = currentHash;
+            _isDirty = false;
 
             if (maskTex == null || maskTex.width != maskSize)
             {
@@ -453,6 +456,31 @@ namespace MaouSamaTD.UI
             Canvas canvas = rt.GetComponentInParent<Canvas>();
             if (canvas == null) return null;
             return canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : Camera.main;
+        }
+
+        private int CalculateUIHash()
+        {
+            unchecked 
+            {
+                int hash = 17;
+                foreach (var h in uiHighlights)
+                {
+                    if (h.Target == null) continue;
+                    hash = hash * 31 + h.Target.position.GetHashCode();
+                    hash = hash * 31 + h.Target.rect.size.GetHashCode();
+                    hash = hash * 31 + h.Size.GetHashCode();
+                    hash = hash * 31 + h.Offset.GetHashCode();
+                }
+                if (isWorldHighlight)
+                {
+                    foreach (var w in worldHighlights)
+                    {
+                        hash = hash * 31 + w.Position.GetHashCode();
+                        hash = hash * 31 + w.Size.GetHashCode();
+                    }
+                }
+                return hash;
+            }
         }
 
         public class HoleRaycaster : Image

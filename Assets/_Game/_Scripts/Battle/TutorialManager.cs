@@ -135,6 +135,8 @@ namespace MaouSamaTD.Managers
 
         private bool _isSkillTargetingLastFrame = false;
         private bool _isDraggingLastFrame = false;
+        private bool _isPlacementModeLastFrame = false;
+        private bool _isSkillPanelVisibleLastFrame = false;
         private float _nextHighlightRefreshTime = 0f;
 
         private void Update()
@@ -157,27 +159,54 @@ namespace MaouSamaTD.Managers
                 }
             }
 
-            // Dynamic Skill Targeting logic: Update hand and blocker when switching between skill selection and unit targeting
-            if (step.ActionKey == "SkillUsed" || step.ActionKey == "RiteMenuOpened")
+            // Every frame, check if there is a world unit highlight target and refresh UI highlight so the cutout dynamically follows it
+            if (step.UseBlocker)
             {
-                bool isTargeting = _interactionManager != null && _interactionManager.IsSkillTargeting;
-                if (isTargeting != _isSkillTargetingLastFrame)
+                bool hasWorldUnit = false;
+                if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
                 {
-                    _isSkillTargetingLastFrame = isTargeting;
-                    if (_showDebugLogs) Debug.Log($"[tutorial] Skill targeting state changed to: {isTargeting}. Refreshing highlights.");
+                    string targetName = step.TargetUI.Name;
+                    if (targetName.StartsWith("Enemy_")) targetName = targetName.Replace("Enemy_", "");
+                    else if (targetName.StartsWith("Unit_")) targetName = targetName.Replace("Unit_", "");
+
+                    hasWorldUnit = PlayerUnit.ActiveUnits.Any(u => u.name == targetName || u.name.Contains(targetName) || u.gameObject.name == step.TargetUI.Name) ||
+                                        EnemyUnit.ActiveEnemies.Any(u => u.name == step.TargetUI.Name || u.name.Contains(targetName));
+                }
+
+                if (hasWorldUnit || step.StepName == "One-Shot Rite" || step.StepName == "Boss Bypasses Ignis")
+                {
                     HandleUIHighlight(step);
                 }
             }
 
-            // Dynamic Unit Placement logic: Refresh highlights every frame while dragging
-            // so the tile cut-out appears immediately (not just on state transition).
+            // Dynamic Skill Targeting & Panel Visibility logic: Update hand and blocker when switching between skill selection, unit targeting, or menu toggle.
+            if (step.ActionKey == "SkillUsed" || step.ActionKey == "RiteMenuOpened")
+            {
+                bool isTargeting = _interactionManager != null && _interactionManager.IsSkillTargeting;
+                var skillPanel = FindObjectOfType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                bool isPanelVisible = skillPanel != null && skillPanel.IsVisible;
+
+                if (isTargeting != _isSkillTargetingLastFrame || isPanelVisible != _isSkillPanelVisibleLastFrame)
+                {
+                    _isSkillTargetingLastFrame = isTargeting;
+                    _isSkillPanelVisibleLastFrame = isPanelVisible;
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Skill state changed (Targeting: {isTargeting}, PanelVisible: {isPanelVisible}). Refreshing highlights.");
+                    HandleUIHighlight(step);
+                }
+            }
+
+            // Dynamic Unit Placement logic: Refresh highlights every frame while dragging or when placement mode is toggled (double-click).
             if (step.ActionKey == "UnitPlaced")
             {
                 bool isDragging = _interactionManager != null && _interactionManager.IsDragging;
-                if (isDragging != _isDraggingLastFrame)
+                bool isSelected = _interactionManager != null && _interactionManager.SelectedUnitData != null;
+                bool isPlacementMode = isDragging || isSelected;
+
+                if (isPlacementMode != _isPlacementModeLastFrame || isDragging != _isDraggingLastFrame)
                 {
                     _isDraggingLastFrame = isDragging;
-                    if (_showDebugLogs) Debug.Log($"[tutorial] Dragging state changed to: {isDragging}. Refreshing highlights.");
+                    _isPlacementModeLastFrame = isPlacementMode;
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Placement mode changed (Dragging: {isDragging}, Selected: {isSelected}). Refreshing highlights.");
                     HandleUIHighlight(step);
                 }
                 
@@ -254,7 +283,38 @@ namespace MaouSamaTD.Managers
                     }
                 }
                 
+                 // _currentStep set later after initializations
+
+                // Reset frame-state tracking variables for the new step to avoid stale transitions
+                _isSkillTargetingLastFrame = _interactionManager != null && _interactionManager.IsSkillTargeting;
+                var currentSkillPanel = FindObjectOfType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                _isSkillPanelVisibleLastFrame = currentSkillPanel != null && currentSkillPanel.IsVisible;
+                // Special check for Level 2: Ensure player has the cost of the AOE spell during swarm/cast phase
+                if (_activeTutorial != null && _activeTutorial.name.Contains("Level2") && 
+                    (step.StepName == "Mobs Swarming!" || step.StepName == "Teach AOE Rite" || step.StepName == "Cast AOE Rite"))
+                {
+                    if (_currencyManager != null && _currencyManager.CurrentSeals < 25)
+                    {
+                        _currencyManager.SetSeals(25);
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Ensuring player has enough seals for AOE spell. Set seals to 25.");
+                    }
+                }
+
+                // Hardening: Automatically reset skill/rite cooldowns when entering a step that requires using them.
+                // This prevents soft-locks if the player accidentally used a skill earlier and it's on cooldown.
+                if (step.ActionKey == "SkillUsed" || step.ActionKey == "RiteUsed" || step.StepName.Contains("Rite") || step.StepName.Contains("Skill"))
+                {
+                    _skillManager?.ResetAllCooldowns();
+                }
+                
                 _currentStep = step;
+                
+                // Reset visuals once at the start of the step if requested
+                if (step.ResetBlocker)
+                {
+                    _uiBlocker?.ClearTargets();
+                    _handUI?.Hide();
+                }
 
                 // 1. Handle StopTime for all step types at the start
                 if (step.StopTime)
@@ -274,8 +334,8 @@ namespace MaouSamaTD.Managers
                             {
                                 if (_showDebugLogs) Debug.Log($"[tutorial] DialogueOnly step {step.StepName} waiting for condition: {step.ActionKey}");
                                 
-                                // Ensure time flows if we are waiting for a dynamic condition, unless explicitly stopped
-                                if (!step.StopTime && _gameManager.CurrentSpeed < 0.1f)
+                                // Ensure time flows if we are waiting for a dynamic condition
+                                if (_gameManager.CurrentSpeed < 0.1f)
                                 {
                                     _gameManager.SetSpeed(1);
                                 }
@@ -406,6 +466,7 @@ namespace MaouSamaTD.Managers
                             if (_currencyManager != null && step.ActionKey == "SkillUsed" &&
                                 step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
                             {
+                                if (_skillManager != null) _skillManager.ResetAllCooldowns();
                                 int requiredCost = GetRiteSealCostFromButtonName(step.TargetUI.Name);
                                 if (requiredCost > 0 && _currencyManager.CurrentSeals < requiredCost)
                                 {
@@ -434,7 +495,48 @@ namespace MaouSamaTD.Managers
                                 }
                             }
 
-                            if (_triggeredActionsBuffer.Contains(step.ActionKey))
+                            if (step.ActionKey == "BossUsedPassive")
+                            {
+                                bool bossPhased = false;
+                                System.Action<MaouSamaTD.Units.EnemyUnit> handler = (enemy) => { bossPhased = true; };
+                                MaouSamaTD.Units.BossPhaseAbility.OnPhaseTriggered += handler;
+
+                                // Prevent race condition: if boss HP is already <= 70%, it phased just before this step began
+                                var boss = MaouSamaTD.Units.EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
+                                if (boss != null && (boss.CurrentHp / boss.MaxHp) <= 0.701f)
+                                {
+                                    bossPhased = true;
+                                }
+
+                                if (!bossPhased)
+                                {
+                                    float bossPassiveTimeout = 30f;
+                                    float bossPassiveTimer = 0f;
+                                    yield return new WaitUntil(() =>
+                                    {
+                                        bossPassiveTimer += Time.deltaTime;
+                                        // Safety: boss missing or dead means phase event will never fire
+                                        var b = MaouSamaTD.Units.EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData?.EnemyName == "Abyssal Shade");
+                                        if (b == null || b.IsDead)
+                                        {
+                                            if (_showDebugLogs) Debug.LogWarning("[tutorial] BossUsedPassive: Boss missing/dead — auto-resolving step.");
+                                            return true;
+                                        }
+                                        if (bossPassiveTimer >= bossPassiveTimeout)
+                                        {
+                                            if (_showDebugLogs) Debug.LogWarning("[tutorial] BossUsedPassive: Timeout reached — auto-resolving step.");
+                                            return true;
+                                        }
+                                        return bossPhased || !_waitingForAction;
+                                    });
+                                }
+                                
+                                MaouSamaTD.Units.BossPhaseAbility.OnPhaseTriggered -= handler;
+                                _waitingForAction = false;
+                                _triggeredActionsBuffer.Remove(step.ActionKey);
+                            }
+
+                            else if (_triggeredActionsBuffer.Contains(step.ActionKey))
                             {
                                 if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer, proceeding.");
                                 _waitingForAction = false; 
@@ -495,8 +597,8 @@ namespace MaouSamaTD.Managers
                             HandleUIHighlight(step);
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey}");
                             
-                            // Ensure time flows if we are waiting for a dynamic condition, unless explicitly stopped
-                            if (!step.StopTime && _gameManager.CurrentSpeed < 0.1f)
+                            // Ensure time flows if we are waiting for a dynamic condition
+                            if (_gameManager.CurrentSpeed < 0.1f)
                             {
                                 _gameManager.SetSpeed(1);
                             }
@@ -558,6 +660,11 @@ namespace MaouSamaTD.Managers
                             {
                                 if (_currencyManager != null)
                                 {
+                                    if (step.RequiredCount > _currencyManager.MaxSeals)
+                                    {
+                                        _currencyManager.SetMaxSeals(step.RequiredCount);
+                                        if (_showDebugLogs) Debug.Log($"[tutorial] SetAuthoritySeals: RequiredCount {step.RequiredCount} exceeds MaxSeals. Automatically increased MaxSeals first.");
+                                    }
                                     _currencyManager.SetSeals(step.RequiredCount);
                                     if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: Current Seals set to {step.RequiredCount}.");
                                 }
@@ -678,6 +785,18 @@ namespace MaouSamaTD.Managers
                                     if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand SetMaxAuthoritySeals: BattleCurrencyManager is NULL!");
                                 }
                             }
+
+                            // After command execution, check for dialogue (fixes soft-lock where dialogue was skipped)
+                            if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
+                            {
+                                bool cmdDialogueDone = false;
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Starting dialogue for CustomCommand step: {step.StepName}");
+                                _dialogueManager.StartDialogue(step.Dialogue, () => cmdDialogueDone = true);
+                                
+                                if (step.UseBlocker) HandleUIHighlight(step);
+                                
+                                yield return new WaitUntil(() => cmdDialogueDone);
+                            }
                         }
                         break;
                 }
@@ -712,13 +831,8 @@ namespace MaouSamaTD.Managers
         {
             if (step == null) return;
 
-            if (step.ResetBlocker)
-            {
-                _uiBlocker.ClearTargets();
-                _handUI.Hide();
-            }
-
-            if (!step.UseBlocker)
+            bool hasDialogue = _dialogueManager != null && _dialogueManager.IsDialogueActive;
+            if (!step.UseBlocker && !hasDialogue)
             {
                 _uiBlocker.HideBlocker();
                 if (!step.ShowHand && !step.DragShowHand) _handUI.Hide();
@@ -751,6 +865,7 @@ namespace MaouSamaTD.Managers
             bool isSkillStep = step.ActionKey == "SkillUsed";
             bool isPlacementStep = step.ActionKey == "UnitPlaced";
             bool isDragging = _interactionManager != null && _interactionManager.IsDragging;
+            bool isPlacementMode = _interactionManager != null && (isDragging || _interactionManager.SelectedUnitData != null);
 
             if (isSkillStep)
             {
@@ -765,14 +880,13 @@ namespace MaouSamaTD.Managers
             }
             else if (isPlacementStep)
             {
-                if (isDragging)
+                if (isPlacementMode)
                 {
-                    // While dragging, we focus on the tiles (handled in the Tiles section below)
-                    // We might still want to highlight some UI if needed, but usually we don't
+                    // While in placement mode (dragging or selected), we focus on the tiles
                 }
                 else
                 {
-                    // Before dragging, highlight the unit button
+                    // Before selecting/dragging, highlight the unit button
                     if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
                 }
             }
@@ -822,7 +936,9 @@ namespace MaouSamaTD.Managers
                             // If a Rite button is inactive, the menu is likely closed.
                             // Highlight the toggle button so the user can reopen it.
                             RectTransform toggleRt = FindTargetRect("SovereignRiteToggle");
-                            if (toggleRt != null && toggleRt.gameObject.activeInHierarchy)
+                            // Use activeSelf instead of activeInHierarchy because if the whole skills panel is inactive, 
+                            // we still want to find and highlight the toggle if it's the target.
+                            if (toggleRt != null)
                             {
                                 uiHits.Add(new UIPopupBlocker.UIHighlightData 
                                 { 
@@ -840,16 +956,26 @@ namespace MaouSamaTD.Managers
             {
                 // Tiles are ONLY cut if:
                 // 1. It's NOT a placement step (highlight-only steps)
-                // 2. It IS a placement step AND the player is currently dragging
-                bool shouldShowTiles = !isPlacementStep || isDragging;
+                // 2. It IS a placement step AND the player is currently in placement mode
+                bool shouldShowTiles = !isPlacementStep || isPlacementMode;
 
                 if (shouldShowTiles)
                 {
                     foreach (var wt in step.TargetTiles)
                     {
+                        Vector3 position = GetWorldPosForTile(wt.Coordinate) + wt.Offset;
+                        if (step.StepName == "One-Shot Rite")
+                        {
+                            var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
+                            if (boss != null)
+                            {
+                                position = boss.transform.position + new Vector3(0, _unitWorldHoleYOffset, 0);
+                            }
+                        }
+
                         worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
                         {
-                            Position = GetWorldPosForTile(wt.Coordinate) + wt.Offset,
+                            Position = position,
                             Size = wt.Size,
                             Height = wt.Height
                         });
@@ -857,18 +983,14 @@ namespace MaouSamaTD.Managers
                 }
             }
             
-            // Ensure active dialogue is always clickable through the blocker
+            // Always allow clicking the dialogue box if it's active
             if (_dialogueManager != null && _dialogueManager.DialogueUI != null && _dialogueManager.DialogueUI.IsShowingDialogue)
             {
                 RectTransform dialogueRT = _dialogueManager.DialogueUI.GetActivePanelRect();
-                if (dialogueRT != null && !uiHits.Exists(h => h.Target == dialogueRT))
+                if (dialogueRT != null)
                 {
-                    uiHits.Add(new UIPopupBlocker.UIHighlightData 
-                    { 
-                        Target = dialogueRT, 
-                        Size = Vector2.one,
-                        Offset = Vector2.zero
-                    });
+                    // Add as a highlight target so it's not blocked
+                    uiHits.Add(new UIPopupBlocker.UIHighlightData { Target = dialogueRT, Size = Vector2.one });
                 }
             }
 
@@ -911,12 +1033,8 @@ namespace MaouSamaTD.Managers
                         handScale *= scaleMult;
                     }
                 }
-                else if (step.HandTargetTileOverride != Vector2Int.zero && (isDragging || step.ActionKey != "UnitPlaced"))
-                {
-                    Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
-                    handPos = Camera.main.WorldToScreenPoint(worldTarget);
-                }
-                else if (uiHits.Count > 0) 
+
+                if (handPos == Vector2.zero && uiHits.Count > 0) 
                 {
                     Vector3[] corners = new Vector3[4];
                     uiHits[0].Target.GetWorldCorners(corners);
@@ -925,7 +1043,12 @@ namespace MaouSamaTD.Managers
                     handPos = (Vector2)center + new Vector2(size.x * uiHits[0].Offset.x, size.y * uiHits[0].Offset.y);
                     handScale *= uiHits[0].Size.x;
                 }
-                else if (worldHighlights.Count > 0) 
+                else if (handPos == Vector2.zero && step.HandTargetTileOverride != Vector2Int.zero && (isPlacementMode || step.ActionKey != "UnitPlaced"))
+                {
+                    Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
+                    handPos = Camera.main.WorldToScreenPoint(worldTarget);
+                }
+                else if (handPos == Vector2.zero && worldHighlights.Count > 0) 
                 {
                     handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
                 }
@@ -969,6 +1092,30 @@ private RectTransform FindTargetRect(string name)
                     go = allObjects.FirstOrDefault(o => o.name == name);
             }
 
+            bool isGoActive = go != null && go.activeInHierarchy;
+            if (!isGoActive && (name.StartsWith("SkillButton_") || resolvedName.StartsWith("SkillButton_")))
+            {
+                if (_currentStep != null)
+                {
+                    if (_currentStep.TargetUI != null && !string.IsNullOrEmpty(_currentStep.TargetUI.Name))
+                    {
+                        var rect = FindActiveRectInHierarchy(_currentStep.TargetUI.Name);
+                        if (rect != null) return rect;
+                    }
+                    if (_currentStep.AdditionalTargetUI != null)
+                    {
+                        foreach (var target in _currentStep.AdditionalTargetUI)
+                        {
+                            if (target != null && !string.IsNullOrEmpty(target.Name))
+                            {
+                                var rect = FindActiveRectInHierarchy(target.Name);
+                                if (rect != null) return rect;
+                            }
+                        }
+                    }
+                }
+            }
+
             if (go != null)
             {
                 RectTransform rt = go.GetComponent<RectTransform>();
@@ -981,6 +1128,32 @@ private RectTransform FindTargetRect(string name)
             return null;
         }
 
+        private RectTransform FindActiveRectInHierarchy(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+
+            string resolvedName = ResolveGenderSuffix(name);
+
+            GameObject go = GameObject.Find(resolvedName);
+            if (go != null && go.activeInHierarchy)
+            {
+                RectTransform rt = go.GetComponent<RectTransform>();
+                if (rt != null) return rt;
+            }
+
+            var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            foreach (var obj in allObjects)
+            {
+                if (obj != null && (obj.name == resolvedName || obj.name == name) && obj.activeInHierarchy)
+                {
+                    RectTransform rt = obj.GetComponent<RectTransform>();
+                    if (rt != null) return rt;
+                }
+            }
+
+            return null;
+        }
+
 /// <summary>
         /// Replaces _Female or _Male suffix in a UI target name with the player's actual gender suffix.
         /// Falls back to the original name if no gender-specific match exists.
@@ -988,6 +1161,21 @@ private RectTransform FindTargetRect(string name)
         private string ResolveGenderSuffix(string name)
         {
             if (_saveManager == null || _saveManager.CurrentData == null) return name;
+
+            // If it is a generic skill button alias (starts with SkillButton_)
+            if (name.StartsWith("SkillButton_") && _skillManager != null && _skillManager.AvailableSkills != null)
+            {
+                string tag = name.Substring("SkillButton_".Length);
+                
+                // Try to find an available skill with this Tag
+                foreach (var rite in _skillManager.AvailableSkills)
+                {
+                    if (rite != null && rite.Tag == tag)
+                    {
+                        return "SkillButton_" + rite.name.Replace(" ", "");
+                    }
+                }
+            }
 
             bool isMale = _saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male;
             string targetSuffix = isMale ? "_Male" : "_Female";
@@ -1024,12 +1212,35 @@ private RectTransform FindTargetRect(string name)
             RectTransform drt = FindTargetRect(ut.Name);
             if (drt != null)
             {
+                bool isFallback = false;
+                // Dynamic Fallback: If the target is a SkillButton or SovereignRite, but it's inactive in hierarchy, 
+                // the skill menu is closed. In this case, redirect the Hand UI position and scale to the "SovereignRiteToggle" button.
+                if (!drt.gameObject.activeInHierarchy && (ut.Name.Contains("SkillButton") || ut.Name.Contains("SovereignRite")))
+                {
+                    RectTransform toggleRt = FindTargetRect("SovereignRiteToggle");
+                    if (toggleRt != null)
+                    {
+                        drt = toggleRt;
+                        scaleMultiplier = 1.2f;
+                        isFallback = true;
+                    }
+                }
+
                 Vector3[] corners = new Vector3[4];
                 drt.GetWorldCorners(corners);
                 Vector3 center = (corners[0] + corners[2]) * 0.5f;
                 Vector3 size = corners[2] - corners[0];
-                screenPos = (Vector2)center + new Vector2(size.x * ut.SizeOffset.x, size.y * ut.SizeOffset.y);
-                scaleMultiplier = ut.Size.x != 0 ? ut.Size.x : 1f;
+
+                if (isFallback)
+                {
+                    // For the toggle fallback, ignore target offset since it belongs to the skill button
+                    screenPos = (Vector2)center;
+                }
+                else
+                {
+                    screenPos = (Vector2)center + new Vector2(size.x * ut.SizeOffset.x, size.y * ut.SizeOffset.y);
+                    scaleMultiplier = ut.Size.x != 0 ? ut.Size.x : 1f;
+                }
                 return true;
             }
 
@@ -1210,6 +1421,18 @@ private RectTransform FindTargetRect(string name)
                             if (dist <= threshold) count++;
                         }
                         bool met = count >= step.RequiredCount && step.RequiredCount > 0;
+                        
+                        // Prevent soft-lock if the player somehow killed all enemies before they could swarm
+                        if (!met && step.WaveIndex >= 0 && _enemyManager != null && _enemyManager.IsWaveCleared(step.WaveIndex))
+                        {
+                            return true;
+                        }
+                        else if (!met && EnemyUnit.ActiveEnemies.Count == 0)
+                        {
+                            // Fallback if not wave-specific
+                            return true;
+                        }
+
                         return met;
                     }
                     return false;
@@ -1221,11 +1444,20 @@ private RectTransform FindTargetRect(string name)
                         // Robust check: Wave has started AND spawning is currently finished AND wave index matches
                         bool hasStarted = step.WaveIndex < 0 || _enemyManager.HasWaveStarted(step.WaveIndex);
                         bool correctWave = step.WaveIndex < 0 || _enemyManager.CurrentWaveIndex >= step.WaveIndex;
-                        bool met = hasStarted && !_enemyManager.IsSpawning && correctWave;
+                        bool hasEnemies = EnemyUnit.ActiveEnemies.Count > 0;
+                        bool met = hasStarted && !_enemyManager.IsSpawning && correctWave && hasEnemies;
                         return met;
                     }
                     return false;
                 
+                case "EnemiesSpawned":
+                    if (_enemyManager != null && _enemyManager.HasWaveStarted(step.WaveIndex))
+                    {
+                        return _enemyManager.GetTotalSpawnedInWave(step.WaveIndex) >= step.RequiredCount;
+                    }
+                    return false;
+                
+
                 case "UnitReach":
                 {
                     string reachName = (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) ? step.TargetUI.Name : "";
@@ -1357,6 +1589,42 @@ private RectTransform FindTargetRect(string name)
                     return false;
                 }
 
+                case "WaveStarted":
+                {
+                    if (_enemyManager != null && step.WaveIndex >= 0)
+                    {
+                        bool started = _enemyManager.HasWaveStarted(step.WaveIndex);
+                        // Overflow guard: if game has already advanced past this wave, treat as started
+                        if (!started && _enemyManager.CurrentWaveIndex > step.WaveIndex)
+                            started = true;
+                        return started;
+                    }
+                    return false;
+                }
+
+                case "WaveCleared":
+                {
+                    if (_enemyManager != null && step.WaveIndex >= 0)
+                    {
+                        bool cleared = _enemyManager.IsWaveCleared(step.WaveIndex);
+                        // Overflow guard: if game has advanced past this wave index, it must have cleared
+                        if (!cleared && _enemyManager.CurrentWaveIndex > step.WaveIndex)
+                            cleared = true;
+                        return cleared;
+                    }
+                    return false;
+                }
+
+                case "BossBypass":
+                {
+                    // Check if the Abyssal Shade has started phasing or completed its bypass
+                    var boss = MaouSamaTD.Units.EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
+                    if (boss == null) return false;
+                    
+                    // We check if it has used its phasing charge
+                    return boss.CurrentPhasingCharges < boss.EnemyData.PhasingCharges;
+                }
+
                 default:
                     return false;
             }
@@ -1456,13 +1724,15 @@ private RectTransform FindTargetRect(string name)
         {
             if (string.IsNullOrEmpty(buttonName)) return false;
 
+            string resolvedName = ResolveGenderSuffix(buttonName);
+
             // Try direct name search (works if button is active)
-            GameObject go = GameObject.Find(buttonName);
+            GameObject go = GameObject.Find(resolvedName);
             if (go != null) return true;
 
             // Also check all inactive objects (button might be in docked panel)
             var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-            return System.Array.Exists(allObjects, o => o.name == buttonName);
+            return System.Array.Exists(allObjects, o => o.name == resolvedName || o.name == buttonName);
         }
 
         /// <summary>
@@ -1474,8 +1744,10 @@ private RectTransform FindTargetRect(string name)
         {
             if (_skillManager == null || string.IsNullOrEmpty(buttonName)) return 0;
 
+            string resolvedName = ResolveGenderSuffix(buttonName);
+
             // Button name pattern: "SkillButton_" + skill.name (no spaces)
-            string skillKey = buttonName.Replace("SkillButton_", "").ToLower();
+            string skillKey = resolvedName.Replace("SkillButton_", "").ToLower();
 
             foreach (var rite in _skillManager.AvailableSkills)
             {
@@ -1492,7 +1764,7 @@ private RectTransform FindTargetRect(string name)
                 }
             }
 
-            if (_showDebugLogs) Debug.LogWarning($"[tutorial] GetRiteSealCostFromButtonName: Could not find rite for button '{buttonName}'");
+            if (_showDebugLogs) Debug.LogWarning($"[tutorial] GetRiteSealCostFromButtonName: Could not find rite for button '{buttonName}' (resolved: '{resolvedName}')");
             return 0;
         }
     }

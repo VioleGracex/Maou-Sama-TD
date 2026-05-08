@@ -89,6 +89,10 @@ namespace MaouSamaTD.UI.Skills
                 if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
                 gameObject.SetActive(false);
             }
+            else
+            {
+                gameObject.SetActive(true);
+            }
 
             if (!gameObject.activeSelf) return;
 

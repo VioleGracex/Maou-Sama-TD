@@ -14,6 +14,8 @@ namespace MaouSamaTD.Units
         
         private bool _hasPhased = false;
 
+        public static event System.Action<EnemyUnit> OnPhaseTriggered;
+
         public override void OnInitialize(EnemyUnit owner)
         {
             _hasPhased = false;
@@ -48,6 +50,9 @@ namespace MaouSamaTD.Units
 
             // 3. Teleport behind Ignis
             TeleportBehindTarget(owner);
+
+            // Notify anyone listening (e.g., TutorialManager)
+            OnPhaseTriggered?.Invoke(owner);
         }
 
         private void TeleportBehindTarget(EnemyUnit owner)

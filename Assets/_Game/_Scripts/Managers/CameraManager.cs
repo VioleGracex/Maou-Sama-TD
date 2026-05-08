@@ -213,10 +213,12 @@ namespace MaouSamaTD.Managers
                 _cmOrbital.Radius = targetRadius;
                 _cmOrbital.VerticalAxis.Value = targetVertical;
                 if (forceHeading) _cmOrbital.HorizontalAxis.Value = targetHeading;
+                
+                if (_battleCamera != null) _battleCamera.PreviousStateIsValid = false;
             }
             else
             {
-                _viewSequence = DOTween.Sequence();
+                _viewSequence = DOTween.Sequence().SetUpdate(true);
                 
                 _viewSequence.Join(DOTween.To(() => _cmOrbital.Radius, x => _cmOrbital.Radius = x, targetRadius, _transitionDuration));
                 _viewSequence.Join(DOTween.To(() => _cmOrbital.VerticalAxis.Value, x => _cmOrbital.VerticalAxis.Value = x, targetVertical, _transitionDuration));
@@ -237,9 +239,17 @@ namespace MaouSamaTD.Managers
         {
              if (_cameraAnchor != null)
              {
-                 _cameraAnchor.position = new Vector3(centerX, 0, centerZ);
+                 Vector3 oldPos = _cameraAnchor.position;
+                 Vector3 newPos = new Vector3(centerX, 0, centerZ);
+                 _cameraAnchor.position = newPos;
                  IsLocked = true;
                  CenterOnMap = true;
+                 
+                 if (_battleCamera != null)
+                 {
+                     _battleCamera.OnTargetObjectWarped(_cameraAnchor, newPos - oldPos);
+                     _battleCamera.PreviousStateIsValid = false;
+                 }
              }
         }
 
@@ -252,7 +262,15 @@ namespace MaouSamaTD.Managers
         {
             if (_gridManager != null && _cameraAnchor != null)
             {
-                _cameraAnchor.position = _gridManager.GetGridCenter();
+                Vector3 oldPos = _cameraAnchor.position;
+                Vector3 newPos = _gridManager.GetGridCenter();
+                _cameraAnchor.position = newPos;
+                
+                if (_battleCamera != null)
+                {
+                    _battleCamera.OnTargetObjectWarped(_cameraAnchor, newPos - oldPos);
+                    _battleCamera.PreviousStateIsValid = false;
+                }
             }
         }
 

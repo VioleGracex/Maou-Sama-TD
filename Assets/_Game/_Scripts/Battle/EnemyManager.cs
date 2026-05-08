@@ -38,11 +38,18 @@ namespace MaouSamaTD.Managers
         public event System.Action<string, int> OnWaveStarted;
 
         private Dictionary<int, int> _waveEnemyCounts = new Dictionary<int, int>();
+        private Dictionary<int, int> _waveSpawnedCounts = new Dictionary<int, int>();
         private HashSet<int> _wavesThatStartedSpawning = new HashSet<int>();
         private HashSet<int> _wavesFinishedSpawning = new HashSet<int>();
         
-        public bool IsWaveCleared(int waveIndex) => _wavesFinishedSpawning.Contains(waveIndex) && (!_waveEnemyCounts.ContainsKey(waveIndex) || _waveEnemyCounts[waveIndex] <= 0);
+        public bool IsWaveCleared(int waveIndex) => waveIndex < 0 || (_wavesFinishedSpawning.Contains(waveIndex) && (!_waveEnemyCounts.ContainsKey(waveIndex) || _waveEnemyCounts[waveIndex] <= 0));
         public bool HasWaveStarted(int waveIndex) => _wavesThatStartedSpawning.Contains(waveIndex);
+        
+        public int GetTotalSpawnedInWave(int waveIndex)
+        {
+            if (_waveSpawnedCounts.ContainsKey(waveIndex)) return _waveSpawnedCounts[waveIndex];
+            return 0;
+        }
         #endregion
 
         #region Lifecycle
@@ -143,6 +150,7 @@ namespace MaouSamaTD.Managers
             _isSpawning = true;
             _wavesThatStartedSpawning.Add(waveIndex);
             if (!_waveEnemyCounts.ContainsKey(waveIndex)) _waveEnemyCounts[waveIndex] = 0;
+            if (!_waveSpawnedCounts.ContainsKey(waveIndex)) _waveSpawnedCounts[waveIndex] = 0;
             OnWaveStarted?.Invoke(wave.WaveMessage, waveIndex);
 
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.WaveStart, "Director", "", $"Wave {waveIndex + 1} Started", 0);
@@ -264,6 +272,9 @@ namespace MaouSamaTD.Managers
             Vector3 startPos = _gridManager.GridToWorldPosition(spawnPoint);
             MaouSamaTD.Units.EnemyUnit enemy = Instantiate(_enemyPrefab, startPos, Quaternion.identity, _enemyContainer);
             
+            if (!_waveSpawnedCounts.ContainsKey(waveIndex)) _waveSpawnedCounts[waveIndex] = 0;
+            _waveSpawnedCounts[waveIndex]++;
+            
             // 4. Initialize
             enemy.gameObject.SetActive(true);
             enemy.Initialize(data, waveIndex, enemyIndex);
@@ -321,10 +332,16 @@ namespace MaouSamaTD.Managers
                     Debug.Log($"[EnemyManager] Starting Wave: {wave.WaveMessage}");
                 }
                 
+                // Show Paths for this wave
+                _pathVisualizer?.ShowPathsForWave(wave);
+
                 List<Coroutine> groupRoutines = new List<Coroutine>();
                 _wavesThatStartedSpawning.Add(waveCounter);
                 if (!_waveEnemyCounts.ContainsKey(waveCounter)) _waveEnemyCounts[waveCounter] = 0;
+                if (!_waveSpawnedCounts.ContainsKey(waveCounter)) _waveSpawnedCounts[waveCounter] = 0;
+                
                 OnWaveStarted?.Invoke(wave.WaveMessage, waveCounter);
+                _tutorialManager?.OnActionTriggered("WaveStarted");
 
                 foreach (var group in wave.Groups)
                 {

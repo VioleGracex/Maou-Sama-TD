@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MaouSamaTD.Grid;
 using MaouSamaTD.Managers;
 using MaouSamaTD.Units;
+using MaouSamaTD.Levels;
 
 namespace MaouSamaTD.Utils
 {
@@ -12,64 +13,36 @@ namespace MaouSamaTD.Utils
     {
         [Inject] private GridManager _gridManager;
 
-        private LineRenderer _lineRenderer;
-
         [SerializeField] private Material _sourceMaterial;
+        [SerializeField] private LineRenderer _lineRendererPrefab;
 
+        private List<LineRenderer> _activeLines = new List<LineRenderer>();
+        private List<LineRenderer> _linePool = new List<LineRenderer>();
         private Material _materialInstance;
         private Coroutine _fadeRoutine;
+        private float _currentAlpha = 0f;
 
         public void Init(Material overrideMaterial = null)
         {
             if (overrideMaterial != null) _sourceMaterial = overrideMaterial;
-
-            _lineRenderer = GetComponent<LineRenderer>();
-            if (_lineRenderer == null)
-            {
-                _lineRenderer = gameObject.AddComponent<LineRenderer>();
-            }
-
-            ConfigureLineRenderer();
             ConfigureMaterial(); 
-            
-            DrawPath();
-            
-            // Set initial alpha to 0 for fade-in later
             SetAlpha(0f);
-            _lineRenderer.enabled = false;
-        }
-
-        private void ConfigureLineRenderer()
-        {
-            _lineRenderer.startWidth = 0.5f; // Wider for arrows
-            _lineRenderer.endWidth = 0.5f;
-            _lineRenderer.positionCount = 0;
-            _lineRenderer.useWorldSpace = true;
-            _lineRenderer.textureMode = LineTextureMode.RepeatPerSegment; // Prevent twisting at corners
-            
-            _lineRenderer.startColor = new Color(1f, 0.5f, 0.2f, 0f); // Match orange-ish theme
-            _lineRenderer.endColor = new Color(0.2f, 1f, 0.5f, 0f);   
         }
 
         private void ConfigureMaterial()
         {
             if (_sourceMaterial != null)
             {
-                // Source material (from Assets) ensures shader is included in build
                 _materialInstance = new Material(_sourceMaterial);
             }
             else
             {
-                // Fallback for Editor (might fail in Build)
                 Shader shader = Shader.Find("Mobile/Particles/Additive");
                 if (shader == null) shader = Shader.Find("Particles/Additive");
                 if (shader == null) shader = Shader.Find("Sprites/Default"); 
                 _materialInstance = new Material(shader);
             }
 
-            _lineRenderer.material = _materialInstance;
-            
-            // Generate and Assign Arrow Texture
             _materialInstance.mainTexture = GenerateArrowTexture();
         }
 
@@ -84,39 +57,18 @@ namespace MaouSamaTD.Utils
             Color clear = new Color(0, 0, 0, 0); 
             Color white = new Color(1, 1, 1, 1);
 
-            // Clear
             for (int i = 0; i < pixels.Length; i++) pixels[i] = clear;
 
-            // Draw Arrow ">"
-            // Center is (32,32)
-            // Tip at (48, 32)
-            // Tails at (16, 16) and (16, 48)
-            
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
                 {
-                    // Normalized coords 0..1
                     float u = x / (float)size;
                     float v = y / (float)size;
-
-                    // Arrow Logic: simple chevron
-                    // Line 1: y = x (approx bottom wing)
-                    // Line 2: y = 1-x (approx top wing)
-                    
-                    // Let's do simple pixel math
-                    // Center line y=32
-                    
-                    // New Thick Chevron Logic
-                    // Tip at x=55. Wings go back to x=15.
-                    // v = distance from center (0.5)
                     float distFromCenter = Mathf.Abs(v - 0.5f);
+                    float arrowEdgeX = 55 - (distFromCenter * 60); 
                     
-                    // The tip of the arrow should be at x=55
-                    // As we go vertical (distFromCenter increases), the arrow edge should move left
-                    float arrowEdgeX = 55 - (distFromCenter * 60); // 60 is the "spread"
-                    
-                    if (x < arrowEdgeX && x > arrowEdgeX - 15) // 15 is thickness
+                    if (x < arrowEdgeX && x > arrowEdgeX - 15)
                     {
                         pixels[y * size + x] = white;
                     }
@@ -128,93 +80,132 @@ namespace MaouSamaTD.Utils
             return tex;
         }
 
-        [ContextMenu("Redraw Path")]
-        public void DrawPath()
+        public void ShowPathsForWave(WaveData wave)
         {
-            if (_gridManager == null) return;
+            Hide();
+            if (wave == null || wave.Groups == null) return;
 
-            Queue<Tile> pathQueue = _gridManager.GetPath(_gridManager.SpawnPoint, _gridManager.ExitPoint, EnemyMovementType.Ground);
-            
-            if (pathQueue == null || pathQueue.Count == 0)
+            HashSet<int> spawnIndices = new HashSet<int>();
+            foreach (var group in wave.Groups) spawnIndices.Add(group.SpawnPointIndex);
+
+            foreach (int index in spawnIndices)
             {
-                _lineRenderer.positionCount = 0;
-                return;
+                if (index < 0 || index >= _gridManager.SpawnPoints.Count) continue;
+                Vector2Int spawn = _gridManager.SpawnPoints[index].Coordinate;
+                Vector2Int exit = _gridManager.GetTargetExitForSpawn(spawn);
+                
+                Queue<Tile> path = _gridManager.GetPath(spawn, exit, EnemyMovementType.Ground);
+                if (path != null && path.Count > 0)
+                {
+                    CreatePathLine(spawn, path);
+                }
             }
+            Show();
+        }
 
-            List<Vector3> points = new List<Vector3>();
+        private void CreatePathLine(Vector2Int start, Queue<Tile> path)
+        {
+            LineRenderer lr = GetLineRenderer();
             
-            // Add Start - Lifted 0.7f to be above floor/HighGround (0.5f)
             float visualHeight = 0.7f;
-            points.Add(_gridManager.GridToWorldPosition(_gridManager.SpawnPoint) + Vector3.up * visualHeight);
+            List<Vector3> points = new List<Vector3>();
+            points.Add(_gridManager.GridToWorldPosition(start) + Vector3.up * visualHeight);
 
-            foreach (var tile in pathQueue)
+            foreach (var tile in path)
             {
                 points.Add(tile.transform.position + Vector3.up * visualHeight);
             }
-            
-            _lineRenderer.positionCount = points.Count;
-            _lineRenderer.SetPositions(points.ToArray());
+
+            lr.positionCount = points.Count;
+            lr.SetPositions(points.ToArray());
+            lr.enabled = true;
+            _activeLines.Add(lr);
+        }
+
+        private LineRenderer GetLineRenderer()
+        {
+            LineRenderer lr;
+            if (_linePool.Count > 0)
+            {
+                lr = _linePool[0];
+                _linePool.RemoveAt(0);
+            }
+            else
+            {
+                if (_lineRendererPrefab != null)
+                {
+                    lr = Instantiate(_lineRendererPrefab, transform);
+                }
+                else
+                {
+                    GameObject go = new GameObject("PathLine");
+                    go.transform.SetParent(transform);
+                    lr = go.AddComponent<LineRenderer>();
+                    lr.startWidth = 0.5f;
+                    lr.endWidth = 0.5f;
+                    lr.useWorldSpace = true;
+                    lr.textureMode = LineTextureMode.RepeatPerSegment;
+                }
+            }
+            lr.material = _materialInstance;
+            return lr;
         }
 
         public void Show()
         {
-            if (_lineRenderer != null)
-            {
-                _lineRenderer.enabled = true;
-                if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
-                _fadeRoutine = StartCoroutine(FadeRoutine(1f, 1.0f)); // Fade In over 1s
-            }
+            if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
+            _fadeRoutine = StartCoroutine(FadeRoutine(1f, 1.0f));
         }
 
         public void Hide()
         {
-            if (_lineRenderer != null)
-            {
-                if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
-                _fadeRoutine = StartCoroutine(FadeRoutine(0f, 0.5f)); // Fade Out over 0.5s
-            }
+            if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
+            _fadeRoutine = StartCoroutine(FadeRoutine(0f, 0.5f));
         }
 
         private System.Collections.IEnumerator FadeRoutine(float targetAlpha, float duration)
         {
-            float startAlpha = GetCurrentAlpha();
+            float startAlpha = _currentAlpha;
             float time = 0;
 
             while (time < duration)
             {
                 time += Time.deltaTime;
                 float t = time / duration;
-                float newAlpha = Mathf.Lerp(startAlpha, targetAlpha, t);
-                SetAlpha(newAlpha);
+                _currentAlpha = Mathf.Lerp(startAlpha, targetAlpha, t);
+                SetAlpha(_currentAlpha);
                 yield return null;
             }
             
-            SetAlpha(targetAlpha);
+            _currentAlpha = targetAlpha;
+            SetAlpha(_currentAlpha);
 
-            if (targetAlpha <= 0.01f)
+            if (_currentAlpha <= 0.01f)
             {
-                _lineRenderer.enabled = false;
+                foreach (var lr in _activeLines)
+                {
+                    lr.enabled = false;
+                    _linePool.Add(lr);
+                }
+                _activeLines.Clear();
             }
-        }
-
-        private float GetCurrentAlpha()
-        {
-            return _lineRenderer.startColor.a;
         }
 
         private void SetAlpha(float a)
         {
-            // Keep original colors but update alpha
-            Color start = new Color(1f, 0.5f, 0f, a); // Orange
-            Color end = new Color(0f, 1f, 0.5f, a);   // Green
+            Color start = new Color(1f, 0.5f, 0f, a); 
+            Color end = new Color(0f, 1f, 0.5f, a);   
             
-            _lineRenderer.startColor = start;
-            _lineRenderer.endColor = end;
+            foreach (var lr in _activeLines)
+            {
+                lr.startColor = start;
+                lr.endColor = end;
+            }
         }
 
         private void Update()
         {
-            if (_lineRenderer != null && _lineRenderer.enabled && _materialInstance != null)
+            if (_activeLines.Count > 0 && _currentAlpha > 0 && _materialInstance != null)
             {
                 float offset = Time.time * -2.0f; 
                 _materialInstance.mainTextureOffset = new Vector2(offset, 0);

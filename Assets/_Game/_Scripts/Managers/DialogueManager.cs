@@ -17,8 +17,8 @@ namespace MaouSamaTD.Managers
             Debug.Log($"[DialogueManager] StartDialogue requested for {data?.name ?? "NULL"}");
             if (IsDialogueActive) 
             {
-                Debug.LogWarning("[DialogueManager] Dialogue already active!");
-                return;
+                Debug.LogWarning("[DialogueManager] Dialogue already active! Force closing and overriding with new dialogue.");
+                HideDialogue();
             }
 
             if (_dialogueUI == null)
@@ -29,6 +29,7 @@ namespace MaouSamaTD.Managers
             }
 
             IsDialogueActive = true;
+            _dialogueUI.transform.SetAsLastSibling();
             _dialogueUI.gameObject.SetActive(true);
             _dialogueUI.ShowDialogue(data, () => 
             {

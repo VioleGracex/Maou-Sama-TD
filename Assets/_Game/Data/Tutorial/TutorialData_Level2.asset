@@ -38,11 +38,11 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 1
     UseBlocker: 0
-    FullBlocker: 0
+    FullBlocker: 1
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Set Seal Limit 50
     Type: 5
     Dialogue: {fileID: 0}
@@ -67,11 +67,11 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 50
     UseBlocker: 0
-    FullBlocker: 0
+    FullBlocker: 1
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Intro
     Type: 0
     Dialogue: {fileID: 11400000, guid: d7743a0cd5ffe49439ec1f41c24f8f20, type: 2}
@@ -96,11 +96,11 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 1
     UseBlocker: 0
-    FullBlocker: 0
+    FullBlocker: 1
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Hold the Line
     Type: 0
     Dialogue: {fileID: 11400000, guid: 4055988c3759ad545876fec42bc946c3, type: 2}
@@ -124,12 +124,12 @@ MonoBehaviour:
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
-    UseBlocker: 0
-    FullBlocker: 0
+    UseBlocker: 1
+    FullBlocker: 1
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Place Ignis
     Type: 3
     Dialogue: {fileID: 0}
@@ -162,7 +162,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Teach Empower
     Type: 3
     Dialogue: {fileID: 11400000, guid: acae4862676c7bb4ca51c7bd01b29ed1, type: 2}
@@ -194,7 +194,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Cast Empower
     Type: 3
     Dialogue: {fileID: 0}
@@ -230,7 +230,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Wave 1 Clears
     Type: 7
     Dialogue: {fileID: 0}
@@ -256,10 +256,10 @@ MonoBehaviour:
     RequiredCount: 1
     UseBlocker: 0
     FullBlocker: 0
-    ResetBlocker: 1
+    ResetBlocker: 0
     StopTime: 0
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Unseal Lilith
     Type: 0
     Dialogue: {fileID: 11400000, guid: 8b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e, type: 2}
@@ -284,11 +284,11 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 1
     UseBlocker: 1
-    FullBlocker: 0
+    FullBlocker: 1
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
-    Comment: 
+    Comment:
   - StepName: Show Lilith Btn
     Type: 5
     Dialogue: {fileID: 0}
@@ -313,11 +313,11 @@ MonoBehaviour:
     WaveIndex: -1
     RequiredCount: 1
     UseBlocker: 1
-    FullBlocker: 0
+    FullBlocker: 1
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
-    Comment: 
+    Comment:
   - StepName: Place Lilith
     Type: 3
     Dialogue: {fileID: 11400000, guid: 4a9f99aba8e0d954c91df435e187f5e8, type: 2}
@@ -350,40 +350,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment: 
-  - StepName: Wait Midpoint
-    Type: 8
-    Dialogue: {fileID: 0}
-    TargetUI:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    AdditionalTargetUI: []
-    TargetTiles:
-    - Coordinate: {x: 4, y: 5}
-      Size: {x: 1.5, y: 1.5}
-      Offset: {x: 0, y: 0, z: 0}
-      Height: 0
-    DelayBefore: 0
-    Duration: 2
-    ActionKey: EnemiesInRange
-    ShowHand: 0
-    HandScale: 1
-    DragShowHand: 0
-    HandTargetUIOverride:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
-    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
-    WaveIndex: 2
-    RequiredCount: 1
-    UseBlocker: 0
-    FullBlocker: 0
-    ResetBlocker: 0
-    StopTime: 0
-    ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: All Mobs Spawned
     Type: 8
     Dialogue: {fileID: 0}
@@ -395,7 +362,7 @@ MonoBehaviour:
     TargetTiles: []
     DelayBefore: 0
     Duration: 2
-    ActionKey: WaveFinishedSpawning
+    ActionKey: EnemiesSpawned
     ShowHand: 0
     HandScale: 1
     DragShowHand: 0
@@ -406,55 +373,34 @@ MonoBehaviour:
     HandTargetTileOverride: {x: 2, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 2
-    RequiredCount: 1
+    RequiredCount: 20
     UseBlocker: 0
     FullBlocker: 0
     ResetBlocker: 0
     StopTime: 0
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Mobs Swarming!
     Type: 0
-    Dialogue: {fileID: 0}
+    Dialogue: {fileID: 11400000, guid: f26ffb1b2a65dc54599a2342472b1e03, type: 2}
     TargetUI:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
-    TargetTiles: []
+    TargetTiles:
+    - Coordinate: {x: 1, y: 5}
+      Size: {x: 1, y: 1}
+      Offset: {x: 0, y: 1, z: 0}
+      Height: 0
+    - Coordinate: {x: 2, y: 5}
+      Size: {x: 1, y: 1}
+      Offset: {x: 0, y: 1, z: 0}
+      Height: 0
     DelayBefore: 0
     Duration: 2
     ActionKey: 
     ShowHand: 0
-    HandScale: 1
-    DragShowHand: 0
-    HandTargetUIOverride:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
-    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
-    WaveIndex: -1
-    RequiredCount: 1
-    UseBlocker: 1
-    FullBlocker: 0
-    ResetBlocker: 1
-    StopTime: 1
-    ResumeTime: 1
-    Comment: 
-  - StepName: Teach AOE Rite
-    Type: 3
-    Dialogue: {fileID: 0}
-    TargetUI:
-      Name: SovereignRiteToggle
-      Size: {x: 1.2, y: 1.2}
-      SizeOffset: {x: 0, y: 0}
-    AdditionalTargetUI: []
-    TargetTiles: []
-    DelayBefore: 0
-    Duration: 2
-    ActionKey: RiteMenuOpened
-    ShowHand: 1
     HandScale: 1
     DragShowHand: 0
     HandTargetUIOverride:
@@ -470,19 +416,49 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
-    Comment: 
+    Comment:
+  - StepName: Teach AOE Rite
+    Type: 3
+    Dialogue: {fileID: 11400000, guid: acae4862676c7bb4ca51c7bd01b29ed1, type: 2}
+    TargetUI:
+      Name: SovereignRiteToggle
+      Size: {x: 1.2, y: 1.2}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 2
+    ActionKey: RiteMenuOpened
+    ShowHand: 1
+    HandScale: 0.5
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: SovereignRiteToggle
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 1
+    UseBlocker: 1
+    FullBlocker: 0
+    ResetBlocker: 0
+    StopTime: 1
+    ResumeTime: 0
+    Comment:
   - StepName: Cast AOE Rite
     Type: 3
     Dialogue: {fileID: 0}
     TargetUI:
-      Name: SkillButton_GrandCross_Male
+      Name: SkillButton_AOE_Rite
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    AdditionalTargetUI:
-    - Name: SkillButton_StarFallRequiem_Female
-      Size: {x: 1.2, y: 1.2}
-      SizeOffset: {x: 0, y: 0}
-    TargetTiles: []
+    AdditionalTargetUI: []
+    TargetTiles:
+    - Coordinate: {x: 1, y: 4}
+      Size: {x: 3, y: 2}
+      Offset: {x: 0, y: 2, z: 0}
+      Height: 0
     DelayBefore: 0
     Duration: 2
     ActionKey: SkillUsed
@@ -490,7 +466,7 @@ MonoBehaviour:
     HandScale: 1
     DragShowHand: 0
     HandTargetUIOverride:
-      Name: SkillButton_GrandCross_Male
+      Name: SkillButton_AOE_Rite
       Size: {x: 1, y: 1}
       SizeOffset: {x: -0.2, y: 0}
     HandTargetTileOverride: {x: 2, y: 4}
@@ -500,11 +476,11 @@ MonoBehaviour:
     UseBlocker: 1
     FullBlocker: 0
     ResetBlocker: 0
-    StopTime: 1
+    StopTime: 0
     ResumeTime: 1
-    Comment: 
-  - StepName: Wave 3 Clears
-    Type: 7
+    Comment:
+  - StepName: Wait for Boss Wave
+    Type: 8
     Dialogue: {fileID: 0}
     TargetUI:
       Name: 
@@ -513,8 +489,8 @@ MonoBehaviour:
     AdditionalTargetUI: []
     TargetTiles: []
     DelayBefore: 0
-    Duration: 2
-    ActionKey: 
+    Duration: 0.1
+    ActionKey: WaveStarted
     ShowHand: 0
     HandScale: 1
     DragShowHand: 0
@@ -522,16 +498,16 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 0, y: 0}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
-    WaveIndex: 2
+    WaveIndex: 3
     RequiredCount: 1
     UseBlocker: 0
     FullBlocker: 0
-    ResetBlocker: 1
+    ResetBlocker: 0
     StopTime: 0
     ResumeTime: 1
-    Comment: 
+    Comment: Waits for boss wave (wave 4 index 3) to begin spawning without pausing
   - StepName: Boss Warning
     Type: 0
     Dialogue: {fileID: 11400000, guid: a7a2b6d0503e6904c860c68a38ac5c70, type: 2}
@@ -541,9 +517,38 @@ MonoBehaviour:
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles: []
-    DelayBefore: 0
+    DelayBefore: 0.5
     Duration: 2
     ActionKey: 
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 0}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 1
+    UseBlocker: 0
+    FullBlocker: 0
+    ResetBlocker: 1
+    StopTime: 1
+    ResumeTime: 1
+    Comment: Shows boss warning dialogue
+  - StepName: Boss Bypasses!
+    Type: 0
+    Dialogue: {fileID: 11400000, guid: 9c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f, type: 2}
+    TargetUI:
+      Name: Abyssal Shade
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 2
+    ActionKey: BossBypass
     ShowHand: 0
     HandScale: 1
     DragShowHand: 0
@@ -559,66 +564,8 @@ MonoBehaviour:
     FullBlocker: 0
     ResetBlocker: 1
     StopTime: 1
-    ResumeTime: 1
-    Comment: 
-  - StepName: Fight to 70% HP
-    Type: 8
-    Dialogue: {fileID: 0}
-    TargetUI:
-      Name: Abyssal Shade
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    AdditionalTargetUI: []
-    TargetTiles: []
-    DelayBefore: 0
-    Duration: 2
-    ActionKey: BossHealth
-    ShowHand: 0
-    HandScale: 1
-    DragShowHand: 0
-    HandTargetUIOverride:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
-    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
-    WaveIndex: -1
-    RequiredCount: 70
-    UseBlocker: 0
-    FullBlocker: 0
-    ResetBlocker: 0
-    StopTime: 0
-    ResumeTime: 1
-    Comment: 
-  - StepName: Boss Passes Ignis
-    Type: 8
-    Dialogue: {fileID: 0}
-    TargetUI:
-      Name: Ignis
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    AdditionalTargetUI: []
-    TargetTiles: []
-    DelayBefore: 0
-    Duration: 2
-    ActionKey: BossPassedUnit
-    ShowHand: 0
-    HandScale: 1
-    DragShowHand: 0
-    HandTargetUIOverride:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
-    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
-    WaveIndex: -1
-    RequiredCount: 1
-    UseBlocker: 0
-    FullBlocker: 0
-    ResetBlocker: 0
-    StopTime: 0
-    ResumeTime: 1
-    Comment: 
+    ResumeTime: 0
+    Comment: Pauses game when boss phases through Ignis
   - StepName: Restore Seals 99
     Type: 5
     Dialogue: {fileID: 0}
@@ -642,12 +589,12 @@ MonoBehaviour:
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 99
-    UseBlocker: 1
+    UseBlocker: 0
     FullBlocker: 0
     ResetBlocker: 1
     StopTime: 1
-    ResumeTime: 1
-    Comment: 
+    ResumeTime: 0
+    Comment:
   - StepName: Refill Seals
     Type: 5
     Dialogue: {fileID: 0}
@@ -674,38 +621,9 @@ MonoBehaviour:
     UseBlocker: 0
     FullBlocker: 0
     ResetBlocker: 0
-    StopTime: 0
-    ResumeTime: 0
-    Comment: 
-  - StepName: Boss Bypasses!
-    Type: 0
-    Dialogue: {fileID: 11400000, guid: 9c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f, type: 2}
-    TargetUI:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    AdditionalTargetUI: []
-    TargetTiles: []
-    DelayBefore: 0
-    Duration: 2
-    ActionKey: 
-    ShowHand: 0
-    HandScale: 1
-    DragShowHand: 0
-    HandTargetUIOverride:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
-    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
-    WaveIndex: -1
-    RequiredCount: 1
-    UseBlocker: 1
-    FullBlocker: 0
-    ResetBlocker: 1
     StopTime: 1
     ResumeTime: 0
-    Comment: 
+    Comment:
   - StepName: Open Rite Menu
     Type: 3
     Dialogue: {fileID: 0}
@@ -731,10 +649,10 @@ MonoBehaviour:
     RequiredCount: 1
     UseBlocker: 1
     FullBlocker: 0
-    ResetBlocker: 1
+    ResetBlocker: 0
     StopTime: 1
-    ResumeTime: 0
-    Comment: 
+    ResumeTime: 1
+    Comment:
   - StepName: One-Shot Rite
     Type: 8
     Dialogue: {fileID: 0}
@@ -770,7 +688,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 0
     ResumeTime: 1
-    Comment: 
+    Comment:
   - StepName: Victory
     Type: 0
     Dialogue: {fileID: 11400000, guid: ad4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a, type: 2}
@@ -799,4 +717,4 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
-    Comment: 
+    Comment:

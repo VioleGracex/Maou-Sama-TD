@@ -10,21 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 09_AbyssalShade_Dialogue
+  m_Name: 03_SovereignRiteToggle_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
-  Background: 1
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Ignis
-    SpeakerPortrait: {fileID: 0}
-    Text: "Tch! My blade... it's passing straight through him! He's turned into pure
-      shadow!"
-    PortraitOnLeft: 0
-    EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
-    Text: "He's entered an ethereal state. Melee strikes are useless now. Only Magic
-      and Rites can harm him."
     PortraitOnLeft: 0
-    EventID: 
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: Our Sovereign's Rites are sealed away for safety. Open the menu to prepare
+      the ritual.
+    Background: 1
+    EventID: "\u9F13"

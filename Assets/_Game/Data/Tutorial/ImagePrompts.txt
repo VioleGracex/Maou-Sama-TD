@@ -1,0 +1,11 @@
+# Image Generation Prompts
+
+## Grand Cross Icon (Seal on Ground)
+**Prompt**: Game skill icon, square format, a glowing demonic X-shaped seal burned deep into the dark cracked ground. Molten lava and fiery orange energy erupting from the lines of the X on the floor. Sharp demonic runes glowing along the edges. Cinematic lighting, high-quality 2D game art, dark fantasy atmosphere, vibrant orange and dark obsidian colors, sharp details, top-down perspective view of the seal on the floor.
+
+## Level 2 Outro Cinematic
+**Prompt**: Cinematic 16:9 illustration, EXACT COMPOSITION AND POSES FROM REFERENCE IMAGE. Low angle perspective from the floor looking up at three characters standing in a dark purple-lit gothic tomb. 
+1. FRONT RIGHT (Close): Lilith
+2. CENTER (Middle): Tina
+3. LEFT (Back): Ignis
+Environment: Thick dark purple fog, floating embers, industrial gothic architecture. Masterpiece, premium anime art style, dramatic lighting, high contrast. No text, no UI.

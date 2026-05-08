@@ -61,8 +61,9 @@ namespace MaouSamaTD.UI
 
         [Inject(Optional = true)] private EnemyManager _enemyManager;
         [Inject(Optional = true)] private BattleCurrencyManager _currencyManager;
+        [Inject(Optional = true)] private TutorialManager _tutorialManager;
 
-        private const float MaxBaseLives = 20f; 
+        private const float MaxNexusIntegrity = 20f; 
 
         private void Start()
         {
@@ -86,11 +87,11 @@ namespace MaouSamaTD.UI
 
             if (_gameManager != null)
             {
-                _gameManager.OnLivesChanged += UpdateHp;
+                _gameManager.OnNexusIntegrityChanged += UpdateHp;
                 _gameManager.OnVictory += ShowWin;
                 _gameManager.OnGameOver += ShowLose;
                 _gameManager.OnSpeedChanged += (s) => UpdateUI();
-                UpdateHp(_gameManager.PlayerLives);
+                UpdateHp(_gameManager.NexusIntegrity);
             }
 
             // Hide panels initially
@@ -148,13 +149,21 @@ namespace MaouSamaTD.UI
             {
                 _sealsText.text = $"Authority: {_currencyManager.CurrentSeals} / {_currencyManager.MaxSeals}";
             }
+
+            // Only grey-out the speed button when the tutorial has actively stopped time.
+            // The pause button is NEVER disabled — the player always needs it to exit/retreat.
+            bool tutorialStoppedTime = _tutorialManager != null && _tutorialManager.IsInTutorial
+                                       && _gameManager != null && _gameManager.CurrentSpeed <= 0f
+                                       && !_gameManager.IsPaused;
+            if (_speedButton != null)
+                _speedButton.interactable = !tutorialStoppedTime;
         }
 
         private void OnDestroy()
         {
             if (_gameManager != null)
             {
-                _gameManager.OnLivesChanged -= UpdateHp;
+                _gameManager.OnNexusIntegrityChanged -= UpdateHp;
                 _gameManager.OnVictory -= ShowWin;
                 _gameManager.OnGameOver -= ShowLose;
                 _gameManager.OnSpeedChanged -= (s) => UpdateUI();
@@ -334,9 +343,9 @@ namespace MaouSamaTD.UI
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
-        private void UpdateHp(int lives)
+        private void UpdateHp(int integrity)
         {
-            float pct = (float)lives / MaxBaseLives;
+            float pct = (float)integrity / MaxNexusIntegrity;
             
             if (_hpFillImage != null)
             {
@@ -352,6 +361,8 @@ namespace MaouSamaTD.UI
         private void OnSpeedClicked()
         {
             if (_gameManager == null) return;
+            // Block speed toggle only while tutorial has stopped time — prevent overriding StopTime steps
+            if (_tutorialManager != null && _tutorialManager.IsInTutorial && _gameManager.CurrentSpeed <= 0f && !_gameManager.IsPaused) return;
             
             // Toggle between 1x and 2x
             float newSpeed = (_gameManager.CurrentSpeed >= 2f) ? 1f : 2f;
@@ -362,6 +373,7 @@ namespace MaouSamaTD.UI
         private void OnPauseClicked()
         {
             if (_gameManager == null) return;
+            // Pause is always allowed — player must be able to exit/retreat even during tutorial
             _gameManager.TogglePause();
             UpdateUI(); // Toggles overlay via IsPaused check
         }

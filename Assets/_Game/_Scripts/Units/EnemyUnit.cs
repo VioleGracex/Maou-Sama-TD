@@ -25,6 +25,7 @@ namespace MaouSamaTD.Units
         private float _charmTimer = 0f;
         private Stack<Tile> _retreatPath = new Stack<Tile>();
         private int _currentPhasingCharges;
+        public int CurrentPhasingCharges => _currentPhasingCharges;
         private List<EnemyAbility> _runtimeAbilities = new List<EnemyAbility>();
 
         public static System.Collections.Generic.List<EnemyUnit> ActiveEnemies = new System.Collections.Generic.List<EnemyUnit>();

@@ -319,11 +319,51 @@ namespace MaouSamaTD.Skills
         /// <summary>Returns true if worldPos is inside the given AoeShape centred on origin.</summary>
         private bool IsInShape(SovereignRiteData skill, Vector3 origin, Vector3 worldPos, float radius)
         {
-            // Convert world positions (XZ plane) to grid coordinates
-            Vector2Int originCoord = new Vector2Int(Mathf.RoundToInt(origin.x), Mathf.RoundToInt(origin.z));
-            Vector2Int targetCoord = new Vector2Int(Mathf.RoundToInt(worldPos.x), Mathf.RoundToInt(worldPos.z));
-            
-            return skill.IsInShape(originCoord, targetCoord);
+            float worldDx = worldPos.x - origin.x;
+            float worldDz = worldPos.z - origin.z;
+            float absDx = Mathf.Abs(worldDx);
+            float absDz = Mathf.Abs(worldDz);
+            float threshold = skill.Radius + 0.6f;
+
+            switch (skill.AoeShape)
+            {
+                case AoeShape.Circle:
+                    return (worldDx * worldDx + worldDz * worldDz) <= threshold * threshold;
+
+                case AoeShape.Square:
+                    return absDx <= threshold && absDz <= threshold;
+
+                case AoeShape.Cross:
+                    return (absDx < 0.6f && absDz <= threshold) || (absDz < 0.6f && absDx <= threshold);
+
+                case AoeShape.DiagonalX:
+                    return Mathf.Abs(absDx - absDz) < 0.6f && absDx <= threshold;
+
+                case AoeShape.Star:
+                    bool isCross = (absDx < 0.6f && absDz <= threshold) || (absDz < 0.6f && absDx <= threshold);
+                    bool isDiag = Mathf.Abs(absDx - absDz) < 0.6f && absDx <= threshold;
+                    return isCross || isDiag;
+
+                case AoeShape.Custom:
+                    // High-precision check for custom offsets:
+                    // Does the target world position fall within any of the offset tiles?
+                    foreach (var offset in skill.CustomShapeOffsets)
+                    {
+                        // We assume tiles are 1x1 units in world space.
+                        // We check if the distance from the worldPos to the center of the offset tile is small.
+                        float targetX = origin.x + offset.x;
+                        float targetZ = origin.z + offset.y;
+                        if (Mathf.Abs(worldPos.x - targetX) < 0.6f && Mathf.Abs(worldPos.z - targetZ) < 0.6f)
+                            return true;
+                    }
+                    // Also always check the center (0,0) for custom shapes to avoid dead zones 
+                    // unless specifically excluded (but usually it's a bug).
+                    if (absDx < 0.6f && absDz < 0.6f) return true;
+                    return false;
+
+                default:
+                    return false;
+            }
         }
 
 

@@ -10,30 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 11_End_Dialogue
+  m_Name: 02_HoldingLine_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
-  Background: 1
   CharactersPerSecond: 30
   Lines:
-  - SpeakerName: Lilith
+  - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
-    Text: "That was... satisfying. I've missed our little dances. My power is yours
-      once more, Sovereign... as is everything else."
-    PortraitOnLeft: 1
+    PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: My Sovereign, the unsealing process is delicate. We must buy time for the
+      ritual to complete.
+    Background: 1
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
-    Text: "The unsealing is complete. Lilith is with us once more."
     PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: Ignis, hold the southern corridor. Do not let those shades interrupt the
+      flow of mana.
+    Background: 1
     EventID: 
-  - SpeakerName: Tina
-    SpeakerPortrait: {fileID: 0}
-    Text: "Come, My Sovereign. We have what we came for. Our journey back is long, but necessary."
-    PortraitOnLeft: 0
-    EventID: 
-  - SpeakerName: Tina
-    SpeakerPortrait: {fileID: 0}
-    Text: "On our way back from the tomb... the kingdom, your kingdom, awaits."
-    PortraitOnLeft: 0
-    EventID:

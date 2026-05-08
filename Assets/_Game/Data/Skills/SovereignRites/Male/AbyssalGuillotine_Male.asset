@@ -26,12 +26,13 @@ MonoBehaviour:
     RangeIndicatorColor: {r: 0.5, g: 0, b: 1, a: 1}
     AnimationTriggerName: 
   Archetype: 0
+  Tag: Single_Rite
   SealCost: 75
   Cooldown: 30
   TargetType: 1
   Range: 100
   Radius: 0
-  AoeShape: 5
+  AoeShape: 0
   CustomShapeOffsets: []
   EffectType: 0
   Modifiers: []

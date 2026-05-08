@@ -26,7 +26,8 @@ MonoBehaviour:
     RangeIndicatorColor: {r: 0.6, g: 0.2, b: 0.8, a: 1}
     AnimationTriggerName: 
   Archetype: 1
-  SealCost: 75
+  Tag: Single_Rite
+  SealCost: 35
   Cooldown: 30
   TargetType: 1
   Range: 100

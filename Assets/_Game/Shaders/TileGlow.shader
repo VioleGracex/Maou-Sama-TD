@@ -6,7 +6,7 @@ Shader "Custom/TileGlow"
         _BaseColor ("Base Color", Color) = (1,1,1,1)
         [Header(Glow Settings)]
         _GlowColor ("Glow Color", Color) = (0,1,0,1)
-        _GlowIntensity ("Glow Intensity", Float) = 1
+        _GlowIntensity ("Glow Intensity", Range(0, 5)) = 0.5
         _BorderWidth ("Border Width", Range(0,0.5)) = 0.05
         [Toggle(_USE_FULL_FILL)] _UseFullFill ("Use Full Fill", Float) = 0
     }
@@ -116,7 +116,12 @@ Shader "Custom/TileGlow"
                     float isBorder = (maxDist > (1.0 - _BorderWidth)) ? 1.0 : 0.0;
                     float glowFactor = lerp(isBorder, 1.0, _UseFullFill);
                     
-                    finalRGB += (_GlowColor.rgb * _GlowIntensity * glowFactor);
+                    // Blend/stain the underlying texture using lerp based on the glow color's alpha channel.
+                    // This ensures the highlight is highly visible and retains saturation even on pure white path surfaces,
+                    // rather than washing out to faint white.
+                    float blendAlpha = saturate(_GlowColor.a * glowFactor);
+                    // Softer blend: mix the glow color rather than replacing the texture color entirely
+                    finalRGB = lerp(finalRGB, finalRGB + (_GlowColor.rgb * _GlowIntensity), blendAlpha * 0.5);
                 }
 
                 return half4(finalRGB, texColor.a);

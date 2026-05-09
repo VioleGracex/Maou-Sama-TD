@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 namespace MaouSamaTD.UI.Skills
 {
-    public class SkillButtonUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+    public class SkillButtonUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [Header("UI References")]
         [SerializeField] private Image _iconImage;
@@ -152,6 +152,41 @@ namespace MaouSamaTD.UI.Skills
 
         public void OnPointerExit(PointerEventData eventData)
         {
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (_data == null) return;
+            if (_manager != null && !_manager.IsSkillReady(_data)) return;
+
+            if (_interactionManager != null)
+            {
+                // Ensure the skill is selected (do not toggle it off if already selected)
+                if (_interactionManager.SelectedSkill != _data || !_interactionManager.IsSkillTargeting)
+                {
+                    _interactionManager.SelectSkill(_data);
+                }
+            }
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            // Required for Unity EventSystem drag registration
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if (_data == null || _interactionManager == null) return;
+
+            bool releasedOnButton = eventData.pointerEnter == gameObject;
+            if (!releasedOnButton)
+            {
+                // Dragged onto map -> Try cast!
+                _interactionManager.TryCastSkillAtScreenPos(eventData.position);
+            }
+
+            // Always clear skill targeting on drag release
+            _interactionManager.DeselectSkill();
         }
     }
 }

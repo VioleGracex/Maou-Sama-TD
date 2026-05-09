@@ -84,10 +84,14 @@ namespace MaouSamaTD.UI.Skills
         {
             CheckTutorialDock();
 
-            if (skills == null || skills.Count == 0)
+            bool isLevel1 = _gameSelectionState != null && _gameSelectionState.SelectedLevel != null && 
+                            (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1");
+
+            if (isLevel1 || skills == null || skills.Count == 0)
             {
                 if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
                 gameObject.SetActive(false);
+                return;
             }
             else
             {

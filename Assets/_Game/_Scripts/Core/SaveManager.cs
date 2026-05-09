@@ -105,7 +105,17 @@ namespace MaouSamaTD.Managers
                     return;
                 }
 
-                CurrentData = JsonUtility.FromJson<PlayerData>(json);
+                PlayerData loadedData = JsonUtility.FromJson<PlayerData>(json);
+                
+                // Version compatibility check: if from version 0.1.0 or before (no version / empty, or explicitly "0.1.0"), delete it!
+                if (loadedData == null || string.IsNullOrEmpty(loadedData.SaveVersion) || loadedData.SaveVersion == "0.1.0")
+                {
+                    Debug.LogWarning($"[SaveManager] Save data belongs to an older version (0.1.0 or before). Deleting and resetting save data.");
+                    DeleteSaveData(); // This deletes file, sets CurrentData = null, and calls CreateNewSave()
+                    return;
+                }
+
+                CurrentData = loadedData;
                 Debug.Log("[SaveManager] Save loaded successfully.");
             }
             catch (System.Exception e)
@@ -204,12 +214,6 @@ namespace MaouSamaTD.Managers
             if (!CurrentData.UnlockedUnits.Contains("Lilith"))
             {
                 CurrentData.UnlockedUnits.Add("Lilith");
-            }
-            
-            BattleCurrencyManager currencyMgr = FindFirstObjectByType<BattleCurrencyManager>();
-            if (currencyMgr != null)
-            {
-                currencyMgr.SetMaxSeals(150);
             }
 
             Debug.Log("[SaveManager] Lilith has been awakened! Sovereign power regained.");

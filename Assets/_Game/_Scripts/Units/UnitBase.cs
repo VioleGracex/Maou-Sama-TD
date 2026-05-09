@@ -345,7 +345,7 @@ namespace MaouSamaTD.Units
                 _spriteRenderer.transform.DOKill(true);
                 
                 // Return to base position (in case kill didn't reset it perfectly due to stacking)
-                _spriteRenderer.transform.localPosition = new Vector3(0, 1f, 0); // Correct for UnitBase default
+                _spriteRenderer.transform.localPosition = GetSpriteLocalPosition();
 
                 _spriteRenderer.DOColor(Color.red, 0.1f).OnComplete(() => _spriteRenderer.DOColor(Color.white, 0.1f));
                 _spriteRenderer.transform.DOShakePosition(0.2f, 0.15f, 15, 90f, false, true);
@@ -542,6 +542,11 @@ namespace MaouSamaTD.Units
         protected virtual void RegisterAttacker(UnitBase attacker)
         {
             // Subclasses can implement aggro logic here
+        }
+
+        protected virtual Vector3 GetSpriteLocalPosition()
+        {
+            return new Vector3(0, 1f, 0);
         }
     }
 }

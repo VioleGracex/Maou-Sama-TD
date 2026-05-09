@@ -30,7 +30,7 @@ namespace MaouSamaTD.UI
         [Header("Overlay Settings")]
         [SerializeField] private Material overlayMaterial;
         [SerializeField] private Color overlayColor = new Color(0, 0, 0, 0.85f);
-        [SerializeField] private int maskSize = 1024;
+        [SerializeField] private int maskSize = 256;
         [SerializeField] private float transitionDuration = 0.1f;
 
         private List<UIHighlightData> uiHighlights = new List<UIHighlightData>();

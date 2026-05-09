@@ -162,7 +162,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_nameText) _nameText.text = unit.UnitName;
             if (_portraitImage) 
             {
-                var portrait = unit.GetSprite(UnitData.UnitImageType.WaistUp);
+                var portrait = unit.GetSprite(UnitData.UnitImageType.Avatar);
                 _portraitImage.sprite = portrait;
                 _portraitImage.gameObject.SetActive(portrait != null);
                 

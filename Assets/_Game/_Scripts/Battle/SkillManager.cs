@@ -14,11 +14,6 @@ namespace MaouSamaTD.Skills
         private List<SovereignRiteData> _availableSkills = new List<SovereignRiteData>();
         public IReadOnlyList<SovereignRiteData> AvailableSkills => _availableSkills;
         private Dictionary<SovereignRiteData, float> _cooldowns = new Dictionary<SovereignRiteData, float>();
-
-        // Pause-time tracking so cooldowns freeze when timeScale == 0
-        private bool _wasPausedLastFrame = false;
-        private float _pauseStartUnscaled = 0f;
-        private float _totalPausedTime = 0f;
         
         [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private TutorialManager _tutorialManager;
@@ -34,11 +29,6 @@ namespace MaouSamaTD.Skills
         {
             _availableSkills.Clear();
             _cooldowns.Clear();
-
-            // Reset pause tracking for clean state on new battle
-            _wasPausedLastFrame = false;
-            _pauseStartUnscaled = 0f;
-            _totalPausedTime = 0f;
 
             if (skills != null)
             {
@@ -67,7 +57,7 @@ namespace MaouSamaTD.Skills
             // Check Cooldown
             if (_cooldowns.ContainsKey(skill))
             {
-                if (Time.time < _cooldowns[skill]) return false;
+                if (_cooldowns[skill] > 0f) return false;
             }
 
             // Check Cost
@@ -92,16 +82,7 @@ namespace MaouSamaTD.Skills
         public float GetRemainingCooldown(SovereignRiteData skill)
         {
             if (skill == null || !_cooldowns.ContainsKey(skill)) return 0f;
-            
-            float endTime = _cooldowns[skill];
-            if (Mathf.Approximately(Time.timeScale, 0f) && _wasPausedLastFrame)
-            {
-                // Currently paused: freeze the countdown visually
-                endTime += (Time.unscaledTime - _pauseStartUnscaled);
-            }
-            
-            float remaining = endTime - Time.unscaledTime;
-            return Mathf.Max(0, remaining);
+            return Mathf.Max(0f, _cooldowns[skill]);
         }
 
         // Renamed/Reloaded for SovereignRites specific
@@ -123,68 +104,35 @@ namespace MaouSamaTD.Skills
             }
 
             // Apply Cooldown
-            _cooldowns[skill] = Time.unscaledTime + skill.Cooldown;
+            _cooldowns[skill] = skill.Cooldown;
 
             // Execute Logic
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Sovereign", "", $"Activating Rite: {skill.SkillName}", 0);
             ApplySkillEffect(skill, targetPosition, targetUnit);
-                        _tutorialManager?.OnActionTriggered("SkillUsed");
+            _tutorialManager?.OnActionTriggered("SkillUsed");
 
-            // One-Shot Rite Miss Interception
             if (_tutorialManager != null && _tutorialManager.IsInTutorial)
             {
-                var step = _tutorialManager.GetCurrentStep();
-                if (step != null && step.ActionKey == "BossHealth" && step.RequiredCount == 0)
-                {
-                    var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
-                    if (boss != null && !boss.IsDead)
-                    {
-                        OnOneShotRiteMiss(skill);
-                    }
-                }
+                _tutorialManager.OnRiteUsed(skill, targetPosition, targetUnit);
             }
 
-            return true;;
+            return true;
         }
         #endregion
 
         #region Internal Logic
         private void Update()
         {
-            TrackPauseTime();
-        }
-
-        /// <summary>
-        /// Tracks accumulated real-time while the game is paused (timeScale == 0).
-        /// This accumulated delta is subtracted from cooldown end-times so that
-        /// cooldowns effectively freeze during tutorial dialogue / pause.
-        /// </summary>
-        private void TrackPauseTime()
-        {
-            bool isPausedNow = Mathf.Approximately(Time.timeScale, 0f);
-
-            if (isPausedNow && !_wasPausedLastFrame)
+            // Update cooldowns based on scaled game time (Time.deltaTime) so that x1, x2 speeds scale them perfectly,
+            // and pausing (timescale = 0) naturally freezes them!
+            var keys = new List<SovereignRiteData>(_cooldowns.Keys);
+            foreach (var key in keys)
             {
-                // Just became paused
-                _pauseStartUnscaled = Time.unscaledTime;
-            }
-            else if (!isPausedNow && _wasPausedLastFrame)
-            {
-                // Just resumed — accumulate how long we were paused
-                float pausedDuration = Time.unscaledTime - _pauseStartUnscaled;
-                _totalPausedTime += pausedDuration;
-
-                // Shift all active cooldown end-times forward by the paused duration
-                // so the remaining time stays the same as when we paused
-                foreach (var key in new List<SovereignRiteData>(_cooldowns.Keys))
+                if (_cooldowns[key] > 0f)
                 {
-                    _cooldowns[key] += pausedDuration;
+                    _cooldowns[key] = Mathf.Max(0f, _cooldowns[key] - Time.deltaTime);
                 }
-
-                if (_showDebugLogs) Debug.Log($"[SkillManager] Resumed from pause. Shifted cooldowns by {pausedDuration:F2}s.");
             }
-
-            _wasPausedLastFrame = isPausedNow;
         }
 
         private bool IsTargetValid(SovereignRiteData skill, UnitBase targetUnit)
@@ -445,125 +393,6 @@ namespace MaouSamaTD.Skills
             
             if (_showDebugLogs) Debug.Log($"[SkillManager] Applied {skill.EffectType} to {unit.gameObject.name}");
         }
-                private int _oneShotMissCount = 0;
-
-        private void OnOneShotRiteMiss(SovereignRiteData skill)
-        {
-            _oneShotMissCount++;
-
-            // Refund seals
-            if (_currencyManager != null)
-            {
-                _currencyManager.GiveSeals(skill.SealCost);
-            }
-
-            // Reset cooldown
-            _cooldowns[skill] = 0f;
-
-            // Find portrait sprites dynamically from existing steps in the active tutorial
-            Sprite tinaLeftPortrait = null;
-            Sprite lilithRightPortrait = null;
-
-            if (_tutorialManager != null && _tutorialManager.ActiveTutorial != null)
-            {
-                foreach (var step in _tutorialManager.ActiveTutorial.Steps)
-                {
-                    if (step.Dialogue != null)
-                    {
-                        foreach (var line in step.Dialogue.Lines)
-                        {
-                            if (line.SpeakerName == "Tina" || line.SpeakerName == "티나")
-                            {
-                                if (line.LeftPortrait != null && tinaLeftPortrait == null) tinaLeftPortrait = line.LeftPortrait;
-                                if (line.RightPortrait != null && tinaLeftPortrait == null) tinaLeftPortrait = line.RightPortrait;
-                                if (line.CenterPortrait != null && tinaLeftPortrait == null) tinaLeftPortrait = line.CenterPortrait;
-                            }
-                            else if (line.SpeakerName == "Lilith" || line.SpeakerName == "릴리스")
-                            {
-                                if (line.LeftPortrait != null && lilithRightPortrait == null) lilithRightPortrait = line.LeftPortrait;
-                                if (line.RightPortrait != null && lilithRightPortrait == null) lilithRightPortrait = line.RightPortrait;
-                                if (line.CenterPortrait != null && lilithRightPortrait == null) lilithRightPortrait = line.CenterPortrait;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Construct humorous dialogue mocking the player
-            MaouSamaTD.Tutorial.DialogueData dialogue = ScriptableObject.CreateInstance<MaouSamaTD.Tutorial.DialogueData>();
-            dialogue.Style = MaouSamaTD.Tutorial.DialogueStyle.FullScreen;
-            dialogue.Lines = new List<MaouSamaTD.Tutorial.DialogueLine>();
-
-            if (_oneShotMissCount == 1)
-            {
-                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
-                {
-                    SpeakerName = "Tina",
-                    LeftPortrait = tinaLeftPortrait,
-                    RightPortrait = lilithRightPortrait,
-                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Left,
-                    Text = "Uh... Maou-sama? Did you... just miss? Like, completely?",
-                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
-                });
-                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
-                {
-                    SpeakerName = "Lilith",
-                    LeftPortrait = tinaLeftPortrait,
-                    RightPortrait = lilithRightPortrait,
-                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Right,
-                    Text = "Fufu, how adorable. The all-powerful Demon Lord's hand must be shaking from witnessing my magnificent presence. Let's pretend that was a 'warning shot'. Try again!",
-                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
-                });
-            }
-            else if (_oneShotMissCount == 2)
-            {
-                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
-                {
-                    SpeakerName = "Tina",
-                    LeftPortrait = tinaLeftPortrait,
-                    RightPortrait = lilithRightPortrait,
-                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Left,
-                    Text = "Twice in a row?! Seriously, Maou-sama, even a blind imp could have hit that giant shadow! Are you doing this on purpose?",
-                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
-                });
-                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
-                {
-                    SpeakerName = "Lilith",
-                    LeftPortrait = tinaLeftPortrait,
-                    RightPortrait = lilithRightPortrait,
-                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Right,
-                    Text = "Perhaps Maou-sama requires glasses? Or maybe a guided map? Come now, my Lord, the boss is literally sitting there. Focus and cast it directly on them!",
-                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
-                });
-            }
-            else
-            {
-                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
-                {
-                    SpeakerName = "Tina",
-                    LeftPortrait = tinaLeftPortrait,
-                    RightPortrait = lilithRightPortrait,
-                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Left,
-                    Text = $"Miss #{_oneShotMissCount}... I'm starting to think you're trolling us, Maou-sama. Please tell me you're trolling us.",
-                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
-                });
-                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
-                {
-                    SpeakerName = "Lilith",
-                    LeftPortrait = tinaLeftPortrait,
-                    RightPortrait = lilithRightPortrait,
-                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Right,
-                    Text = $"No, no, Tina. I think Maou-sama is simply practicing their pattern art on the ground. A very creative way to lose a battle, my Lord! Here, I've refunded your seals and reset the cooldown yet again. Try to actually hit them this time, okay? ♥",
-                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
-                });
-            }
-
-            if (_dialogueManager != null)
-            {
-                _dialogueManager.StartDialogue(dialogue);
-            }
-        }
-
         #endregion
     }
 }

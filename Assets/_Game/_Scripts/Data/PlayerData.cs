@@ -7,6 +7,7 @@ namespace MaouSamaTD.Data
     [Serializable]
     public class PlayerData
     {
+        public string SaveVersion = "0.1.1";
         public List<string> CompletedLevels = new List<string>();
         // Using List of structs for JsonUtility compatibility instead of Dictionary
         public List<LevelStarData> LevelStars = new List<LevelStarData>();

@@ -53,26 +53,27 @@ namespace MaouSamaTD.Managers
             
             if (levelData != null)
             {
-                _maxSeals = levelData.MaxAuthoritySeals;
+                // Prioritize LevelData setting
+                _maxSeals = levelData.MaxAuthoritySeals > 0 ? levelData.MaxAuthoritySeals : 99;
                 _startingSeals = levelData.StartingAuthoritySeals;
                 CurrentSeals = _startingSeals;
             }
             else
             {
-                _maxSeals = 30; // Default fallback
+                _maxSeals = 99; // Default fallback
             }
 
-            // Tiered Logic: Level Base + Lilith Bonus (30) capped at 99
+            // Only apply persistent bonuses if not in a forced-economy tutorial
             SaveManager save = FindFirstObjectByType<SaveManager>();
-            if (save != null && save.CurrentData != null)
+            bool isTutorial = levelData != null && levelData.HasTutorial;
+
+            if (save != null && save.CurrentData != null && !isTutorial)
             {
                 int bonus = save.CurrentData.IsLilithAwakened ? 30 : 0;
                 
-                // If we have a specific persistent MaxSeals override (e.g. from shop/upgrades), use it
-                // Otherwise calculate based on level + Lilith
                 if (save.CurrentData.MaxSeals > 0)
                 {
-                    _maxSeals = save.CurrentData.MaxSeals;
+                    _maxSeals = Mathf.Max(_maxSeals, save.CurrentData.MaxSeals);
                 }
                 else
                 {

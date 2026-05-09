@@ -27,7 +27,7 @@ MonoBehaviour:
     AnimationTriggerName: 
   Archetype: 1
   Tag: Single_Rite
-  SealCost: 35
+  SealCost: 75
   Cooldown: 30
   TargetType: 1
   Range: 100

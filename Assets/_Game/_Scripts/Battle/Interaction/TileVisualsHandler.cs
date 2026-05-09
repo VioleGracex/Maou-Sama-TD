@@ -93,7 +93,7 @@ namespace MaouSamaTD.Managers.Interaction
                     {
                         shouldHighlight = true;
                         highlightColor = RangeColor;
-                        highlightColor.a = 0.8f; 
+                        highlightColor.a = RangeColor.a; // Use the designed RangeColor alpha (soft)
                         useFullFill = UseFullFillRange;
                     }
                 }
@@ -103,7 +103,7 @@ namespace MaouSamaTD.Managers.Interaction
                     {
                         shouldHighlight = true;
                         highlightColor = selectedSkill.BaseVisuals.RangeIndicatorColor;
-                        highlightColor.a = (tile == hoverTile) ? 0.8f : 0.5f;
+                        highlightColor.a = (tile == hoverTile) ? 0.35f : 0.15f; // Softer skill range indicator colors
                         useFullFill = UseFullFillSkills;
                     }
                 }

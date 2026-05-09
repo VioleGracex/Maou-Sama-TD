@@ -8,6 +8,7 @@ using MaouSamaTD.UI;
 using MaouSamaTD.UI.Tutorial;
 using MaouSamaTD.Tutorial;
 using MaouSamaTD.Units;
+using MaouSamaTD.Skills;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
@@ -53,9 +54,96 @@ namespace MaouSamaTD.Managers
         private TutorialStep currentStep => _currentStep;
         private bool _isWaitingForDialogueCondition = false;
         private bool _bossPhasedTriggered = false;
+        private int _currentStepMissCount = 0;
+        private int _nextStepIndexOverride = -1;
+        private Dictionary<string, RectTransform> _uiTargetCache = new Dictionary<string, RectTransform>();
         #endregion
 
         #region Public API
+        private int FindStepIndexByName(string stepName)
+        {
+            if (_activeTutorial == null || string.IsNullOrEmpty(stepName)) return -1;
+            for (int i = 0; i < _activeTutorial.Steps.Count; i++)
+            {
+                if (_activeTutorial.Steps[i] != null && _activeTutorial.Steps[i].StepName == stepName)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public void OnRiteUsed(SovereignRiteData skill, Vector3 targetPosition, UnitBase targetUnit)
+        {
+            if (_currentStep == null || !_currentStep.EnableMissInterception || skill == null) return;
+
+            // Check if the boss is still alive/unhurt
+            string bossName = _currentStep.MissTargetBossName;
+            var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == bossName);
+            if (boss != null && !boss.IsDead)
+            {
+                if (_showDebugLogs) Debug.Log($"[tutorial] Rite missed boss '{bossName}'. Triggering retry/miss interception.");
+
+                // Refund seals
+                if (_currencyManager != null)
+                {
+                    _currencyManager.GiveSeals(skill.SealCost);
+                }
+
+                // Reset cooldown
+                _skillManager?.ForceSetReady(skill);
+
+                // Handle Failure Branch Jumping
+                if (!string.IsNullOrEmpty(_currentStep.OnFailJumpToStepName))
+                {
+                    int targetIndex = FindStepIndexByName(_currentStep.OnFailJumpToStepName);
+                    if (targetIndex >= 0)
+                    {
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Rite missed. Jumping to fail branch step: '{_currentStep.OnFailJumpToStepName}' (Index {targetIndex})");
+                        _nextStepIndexOverride = targetIndex;
+                        _waitingForAction = false; // Stop waiting so the routine advances immediately
+                        _currentStepMissCount++;
+                        return;
+                    }
+                }
+
+                // Fallback to standard ConsecutiveMissDialogues list if OnFailJumpToStepName is not specified
+                if (_currentStep.ConsecutiveMissDialogues != null && _currentStep.ConsecutiveMissDialogues.Count > 0)
+                {
+                    int index = Mathf.Min(_currentStepMissCount, _currentStep.ConsecutiveMissDialogues.Count - 1);
+                    DialogueData dialogue = _currentStep.ConsecutiveMissDialogues[index];
+                    bool isThirdOrGreaterMiss = (_currentStepMissCount >= 2); // 3rd miss is index 2 (starting at 0)
+
+                    if (dialogue != null && _dialogueManager != null)
+                    {
+                        _gameManager?.SetSpeed(0);
+                        _dialogueManager.StartDialogue(dialogue, () =>
+                        {
+                            if (_showDebugLogs) Debug.Log("[tutorial] Custom Miss/Retry Dialogue Finished.");
+                            
+                            if (isThirdOrGreaterMiss)
+                            {
+                                if (_showDebugLogs) Debug.Log("[tutorial] Third miss reached! Lilith finishes the boss.");
+                                
+                                // Kill the boss
+                                var targetBoss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == bossName);
+                                if (targetBoss != null)
+                                {
+                                    targetBoss.PreventDeathForTutorial = false; // Lift immortality
+                                    targetBoss.Die(); // Kill the boss
+                                }
+                                
+                                // Stop waiting so the routine moves forward!
+                                _waitingForAction = false;
+                            }
+                        });
+                    }
+                }
+
+                _currentStepMissCount++;
+            }
+        }
+
         public void StartTutorial(TutorialDataSO data)
         {
             if (_showDebugLogs) Debug.Log($"[tutorial] StartTutorial called for: {data?.name}");
@@ -74,6 +162,7 @@ namespace MaouSamaTD.Managers
             IsInTutorial = true;
             _currentStepIndex = 0;
             _bossPhasedTriggered = false;
+            _nextStepIndexOverride = -1;
 
             // Level 2 Start Logic: Set initial seals to 50
             if (_activeTutorial != null && _activeTutorial.name.Contains("Level2"))
@@ -83,6 +172,17 @@ namespace MaouSamaTD.Managers
                     _currencyManager.SetMaxSeals(50);
                     _currencyManager.SetSeals(50);
                     if (_showDebugLogs) Debug.Log("[tutorial] Level 2 Initialized: Seals set to 50.");
+                }
+            }
+
+            // Level 1 Start Logic: Ensure Sovereign Rite Panel is strictly hidden
+            if (_activeTutorial != null && _activeTutorial.name.Contains("Level1"))
+            {
+                var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                if (skillPanel != null)
+                {
+                    skillPanel.gameObject.SetActive(false);
+                    if (_showDebugLogs) Debug.Log("[tutorial] Level 1 Initialized: Forcing SkillPanelUI to SetActive(false).");
                 }
             }
             
@@ -170,7 +270,7 @@ namespace MaouSamaTD.Managers
             // Periodically check if targets are still valid/active (e.g. if user closes a menu)
             if (Time.unscaledTime > _nextHighlightRefreshTime)
             {
-                _nextHighlightRefreshTime = Time.unscaledTime + 0.5f;
+                _nextHighlightRefreshTime = Time.unscaledTime + 0.1f; // Much faster refresh for responsive UI
                 if (step.UseBlocker && step.TargetUI != null)
                 {
                     var rt = FindTargetRect(step.TargetUI.Name);
@@ -305,7 +405,9 @@ namespace MaouSamaTD.Managers
                     }
                 }
                 
-                 // _currentStep set later after initializations
+                _currentStep = step;
+                _currentStepMissCount = 0;
+                _uiTargetCache.Clear(); // Clear cache for new step
 
                 // Reset frame-state tracking variables for the new step to avoid stale transitions
                 _isSkillTargetingLastFrame = _interactionManager != null && _interactionManager.IsSkillTargeting;
@@ -328,8 +430,6 @@ namespace MaouSamaTD.Managers
                 {
                     _skillManager?.ResetAllCooldowns();
                 }
-                
-                _currentStep = step;
                 
                 // Reset visuals once at the start of the step if requested
                 if (step.ResetBlocker)
@@ -838,7 +938,31 @@ namespace MaouSamaTD.Managers
                 if (step.ResumeTime) _gameManager.SetSpeed(1);
 
                 if (_showDebugLogs) Debug.Log($"[tutorial] <<< Finished Step [{_currentStepIndex}]: {step.StepName}");
-                _currentStepIndex++;
+                
+                // Redirection Engine
+                if (_nextStepIndexOverride >= 0)
+                {
+                    _currentStepIndex = _nextStepIndexOverride;
+                    _nextStepIndexOverride = -1;
+                }
+                else if (!string.IsNullOrEmpty(step.OnCompleteJumpToStepName))
+                {
+                    int targetIndex = FindStepIndexByName(step.OnCompleteJumpToStepName);
+                    if (targetIndex >= 0)
+                    {
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} finished. Branching redirect to: '{step.OnCompleteJumpToStepName}' (Index {targetIndex})");
+                        _currentStepIndex = targetIndex;
+                    }
+                    else
+                    {
+                        Debug.LogError($"[tutorial] Could not find redirect step name: '{step.OnCompleteJumpToStepName}' in tutorial steps!");
+                        _currentStepIndex++;
+                    }
+                }
+                else
+                {
+                    _currentStepIndex++;
+                }
             }
 
             IsInTutorial = false;
@@ -864,6 +988,16 @@ namespace MaouSamaTD.Managers
         private void HandleUIHighlight(TutorialStep step)
         {
             if (step == null) return;
+
+            // Prevent double-dimming if dialogue has its own full screen dim active
+            if (_dialogueManager != null && _dialogueManager.DialogueUI != null && 
+                _dialogueManager.DialogueUI.IsShowingDialogue && 
+                _dialogueManager.DialogueUI.ActiveBackground == DialogueBackground.FullScreenDim)
+            {
+                _uiBlocker.HideBlocker();
+                _handUI.Hide();
+                return;
+            }
 
             bool hasDialogue = _dialogueManager != null && _dialogueManager.IsDialogueActive;
             if (!step.UseBlocker && !hasDialogue)
@@ -944,9 +1078,10 @@ namespace MaouSamaTD.Managers
                     Transform t = pu != null ? pu.transform : eu.transform;
                     Vector2 size = (ut.Size != Vector2.zero) ? ut.Size : _unitWorldHoleSizeDefault;
                     // Multiply size by specific offset if needed, or just use default unit settings.
+                    float yOffset = _unitWorldHoleYOffset + ut.SizeOffset.y;
                     worldHighlights.Add(new UIPopupBlocker.WorldHighlightData
                     {
-                        Position = t.position + new Vector3(0, _unitWorldHoleYOffset, 0),
+                        Position = t.position + new Vector3(0, yOffset, 0),
                         Size = size,
                         Height = 0f
                     });
@@ -1028,7 +1163,7 @@ namespace MaouSamaTD.Managers
                     {
                         Position = position,
                         Size = new Vector2(1.2f, 1.2f),
-                        Height = 2.0f
+                        Height = 1.0f
                     });
                 }
             }
@@ -1126,6 +1261,9 @@ private RectTransform FindTargetRect(string name)
             // first try swapping to the player's actual gender, then fall back to the stored name.
             string resolvedName = ResolveGenderSuffix(name);
 
+            // Try cache first
+            if (_uiTargetCache.TryGetValue(resolvedName, out RectTransform cached)) return cached;
+
             // Try active first (fastest)
             GameObject go = GameObject.Find(resolvedName);
 
@@ -1133,13 +1271,17 @@ private RectTransform FindTargetRect(string name)
             if (go == null && resolvedName != name)
                 go = GameObject.Find(name);
 
-            // If still not found, search all (including inactive)
+            // If still not found, search children of main Canvas
             if (go == null)
             {
-                var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-                go = allObjects.FirstOrDefault(o => o.name == resolvedName);
-                if (go == null && resolvedName != name)
-                    go = allObjects.FirstOrDefault(o => o.name == name);
+                // Targeted search is much faster than Resources.FindObjectsOfTypeAll
+                var canvas = FindFirstObjectByType<Canvas>();
+                if (canvas != null)
+                {
+                    var all = canvas.GetComponentsInChildren<RectTransform>(true);
+                    var found = System.Array.Find(all, r => r.name == resolvedName || r.name == name);
+                    if (found != null) go = found.gameObject;
+                }
             }
 
             bool isGoActive = go != null && go.activeInHierarchy;
@@ -1169,10 +1311,19 @@ private RectTransform FindTargetRect(string name)
             if (go != null)
             {
                 RectTransform rt = go.GetComponent<RectTransform>();
-                if (rt != null) return rt;
+                if (rt != null) 
+                {
+                    _uiTargetCache[resolvedName] = rt;
+                    return rt;
+                }
 
                 Canvas canvas = go.GetComponentInChildren<Canvas>(true);
-                if (canvas != null) return canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
+                if (canvas != null)
+                {
+                    var crt = canvas.GetComponent<RectTransform>() ?? canvas.transform as RectTransform;
+                    if (crt != null) _uiTargetCache[resolvedName] = crt;
+                    return crt;
+                }
             }
 
             return null;
@@ -1181,23 +1332,30 @@ private RectTransform FindTargetRect(string name)
         private RectTransform FindActiveRectInHierarchy(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
-
             string resolvedName = ResolveGenderSuffix(name);
 
+            // Try active first (fastest)
             GameObject go = GameObject.Find(resolvedName);
             if (go != null && go.activeInHierarchy)
             {
                 RectTransform rt = go.GetComponent<RectTransform>();
-                if (rt != null) return rt;
+                if (rt != null) 
+                {
+                    _uiTargetCache[resolvedName] = rt;
+                    return rt;
+                }
             }
 
-            var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-            foreach (var obj in allObjects)
+            // Fallback to Canvas search (still faster than Resources.FindObjectsOfTypeAll)
+            var canvas = FindFirstObjectByType<Canvas>();
+            if (canvas != null)
             {
-                if (obj != null && (obj.name == resolvedName || obj.name == name) && obj.activeInHierarchy)
+                var all = canvas.GetComponentsInChildren<RectTransform>(true);
+                var found = System.Array.Find(all, r => (r.name == resolvedName || r.name == name) && r.gameObject.activeInHierarchy);
+                if (found != null)
                 {
-                    RectTransform rt = obj.GetComponent<RectTransform>();
-                    if (rt != null) return rt;
+                    _uiTargetCache[resolvedName] = found;
+                    return found;
                 }
             }
 
@@ -1428,8 +1586,25 @@ private RectTransform FindTargetRect(string name)
                     if (targetUnit != null)
                     {
                         bool met = targetUnit.KillCount >= step.RequiredCount && step.RequiredCount > 0;
-                        return met;
+                        if (met) return true;
                     }
+
+                    // Unstuckable Guard: If the player killed the enemies by other means (e.g. rites, environment, etc.)
+                    // and there are no active enemies left or the wave is cleared, complete the step to prevent soft-locks.
+                    if (EnemyUnit.ActiveEnemies.Count == 0)
+                    {
+                        if (_enemyManager != null && !_enemyManager.IsSpawning)
+                        {
+                            Debug.Log($"[tutorial] Unstuckable Guard: No active enemies left. Skipping UnitKills check.");
+                            return true;
+                        }
+                    }
+                    if (step.WaveIndex >= 0 && _enemyManager != null && _enemyManager.IsWaveCleared(step.WaveIndex))
+                    {
+                        Debug.Log($"[tutorial] Unstuckable Guard: Wave {step.WaveIndex} cleared. Skipping UnitKills check.");
+                        return true;
+                    }
+
                     return false;
                 }
 
@@ -1716,6 +1891,16 @@ private RectTransform FindTargetRect(string name)
                 if (_triggeredActionsBuffer.Contains(step.ActionKey))
                 {
                     return true;
+                }
+
+                // Special case for RiteMenuOpened: if skill panel is already open, skip step entirely
+                if (step.ActionKey == "RiteMenuOpened")
+                {
+                    var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                    if (skillPanel != null && skillPanel.IsVisible)
+                    {
+                        return true;
+                    }
                 }
 
                 // Special case for UnitPlaced

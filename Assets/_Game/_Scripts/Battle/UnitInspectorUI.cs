@@ -80,7 +80,7 @@ namespace MaouSamaTD.UI
                 {
                     _panel.transform.DOKill();
                     _panel.SetActive(true);
-                    _panel.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack).SetUpdate(true); // Animate In
+                    _panel.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.OutBack).SetUpdate(true); // Faster Animation In
                     
                     Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
                     if (tm != null) tm.OnActionTriggered("UnitStatsOpened");

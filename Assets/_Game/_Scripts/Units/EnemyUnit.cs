@@ -679,5 +679,13 @@ namespace MaouSamaTD.Units
                 RecalculatePath();
             }
         }
+
+        protected override Vector3 GetSpriteLocalPosition()
+        {
+            if (_enemyData == null) return new Vector3(0, 1f, 0);
+            float baseHeight = _enemyData.BaseVisualHeight; 
+            float finalY = baseHeight + _enemyData.VisualYOffset;
+            return new Vector3(0, finalY, 0);
+        }
     }
 }

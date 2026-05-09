@@ -10,50 +10,41 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 09_End_Dialogue
+  m_Name: L2_05_Placement_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
   CharactersPerSecond: 30
   Lines:
+  - SpeakerName: Tina
+    SpeakerPortrait: {fileID: 0}
+    PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: Lilith is a Warlock. Place her on the High Ground to maximize her reach
+      and Magical damage.
+    Background: 1
+    EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 1
+    PortraitOnLeft: 0
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: That was... satisfying. I've missed our little dances. My power is yours
-      once more, Sovereign... as is everything else.
+    Text: "Look at those filthy 'Shadow Wings'\u2014circling like vultures. They
+      think we're easy prey."
     Background: 1
     EventID: 
-  - SpeakerName: Tina
+  - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
     PortraitOnLeft: 0
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: The unsealing is complete. Lilith is with us once more.
+    Text: Let me handle them, Sovereign. My magic can reach where Ignis's sword falters.
+      Just... give me a good view.
     Background: 1
-    EventID: 
-  - SpeakerName: Tina
-    SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
-    LeftPortrait: {fileID: 0}
-    RightPortrait: {fileID: 0}
-    CenterPortrait: {fileID: 0}
-    Focus: 0
-    Text: Come, My Sovereign. We have what we came for. Our journey back is long,
-      but necessary.
-    Background: 1
-    EventID: 
-  - SpeakerName: Tina
-    SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
-    LeftPortrait: {fileID: 0}
-    RightPortrait: {fileID: 0}
-    CenterPortrait: {fileID: 0}
-    Focus: 0
-    Text: On our way back from the tomb... the kingdom, your kingdom, awaits.
-    Background: 0
     EventID: 

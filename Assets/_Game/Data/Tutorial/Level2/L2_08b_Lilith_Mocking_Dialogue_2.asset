@@ -10,30 +10,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 01_SilentTomb_Dialogue
+  m_Name: L2_08b_Lilith_Mocking_Dialogue_2
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
   CharactersPerSecond: 30
   Lines:
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
+    PortraitOnLeft: 1
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: We have reached the heart of the lower sanctum. The air here is... sickeningly
-      sweet. Her presence still lingers.
+    Text: Wait... that's two in a row! Sovereign, is the targeting reticle dirty,
+      or are you doing this on purpose?
     Background: 1
+    BackgroundImage: {fileID: 21300000, guid: 4b4db4fe0516e96429994fb34e62aeb1, type: 3}
     EventID: 
-  - SpeakerName: Tina
+  - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
+    PortraitOnLeft: 1
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Steel yourself, My Sovereign. To reclaim your Crests, we must endure her...
-      antics.
+    Text: My Sovereign, are you attempting to carve a portrait of me in the ground
+      with your magic? How flattering! But the actual boss is standing over there...
+      you know, the giant shadow?
     Background: 1
+    BackgroundImage: {fileID: 21300000, guid: 4b4db4fe0516e96429994fb34e62aeb1, type: 3}
     EventID: 

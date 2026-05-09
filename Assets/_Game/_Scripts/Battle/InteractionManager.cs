@@ -24,7 +24,7 @@ namespace MaouSamaTD.Managers
         [Header("Visual Settings")]
         [SerializeField] private Color _validGlowColor = Color.green;
         [SerializeField] private Color _invalidGlowColor = Color.red;
-        [SerializeField] private Color _rangeIndicatorColor = new Color(0, 0, 1, 0.3f);
+        [SerializeField] private Color _rangeIndicatorColor = new Color(0, 0, 1, 0.12f);
         [Space]
         [SerializeField] private bool _useFullFillForPlacement = false;
         [SerializeField] private bool _useFullFillForRange = true;
@@ -384,6 +384,72 @@ namespace MaouSamaTD.Managers
             {
                 DeselectSkill();
             }
+        }
+
+        public bool TryCastSkillAtScreenPos(Vector2 screenPos)
+        {
+            if (_selectedSkill == null) return false;
+            
+            // Tutorial Blocker Check
+            if (_tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.gameObject.activeInHierarchy)
+            {
+                if (!_uiBlocker.IsPointerInHole(screenPos))
+                {
+                    return false;
+                }
+            }
+            
+            Ray ray = _inputHandler.GetRayFromScreenPos(screenPos);
+            Vector3 targetPos = Vector3.zero;
+            UnitBase targetUnit = null;
+            Tile targetTile = null;
+            
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f, ~LayerMask.GetMask("Ignore Raycast")))
+            {
+                targetUnit = hit.collider.GetComponent<UnitBase>();
+                targetPos = new Vector3(hit.point.x, 0, hit.point.z);
+            }
+            
+            // Try to find the tile if it's a tile/ground skill
+            targetTile = _gridManager.GetTileAt(_gridManager.WorldToGridCoordinates(targetPos));
+
+            if (targetUnit == null)
+            {
+                 Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+                 if (groundPlane.Raycast(ray, out float enter)) 
+                 {
+                     targetPos = ray.GetPoint(enter);
+                     if (targetTile == null)
+                        targetTile = _gridManager.GetTileAt(_gridManager.WorldToGridCoordinates(targetPos));
+                 }
+            }
+
+            if (_selectedSkill.TargetType == SkillTargetType.Tile)
+            {
+                if (targetTile != null)
+                {
+                    if (!IsTileValidForRite(targetTile))
+                    {
+                        return false;
+                    }
+
+                    if (_skillManager.TryExecuteRite(_selectedSkill, targetTile.transform.position, targetUnit))
+                    {
+                        DeselectSkill();
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+
+            if (_skillManager.TryExecuteRite(_selectedSkill, targetPos, targetUnit))
+            {
+                DeselectSkill();
+                return true;
+            }
+
+            return false;
         }
 
         private bool IsTileValidForRite(Tile tile)

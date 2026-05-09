@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using MaouSamaTD.Managers;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using MaouSamaTD.Levels;
 using Zenject;
 using DG.Tweening;
@@ -331,24 +333,62 @@ namespace MaouSamaTD.UI
             var currentLevel = _gameManager.CurrentLevelData;
             if (currentLevel == null) currentLevel = _selectionState?.SelectedLevel;
 
-            var levelDb = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase;
-            
-            if (currentLevel != null && levelDb != null)
+            int nextIndex = 1;
+            if (currentLevel != null)
             {
-                var nextLevel = levelDb.AllLevels.Find(l => l.LevelIndex == currentLevel.LevelIndex + 1);
-                if (nextLevel == null) nextLevel = levelDb.GetNextLevel(currentLevel);
-
-                if (nextLevel != null)
-                {
-                    Debug.Log($"[GameControlUI] Loading next level: {nextLevel.LevelName} (Index: {nextLevel.LevelIndex})");
-                    _selectionState.SetLevel(nextLevel);
-                    ReloadScene();
-                    return;
-                }
+                nextIndex = currentLevel.LevelIndex + 1;
             }
-            
-            Debug.Log("[GameControlUI] No next level found, returning to menu.");
-            ReturnToMenu();
+
+            string primaryKey = $"Assets/_Game/Data/Levels/LevelData_Level{nextIndex}.asset";
+            string fallbackKey = $"LevelData_Level{nextIndex}";
+
+            Debug.Log($"[GameControlUI] Attempting to load next level via Addressables key: '{primaryKey}'");
+
+            Addressables.LoadAssetAsync<LevelData>(primaryKey).Completed += handle =>
+            {
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    LevelData loadedLevel = handle.Result;
+                    Debug.Log($"[GameControlUI] Successfully loaded next level '{loadedLevel.LevelName}' via Addressables primary key!");
+                    _selectionState.SetLevel(loadedLevel);
+                    ReloadScene();
+                }
+                else
+                {
+                    Debug.LogWarning($"[GameControlUI] Failed to load next level via '{primaryKey}'. Trying fallback: '{fallbackKey}'...");
+                    Addressables.LoadAssetAsync<LevelData>(fallbackKey).Completed += fallbackHandle =>
+                    {
+                        if (fallbackHandle.Status == AsyncOperationStatus.Succeeded)
+                        {
+                            LevelData loadedLevel = fallbackHandle.Result;
+                            Debug.Log($"[GameControlUI] Successfully loaded next level '{loadedLevel.LevelName}' via Addressables fallback key!");
+                            _selectionState.SetLevel(loadedLevel);
+                            ReloadScene();
+                        }
+                        else
+                        {
+                            Debug.LogError($"[GameControlUI] Failed to load next level via both Addressable keys. Falling back to memory-based LevelDatabase lookup.");
+                            
+                            var levelDb = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase;
+                            if (currentLevel != null && levelDb != null)
+                            {
+                                var nextLevel = levelDb.AllLevels.Find(l => l.LevelIndex == nextIndex);
+                                if (nextLevel == null) nextLevel = levelDb.GetNextLevel(currentLevel);
+
+                                if (nextLevel != null)
+                                {
+                                    _selectionState.SetLevel(nextLevel);
+                                    ReloadScene();
+                                    return;
+                                }
+                            }
+                            
+                            Debug.Log("[GameControlUI] No next level found, returning to menu.");
+                            ReturnToMenu();
+                        }
+                    };
+                }
+            };
         }
 
         private void ShowLose()

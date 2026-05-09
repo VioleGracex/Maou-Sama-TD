@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using MaouSamaTD.Data;
+using MaouSamaTD.Core;
 using Zenject;
 using DG.Tweening;
 
@@ -39,6 +40,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         #region Dependencies
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
+        [Inject] private MaouSamaTD.Managers.GameSelectionState _gameSelectionState;
         #endregion
 
         #region State
@@ -259,6 +261,17 @@ namespace MaouSamaTD.UI.MainMenu
                 _saveManager.CurrentData.UnlockedUnits.Add("Ignis");
 
             _saveManager.Save();
+
+            // Set Level 1-1 as selected so that it starts on Level 1 instead of falling back to Level 2
+            if (_gameSelectionState != null && AppEntryPoint.LoadedLevelDatabase != null)
+            {
+                var lvl1 = AppEntryPoint.LoadedLevelDatabase.GetLevelByID("1-1");
+                if (lvl1 != null)
+                {
+                    _gameSelectionState.SetLevel(lvl1);
+                    Debug.Log("[AscensionPanel] Explicitly selected Level 1-1 in GameSelectionState for first-time player.");
+                }
+            }
 
             // Disable the button so the player can't double-click
             if (_ariseButton != null) _ariseButton.interactable = false;

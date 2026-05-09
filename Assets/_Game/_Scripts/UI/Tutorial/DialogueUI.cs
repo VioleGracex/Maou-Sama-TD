@@ -15,6 +15,7 @@ namespace MaouSamaTD.UI.Tutorial
     public class DialogueUI : MonoBehaviour
     {
         public bool IsShowingDialogue => (_fullScreenPanel != null && _fullScreenPanel.activeInHierarchy) || (_miniTopPanel != null && _miniTopPanel.activeInHierarchy);
+        public DialogueBackground ActiveBackground => _bgType;
 
         public RectTransform GetPanelRect(DialogueStyle style)
         {
@@ -82,6 +83,7 @@ namespace MaouSamaTD.UI.Tutorial
         private int _lastClickFrame = -1;
         private DialogueBackground _lastAppliedBG = (DialogueBackground)(-1);
         private DialogueStyle _lastAppliedStyle = (DialogueStyle)(-1);
+        private CanvasGroup _canvasGroup;
 
         private TextMeshProUGUI ActiveContentText 
         {
@@ -103,6 +105,7 @@ namespace MaouSamaTD.UI.Tutorial
 
         private void Awake()
         {
+            _canvasGroup = GetComponent<CanvasGroup>();
             Debug.Log("[tutorial] DialogueUI Awake - Initializing listeners...");
 
             // Ensure Canvas is top-level overlay
@@ -118,6 +121,12 @@ namespace MaouSamaTD.UI.Tutorial
 
             if (_fullScreenPanel != null) _fullScreenPanel.SetActive(false);
             if (_miniTopPanel != null) _miniTopPanel.SetActive(false);
+            if (_fullScreenDim != null)
+            {
+                _fullScreenDim.DOKill();
+                _fullScreenDim.alpha = 0f;
+                _fullScreenDim.gameObject.SetActive(false);
+            }
             
             if (_fullNextButton != null) 
             {
@@ -176,6 +185,13 @@ namespace MaouSamaTD.UI.Tutorial
             
             _fullScreenPanel?.SetActive(_currentStyle == DialogueStyle.FullScreen);
             _miniTopPanel?.SetActive(_currentStyle == DialogueStyle.MiniTop);
+
+            if (_backgroundImage != null)
+            {
+                _backgroundImage.sprite = null;
+                _backgroundImage.gameObject.SetActive(false);
+                _backgroundImage.enabled = false;
+            }
 
             ApplyBackground(DialogueBackground.None);
 
@@ -260,8 +276,12 @@ namespace MaouSamaTD.UI.Tutorial
             
             if (_backgroundImage != null)
             {
-                _backgroundImage.sprite = line.Background;
-                _backgroundImage.enabled = line.Background != null;
+                if (_backgroundImage.sprite != line.Background)
+                {
+                    _backgroundImage.sprite = line.Background;
+                    _backgroundImage.gameObject.SetActive(line.Background != null);
+                    _backgroundImage.enabled = line.Background != null;
+                }
             }
 
             ApplyBackground(line.BackgroundOverlay);
@@ -314,6 +334,16 @@ namespace MaouSamaTD.UI.Tutorial
 
             if (speakerText != null) speakerText.text = line.SpeakerName;
             
+            if (_backgroundImage != null)
+            {
+                if (_backgroundImage.sprite != line.BackgroundImage)
+                {
+                    _backgroundImage.sprite = line.BackgroundImage;
+                    _backgroundImage.gameObject.SetActive(line.BackgroundImage != null);
+                    _backgroundImage.enabled = line.BackgroundImage != null;
+                }
+            }
+
             ApplyBackground(line.Background);
 
             if (_currentStyle == DialogueStyle.FullScreen)
@@ -335,6 +365,12 @@ namespace MaouSamaTD.UI.Tutorial
                 }
             }
 
+            // Ensure the dialogue box is fully opaque (not faint)
+            if (_canvasGroup != null) _canvasGroup.alpha = 1f;
+            
+            // The dialogue background should respect its inspector alpha (e.g. 0.85) rather than being forced to 1.0 (fully opaque).
+            // This prevents it from looking "too dark".
+
             StartTyping(line.Text);
         }
 
@@ -347,7 +383,7 @@ namespace MaouSamaTD.UI.Tutorial
             
             _bgType = type;
             
-            if (_backgroundImage != null) _backgroundImage.enabled = false;
+            if (_backgroundImage != null && _backgroundImage.sprite == null) _backgroundImage.enabled = false;
 
             // 1. Transition FROM old background type
             if (oldType == DialogueBackground.FullScreenDim && _bgType != DialogueBackground.FullScreenDim)
@@ -378,6 +414,13 @@ namespace MaouSamaTD.UI.Tutorial
             switch (_bgType)
             {
                 case DialogueBackground.UIBlocker:
+                    if (_fullScreenDim != null)
+                    {
+                        _fullScreenDim.DOKill();
+                        _fullScreenDim.DOFade(0f, 0.3f).SetUpdate(true).OnComplete(() => {
+                            _fullScreenDim.gameObject.SetActive(false);
+                        });
+                    }
                     RectTransform dialogueRT = GetActivePanelRect();
                     if (_uiBlocker != null && dialogueRT != null)
                     {
@@ -386,6 +429,10 @@ namespace MaouSamaTD.UI.Tutorial
                     break;
 
                 case DialogueBackground.FullScreenDim:
+                    if (_uiBlocker != null)
+                    {
+                        _uiBlocker.HideBlocker();
+                    }
                     if (_fullScreenDim != null)
                     {
                         _fullScreenDim.gameObject.SetActive(true);

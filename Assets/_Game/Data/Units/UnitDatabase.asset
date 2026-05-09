@@ -108,5 +108,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 270d8b3d82c13da4d94c71b7931f9231, type: 2}
   - {fileID: 11400000, guid: 9e5e02de45ce50441bcc9586ba92e211, type: 2}
   - {fileID: 11400000, guid: 6251296297e7d134c8fa31f40338f374, type: 2}
-  GlobalButtonImageType: 2
+  GlobalButtonImageType: 0
   UseGlobalButtonOverride: 1

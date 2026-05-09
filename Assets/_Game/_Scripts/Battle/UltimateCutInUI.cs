@@ -44,10 +44,20 @@ namespace MaouSamaTD.UI
             }
         }
 
+        private Canvas _canvas;
+
         private void Awake()
         {
             if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            else { Destroy(gameObject); return; }
+
+            _canvas = GetComponent<Canvas>();
+            if (_canvas == null) _canvas = gameObject.AddComponent<Canvas>();
+            _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            _canvas.sortingOrder = 3500; // Above Dialogue (3000)
+
+            if (gameObject.GetComponent<GraphicRaycaster>() == null)
+                gameObject.AddComponent<GraphicRaycaster>();
 
             if (_canvasGroup != null)
             {
@@ -58,7 +68,6 @@ namespace MaouSamaTD.UI
             Transform dimChild = transform.Find("Background_Dim");
             if (dimChild != null) _backgroundDim = dimChild.gameObject;
 
-            // Ensure we are logically "hidden" but active for coroutines
             if (_identityContainer != null) _identityContainer.alpha = 0;
         }
 
@@ -124,6 +133,14 @@ namespace MaouSamaTD.UI
             Vector2 finalUltPos = _ultimateText.rectTransform.anchoredPosition;
             _ultimateText.rectTransform.anchoredPosition = finalUltPos - slideDir * _ultimateTextOffset;
 
+            Debug.Log($"[Ultimate] STARTING sequence for {unitName}.");
+
+            // Verify UltimateCutInUI
+            if (MaouSamaTD.UI.UltimateCutInUI.Instance == null)
+            {
+                Debug.LogError("[Ultimate] UltimateCutInUI.Instance is NULL! Is it in the scene?");
+            }
+
             if (_nameText != null) _nameText.text = unitName.ToUpper();
             if (_titleText != null) _titleText.text = unitTitle.ToUpper();
             if (_skillNameText != null) _skillNameText.text = skillName.ToUpper();
@@ -159,7 +176,7 @@ namespace MaouSamaTD.UI
             yield return _ultimateText.rectTransform.DOAnchorPos(finalUltPos, 0.5f).SetEase(Ease.OutBack).SetUpdate(true).WaitForCompletion();
 
             // Hold
-            yield return new WaitForSecondsRealtime(1.5f);
+            yield return new WaitForSecondsRealtime(1.0f); // Reduced from 1.5s for snappier combat
 
             // Exit along the same diagonal path
             if (_redBanner != null) _redBanner.DOAnchorPos(slideDir * _bannerSlideDistance, 0.5f).SetEase(Ease.InCubic).SetUpdate(true);

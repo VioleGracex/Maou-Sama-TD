@@ -205,25 +205,44 @@ namespace MaouSamaTD.Skills.Editor
 
         private void DrawVisualFields(SerializedProperty visualsProp)
         {
-            if (visualsProp == null) return;
+            if (visualsProp == null)
+            {
+                EditorGUILayout.HelpBox("Visuals property not found.", MessageType.Warning);
+                return;
+            }
 
             EditorGUILayout.LabelField("Assets", EditorStyles.miniBoldLabel);
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("UltimatePrefab"), new GUIContent("Ultimate Projectile"));
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("CastVFX"), new GUIContent("Cast VFX"));
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("HitVFX"), new GUIContent("Impact VFX"));
+            SafePropertyField(visualsProp.FindPropertyRelative("UltimatePrefab"), "Ultimate Projectile");
+            SafePropertyField(visualsProp.FindPropertyRelative("CastVFX"), "Cast VFX");
+            SafePropertyField(visualsProp.FindPropertyRelative("HitVFX"), "Impact VFX");
             
             GUILayout.Space(5);
             EditorGUILayout.LabelField("Audio", EditorStyles.miniBoldLabel);
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("CastSFX"), new GUIContent("Cast Sound"));
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("HitSFX"), new GUIContent("Impact Sound"));
+            SafePropertyField(visualsProp.FindPropertyRelative("CastSFX"), "Cast Sound");
+            SafePropertyField(visualsProp.FindPropertyRelative("HitSFX"), "Impact Sound");
 
             GUILayout.Space(5);
             EditorGUILayout.LabelField("Colors & Animation", EditorStyles.miniBoldLabel);
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("UltimateColor"), new GUIContent("Banner Color"));
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("TitleBgColor"), new GUIContent("Title BG Color"));
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("SkillNameBgColor"), new GUIContent("Name BG Color"));
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("RangeIndicatorColor"), new GUIContent("AoE Color"));
-            EditorGUILayout.PropertyField(visualsProp.FindPropertyRelative("AnimationTriggerName"), new GUIContent("Anim Trigger"));
+            SafePropertyField(visualsProp.FindPropertyRelative("UltimateColor"), "Banner Color");
+            SafePropertyField(visualsProp.FindPropertyRelative("TitleBgColor"), "Title BG Color");
+            SafePropertyField(visualsProp.FindPropertyRelative("SkillNameBgColor"), "Name BG Color");
+            SafePropertyField(visualsProp.FindPropertyRelative("RangeIndicatorColor"), "AoE Color");
+            SafePropertyField(visualsProp.FindPropertyRelative("AnimationTriggerName"), "Anim Trigger");
+        }
+
+        private void SafePropertyField(SerializedProperty prop, string label)
+        {
+            if (prop != null)
+            {
+                EditorGUILayout.PropertyField(prop, new GUIContent(label));
+            }
+            else
+            {
+                using (new EditorGUI.DisabledScope(true))
+                {
+                    EditorGUILayout.LabelField(label, "[Property Missing]");
+                }
+            }
         }
 
         private void DrawResponsiveSpriteField(SerializedProperty prop, string label)

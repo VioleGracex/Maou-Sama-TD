@@ -10,41 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 05_Placement_Dialogue
+  m_Name: L2_08a_Lilith_Mocking_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
   CharactersPerSecond: 30
   Lines:
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
+    PortraitOnLeft: 1
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Lilith is a Warlock. Place her on the High Ground to maximize her reach
-      and Magical damage.
+    Text: Uh... Sovereign? Did you... just miss? Like, completely?
     Background: 1
+    BackgroundImage: {fileID: 21300000, guid: 4b4db4fe0516e96429994fb34e62aeb1, type: 3}
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
+    PortraitOnLeft: 1
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: "Look at those filthy 'Shadow Wings'\u2014circling like vultures. They
-      think we're easy prey."
+    Text: Fufu, how adorable. The all-powerful Sovereign's hand must be shaking from
+      witnessing my magnificent presence. Let's pretend that was a 'warning shot'.
+      Try again!
     Background: 1
-    EventID: 
-  - SpeakerName: Lilith
-    SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
-    LeftPortrait: {fileID: 0}
-    RightPortrait: {fileID: 0}
-    CenterPortrait: {fileID: 0}
-    Focus: 0
-    Text: Let me handle them, Sovereign. My magic can reach where Ignis's sword falters.
-      Just... give me a good view.
-    Background: 1
+    BackgroundImage: {fileID: 21300000, guid: 4b4db4fe0516e96429994fb34e62aeb1, type: 3}
     EventID: 

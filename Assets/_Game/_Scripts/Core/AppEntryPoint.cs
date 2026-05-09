@@ -17,6 +17,7 @@ namespace MaouSamaTD.Core
         [SerializeField] private MaouSamaTD.UI.MainMenu.AscensionPanel _ascensionPanel;
 
         [Inject] private SaveManager _saveManager;
+        [Inject] private GameSelectionState _gameSelectionState;
         
         // This is a static reference we can use universally since it will be loaded from Addressables
         public static UnitDatabase LoadedUnitDatabase { get; private set; }
@@ -38,6 +39,22 @@ namespace MaouSamaTD.Core
 
         private IEnumerator InitializeGameDataCoroutine(Action<float> onProgress, Action onComplete)
         {
+            // If already initialized, we can skip the slow and potentially crash-prone Addressables loading entirely!
+            if (LoadedUnitDatabase != null && LoadedLevelDatabase != null && LoadedScalingData != null)
+            {
+                Debug.Log("[AppEntryPoint] Game data already initialized. Skipping Addressables reload.");
+                onProgress?.Invoke(1.0f);
+                
+                // Still load save data to make sure any updates or level clears are reflected
+                if (_saveManager != null)
+                {
+                    _saveManager.Load();
+                }
+                
+                onComplete?.Invoke();
+                yield break;
+            }
+
             Debug.Log("[AppEntryPoint] Bootstrapping Addressables...");
             var initHandle = Addressables.InitializeAsync();
             while (!initHandle.IsDone)
@@ -155,6 +172,21 @@ namespace MaouSamaTD.Core
             if (!level1Done)
             {
                 Debug.Log("[AppEntryPoint] Level 1-1 not completed – routing to BattleScene.");
+                
+                if (_gameSelectionState != null && LoadedLevelDatabase != null)
+                {
+                    var lvl1 = LoadedLevelDatabase.GetLevelByID("1-1");
+                    if (lvl1 != null)
+                    {
+                        _gameSelectionState.SetLevel(lvl1);
+                        Debug.Log("[AppEntryPoint] Automatically selected Level 1-1 in GameSelectionState.");
+                    }
+                    else
+                    {
+                        Debug.LogError("[AppEntryPoint] Could not find Level 1-1 in LoadedLevelDatabase!");
+                    }
+                }
+
                 var loader = UnityEngine.Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
                 if (loader != null)
                 {

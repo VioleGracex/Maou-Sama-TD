@@ -119,6 +119,21 @@ namespace MaouSamaTD.Tutorial
         [Tooltip("Automatically resume game time (scale 1) after this step completes")]
         public bool ResumeTime = true;
 
+        [Header("Miss / Fail Branching")]
+        [Tooltip("If true, casting a rite during this step checks if target is missed/alive and handles refunding.")]
+        public bool EnableMissInterception;
+        [ShowIf("EnableMissInterception")]
+        [Tooltip("The name of the boss/enemy to check for miss interception.")]
+        public string MissTargetBossName = "Abyssal Shade";
+        [ShowIf("EnableMissInterception")]
+        [Tooltip("If a miss/fail is detected, jump to this step name (e.g. '21-a') instead of the next step.")]
+        public string OnFailJumpToStepName;
+        [Tooltip("When this step finishes successfully, jump to this step name (e.g. '21') instead of the next sequential step.")]
+        public string OnCompleteJumpToStepName;
+        [ShowIf("EnableMissInterception")]
+        [Tooltip("Optional sequential list of dialogues to display on consecutive misses (fallback if OnFailJumpToStepName is empty).")]
+        public List<DialogueData> ConsecutiveMissDialogues = new List<DialogueData>();
+
         [Header("Developer Notes")]
         [TextArea(3, 10)]
         [Tooltip("Internal notes about this step's purpose, triggers, or logic.")]

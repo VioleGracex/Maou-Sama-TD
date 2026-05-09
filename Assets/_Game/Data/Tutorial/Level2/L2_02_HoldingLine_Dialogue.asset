@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75c476018da43bc45bbd42d53cd0b8c8, type: 3}
-  m_Name: 03_SovereignRiteToggle_Dialogue
+  m_Name: L2_02_HoldingLine_Dialogue
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.DialogueData
   Style: 0
   CharactersPerSecond: 30
@@ -22,7 +22,18 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Our Sovereign's Rites are sealed away for safety. Open the menu to prepare
-      the ritual.
+    Text: My Sovereign, the unsealing process is delicate. We must buy time for the
+      ritual to complete.
     Background: 1
-    EventID: "\u9F13"
+    EventID: 
+  - SpeakerName: Tina
+    SpeakerPortrait: {fileID: 0}
+    PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: Ignis, hold the southern corridor. Do not let those shades interrupt the
+      flow of mana.
+    Background: 1
+    EventID: 

@@ -34,6 +34,7 @@ namespace MaouSamaTD.Tutorial
         public string Text;
         
         public DialogueBackground Background;
+        public Sprite BackgroundImage;
 
         // Optional: Trigger event or sound
         public string EventID;

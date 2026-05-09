@@ -90,9 +90,79 @@ namespace MaouSamaTD.Units
 
         private IEnumerator ExecuteUltimateRoutine()
         {
-            // Ultimate system is currently disabled/simplified
-            if (_showDebugLogs) Debug.Log("[Ultimate] Ultimate execution triggered but system is currently simplified.");
-            yield break;
+            if (Data == null)
+            {
+                Debug.LogError("[Ultimate] PlayerUnit Data is NULL at runtime!");
+                yield break;
+            }
+
+            if (Data.UltimateSkill == null)
+            {
+                Debug.LogError($"[Ultimate] {Data.UnitName} has no Skill Data assigned in IgnisUnitData.asset!");
+                yield break;
+            }
+
+            var visuals = Data.UltimateSkill.GetVisuals(Data.EquippedSkinID);
+
+            if (visuals.UltimatePrefab == null)
+            {
+                Debug.LogError($"[Ultimate] {Data.UnitName} Skill [{Data.UltimateSkill.SkillName}] exists, but UltimatePrefab is NULL! GUID check needed.");
+                yield break;
+            }
+
+            if (_showDebugLogs) Debug.Log($"[Ultimate] STARTING sequence for {Data.UnitName}. Prefab: {visuals.UltimatePrefab.name}");
+
+            // Start Cut-In Animation
+            if (MaouSamaTD.UI.UltimateCutInUI.Instance != null)
+            {
+                string uName = Data.UnitName;
+                string uTitle = Data.UnitTitle;
+                string sName = Data.UltimateSkill.SkillName;
+                Color bColor = visuals.UltimateColor;
+                Color tBgColor = visuals.TitleBgColor;
+                Color tTextColor = visuals.TitleTextColor;
+                Color sBgColor = visuals.SkillNameBgColor;
+                Color sTextColor = visuals.SkillNameTextColor;
+                Color nTextColor = visuals.NameTextColor;
+                Sprite portrait = Data.GetSprite(UnitData.UnitImageType.WaistUp);
+
+                if (_showDebugLogs) Debug.Log($"[Ultimate] Triggering Cut-In Animation for {uName}...");
+                // Wait for the full animation sequence to complete
+                yield return MaouSamaTD.UI.UltimateCutInUI.Instance.PlayAnimation(uName, uTitle, sName, bColor, tBgColor, tTextColor, sBgColor, sTextColor, nTextColor, portrait);
+            }
+            else
+            {
+                if (_showDebugLogs) Debug.LogWarning("[Ultimate] UltimateCutInUI.Instance is MISSING. Skipping animation.");
+            }
+
+            if (_animator != null) _animator.Play("Ultimate", 0, 0f);
+            IsCastingUltimate = true;
+
+            Vector3 bestDir = FindBestUltimateDirection();
+            if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {visuals.UltimatePrefab.name} towards {bestDir}");
+
+            GameObject projObj = Instantiate(visuals.UltimatePrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+            
+            var ultimateEffect = projObj.GetComponent<MaouSamaTD.Skills.UltimateEffect>();
+            if (ultimateEffect != null)
+            {
+                ultimateEffect.Execute(this, bestDir);
+                if (_showDebugLogs) Debug.Log($"[Ultimate] {projObj.name} EXECUTED successfully.");
+                
+                // Wait for the local ultimate animation to finish before going back to idle
+                yield return new WaitForSeconds(1.5f);
+                
+                IsCastingUltimate = false;
+                if (_animator != null && !_isDead)
+                {
+                    _animator.Play("Idle", 0, 0f);
+                }
+            }
+            else
+            {
+                Debug.LogError($"[Ultimate] Prefab on {Data.UltimateSkill.SkillName} is missing an UltimateEffect component!");
+                IsCastingUltimate = false;
+            }
         }
 
         private Vector3 FindBestUltimateDirection()

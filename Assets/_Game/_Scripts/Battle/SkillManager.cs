@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using MaouSamaTD.Managers;
+using System.Linq;
+using MaouSamaTD.Managers;using MaouSamaTD.Managers;
 using MaouSamaTD.Units;
 using Zenject;
 
@@ -22,6 +23,7 @@ namespace MaouSamaTD.Skills
         [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private TutorialManager _tutorialManager;
         [Inject] private Grid.GridManager _gridManager;
+        [Inject] private DialogueManager _dialogueManager;
 
         [Header("Debug")]
         [SerializeField] private bool _showDebugLogs = true;
@@ -126,9 +128,23 @@ namespace MaouSamaTD.Skills
             // Execute Logic
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Sovereign", "", $"Activating Rite: {skill.SkillName}", 0);
             ApplySkillEffect(skill, targetPosition, targetUnit);
-            _tutorialManager?.OnActionTriggered("SkillUsed");
+                        _tutorialManager?.OnActionTriggered("SkillUsed");
 
-            return true;
+            // One-Shot Rite Miss Interception
+            if (_tutorialManager != null && _tutorialManager.IsInTutorial)
+            {
+                var step = _tutorialManager.GetCurrentStep();
+                if (step != null && step.ActionKey == "BossHealth" && step.RequiredCount == 0)
+                {
+                    var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
+                    if (boss != null && !boss.IsDead)
+                    {
+                        OnOneShotRiteMiss(skill);
+                    }
+                }
+            }
+
+            return true;;
         }
         #endregion
 
@@ -429,6 +445,125 @@ namespace MaouSamaTD.Skills
             
             if (_showDebugLogs) Debug.Log($"[SkillManager] Applied {skill.EffectType} to {unit.gameObject.name}");
         }
+                private int _oneShotMissCount = 0;
+
+        private void OnOneShotRiteMiss(SovereignRiteData skill)
+        {
+            _oneShotMissCount++;
+
+            // Refund seals
+            if (_currencyManager != null)
+            {
+                _currencyManager.GiveSeals(skill.SealCost);
+            }
+
+            // Reset cooldown
+            _cooldowns[skill] = 0f;
+
+            // Find portrait sprites dynamically from existing steps in the active tutorial
+            Sprite tinaLeftPortrait = null;
+            Sprite lilithRightPortrait = null;
+
+            if (_tutorialManager != null && _tutorialManager.ActiveTutorial != null)
+            {
+                foreach (var step in _tutorialManager.ActiveTutorial.Steps)
+                {
+                    if (step.Dialogue != null)
+                    {
+                        foreach (var line in step.Dialogue.Lines)
+                        {
+                            if (line.SpeakerName == "Tina" || line.SpeakerName == "티나")
+                            {
+                                if (line.LeftPortrait != null && tinaLeftPortrait == null) tinaLeftPortrait = line.LeftPortrait;
+                                if (line.RightPortrait != null && tinaLeftPortrait == null) tinaLeftPortrait = line.RightPortrait;
+                                if (line.CenterPortrait != null && tinaLeftPortrait == null) tinaLeftPortrait = line.CenterPortrait;
+                            }
+                            else if (line.SpeakerName == "Lilith" || line.SpeakerName == "릴리스")
+                            {
+                                if (line.LeftPortrait != null && lilithRightPortrait == null) lilithRightPortrait = line.LeftPortrait;
+                                if (line.RightPortrait != null && lilithRightPortrait == null) lilithRightPortrait = line.RightPortrait;
+                                if (line.CenterPortrait != null && lilithRightPortrait == null) lilithRightPortrait = line.CenterPortrait;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Construct humorous dialogue mocking the player
+            MaouSamaTD.Tutorial.DialogueData dialogue = ScriptableObject.CreateInstance<MaouSamaTD.Tutorial.DialogueData>();
+            dialogue.Style = MaouSamaTD.Tutorial.DialogueStyle.FullScreen;
+            dialogue.Lines = new List<MaouSamaTD.Tutorial.DialogueLine>();
+
+            if (_oneShotMissCount == 1)
+            {
+                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
+                {
+                    SpeakerName = "Tina",
+                    LeftPortrait = tinaLeftPortrait,
+                    RightPortrait = lilithRightPortrait,
+                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Left,
+                    Text = "Uh... Maou-sama? Did you... just miss? Like, completely?",
+                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
+                });
+                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
+                {
+                    SpeakerName = "Lilith",
+                    LeftPortrait = tinaLeftPortrait,
+                    RightPortrait = lilithRightPortrait,
+                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Right,
+                    Text = "Fufu, how adorable. The all-powerful Demon Lord's hand must be shaking from witnessing my magnificent presence. Let's pretend that was a 'warning shot'. Try again!",
+                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
+                });
+            }
+            else if (_oneShotMissCount == 2)
+            {
+                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
+                {
+                    SpeakerName = "Tina",
+                    LeftPortrait = tinaLeftPortrait,
+                    RightPortrait = lilithRightPortrait,
+                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Left,
+                    Text = "Twice in a row?! Seriously, Maou-sama, even a blind imp could have hit that giant shadow! Are you doing this on purpose?",
+                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
+                });
+                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
+                {
+                    SpeakerName = "Lilith",
+                    LeftPortrait = tinaLeftPortrait,
+                    RightPortrait = lilithRightPortrait,
+                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Right,
+                    Text = "Perhaps Maou-sama requires glasses? Or maybe a guided map? Come now, my Lord, the boss is literally sitting there. Focus and cast it directly on them!",
+                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
+                });
+            }
+            else
+            {
+                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
+                {
+                    SpeakerName = "Tina",
+                    LeftPortrait = tinaLeftPortrait,
+                    RightPortrait = lilithRightPortrait,
+                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Left,
+                    Text = $"Miss #{_oneShotMissCount}... I'm starting to think you're trolling us, Maou-sama. Please tell me you're trolling us.",
+                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
+                });
+                dialogue.Lines.Add(new MaouSamaTD.Tutorial.DialogueLine
+                {
+                    SpeakerName = "Lilith",
+                    LeftPortrait = tinaLeftPortrait,
+                    RightPortrait = lilithRightPortrait,
+                    Focus = MaouSamaTD.Tutorial.PortraitFocus.Right,
+                    Text = $"No, no, Tina. I think Maou-sama is simply practicing their pattern art on the ground. A very creative way to lose a battle, my Lord! Here, I've refunded your seals and reset the cooldown yet again. Try to actually hit them this time, okay? ♥",
+                    Background = MaouSamaTD.Tutorial.DialogueBackground.UIBlocker
+                });
+            }
+
+            if (_dialogueManager != null)
+            {
+                _dialogueManager.StartDialogue(dialogue);
+            }
+        }
+
         #endregion
     }
 }

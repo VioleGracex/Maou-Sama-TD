@@ -22,7 +22,7 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: "Sovereign! We're being swarmed! My blade cannot keep up with these numbers!"
+    Text: Sovereign! We're being swarmed! My blade cannot keep up with these numbers!
     Background: 1
     EventID: 
   - SpeakerName: Lilith
@@ -32,7 +32,7 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: "They're overwhelming us! Maou-sama, please... call upon your Sovereign
-      Rite and wipe them all out at once!"
+    Text: They're overwhelming us! Maou-sama, please... call upon your Sovereign
+      Rite and wipe them all out at once!
     Background: 1
     EventID: 

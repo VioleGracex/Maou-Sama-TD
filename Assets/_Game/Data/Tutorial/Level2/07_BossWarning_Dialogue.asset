@@ -23,5 +23,5 @@ MonoBehaviour:
     CenterPortrait: {fileID: 0}
     Focus: 0
     Text: A powerful one is coming... the final one.
-    Background: 2
+    Background: 1
     EventID: 

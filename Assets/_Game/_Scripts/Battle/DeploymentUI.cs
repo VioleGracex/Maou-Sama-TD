@@ -324,8 +324,18 @@ namespace MaouSamaTD.UI
             UnitButtonUI btn = _unitButtons.Find(b => b.Data != null && b.Data.UnitName == targetName);
             if (btn != null)
             {
+                bool wasActive = btn.gameObject.activeSelf;
                 btn.gameObject.SetActive(visible);
                 Debug.Log($"[DeploymentUI] Set visibility for {targetName} to {visible}");
+
+                // Play beautiful pop-in entrance animation if newly made visible
+                if (visible && !wasActive)
+                {
+                    btn.transform.localScale = Vector3.zero;
+                    btn.transform.DOScale(Vector3.one, 0.4f)
+                        .SetEase(Ease.OutBack)
+                        .SetUpdate(true);
+                }
             }
             else
             {

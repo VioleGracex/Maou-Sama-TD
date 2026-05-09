@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using MaouSamaTD.Units;
 using Zenject;
+using DG.Tweening;
 
 namespace MaouSamaTD.UI
 {
@@ -21,6 +22,9 @@ namespace MaouSamaTD.UI
         private UnitDragHandler _dragHandler;
         private UnitData _data;
         private bool _isSelected; 
+        private bool _lastCanAfford = true;
+        private bool _lastIsDeployed = false;
+        private bool _lastIsCoolingDown = false;
         [Inject] private DiContainer _container;
 
         public UnitData Data => _data;
@@ -45,6 +49,7 @@ namespace MaouSamaTD.UI
             if (_button != null)
             {
                 _button.onClick.RemoveAllListeners();
+                _button.transition = Selectable.Transition.None; // Prevent default Unity UI transitions from overriding custom states!
                 // Handled by UnitDragHandler
             }
 
@@ -52,6 +57,12 @@ namespace MaouSamaTD.UI
 
             UpdateVisuals();
             UpdateCooldown(0); 
+
+            // Smooth pop-in animation, even when Time.timeScale = 0
+            transform.localScale = Vector3.zero;
+            transform.DOScale(Vector3.one, 0.4f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true);
         }
 
         private void UpdateVisuals()
@@ -123,21 +134,15 @@ namespace MaouSamaTD.UI
         public void SetSelected(bool isSelected)
         {
             _isSelected = isSelected;
-            
-            if (_background != null)
-            {
-                _background.color = isSelected ? Color.green : Color.white; 
-            }
-            
-            if (_unitIcon != null)
-            {
-               if (isSelected) _unitIcon.color = Color.yellow;
-               else _unitIcon.color = Color.white;
-            }
+            UpdateState(_lastCanAfford, _lastIsDeployed, _lastIsCoolingDown);
         }
 
         public void UpdateState(bool canAfford, bool isDeployed, bool isCoolingDown)
         {
+            _lastCanAfford = canAfford;
+            _lastIsDeployed = isDeployed;
+            _lastIsCoolingDown = isCoolingDown;
+
             bool isBusy = isDeployed || isCoolingDown;
             bool isInteractable = !isBusy && canAfford;
 
@@ -166,7 +171,7 @@ namespace MaouSamaTD.UI
                     }
                     else
                     {
-                        _background.color = baseColor; 
+                        _background.color = _isSelected ? Color.green : baseColor; 
                     }
 
                     if (_unitIcon != null)

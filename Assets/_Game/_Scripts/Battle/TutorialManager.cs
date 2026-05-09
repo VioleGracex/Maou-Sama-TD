@@ -625,7 +625,7 @@ namespace MaouSamaTD.Managers
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey}");
                             
                             // Ensure time flows if we are waiting for a dynamic condition, UNLESS StopTime is requested!
-                            if (step.StopTime)
+                                                        if (step.StopTime || step.StepName == "One-Shot Rite")
                             {
                                 if (_gameManager.CurrentSpeed > 0.1f)
                                 {
@@ -1783,6 +1783,7 @@ private RectTransform FindTargetRect(string name)
         }
         #endregion
 
+        public MaouSamaTD.Tutorial.TutorialDataSO ActiveTutorial => _activeTutorial;
         public int GetCurrentStepIndex() => _currentStepIndex;
         public MaouSamaTD.Tutorial.TutorialStep GetCurrentStep() => _activeTutorial != null && _currentStepIndex >= 0 && _currentStepIndex < _activeTutorial.Steps.Count ? _activeTutorial.Steps[_currentStepIndex] : null;
 

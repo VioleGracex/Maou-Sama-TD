@@ -24,7 +24,7 @@ MonoBehaviour:
     Focus: 0
     Text: We have reached the heart of the lower sanctum. The air here is... sickeningly
       sweet. Her presence still lingers.
-    Background: 2
+    Background: 1
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
@@ -35,5 +35,5 @@ MonoBehaviour:
     Focus: 0
     Text: Steel yourself, My Sovereign. To reclaim your Crests, we must endure her...
       antics.
-    Background: 2
+    Background: 1
     EventID: 

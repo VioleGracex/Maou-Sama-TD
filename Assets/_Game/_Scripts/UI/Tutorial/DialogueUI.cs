@@ -18,14 +18,24 @@ namespace MaouSamaTD.UI.Tutorial
 
         public RectTransform GetPanelRect(DialogueStyle style)
         {
-            if (style == DialogueStyle.FullScreen && _fullScreenPanel != null) return _fullScreenPanel.GetComponent<RectTransform>();
+            if (style == DialogueStyle.FullScreen && _fullScreenPanel != null)
+            {
+                var box = _fullScreenPanel.transform.Find("DialougeBox");
+                if (box != null) return box.GetComponent<RectTransform>();
+                return _fullScreenPanel.GetComponent<RectTransform>();
+            }
             if (style == DialogueStyle.MiniTop && _miniTopPanel != null) return _miniTopPanel.GetComponent<RectTransform>();
             return null;
         }
 
         public RectTransform GetActivePanelRect()
         {
-            if (_fullScreenPanel != null && _fullScreenPanel.activeInHierarchy) return _fullScreenPanel.GetComponent<RectTransform>();
+            if (_fullScreenPanel != null && _fullScreenPanel.activeInHierarchy)
+            {
+                var box = _fullScreenPanel.transform.Find("DialougeBox");
+                if (box != null) return box.GetComponent<RectTransform>();
+                return _fullScreenPanel.GetComponent<RectTransform>();
+            }
             if (_miniTopPanel != null && _miniTopPanel.activeInHierarchy) return _miniTopPanel.GetComponent<RectTransform>();
             return null;
         }
@@ -330,43 +340,60 @@ namespace MaouSamaTD.UI.Tutorial
 
         private void ApplyBackground(DialogueBackground type)
         {
+            DialogueBackground oldType = _bgType;
             if (_lastAppliedBG == type && _lastAppliedStyle == _currentStyle) return;
             _lastAppliedBG = type;
             _lastAppliedStyle = _currentStyle;
             
             _bgType = type;
             
-            // Background image (sprite) is handled separately if needed, but for tutorials 
-            // we mostly care about the Blocker/Dim.
             if (_backgroundImage != null) _backgroundImage.enabled = false;
 
-            // Reset
-            if (_bgType != DialogueBackground.UIBlocker)
+            // 1. Transition FROM old background type
+            if (oldType == DialogueBackground.FullScreenDim && _bgType != DialogueBackground.FullScreenDim)
             {
-                _uiBlocker?.HideBlocker();
+                if (_fullScreenDim != null)
+                {
+                    _fullScreenDim.DOKill();
+                    _fullScreenDim.DOFade(0f, 0.3f).SetUpdate(true).OnComplete(() => {
+                        _fullScreenDim.gameObject.SetActive(false);
+                    });
+                }
             }
             
-            if (_backgroundImage != null) _backgroundImage.enabled = false;
+            if (oldType == DialogueBackground.UIBlocker && _bgType != DialogueBackground.UIBlocker)
+            {
+                if (_uiBlocker != null)
+                {
+                    RectTransform dialogueRT = GetActivePanelRect();
+                    if (dialogueRT != null)
+                    {
+                        _uiBlocker.RemoveTarget(dialogueRT);
+                    }
+                    _uiBlocker.HideBlocker(immediate: false);
+                }
+            }
 
+            // 2. Apply NEW background type
             switch (_bgType)
             {
                 case DialogueBackground.UIBlocker:
-                    RectTransform dialogueRT = _currentStyle == DialogueStyle.FullScreen ? 
-                        _fullScreenPanel.GetComponent<RectTransform>() : 
-                        _miniTopPanel.GetComponent<RectTransform>();
-                        
-                    if (_uiBlocker != null)
+                    RectTransform dialogueRT = GetActivePanelRect();
+                    if (_uiBlocker != null && dialogueRT != null)
                     {
                         _uiBlocker.ShowBlockerWithTarget(dialogueRT);
                     }
                     break;
+
                 case DialogueBackground.FullScreenDim:
                     if (_fullScreenDim != null)
                     {
                         _fullScreenDim.gameObject.SetActive(true);
                         var img = _fullScreenDim.GetComponent<UnityEngine.UI.Image>();
                         if (img != null) img.color = Color.black;
-                        _fullScreenDim.alpha = 0;
+                        
+                        _fullScreenDim.DOKill();
+                        _fullScreenDim.alpha = 0f;
                         _fullScreenDim.DOFade(0.7f, 0.3f).SetUpdate(true);
                     }
                     break;
@@ -398,6 +425,13 @@ namespace MaouSamaTD.UI.Tutorial
 
         private void Hide()
         {
+            // 1. Unregister active dialogue panel target from UIPopupBlocker BEFORE deactivating panels
+            RectTransform dialogueRT = GetActivePanelRect();
+            if (dialogueRT != null && _uiBlocker != null)
+            {
+                _uiBlocker.RemoveTarget(dialogueRT);
+            }
+
             _fullScreenPanel?.SetActive(false);
             _miniTopPanel?.SetActive(false);
             if (_fullNextButton != null) _fullNextButton.gameObject.SetActive(false);
@@ -407,12 +441,6 @@ namespace MaouSamaTD.UI.Tutorial
             
             if (_fullScreenDim != null) _fullScreenDim.gameObject.SetActive(false);
             
-            // Clean up our mask impact
-            RectTransform dialogueRT = _currentStyle == DialogueStyle.FullScreen ? 
-                        _fullScreenPanel.GetComponent<RectTransform>() : 
-                        _miniTopPanel.GetComponent<RectTransform>();
-            _uiBlocker?.RemoveTarget(dialogueRT);
-
             // During tutorial, don't hide blocker as TutorialManager controls it
             bool isInTutorial = _tutorialManager != null && _tutorialManager.IsInTutorial;
             if (!isInTutorial)

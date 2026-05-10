@@ -803,7 +803,7 @@ MonoBehaviour:
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles: []
-    DelayBefore: 0
+    DelayBefore: 1.5
     Duration: 2
     ActionKey: 
     ShowHand: 0
@@ -822,6 +822,7 @@ MonoBehaviour:
     ResetBlocker: 1
     StopTime: 1
     ResumeTime: 1
+    DelayBeforeStopTime: 0
     EnableMissInterception: 0
     MissTargetBossName: Abyssal Shade
     OnFailJumpToStepName: 

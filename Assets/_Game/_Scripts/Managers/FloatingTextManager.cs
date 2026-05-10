@@ -1,4 +1,5 @@
 using UnityEngine;
+using DG.Tweening;
 
 namespace MaouSamaTD.Managers
 {
@@ -66,6 +67,21 @@ namespace MaouSamaTD.Managers
             if (textScript != null)
             {
                 textScript.Init(amount, false, _healColor);
+            }
+        }
+
+        public void DestroyAllActiveTexts()
+        {
+            var activeTexts = FindObjectsOfType<MaouSamaTD.UI.FloatingText>();
+            foreach (var t in activeTexts)
+            {
+                if (t != null && t.gameObject != null)
+                {
+                    t.transform.DOKill();
+                    var tmp = t.GetComponent<TMPro.TextMeshPro>();
+                    if (tmp != null) tmp.DOKill();
+                    Destroy(t.gameObject);
+                }
             }
         }
         #endregion

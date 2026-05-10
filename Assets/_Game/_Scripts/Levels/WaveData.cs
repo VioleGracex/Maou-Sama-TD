@@ -15,5 +15,12 @@ namespace MaouSamaTD.Levels
         
         [Tooltip("Message to display when wave starts")]
         public string WaveMessage;
+
+        [Header("Dialogue")]
+        [Tooltip("Story to play BEFORE the wave starts spawning")]
+        public MaouSamaTD.Story.StoryDataSO PreWaveStory;
+        
+        [Tooltip("Story to play AFTER the wave is cleared (all enemies dead)")]
+        public MaouSamaTD.Story.StoryDataSO PostWaveStory;
     }
 }

@@ -11,6 +11,9 @@ namespace MaouSamaTD.Data
         [Header("Global UI Settings")]
         public MaouSamaTD.Units.UnitData.UnitImageType GlobalButtonImageType = MaouSamaTD.Units.UnitData.UnitImageType.Avatar;
         public bool UseGlobalButtonOverride = true;
+        
+        public MaouSamaTD.Units.UnitData.UnitImageType GlobalCardImageType = MaouSamaTD.Units.UnitData.UnitImageType.WaistUp;
+        public bool UseGlobalCardOverride = true;
 
         public MaouSamaTD.Units.UnitData GetUnitByID(string id)
         {

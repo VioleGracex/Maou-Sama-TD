@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 4021f0b1-97bf-4fd0-8fc0-9e02405c4083
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 2749.5
+    Attack: 33
+    Defense: 66
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    ClassName: Bastion
   UnitName: Tika
   UnitTitle: Feline Scout
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -50,13 +50,14 @@ MonoBehaviour:
   AttackPattern: 0
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 10
-  BlockCount: 1
+  DeploymentCost: 12
+  BlockCount: 3
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 100
-  AttackPower: 10
+  MaxHp: 1833
+  AttackPower: 33
   AttackInterval: 1
-  Defense: 0
+  Defense: 44
   Resistance: 0
   RespawnTime: 5
   Range: 1

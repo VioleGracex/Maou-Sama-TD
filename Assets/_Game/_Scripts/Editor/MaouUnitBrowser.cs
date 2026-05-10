@@ -55,7 +55,45 @@ namespace MaouSamaTD.Editor
 
         private void OnEnable()
         {
+            LoadSettings();
             RefreshData();
+        }
+
+        private void OnDisable()
+        {
+            SaveSettings();
+        }
+
+        private void LoadSettings()
+        {
+            _searchText = EditorPrefs.GetString("MaouUnitBrowser_SearchText", "");
+            _rarityFilter = EditorPrefs.GetInt("MaouUnitBrowser_RarityFilter", -1);
+            _currentViewMode = (ViewMode)EditorPrefs.GetInt("MaouUnitBrowser_ViewMode", (int)ViewMode.List);
+            _itemsPerPage = EditorPrefs.GetInt("MaouUnitBrowser_ItemsPerPage", 24);
+            _currentPage = EditorPrefs.GetInt("MaouUnitBrowser_CurrentPage", 0);
+            _showDetails = EditorPrefs.GetBool("MaouUnitBrowser_ShowDetails", true);
+            _thumbnailType = (ThumbnailType)EditorPrefs.GetInt("MaouUnitBrowser_ThumbnailType", (int)ThumbnailType.Avatar);
+            _sortMode = (SortMode)EditorPrefs.GetInt("MaouUnitBrowser_SortMode", (int)SortMode.Name);
+            _browserWidth = EditorPrefs.GetFloat("MaouUnitBrowser_BrowserWidth", 450f);
+            _zoomFactor = EditorPrefs.GetFloat("MaouUnitBrowser_ZoomFactor", 1.0f);
+            _showTitles = EditorPrefs.GetBool("MaouUnitBrowser_ShowTitles", true);
+            _sortAscending = EditorPrefs.GetBool("MaouUnitBrowser_SortAscending", true);
+        }
+
+        private void SaveSettings()
+        {
+            EditorPrefs.SetString("MaouUnitBrowser_SearchText", _searchText);
+            EditorPrefs.SetInt("MaouUnitBrowser_RarityFilter", _rarityFilter);
+            EditorPrefs.SetInt("MaouUnitBrowser_ViewMode", (int)_currentViewMode);
+            EditorPrefs.SetInt("MaouUnitBrowser_ItemsPerPage", _itemsPerPage);
+            EditorPrefs.SetInt("MaouUnitBrowser_CurrentPage", _currentPage);
+            EditorPrefs.SetBool("MaouUnitBrowser_ShowDetails", _showDetails);
+            EditorPrefs.SetInt("MaouUnitBrowser_ThumbnailType", (int)_thumbnailType);
+            EditorPrefs.SetInt("MaouUnitBrowser_SortMode", (int)_sortMode);
+            EditorPrefs.SetFloat("MaouUnitBrowser_BrowserWidth", _browserWidth);
+            EditorPrefs.SetFloat("MaouUnitBrowser_ZoomFactor", _zoomFactor);
+            EditorPrefs.SetBool("MaouUnitBrowser_ShowTitles", _showTitles);
+            EditorPrefs.SetBool("MaouUnitBrowser_SortAscending", _sortAscending);
         }
 
         private void RefreshData()

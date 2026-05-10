@@ -54,7 +54,45 @@ namespace MaouSamaTD.Editor
 
         private void OnEnable()
         {
+            LoadSettings();
             RefreshData();
+        }
+
+        private void OnDisable()
+        {
+            SaveSettings();
+        }
+
+        private void LoadSettings()
+        {
+            _searchText = EditorPrefs.GetString("MaouEnemyBrowser_SearchText", "");
+            _movementFilter = EditorPrefs.GetInt("MaouEnemyBrowser_MovementFilter", -1);
+            _currentViewMode = (ViewMode)EditorPrefs.GetInt("MaouEnemyBrowser_ViewMode", (int)ViewMode.Grid);
+            _itemsPerPage = EditorPrefs.GetInt("MaouEnemyBrowser_ItemsPerPage", 24);
+            _currentPage = EditorPrefs.GetInt("MaouEnemyBrowser_CurrentPage", 0);
+            _showDetails = EditorPrefs.GetBool("MaouEnemyBrowser_ShowDetails", true);
+            _thumbnailType = (ThumbnailType)EditorPrefs.GetInt("MaouEnemyBrowser_ThumbnailType", (int)ThumbnailType.Chibi);
+            _sortMode = (SortMode)EditorPrefs.GetInt("MaouEnemyBrowser_SortMode", (int)SortMode.Name);
+            _browserWidth = EditorPrefs.GetFloat("MaouEnemyBrowser_BrowserWidth", 450f);
+            _zoomFactor = EditorPrefs.GetFloat("MaouEnemyBrowser_ZoomFactor", 1.0f);
+            _previewScale = EditorPrefs.GetFloat("MaouEnemyBrowser_PreviewScale", 0.4f);
+            _sortAscending = EditorPrefs.GetBool("MaouEnemyBrowser_SortAscending", true);
+        }
+
+        private void SaveSettings()
+        {
+            EditorPrefs.SetString("MaouEnemyBrowser_SearchText", _searchText);
+            EditorPrefs.SetInt("MaouEnemyBrowser_MovementFilter", _movementFilter);
+            EditorPrefs.SetInt("MaouEnemyBrowser_ViewMode", (int)_currentViewMode);
+            EditorPrefs.SetInt("MaouEnemyBrowser_ItemsPerPage", _itemsPerPage);
+            EditorPrefs.SetInt("MaouEnemyBrowser_CurrentPage", _currentPage);
+            EditorPrefs.SetBool("MaouEnemyBrowser_ShowDetails", _showDetails);
+            EditorPrefs.SetInt("MaouEnemyBrowser_ThumbnailType", (int)_thumbnailType);
+            EditorPrefs.SetInt("MaouEnemyBrowser_SortMode", (int)_sortMode);
+            EditorPrefs.SetFloat("MaouEnemyBrowser_BrowserWidth", _browserWidth);
+            EditorPrefs.SetFloat("MaouEnemyBrowser_ZoomFactor", _zoomFactor);
+            EditorPrefs.SetFloat("MaouEnemyBrowser_PreviewScale", _previewScale);
+            EditorPrefs.SetBool("MaouEnemyBrowser_SortAscending", _sortAscending);
         }
 
         private void RefreshData()

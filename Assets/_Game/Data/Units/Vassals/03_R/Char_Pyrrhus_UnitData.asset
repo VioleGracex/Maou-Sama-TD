@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 7e9b5bb9-d57c-40a7-9f31-fc90a134e34e
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 3000
+    Attack: 36
+    Defense: 72
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    ClassName: Bastion
   UnitName: Pyrrhus
   UnitTitle: Hellfire Alchemist
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -49,13 +49,14 @@ MonoBehaviour:
   AttackPattern: 0
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 10
-  BlockCount: 1
+  DeploymentCost: 14
+  BlockCount: 3
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 100
-  AttackPower: 10
+  MaxHp: 2000
+  AttackPower: 36
   AttackInterval: 1
-  Defense: 0
+  Defense: 48
   Resistance: 0
   RespawnTime: 5
   Range: 1

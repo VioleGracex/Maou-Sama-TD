@@ -32,6 +32,8 @@ namespace MaouSamaTD.Battle
     /// </summary>
     public class BattleLogManager : MonoBehaviour
     {
+        public event System.Action<BattleLogEntry> OnEventLogged;
+
         private static BattleLogManager _instance;
         public static BattleLogManager Instance
         {
@@ -78,6 +80,8 @@ namespace MaouSamaTD.Battle
 
             _logs.Add(entry);
             if (_logs.Count > _maxLogs) _logs.RemoveAt(0);
+
+            OnEventLogged?.Invoke(entry);
 
             if (_logToConsole)
             {

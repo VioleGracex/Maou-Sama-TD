@@ -17,6 +17,7 @@ namespace MaouSamaTD.Editor
         private int _selectedTab = 0;
         private string[] _tabNames = { "Layout", "Visuals" };
         private Vector2 _scrollPosition;
+        private EnemyData _pathingSimulationEnemy;
         
         private static Texture2D s_TextureClipboard;
         
@@ -129,10 +130,17 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Shift N")) Shift(data, 1, 0);
-            if (GUILayout.Button("Shift S")) Shift(data, -1, 0);
-            if (GUILayout.Button("Shift E")) Shift(data, 0, -1);
-            if (GUILayout.Button("Shift W")) Shift(data, 0, 1);
+            if (GUILayout.Button("Shift N", GUILayout.Width(60))) Shift(data, 0, 1);
+            if (GUILayout.Button("Shift S", GUILayout.Width(60))) Shift(data, 0, -1);
+            if (GUILayout.Button("Shift E", GUILayout.Width(60))) Shift(data, 1, 0);
+            if (GUILayout.Button("Shift W", GUILayout.Width(60))) Shift(data, -1, 0);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Shift NW", GUILayout.Width(60))) Shift(data, -1, 1);
+            if (GUILayout.Button("Shift NE", GUILayout.Width(60))) Shift(data, 1, 1);
+            if (GUILayout.Button("Shift SW", GUILayout.Width(60))) Shift(data, -1, -1);
+            if (GUILayout.Button("Shift SE", GUILayout.Width(60))) Shift(data, 1, -1);
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
@@ -141,6 +149,12 @@ namespace MaouSamaTD.Editor
             if (data.ShowPathing)
             {
                 EditorGUILayout.HelpBox("Showing Ground (Orange) and Flying (Cyan) paths from Spawns to Exits.", MessageType.None);
+                
+                _pathingSimulationEnemy = (EnemyData)EditorGUILayout.ObjectField("Simulation Enemy", _pathingSimulationEnemy, typeof(EnemyData), false);
+                if (_pathingSimulationEnemy != null)
+                {
+                    EditorGUILayout.LabelField($"Speed: {_pathingSimulationEnemy.MoveSpeed} blocks/sec", EditorStyles.miniBoldLabel);
+                }
             }
 
             EditorGUILayout.Space();
@@ -1103,13 +1117,21 @@ namespace MaouSamaTD.Editor
                     {
                         // High Ground Spawn -> High Ground Exit: Usually for Flying or High-path units
                         var flyingPath = GetPathInEditor(data, start, target, MaouSamaTD.Units.EnemyMovementType.Flying);
-                        if (flyingPath != null) DrawPathLine(flyingPath, Color.cyan, 2f, data, tileGridRect, cellW, cellH, 0);
+                        if (flyingPath != null) 
+                        {
+                            DrawPathLine(flyingPath, Color.cyan, 2f, data, tileGridRect, cellW, cellH, 0);
+                            DrawPathSimulationLabel(flyingPath, Color.cyan, data, tileGridRect, cellW, cellH);
+                        }
                     }
                     else
                     {
                         // Regular Spawn -> Regular Exit: Ground path
                         var groundPath = GetPathInEditor(data, start, target, MaouSamaTD.Units.EnemyMovementType.Ground);
-                        if (groundPath != null) DrawPathLine(groundPath, Color.orange, 2f, data, tileGridRect, cellW, cellH, 0);
+                        if (groundPath != null) 
+                        {
+                            DrawPathLine(groundPath, Color.orange, 2f, data, tileGridRect, cellW, cellH, 0);
+                            DrawPathSimulationLabel(groundPath, Color.orange, data, tileGridRect, cellW, cellH);
+                        }
                         
                         // If user specifically wants to see flying paths from ground spawns, 
                         // we could add a toggle, but for now we follow the "don't show 2 arrows" request.
@@ -1158,6 +1180,27 @@ namespace MaouSamaTD.Editor
                 end - dir * 10 + side * 5,
                 end - dir * 10 - side * 5
             );
+        }
+
+        private void DrawPathSimulationLabel(List<Vector2Int> path, Color color, MapData data, Rect tileGridRect, float cellW, float cellH)
+        {
+            if (_pathingSimulationEnemy == null || path == null || path.Count < 2) return;
+
+            float distance = path.Count - 1;
+            float time = distance / Mathf.Max(0.1f, _pathingSimulationEnemy.MoveSpeed);
+
+            Vector2 labelPos = GetCellCenter(path[0], data, tileGridRect, cellW, cellH);
+            
+            GUIStyle style = new GUIStyle(EditorStyles.boldLabel);
+            style.normal.textColor = color;
+            style.fontSize = 12;
+            
+            string text = $"{time:F1}s ({distance} blocks)";
+            Vector2 size = style.CalcSize(new GUIContent(text));
+            
+            // Draw a small background for readability
+            EditorGUI.DrawRect(new Rect(labelPos.x - size.x * 0.5f - 2, labelPos.y - size.y * 0.5f - 2, size.x + 4, size.y + 4), new Color(0, 0, 0, 0.6f));
+            GUI.Label(new Rect(labelPos.x - size.x * 0.5f, labelPos.y - size.y * 0.5f, size.x, size.y), text, style);
         }
 
         private Vector2 GetCellCenter(Vector2Int coord, MapData data, Rect tileGridRect, float cellW, float cellH)

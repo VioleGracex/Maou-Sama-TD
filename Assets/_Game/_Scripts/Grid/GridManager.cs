@@ -17,6 +17,8 @@ namespace MaouSamaTD.Grid
         [SerializeField] private Tile _tilePrefab;
         [SerializeField] private Transform _gridContainer;
         [SerializeField] private Transform _wallContainer;
+        [SerializeField] private Transform _cameraAnchor;
+        [SerializeField] private Transform _enemyContainer;
 
         private Dictionary<Vector2Int, Tile> _grid = new Dictionary<Vector2Int, Tile>();
         
@@ -46,7 +48,8 @@ namespace MaouSamaTD.Grid
         }
         public float CellSize => _cellSize;
         public Transform WallContainer => _wallContainer;
-        public Transform CameraAnchor { get; private set; }
+        public Transform CameraAnchor => _cameraAnchor;
+        public Transform EnemyContainer => _enemyContainer;
         
         // Spawn/Exit Points
         public Vector2Int SpawnPoint { get; private set; }
@@ -55,33 +58,55 @@ namespace MaouSamaTD.Grid
         public bool exitIsLeft => ExitPoint.x < SpawnPoint.x;
         public List<Vector2Int> ExitPoints { get; private set; } = new List<Vector2Int>();
         
-        public Vector2Int GetTargetExitForSpawn(Vector2Int spawnCoord)
+        public Vector2Int GetTargetExitForSpawn(Vector2Int spawnCoord, MaouSamaTD.Units.EnemyMovementType moveType = MaouSamaTD.Units.EnemyMovementType.Ground)
         {
             var spawnData = SpawnPoints.Find(s => s.Coordinate == spawnCoord);
             
-            // Check if spawn point is high ground
-            Tile spawnTile = GetTileAt(spawnCoord);
-            bool isHighGroundSpawn = spawnTile != null && (spawnTile.Type == TileType.SpawnPointHigh || spawnTile.Type == TileType.HighGround);
-
+            // 1. Explicit mapping from SpawnPointData
             if (spawnData.Coordinate == spawnCoord && spawnData.TargetExitIndex >= 0 && spawnData.TargetExitIndex < ExitPoints.Count)
             {
                 return ExitPoints[spawnData.TargetExitIndex];
             }
             
-            // Fallback: If it's a high ground spawn, look for the first high ground exit
-            if (isHighGroundSpawn)
+            Tile spawnTile = GetTileAt(spawnCoord);
+            bool isHighGroundSpawn = spawnTile != null && (spawnTile.Type == TileType.SpawnPointHigh || spawnTile.Type == TileType.HighGround);
+
+            // 2. High Ground Exit Logic (for flying units or high ground spawns)
+            if (isHighGroundSpawn || moveType == MaouSamaTD.Units.EnemyMovementType.Flying || moveType == MaouSamaTD.Units.EnemyMovementType.Mixed)
             {
+                float minDistance = float.MaxValue;
+                Vector2Int closestHighExit = ExitPoint;
+                bool foundHighExit = false;
+
                 foreach (var ep in ExitPoints)
                 {
                     Tile et = GetTileAt(ep);
                     if (et != null && (et.Type == TileType.ExitPointHigh || et.Type == TileType.HighGround))
                     {
-                        return ep;
+                        float dist = Vector2.Distance(new Vector2(spawnCoord.x, spawnCoord.y), new Vector2(ep.x, ep.y));
+                        if (dist < minDistance)
+                        {
+                            minDistance = dist;
+                            closestHighExit = ep;
+                            foundHighExit = true;
+                        }
                     }
+                }
+                
+                if (foundHighExit) return closestHighExit;
+            }
+
+            // 3. Ground Exit Logic (for everyone else or fallback)
+            foreach (var ep in ExitPoints)
+            {
+                Tile et = GetTileAt(ep);
+                if (et != null && (et.Type == TileType.ExitPoint || et.Type == TileType.Walkable))
+                {
+                    return ep;
                 }
             }
 
-            return ExitPoint; // Default fallback (usually the first exit found)
+            return ExitPoint; // Absolute fallback
         }
 
         public void SetSpawnMapping(Vector2Int spawnCoord, int exitIndex)
@@ -150,7 +175,8 @@ namespace MaouSamaTD.Grid
                  GenerateTestMap();
             }
 
-            EnsureCameraAnchor(); // Ensure logic created
+            EnsureCameraAnchor(); 
+            EnsureEnemyContainer();
             
             // Sync settings with actual found tiles (Runs after load OR generation)
             // Sync settings with actual found tiles (Runs after load OR generation)
@@ -270,16 +296,53 @@ namespace MaouSamaTD.Grid
         #region Camera Anchor
         public void EnsureCameraAnchor()
         {
-            if (CameraAnchor == null)
+            if (_cameraAnchor == null)
             {
-                var anchor = GameObject.Find("CameraAnchor");
-                if (anchor == null) anchor = new GameObject("CameraAnchor");
-                
-                CameraAnchor = anchor.transform;
+                // First check children (in case it's part of a spawned map prefab)
+                _cameraAnchor = transform.Find("CameraAnchor");
+
+                // Then check the whole scene (Legacy/Emergency fallback)
+                if (_cameraAnchor == null)
+                {
+                    var go = GameObject.Find("CameraAnchor");
+                    if (go != null) _cameraAnchor = go.transform;
+                }
+
+                if (_cameraAnchor == null)
+                {
+                    Debug.Log("[GridManager] CameraAnchor not found. Creating one.");
+                    _cameraAnchor = new GameObject("CameraAnchor").transform;
+                    _cameraAnchor.SetParent(transform);
+                    _cameraAnchor.localPosition = Vector3.zero;
+                }
             }
             
             // Always update position when this is called, to ensure it matches current grid
-            CameraAnchor.position = GetGridCenter();
+            _cameraAnchor.position = GetGridCenter();
+        }
+
+        public void EnsureEnemyContainer()
+        {
+            if (_enemyContainer == null)
+            {
+                // First check children
+                _enemyContainer = transform.Find("Enemies");
+
+                // Then check the whole scene
+                if (_enemyContainer == null)
+                {
+                    var go = GameObject.Find("Enemies");
+                    if (go != null) _enemyContainer = go.transform;
+                }
+
+                if (_enemyContainer == null)
+                {
+                    Debug.Log("[GridManager] Enemy container not found. Creating one.");
+                    _enemyContainer = new GameObject("Enemies").transform;
+                    _enemyContainer.SetParent(transform);
+                    _enemyContainer.localPosition = Vector3.zero;
+                }
+            }
         }
         #endregion
 

@@ -175,11 +175,20 @@ namespace MaouSamaTD.Units
         public virtual void Initialize(UnitData data)
         {
             _data = data;
-            _maxHp = data.MaxHp;
+            if (data.CalculatedStats.MaxHp > 0)
+            {
+                _maxHp = data.CalculatedStats.MaxHp;
+                _attackPower = data.CalculatedStats.Attack;
+                _defense = data.CalculatedStats.Defense;
+            }
+            else
+            {
+                _maxHp = data.MaxHp;
+                _attackPower = data.AttackPower;
+                _defense = data.Defense;
+            }
             _currentHp = _maxHp;
-            _attackPower = data.AttackPower;
             _attackInterval = data.AttackInterval;
-            _defense = data.Defense;
             
             name = data.UnitName;
 
@@ -311,7 +320,7 @@ namespace MaouSamaTD.Units
                 finalAmount = 0;
             }
 
-            float damageTaken = Mathf.Max(finalAmount > 0 ? 1 : 0, finalAmount - _defense); 
+            float damageTaken = Mathf.Max(0f, finalAmount - _defense); 
 
             if (PreventDeathForTutorial && _currentHp - damageTaken <= 1f)
             {

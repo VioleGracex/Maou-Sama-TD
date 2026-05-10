@@ -314,9 +314,28 @@ namespace MaouSamaTD.Units
                     
                     // Flying units only attack high ground, UNLESS they are on the same tile as the target (passing through)
                     var targetTile = _gridManager.GetTileAt(targetPos);
+                    bool isTargetHighGround = targetTile != null && targetTile.IsHighGround;
+
+                    if (isTargetHighGround)
+                    {
+                        if (!(_enemyData.GroundAttackTargets.HasFlag(TargetableGround.HighGround)))
+                        {
+                            // If we can't attack high ground, we skip unless we are on the same tile (collision/passing)
+                            if (myPos != targetPos) continue;
+                        }
+                    }
+                    else
+                    {
+                        if (!(_enemyData.GroundAttackTargets.HasFlag(TargetableGround.LowGround)))
+                        {
+                            // If we can't attack low ground, we skip unless we are on the same tile
+                            if (myPos != targetPos) continue;
+                        }
+                    }
+
                     if (_enemyData.MovementType == EnemyMovementType.Flying)
                     {
-                        if (myPos != targetPos && (targetTile == null || !targetTile.IsHighGround))
+                        if (myPos != targetPos && !isTargetHighGround)
                         {
                             continue;
                         }
@@ -377,8 +396,11 @@ namespace MaouSamaTD.Units
                     bool attIsHigh = attTile != null && attTile.IsHighGround;
                     bool curIsHigh = curTile != null && curTile.IsHighGround;
 
-                    // Switch if attacker is on high ground and current target isn't
-                    if (attIsHigh && !curIsHigh)
+                    // Switch if target ground type is allowed and current isn't (or priority dictates)
+                    bool canAttackNext = attIsHigh ? _enemyData.GroundAttackTargets.HasFlag(TargetableGround.HighGround) : _enemyData.GroundAttackTargets.HasFlag(TargetableGround.LowGround);
+                    bool canAttackCur = curIsHigh ? _enemyData.GroundAttackTargets.HasFlag(TargetableGround.HighGround) : _enemyData.GroundAttackTargets.HasFlag(TargetableGround.LowGround);
+
+                    if (canAttackNext && !canAttackCur)
                     {
                         _attackTarget = player;
                     }
@@ -447,9 +469,12 @@ namespace MaouSamaTD.Units
                 {
                     _attackTarget = target;
                     
-                    // Only stop (InitiateCentering) if we are NOT phasing/bypassing
-                    // This allows the boss to attack Ignis while passing through him.
-                    if (!isPhasing)
+                    // Stop to attack ONLY if:
+                    // 1. Priority is KillUnits
+                    // 2. OR we are physically blocked by this target (handled in collision check below)
+                    // 3. AND we are not currently phasing/bypassing
+                    
+                    if (_enemyData.TargetingPriority == EnemyTargetingPriority.KillUnits && !isPhasing)
                     {
                         InitiateCentering();
                         return;
@@ -538,11 +563,12 @@ namespace MaouSamaTD.Units
                     
                     if (_currentPhasingCharges <= 0)
                     {
-                        // Becomes vulnerable again
-                        if (Immunities.Contains(DamageType.Melee))
+                        // Becomes vulnerable again ONLY if it was granted by phasing (not currently tracked explicitly, but let's check if it was in base data)
+                        bool wasInBaseData = _enemyData != null && _enemyData.Immunities.Contains(DamageType.Melee);
+                        if (Immunities.Contains(DamageType.Melee) && !wasInBaseData)
                         {
                             Immunities.Remove(DamageType.Melee);
-                            if (_showDebugLogs) Debug.Log($"{gameObject.name} Phasing ended. MELEE IMMUNITY REMOVED (Vulnerable)!");
+                            if (_showDebugLogs) Debug.Log($"{gameObject.name} Phasing ended. TEMPORARY MELEE IMMUNITY REMOVED (Vulnerable)!");
                         }
                     }
                 }
@@ -588,7 +614,7 @@ namespace MaouSamaTD.Units
         private void ReachedExit()
         {
             _isMoving = false;
-            if (_showDebugLogs) Debug.Log($"Enemy reached exit! Dealing {(int)_enemyData.DamageToPlayerBase} damage.");
+            if (_showDebugLogs) Debug.Log($"Enemy reached exit! Dealing {(int)_enemyData.ExitDamage} damage.");
             
             var gm = FindFirstObjectByType<MaouSamaTD.Managers.GameManager>();
             if (gm != null)

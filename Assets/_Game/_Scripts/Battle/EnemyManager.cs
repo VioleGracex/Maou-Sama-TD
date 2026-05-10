@@ -18,8 +18,11 @@ namespace MaouSamaTD.Managers
         [Inject] private Grid.GridManager _gridManager;
         [Inject] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer;
         [Inject] private TutorialManager _tutorialManager;
+        [Inject] private StoryManager _storyManager;
         
-        private Transform _enemyContainer;
+        [Header("Containers")]
+        [SerializeField] private Transform _enemyContainer;
+        
         private bool _isSpawning = false;
         private bool _allWavesFinished = false;
         private bool _victoryTriggered = false;
@@ -53,14 +56,14 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Lifecycle
+        private void Awake()
+        {
+            // Container is now passed via Initialize or set in Inspector
+        }
+
         private void Start()
         {
-            if (_enemyContainer == null)
-            {
-                var container = GameObject.Find("Enemies");
-                if (container == null) container = new GameObject("Enemies");
-                _enemyContainer = container.transform;
-            }
+            EnemyUnit.OnAnyEnemyRemoved -= HandleEnemyRemoved;
             EnemyUnit.OnAnyEnemyRemoved += HandleEnemyRemoved;
         }
 
@@ -110,9 +113,10 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Public API
-        public void Initialize(List<WaveData> waves, float gracePeriod = 0f, bool startImmediately = true)
+        public void Initialize(List<WaveData> waves, Transform enemyContainer, float gracePeriod = 0f, bool startImmediately = true)
         {
             _waves = waves;
+            _enemyContainer = enemyContainer;
             _allWavesFinished = false;
             _victoryTriggered = false;
             _isInitialized = true;
@@ -208,7 +212,7 @@ namespace MaouSamaTD.Managers
             
             // 1. Validate Spawning Constraints & Get Correct Exit
             Tile spawnTile = _gridManager.GetTileAt(spawnPoint);
-            Vector2Int exitPoint = _gridManager.GetTargetExitForSpawn(spawnPoint);
+            Vector2Int exitPoint = _gridManager.GetTargetExitForSpawn(spawnPoint, data.MovementType);
 
             if (spawnTile != null)
             {
@@ -226,30 +230,6 @@ namespace MaouSamaTD.Managers
                         return;
                     }
                 }
-            }
-
-            // High Ground Logic for Flying/Mixed units: If unit is flying, force it to target the CLOSEST high ground exit if one exists
-            if (data.MovementType == MaouSamaTD.Units.EnemyMovementType.Flying || data.MovementType == MaouSamaTD.Units.EnemyMovementType.Mixed)
-            {
-                 float minDistance = float.MaxValue;
-                 Vector2Int closestHighExit = exitPoint;
-                 bool foundHighExit = false;
-
-                 foreach(var ep in _gridManager.ExitPoints)
-                 {
-                     var et = _gridManager.GetTileAt(ep);
-                     if (et != null && (et.Type == TileType.ExitPointHigh || et.IsHighGround))
-                     {
-                         float dist = Vector2.Distance(new Vector2(spawnPoint.x, spawnPoint.y), new Vector2(ep.x, ep.y));
-                         if (dist < minDistance)
-                         {
-                             minDistance = dist;
-                             closestHighExit = ep;
-                             foundHighExit = true;
-                         }
-                     }
-                 }
-                 if (foundHighExit) exitPoint = closestHighExit;
             }
 
             // 2. Get Path
@@ -343,6 +323,14 @@ namespace MaouSamaTD.Managers
                 OnWaveStarted?.Invoke(wave.WaveMessage, waveCounter);
                 _tutorialManager?.OnActionTriggered("WaveStarted");
 
+                // Pre-Wave Story
+                if (wave.PreWaveStory != null && _storyManager != null)
+                {
+                    bool storyFinished = false;
+                    _storyManager.PlayStory(wave.PreWaveStory, () => storyFinished = true);
+                    yield return new WaitUntil(() => storyFinished);
+                }
+
                 foreach (var group in wave.Groups)
                 {
                     if (!_isSpawning) yield break;
@@ -365,6 +353,14 @@ namespace MaouSamaTD.Managers
                 // WAIT: Wait for the entire wave to be cleared (all enemies defeated/escaped) before proceeding to next wave delay
                 yield return new WaitUntil(() => IsWaveCleared(waveCounter));
 
+                // Post-Wave Story
+                if (wave.PostWaveStory != null && _storyManager != null)
+                {
+                    bool storyFinished = false;
+                    _storyManager.PlayStory(wave.PostWaveStory, () => storyFinished = true);
+                    yield return new WaitUntil(() => storyFinished);
+                }
+
                 if (wave.DelayBeforeNextWave > 0)
                 {
                     _isSpawning = false; // Not spawning during the delay
@@ -384,6 +380,12 @@ namespace MaouSamaTD.Managers
         {
             if (group.InitialDelay > 0)
                 yield return new WaitForSeconds(group.InitialDelay);
+
+            // Re-show paths when this group starts spawning to remind the player of the route
+            if (_pathVisualizer != null && waveCounter >= 0 && waveCounter < _waves.Count)
+            {
+                _pathVisualizer.ShowPathsForWave(_waves[waveCounter]);
+            }
 
             for (int i = 0; i < group.Count; i++)
             {

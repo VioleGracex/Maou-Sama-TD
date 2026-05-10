@@ -53,6 +53,8 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Initialization
+        [SerializeField] private MaouSamaTD.UI.MainMenu.LoadingScreenPanel _loadingScreen;
+
         public void LoadLevelData(LevelData levelData)
         {
             InitializeGame(levelData);
@@ -245,7 +247,9 @@ namespace MaouSamaTD.Managers
             {
                 float gracePeriod = levelData.GracePeriod;
                 Debug.Log($"[GameManager] Starting Enemy Manager with Grace Period: {gracePeriod}s");
-                _enemyManager.Initialize(levelData.Waves, gracePeriod);
+                
+                // Pass the enemy container from GridManager (which might have been found dynamically or assigned)
+                _enemyManager.Initialize(levelData.Waves, _gridManager.EnemyContainer, gracePeriod);
             }
             else
             {
@@ -259,8 +263,7 @@ namespace MaouSamaTD.Managers
             OnNexusIntegrityChanged?.Invoke(NexusIntegrity);
 
             // Signal the loading screen that the level is ready
-            var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>();
-            if (loader != null) loader.NotifyLevelReady();
+            if (_loadingScreen != null) _loadingScreen.NotifyLevelReady();
         }
         #endregion
 
@@ -289,7 +292,7 @@ namespace MaouSamaTD.Managers
             EnemiesPassedCount++;
             
             bool isBoss = enemy != null && enemy.EnemyData != null && enemy.EnemyData.IsBoss;
-            int damage = enemy != null && enemy.EnemyData != null ? (int)enemy.EnemyData.DamageToPlayerBase : 1;
+            int damage = enemy != null && enemy.EnemyData != null ? (int)enemy.EnemyData.ExitDamage : 1;
 
             Debug.Log($"[GameManager] Enemy escaped (Boss: {isBoss})! Total passed: {EnemiesPassedCount}");
 
@@ -418,13 +421,16 @@ namespace MaouSamaTD.Managers
                 SetSpeed(0);
             }
         }
-
         public void SetSpeed(float speed)
         {
             CurrentSpeed = speed;
             if (!IsPaused && !IsGameEnded)
             {
                 Time.timeScale = CurrentSpeed;
+            }
+            if (speed == 0f)
+            {
+                FloatingTextManager.Instance?.DestroyAllActiveTexts();
             }
             OnSpeedChanged?.Invoke(speed);
         }
@@ -437,6 +443,7 @@ namespace MaouSamaTD.Managers
             if (IsPaused)
             {
                 Time.timeScale = 0f;
+                FloatingTextManager.Instance?.DestroyAllActiveTexts();
             }
             else
             {

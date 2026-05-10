@@ -23,7 +23,21 @@ namespace MaouSamaTD.Units
         IgnoreIfTargetAttacking // Only blocked if target is idle/defending, ignores if target is attacking
     }
 
-    [CreateAssetMenu(fileName = "NewEnemyData", menuName = "MaouSamaTD/Enemy Data")]
+    public enum EnemyTargetingPriority
+    {
+        ReachExit,    // Prioritizes moving to exit; only stops if physically blocked
+        KillUnits     // Stops to kill any target in range, even if not blocking the path
+    }
+
+    [System.Flags]
+    public enum TargetableGround
+    {
+        None = 0,
+        LowGround = 1 << 0,
+        HighGround = 1 << 1
+    }
+
+    [CreateAssetMenu(fileName = "NewEnemyData", menuName = "Maou-Sama-TD/Enemy Data")]
     public class EnemyData : MaouSamaTD.Core.GameDataSO
     {
         [Header("Identity")]
@@ -37,10 +51,13 @@ namespace MaouSamaTD.Units
         [Header("Stats")]
         public float MaxHp = 50f;
         public float MoveSpeed = 2f;
+        public float BlocksPerSecond => MoveSpeed; // Visual helper for design
         public float AttackPower = 5f; // Duration damage or hit damage?
         public float AttackInterval = 1.0f; 
         public float AttackRange = 0.5f;
-        public float DamageToPlayerBase = 1f;
+        
+        [Tooltip("Damage dealt to the Player's Nexus health when this unit reaches the exit.")]
+        public float ExitDamage = 1f;
 
         [Header("Combat Pattern")]
         public AttackPattern AttackPattern = AttackPattern.All;
@@ -49,7 +66,12 @@ namespace MaouSamaTD.Units
         public EnemyMovementType MovementType;
         public EnemyCollisionType CollisionType;
         public EnemyEvasionType EvasionType;
+        public EnemyTargetingPriority TargetingPriority = EnemyTargetingPriority.ReachExit;
         public bool OnlyAttackIfBlocked;
+        
+        [Tooltip("Which types of ground tiles can this unit target and attack?")]
+        public TargetableGround GroundAttackTargets = TargetableGround.LowGround;
+        
         public int PhasingCharges = 0;
         public System.Collections.Generic.List<DamageType> Immunities = new System.Collections.Generic.List<DamageType>();
         

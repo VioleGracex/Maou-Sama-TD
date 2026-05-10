@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 85d5c7dc-dd5f-4dbd-aa75-4a1b324dfe74
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
+    MaxHp: 900
+    Attack: 135
+    Defense: 15
     ClassIcon: {fileID: 0}
-    ClassName: 
+    ClassName: Warlock
   UnitName: Mammon
   UnitTitle: Lord Of Greed
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -53,16 +53,17 @@ MonoBehaviour:
   AttackPattern: 0
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 10
+  DeploymentCost: 25
   BlockCount: 1
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 100
-  AttackPower: 10
+  MaxHp: 900
+  AttackPower: 135
   AttackInterval: 1
-  Defense: 0
+  Defense: 15
   Resistance: 0
   RespawnTime: 5
-  Range: 1
+  Range: 3.5
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

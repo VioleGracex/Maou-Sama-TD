@@ -30,7 +30,27 @@ namespace MaouSamaTD.Editors
 
         private void OnEnable()
         {
+            LoadSettings();
             RefreshData();
+        }
+
+        private void OnDisable()
+        {
+            SaveSettings();
+        }
+
+        private void LoadSettings()
+        {
+            _searchText = EditorPrefs.GetString("SovereignRiteBrowser_SearchText", "");
+            _genderFilter = EditorPrefs.GetInt("SovereignRiteBrowser_GenderFilter", 0);
+            _sidebarWidth = EditorPrefs.GetFloat("SovereignRiteBrowser_SidebarWidth", 250f);
+        }
+
+        private void SaveSettings()
+        {
+            EditorPrefs.SetString("SovereignRiteBrowser_SearchText", _searchText);
+            EditorPrefs.SetInt("SovereignRiteBrowser_GenderFilter", _genderFilter);
+            EditorPrefs.SetFloat("SovereignRiteBrowser_SidebarWidth", _sidebarWidth);
         }
 
         private void RefreshData()

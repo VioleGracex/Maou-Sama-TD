@@ -16,6 +16,7 @@ namespace MaouSamaTD.UI
         [Header("Speed Control")]
         [SerializeField] private Button _speedButton;
         [SerializeField] private TextMeshProUGUI _speedText;
+        [SerializeField] private GameObject _tacticalIndicator;
         
         [Header("Base HP")]
         [SerializeField] private Image _hpFillImage;
@@ -97,71 +98,15 @@ namespace MaouSamaTD.UI
             }
 
             // Hide panels initially, dynamic find as fallback if null
-            if (_winPanel == null)
-            {
-                _winPanel = GameObject.Find("VictoryPanel");
-                if (_winPanel == null)
-                {
-                    var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-                    _winPanel = System.Array.Find(allObjects, o => o.name == "VictoryPanel" || o.name == "WinPanel");
-                }
-                if (_winPanel != null) Debug.Log($"[GameControlUI] Dynamically bound unassigned _winPanel reference to '{_winPanel.name}'");
-            }
-
-            if (_losePanel == null)
-            {
-                _losePanel = GameObject.Find("LosePanel");
-                if (_losePanel == null)
-                {
-                    var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-                    _losePanel = System.Array.Find(allObjects, o => o.name == "LosePanel");
-                }
-                if (_losePanel != null) Debug.Log($"[GameControlUI] Dynamically bound unassigned _losePanel reference to '{_losePanel.name}'");
-            }
-
             if (_winPanel != null) _winPanel.SetActive(false);
             if (_losePanel != null) _losePanel.SetActive(false);
             if (_confirmationPanel != null) _confirmationPanel.SetActive(false);
             if (_pauseOverlay != null) _pauseOverlay.SetActive(false);
 
-            EnsureStatusTextExists();
 
             UpdateUI();
         }
 
-        private void EnsureStatusTextExists()
-        {
-            if (_waveText == null)
-            {
-                GameObject go = new GameObject("WaveText", typeof(RectTransform), typeof(TextMeshProUGUI));
-                go.transform.SetParent(transform);
-                var rt = go.GetComponent<RectTransform>();
-                rt.anchorMin = new Vector2(0.5f, 1f);
-                rt.anchorMax = new Vector2(0.5f, 1f);
-                rt.pivot = new Vector2(0.5f, 1f);
-                rt.anchoredPosition = new Vector2(0, -100);
-                _waveText = go.GetComponent<TextMeshProUGUI>();
-                _waveText.fontSize = 24;
-                _waveText.alignment = TextAlignmentOptions.Center;
-                _waveText.enableWordWrapping = false;
-                _waveText.raycastTarget = false;
-            }
-            if (_sealsText == null)
-            {
-                GameObject go = new GameObject("SealsText", typeof(RectTransform), typeof(TextMeshProUGUI));
-                go.transform.SetParent(transform);
-                var rt = go.GetComponent<RectTransform>();
-                rt.anchorMin = new Vector2(0.5f, 1f);
-                rt.anchorMax = new Vector2(0.5f, 1f);
-                rt.pivot = new Vector2(0.5f, 1f);
-                rt.anchoredPosition = new Vector2(0, -140);
-                _sealsText = go.GetComponent<TextMeshProUGUI>();
-                _sealsText.fontSize = 24;
-                _sealsText.alignment = TextAlignmentOptions.Center;
-                _sealsText.enableWordWrapping = false;
-                _sealsText.raycastTarget = false;
-            }
-        }
 
         private void Update()
         {
@@ -171,7 +116,7 @@ namespace MaouSamaTD.UI
             }
             if (_sealsText != null && _currencyManager != null)
             {
-                _sealsText.text = $"Authority: {_currencyManager.CurrentSeals} / {_currencyManager.MaxSeals}";
+                _sealsText.text = $"{_currencyManager.CurrentSeals} / {_currencyManager.MaxSeals}";
             }
 
             // Only grey-out the speed button when the tutorial has actively stopped time.
@@ -201,9 +146,8 @@ namespace MaouSamaTD.UI
             
             if (_winPanel == null)
             {
-                Debug.LogWarning("[GameControlUI] _winPanel is null inside ShowWin! Attempting emergency find...");
-                var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-                _winPanel = System.Array.Find(allObjects, o => o.name == "VictoryPanel" || o.name == "WinPanel");
+                Debug.LogError("[GameControlUI] _winPanel is null! Please assign it in the Inspector.");
+                return;
             }
 
             if (_winPanel != null)
@@ -398,9 +342,8 @@ namespace MaouSamaTD.UI
             
             if (_losePanel == null)
             {
-                Debug.LogWarning("[GameControlUI] _losePanel is null inside ShowLose! Attempting emergency find...");
-                var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-                _losePanel = System.Array.Find(allObjects, o => o.name == "LosePanel");
+                Debug.LogError("[GameControlUI] _losePanel is null! Please assign it in the Inspector.");
+                return;
             }
 
             if (_losePanel != null)
@@ -435,11 +378,15 @@ namespace MaouSamaTD.UI
             // Retreat = Go back to Menu
             ReturnToMenu();
         }
-        
+
         private void ReturnToMenu()
         {
              // Resume time just in case
              Time.timeScale = 1f;
+             // Clear all DOTween tweens to prevent memory leaks and exceptions
+             DOTween.KillAll();
+             // Clean up assets
+             Resources.UnloadUnusedAssets();
              // Load Scene 0 (Home/Menu)
              SceneManager.LoadScene(0);
         }
@@ -451,8 +398,12 @@ namespace MaouSamaTD.UI
 
         private void ReloadScene()
         {
+            DOTween.KillAll();
+            Resources.UnloadUnusedAssets();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
+        
+
 
         private void UpdateHp(int integrity)
         {
@@ -465,7 +416,7 @@ namespace MaouSamaTD.UI
 
             if (_hpText != null)
             {
-                _hpText.text = $"{Mathf.CeilToInt(pct * 100)}%";
+                _hpText.text = $"Wagon: {Mathf.CeilToInt(pct * 100)}%";
             }
         }
 
@@ -475,11 +426,16 @@ namespace MaouSamaTD.UI
             // Block speed toggle only while tutorial has stopped time — prevent overriding StopTime steps
             if (_tutorialManager != null && _tutorialManager.IsInTutorial && _gameManager.CurrentSpeed <= 0f && !_gameManager.IsPaused) return;
             
-            // Toggle between 1x and 2x
-            float newSpeed = (_gameManager.CurrentSpeed >= 2f) ? 1f : 2f;
+            // Cycle: 1x -> 2x -> 0x -> 1x
+            float newSpeed = 1f;
+            if (_gameManager.CurrentSpeed >= 1f && _gameManager.CurrentSpeed < 2f) newSpeed = 2f;
+            else if (_gameManager.CurrentSpeed >= 2f) newSpeed = 0f;
+            else newSpeed = 1f;
+
             _gameManager.SetSpeed(newSpeed);
             UpdateUI();
         }
+
 
         private void OnPauseClicked()
         {
@@ -506,6 +462,15 @@ namespace MaouSamaTD.UI
                 }
             }
 
+            // Wave Text
+            if (_waveText != null && _enemyManager != null)
+            {
+                // Display current wave (1-indexed)
+                int current = _enemyManager.CurrentWaveIndex + 1;
+                int total = _enemyManager.TotalWaves;
+                _waveText.text = $"Wave: {current}/{total}";
+            }
+
             // Pause Overlay Logic
             if (_pauseOverlay != null)
             {
@@ -518,6 +483,13 @@ namespace MaouSamaTD.UI
                 if (_gameManager.IsGameEnded) showPause = false;
 
                 _pauseOverlay.SetActive(showPause);
+            }
+
+            // Tactical Indicator
+            if (_tacticalIndicator != null)
+            {
+                // Show only if speed is 0 but NOT paused
+                _tacticalIndicator.SetActive(_gameManager.CurrentSpeed <= 0f && !_gameManager.IsPaused && !_gameManager.IsGameEnded);
             }
         }
     }

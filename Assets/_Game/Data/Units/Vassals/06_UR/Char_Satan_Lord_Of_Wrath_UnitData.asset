@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 90604a36-9e91-401c-baf1-cde8dedf915a
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 2250
+    Attack: 90
+    Defense: 45
+    ClassIcon: {fileID: 21300000, guid: 33b39977cf7fa404194b18d31210c071, type: 3}
+    ClassName: Vanguard
   UnitName: Satan
   UnitTitle: Lord Of Wrath
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -53,13 +53,14 @@ MonoBehaviour:
   AttackPattern: 0
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 10
-  BlockCount: 1
+  DeploymentCost: 25
+  BlockCount: 2
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 100
-  AttackPower: 10
+  MaxHp: 2250
+  AttackPower: 90
   AttackInterval: 1
-  Defense: 0
+  Defense: 45
   Resistance: 0
   RespawnTime: 5
   Range: 1

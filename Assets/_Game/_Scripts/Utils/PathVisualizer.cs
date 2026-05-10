@@ -85,29 +85,39 @@ namespace MaouSamaTD.Utils
             Hide();
             if (wave == null || wave.Groups == null) return;
 
-            HashSet<int> spawnIndices = new HashSet<int>();
-            foreach (var group in wave.Groups) spawnIndices.Add(group.SpawnPointIndex);
-
-            foreach (int index in spawnIndices)
+            HashSet<(int index, EnemyMovementType moveType)> pathRequests = new HashSet<(int, EnemyMovementType)>();
+            foreach (var group in wave.Groups)
             {
-                if (index < 0 || index >= _gridManager.SpawnPoints.Count) continue;
-                Vector2Int spawn = _gridManager.SpawnPoints[index].Coordinate;
-                Vector2Int exit = _gridManager.GetTargetExitForSpawn(spawn);
+                if (group.EnemyType != null)
+                {
+                    pathRequests.Add((group.SpawnPointIndex, group.EnemyType.MovementType));
+                }
+                else
+                {
+                    pathRequests.Add((group.SpawnPointIndex, EnemyMovementType.Ground));
+                }
+            }
+
+            foreach (var req in pathRequests)
+            {
+                if (req.index < 0 || req.index >= _gridManager.SpawnPoints.Count) continue;
+                Vector2Int spawn = _gridManager.SpawnPoints[req.index].Coordinate;
+                Vector2Int exit = _gridManager.GetTargetExitForSpawn(spawn, req.moveType);
                 
-                Queue<Tile> path = _gridManager.GetPath(spawn, exit, EnemyMovementType.Ground);
+                Queue<Tile> path = _gridManager.GetPath(spawn, exit, req.moveType);
                 if (path != null && path.Count > 0)
                 {
-                    CreatePathLine(spawn, path);
+                    CreatePathLine(spawn, path, req.moveType);
                 }
             }
             Show();
         }
 
-        private void CreatePathLine(Vector2Int start, Queue<Tile> path)
+        private void CreatePathLine(Vector2Int start, Queue<Tile> path, EnemyMovementType moveType)
         {
             LineRenderer lr = GetLineRenderer();
             
-            float visualHeight = 0.7f;
+            float visualHeight = moveType == EnemyMovementType.Flying ? 1.5f : 0.7f;
             List<Vector3> points = new List<Vector3>();
             points.Add(_gridManager.GridToWorldPosition(start) + Vector3.up * visualHeight);
 
@@ -118,6 +128,19 @@ namespace MaouSamaTD.Utils
 
             lr.positionCount = points.Count;
             lr.SetPositions(points.ToArray());
+            
+            // Distinguish colors if multiple types exist
+            if (moveType == EnemyMovementType.Flying)
+            {
+                lr.startColor = new Color(0.5f, 0f, 1f, _currentAlpha); // Purple for flyers
+                lr.endColor = new Color(1f, 0f, 0.5f, _currentAlpha);
+            }
+            else
+            {
+                lr.startColor = new Color(1f, 0.5f, 0f, _currentAlpha); // Orange for ground
+                lr.endColor = new Color(0f, 1f, 0.5f, _currentAlpha);
+            }
+
             lr.enabled = true;
             _activeLines.Add(lr);
         }
@@ -155,6 +178,9 @@ namespace MaouSamaTD.Utils
         {
             if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
             _fadeRoutine = StartCoroutine(FadeRoutine(1f, 1.0f));
+            
+            CancelInvoke("Hide");
+            Invoke("Hide", 15f);
         }
 
         public void Hide()
@@ -193,13 +219,14 @@ namespace MaouSamaTD.Utils
 
         private void SetAlpha(float a)
         {
-            Color start = new Color(1f, 0.5f, 0f, a); 
-            Color end = new Color(0f, 1f, 0.5f, a);   
-            
             foreach (var lr in _activeLines)
             {
-                lr.startColor = start;
-                lr.endColor = end;
+                Color sc = lr.startColor;
+                Color ec = lr.endColor;
+                sc.a = a;
+                ec.a = a;
+                lr.startColor = sc;
+                lr.endColor = ec;
             }
         }
 

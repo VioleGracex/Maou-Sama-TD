@@ -53,4 +53,7 @@ MonoBehaviour:
   - Name: mandates
     Id: 1773483367
     TextAsset: {fileID: 4900000, guid: 7e8aedc417db46a4e9edc3f0292b2fc9, type: 3}
+  - Name: home
+    Id: 1773483368
+    TextAsset: {fileID: 4900000, guid: 17ff534f6acb00f458383ca784113e69, type: 3}
   SaveFolder: {fileID: 102900000, guid: c392831e85f928548b8494fefd912562, type: 3}

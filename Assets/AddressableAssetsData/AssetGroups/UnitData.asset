@@ -526,13 +526,6 @@ MonoBehaviour:
     - UnitData
     - Unit_Master
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d8da4f0bc640c8a479b115cbe80f3e2d
-    m_Address: Char_Seraphine_Pale_Empress_UnitData
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - UnitData
-    - Unit_Elite
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d99228d516df89b4f9799aaf314af143
     m_Address: Char_Nerissa_Midnight_Archivist_UnitData
     m_ReadOnly: 0

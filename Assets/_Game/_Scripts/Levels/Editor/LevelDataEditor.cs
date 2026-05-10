@@ -238,8 +238,12 @@ namespace MaouSamaTD.Levels.Editor
                 
                 // Construct a nice label: "Wave 1: [Message]"
                 string message = waveProp.FindPropertyRelative("WaveMessage").stringValue;
+                var preStory = waveProp.FindPropertyRelative("PreWaveStory").objectReferenceValue;
+                var postStory = waveProp.FindPropertyRelative("PostWaveStory").objectReferenceValue;
+                
                 string label = $"Wave {i + 1}";
                 if (!string.IsNullOrEmpty(message)) label += $" ({message})";
+                if (preStory != null || postStory != null) label += " [STORY]";
                 
                 EditorGUILayout.PropertyField(waveProp, new GUIContent(label), true);
             }

@@ -14,6 +14,7 @@ namespace MaouSamaTD.Managers
         [Inject] private StoryManager _storyManager;
         [Inject] private EnemyManager _enemyManager;
         [Inject] private BattleCurrencyManager _currencyManager;
+        [Inject] private Grid.GridManager _gridManager;
 
         #region Lifecycle
         private void Start()
@@ -69,7 +70,7 @@ namespace MaouSamaTD.Managers
             {
                 float gracePeriod = dataToLoad.GracePeriod;
                 Debug.Log($"[LevelManager] Initializing Enemy Manager. Tutorial Active: {hasTutorial}");
-                _enemyManager.Initialize(dataToLoad.Waves, gracePeriod, !hasTutorial);
+                _enemyManager.Initialize(dataToLoad.Waves, _gridManager.EnemyContainer, gracePeriod, !hasTutorial);
             }
 
             if (hasTutorial)

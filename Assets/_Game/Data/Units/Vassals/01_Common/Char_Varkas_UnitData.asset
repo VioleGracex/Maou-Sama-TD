@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: e21b0f80-1ae6-44db-bc0a-d3d5fcb1ac7f
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 2500.5
+    Attack: 30
+    Defense: 60
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    ClassName: Bastion
   UnitName: Varkas
   UnitTitle: Drakmora Lancer
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -50,12 +50,13 @@ MonoBehaviour:
   AttackType: 0
   DamageType: 0
   DeploymentCost: 10
-  BlockCount: 1
+  BlockCount: 3
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 100
-  AttackPower: 10
+  MaxHp: 1667
+  AttackPower: 30
   AttackInterval: 1
-  Defense: 0
+  Defense: 40
   Resistance: 0
   RespawnTime: 5
   Range: 1

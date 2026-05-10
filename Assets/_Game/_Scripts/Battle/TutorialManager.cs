@@ -441,8 +441,16 @@ namespace MaouSamaTD.Managers
                 // 1. Handle StopTime for all step types at the start
                 if (step.StopTime)
                 {
-                    if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime. Pausing game.");
-                    _gameManager.SetSpeed(0);
+                    if (step.DelayBeforeStopTime > 0f)
+                    {
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime with delay of {step.DelayBeforeStopTime}s.");
+                        StartCoroutine(DelayedTimeStop(step.DelayBeforeStopTime, step.StepName));
+                    }
+                    else
+                    {
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime. Pausing game.");
+                        _gameManager.SetSpeed(0);
+                    }
                 }
 
                 switch (step.Type)
@@ -472,8 +480,16 @@ namespace MaouSamaTD.Managers
                             // Apply StopTime AFTER the condition wait, so the game pauses for the actual dialogue
                             if (step.StopTime)
                             {
-                                if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime. Pausing game.");
-                                _gameManager.SetSpeed(0);
+                                if (step.DelayBeforeStopTime > 0f)
+                                {
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime with delay of {step.DelayBeforeStopTime}s (after condition).");
+                                    StartCoroutine(DelayedTimeStop(step.DelayBeforeStopTime, step.StepName));
+                                }
+                                else
+                                {
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime. Pausing game.");
+                                    _gameManager.SetSpeed(0);
+                                }
                             }
 
                             // Special Logic for Level 2 Boss Bypass: Lilith Refills Seals
@@ -1181,6 +1197,7 @@ namespace MaouSamaTD.Managers
 
             _uiBlocker.ShowBlockerWithDetailedTargets(uiHits, worldHighlights);
 
+
             bool ignoreOverride = isSkillStep && isSkillTargeting;
 
             if (step.DragShowHand && (uiHits.Count > 0 || worldHighlights.Count > 0) && !_dialogueManager.IsDialogueActive)
@@ -1207,44 +1224,78 @@ namespace MaouSamaTD.Managers
             }
             else if (step.ShowHand && !_dialogueManager.IsDialogueActive)
             {
-                Vector2 handPos = Vector2.zero;
-                float handScale = step.HandScale;
-
-                if (!ignoreOverride && step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
+                if (isDragging)
                 {
-                    if (GetTargetScreenPositionAndScale(step.HandTargetUIOverride, out Vector2 targetPos, out float scaleMult))
+                    Vector2 startPos = Vector2.zero;
+                    Vector2 screenTarget = Vector2.zero;
+
+                    if (uiHits.Count > 0)
                     {
-                        handPos = targetPos;
-                        handScale *= scaleMult;
+                        Vector3[] corners = new Vector3[4];
+                        uiHits[0].Target.GetWorldCorners(corners);
+                        Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                        startPos = (Vector2)center + uiHits[0].Offset;
                     }
-                }
 
-                if (handPos == Vector2.zero && uiHits.Count > 0) 
-                {
-                    Vector3[] corners = new Vector3[4];
-                    uiHits[0].Target.GetWorldCorners(corners);
-                    Vector3 center = (corners[0] + corners[2]) * 0.5f;
-                    Vector3 size = corners[2] - corners[0];
-                    handPos = (Vector2)center + new Vector2(size.x * uiHits[0].Offset.x, size.y * uiHits[0].Offset.y);
-                    handScale *= uiHits[0].Size.x;
-                }
-                else if (handPos == Vector2.zero && step.HandTargetTileOverride != Vector2Int.zero && (isPlacementMode || step.ActionKey != "UnitPlaced"))
-                {
-                    Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
-                    handPos = Camera.main.WorldToScreenPoint(worldTarget);
-                }
-                else if (handPos == Vector2.zero && worldHighlights.Count > 0) 
-                {
-                    handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
-                }
+                    if (step.HandTargetTileOverride != Vector2Int.zero)
+                    {
+                        Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
+                        screenTarget = Camera.main.WorldToScreenPoint(worldTarget);
+                    }
 
-                if (handPos != Vector2.zero) 
-                {
-                    _handUI.ShowAt(handPos, handScale);
+                    if (startPos != Vector2.zero && screenTarget != Vector2.zero)
+                    {
+                        _handUI.MoveHand(startPos, screenTarget, step.HandScale);
+                    }
                 }
                 else
                 {
-                    _handUI.Hide();
+                    Vector2 handPos = Vector2.zero;
+                    float handScale = step.HandScale;
+
+                    if (!ignoreOverride && step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
+                    {
+                        if (GetTargetScreenPositionAndScale(step.HandTargetUIOverride, out Vector2 targetPos, out float scaleMult))
+                        {
+                            handPos = targetPos;
+                            handScale *= scaleMult;
+                        }
+                    }
+
+                    if (handPos == Vector2.zero && uiHits.Count > 0) 
+                    {
+                        Vector3[] corners = new Vector3[4];
+                        uiHits[0].Target.GetWorldCorners(corners);
+                        Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                        handPos = (Vector2)center + uiHits[0].Offset;
+                        handScale *= uiHits[0].Size.x;
+                    }
+                    else if (handPos == Vector2.zero && step.HandTargetTileOverride != Vector2Int.zero && (isPlacementMode || step.ActionKey != "UnitPlaced"))
+                    {
+                        Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
+                        handPos = Camera.main.WorldToScreenPoint(worldTarget);
+                    }
+                    else if (handPos == Vector2.zero && worldHighlights.Count > 0) 
+                    {
+                        handPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
+                    }
+
+                    if (handPos != Vector2.zero) 
+                    {
+                        float dist = Vector2.Distance(_handUI.GetComponent<RectTransform>().position, handPos);
+                        if (dist > 50f && dist < 1000f)
+                        {
+                             _handUI.MoveTo(handPos, handScale, 0.25f);
+                        }
+                        else
+                        {
+                             _handUI.ShowAt(handPos, handScale);
+                        }
+                    }
+                    else
+                    {
+                        _handUI.Hide();
+                    }
                 }
             }
             else
@@ -1437,7 +1488,6 @@ private RectTransform FindTargetRect(string name)
                 Vector3[] corners = new Vector3[4];
                 drt.GetWorldCorners(corners);
                 Vector3 center = (corners[0] + corners[2]) * 0.5f;
-                Vector3 size = corners[2] - corners[0];
 
                 if (isFallback)
                 {
@@ -1446,9 +1496,13 @@ private RectTransform FindTargetRect(string name)
                 }
                 else
                 {
-                    screenPos = (Vector2)center + new Vector2(size.x * ut.SizeOffset.x, size.y * ut.SizeOffset.y);
-                    scaleMultiplier = ut.Size.x != 0 ? ut.Size.x : 1f;
+                    // Apply offset. If ut.SizeOffset was intended as pixels, we should scale it by the canvas ratio.
+                    // However, adding it directly to screen space center is generally what's expected for simple offsets.
+                    // For dragging distance stability, we use the corners center + offset.
+                    screenPos = (Vector2)center + ut.SizeOffset;
                 }
+
+                scaleMultiplier = ut.Size.x != 0 ? ut.Size.x : 1f;
                 return true;
             }
 
@@ -1964,6 +2018,16 @@ private RectTransform FindTargetRect(string name)
             else
             {
                 Debug.LogError("[tutorial] Failed to load Lilith from Addressables! Check if 'Char_Lilith_UnitData' address is correct.");
+            }
+        }
+
+        private IEnumerator DelayedTimeStop(float delay, string stepName)
+        {
+            yield return new WaitForSecondsRealtime(delay);
+            if (IsInTutorial && _currentStep != null && _currentStep.StepName == stepName && _currentStep.StopTime)
+            {
+                if (_showDebugLogs) Debug.Log($"[tutorial] Delayed time pause executed for step: {stepName}");
+                _gameManager.SetSpeed(0);
             }
         }
         #endregion

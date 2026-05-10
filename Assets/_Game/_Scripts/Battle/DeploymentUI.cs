@@ -38,6 +38,7 @@ namespace MaouSamaTD.UI
         public IEnumerable<UnitData> DeployedUnits => _deployedUnits;
         private Dictionary<UnitData, float> _cooldownTimers = new Dictionary<UnitData, float>();
         private List<UnitButtonUI> _unitButtons = new List<UnitButtonUI>();
+        private Dictionary<UnitData, PlayerUnit> _activeInstances = new Dictionary<UnitData, PlayerUnit>();
 
         private void OnEnable()
         {
@@ -266,6 +267,7 @@ namespace MaouSamaTD.UI
             newUnit.OnRetreat += (u) => OnUnitRetreated(u.Data);
             
             _deployedUnits.Add(unitData);
+            _activeInstances[unitData] = newUnit;
             
             RefreshButtonsState();
             
@@ -278,6 +280,7 @@ namespace MaouSamaTD.UI
             if (_deployedUnits.Contains(unitData))
             {
                 _deployedUnits.Remove(unitData);
+                if (_activeInstances.ContainsKey(unitData)) _activeInstances.Remove(unitData);
                 
                 // Start Cooldown
                 _cooldownTimers[unitData] = unitData.RespawnTime;
@@ -291,17 +294,16 @@ namespace MaouSamaTD.UI
         {
             if (unit == null) return;
             
-            if (unit.CurrentTile != null)
+            unit.Retreat();
+        }
+
+        public void RetreatUnitByData(UnitData unitData)
+        {
+            if (unitData == null) return;
+            if (_activeInstances.TryGetValue(unitData, out var instance))
             {
-                unit.CurrentTile.SetOccupant(null); // Clear tile
+                instance.Retreat();
             }
-            
-            if (unit.Data != null)
-            {
-                OnUnitRetreated(unit.Data);
-            }
-            
-            Destroy(unit.gameObject);
         }
 
         public void ToggleVisibility()

@@ -80,6 +80,7 @@ namespace MaouSamaTD.Units.Editor
             BeginSection("Behavior & Rules");
             DrawProperty("MovementType", "Movement Type");
             DrawProperty("CollisionType", "Collision Rules");
+            DrawProperty("EvasionType", "Evasion Style");
             DrawProperty("PhasingCharges", "Phasing Charges");
             EndSection();
 
@@ -93,14 +94,21 @@ namespace MaouSamaTD.Units.Editor
             BeginSection("Stats");
             DrawProperty("MaxHp", "Max Health Points");
             DrawProperty("MoveSpeed", "Movement Speed");
+            using (new EditorGUI.DisabledScope(true))
+            {
+                EditorGUILayout.LabelField("Blocks Per Second", _target.BlocksPerSecond.ToString("F2"));
+            }
             DrawProperty("AttackPower", "Attack Power");
             DrawProperty("AttackInterval", "Attack Interval (Sec)");
             DrawProperty("AttackRange", "Attack Range (Tiles)");
-            DrawProperty("DamageToPlayerBase", "Damage to Player Base");
+            DrawProperty("ExitDamage", "Exit Damage (To Player)");
             EndSection();
 
             BeginSection("Combat Pattern");
             DrawProperty("AttackPattern", "Targeting Pattern");
+            DrawProperty("TargetingPriority", "Movement Priority");
+            DrawProperty("OnlyAttackIfBlocked", "Only Attack If Blocked");
+            DrawProperty("GroundAttackTargets", "Targetable Ground Types");
             EndSection();
             
             BeginSection("Immunities");

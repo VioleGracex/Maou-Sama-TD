@@ -162,7 +162,16 @@ namespace MaouSamaTD.UI.MainMenu
             if (_nameText) _nameText.text = unit.UnitName;
             if (_portraitImage) 
             {
-                var portrait = unit.GetSprite(UnitData.UnitImageType.Avatar);
+                var imageType = unit.CardSlotImageType;
+
+                // Check if we have a global override active in the UnitDatabase
+                if (MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null && 
+                    MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.UseGlobalCardOverride)
+                {
+                    imageType = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GlobalCardImageType;
+                }
+
+                var portrait = unit.GetSprite(imageType);
                 _portraitImage.sprite = portrait;
                 _portraitImage.gameObject.SetActive(portrait != null);
                 

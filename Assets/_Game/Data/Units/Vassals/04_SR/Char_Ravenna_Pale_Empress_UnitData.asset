@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
-  m_Name: Char_Seraphine_Pale_Empress_UnitData
+  m_Name: Char_Ravenna_Pale_Empress_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
   UniqueID: b12b0531-8835-4053-8f7e-e11ee9f48a2e
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
-    ClassIcon: {fileID: 0}
-    ClassName: 
-  UnitName: Seraphine
+    MaxHp: 3250.5
+    Attack: 39
+    Defense: 78
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    ClassName: Bastion
+  UnitName: Ravenna
   UnitTitle: Pale Empress
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
@@ -51,13 +51,14 @@ MonoBehaviour:
   AttackPattern: 0
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 10
-  BlockCount: 1
+  DeploymentCost: 16
+  BlockCount: 3
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 100
-  AttackPower: 10
+  MaxHp: 2167
+  AttackPower: 39
   AttackInterval: 1
-  Defense: 0
+  Defense: 52
   Resistance: 0
   RespawnTime: 5
   Range: 1

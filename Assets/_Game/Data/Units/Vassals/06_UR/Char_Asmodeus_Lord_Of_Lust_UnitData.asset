@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 1ada1924-dd8c-4416-a191-068126fe1fa8
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
+    MaxHp: 1200
+    Attack: 150
+    Defense: 22
     ClassIcon: {fileID: 0}
-    ClassName: 
+    ClassName: Assassin
   UnitName: Asmodeus
   UnitTitle: Lord Of Lust
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -53,13 +53,14 @@ MonoBehaviour:
   AttackPattern: 0
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 10
+  DeploymentCost: 25
   BlockCount: 1
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 100
-  AttackPower: 10
+  MaxHp: 1200
+  AttackPower: 150
   AttackInterval: 1
-  Defense: 0
+  Defense: 22
   Resistance: 0
   RespawnTime: 5
   Range: 1

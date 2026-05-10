@@ -113,11 +113,18 @@ namespace MaouSamaTD.Tutorial
         [Tooltip("Reset previous holes when this step starts")]
         public bool ResetBlocker = true;
 
-        [Tooltip("If true, game time will be paused (speed 0) while this step is active")]
+        [Label("Pause Time on Step Start")]
+        [Tooltip("If true, game time will be paused (speed 0) at the start of this step")]
         public bool StopTime = true;
 
+        [Label("Resume Time on Step Complete")]
         [Tooltip("Automatically resume game time (scale 1) after this step completes")]
         public bool ResumeTime = true;
+
+        [Label("Delay Before Pausing Time")]
+        [Tooltip("Optional delay (in seconds) after the step starts but before the game is paused. Useful for allowing action animations to play out.")]
+        [ShowIf("StopTime")]
+        public float DelayBeforeStopTime = 0f;
 
         [Header("Miss / Fail Branching")]
         [Tooltip("If true, casting a rite during this step checks if target is missed/alive and handles refunding.")]

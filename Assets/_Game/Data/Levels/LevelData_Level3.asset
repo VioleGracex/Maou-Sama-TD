@@ -44,56 +44,69 @@ MonoBehaviour:
   AuthoritySealsPerSecond: 2
   Waves:
   - Groups:
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 10
-      SpawnInterval: 0.8
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 8
+      SpawnInterval: 1
       InitialDelay: 0
       SpawnPointIndex: 0
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 10
-      SpawnInterval: 0.8
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 8
+      SpawnInterval: 1
       InitialDelay: 0
       SpawnPointIndex: 1
-    DelayBeforeNextWave: 12
-    WaveMessage: Ambush from East and West!
-  - Groups:
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 8
-      SpawnInterval: 1
-      InitialDelay: 0
-      SpawnPointIndex: 2
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 8
-      SpawnInterval: 1
-      InitialDelay: 0
-      SpawnPointIndex: 3
     DelayBeforeNextWave: 15
-    WaveMessage: They're Coming from North and South!
+    WaveMessage: Bandits are ambushing us from the East and West!
   - Groups:
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 7
-      SpawnInterval: 0.5
-      InitialDelay: 0
-      SpawnPointIndex: 0
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 7
-      SpawnInterval: 0.5
-      InitialDelay: 0
-      SpawnPointIndex: 1
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 7
-      SpawnInterval: 0.5
+    - EnemyType: {fileID: 11400000, guid: 6098614b310370a469f6fff2791fc95d, type: 2}
+      Count: 5
+      SpawnInterval: 1.2
       InitialDelay: 0
       SpawnPointIndex: 2
-    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
-      Count: 7
-      SpawnInterval: 0.5
+    - EnemyType: {fileID: 11400000, guid: 6098614b310370a469f6fff2791fc95d, type: 2}
+      Count: 5
+      SpawnInterval: 1.2
       InitialDelay: 0
       SpawnPointIndex: 3
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 4
+      SpawnInterval: 1.5
+      InitialDelay: 2
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 4
+      SpawnInterval: 1.5
+      InitialDelay: 2
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 20
+    WaveMessage: Fast Wolf Riders incoming from North and South!
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: ccd2b0230709b24478ecb7de75ddb12b, type: 2}
+      Count: 1
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 3
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 5
+      SpawnInterval: 1
+      InitialDelay: 1
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 5
+      SpawnInterval: 1
+      InitialDelay: 1
+      SpawnPointIndex: 1
+    - EnemyType: {fileID: 11400000, guid: 6098614b310370a469f6fff2791fc95d, type: 2}
+      Count: 3
+      SpawnInterval: 1.2
+      InitialDelay: 3
+      SpawnPointIndex: 2
     DelayBeforeNextWave: 0
-    WaveMessage: TOTAL AMBUSH - SURROUNDED!
+    WaveMessage: The Bandit Boss has arrived! Slay him!
   HasTutorial: 0
   TutorialData: {fileID: 0}
+  HasStory: 0
+  IntroStory: {fileID: 0}
+  OutroStory: {fileID: 0}
   StarConditions:
   - Description: Complete the ambush
     Type: 0
@@ -105,3 +118,5 @@ MonoBehaviour:
     TargetValue: 300
     BonusRewards: []
     AutoGrantInTutorial: 0
+  WinConditions: []
+  LoseConditions: []

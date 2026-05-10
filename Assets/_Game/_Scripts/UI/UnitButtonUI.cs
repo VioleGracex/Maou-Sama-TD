@@ -17,6 +17,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _nameText; 
         [SerializeField] private TextMeshProUGUI _costText;
         [SerializeField] private Button _button;
+        [SerializeField] private Button _retreatButton;
         [SerializeField] private ClassScalingData _classScalingData; // Fallbacks to Resources if null
         
         private UnitDragHandler _dragHandler;
@@ -49,8 +50,14 @@ namespace MaouSamaTD.UI
             if (_button != null)
             {
                 _button.onClick.RemoveAllListeners();
-                _button.transition = Selectable.Transition.None; // Prevent default Unity UI transitions from overriding custom states!
-                // Handled by UnitDragHandler
+                _button.transition = Selectable.Transition.None; 
+            }
+
+            if (_retreatButton != null)
+            {
+                _retreatButton.onClick.RemoveAllListeners();
+                _retreatButton.onClick.AddListener(OnRetreatButtonClicked);
+                _retreatButton.gameObject.SetActive(false);
             }
 
             if (_background == null) _background = GetComponent<Image>();
@@ -149,38 +156,67 @@ namespace MaouSamaTD.UI
             if (_button != null) _button.interactable = isInteractable;
             if (_dragHandler != null) _dragHandler.SetInteractable(isInteractable);
 
+            // Differentiate cost text color
+            if (_costText != null)
+            {
+                _costText.color = canAfford ? Color.white : Color.red;
+            }
+
             if (_background != null)
             {
                 Color baseColor = GetClassColor(_data.Class);
 
                 if (isCoolingDown)
                 {
-                     _background.color = baseColor; 
-                     if (_unitIcon != null) _unitIcon.color = Color.gray; 
+                    _background.color = baseColor * 0.6f; 
+                    if (_unitIcon != null) _unitIcon.color = new Color(0.4f, 0.4f, 0.4f, 1f); 
                 }
                 else if (isDeployed)
                 {
-                    _background.color = Color.gray;
-                    if (_unitIcon != null) _unitIcon.color = Color.gray; 
+                    // Already Deployed: Desaturated Gray
+                    _background.color = new Color(0.3f, 0.3f, 0.3f, 1f);
+                    if (_unitIcon != null) _unitIcon.color = new Color(0.3f, 0.3f, 0.3f, 0.7f); 
+                    if (_retreatButton != null) _retreatButton.gameObject.SetActive(true);
                 }
                 else
                 {
+                    if (_retreatButton != null) _retreatButton.gameObject.SetActive(false);
                     if (!canAfford)
                     {
-                        _background.color = baseColor * 0.5f; 
+                        // Insufficient Seals: Darkened/Reddish Tint
+                        _background.color = new Color(0.4f, 0.15f, 0.15f, 1f); 
+                        if (_unitIcon != null) _unitIcon.color = new Color(0.5f, 0.35f, 0.35f, 0.9f);
                     }
                     else
                     {
                         _background.color = _isSelected ? Color.green : baseColor; 
-                    }
-
-                    if (_unitIcon != null)
-                    {
-                        if (_isSelected) _unitIcon.color = Color.yellow;
-                        else if (!canAfford) _unitIcon.color = Color.white; 
-                        else _unitIcon.color = Color.white;
+                        if (_unitIcon != null)
+                        {
+                            if (_isSelected) _unitIcon.color = Color.yellow;
+                            else _unitIcon.color = Color.white;
+                        }
                     }
                 }
+            }
+        }
+
+        private void OnRetreatButtonClicked()
+        {
+            if (_data == null) return;
+            
+            // Find the active unit instance to retreat
+            // This usually requires a reference to the active units in the scene
+            // DeploymentUI or InteractionManager usually tracks this.
+            
+            // For now, we'll use a static message or find it via tag/type
+            // Better: DeploymentUI has OnUnitRetreated, but we need to tell it WHICH instance.
+            // Actually, PlayerUnit has OnRetreat event.
+            
+            // We'll broadcast this to DeploymentUI
+            var deploymentUI = Object.FindAnyObjectByType<DeploymentUI>();
+            if (deploymentUI != null)
+            {
+                deploymentUI.RetreatUnitByData(_data);
             }
         }
 

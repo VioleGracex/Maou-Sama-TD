@@ -160,7 +160,7 @@ def update_identity(asset_path, unit_name, unit_title):
 
 def update_renamed_asset_identities():
     identities = {
-        "03_R/Char_Lava_Bender_UnitData.asset": ("Lava-Bender", ""),
+        "03_R/Char_Ignatius_UnitData.asset": ("Ignatius", ""),
         "03_R/Char_Feral_Alley_Cat_UnitData.asset": ("Feral Alley-Cat", ""),
         "03_R/Char_Rune_Scarred_Gladiator_UnitData.asset": ("Rune-Scarred Gladiator", ""),
         "04_SR/Char_Kaelia_Cursed_Blademaster_UnitData.asset": ("Kaelia", "Cursed Blademaster")
@@ -258,7 +258,8 @@ def run_sync():
 
     # First, run renames and cleanup
     delete_leftover_assets()
-    rename_asset_if_exists("Char_Magma_UnitData.asset", "Char_Lava_Bender_UnitData.asset", asset_root / "03_R")
+    rename_asset_if_exists("Char_Magma_UnitData.asset", "Char_Ignatius_UnitData.asset", asset_root / "03_R")
+    rename_asset_if_exists("Char_Lava_Bender_UnitData.asset", "Char_Ignatius_UnitData.asset", asset_root / "03_R")
     rename_asset_if_exists("Char_Shadow_UnitData.asset", "Char_Feral_Alley_Cat_UnitData.asset", asset_root / "03_R")
     rename_asset_if_exists("Char_Thrax_UnitData.asset", "Char_Rune_Scarred_Gladiator_UnitData.asset", asset_root / "03_R")
     rename_asset_if_exists("Char_Kaelen_Cursed_Blademaster_UnitData.asset", "Char_Kaelia_Cursed_Blademaster_UnitData.asset", asset_root / "04_SR")

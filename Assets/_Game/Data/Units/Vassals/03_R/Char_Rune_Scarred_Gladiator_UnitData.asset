@@ -22,7 +22,6 @@ MonoBehaviour:
     ClassName: Bastion
   UnitName: Rune-Scarred Gladiator
   UnitTitle: 
-  BriefDescription: 
   LoreEntries: []
   BaseSkin:
     Avatar: {fileID: 21300000, guid: 56d728b8844f2e042ab0c40478e76071, type: 3}

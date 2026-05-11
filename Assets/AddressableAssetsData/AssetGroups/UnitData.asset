@@ -218,26 +218,12 @@ MonoBehaviour:
     - UnitData
     - Unit_Common
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 549c13a49e8715e48ace6c7a0e0679b4
-    m_Address: Char_Kaelia_Crimson_Vanguard_UnitData
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - UnitData
-    - Unit_Master
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5531527db5f679146ae1e71545b42a2c
     m_Address: Char_Stubbs_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData
     - Unit_Common
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5cf419b9421ba514fac9b1d438cb93e8
-    m_Address: Char_Vespera_Succubus_Envoy_UnitData
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - UnitData
-    - Unit_Master
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5e5a8620fb5a5d3458dd7f73bbff9da0
     m_Address: Char_Camilla_Ebon_Lady_Of_Chains_UnitData
@@ -451,13 +437,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: be5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b
     m_Address: Char_Lilith_UnitData
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - UnitData
-    - Unit_Master
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c1886ef87faf720409e881ecfb156ab3
-    m_Address: Char_Zephyria_Cloud_Scout_UnitData
     m_ReadOnly: 0
     m_SerializedLabels:
     - UnitData

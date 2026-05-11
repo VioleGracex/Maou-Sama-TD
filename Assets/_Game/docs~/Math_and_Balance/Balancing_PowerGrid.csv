@@ -83,7 +83,7 @@ File,Name,Rarity,Class,Base HP,Base ATK,Base DEF,Range,Final HP,Final ATK,Final 
 08_exiled_cleric.md,Elowen (Exiled Cleric),UC,Sage,1000,50,25,1,1100,55,28,434,1.0,12,1,18.0,False,Melee,SingleTarget,All
 10_solas_apprentice_cultist.md,"Solas, Apprentice Cultist",Common,Warlock,600,90,10,2,600,90,10,430,1.5,10,1,15.0,True,Magic,AreaOfEffect,All
 07_pyrrhus_hellfire_alchemist.md,"Pyrrhus, Hellfire Alchemist",R,Architect,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
-16_lava_bender.md,Lava-Bender,R,Architect,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
+16_ignatius.md,Ignatius,R,Architect,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
 20_mina_charming_novice.md,"Mina, Charming Novice",R,Support,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
 05_skye_lesser_harpy.md,"Skye, Lesser Harpy",Common,Ranger,600,80,10,3,600,80,10,416,1.0,10,1,15.0,True,Physical,SingleTarget,Horizontal
 09_fang_wolf_pup.md,"Fang, Wolf Pup",Common,Ranger,600,80,10,3,600,80,10,416,1.0,10,1,15.0,True,Physical,SingleTarget,Horizontal

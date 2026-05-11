@@ -28,7 +28,7 @@ class_assignments = {
     # Architect (4)
     "pyrrhus": "Architect",
     "hellfire_alchemist": "Architect",
-    "lava_bender": "Architect",
+    "ignatius": "Architect",
     "vesper": "Architect",
     "void_caller": "Architect",
     "malphas": "Architect",

@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
   CalculatedStats:
-    MaxHp: 3499.5
+  MaxHp: 3500
     Attack: 42
-    Defense: 84
+  Defense: 84
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Ignis
@@ -60,19 +60,18 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 4
   Class: 0
-  AttackPattern: 3
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 20
+  DeploymentCost: 26
   BlockCount: 3
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 2333
+  MaxHp: 3500
   AttackPower: 42
-  AttackInterval: 1
-  Defense: 56
-  Resistance: 0
-  RespawnTime: 5
+  AttackInterval: 1.2
+  Defense: 84
+  RespawnTime: 25.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 1

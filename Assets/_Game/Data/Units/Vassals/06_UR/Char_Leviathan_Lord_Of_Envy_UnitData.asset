@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 98e21802-77c1-4ae5-9fe5-b15aef0af508
   CalculatedStats:
-    MaxHp: 900
+  MaxHp: 1500
     Attack: 135
-    Defense: 15
+  Defense: 38
     ClassIcon: {fileID: 0}
     ClassName: Necromancer
   UnitName: Leviathan
@@ -50,20 +50,19 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 5
   Class: 7
-  AttackPattern: 0
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 25
+  DeploymentCost: 26
   BlockCount: 1
-  CanAttackFlying: 1
+  CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 900
-  AttackPower: 135
-  AttackInterval: 1
-  Defense: 15
-  Resistance: 0
-  RespawnTime: 5
-  Range: 3.5
+  MaxHp: 1500
+  AttackPower: 75
+  AttackInterval: 1.0
+  Defense: 38
+  RespawnTime: 30.0
+  Range: 1
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

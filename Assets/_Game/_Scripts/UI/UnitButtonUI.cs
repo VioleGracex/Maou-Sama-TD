@@ -19,6 +19,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private Button _button;
         [SerializeField] private Button _retreatButton;
         [SerializeField] private ClassScalingData _classScalingData; // Fallbacks to Resources if null
+        [SerializeField] private Slider _hpSlider;
         
         private UnitDragHandler _dragHandler;
         private UnitData _data;
@@ -212,12 +213,67 @@ namespace MaouSamaTD.UI
             // Better: DeploymentUI has OnUnitRetreated, but we need to tell it WHICH instance.
             // Actually, PlayerUnit has OnRetreat event.
             
-            // We'll broadcast this to DeploymentUI
             var deploymentUI = Object.FindAnyObjectByType<DeploymentUI>();
             if (deploymentUI != null)
             {
                 deploymentUI.RetreatUnitByData(_data);
             }
+        }
+
+        public void UpdateHpSlider(float ratio)
+        {
+            if (_hpSlider == null)
+            {
+                CreateProceduralHpSlider();
+            }
+
+            if (_hpSlider != null)
+            {
+                _hpSlider.value = ratio;
+                _hpSlider.gameObject.SetActive(true);
+            }
+        }
+
+        private void CreateProceduralHpSlider()
+        {
+            GameObject sliderObj = new GameObject("HP_Slider_Procedural", typeof(RectTransform));
+            sliderObj.transform.SetParent(this.transform, false);
+            
+            RectTransform rect = sliderObj.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.05f, 0f);
+            rect.anchorMax = new Vector2(0.95f, 0f);
+            rect.pivot = new Vector2(0.5f, 0f);
+            rect.anchoredPosition = new Vector2(0f, 4f);
+            rect.sizeDelta = new Vector2(0f, 6f);
+
+            Image bgImage = sliderObj.AddComponent<Image>();
+            bgImage.color = new Color(0.12f, 0.12f, 0.14f, 0.85f);
+
+            GameObject fillArea = new GameObject("Fill Area", typeof(RectTransform));
+            fillArea.transform.SetParent(sliderObj.transform, false);
+            RectTransform fillAreaRect = fillArea.GetComponent<RectTransform>();
+            fillAreaRect.anchorMin = Vector2.zero;
+            fillAreaRect.anchorMax = Vector2.one;
+            fillAreaRect.sizeDelta = Vector2.zero;
+
+            GameObject fillObj = new GameObject("Fill", typeof(RectTransform));
+            fillObj.transform.SetParent(fillArea.transform, false);
+            RectTransform fillRect = fillObj.GetComponent<RectTransform>();
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = new Vector2(1f, 1f);
+            fillRect.sizeDelta = Vector2.zero;
+
+            Image fillImage = fillObj.AddComponent<Image>();
+            fillImage.color = new Color(0.1f, 0.85f, 0.55f, 0.95f);
+
+            _hpSlider = sliderObj.AddComponent<Slider>();
+            _hpSlider.interactable = false;
+            _hpSlider.transition = Selectable.Transition.None;
+            _hpSlider.navigation = new Navigation { mode = Navigation.Mode.None };
+            _hpSlider.fillRect = fillRect;
+            _hpSlider.minValue = 0f;
+            _hpSlider.maxValue = 1f;
+            _hpSlider.value = 1f;
         }
 
         private Color GetClassColor(UnitClass unitClass)

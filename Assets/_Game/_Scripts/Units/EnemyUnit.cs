@@ -173,6 +173,12 @@ namespace MaouSamaTD.Units
             {
                 ability.OnDeath(this);
             }
+
+            if (_blockedBy != null)
+            {
+                _blockedBy.UnregisterBlockedEnemy(this);
+            }
+
             base.Die(attacker);
         }
 
@@ -444,7 +450,7 @@ namespace MaouSamaTD.Units
             {
                 _lastAttackTime = Time.time;
                 if (_animator != null) _animator.Play("Attack", 0, 0f);
-                target.TakeDamage(_attackPower, this, DamageType.Melee);
+                target.TakeDamage(_attackPower, this, _enemyData.DamageType);
 
                 foreach (var ability in _runtimeAbilities)
                 {
@@ -484,9 +490,9 @@ namespace MaouSamaTD.Units
 
             // 2. Check for blockers in moving path
             if (!_isCentering && _enemyData.MovementType != EnemyMovementType.Flying && 
-                _enemyData.CollisionType == EnemyCollisionType.BlockedByPlayer && !_isCharmed)
+                _enemyData.CollisionType == EnemyCollisionType.BlockedByUnits && !_isCharmed)
             {
-                if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player)
+                if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player && player.CanBlock())
                 {
                     bool canEvade = false;
                     
@@ -526,7 +532,7 @@ namespace MaouSamaTD.Units
                     else
                     {
                         _blockedBy = player;
-                        player.NotifyEncounter(); // Trigger reach tutorial logic
+                        player.NotifyEncounter(this); // Trigger reach tutorial logic
                         InitiateCentering();
                         return;
                     }
@@ -636,6 +642,10 @@ namespace MaouSamaTD.Units
 
         public void ReleaseBlock()
         {
+            if (_blockedBy != null)
+            {
+                _blockedBy.UnregisterBlockedEnemy(this);
+            }
             _blockedBy = null;
             _isMoving = true;
         }

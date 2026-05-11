@@ -39,6 +39,8 @@ namespace MaouSamaTD.UI
         private Dictionary<UnitData, float> _cooldownTimers = new Dictionary<UnitData, float>();
         private List<UnitButtonUI> _unitButtons = new List<UnitButtonUI>();
         private Dictionary<UnitData, PlayerUnit> _activeInstances = new Dictionary<UnitData, PlayerUnit>();
+        private Dictionary<UnitData, float> _vassalHpRatios = new Dictionary<UnitData, float>();
+        private Dictionary<UnitData, bool> _isManuallyRetreated = new Dictionary<UnitData, bool>();
 
         private void OnEnable()
         {
@@ -60,10 +62,41 @@ namespace MaouSamaTD.UI
 
         private void Update()
         {
+            // 1. Update live HP ratios for all deployed active instances
+            foreach (var kvp in _activeInstances)
+            {
+                if (kvp.Value != null)
+                {
+                    _vassalHpRatios[kvp.Key] = kvp.Value.CurrentHp / kvp.Value.MaxHp;
+                }
+            }
+
+            // 2. Regenerate benched/undeployed unit health over time
+            foreach (var unit in _availableUnits)
+            {
+                if (unit == null) continue;
+                if (!_deployedUnits.Contains(unit))
+                {
+                    if (!_vassalHpRatios.ContainsKey(unit))
+                    {
+                        _vassalHpRatios[unit] = 1.0f;
+                    }
+
+                    float currentRatio = _vassalHpRatios[unit];
+                    if (currentRatio < 1.0f)
+                    {
+                        bool isManual = !_isManuallyRetreated.ContainsKey(unit) || _isManuallyRetreated[unit];
+                        float rate = isManual ? 0.10f : 0.02f; // Manual Retreat: 10%/s, Defeated/KO: 2%/s
+                        currentRatio = Mathf.Min(1.0f, currentRatio + rate * Time.deltaTime);
+                        _vassalHpRatios[unit] = currentRatio;
+                    }
+                }
+            }
+
+            // 3. Process Cooldown Timers
             if (_cooldownTimers.Count > 0)
             {
                 List<UnitData> finishedCooldowns = new List<UnitData>();
-                
                 List<UnitData> keys = new List<UnitData>(_cooldownTimers.Keys);
 
                 foreach (var unit in keys)
@@ -84,6 +117,16 @@ namespace MaouSamaTD.UI
                     _cooldownTimers.Remove(unit);
                     UpdateButtonCooldownVisual(unit); 
                     RefreshButtonsState(); 
+                }
+            }
+
+            // 4. Update HP Slider visuals on all buttons in real-time
+            foreach (var btn in _unitButtons)
+            {
+                if (btn != null && btn.Data != null)
+                {
+                    float hpRatio = _vassalHpRatios.ContainsKey(btn.Data) ? _vassalHpRatios[btn.Data] : 1.0f;
+                    btn.UpdateHpSlider(hpRatio);
                 }
             }
         }
@@ -124,6 +167,17 @@ namespace MaouSamaTD.UI
             {
                 _availableUnits.Add(supportAssistant);
             }
+
+            _vassalHpRatios.Clear();
+            _isManuallyRetreated.Clear();
+            foreach (var unit in _availableUnits)
+            {
+                if (unit != null)
+                {
+                    _vassalHpRatios[unit] = 1.0f;
+                    _isManuallyRetreated[unit] = true;
+                }
+            }
             
             GenerateButtons();
             
@@ -137,6 +191,12 @@ namespace MaouSamaTD.UI
             
             if (!_availableUnits.Contains(unit))
                 _availableUnits.Add(unit);
+
+            if (!_vassalHpRatios.ContainsKey(unit))
+            {
+                _vassalHpRatios[unit] = 1.0f;
+                _isManuallyRetreated[unit] = true;
+            }
             
             // Ensure button exists even if unit was already in the list (e.g. for dynamic tutorial additions)
             if (_unitButtons.Exists(b => b.Data == unit))
@@ -260,6 +320,8 @@ namespace MaouSamaTD.UI
             }
             
             newUnit.Initialize(unitData);
+            float initialRatio = _vassalHpRatios.ContainsKey(unitData) ? _vassalHpRatios[unitData] : 1.0f;
+            newUnit.SetHpRatio(initialRatio);
             
             newUnit.CurrentTile = tile;
             tile.SetOccupant(newUnit);
@@ -280,6 +342,20 @@ namespace MaouSamaTD.UI
             if (_deployedUnits.Contains(unitData))
             {
                 _deployedUnits.Remove(unitData);
+                
+                if (_activeInstances.TryGetValue(unitData, out var instance))
+                {
+                    if (instance == null || instance.IsDead || instance.CurrentHp <= 0)
+                    {
+                        _vassalHpRatios[unitData] = 0f;
+                        _isManuallyRetreated[unitData] = false; // Defeated/KO -> Slow healing (2%/s)
+                    }
+                    else
+                    {
+                        _vassalHpRatios[unitData] = instance.CurrentHp / instance.MaxHp;
+                    }
+                }
+                
                 if (_activeInstances.ContainsKey(unitData)) _activeInstances.Remove(unitData);
                 
                 // Start Cooldown
@@ -294,6 +370,13 @@ namespace MaouSamaTD.UI
         {
             if (unit == null) return;
             
+            if (unit.Data != null)
+            {
+                float ratio = unit.CurrentHp / unit.MaxHp;
+                _vassalHpRatios[unit.Data] = ratio;
+                _isManuallyRetreated[unit.Data] = true; // Manual Retreat -> Fast healing (10%/s)
+            }
+            
             unit.Retreat();
         }
 
@@ -302,6 +385,10 @@ namespace MaouSamaTD.UI
             if (unitData == null) return;
             if (_activeInstances.TryGetValue(unitData, out var instance))
             {
+                float ratio = instance.CurrentHp / instance.MaxHp;
+                _vassalHpRatios[unitData] = ratio;
+                _isManuallyRetreated[unitData] = true; // Manual Retreat -> Fast healing (10%/s)
+
                 instance.Retreat();
             }
         }

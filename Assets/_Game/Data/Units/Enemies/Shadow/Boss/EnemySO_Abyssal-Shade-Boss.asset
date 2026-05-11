@@ -22,10 +22,11 @@ MonoBehaviour:
   AnimatorController: {fileID: 0}
   MaxHp: 2500
   MoveSpeed: 0.5
-  AttackPower: 20
+  AttackPower: 110
   AttackInterval: 2
   AttackRange: 1
-  DamageToPlayerBase: 10
+  ExitDamage: 10
+  DamageType: 2
   AttackPattern: 4
   MovementType: 0
   CollisionType: 0

@@ -121,9 +121,7 @@ namespace MaouSamaTD.UI
 
             // Only grey-out the speed button when the tutorial has actively stopped time.
             // The pause button is NEVER disabled — the player always needs it to exit/retreat.
-            bool tutorialStoppedTime = _tutorialManager != null && _tutorialManager.IsInTutorial
-                                       && _gameManager != null && _gameManager.CurrentSpeed <= 0f
-                                       && !_gameManager.IsPaused;
+            bool tutorialStoppedTime = _gameManager != null && _gameManager.IsTutorialTimeStop;
             if (_speedButton != null)
                 _speedButton.interactable = !tutorialStoppedTime;
         }
@@ -452,7 +450,7 @@ namespace MaouSamaTD.UI
             // Speed Text
             if (_speedText != null)
             {
-                if (_gameManager.IsPaused || _gameManager.CurrentSpeed <= 0f)
+                if (_gameManager.IsPaused)
                 {
                     _speedText.text = "";
                 }

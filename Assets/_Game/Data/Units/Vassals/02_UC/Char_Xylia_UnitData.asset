@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 62caa3fa-beb1-4700-a407-b3c83fbcf3f8
   CalculatedStats:
-    MaxHp: 2749.5
+  MaxHp: 660
     Attack: 33
-    Defense: 66
+  Defense: 11
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Xylia
@@ -47,20 +47,19 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 1
   Class: 0
-  AttackPattern: 0
-  AttackType: 0
-  DamageType: 0
+  AttackPattern: 4
+  AttackType: 1
+  DamageType: 2
   DeploymentCost: 12
-  BlockCount: 3
+  BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 1833
-  AttackPower: 33
-  AttackInterval: 1
-  Defense: 44
-  Resistance: 0
-  RespawnTime: 5
-  Range: 1
+  MaxHp: 660
+  AttackPower: 99
+  AttackInterval: 1.5
+  Defense: 11
+  RespawnTime: 18.0
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

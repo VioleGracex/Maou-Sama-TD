@@ -52,6 +52,14 @@ namespace MaouSamaTD.Editor
             GetWindow<MaouEnemyBrowser>("Enemy Browser");
         }
 
+        public static void OpenAndSelect(EnemyData enemy)
+        {
+            var window = GetWindow<MaouEnemyBrowser>("Enemy Browser");
+            window.SelectEnemy(enemy);
+            window._showDetails = true;
+            window.Repaint();
+        }
+
         private void OnEnable()
         {
             LoadSettings();

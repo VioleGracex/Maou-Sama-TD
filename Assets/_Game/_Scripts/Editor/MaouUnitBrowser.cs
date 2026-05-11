@@ -53,6 +53,19 @@ namespace MaouSamaTD.Editor
             GetWindow<MaouUnitBrowser>("Unit Browser");
         }
 
+        public static void OpenAndSelect(UnitData unit)
+        {
+            var window = GetWindow<MaouUnitBrowser>("Unit Browser");
+            window.SelectUnit(unit);
+            window.ShowDetailsWithUnit(unit);
+        }
+
+        private void ShowDetailsWithUnit(UnitData unit)
+        {
+            _showDetails = true;
+            Repaint();
+        }
+
         private void OnEnable()
         {
             LoadSettings();

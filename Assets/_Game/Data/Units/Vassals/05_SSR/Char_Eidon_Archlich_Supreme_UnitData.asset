@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 4035456c-fe53-4126-9cb0-8342fb415625
   CalculatedStats:
-    MaxHp: 3499.5
+  MaxHp: 840
     Attack: 42
-    Defense: 84
+  Defense: 14
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Eidon
@@ -48,20 +48,19 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 4
   Class: 0
-  AttackPattern: 0
-  AttackType: 0
-  DamageType: 0
-  DeploymentCost: 20
-  BlockCount: 3
+  AttackPattern: 4
+  AttackType: 1
+  DamageType: 2
+  DeploymentCost: 22
+  BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 2333
-  AttackPower: 42
-  AttackInterval: 1
-  Defense: 56
-  Resistance: 0
-  RespawnTime: 5
-  Range: 1
+  MaxHp: 840
+  AttackPower: 126
+  AttackInterval: 1.5
+  Defense: 14
+  RespawnTime: 25.0
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

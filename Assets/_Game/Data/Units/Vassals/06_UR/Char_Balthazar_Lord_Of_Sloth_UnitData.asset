@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 9fb6bb04-3959-41fc-9a73-0c66d1be03e0
   CalculatedStats:
-    MaxHp: 900
+  MaxHp: 900
     Attack: 135
-    Defense: 15
+  Defense: 15
     ClassIcon: {fileID: 0}
     ClassName: Warlock
   UnitName: Balthazar
@@ -50,20 +50,19 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 5
   Class: 4
-  AttackPattern: 0
-  AttackType: 0
-  DamageType: 0
-  DeploymentCost: 25
+  AttackPattern: 4
+  AttackType: 1
+  DamageType: 2
+  DeploymentCost: 26
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
   MaxHp: 900
   AttackPower: 135
-  AttackInterval: 1
+  AttackInterval: 1.5
   Defense: 15
-  Resistance: 0
-  RespawnTime: 5
-  Range: 3.5
+  RespawnTime: 30.0
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

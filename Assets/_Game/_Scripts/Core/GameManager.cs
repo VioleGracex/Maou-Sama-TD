@@ -421,9 +421,12 @@ namespace MaouSamaTD.Managers
                 SetSpeed(0);
             }
         }
-        public void SetSpeed(float speed)
+        public bool IsTutorialTimeStop { get; private set; } = false;
+
+        public void SetSpeed(float speed, bool isTutorialTimeStop = false)
         {
             CurrentSpeed = speed;
+            IsTutorialTimeStop = isTutorialTimeStop;
             if (!IsPaused && !IsGameEnded)
             {
                 Time.timeScale = CurrentSpeed;

@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 67df1e55-029d-4587-8341-ad2e56e512b5
   CalculatedStats:
-    MaxHp: 3000
+  MaxHp: 960
     Attack: 36
-    Defense: 72
+  Defense: 18
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Thresh
@@ -46,19 +46,18 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 2
   Class: 0
-  AttackPattern: 0
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 14
-  BlockCount: 3
-  CanAttackFlying: 1
+  DeploymentCost: 15
+  BlockCount: 1
+  CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 2000
-  AttackPower: 36
-  AttackInterval: 1
-  Defense: 48
-  Resistance: 0
-  RespawnTime: 5
+  MaxHp: 960
+  AttackPower: 120
+  AttackInterval: 0.8
+  Defense: 18
+  RespawnTime: 20.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

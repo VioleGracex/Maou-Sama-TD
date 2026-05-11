@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 7e9b5bb9-d57c-40a7-9f31-fc90a134e34e
   CalculatedStats:
-    MaxHp: 3000
+  MaxHp: 840
     Attack: 36
-    Defense: 72
+  Defense: 24
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Pyrrhus
@@ -46,20 +46,19 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 2
   Class: 0
-  AttackPattern: 0
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 14
-  BlockCount: 3
+  DeploymentCost: 15
+  BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 2000
-  AttackPower: 36
-  AttackInterval: 1
-  Defense: 48
-  Resistance: 0
-  RespawnTime: 5
-  Range: 1
+  MaxHp: 840
+  AttackPower: 48
+  AttackInterval: 1.0
+  Defense: 24
+  RespawnTime: 20.0
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

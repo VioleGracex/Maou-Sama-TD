@@ -14,7 +14,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _hpText;
         [SerializeField] private TextMeshProUGUI _atkText;
         [SerializeField] private TextMeshProUGUI _defText;
-        [SerializeField] private TextMeshProUGUI _resText;
+
         [SerializeField] private TextMeshProUGUI _blockText;
         [SerializeField] private TextMeshProUGUI _aspdText;
         [SerializeField] private TextMeshProUGUI _costText;
@@ -35,7 +35,7 @@ namespace MaouSamaTD.UI
             if (_hpText) _hpText.text = u.MaxHp.ToString("F0");
             if (_atkText) _atkText.text = u.AttackPower.ToString("F0");
             if (_defText) _defText.text = u.Defense.ToString("F0");
-            if (_resText) _resText.text = u.Resistance.ToString("F0");
+
             if (_blockText) _blockText.text = u.BlockCount.ToString();
             if (_aspdText) _aspdText.text = GetASPDLabel(u.AttackInterval);
             if (_costText) _costText.text = u.DeploymentCost.ToString();

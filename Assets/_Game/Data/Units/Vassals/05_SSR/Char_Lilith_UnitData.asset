@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: c7b8e2d4-1a2b-4c3d-8e5f-6a7b8c9d0e1f
   CalculatedStats:
-    MaxHp: 840
+  MaxHp: 840
     Attack: 126
-    Defense: 14
+  Defense: 14
     ClassIcon: {fileID: 0}
     ClassName: Warlock
   UnitName: Lilith
@@ -62,10 +62,10 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 4
   Class: 4
-  AttackPattern: 5
-  AttackType: 0
+  AttackPattern: 4
+  AttackType: 1
   DamageType: 2
-  DeploymentCost: 20
+  DeploymentCost: 22
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets:
@@ -103,11 +103,10 @@ MonoBehaviour:
   - {x: -1, y: -3}
   MaxHp: 840
   AttackPower: 126
-  AttackInterval: 1
+  AttackInterval: 1.5
   Defense: 14
-  Resistance: 0
-  RespawnTime: 5
-  Range: 3.5
+  RespawnTime: 25.0
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

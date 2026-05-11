@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 60be5deb-b38c-4d77-86f4-b916eaafc543
   CalculatedStats:
-    MaxHp: 840
+  MaxHp: 840
     Attack: 112
-    Defense: 14
+  Defense: 14
     ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
     ClassName: Ranger
   UnitName: Aquila
@@ -49,20 +49,19 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 4
   Class: 3
-  AttackPattern: 0
+  AttackPattern: 1
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 20
+  DeploymentCost: 22
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
   MaxHp: 840
   AttackPower: 112
-  AttackInterval: 1
+  AttackInterval: 1.0
   Defense: 14
-  Resistance: 0
-  RespawnTime: 5
-  Range: 4
+  RespawnTime: 25.0
+  Range: 3
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

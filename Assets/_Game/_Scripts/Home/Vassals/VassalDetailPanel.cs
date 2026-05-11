@@ -48,7 +48,7 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private TextMeshProUGUI _hpText;
         [SerializeField] private TextMeshProUGUI _atkText;
         [SerializeField] private TextMeshProUGUI _defText;
-                [SerializeField] private TextMeshProUGUI _resistanceText;
+
 
         [SerializeField] private TextMeshProUGUI _rangeText;
         [SerializeField] private TextMeshProUGUI _blockText;
@@ -273,7 +273,7 @@ namespace MaouSamaTD.UI.Vassals
             if (_hpText)    _hpText.text    = u.MaxHp.ToString("0");
             if (_atkText)   _atkText.text   = u.AttackPower.ToString("0");
             if (_defText)   _defText.text   = u.Defense.ToString("0");
-            if (_resistanceText) _resistanceText.text = (u.Resistance * 100f).ToString("0") + "%";
+
             if (_rangeText) _rangeText.text = u.Range.ToString("0.0");
             if (_blockText) _blockText.text = u.BlockCount.ToString();
             if (_costText)  _costText.text  = u.DeploymentCost.ToString();

@@ -18,18 +18,25 @@ MonoBehaviour:
   EnemySprite: {fileID: 21300000, guid: e6775d8d732c1ac49b01a604fe2af402, type: 3}
   FullBodyArt: {fileID: 21300000, guid: 35384ba6de243a74a92c21d9577b67c3, type: 3}
   FullSplashArt: {fileID: 21300000, guid: 35384ba6de243a74a92c21d9577b67c3, type: 3}
+  IsBoss: 0
   AnimatorController: {fileID: 0}
   MaxHp: 300
   MoveSpeed: 1
   AttackPower: 30
   AttackInterval: 1.5
   AttackRange: 1
-  DamageToPlayerBase: 1
+  DamageType: 0
+  ExitDamage: 1
   AttackPattern: 3
   MovementType: 0
   CollisionType: 0
+  EvasionType: 0
+  TargetingPriority: 0
+  OnlyAttackIfBlocked: 0
+  GroundAttackTargets: 1
   PhasingCharges: 0
   Immunities: 
+  Abilities: []
   CurrencyReward: 10
   Tint: {r: 1, g: 1, b: 1, a: 1}
   VisualYOffset: 0

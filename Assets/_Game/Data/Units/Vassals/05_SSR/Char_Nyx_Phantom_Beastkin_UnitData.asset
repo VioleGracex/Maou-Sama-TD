@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 1317ba29-b5bf-42ce-8171-faff612ca29a
   CalculatedStats:
-    MaxHp: 3499.5
+  MaxHp: 1120
     Attack: 42
-    Defense: 84
+  Defense: 21
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Nyx
@@ -48,19 +48,18 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 4
   Class: 0
-  AttackPattern: 0
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
   DeploymentCost: 20
-  BlockCount: 3
-  CanAttackFlying: 1
+  BlockCount: 1
+  CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 2333
-  AttackPower: 42
-  AttackInterval: 1
-  Defense: 56
-  Resistance: 0
-  RespawnTime: 5
+  MaxHp: 1120
+  AttackPower: 140
+  AttackInterval: 0.8
+  Defense: 21
+  RespawnTime: 25.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

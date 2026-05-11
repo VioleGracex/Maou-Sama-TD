@@ -102,6 +102,7 @@ namespace MaouSamaTD.Units.Editor
             DrawProperty("AttackInterval", "Attack Interval (Sec)");
             DrawProperty("AttackRange", "Attack Range (Tiles)");
             DrawProperty("ExitDamage", "Exit Damage (To Player)");
+            DrawProperty("DamageType", "Damage Type");
             EndSection();
 
             BeginSection("Combat Pattern");

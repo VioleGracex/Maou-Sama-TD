@@ -108,7 +108,7 @@ namespace MaouSamaTD.Units.Editor
                 DrawProperty("MaxHp", "Max HP");
                 DrawProperty("AttackPower", "Attack Power");
                 DrawProperty("Defense", "Defense");
-                DrawProperty("Resistance", "Resistance");
+
                 DrawProperty("RespawnTime", "Redeploy Timer (Sec)");
             }
             EndSection(baseAttState);

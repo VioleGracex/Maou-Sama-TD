@@ -46,12 +46,29 @@ namespace MaouSamaTD.Units
         public int KillCount { get; private set; }
         public int ReachCount { get; private set; }
 
-        public void NotifyEncounter()
+        private System.Collections.Generic.List<EnemyUnit> _currentlyBlockedEnemies = new System.Collections.Generic.List<EnemyUnit>();
+        public bool CanBlock() => _currentlyBlockedEnemies.Count < BlockCount;
+
+        public void NotifyEncounter(EnemyUnit enemy)
         {
+            if (enemy != null && !_currentlyBlockedEnemies.Contains(enemy))
+            {
+                _currentlyBlockedEnemies.Add(enemy);
+            }
+            
             ReachCount++;
-            if (_showDebugLogs) Debug.Log($"[Ultimate] {gameObject.name} encountered an enemy. Total reaches: {ReachCount}");
+            if (_showDebugLogs) Debug.Log($"[Ultimate] {gameObject.name} encountered {enemy?.gameObject.name}. Blocking: {_currentlyBlockedEnemies.Count}/{BlockCount}");
             Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
             if (tm != null) tm.OnActionTriggered("UnitReach");
+        }
+
+        public void UnregisterBlockedEnemy(EnemyUnit enemy)
+        {
+            if (_currentlyBlockedEnemies.Contains(enemy))
+            {
+                _currentlyBlockedEnemies.Remove(enemy);
+                if (_showDebugLogs) Debug.Log($"[Ultimate] {gameObject.name} released {enemy.gameObject.name}. Blocking: {_currentlyBlockedEnemies.Count}/{BlockCount}");
+            }
         }
 
         public void IncrementKillCount()
@@ -260,6 +277,12 @@ namespace MaouSamaTD.Units
         private void OnDestroy()
         {
             ActiveUnits.Remove(this);
+            // Ensure any blocked enemies are released so they can resume moving
+            foreach (var enemy in _currentlyBlockedEnemies)
+            {
+                if (enemy != null) enemy.ReleaseBlock();
+            }
+            _currentlyBlockedEnemies.Clear();
         }
 
         protected override void UpdateVisuals()
@@ -458,6 +481,8 @@ namespace MaouSamaTD.Units
                 CurrentTile.SetOccupant(null);
                 CurrentTile = null;
             }
+
+            OnRetreat?.Invoke(this);
 
             if (_interactionManager != null) _interactionManager.NotifyUnitRemoved(this);
             

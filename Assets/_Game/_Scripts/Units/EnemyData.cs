@@ -11,8 +11,8 @@ namespace MaouSamaTD.Units
 
     public enum EnemyCollisionType
     {
-        BlockedByPlayer,
-        IgnorePlayer
+        BlockedByUnits,
+        IgnoreUnits
     }
 
     public enum EnemyEvasionType
@@ -56,6 +56,9 @@ namespace MaouSamaTD.Units
         public float AttackInterval = 1.0f; 
         public float AttackRange = 0.5f;
         
+        [Tooltip("The type of damage this enemy deals.")]
+        public DamageType DamageType = DamageType.Melee;
+
         [Tooltip("Damage dealt to the Player's Nexus health when this unit reaches the exit.")]
         public float ExitDamage = 1f;
 

@@ -27,31 +27,84 @@ namespace MaouSamaTD.UI.Tutorial
             if (_panel != null) _panel.SetActive(false);
         }
 
+        private void OnDisable()
+        {
+            KillActiveSequence();
+        }
+
         private Vector3 _lastShowPos;
         private float _lastShowScale;
         private Sequence _pulseSeq;
+        private Vector2 _currentTargetStart;
+        private Vector2 _currentTargetEnd;
+
+        private void KillActiveSequence()
+        {
+            if (_handTransform != null)
+            {
+                _handTransform.DOKill();
+            }
+            if (_pulseSeq != null)
+            {
+                _pulseSeq.Kill();
+                _pulseSeq = null;
+            }
+        }
 
         public void ShowAt(Vector2 screenPosition, float baseScale = 1f)
         {
             gameObject.SetActive(true);
-            _panel.SetActive(true);
+            if (_panel != null) _panel.SetActive(true);
 
-            // Stability check: if position and scale are almost identical, don't restart logic
-            if (Vector3.Distance(_handTransform.position, (Vector3)screenPosition) < 0.1f && 
-                Mathf.Abs(_lastShowScale - baseScale) < 0.01f && 
-                _pulseSeq != null && _pulseSeq.IsActive())
+            // Stability check: if position is extremely close and scale is same, do nothing
+            float dist = Vector2.Distance(_handTransform.position, screenPosition);
+            if (dist < 0.1f && Mathf.Abs(_lastShowScale - baseScale) < 0.01f && _pulseSeq != null && _pulseSeq.IsActive())
             {
                 return;
             }
 
-            _lastShowPos = screenPosition;
+            // If we are already active and pulsing, and the target position changed slightly (e.g., unit moving, camera jitter)
+            if (dist < 15f && _pulseSeq != null && _pulseSeq.IsActive())
+            {
+                // Smoothly slide/cling to the target position without killing and restarting the pulsing scale sequence
+                _handTransform.position = screenPosition;
+                _lastShowScale = baseScale;
+                return;
+            }
+
+            // If position changed significantly, smoothly glide to the new position instead of snapping instantly
+            if (dist >= 15f && _pulseSeq != null && _pulseSeq.IsActive() && gameObject.activeInHierarchy)
+            {
+                _currentTargetStart = _handTransform.position;
+                _currentTargetEnd = screenPosition;
+                _lastShowScale = baseScale;
+
+                KillActiveSequence();
+                _pulseSeq = DOTween.Sequence();
+                _pulseSeq.Join(_handTransform.DOMove(screenPosition, 0.35f).SetEase(Ease.OutQuad))
+                         .Join(_handTransform.DOScale(baseScale, 0.35f).SetEase(Ease.OutQuad))
+                         .OnComplete(() =>
+                         {
+                             // Once arrived, resume the continuous pulse animation loop
+                             KillActiveSequence();
+                             _pulseSeq = DOTween.Sequence();
+                             _pulseSeq.Append(_handTransform.DOScale(baseScale + _pulseAmount, _pulseDuration).SetEase(Ease.InOutSine))
+                                      .Append(_handTransform.DOScale(baseScale, _returnDuration).SetEase(Ease.InOutSine))
+                                      .SetLoops(-1, LoopType.Restart)
+                                      .SetUpdate(true);
+                         })
+                         .SetUpdate(true);
+                return;
+            }
+
+            // First time showing or fallback: instant placement & pulse setup
             _lastShowScale = baseScale;
             _handTransform.position = screenPosition;
-            
-            // Pulse logic: relative to baseScale
-            _handTransform.DOKill();
+            _currentTargetEnd = screenPosition;
+
+            KillActiveSequence();
             _handTransform.localScale = Vector3.one * baseScale;
-            
+
             _pulseSeq = DOTween.Sequence();
             _pulseSeq.Append(_handTransform.DOScale(baseScale + _pulseAmount, _pulseDuration).SetEase(Ease.InOutSine))
                     .Append(_handTransform.DOScale(baseScale, _returnDuration).SetEase(Ease.InOutSine))
@@ -62,48 +115,87 @@ namespace MaouSamaTD.UI.Tutorial
         public void MoveHand(Vector2 start, Vector2 end, float targetScale = 1f)
         {
             gameObject.SetActive(true);
-            _panel.SetActive(true);
+            if (_panel != null) _panel.SetActive(true);
 
-            // Don't interrupt if we are already moving to the same destination
-            if (_pulseSeq != null && _pulseSeq.IsActive() && Vector3.Distance(_handTransform.position, (Vector3)end) < 1f)
+            // If we are already animating a move from the same start to the same end, let it play!
+            if (_pulseSeq != null && _pulseSeq.IsActive() && 
+                Vector2.Distance(_currentTargetStart, start) < 5f && 
+                Vector2.Distance(_currentTargetEnd, end) < 5f)
             {
                 return;
             }
 
-            _handTransform.DOKill();
-            _handTransform.position = start;
-            _handTransform.localScale = Vector3.one * targetScale;
+            _currentTargetStart = start;
+            _currentTargetEnd = end;
+            _lastShowScale = targetScale;
+
+            KillActiveSequence();
             
-            float distance = Vector2.Distance(start, end);
-            float duration = Mathf.Clamp(distance / 500f, 0.5f, 2.0f); // Constant speed (approx 500px/s)
+            // Set initial state: slightly enlarged, hovering over button
+            _handTransform.position = start;
+            _handTransform.localScale = Vector3.one * (targetScale * 1.1f);
             
             _pulseSeq = DOTween.Sequence();
-            _pulseSeq.Append(_handTransform.DOMove(end, duration).SetEase(Ease.InOutSine))
-                .SetLoops(-1, LoopType.Restart)
-                .SetUpdate(true);
+            
+            // 1. Press down (scale down to mimic grabbing)
+            _pulseSeq.Append(_handTransform.DOScale(targetScale * 0.85f, 0.35f).SetEase(Ease.OutBack))
+                     .AppendInterval(0.1f); // Brief tactile pause before dragging
+            
+            // 2. Drag to destination (using InOutCubic for realistic weight, inertia, and smooth deceleration)
+            float distance = Vector2.Distance(start, end);
+            float dragDuration = Mathf.Clamp(distance / 200f, 1.2f, 2.0f); // Deliberate speed (200px/s) for ultimate readability
+            
+            _pulseSeq.Append(_handTransform.DOMove(end, dragDuration).SetEase(Ease.InOutCubic));
+            
+            // 3. Release (scale up slightly to mimic dropping/letting go)
+            _pulseSeq.Append(_handTransform.DOScale(targetScale * 1.1f, 0.3f).SetEase(Ease.OutSine))
+                     .AppendInterval(0.15f);
+                     
+            // 4. Fade out smoothly (scale to 0 so there is NO jarring teleport back to start!)
+            _pulseSeq.Append(_handTransform.DOScale(0f, 0.25f).SetEase(Ease.InSine));
+            
+            // 5. Instantly teleport back to start while invisible
+            _pulseSeq.AppendCallback(() => {
+                _handTransform.position = start;
+            });
+            
+            // 6. Fade back in/scale up over start position to restart loop
+            _pulseSeq.Append(_handTransform.DOScale(targetScale * 1.1f, 0.25f).SetEase(Ease.OutSine))
+                     .AppendInterval(0.2f); // Brief idle delay before repeating
+
+            _pulseSeq.SetLoops(-1, LoopType.Restart)
+                     .SetUpdate(true);
         }
 
         public void MoveTo(Vector2 end, float targetScale = 1f, float duration = 0.3f)
         {
             gameObject.SetActive(true);
-            _panel.SetActive(true);
+            if (_panel != null) _panel.SetActive(true);
 
-            if (_pulseSeq != null && _pulseSeq.IsActive() && Vector3.Distance(_handTransform.position, (Vector3)end) < 1f)
+            // If we are already moving towards the same destination, don't interrupt
+            if (_pulseSeq != null && _pulseSeq.IsActive() && Vector2.Distance(_currentTargetEnd, end) < 5f)
             {
                 return;
             }
 
-            _handTransform.DOKill();
+            _currentTargetStart = _handTransform.position;
+            _currentTargetEnd = end;
+            _lastShowScale = targetScale;
+
+            KillActiveSequence();
             _pulseSeq = DOTween.Sequence();
             _pulseSeq.Join(_handTransform.DOMove(end, duration).SetEase(Ease.OutSine))
                      .Join(_handTransform.DOScale(targetScale, duration).SetEase(Ease.OutSine))
                      .SetUpdate(true);
         }
 
-
         public void Hide()
         {
-            _panel.SetActive(false);
+            KillActiveSequence();
+            _currentTargetStart = Vector2.zero;
+            _currentTargetEnd = Vector2.zero;
+            _lastShowScale = 0f;
+            if (_panel != null) _panel.SetActive(false);
             gameObject.SetActive(false);
         }
     }

@@ -1186,21 +1186,44 @@ namespace MaouSamaTD.Editor
         {
             if (_pathingSimulationEnemy == null || path == null || path.Count < 2) return;
 
-            float distance = path.Count - 1;
-            float time = distance / Mathf.Max(0.1f, _pathingSimulationEnemy.MoveSpeed);
+            float speed = Mathf.Max(0.1f, _pathingSimulationEnemy.MoveSpeed);
 
-            Vector2 labelPos = GetCellCenter(path[0], data, tileGridRect, cellW, cellH);
+            // 1. Draw intermediate time tick labels every 3 blocks to represent flow
+            GUIStyle tickStyle = new GUIStyle(EditorStyles.boldLabel);
+            tickStyle.normal.textColor = new Color(color.r * 0.9f, color.g * 0.9f, color.b * 0.9f, 0.85f);
+            tickStyle.fontSize = 9;
+
+            for (int i = 1; i < path.Count - 1; i++)
+            {
+                if (i % 3 == 0)
+                {
+                    float cumulativeTime = i / speed;
+                    Vector2 nodePos = GetCellCenter(path[i], data, tileGridRect, cellW, cellH);
+                    string nodeText = $"+{cumulativeTime:F1}s";
+                    Vector2 nodeSize = tickStyle.CalcSize(new GUIContent(nodeText));
+
+                    // Small background for readability
+                    EditorGUI.DrawRect(new Rect(nodePos.x - nodeSize.x * 0.5f - 1, nodePos.y - nodeSize.y * 0.5f - 1, nodeSize.x + 2, nodeSize.y + 2), new Color(0, 0, 0, 0.45f));
+                    GUI.Label(new Rect(nodePos.x - nodeSize.x * 0.5f, nodePos.y - nodeSize.y * 0.5f, nodeSize.x, nodeSize.y), nodeText, tickStyle);
+                }
+            }
+
+            // 2. Draw final total arrival time at the destination (exit node)
+            float distance = path.Count - 1;
+            float totalTime = distance / speed;
+
+            Vector2 exitPos = GetCellCenter(path[path.Count - 1], data, tileGridRect, cellW, cellH);
             
-            GUIStyle style = new GUIStyle(EditorStyles.boldLabel);
-            style.normal.textColor = color;
-            style.fontSize = 12;
+            GUIStyle finalStyle = new GUIStyle(EditorStyles.boldLabel);
+            finalStyle.normal.textColor = color;
+            finalStyle.fontSize = 11;
             
-            string text = $"{time:F1}s ({distance} blocks)";
-            Vector2 size = style.CalcSize(new GUIContent(text));
+            string text = $"{totalTime:F1}s ({distance} blocks)";
+            Vector2 size = finalStyle.CalcSize(new GUIContent(text));
             
-            // Draw a small background for readability
-            EditorGUI.DrawRect(new Rect(labelPos.x - size.x * 0.5f - 2, labelPos.y - size.y * 0.5f - 2, size.x + 4, size.y + 4), new Color(0, 0, 0, 0.6f));
-            GUI.Label(new Rect(labelPos.x - size.x * 0.5f, labelPos.y - size.y * 0.5f, size.x, size.y), text, style);
+            // Draw a beautiful background highlight for the final result
+            EditorGUI.DrawRect(new Rect(exitPos.x - size.x * 0.5f - 3, exitPos.y - size.y * 0.5f - 3, size.x + 6, size.y + 6), new Color(0, 0, 0, 0.75f));
+            GUI.Label(new Rect(exitPos.x - size.x * 0.5f, exitPos.y - size.y * 0.5f, size.x, size.y), text, finalStyle);
         }
 
         private Vector2 GetCellCenter(Vector2Int coord, MapData data, Rect tileGridRect, float cellW, float cellH)

@@ -112,6 +112,63 @@ for file_path in char_dir.rglob("*.md"):
         
         power = calc_power(final_hp, final_atk, final_def, mult, base["Range"], 100)
         
+        # Standard defaults based on Class & Rarity
+        atk_interval = 1.0
+        if cls in ["Assassin", "Executioner"]:
+            atk_interval = 0.8
+        elif cls in ["Warlock", "Sage", "Necromancer"]:
+            atk_interval = 1.5
+        elif cls == "Bastion":
+            atk_interval = 1.2
+
+        cost_map = {
+            "Common": 10,
+            "UC": 12,
+            "R": 15,
+            "SR": 18,
+            "SSR": 22,
+            "UR": 26,
+        }
+        deployment_cost = cost_map.get(rarity, 10)
+        if cls == "Bastion":
+            deployment_cost += 4
+        elif cls == "Assassin":
+            deployment_cost -= 2
+
+        block_map = {
+            "Vanguard": 2,
+            "Bastion": 3,
+            "Guardian": 3,
+            "Overlord": 3,
+        }
+        block_count = block_map.get(cls, 1)
+
+        respawn_map = {
+            "Common": 15.0,
+            "UC": 18.0,
+            "R": 20.0,
+            "SR": 22.0,
+            "SSR": 25.0,
+            "UR": 30.0,
+        }
+        respawn_time = respawn_map.get(rarity, 20.0)
+
+        can_attack_flying = cls in ["Ranger", "Gunner", "Warlock", "Sage", "Necromancer", "Support", "Architect"]
+
+        damage_type = "Melee"
+        if cls in ["Warlock", "Sage", "Necromancer"]:
+            damage_type = "Magic"
+        elif cls in ["Ranger", "Gunner"]:
+            damage_type = "Physical"
+
+        attack_type = "SingleTarget"
+        if cls in ["Warlock", "Necromancer"]:
+            attack_type = "AreaOfEffect"
+
+        attack_pattern = "All"
+        if cls in ["Ranger", "Gunner"]:
+            attack_pattern = "Horizontal"
+
         results.append({
             "File": filename,
             "Name": name,
@@ -124,16 +181,30 @@ for file_path in char_dir.rglob("*.md"):
             "Final HP": final_hp,
             "Final ATK": final_atk,
             "Final DEF": final_def,
-            "Total Power": power
+            "Total Power": power,
+            "AttackInterval": atk_interval,
+            "DeploymentCost": deployment_cost,
+            "BlockCount": block_count,
+            "RespawnTime": respawn_time,
+            "CanAttackFlying": "True" if can_attack_flying else "False",
+            "DamageType": damage_type,
+            "AttackType": attack_type,
+            "AttackPattern": attack_pattern
         })
 
 results.sort(key=lambda x: x["Total Power"], reverse=True)
 
 with open(csv_path, "w", newline="", encoding="utf-8") as csvfile:
-    fieldnames = ["File", "Name", "Rarity", "Class", "Base HP", "Base ATK", "Base DEF", "Range", "Final HP", "Final ATK", "Final DEF", "Total Power"]
+    fieldnames = [
+        "File", "Name", "Rarity", "Class", "Base HP", "Base ATK", "Base DEF", "Range", 
+        "Final HP", "Final ATK", "Final DEF", "Total Power", "AttackInterval", 
+        "DeploymentCost", "BlockCount", "RespawnTime", "CanAttackFlying", 
+        "DamageType", "AttackType", "AttackPattern"
+    ]
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     for row in results:
         writer.writerow(row)
 
 print(f"Generated {csv_path} with {len(results)} characters.")
+

@@ -116,7 +116,7 @@ namespace MaouSamaTD.Managers
 
                     if (dialogue != null && _dialogueManager != null)
                     {
-                        _gameManager?.SetSpeed(0);
+                        _gameManager?.SetSpeed(0, true);
                         _dialogueManager.StartDialogue(dialogue, () =>
                         {
                             if (_showDebugLogs) Debug.Log("[tutorial] Custom Miss/Retry Dialogue Finished.");
@@ -449,7 +449,7 @@ namespace MaouSamaTD.Managers
                     else
                     {
                         if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime. Pausing game.");
-                        _gameManager.SetSpeed(0);
+                        _gameManager.SetSpeed(0, true);
                     }
                 }
 
@@ -488,7 +488,7 @@ namespace MaouSamaTD.Managers
                                 else
                                 {
                                     if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime. Pausing game.");
-                                    _gameManager.SetSpeed(0);
+                                    _gameManager.SetSpeed(0, true);
                                 }
                             }
 
@@ -728,7 +728,7 @@ namespace MaouSamaTD.Managers
                             HandleUIHighlight(step);
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for Wave completion (Index: {step.WaveIndex})");
                             if (step.ResumeTime) _gameManager.SetSpeed(1); 
-                            else _gameManager.SetSpeed(0); 
+                            else _gameManager.SetSpeed(0, true); 
                             yield return new WaitUntil(() => _enemyManager != null && _enemyManager.IsWaveCleared(step.WaveIndex));
                             if (_showDebugLogs) Debug.Log("[tutorial] Wave cleared.");
                         }
@@ -745,7 +745,7 @@ namespace MaouSamaTD.Managers
                             {
                                 if (_gameManager.CurrentSpeed > 0.1f)
                                 {
-                                    _gameManager.SetSpeed(0);
+                                    _gameManager.SetSpeed(0, true);
                                 }
                             }
                             else if (_gameManager.CurrentSpeed < 0.1f)
@@ -1202,51 +1202,38 @@ namespace MaouSamaTD.Managers
 
             if (step.DragShowHand && (uiHits.Count > 0 || worldHighlights.Count > 0) && !_dialogueManager.IsDialogueActive)
             {
-                Vector2 startPos = Vector2.zero;
-                if (uiHits.Count > 0) startPos = (Vector2)uiHits[0].Target.position + uiHits[0].Offset;
-                else if (worldHighlights.Count > 0) startPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
-
-                if (!ignoreOverride && step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
+                if (isDragging || isSkillTargeting || isPlacementMode)
                 {
-                    if (GetTargetScreenPositionAndScale(step.HandTargetUIOverride, out Vector2 targetPos, out float scaleMult))
-                    {
-                        float finalScale = step.HandScale * scaleMult;
-                        _handUI.MoveHand(startPos, targetPos, finalScale);
-                    }
-                    else _handUI.MoveHand(startPos, Vector2.zero, step.HandScale);
+                    _handUI.Hide();
                 }
                 else
                 {
-                    Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
-                    Vector2 screenTarget = Camera.main.WorldToScreenPoint(worldTarget);
-                    _handUI.MoveHand(startPos, screenTarget, step.HandScale);
-                }
-            }
-            else if (step.ShowHand && !_dialogueManager.IsDialogueActive)
-            {
-                if (isDragging)
-                {
                     Vector2 startPos = Vector2.zero;
-                    Vector2 screenTarget = Vector2.zero;
+                    if (uiHits.Count > 0) startPos = (Vector2)uiHits[0].Target.position + uiHits[0].Offset;
+                    else if (worldHighlights.Count > 0) startPos = Camera.main.WorldToScreenPoint(worldHighlights[0].Position);
 
-                    if (uiHits.Count > 0)
+                    if (!ignoreOverride && step.HandTargetUIOverride != null && !string.IsNullOrEmpty(step.HandTargetUIOverride.Name))
                     {
-                        Vector3[] corners = new Vector3[4];
-                        uiHits[0].Target.GetWorldCorners(corners);
-                        Vector3 center = (corners[0] + corners[2]) * 0.5f;
-                        startPos = (Vector2)center + uiHits[0].Offset;
+                        if (GetTargetScreenPositionAndScale(step.HandTargetUIOverride, out Vector2 targetPos, out float scaleMult))
+                        {
+                            float finalScale = step.HandScale * scaleMult;
+                            _handUI.MoveHand(startPos, targetPos, finalScale);
+                        }
+                        else _handUI.MoveHand(startPos, Vector2.zero, step.HandScale);
                     }
-
-                    if (step.HandTargetTileOverride != Vector2Int.zero)
+                    else
                     {
                         Vector3 worldTarget = GetWorldPosForTile(step.HandTargetTileOverride) + step.HandTargetTileOffsetOverride;
-                        screenTarget = Camera.main.WorldToScreenPoint(worldTarget);
-                    }
-
-                    if (startPos != Vector2.zero && screenTarget != Vector2.zero)
-                    {
+                        Vector2 screenTarget = Camera.main.WorldToScreenPoint(worldTarget);
                         _handUI.MoveHand(startPos, screenTarget, step.HandScale);
                     }
+                }
+            }
+            else if (step.ShowHand)
+            {
+                if (isDragging || isSkillTargeting || isPlacementMode)
+                {
+                    _handUI.Hide();
                 }
                 else
                 {
@@ -1313,7 +1300,7 @@ private RectTransform FindTargetRect(string name)
             string resolvedName = ResolveGenderSuffix(name);
 
             // Try cache first
-            if (_uiTargetCache.TryGetValue(resolvedName, out RectTransform cached)) return cached;
+            if (_uiTargetCache.TryGetValue(resolvedName, out RectTransform cached) && cached != null) return cached;
 
             // Try active first (fastest)
             GameObject go = GameObject.Find(resolvedName);
@@ -2027,7 +2014,7 @@ private RectTransform FindTargetRect(string name)
             if (IsInTutorial && _currentStep != null && _currentStep.StepName == stepName && _currentStep.StopTime)
             {
                 if (_showDebugLogs) Debug.Log($"[tutorial] Delayed time pause executed for step: {stepName}");
-                _gameManager.SetSpeed(0);
+                _gameManager.SetSpeed(0, true);
             }
         }
         #endregion

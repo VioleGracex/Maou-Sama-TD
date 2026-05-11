@@ -90,6 +90,7 @@ namespace MaouSamaTD.Units
         [SerializeField] protected Animator _animator;
         [SerializeField] protected TextMeshProUGUI _textFallback; 
         [SerializeField] protected Image _hpFillImage;
+        [SerializeField] protected TextMeshProUGUI _hpText;
         [SerializeField] protected RectTransform _hpBarRoot;
         
         [Header("Effects")]
@@ -201,6 +202,11 @@ namespace MaouSamaTD.Units
                     _hpFillImage.canvas.worldCamera = Camera.main;
                     SetupBillboard(_hpFillImage.canvas.gameObject);
                 }
+            }
+
+            if (_hpText != null)
+            {
+                _hpText.text = $"{Mathf.CeilToInt(_currentHp)} / {Mathf.CeilToInt(_maxHp)}";
             }
 
             UpdateVisuals();
@@ -320,7 +326,7 @@ namespace MaouSamaTD.Units
                 finalAmount = 0;
             }
 
-            float damageTaken = Mathf.Max(0f, finalAmount - _defense); 
+            float damageTaken = finalAmount > 0f ? Mathf.Max(1f, finalAmount - _defense) : 0f; 
 
             if (PreventDeathForTutorial && _currentHp - damageTaken <= 1f)
             {
@@ -345,6 +351,11 @@ namespace MaouSamaTD.Units
             if (_hpFillImage != null)
             {
                  _hpFillImage.fillAmount = _currentHp / _maxHp;
+            }
+
+            if (_hpText != null)
+            {
+                _hpText.text = $"{Mathf.CeilToInt(_currentHp)} / {Mathf.CeilToInt(_maxHp)}";
             }
 
             if (_spriteRenderer != null)
@@ -394,6 +405,11 @@ namespace MaouSamaTD.Units
             {
                  _hpFillImage.fillAmount = _currentHp / _maxHp;
             }
+
+            if (_hpText != null)
+            {
+                _hpText.text = $"{Mathf.CeilToInt(_currentHp)} / {Mathf.CeilToInt(_maxHp)}";
+            }
             
             if (FloatingTextManager.Instance != null)
             {
@@ -401,6 +417,21 @@ namespace MaouSamaTD.Units
             }
             
             OnHealthChanged?.Invoke(_currentHp / _maxHp);
+        }
+
+        public virtual void SetHpRatio(float ratio)
+        {
+            ratio = Mathf.Clamp01(ratio);
+            _currentHp = _maxHp * ratio;
+            if (_hpFillImage != null)
+            {
+                _hpFillImage.fillAmount = ratio;
+            }
+            if (_hpText != null)
+            {
+                _hpText.text = $"{Mathf.CeilToInt(_currentHp)} / {Mathf.CeilToInt(_maxHp)}";
+            }
+            OnHealthChanged?.Invoke(ratio);
         }
 
         public virtual void ApplyBuff(string id, MaouSamaTD.Skills.SkillStatType stat, float multiplier, float duration)

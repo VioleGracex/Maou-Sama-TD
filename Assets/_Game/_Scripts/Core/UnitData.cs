@@ -250,7 +250,7 @@ namespace MaouSamaTD.Units
         public float AttackPower = 10f;
         public float AttackInterval = 1f;
         public float Defense = 0f;
-        public float Resistance = 0f;
+
         public float RespawnTime = 5f; // Seconds
         public float Range = 1f; // Tiles
         public float MaxCharge = 100f;

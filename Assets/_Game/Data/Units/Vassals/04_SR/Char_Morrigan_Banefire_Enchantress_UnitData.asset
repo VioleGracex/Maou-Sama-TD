@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 72cc95ec-a837-4042-90cc-cc536e10b076
   CalculatedStats:
-    MaxHp: 3250.5
+  MaxHp: 780
     Attack: 39
-    Defense: 78
+  Defense: 13
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Morrigan
@@ -48,20 +48,19 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 3
   Class: 0
-  AttackPattern: 0
-  AttackType: 0
-  DamageType: 0
-  DeploymentCost: 16
-  BlockCount: 3
+  AttackPattern: 4
+  AttackType: 1
+  DamageType: 2
+  DeploymentCost: 18
+  BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 2167
-  AttackPower: 39
-  AttackInterval: 1
-  Defense: 52
-  Resistance: 0
-  RespawnTime: 5
-  Range: 1
+  MaxHp: 780
+  AttackPower: 117
+  AttackInterval: 1.5
+  Defense: 13
+  RespawnTime: 22.0
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

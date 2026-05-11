@@ -10,35 +10,36 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
-  m_Name: Char_Kaelen_Cursed_Blademaster_UnitData
+  m_Name: Char_Nightmare_Weaver_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 8d960501-6676-4843-8abb-84cb4022e263
+  UniqueID: 7ee8810b-4a3c-40f9-9038-484f39bdbaa3
   CalculatedStats:
-  MaxHp: 1040
-    Attack: 39
-  Defense: 20
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
-  UnitName: Kaelen
-  UnitTitle: Cursed Blademaster
+  MaxHp: 980
+    Attack: 112
+  Defense: 28
+    ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
+    ClassName: Ranger
+  UnitName: Nightmare Weaver
+  UnitTitle: 
   SummonQuote: Sovereign, it is an honor to serve you.
-  BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
+  BriefDescription: Ruler of the highest peaks, commands the storms with a flap of
+    her wings.
   LoreEntries:
   - Title: Origin
-    Content: A loyal combatant in the Maou's forces holding the rank of SR.
+    Content: Ruler of the highest peaks, commands the storms with a flap of her wings.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: d1ed27f412d5e3a4685f45b98812d2ea, type: 3}
-    Chibi: {fileID: 21300000, guid: 53b1030d7d4d2e8409fa55a4eaa9b462, type: 3}
-    WaistUp: {fileID: 21300000, guid: b772a31f8a9fcf244ac43882c535293d, type: 3}
-    FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: a98def0d944cb634dbbc247caa549d54, type: 3}
+    Avatar: {fileID: 21300000, guid: b0ebda7fb0a56f4478cf8311800df6e9, type: 3}
+    Chibi: {fileID: 21300000, guid: 50a484f1d84de134ebea55eac775df8d, type: 3}
+    WaistUp: {fileID: 21300000, guid: ad21cbd4a0bcf74449bba31d40560dca, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: 5ce6f2a2fdb42474081f7f6c046c06ef, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 5ce6f2a2fdb42474081f7f6c046c06ef, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
   Skins: []
   _equippedSkinID: 
-  CardSlotImageType: 4
-  ButtonImageType: 1
+  CardSlotImageType: 2
+  ButtonImageType: 0
   Level: 1
   Experience: 0
   StarRating: 1
@@ -46,21 +47,21 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
-  Rarity: 3
-  Class: 0
-  AttackPattern: 0
+  Rarity: 4
+  Class: 8
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 16
+  DeploymentCost: 22
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 1040
-  AttackPower: 130
-  AttackInterval: 1
-  Defense: 20
-  RespawnTime: 5
-  Range: 1
+  MaxHp: 980
+  AttackPower: 56
+  AttackInterval: 1.0
+  Defense: 28
+  RespawnTime: 25.0
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

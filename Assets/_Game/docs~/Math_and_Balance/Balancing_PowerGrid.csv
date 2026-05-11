@@ -1,43 +1,43 @@
 File,Name,Rarity,Class,Base HP,Base ATK,Base DEF,Range,Final HP,Final ATK,Final DEF,Total Power,AttackInterval,DeploymentCost,BlockCount,RespawnTime,CanAttackFlying,DamageType,AttackType,AttackPattern
-03_fenris_alpha_of_the_north.md,"Fenris, Alpha of the North",SSR,Bastion,2500,30,60,1,3500,42,84,954,1.2,26,3,25.0,False,Melee,SingleTarget,All
+03_fenris_alpha_of_the_north.md,"Fenris, Alpha of the North",SSR,Executioner,2500,30,60,1,3500,42,84,954,1.2,26,3,25.0,False,Melee,SingleTarget,All
 05_malina_infernal_countess.md,"Malina, Infernal Countess",SSR,Bastion,2500,30,60,1,3500,42,84,954,1.2,26,3,25.0,False,Melee,SingleTarget,All
 09_ignis_guard_captain.md,Ignis Guard Captain,SSR,Bastion,2500,30,60,1,3500,42,84,954,1.2,26,3,25.0,False,Melee,SingleTarget,All
-02_asmodeus_lord_of_lust.md,"Asmodeus, Lord of Lust",UR,Assassin,800,100,15,1,1200,150,22,932,0.8,24,1,30.0,False,Melee,SingleTarget,All
-03_lucifer_lord_of_pride.md,"Lucifer, Lord of Pride",UR,Vanguard,1500,60,30,1,2250,90,45,915,1.0,26,2,30.0,False,Melee,SingleTarget,All
-01_balthazar_lord_of_sloth.md,"Balthazar, Lord of Sloth",UR,Warlock,600,90,10,2,900,135,15,843,1.5,26,1,30.0,True,Magic,AreaOfEffect,All
+02_asmodeus_lord_of_lust.md,"Asmodeus, Lord of Lust",UR,Overlord,800,100,15,1,1200,150,22,932,0.8,24,1,30.0,False,Melee,SingleTarget,All
+03_lucifer_lord_of_pride.md,"Lucifer, Lord of Pride",UR,Overlord,1500,60,30,1,2250,90,45,915,1.0,26,2,30.0,False,Melee,SingleTarget,All
+01_balthazar_lord_of_sloth.md,"Balthazar, Lord of Sloth",UR,Overlord,600,90,10,2,900,135,15,843,1.5,26,1,30.0,True,Magic,AreaOfEffect,All
 08_azalea_scarlet_viceroy.md,"Azalea, Scarlet Viceroy",SR,Bastion,2500,30,60,1,3250,39,78,836,1.2,22,3,22.0,False,Melee,SingleTarget,All
 15_gorm_abyssal_dreadnought.md,"Gorm, Abyssal Dreadnought",SR,Bastion,2500,30,60,1,3250,39,78,836,1.2,22,3,22.0,False,Melee,SingleTarget,All
 02_vladislav_crimson_duke.md,"Vladislav, Crimson Duke",SSR,Assassin,800,100,15,1,1120,140,21,825,0.8,20,1,25.0,False,Melee,SingleTarget,All
 07_nyx_phantom_beastkin.md,"Nyx, Phantom Beastkin",SSR,Assassin,800,100,15,1,1120,140,21,825,0.8,20,1,25.0,False,Melee,SingleTarget,All
 04_victor_fallen_paladin.md,"Victor, Fallen Paladin",SSR,Vanguard,1500,60,30,1,2100,84,42,810,1.0,22,2,25.0,False,Melee,SingleTarget,All
 15_abyssal_dreadknight.md,Abyssal Dreadknight,SSR,Vanguard,1500,60,30,1,2100,84,42,810,1.0,22,2,25.0,False,Melee,SingleTarget,All
-01_eidon_archlich_supreme.md,"Eidon, Archlich Supreme",SSR,Warlock,600,90,10,2,840,126,14,747,1.5,22,1,25.0,True,Magic,AreaOfEffect,All
+01_eidon_archlich_supreme.md,"Eidon, Archlich Supreme",SSR,Necromancer,600,90,10,2,840,126,14,747,1.5,22,1,25.0,True,Magic,AreaOfEffect,All
 10_lilith_duchess_of_crimson_allure.md,"Lilith, Duchess of Crimson Allure",SSR,Warlock,600,90,10,2,840,126,14,747,1.5,22,1,25.0,True,Magic,AreaOfEffect,All
 04_vex_skeletal_warden.md,"Vex, Skeletal Warden",R,Bastion,2500,30,60,1,3000,36,72,727,1.2,19,3,20.0,False,Melee,SingleTarget,All
-09_anubis_tomb_guardian.md,"Anubis, Tomb Guardian",R,Bastion,2500,30,60,1,3000,36,72,727,1.2,19,3,20.0,False,Melee,SingleTarget,All
+09_anubis_tomb_guardian.md,"Anubis, Tomb Guardian",R,Executioner,2500,30,60,1,3000,36,72,727,1.2,19,3,20.0,False,Melee,SingleTarget,All
 13_grim_bone_juggernaut.md,"Grim, Bone Juggernaut",R,Bastion,2500,30,60,1,3000,36,72,727,1.2,19,3,20.0,False,Melee,SingleTarget,All
 02_astaroth_queen_of_pain.md,"Astaroth, Queen of Pain",SR,Executioner,800,100,15,1,1040,130,20,727,0.8,18,1,22.0,False,Melee,SingleTarget,All
 07_isolde_dusk_bound_reaver.md,"Isolde, Dusk-Bound Reaver",SR,Executioner,800,100,15,1,1040,130,20,727,0.8,18,1,22.0,False,Melee,SingleTarget,All
 09_lucien_phantom_operative.md,"Lucien, Phantom Operative",SR,Assassin,800,100,15,1,1040,130,20,727,0.8,16,1,22.0,False,Melee,SingleTarget,All
-13_blight_the_rotting_king.md,"Blight, The Rotting King",SR,Executioner,800,100,15,1,1040,130,20,727,0.8,18,1,22.0,False,Melee,SingleTarget,All
+13_blight_the_rotting_king.md,"Blight, The Rotting King",SR,Necromancer,800,100,15,1,1040,130,20,727,0.8,18,1,22.0,False,Melee,SingleTarget,All
 14_selene_stray_hunter.md,"Selene, Stray Hunter",SR,Assassin,800,100,15,1,1040,130,20,727,0.8,16,1,22.0,False,Melee,SingleTarget,All
 17_kaelia_cursed_blademaster.md,"Kaelia, Cursed Blademaster",SR,Executioner,800,100,15,1,1040,130,20,727,0.8,18,1,22.0,False,Melee,SingleTarget,All
 19_drusilla_seductive_spy.md,"Drusilla, Seductive Spy",SR,Assassin,800,100,15,1,1040,130,20,727,0.8,16,1,22.0,False,Melee,SingleTarget,All
-04_mammon_lord_of_greed.md,"Mammon, Lord of Greed",UR,Mage,1000,50,25,1,1500,75,38,721,1.0,26,1,30.0,False,Melee,SingleTarget,All
-05_belphegor_lord_of_gluttony.md,"Belphegor, Lord of Gluttony",UR,Tank,1000,50,25,1,1500,75,38,721,1.0,26,1,30.0,False,Melee,SingleTarget,All
-06_leviathan_lord_of_envy.md,"Leviathan, Lord of Envy",UR,Summoner,1000,50,25,1,1500,75,38,721,1.0,26,1,30.0,False,Melee,SingleTarget,All
-07_satan_lord_of_wrath.md,"Satan, Lord of Wrath",UR,Berserker,1000,50,25,1,1500,75,38,721,1.0,26,1,30.0,False,Melee,SingleTarget,All
+04_mammon_lord_of_greed.md,"Mammon, Lord of Greed",UR,Overlord,1000,50,25,1,1500,75,38,721,1.0,26,1,30.0,False,Melee,SingleTarget,All
+05_belphegor_lord_of_gluttony.md,"Belphegor, Lord of Gluttony",UR,Overlord,1000,50,25,1,1500,75,38,721,1.0,26,1,30.0,False,Melee,SingleTarget,All
+06_leviathan_lord_of_envy.md,"Leviathan, Lord of Envy",UR,Overlord,1000,50,25,1,1500,75,38,721,1.0,26,1,30.0,False,Melee,SingleTarget,All
+07_satan_lord_of_wrath.md,"Satan, Lord of Wrath",UR,Overlord,1000,50,25,1,1500,75,38,721,1.0,26,1,30.0,False,Melee,SingleTarget,All
 06_aquila_the_harpy_queen.md,"Aquila, The Harpy Queen",SSR,Ranger,600,80,10,3,840,112,14,720,1.0,22,1,25.0,True,Physical,SingleTarget,Horizontal
 11_shade_the_phantom_stalker.md,"Shade, The Phantom Stalker",SSR,Ranger,600,80,10,3,840,112,14,720,1.0,22,1,25.0,True,Physical,SingleTarget,Horizontal
-04_camilla_ebon_lady_of_chains.md,"Camilla, Ebon Lady of Chains",SR,Vanguard,1500,60,30,1,1950,78,39,712,1.0,18,2,22.0,False,Melee,SingleTarget,All
+04_camilla_ebon_lady_of_chains.md,"Camilla, Ebon Lady of Chains",SR,Assassin,1500,60,30,1,1950,78,39,712,1.0,18,2,22.0,False,Melee,SingleTarget,All
 10_toros_savage_packleader.md,"Toros, Savage Packleader",SR,Vanguard,1500,60,30,1,1950,78,39,712,1.0,18,2,22.0,False,Melee,SingleTarget,All
-20_talon_sky_piercer.md,"Talon, Sky Piercer",SR,Vanguard,1500,60,30,1,1950,78,39,712,1.0,18,2,22.0,False,Melee,SingleTarget,All
+20_talon_sky_piercer.md,"Talon, Sky Piercer",SR,Ranger,1500,60,30,1,1950,78,39,712,1.0,18,2,22.0,False,Melee,SingleTarget,All
 03_morrigan_banefire_enchantress.md,"Morrigan, Banefire Enchantress",SR,Warlock,600,90,10,2,780,117,13,658,1.5,18,1,22.0,True,Magic,AreaOfEffect,All
 12_azazel_ruined_choirboy.md,"Azazel, Ruined Choirboy",SR,Warlock,600,90,10,2,780,117,13,658,1.5,18,1,22.0,True,Magic,AreaOfEffect,All
-18_vesper_void_caller.md,"Vesper, Void-Caller",SR,Warlock,600,90,10,2,780,117,13,658,1.5,18,1,22.0,True,Magic,AreaOfEffect,All
-08_valerius_crimson_defector.md,"Valerius, Crimson Defector",SSR,Tactician,1000,50,25,1,1400,70,35,640,1.0,22,1,25.0,False,Melee,SingleTarget,All
-12_blood_drinker._demon.md,Kaelthas Blood Drinker,SSR,Mage,1000,50,25,1,1400,70,35,640,1.0,22,1,25.0,False,Melee,SingleTarget,All
-13_infernal_behemoth.md,Infernal Behemoth,SSR,Tank,1000,50,25,1,1400,70,35,640,1.0,22,1,25.0,False,Melee,SingleTarget,All
+18_vesper_void_caller.md,"Vesper, Void-Caller",SR,Architect,600,90,10,2,780,117,13,658,1.5,18,1,22.0,True,Magic,AreaOfEffect,All
+08_valerius_crimson_defector.md,"Valerius, Crimson Defector",SSR,Support,1000,50,25,1,1400,70,35,640,1.0,22,1,25.0,False,Melee,SingleTarget,All
+12_blood_drinker._demon.md,Kaelthas Blood Drinker,SSR,Warlock,1000,50,25,1,1400,70,35,640,1.0,22,1,25.0,False,Melee,SingleTarget,All
+13_infernal_behemoth.md,Infernal Behemoth,SSR,Bastion,1000,50,25,1,1400,70,35,640,1.0,22,1,25.0,False,Melee,SingleTarget,All
 05_zephyra_storm_bound_duchess.md,"Zephyra, Storm-Bound Duchess",SR,Ranger,600,80,10,3,780,104,13,634,1.0,18,1,22.0,True,Physical,SingleTarget,Horizontal
 11_lyra_blood_moon_sentinel.md,"Lyra, Blood-Moon Sentinel",SR,Ranger,600,80,10,3,780,104,13,634,1.0,18,1,22.0,True,Physical,SingleTarget,Horizontal
 05_thresh_wraith_executioner.md,"Thresh, Wraith Executioner",R,Executioner,800,100,15,1,960,120,18,633,0.8,15,1,20.0,False,Melee,SingleTarget,All
@@ -45,30 +45,30 @@ File,Name,Rarity,Class,Base HP,Base ATK,Base DEF,Range,Final HP,Final ATK,Final 
 12_feral_alley_cat.md,Feral Alley-Cat,R,Assassin,800,100,15,1,960,120,18,633,0.8,13,1,20.0,False,Melee,SingleTarget,All
 20_vane_shadow_assassin.md,"Vane, Shadow Assassin",R,Assassin,800,100,15,1,960,120,18,633,0.8,13,1,20.0,False,Melee,SingleTarget,All
 04_reanimated_shieldbearer.md,Tarkus (Reanimated Shieldbearer),UC,Bastion,2500,30,60,1,2750,33,66,627,1.2,16,3,18.0,False,Melee,SingleTarget,All
-10_rune_scarred_gladiator.md,Rune-Scarred Gladiator,R,Vanguard,1500,60,30,1,1800,72,36,622,1.0,15,2,20.0,False,Melee,SingleTarget,All
+10_rune_scarred_gladiator.md,Rune-Scarred Gladiator,R,Executioner,1500,60,30,1,1800,72,36,622,1.0,15,2,20.0,False,Melee,SingleTarget,All
 14_alaric_dusk_knight.md,"Alaric, Dusk Knight",R,Vanguard,1500,60,30,1,1800,72,36,622,1.0,15,2,20.0,False,Melee,SingleTarget,All
 19_lupus_howling_marauder.md,"Lupus, Howling Marauder",R,Vanguard,1500,60,30,1,1800,72,36,622,1.0,15,2,20.0,False,Melee,SingleTarget,All
 15_draco_vampiric_aristocrat.md,"Draco, Vampiric Aristocrat",R,Warlock,600,90,10,2,720,108,12,575,1.5,15,1,20.0,True,Magic,AreaOfEffect,All
 17_sibyl_bloodied_oracle.md,"Sibyl, Bloodied Oracle",R,Warlock,600,90,10,2,720,108,12,575,1.5,15,1,20.0,True,Magic,AreaOfEffect,All
-01_nerissa_midnight_archivist.md,"Nerissa, Midnight Archivist",SR,Blood,1000,50,25,1,1300,65,32,565,1.0,18,1,22.0,False,Melee,SingleTarget,All
-06_ravenna_pale_empress.md,"Ravenna, Pale Empress",SR,Tactician,1000,50,25,1,1300,65,32,565,1.0,18,1,22.0,False,Melee,SingleTarget,All
-16_celia_sanctus_traitor.md,"Celia, Sanctus Traitor",SR,Blood,1000,50,25,1,1300,65,32,565,1.0,18,1,22.0,False,Melee,SingleTarget,All
-02_eira_frostbane_sniper.md,"Eira, Frostbane Sniper",R,Ranger,600,80,10,3,720,96,12,555,1.0,15,1,20.0,True,Physical,SingleTarget,Horizontal
+01_nerissa_midnight_archivist.md,"Nerissa, Midnight Archivist",SR,Sage,1000,50,25,1,1300,65,32,565,1.0,18,1,22.0,False,Melee,SingleTarget,All
+06_ravenna_pale_empress.md,"Ravenna, Pale Empress",SR,Necromancer,1000,50,25,1,1300,65,32,565,1.0,18,1,22.0,False,Melee,SingleTarget,All
+16_celia_sanctus_traitor.md,"Celia, Sanctus Traitor",SR,Sage,1000,50,25,1,1300,65,32,565,1.0,18,1,22.0,False,Melee,SingleTarget,All
+02_eira_frostbane_sniper.md,"Eira, Frostbane Sniper",R,Gunner,600,80,10,3,720,96,12,555,1.0,15,1,20.0,True,Physical,SingleTarget,Horizontal
 18_zephyr_wind_rider.md,"Zephyr, Wind Rider",R,Ranger,600,80,10,3,720,96,12,555,1.0,15,1,20.0,True,Physical,SingleTarget,Horizontal
 01_shadow_stalker.md,Viona (Shadow Stalker),UC,Assassin,800,100,15,1,880,110,16,547,0.8,10,1,18.0,False,Melee,SingleTarget,All
 07_feline_scout.md,Tika (Feline Scout),UC,Assassin,800,100,15,1,880,110,16,547,0.8,10,1,18.0,False,Melee,SingleTarget,All
 03_armored_dire_wolf.md,Ulf (Armored Dire-Wolf),UC,Vanguard,1500,60,30,1,1650,66,33,538,1.0,12,2,18.0,False,Melee,SingleTarget,All
 06_ember_bruiser.md,Fyr (Ember Bruiser),UC,Vanguard,1500,60,30,1,1650,66,33,538,1.0,12,2,18.0,False,Melee,SingleTarget,All
-06_mort_grave_digger.md,"Mort, Grave Digger",Common,Bastion,2500,30,60,1,2500,30,60,536,1.2,14,3,15.0,False,Melee,SingleTarget,All
-16_cinder_undead_guard.md,"Cinder, Undead Guard",Common,Bastion,2500,30,60,1,2500,30,60,536,1.2,14,3,15.0,False,Melee,SingleTarget,All
+06_mort_grave_digger.md,"Mort, Grave Digger",Common,Necromancer,2500,30,60,1,2500,30,60,536,1.2,14,3,15.0,False,Melee,SingleTarget,All
+16_cinder_undead_guard.md,"Cinder, Undead Guard",Common,Support,2500,30,60,1,2500,30,60,536,1.2,14,3,15.0,False,Melee,SingleTarget,All
 19_karrow_skeleton_guard.md,"Karrow, Skeleton Guard",Common,Bastion,2500,30,60,1,2500,30,60,536,1.2,14,3,15.0,False,Melee,SingleTarget,All
 14_nightmare_weaver.md,Nightmare Weaver,SSR,Support,700,40,20,2,980,56,28,531,1.0,22,1,25.0,True,Melee,SingleTarget,All
 05_scorned_adept.md,Xylia (Scorned Adept),UC,Warlock,600,90,10,2,660,99,11,499,1.5,12,1,18.0,True,Magic,AreaOfEffect,All
-03_caius_heretic_priest.md,"Caius, Heretic Priest",R,Blood,1000,50,25,1,1200,60,30,497,1.0,15,1,20.0,False,Melee,SingleTarget,All
-08_malphas_abyssal_tactician.md,"Malphas, Abyssal Tactician",R,Tactician,1000,50,25,1,1200,60,30,497,1.0,15,1,20.0,False,Melee,SingleTarget,All
-11_corvus_plague_doctor.md,"Corvus, Plague Doctor",R,Blood,1000,50,25,1,1200,60,30,497,1.0,15,1,20.0,False,Melee,SingleTarget,All
-02_defected_marksman.md,Callum (Defected Marksman),UC,Ranger,600,80,10,3,660,88,11,483,1.0,12,1,18.0,True,Physical,SingleTarget,Horizontal
-09_skeletal_archer.md,Korr (Skeletal Archer),UC,Ranger,600,80,10,3,660,88,11,483,1.0,12,1,18.0,True,Physical,SingleTarget,Horizontal
+03_caius_heretic_priest.md,"Caius, Heretic Priest",R,Sage,1000,50,25,1,1200,60,30,497,1.0,15,1,20.0,False,Melee,SingleTarget,All
+08_malphas_abyssal_tactician.md,"Malphas, Abyssal Tactician",R,Architect,1000,50,25,1,1200,60,30,497,1.0,15,1,20.0,False,Melee,SingleTarget,All
+11_corvus_plague_doctor.md,"Corvus, Plague Doctor",R,Sage,1000,50,25,1,1200,60,30,497,1.0,15,1,20.0,False,Melee,SingleTarget,All
+02_defected_marksman.md,Callum (Defected Marksman),UC,Gunner,600,80,10,3,660,88,11,483,1.0,12,1,18.0,True,Physical,SingleTarget,Horizontal
+09_skeletal_archer.md,Korr (Skeletal Archer),UC,Gunner,600,80,10,3,660,88,11,483,1.0,12,1,18.0,True,Physical,SingleTarget,Horizontal
 10_nightwing_harpy.md,Skyra (Nightwing Harpy),UC,Ranger,600,80,10,3,660,88,11,483,1.0,12,1,18.0,True,Physical,SingleTarget,Horizontal
 11_jax_cursed_bandit.md,"Jax, Cursed Bandit",Common,Assassin,800,100,15,1,800,100,15,470,0.8,8,1,15.0,False,Melee,SingleTarget,All
 15_val_lesser_vampire.md,"Val, Lesser Vampire",Common,Assassin,800,100,15,1,800,100,15,470,0.8,8,1,15.0,False,Melee,SingleTarget,All
@@ -80,19 +80,19 @@ File,Name,Rarity,Class,Base HP,Base ATK,Base DEF,Range,Final HP,Final ATK,Final 
 08_elias_forsaken_conscript.md,"Elias, Forsaken Conscript",Common,Vanguard,1500,60,30,1,1500,60,30,462,1.0,10,2,15.0,False,Melee,SingleTarget,All
 12_stubbs_zombie_footman.md,"Stubbs, Zombie Footman",Common,Vanguard,1500,60,30,1,1500,60,30,462,1.0,10,2,15.0,False,Melee,SingleTarget,All
 18_grog_demonized_thug.md,"Grog, Demonized Thug",Common,Vanguard,1500,60,30,1,1500,60,30,462,1.0,10,2,15.0,False,Melee,SingleTarget,All
-08_exiled_cleric.md,Elowen (Exiled Cleric),UC,Blood,1000,50,25,1,1100,55,28,434,1.0,12,1,18.0,False,Melee,SingleTarget,All
+08_exiled_cleric.md,Elowen (Exiled Cleric),UC,Sage,1000,50,25,1,1100,55,28,434,1.0,12,1,18.0,False,Melee,SingleTarget,All
 10_solas_apprentice_cultist.md,"Solas, Apprentice Cultist",Common,Warlock,600,90,10,2,600,90,10,430,1.5,10,1,15.0,True,Magic,AreaOfEffect,All
-07_pyrrhus_hellfire_alchemist.md,"Pyrrhus, Hellfire Alchemist",R,Support,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
-16_lava_bender.md,Lava-Bender,R,Support,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
+07_pyrrhus_hellfire_alchemist.md,"Pyrrhus, Hellfire Alchemist",R,Architect,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
+16_lava_bender.md,Lava-Bender,R,Architect,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
 20_mina_charming_novice.md,"Mina, Charming Novice",R,Support,700,40,20,2,840,48,24,417,1.0,15,1,20.0,True,Melee,SingleTarget,All
 05_skye_lesser_harpy.md,"Skye, Lesser Harpy",Common,Ranger,600,80,10,3,600,80,10,416,1.0,10,1,15.0,True,Physical,SingleTarget,Horizontal
 09_fang_wolf_pup.md,"Fang, Wolf Pup",Common,Ranger,600,80,10,3,600,80,10,416,1.0,10,1,15.0,True,Physical,SingleTarget,Horizontal
-13_noire_outcast_archer.md,"Noire, Outcast Archer",Common,Ranger,600,80,10,3,600,80,10,416,1.0,10,1,15.0,True,Physical,SingleTarget,Horizontal
-14_dusk_skeleton_bowman.md,"Dusk, Skeleton Bowman",Common,Ranger,600,80,10,3,600,80,10,416,1.0,10,1,15.0,True,Physical,SingleTarget,Horizontal
-01c_mordred_drakmora_crossbowman.md,"Mordred, Drakmora Crossbowman",Common,Marksman,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
-07_vesta_corrupt_acolyte.md,"Vesta, Corrupt Acolyte",Common,Blood,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
-21_zit_goblin_scout.md,"Zit, Goblin Scout",Common,Scout,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
-22_gloo_swamp_slime.md,"Gloo, Swamp Slime",Common,Tank,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
-23_verm_plague_rat.md,"Verm, Plague Rat",Common,Strikers,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
+13_noire_outcast_archer.md,"Noire, Outcast Archer",Common,Gunner,600,80,10,3,600,80,10,416,1.0,10,1,15.0,True,Physical,SingleTarget,Horizontal
+14_dusk_skeleton_bowman.md,"Dusk, Skeleton Bowman",Common,Gunner,600,80,10,3,600,80,10,416,1.0,10,1,15.0,True,Physical,SingleTarget,Horizontal
+01c_mordred_drakmora_crossbowman.md,"Mordred, Drakmora Crossbowman",Common,Gunner,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
+07_vesta_corrupt_acolyte.md,"Vesta, Corrupt Acolyte",Common,Sage,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
+21_zit_goblin_scout.md,"Zit, Goblin Scout",Common,Assassin,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
+22_gloo_swamp_slime.md,"Gloo, Swamp Slime",Common,Bastion,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
+23_verm_plague_rat.md,"Verm, Plague Rat",Common,Executioner,1000,50,25,1,1000,50,25,376,1.0,10,1,15.0,False,Melee,SingleTarget,All
 04_lila_fledgling_succubus.md,"Lila, Fledgling Succubus",Common,Support,700,40,20,2,700,40,20,320,1.0,10,1,15.0,True,Melee,SingleTarget,All
 17_luna_stray_kitten.md,"Luna, Stray Kitten",Common,Support,700,40,20,2,700,40,20,320,1.0,10,1,15.0,True,Melee,SingleTarget,All

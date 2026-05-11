@@ -10,27 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
-  m_Name: Char_Vespera_Succubus_Envoy_UnitData
+  m_Name: Char_Kaelia_Cursed_Blademaster_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: 2378d69c-897a-45b8-a684-08a09d36d447
+  UniqueID: 8d960501-6676-4843-8abb-84cb4022e263
   CalculatedStats:
-    MaxHp: 3499.5
-    Attack: 42
-    Defense: 84
+  MaxHp: 1040
+    Attack: 39
+  Defense: 20
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
-  UnitName: Vespera
-  UnitTitle: Succubus Envoy
+  UnitName: Kaelia
+  UnitTitle: Cursed Blademaster
   SummonQuote: Sovereign, it is an honor to serve you.
-  BriefDescription: 
-  LoreEntries: []
+  BriefDescription: A loyal combatant in the Maou's forces holding the rank of SR.
+  LoreEntries:
+  - Title: Origin
+    Content: A loyal combatant in the Maou's forces holding the rank of SR.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: 33977d9ad1a4bc248b800bc219f89cf0, type: 3}
-    Chibi: {fileID: 21300000, guid: 10f78a02f7f2be94787026a619297a34, type: 3}
-    WaistUp: {fileID: 21300000, guid: e372562f3e1ee5f428b51c8da85bc039, type: 3}
+    Avatar: {fileID: 21300000, guid: d1ed27f412d5e3a4685f45b98812d2ea, type: 3}
+    Chibi: {fileID: 21300000, guid: 53b1030d7d4d2e8409fa55a4eaa9b462, type: 3}
+    WaistUp: {fileID: 21300000, guid: b772a31f8a9fcf244ac43882c535293d, type: 3}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: 00768cad01e9b2b4d98b0d44d1f9aa2a, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: a98def0d944cb634dbbc247caa549d54, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
   Skins: []
@@ -44,21 +46,20 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
-  Rarity: 4
-  Class: 0
-  AttackPattern: 0
+  Rarity: 3
+  Class: 2
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 20
-  BlockCount: 3
-  CanAttackFlying: 1
+  DeploymentCost: 18
+  BlockCount: 1
+  CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 2333
-  AttackPower: 42
-  AttackInterval: 1
-  Defense: 56
-  Resistance: 0
-  RespawnTime: 5
+  MaxHp: 1040
+  AttackPower: 130
+  AttackInterval: 0.8
+  Defense: 20
+  RespawnTime: 22.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

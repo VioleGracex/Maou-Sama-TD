@@ -45,7 +45,7 @@ MonoBehaviour:
   BaseStatMultiplier: 1
   AcquisitionDate: 0
   Rarity: 0
-  Class: 0
+  Class: 3
   AttackPattern: 1
   AttackType: 0
   DamageType: 0

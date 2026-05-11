@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
-  m_Name: Char_Kaelen_UnitData
+  m_Name: Char_Karrow_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
   UniqueID: 486fe993-9d47-4fa2-b9e0-6bb83d2f3f72

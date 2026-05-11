@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
+  m_Name: Char_Skeleton_Militia_UnitData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
+  useDefaultInspector: 0
+  UniqueID: 16cfdfe5-95f9-4bc6-a8ca-817d0608a5e1
+  CalculatedStats:
+  MaxHp: 1500
+    Attack: 60
+  Defense: 30
+    ClassIcon: {fileID: 21300000, guid: 33b39977cf7fa404194b18d31210c071, type: 3}
+    ClassName: Vanguard
+  UnitName: Skeleton Militia
+  UnitTitle: 
+  SummonQuote: Sovereign, it is an honor to serve you.
+  BriefDescription: A survivor of the lower districts who has taken up arms to defend
+    what remains.
+  LoreEntries:
+  - Title: Origin
+    Content: A loyal combatant in the Maou's forces holding the rank of Common.
+  BaseSkin:
+    Avatar: {fileID: 21300000, guid: 386630ca55794ff44b540f89124e4537, type: 3}
+    Chibi: {fileID: 21300000, guid: 386630ca55794ff44b540f89124e4537, type: 3}
+    WaistUp: {fileID: 21300000, guid: 5ad4257206fe3b642a25036e25010741, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: cf21dc05c675a5043b116e65f03f7e01, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: cf21dc05c675a5043b116e65f03f7e01, type: 3}
+    AnimatorController: {fileID: 0}
+  StarAdvancementVisuals: []
+  Skins:
+  - SkinID: default
+    SkinThemeName: Base
+    SeriesName: 
+    Avatar: {fileID: 21300000, guid: 386630ca55794ff44b540f89124e4537, type: 3}
+    Chibi: {fileID: 21300000, guid: 386630ca55794ff44b540f89124e4537, type: 3}
+    WaistUp: {fileID: 21300000, guid: cf21dc05c675a5043b116e65f03f7e01, type: 3}
+    FullSplashArt: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: cf21dc05c675a5043b116e65f03f7e01, type: 3}
+    AnimatorController: {fileID: 0}
+    IsDefault: 1
+    UnlockCost: 0
+    IsPremium: 0
+  _equippedSkinID: 
+  CardSlotImageType: 2
+  ButtonImageType: 0
+  Level: 1
+  Experience: 0
+  StarRating: 1
+  Amity: 0
+  SkillLevel: 1
+  BaseStatMultiplier: 1
+  AcquisitionDate: 0
+  Rarity: 0
+  Class: 1
+  AttackPattern: 4
+  AttackType: 0
+  DamageType: 0
+  DeploymentCost: 10
+  BlockCount: 2
+  CanAttackFlying: 0
+  CustomPatternOffsets: []
+  MaxHp: 1500
+  AttackPower: 60
+  AttackInterval: 1.0
+  Defense: 30
+  RespawnTime: 15.0
+  Range: 1
+  MaxCharge: 100
+  ChargePerSecond: 5
+  ChargePerAttack: 10
+  UltimateDamageResistance: 0
+  PassiveSkill: {fileID: 0}
+  ActiveSkill: {fileID: 0}
+  UltimateSkill: {fileID: 0}
+  AscensionNodes: []
+  _viableTiles: 
+  _unlockedSkinIDs: []

@@ -346,10 +346,11 @@ namespace MaouSamaTD.EditorTools
                     if (avatar != null && avatar.texture != null)
                     {
                         GUI.DrawTexture(centeredRect, avatar.texture, ScaleMode.ScaleToFit);
+                        GUI.Label(centeredRect, new GUIContent("", vassal.UnitName));
                     }
                     else
                     {
-                        GUI.Box(centeredRect, "?");
+                        GUI.Box(centeredRect, new GUIContent("?", vassal.UnitName));
                     }
                     GUILayout.Label(vassal.UnitName, hasMismatch ? _mismatchStyle : EditorStyles.label, GUILayout.Width(100));
                 }
@@ -459,6 +460,10 @@ namespace MaouSamaTD.EditorTools
             {
                 SyncAllVassalsToCsv();
             }
+            if (GUILayout.Button("📥 Sync ALL (CSV Spreadsheet -> Live Assets)", GUILayout.Height(25)))
+            {
+                SyncAllCsvToVassals();
+            }
             if (GUILayout.Button("💾 Write CSV Out to File", GUILayout.Height(25)))
             {
                 SaveCsvFile();
@@ -539,10 +544,11 @@ namespace MaouSamaTD.EditorTools
                     if (avatar != null && avatar.texture != null)
                     {
                         GUI.DrawTexture(centeredRect, avatar.texture, ScaleMode.ScaleToFit);
+                        GUI.Label(centeredRect, new GUIContent("", enemy.EnemyName));
                     }
                     else
                     {
-                        GUI.Box(centeredRect, "?");
+                        GUI.Box(centeredRect, new GUIContent("?", enemy.EnemyName));
                     }
                     GUILayout.Label(enemy.EnemyName, EditorStyles.label, GUILayout.Width(100));
                 }
@@ -1156,8 +1162,114 @@ namespace MaouSamaTD.EditorTools
             if (csvRow.ContainsKey("AttackType") && System.Enum.TryParse(csvRow["AttackType"], out AttackType at)) vassal.AttackType = at;
             if (csvRow.ContainsKey("AttackPattern") && System.Enum.TryParse(csvRow["AttackPattern"], out AttackPattern ap)) vassal.AttackPattern = ap;
 
+            // Parse Class and map aliases/custom string categories
+            if (csvRow.ContainsKey("Class"))
+            {
+                string classStr = csvRow["Class"].Trim().ToLower();
+                UnitClass parsedClass = UnitClass.Bastion;
+                switch (classStr)
+                {
+                    case "bastion":
+                    case "tank":
+                        parsedClass = UnitClass.Bastion;
+                        break;
+                    case "vanguard":
+                    case "berserker":
+                        parsedClass = UnitClass.Vanguard;
+                        break;
+                    case "executioner":
+                    case "strikers":
+                        parsedClass = UnitClass.Executioner;
+                        break;
+                    case "ranger":
+                    case "marksman":
+                        parsedClass = UnitClass.Ranger;
+                        break;
+                    case "warlock":
+                    case "mage":
+                        parsedClass = UnitClass.Warlock;
+                        break;
+                    case "sage":
+                    case "blood":
+                    case "blood sage":
+                        parsedClass = UnitClass.Sage;
+                        break;
+                    case "architect":
+                        parsedClass = UnitClass.Architect;
+                        break;
+                    case "necromancer":
+                    case "summoner":
+                        parsedClass = UnitClass.Necromancer;
+                        break;
+                    case "support":
+                    case "tactician":
+                    case "scout":
+                        parsedClass = UnitClass.Support;
+                        break;
+                    case "gunner":
+                        parsedClass = UnitClass.Gunner;
+                        break;
+                    case "assassin":
+                        parsedClass = UnitClass.Assassin;
+                        break;
+                    case "overlord":
+                        parsedClass = UnitClass.Overlord;
+                        break;
+                    default:
+                        if (System.Enum.TryParse(csvRow["Class"], true, out UnitClass uc))
+                        {
+                            parsedClass = uc;
+                        }
+                        break;
+                }
+                vassal.Class = parsedClass;
+            }
+
+            // Parse Rarity
+            if (csvRow.ContainsKey("Rarity"))
+            {
+                string rarityStr = csvRow["Rarity"].Trim().ToUpper();
+                UnitRarity parsedRarity = UnitRarity.Common;
+                switch (rarityStr)
+                {
+                    case "C":
+                    case "COMMON":
+                    case "NORMAL":
+                    case "N":
+                        parsedRarity = UnitRarity.Common;
+                        break;
+                    case "UC":
+                    case "UNCOMMON":
+                        parsedRarity = UnitRarity.Uncommon;
+                        break;
+                    case "R":
+                    case "RARE":
+                        parsedRarity = UnitRarity.Rare;
+                        break;
+                    case "SR":
+                    case "ELITE":
+                        parsedRarity = UnitRarity.Elite;
+                        break;
+                    case "SSR":
+                    case "MASTER":
+                        parsedRarity = UnitRarity.Master;
+                        break;
+                    case "UR":
+                    case "LEGENDARY":
+                        parsedRarity = UnitRarity.Legendary;
+                        break;
+                    default:
+                        if (System.Enum.TryParse(csvRow["Rarity"], true, out UnitRarity ur))
+                        {
+                            parsedRarity = ur;
+                        }
+                        break;
+                }
+                vassal.Rarity = parsedRarity;
+            }
+
             EditorUtility.SetDirty(vassal);
-            Debug.Log($"[Balancing Studio] Overwrote {vassal.UnitName} asset with CSV values.");
+            Debug.Log($"[Balancing Studio] Overwrote {vassal.UnitName} asset with CSV values (including Class and Rarity).");
         }
 
         private void SortVassals()
@@ -1340,6 +1452,79 @@ namespace MaouSamaTD.EditorTools
             {
                 Debug.LogError($"[Balancing Studio] Failed to save CSV: {ex.Message}");
             }
+        }
+
+        private void SyncAllCsvToVassals()
+        {
+            int count = 0;
+            foreach (var vassal in _vassalAssets)
+            {
+                if (vassal == null) continue;
+
+                Dictionary<string, string> csvRow = null;
+
+                // 1. Hardcoded special cases from unit_mapping.json / custom asset naming
+                if (vassal.name == "Char_Magma_UnitData")
+                {
+                    csvRow = _csvRows.Find(r => r.GetValueOrDefault("File", "").Contains("lava_bender"));
+                }
+                else if (vassal.name == "Char_Thrax_UnitData")
+                {
+                    csvRow = _csvRows.Find(r => r.GetValueOrDefault("File", "").Contains("rune_scarred_gladiator"));
+                }
+                else if (vassal.name == "Char_Kaelen_Cursed_Blademaster_UnitData")
+                {
+                    csvRow = _csvRows.Find(r => r.GetValueOrDefault("File", "").Contains("kaelia_cursed_blademaster") || r.GetValueOrDefault("File", "").Contains("kaelen_cursed_blademaster"));
+                }
+                else if (vassal.name == "Char_Vespera_Succubus_Envoy_UnitData")
+                {
+                    // No exact row in CSV since Vespera is an art-only asset, keep her as is
+                    csvRow = null;
+                }
+                else if (vassal.name == "Char_Zephyria_Cloud_Scout_UnitData")
+                {
+                    // No exact row in CSV since Zephyria is an art-only asset, keep her as is
+                    csvRow = null;
+                }
+
+                // 2. Exact match on whole Name
+                if (csvRow == null)
+                {
+                    csvRow = _csvRows.Find(r => r.ContainsKey("Name") && r["Name"].Trim().Equals(vassal.UnitName.Trim(), System.StringComparison.OrdinalIgnoreCase));
+                }
+
+                // 3. Match on name before first separator (comma, space, bracket) - maps titled characters like 'Kaldor, Drakmora Infantry'
+                if (csvRow == null)
+                {
+                    csvRow = _csvRows.Find(r => {
+                        if (!r.ContainsKey("Name")) return false;
+                        string csvName = r["Name"].Trim();
+                        string[] parts = csvName.Split(new char[] { ',', '(', ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+                        if (parts.Length > 0 && parts[0].Trim().Equals(vassal.UnitName.Trim(), System.StringComparison.OrdinalIgnoreCase))
+                            return true;
+                        return false;
+                    });
+                }
+
+                // 4. Match asset name substring inside the CSV File column as fallback
+                if (csvRow == null)
+                {
+                    string cleanAssetName = vassal.name.Replace("Char_", "").Replace("_UnitData", "").Replace("_", "").ToLower();
+                    csvRow = _csvRows.Find(r => r.ContainsKey("File") && r["File"].Replace("_", "").ToLower().Contains(cleanAssetName));
+                }
+
+                if (csvRow != null)
+                {
+                    SyncCsvToVassal(vassal, csvRow);
+                    count++;
+                }
+                else
+                {
+                    Debug.LogWarning($"[Balancing Studio] Skip syncing '{vassal.name}' (UnitName: '{vassal.UnitName}') - no matching CSV row found.");
+                }
+            }
+            UnityEditor.AssetDatabase.SaveAssets();
+            Debug.Log($"[Balancing Studio] Synced {count} vassals from CSV to ScriptableObjects successfully.");
         }
     }
 }

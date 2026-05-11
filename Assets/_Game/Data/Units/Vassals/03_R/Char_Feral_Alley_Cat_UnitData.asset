@@ -10,27 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
-  m_Name: Char_Kaelia_Crimson_Vanguard_UnitData
+  m_Name: Char_Feral_Alley_Cat_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
-  UniqueID: bc8c71fc-db9b-4d77-a38d-d2c9d452109c
+  UniqueID: 741bba9d-94df-4e37-a05f-436fd498a1ec
   CalculatedStats:
-    MaxHp: 3499.5
-    Attack: 42
-    Defense: 84
+  MaxHp: 960
+    Attack: 36
+  Defense: 18
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
-  UnitName: Kaelia
-  UnitTitle: Crimson Vanguard
-  SummonQuote: Sovereign, it is an honor to serve you.
-  BriefDescription: 
-  LoreEntries: []
+  UnitName: Feral Alley-Cat
+  UnitTitle: 
+  BriefDescription: A very powerful and ancient combatant of the Maou's forces.
+  LoreEntries:
+  - Title: Origin
+    Content: A very powerful and ancient combatant of the Maou's forces.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: a5d29948b156cee44813d9b6d3ce1c83, type: 3}
-    Chibi: {fileID: 21300000, guid: fbc647aca3d3bd24ebdb7377c2b41ab1, type: 3}
-    WaistUp: {fileID: 21300000, guid: 82adc8e6b5fb3e54986b8a9b4dfe0b37, type: 3}
+    Avatar: {fileID: 21300000, guid: bc3436e77a735ec46a5cc1bd58e30561, type: 3}
+    Chibi: {fileID: 21300000, guid: d8f392e7a1266fe4b8c371d8df3deecb, type: 3}
+    WaistUp: {fileID: 21300000, guid: 36305a66b38959349b9a256b3c4130a7, type: 3}
     FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: 734e1fefd904e3548bf428288e8b98df, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 9598616cb1befea4492d34798fca343a, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
   Skins: []
@@ -44,21 +45,20 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
-  Rarity: 4
-  Class: 0
-  AttackPattern: 0
+  Rarity: 2
+  Class: 10
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 20
-  BlockCount: 3
-  CanAttackFlying: 1
+  DeploymentCost: 13
+  BlockCount: 1
+  CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 2333
-  AttackPower: 42
-  AttackInterval: 1
-  Defense: 56
-  Resistance: 0
-  RespawnTime: 5
+  MaxHp: 960
+  AttackPower: 120
+  AttackInterval: 0.8
+  Defense: 18
+  RespawnTime: 20.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

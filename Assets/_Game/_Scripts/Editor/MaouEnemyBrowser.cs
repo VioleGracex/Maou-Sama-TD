@@ -27,6 +27,7 @@ namespace MaouSamaTD.Editor
         private Vector2 _scrollPos;
         private Vector2 _detailScrollPos;
         private Vector2 _infoScrollPos;
+        private EnemyData _hoveredEnemy;
         
         public enum ThumbnailType { Chibi, Portrait, Splash }
         public enum SortMode { Name, HP, Speed }
@@ -62,6 +63,7 @@ namespace MaouSamaTD.Editor
 
         private void OnEnable()
         {
+            wantsMouseMove = true;
             LoadSettings();
             RefreshData();
         }
@@ -179,6 +181,7 @@ namespace MaouSamaTD.Editor
 
         private void OnGUI()
         {
+            _hoveredEnemy = null;
             InitializeStyles();
 
             DrawToolbar();
@@ -197,6 +200,13 @@ namespace MaouSamaTD.Editor
             }
 
             EditorGUILayout.EndHorizontal();
+
+            if (Event.current.type == EventType.MouseMove)
+            {
+                Repaint();
+            }
+
+            DrawHoverTooltip();
         }
 
         private void HandleGlobalInput()
@@ -392,6 +402,11 @@ namespace MaouSamaTD.Editor
                         
                         Rect cardRect = EditorGUILayout.BeginVertical(isSelected ? _selectionStyle : _cardStyle, GUILayout.Width(cellWidth), GUILayout.Height(cellHeight));
                         
+                        if (cardRect.Contains(Event.current.mousePosition))
+                        {
+                            _hoveredEnemy = enemy;
+                        }
+                        
                         float thumbSize = cellWidth - 10;
                         Rect thumbnailRect = GUILayoutUtility.GetRect(thumbSize, thumbSize);
                         DrawEnemyThumbnail(thumbnailRect, enemy);
@@ -427,9 +442,14 @@ namespace MaouSamaTD.Editor
             if (s == null) s = enemy.EnemySprite ?? enemy.FullBodyArt ?? enemy.FullSplashArt;
 
             if (s != null)
+            {
                 GUI.DrawTexture(r, s.texture, ScaleMode.ScaleToFit);
+                GUI.Label(r, new GUIContent("", enemy.EnemyName));
+            }
             else
-                GUI.Box(r, "?");
+            {
+                GUI.Box(r, new GUIContent("?", enemy.EnemyName));
+            }
         }
 
         private void DrawPagination()
@@ -597,6 +617,48 @@ namespace MaouSamaTD.Editor
             }
             if (s == null) s = enemy.EnemySprite ?? enemy.FullBodyArt ?? enemy.FullSplashArt;
             _tempPreview = s != null ? s.texture : null;
+        }
+
+        private void DrawHoverTooltip()
+        {
+            if (_hoveredEnemy == null) return;
+
+            Vector2 mousePos = Event.current.mousePosition;
+            float width = 220;
+            float height = 75;
+            float x = mousePos.x + 15;
+            float y = mousePos.y + 15;
+
+            if (x + width > position.width) x = mousePos.x - width - 15;
+            if (y + height > position.height) y = mousePos.y - height - 15;
+
+            Rect tooltipRect = new Rect(x, y, width, height);
+
+            Handles.BeginGUI();
+            GUI.color = new Color(0.12f, 0.12f, 0.15f, 0.95f);
+            GUI.Box(tooltipRect, "", (GUIStyle)"helpbox");
+            GUI.color = Color.white;
+
+            Rect paddingRect = new Rect(tooltipRect.x + 10, tooltipRect.y + 8, tooltipRect.width - 20, tooltipRect.height - 16);
+            
+            GUIStyle nameStyle = new GUIStyle(EditorStyles.boldLabel);
+            nameStyle.fontSize = 12;
+            nameStyle.normal.textColor = Color.white;
+            GUI.Label(new Rect(paddingRect.x, paddingRect.y, paddingRect.width, 20), _hoveredEnemy.EnemyName, nameStyle);
+
+            GUIStyle subStyle = new GUIStyle(EditorStyles.miniLabel);
+            subStyle.normal.textColor = new Color(0.7f, 0.7f, 0.7f);
+            string shortId = !string.IsNullOrEmpty(_hoveredEnemy.UniqueID) && _hoveredEnemy.UniqueID.Length >= 8 
+                ? _hoveredEnemy.UniqueID.Substring(0, 8) 
+                : "N/A";
+            GUI.Label(new Rect(paddingRect.x, paddingRect.y + 20, paddingRect.width, 16), $"Enemy Unit | ID: {shortId}", subStyle);
+
+            GUIStyle badgeStyle = new GUIStyle(EditorStyles.miniLabel);
+            badgeStyle.normal.textColor = new Color(1.0f, 0.3f, 0.3f);
+            badgeStyle.fontStyle = FontStyle.Bold;
+            GUI.Label(new Rect(paddingRect.x, paddingRect.y + 38, paddingRect.width, 16), $"HP: {_hoveredEnemy.MaxHp} | Speed: {_hoveredEnemy.MoveSpeed}", badgeStyle);
+
+            Handles.EndGUI();
         }
     }
 }

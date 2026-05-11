@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
-  m_Name: Char_Selene_UnitData
+  m_Name: Char_Lumina_UnitData
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
   useDefaultInspector: 0
   UniqueID: c11d4b42-14a9-40c5-bc78-2aa504a5b851
@@ -47,7 +47,7 @@ MonoBehaviour:
   BaseStatMultiplier: 1
   AcquisitionDate: 0
   Rarity: 2
-  Class: 0
+  Class: 10
   AttackPattern: 4
   AttackType: 0
   DamageType: 0

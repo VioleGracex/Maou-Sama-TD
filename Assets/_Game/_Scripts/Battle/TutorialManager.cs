@@ -131,10 +131,18 @@ namespace MaouSamaTD.Managers
                                 {
                                     targetBoss.PreventDeathForTutorial = false; // Lift immortality
                                     targetBoss.Die(); // Kill the boss
+                                    
+                                    // User requested: resume time and hide blocker then wait 2 seconds then show next step
+                                    _gameManager?.SetSpeed(1, true);
+                                    _uiBlocker.HideBlocker();
+                                    _handUI.Hide();
+                                    StartCoroutine(DelayedCompleteWaitForAction(2.0f));
                                 }
-                                
-                                // Stop waiting so the routine moves forward!
-                                _waitingForAction = false;
+                                else
+                                {
+                                    // Fallback if boss is already gone
+                                    _waitingForAction = false;
+                                }
                             }
                         });
                     }
@@ -516,17 +524,18 @@ namespace MaouSamaTD.Managers
                                     if (_showDebugLogs) Debug.Log($"[tutorial] Dialogue completed for step: {step.StepName}");
                                     dialogueDone = true;
                                 });
+                                yield return new WaitUntil(() => dialogueDone);
                             }
                             else
                             {
                                 if (_showDebugLogs) Debug.LogWarning($"[tutorial] DialogueOnly step '{step.StepName}' has no Dialogue data. Skipping dialogue.");
-                                dialogueDone = true;
                             }
 
-                            // Refresh highlight after starting dialogue so IsDialogueActive is true
-                            HandleUIHighlight(step);
-
-                            yield return new WaitUntil(() => dialogueDone);
+                            // Only show highlight/blocker AFTER dialogue is finished, if requested
+                            if (step.UseBlocker)
+                            {
+                                HandleUIHighlight(step);
+                            }
                             
                             _handUI.Hide();
                         }
@@ -535,7 +544,6 @@ namespace MaouSamaTD.Managers
                     case TutorialStepType.HighlightUI:
                         // TRIGGER: Highlights a specific UI element and optionally shows dialogue.
                         {
-                            HandleUIHighlight(step);
                             bool uiDialogueDone = false;
                             if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                             {
@@ -546,10 +554,22 @@ namespace MaouSamaTD.Managers
                                 });
                                 yield return new WaitUntil(() => uiDialogueDone);
                             }
+                            
+                            // Highlight AFTER dialogue
+                            HandleUIHighlight(step);
+                            
+                            // If this is just a highlight step without a wait, we might need a small delay or just proceed
+                            if (string.IsNullOrEmpty(step.ActionKey))
+                            {
+                                yield return new WaitForSecondsRealtime(0.5f);
+                            }
                             else
                             {
-                                if (_showDebugLogs) Debug.Log($"[tutorial] No dialogue for HighlightUI step: {step.StepName}, moving on.");
+                                _waitingForAction = true;
+                                _waitingActionKey = step.ActionKey;
+                                yield return new WaitUntil(() => !_waitingForAction);
                             }
+
                             _handUI.Hide();
                         }
                         break;
@@ -557,19 +577,34 @@ namespace MaouSamaTD.Managers
                     case TutorialStepType.HighlightTile:
                         // TRIGGER: Highlights one or more world tiles and optionally shows dialogue.
                         {
+                            bool tileDialogueDone = false;
+                            if (step.Dialogue != null)
+                            {
+                                _dialogueManager.StartDialogue(step.Dialogue, () => 
+                                {
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Tile Highlight Dialogue completed for step: {step.StepName}");
+                                    tileDialogueDone = true;
+                                });
+                                yield return new WaitUntil(() => tileDialogueDone);
+                            }
+
                             HandleUIHighlight(step);
                             if (step.TargetTiles != null)
                             {
                                 foreach (var wt in step.TargetTiles) HighlightTile(wt.Coordinate);
                             }
                             
-                            bool tileDialogueDone = false;
-                            _dialogueManager.StartDialogue(step.Dialogue, () => 
+                            if (string.IsNullOrEmpty(step.ActionKey))
                             {
-                                if (_showDebugLogs) Debug.Log($"[tutorial] Tile Highlight Dialogue completed for step: {step.StepName}");
-                                tileDialogueDone = true;
-                            });
-                            yield return new WaitUntil(() => tileDialogueDone);
+                                yield return new WaitForSecondsRealtime(0.5f);
+                            }
+                            else
+                            {
+                                _waitingForAction = true;
+                                _waitingActionKey = step.ActionKey;
+                                yield return new WaitUntil(() => !_waitingForAction);
+                            }
+
                             _handUI.Hide();
                             ClearAllTileHighlights();
                         }
@@ -584,19 +619,14 @@ namespace MaouSamaTD.Managers
                             {
                                 bool actionDialogueDone = false;
                                 _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
-                                
-                                if (step.UseBlocker)
-                                {
-                                    HandleUIHighlight(step);
-                                }
-                                
                                 yield return new WaitUntil(() => actionDialogueDone);
                             }
-
-                            HandleUIHighlight(step);
                             
-                            _waitingForAction = true;
-                            _waitingActionKey = step.ActionKey;
+                            // Show highlight and hand AFTER dialogue
+                            if (step.UseBlocker)
+                            {
+                                HandleUIHighlight(step);
+                            }
 
                             if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)
                             {
@@ -610,13 +640,23 @@ namespace MaouSamaTD.Managers
                                 step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
                             {
                                 if (_skillManager != null) _skillManager.ResetAllCooldowns();
-                                int requiredCost = GetRiteSealCostFromButtonName(step.TargetUI.Name);
+                                int requiredCost = 0;
+                                if (step.TargetUI.Name != "Ult_Btn")
+                                {
+                                    requiredCost = GetRiteSealCostFromButtonName(step.TargetUI.Name);
+                                }
                                 if (requiredCost > 0 && _currencyManager.CurrentSeals < requiredCost)
                                 {
                                     _currencyManager.SetSeals(requiredCost);
                                     if (_showDebugLogs) Debug.Log($"[tutorial] Set seals to {requiredCost} for step '{step.StepName}' (rite: {step.TargetUI.Name})");
                                 }
                             }
+                            
+                            _waitingForAction = true;
+                            _waitingActionKey = step.ActionKey;
+                            yield return new WaitUntil(() => !_waitingForAction);
+                            
+                            _handUI.Hide();
 
                             // Auto-skip "Open Rite Menu" if it's already open
                             if (step.ActionKey == "RiteMenuOpened")
@@ -689,6 +729,15 @@ namespace MaouSamaTD.Managers
                             {
                                 yield return new WaitUntil(() => !_waitingForAction);
                                 _triggeredActionsBuffer.Remove(step.ActionKey); 
+
+                                // Special Logic for Level 2 Boss Dead: Delay 2s before next step
+                                if (step.ActionKey == "BossDead")
+                                {
+                                    if (_showDebugLogs) Debug.Log("[tutorial] Boss Dead: Resuming time and hiding blocker for 2 seconds...");
+                                    _gameManager.SetSpeed(1);
+                                    _uiBlocker.HideBlocker();
+                                    yield return new WaitForSecondsRealtime(2f);
+                                }
                             }
                             
                             if (_unitInspectorUI != null) _unitInspectorUI.IsLocked = false;
@@ -832,6 +881,14 @@ namespace MaouSamaTD.Managers
                                     if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: AwakenLilith started (Addressables).");
                                 }
                             }
+                            else if (step.ActionKey == "ShowLilith")
+                            {
+                                if (_deploymentUI != null)
+                                {
+                                    _deploymentUI.SetUnitButtonVisibility("Lilith", true);
+                                    if (_showDebugLogs) Debug.Log("[tutorial] CustomCommand: ShowLilith executed.");
+                                }
+                            }
                             else if (step.ActionKey == "SetPhasingAndImmunity")
                             {
                                 string bossName = string.IsNullOrEmpty(targetName) ? "Abyssal Shade" : targetName;
@@ -862,9 +919,16 @@ namespace MaouSamaTD.Managers
                             {
                                 if (_deploymentUI != null)
                                 {
-                                    bool active = (step.RequiredCount > 0);
-                                    _deploymentUI.SetUnitButtonVisibility(targetName, active);
-                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: SetUnitButtonActive for {targetName} to {active}");
+                                     if (!string.IsNullOrEmpty(targetName))
+                                     {
+                                         bool active = (step.RequiredCount > 0);
+                                         _deploymentUI.SetUnitButtonVisibility(targetName, active);
+                                     }
+                                     else if (_showDebugLogs)
+                                     {
+                                         Debug.LogWarning($"[tutorial] SetUnitButtonActive: TargetUI.Name is empty for step '{step.StepName}'");
+                                     }
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: SetUnitButtonActive for {targetName} to {step.RequiredCount > 0}");
                                 }
                                 else
                                 {
@@ -920,19 +984,6 @@ namespace MaouSamaTD.Managers
                                             };
                                         }
                                     };
-                                }
-                            }
-                            else if (step.ActionKey == "SetMaxAuthoritySeals")
-                            {
-                                if (_currencyManager != null)
-                                {
-                                    int newMax = step.RequiredCount;
-                                    _currencyManager.SetMaxSeals(newMax);
-                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand: SetMaxAuthoritySeals → {newMax}");
-                                }
-                                else
-                                {
-                                    if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand SetMaxAuthoritySeals: BattleCurrencyManager is NULL!");
                                 }
                             }
 
@@ -1051,7 +1102,9 @@ namespace MaouSamaTD.Managers
             bool isDragging = _interactionManager != null && _interactionManager.IsDragging;
             bool isPlacementMode = _interactionManager != null && (isDragging || _interactionManager.SelectedUnitData != null);
 
-            if (isSkillStep)
+            bool isDialogueActive = _dialogueManager != null && _dialogueManager.IsDialogueActive;
+
+            if (isSkillStep && !isDialogueActive)
             {
                 // Always show the skill button so its glow/state is visible even when targeting tiles
                 if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
@@ -1062,7 +1115,7 @@ namespace MaouSamaTD.Managers
                     if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
                 }
             }
-            else if (isPlacementStep)
+            else if (isPlacementStep && !isDialogueActive)
             {
                 if (isPlacementMode)
                 {
@@ -1074,7 +1127,7 @@ namespace MaouSamaTD.Managers
                     if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
                 }
             }
-            else
+            else if (!isDialogueActive)
             {
                 if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name)) uiTargets.Add(step.TargetUI);
                 if (step.AdditionalTargetUI != null) uiTargets.AddRange(step.AdditionalTargetUI);
@@ -1137,7 +1190,7 @@ namespace MaouSamaTD.Managers
                 }
             }
 
-            if (step.TargetTiles != null && step.TargetTiles.Count > 0)
+            if (step.TargetTiles != null && step.TargetTiles.Count > 0 && !isDialogueActive)
             {
                 // Tiles are ONLY cut if:
                 // 1. It's NOT a placement step (highlight-only steps)
@@ -1169,7 +1222,7 @@ namespace MaouSamaTD.Managers
             }
 
             // DYNAMIC: Highlight tile boss stands on during "Boss Bypasses!" step
-            if (step.StepName == "Boss Bypasses!" || step.StepName == "Boss Bypasses ignis")
+            if (!isDialogueActive && (step.StepName == "Boss Bypasses!" || step.StepName == "Boss Bypasses ignis"))
             {
                 var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
                 if (boss != null)
@@ -1194,6 +1247,9 @@ namespace MaouSamaTD.Managers
                     uiHits.Add(new UIPopupBlocker.UIHighlightData { Target = dialogueRT, Size = Vector2.one });
                 }
             }
+
+            if (isDialogueActive) _uiBlocker.SetSortingOrder(2999);
+            else _uiBlocker.SetSortingOrder(50);
 
             _uiBlocker.ShowBlockerWithDetailedTargets(uiHits, worldHighlights);
 
@@ -1229,7 +1285,7 @@ namespace MaouSamaTD.Managers
                     }
                 }
             }
-            else if (step.ShowHand)
+            else if (step.ShowHand && !isDialogueActive)
             {
                 if (isDragging || isSkillTargeting || isPlacementMode)
                 {
@@ -1269,15 +1325,7 @@ namespace MaouSamaTD.Managers
 
                     if (handPos != Vector2.zero) 
                     {
-                        float dist = Vector2.Distance(_handUI.GetComponent<RectTransform>().position, handPos);
-                        if (dist > 50f && dist < 1000f)
-                        {
-                             _handUI.MoveTo(handPos, handScale, 0.25f);
-                        }
-                        else
-                        {
-                             _handUI.ShowAt(handPos, handScale);
-                        }
+                        _handUI.ShowAt(handPos, handScale);
                     }
                     else
                     {
@@ -1547,6 +1595,13 @@ private RectTransform FindTargetRect(string name)
         #endregion
 
         #region Actions & Conditions
+        private IEnumerator DelayedCompleteWaitForAction(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            _waitingForAction = false;
+            if (_showDebugLogs) Debug.Log($"[tutorial] Delay finished. Proceeding from boss death.");
+        }
+
         public void OnActionTriggered(string actionKey)
         {
             _triggeredActionsBuffer.Add(actionKey);
@@ -2070,6 +2125,8 @@ private RectTransform FindTargetRect(string name)
                     return rite.SealCost;
                 }
             }
+
+            if (resolvedName == "Ult_Btn") return 0;
 
             if (_showDebugLogs) Debug.LogWarning($"[tutorial] GetRiteSealCostFromButtonName: Could not find rite for button '{buttonName}' (resolved: '{resolvedName}')");
             return 0;

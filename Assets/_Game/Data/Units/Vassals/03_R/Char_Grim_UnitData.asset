@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: c251b322-3163-40b3-87a0-9ff02ef043bc
   CalculatedStats:
-  MaxHp: 3000
+  MaxHp: 300
     Attack: 36
-  Defense: 72
+  Defense: 10
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Grim
@@ -53,10 +53,10 @@ MonoBehaviour:
   BlockCount: 3
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 3000
-  AttackPower: 36
+  MaxHp: 300
+  AttackPower: 4
   AttackInterval: 1.2
-  Defense: 72
+  Defense: 10
   RespawnTime: 20.0
   Range: 1
   MaxCharge: 100

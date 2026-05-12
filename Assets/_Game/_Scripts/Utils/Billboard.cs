@@ -19,6 +19,10 @@ namespace MaouSamaTD.Utils
         [SerializeField] private bool _lockY = false;
         [SerializeField] private bool _lockZ = false;
         
+        public bool LockX { get => _lockX; set => _lockX = value; }
+        public bool LockY { get => _lockY; set => _lockY = value; }
+        public bool LockZ { get => _lockZ; set => _lockZ = value; }
+
         [Tooltip("If true, only updates once in Start/OnEnable. Use if camera is static.")]
         [SerializeField] private bool _isStatic = false;
 

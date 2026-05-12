@@ -80,6 +80,12 @@ namespace MaouSamaTD.UI
             _cachedPixels = new Color32[maskSize * maskSize];
         }
 
+        public void SetSortingOrder(int order)
+        {
+            Canvas canvas = GetComponent<Canvas>();
+            if (canvas != null) canvas.sortingOrder = order;
+        }
+
         public void ShowBlockerWithDetailedTargets(List<UIHighlightData> uiHits, List<WorldHighlightData> worldHits)
         {
             uiHighlights.Clear();

@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: d47ebcf5-9ba3-4eb7-8da6-c1696d910da2
   CalculatedStats:
-  MaxHp: 1000
+  MaxHp: 60
     Attack: 30
-  Defense: 25
+  Defense: 1
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Vesta
@@ -50,17 +50,17 @@ MonoBehaviour:
   Class: 5
   AttackPattern: 4
   AttackType: 0
-  DamageType: 0
+  DamageType: 2
   DeploymentCost: 10
   BlockCount: 1
-  CanAttackFlying: 0
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 1000
-  AttackPower: 50
-  AttackInterval: 1.0
-  Defense: 25
+  MaxHp: 60
+  AttackPower: 9
+  AttackInterval: 1.5
+  Defense: 1
   RespawnTime: 15.0
-  Range: 1
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

@@ -32,7 +32,7 @@ MonoBehaviour:
   CollisionType: 0
   EvasionType: 0
   TargetingPriority: 0
-  OnlyAttackIfBlocked: 1
+  OnlyAttackIfBlocked: 0
   GroundAttackTargets: 2
   PhasingCharges: 0
   Immunities: 

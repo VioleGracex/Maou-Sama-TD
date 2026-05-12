@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 90604a36-9e91-401c-baf1-cde8dedf915a
   CalculatedStats:
-  MaxHp: 1500
+  MaxHp: 300
     Attack: 90
-  Defense: 38
+  Defense: 8
     ClassIcon: {fileID: 21300000, guid: 33b39977cf7fa404194b18d31210c071, type: 3}
     ClassName: Vanguard
   UnitName: Satan
@@ -54,13 +54,13 @@ MonoBehaviour:
   AttackType: 0
   DamageType: 0
   DeploymentCost: 26
-  BlockCount: 1
+  BlockCount: 3
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 1500
-  AttackPower: 75
+  MaxHp: 300
+  AttackPower: 18
   AttackInterval: 1.0
-  Defense: 38
+  Defense: 8
   RespawnTime: 30.0
   Range: 1
   MaxCharge: 100

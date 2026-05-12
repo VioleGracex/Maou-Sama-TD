@@ -163,7 +163,8 @@ def update_renamed_asset_identities():
         "03_R/Char_Ignatius_UnitData.asset": ("Ignatius", ""),
         "03_R/Char_Feral_Alley_Cat_UnitData.asset": ("Feral Alley-Cat", ""),
         "03_R/Char_Rune_Scarred_Gladiator_UnitData.asset": ("Rune-Scarred Gladiator", ""),
-        "04_SR/Char_Kaelia_Cursed_Blademaster_UnitData.asset": ("Kaelia", "Cursed Blademaster")
+        "04_SR/Char_Kaelia_Cursed_Blademaster_UnitData.asset": ("Kaelia", "Cursed Blademaster"),
+        "05_SSR/Char_Vaelin_UnitData.asset": ("Vaelin", "The Phantom Stalker")
     }
     for rel_path, (name, title) in identities.items():
         p = asset_root / rel_path
@@ -263,6 +264,7 @@ def run_sync():
     rename_asset_if_exists("Char_Shadow_UnitData.asset", "Char_Feral_Alley_Cat_UnitData.asset", asset_root / "03_R")
     rename_asset_if_exists("Char_Thrax_UnitData.asset", "Char_Rune_Scarred_Gladiator_UnitData.asset", asset_root / "03_R")
     rename_asset_if_exists("Char_Kaelen_Cursed_Blademaster_UnitData.asset", "Char_Kaelia_Cursed_Blademaster_UnitData.asset", asset_root / "04_SR")
+    rename_asset_if_exists("Char_Shade_UnitData.asset", "Char_Vaelin_UnitData.asset", asset_root / "05_SSR")
     
     update_renamed_asset_identities()
     

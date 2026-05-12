@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: eeab5d09-3216-42ac-9107-2ac8f0ec7d0b
   CalculatedStats:
-  MaxHp: 1950
+  MaxHp: 78
     Attack: 39
-  Defense: 39
+  Defense: 1
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Talon
@@ -48,19 +48,19 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 3
   Class: 3
-  AttackPattern: 4
+  AttackPattern: 1
   AttackType: 0
   DamageType: 0
   DeploymentCost: 18
-  BlockCount: 2
-  CanAttackFlying: 0
+  BlockCount: 1
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 1950
-  AttackPower: 78
+  MaxHp: 78
+  AttackPower: 10
   AttackInterval: 1.0
-  Defense: 39
+  Defense: 1
   RespawnTime: 22.0
-  Range: 1
+  Range: 3
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

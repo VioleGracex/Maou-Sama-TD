@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
+  m_Name: Char_Vaelin_UnitData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
+  useDefaultInspector: 0
+  UniqueID: 3854612a-88cf-4717-86f1-275e1b90c984
+  CalculatedStats:
+  MaxHp: 84
+    Attack: 0
+  Defense: 1
+    ClassIcon: {fileID: 0}
+    ClassName: 
+  UnitName: Vaelin
+  UnitTitle: The Phantom Stalker
+  SummonQuote: 
+  BriefDescription: 
+  LoreEntries: []
+  BaseSkin:
+    Avatar: {fileID: 21300000, guid: 5e4b7774c3a583a4f8f9ed6167ba8b3f, type: 3}
+    Chibi: {fileID: 21300000, guid: 0b3d2b4bb70fbff40bdd9d3b00843944, type: 3}
+    WaistUp: {fileID: 21300000, guid: ccfe1b6a98809064abc685e6103ffcdd, type: 3}
+    FullSplashArt: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: 56bbdbe139198174ab490cee11561290, type: 3}
+    AnimatorController: {fileID: 0}
+  StarAdvancementVisuals: []
+  Skins: []
+  _equippedSkinID: 
+  CardSlotImageType: 2
+  ButtonImageType: 0
+  Level: 1
+  Experience: 0
+  StarRating: 1
+  Amity: 0
+  SkillLevel: 1
+  BaseStatMultiplier: 1
+  AcquisitionDate: 0
+  Rarity: 4
+  Class: 3
+  AttackPattern: 1
+  AttackType: 0
+  DamageType: 0
+  DeploymentCost: 22
+  BlockCount: 1
+  CanAttackFlying: 1
+  CustomPatternOffsets: []
+  MaxHp: 84
+  AttackPower: 11
+  AttackInterval: 1.0
+  Defense: 1
+  RespawnTime: 25.0
+  Range: 3
+  MaxCharge: 100
+  ChargePerSecond: 5
+  ChargePerAttack: 10
+  UltimateDamageResistance: 0
+  PassiveSkill: {fileID: 0}
+  ActiveSkill: {fileID: 0}
+  UltimateSkill: {fileID: 0}
+  AscensionNodes: []
+  _viableTiles: 
+  _unlockedSkinIDs: []

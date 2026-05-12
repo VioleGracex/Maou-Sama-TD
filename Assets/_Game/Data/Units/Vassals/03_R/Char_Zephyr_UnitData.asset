@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: fdbefac5-3d03-4732-b1a0-6ff925a5f6d7
   CalculatedStats:
-  MaxHp: 720
+  MaxHp: 72
     Attack: 36
-  Defense: 12
+  Defense: 1
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Zephyr
@@ -55,10 +55,10 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 720
-  AttackPower: 96
+  MaxHp: 72
+  AttackPower: 10
   AttackInterval: 1.0
-  Defense: 12
+  Defense: 1
   RespawnTime: 20.0
   Range: 3
   MaxCharge: 100

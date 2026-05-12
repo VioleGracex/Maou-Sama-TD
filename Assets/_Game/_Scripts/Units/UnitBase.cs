@@ -17,8 +17,8 @@ namespace MaouSamaTD.Units
         [SerializeField] protected float _attackInterval = 1f;
         [SerializeField] protected float _defense = 0f;
         
-        public float MaxHp => _maxHp;
-        public float CurrentHp => _currentHp;
+        public float MaxHp => Mathf.Ceil(_maxHp);
+        public float CurrentHp => Mathf.Ceil(_currentHp);
         public float AttackPower 
         {
             get
@@ -29,7 +29,7 @@ namespace MaouSamaTD.Units
                     foreach (var b in _activeBuffs) 
                         if (b.Stat == MaouSamaTD.Skills.SkillStatType.Attack) mult *= b.Multiplier;
                 }
-                return _attackPower * mult;
+                return Mathf.Ceil(_attackPower * mult);
             }
         }
         public float Defense 
@@ -42,7 +42,7 @@ namespace MaouSamaTD.Units
                     foreach (var b in _activeBuffs) 
                         if (b.Stat == MaouSamaTD.Skills.SkillStatType.Defense) mult *= b.Multiplier;
                 }
-                return _defense * mult;
+                return Mathf.Ceil(_defense * mult);
             }
         }
 
@@ -71,7 +71,7 @@ namespace MaouSamaTD.Units
                     foreach (var b in _activeBuffs) 
                         if (b.Stat == MaouSamaTD.Skills.SkillStatType.Range) mult *= b.Multiplier;
                 }
-                return baseRange * mult;
+                return Mathf.Ceil(baseRange * mult);
             }
         }
         
@@ -118,6 +118,8 @@ namespace MaouSamaTD.Units
 
         protected System.Collections.Generic.Dictionary<UnitBase, float> _damageTakenByAttacker = new System.Collections.Generic.Dictionary<UnitBase, float>();
         public float GetDamageFrom(UnitBase attacker) => (attacker != null && _damageTakenByAttacker.ContainsKey(attacker)) ? _damageTakenByAttacker[attacker] : 0f;
+
+        public virtual System.Collections.Generic.List<Vector2Int> CustomPatternOffsets => _data != null ? _data.CustomPatternOffsets : null;
 
         [System.Serializable]
         public class BuffInstance
@@ -326,7 +328,7 @@ namespace MaouSamaTD.Units
                 finalAmount = 0;
             }
 
-            float damageTaken = finalAmount > 0f ? Mathf.Max(1f, finalAmount - _defense) : 0f; 
+            float damageTaken = finalAmount > 0f ? Mathf.Ceil(Mathf.Max(1f, finalAmount - Defense)) : 0f; 
 
             if (PreventDeathForTutorial && _currentHp - damageTaken <= 1f)
             {
@@ -479,6 +481,44 @@ namespace MaouSamaTD.Units
             if (_healParticle != null) _healParticle.Play(); 
         }
 
+        public virtual bool IsRanged()
+        {
+            return false;
+        }
+
+        protected virtual void HandleAttack(UnitBase target)
+        {
+            if (target == null) return;
+            
+            bool playedAnimation = false;
+            // Handle Animation fallback
+            if (_animator != null && _animator.runtimeAnimatorController != null)
+            {
+                if (_animator.HasState(0, Animator.StringToHash("Attack")))
+                {
+                    _animator.Play("Attack", 0, 0f);
+                    playedAnimation = true;
+                }
+            }
+            
+            if (!playedAnimation && _spriteRenderer != null)
+            {
+                if (IsRanged())
+                {
+                    // Ranged units do not do the physical punch/lunge bump fallback.
+                    // Instead, they use a soft, satisfying scale-recoil animation.
+                    _spriteRenderer.transform.DOPunchScale(new Vector3(-0.1f, 0.1f, 0f), 0.15f, 1, 0.5f);
+                }
+                else
+                {
+                    // Melee bump towards target fallback
+                    Vector3 originalPos = _spriteRenderer.transform.localPosition;
+                    Vector3 worldDir = (target.transform.position - transform.position).normalized * 0.3f;
+                    _spriteRenderer.transform.DOLocalMove(originalPos + new Vector3(worldDir.x, worldDir.y, 0), 0.1f).SetLoops(2, LoopType.Yoyo);
+                }
+            }
+        }
+
         public virtual void Die(UnitBase attacker = null)
         {
             if (_isDead) return;
@@ -505,13 +545,37 @@ namespace MaouSamaTD.Units
             OnDeath?.Invoke();
 
             // Handle Animation
-            if (_animator != null)
+            bool playedDeathAnim = false;
+            if (_animator != null && _animator.runtimeAnimatorController != null)
             {
                 // Try playing common death state names
-                _animator.Play("Die", 0, 0f);
-                _animator.Play("Death", 0, 0f);
+                if (_animator.HasState(0, Animator.StringToHash("Die")))
+                {
+                    _animator.Play("Die", 0, 0f);
+                    playedDeathAnim = true;
+                }
+                else if (_animator.HasState(0, Animator.StringToHash("Death")))
+                {
+                    _animator.Play("Death", 0, 0f);
+                    playedDeathAnim = true;
+                }
                 
-                StartCoroutine(DelayedDestroy(_animator));
+                if (playedDeathAnim)
+                {
+                    StartCoroutine(DelayedDestroy(_animator));
+                    return;
+                }
+            }
+            
+            if (!playedDeathAnim && _spriteRenderer != null)
+            {
+                // Improved DOTween Fallback: Shake, then fade and shrink
+                Sequence seq = DOTween.Sequence();
+                seq.Append(_spriteRenderer.transform.DOShakePosition(0.3f, 0.1f));
+                seq.Join(_spriteRenderer.DOColor(Color.red, 0.3f));
+                seq.Append(_spriteRenderer.DOFade(0f, 0.5f));
+                seq.Join(transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack));
+                seq.OnComplete(() => Destroy(gameObject));
                 return;
             }
 
@@ -543,7 +607,7 @@ namespace MaouSamaTD.Units
             Destroy(gameObject);
         }
 
-        protected bool IsTargetInPattern(Vector2Int origin, Vector2Int target, AttackPattern pattern, float range)
+        public bool IsTargetInPattern(Vector2Int origin, Vector2Int target, AttackPattern pattern, float range)
         {
             int dx = Mathf.Abs(origin.x - target.x);
             int dy = Mathf.Abs(origin.y - target.y);
@@ -567,9 +631,10 @@ namespace MaouSamaTD.Units
                 case AttackPattern.All:
                     return dx <= iRange && dy <= iRange; 
                 case AttackPattern.Custom:
-                    if (_data == null || _data.CustomPatternOffsets == null) return false;
+                    var offsets = CustomPatternOffsets;
+                    if (offsets == null) return false;
                     Vector2Int offset = target - origin;
-                    return _data.CustomPatternOffsets.Contains(offset);
+                    return offsets.Contains(offset);
                 default:
                     return false;
             }

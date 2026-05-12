@@ -144,7 +144,12 @@ namespace MaouSamaTD.UI.Skills
             // Move Right on Hide
             Vector2 targetPos = _isVisible ? _visiblePos : _visiblePos + new Vector2(_hideOffset, 0);
             
-            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
+            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack).SetUpdate(true).OnComplete(() => {
+                if (_isVisible)
+                {
+                    _tutorialManager?.OnActionTriggered("RiteMenuOpened");
+                }
+            });
             
             // Fix: Update Text
             if (_toggleButton != null)
@@ -159,11 +164,6 @@ namespace MaouSamaTD.UI.Skills
             // Always hide the tutorial hand when the panel state changes —
             // the TutorialManager will re-show it on the next highlight refresh.
             _tutorialManager?.HideHand();
-
-            if (_isVisible)
-            {
-                _tutorialManager?.OnActionTriggered("RiteMenuOpened");
-            }
         }
     }
 }

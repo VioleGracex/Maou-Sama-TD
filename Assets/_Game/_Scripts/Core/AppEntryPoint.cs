@@ -20,9 +20,54 @@ namespace MaouSamaTD.Core
         [Inject] private GameSelectionState _gameSelectionState;
         
         // This is a static reference we can use universally since it will be loaded from Addressables
-        public static UnitDatabase LoadedUnitDatabase { get; private set; }
-        public static MaouSamaTD.Data.LevelDatabase LoadedLevelDatabase { get; private set; }
-        public static MaouSamaTD.Units.ClassScalingData LoadedScalingData { get; private set; }
+        private static UnitDatabase _loadedUnitDatabase;
+        private static MaouSamaTD.Data.LevelDatabase _loadedLevelDatabase;
+        private static MaouSamaTD.Units.ClassScalingData _loadedScalingData;
+
+        public static UnitDatabase LoadedUnitDatabase 
+        {
+            get
+            {
+                if (_loadedUnitDatabase == null)
+                {
+                    Debug.Log("[AppEntryPoint] LoadedUnitDatabase accessed while null. Attempting sync load...");
+                    var handle = Addressables.LoadAssetAsync<UnitDatabase>("UnitDatabase");
+                    _loadedUnitDatabase = handle.WaitForCompletion();
+                }
+                return _loadedUnitDatabase;
+            }
+            private set => _loadedUnitDatabase = value;
+        }
+
+        public static MaouSamaTD.Data.LevelDatabase LoadedLevelDatabase 
+        {
+            get
+            {
+                if (_loadedLevelDatabase == null)
+                {
+                    Debug.Log("[AppEntryPoint] LoadedLevelDatabase accessed while null. Attempting sync load...");
+                    var handle = Addressables.LoadAssetAsync<MaouSamaTD.Data.LevelDatabase>("LevelDatabase");
+                    _loadedLevelDatabase = handle.WaitForCompletion();
+                }
+                return _loadedLevelDatabase;
+            }
+            private set => _loadedLevelDatabase = value;
+        }
+
+        public static MaouSamaTD.Units.ClassScalingData LoadedScalingData 
+        {
+            get
+            {
+                if (_loadedScalingData == null)
+                {
+                    Debug.Log("[AppEntryPoint] LoadedScalingData accessed while null. Attempting sync load...");
+                    var handle = Addressables.LoadAssetAsync<MaouSamaTD.Units.ClassScalingData>("ClassScalingData");
+                    _loadedScalingData = handle.WaitForCompletion();
+                }
+                return _loadedScalingData;
+            }
+            private set => _loadedScalingData = value;
+        }
 
         [Header("Debug")]
         [SerializeField] private bool _grantDebugResources;
@@ -118,10 +163,13 @@ namespace MaouSamaTD.Core
                 Debug.Log($"[AppEntryPoint] Successfully loaded ClassScalingData.");
 
                 // Trigger an initial refresh of all loaded unit data properties
-                if (LoadedUnitDatabase != null)
+                if (LoadedUnitDatabase != null && LoadedUnitDatabase.AllUnits != null)
                 {
                     foreach (var unit in LoadedUnitDatabase.AllUnits)
-                        unit.RefreshStats(LoadedScalingData);
+                    {
+                        if (unit != null)
+                            unit.RefreshStats(LoadedScalingData);
+                    }
                 }
             }
 
@@ -150,9 +198,9 @@ namespace MaouSamaTD.Core
         {
             Debug.Log("[AppEntryPoint] App Initialization Complete. Proceeding to destination...");
 
-            if (_saveManager.CurrentData == null)
+            if (_saveManager == null || _saveManager.CurrentData == null)
             {
-                Debug.LogError("[AppEntryPoint] SaveData is null in ProceedToGame!");
+                Debug.LogError("[AppEntryPoint] SaveManager or SaveData is null in ProceedToGame!");
                 return;
             }
 

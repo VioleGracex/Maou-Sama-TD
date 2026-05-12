@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
+  m_Name: Char_Vladislav_UnitData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
+  useDefaultInspector: 0
+  UniqueID: 6d9870be-2312-4430-975f-7f17f635ad55
+  CalculatedStats: 
+  MaxHp: 112
+  Attack: 42
+  Defense: 3
+  ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+  ClassName: Bastion
+  UnitName: Vladislav
+  UnitTitle: Crimson Duke
+  SummonQuote: Sovereign, it is an honor to serve you.
+  BriefDescription: The progenitor of the vampire courts in Drakmora.
+  LoreEntries:
+  - Title: Origin
+    Content: The progenitor of the vampire courts in Drakmora.
+  BaseSkin:
+    Avatar: {fileID: 21300000, guid: 1a19183c89e7e3248853b13d27df9044, type: 3}
+    Chibi: {fileID: 21300000, guid: 87bd304f8f7736640a43ddd01b307813, type: 3}
+    WaistUp: {fileID: 21300000, guid: 19f1fd82d99e3fd468f710d9548e620a, type: 3}
+    FullSplashArt: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: 49e72ae6f28e791489404124d9367606, type: 3}
+    AnimatorController: {fileID: 0}
+  StarAdvancementVisuals: []
+  Skins: []
+  _equippedSkinID: 
+  CardSlotImageType: 4
+  ButtonImageType: 1
+  Level: 1
+  Experience: 0
+  StarRating: 1
+  Amity: 0
+  SkillLevel: 1
+  BaseStatMultiplier: 1
+  AcquisitionDate: 0
+  Rarity: 4
+  Class: 10
+  AttackPattern: 4
+  AttackType: 0
+  DamageType: 0
+  DeploymentCost: 20
+  BlockCount: 1
+  CanAttackFlying: 0
+  CustomPatternOffsets: []
+  MaxHp: 112
+  AttackPower: 14
+  AttackInterval: 0.8
+  Defense: 3
+  RespawnTime: 25.0
+  Range: 1
+  MaxCharge: 100
+  ChargePerSecond: 5
+  ChargePerAttack: 10
+  UltimateDamageResistance: 0
+  PassiveSkill: {fileID: 0}
+  ActiveSkill: {fileID: 0}
+  UltimateSkill: {fileID: 0}
+  AscensionNodes: []
+  _viableTiles: 
+  _unlockedSkinIDs: []

@@ -4,11 +4,23 @@ using TMPro;
 using MaouSamaTD.Units;
 using Zenject;
 using DG.Tweening;
+using UnityEngine.EventSystems;
 
 namespace MaouSamaTD.UI
 {
-    public class UnitButtonUI : MonoBehaviour
+    public class UnitButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
+        [Header("Visual Settings")]
+        [SerializeField] private Color _deployedBgColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+        [SerializeField] private Color _deployedIconColor = new Color(0.7f, 0.7f, 0.7f, 0.9f);
+        [SerializeField] private float _cooldownBgMultiplier = 0.6f;
+        [SerializeField] private Color _cooldownIconColor = new Color(0.4f, 0.4f, 0.4f, 1f);
+        [SerializeField] private Color _insufficientFundsBgColor = new Color(0.4f, 0.15f, 0.15f, 1f);
+        [SerializeField] private Color _insufficientFundsIconColor = new Color(0.5f, 0.35f, 0.35f, 0.9f);
+        [SerializeField] private Color _selectedBgColor = Color.green;
+        [SerializeField] private Color _selectedIconColor = Color.yellow;
+        [SerializeField] private Color _idleIconColor = Color.white;
+        
         [Header("References")]
         [SerializeField] private Image _unitIcon;       
         [SerializeField] private Image _classIcon;      
@@ -27,6 +39,7 @@ namespace MaouSamaTD.UI
         private bool _lastCanAfford = true;
         private bool _lastIsDeployed = false;
         private bool _lastIsCoolingDown = false;
+        private bool _isHovered = false;
         [Inject] private DiContainer _container;
 
         public UnitData Data => _data;
@@ -58,7 +71,7 @@ namespace MaouSamaTD.UI
             {
                 _retreatButton.onClick.RemoveAllListeners();
                 _retreatButton.onClick.AddListener(OnRetreatButtonClicked);
-                _retreatButton.gameObject.SetActive(false);
+                RefreshRetreatButton();
             }
 
             if (_background == null) _background = GetComponent<Image>();
@@ -104,7 +117,7 @@ namespace MaouSamaTD.UI
             if (_classIcon != null)
             {
                 if (_classScalingData == null)
-                    _classScalingData = Resources.Load<ClassScalingData>("ClassScalingData");
+                    _classScalingData = MaouSamaTD.Core.AppEntryPoint.LoadedScalingData;
 
                 if (_classScalingData != null && _classScalingData.TryGetMultipliers(_data.Class, out var multipliers))
                 {
@@ -160,7 +173,8 @@ namespace MaouSamaTD.UI
             // Differentiate cost text color
             if (_costText != null)
             {
-                _costText.color = canAfford ? Color.white : Color.red;
+                // Vibrant red for better visibility
+                _costText.color = canAfford ? Color.white : new Color(1f, 0.2f, 0.2f);
             }
 
             if (_background != null)
@@ -169,35 +183,54 @@ namespace MaouSamaTD.UI
 
                 if (isCoolingDown)
                 {
-                    _background.color = baseColor * 0.6f; 
-                    if (_unitIcon != null) _unitIcon.color = new Color(0.4f, 0.4f, 0.4f, 1f); 
+                    _background.color = baseColor * _cooldownBgMultiplier; 
+                    if (_unitIcon != null) _unitIcon.color = _cooldownIconColor; 
                 }
                 else if (isDeployed)
                 {
-                    // Already Deployed: Desaturated Gray
-                    _background.color = new Color(0.3f, 0.3f, 0.3f, 1f);
-                    if (_unitIcon != null) _unitIcon.color = new Color(0.3f, 0.3f, 0.3f, 0.7f); 
-                    if (_retreatButton != null) _retreatButton.gameObject.SetActive(true);
+                    // Already Deployed
+                    _background.color = _deployedBgColor;
+                    if (_unitIcon != null) _unitIcon.color = _deployedIconColor; 
                 }
                 else
                 {
-                    if (_retreatButton != null) _retreatButton.gameObject.SetActive(false);
                     if (!canAfford)
                     {
-                        // Insufficient Seals: Darkened/Reddish Tint
-                        _background.color = new Color(0.4f, 0.15f, 0.15f, 1f); 
-                        if (_unitIcon != null) _unitIcon.color = new Color(0.5f, 0.35f, 0.35f, 0.9f);
+                        // Insufficient Seals
+                        _background.color = _insufficientFundsBgColor; 
+                        if (_unitIcon != null) _unitIcon.color = _insufficientFundsIconColor;
                     }
                     else
                     {
-                        _background.color = _isSelected ? Color.green : baseColor; 
+                        _background.color = _isSelected ? _selectedBgColor : baseColor; 
                         if (_unitIcon != null)
                         {
-                            if (_isSelected) _unitIcon.color = Color.yellow;
-                            else _unitIcon.color = Color.white;
+                            _unitIcon.color = _isSelected ? _selectedIconColor : _idleIconColor;
                         }
                     }
                 }
+            }
+            
+            RefreshRetreatButton();
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            _isHovered = true;
+            RefreshRetreatButton();
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            _isHovered = false;
+            RefreshRetreatButton();
+        }
+
+        private void RefreshRetreatButton()
+        {
+            if (_retreatButton != null)
+            {
+                _retreatButton.gameObject.SetActive(_lastIsDeployed && _isHovered);
             }
         }
 
@@ -222,11 +255,6 @@ namespace MaouSamaTD.UI
 
         public void UpdateHpSlider(float ratio)
         {
-            if (_hpSlider == null)
-            {
-                CreateProceduralHpSlider();
-            }
-
             if (_hpSlider != null)
             {
                 _hpSlider.value = ratio;
@@ -234,47 +262,7 @@ namespace MaouSamaTD.UI
             }
         }
 
-        private void CreateProceduralHpSlider()
-        {
-            GameObject sliderObj = new GameObject("HP_Slider_Procedural", typeof(RectTransform));
-            sliderObj.transform.SetParent(this.transform, false);
-            
-            RectTransform rect = sliderObj.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.05f, 0f);
-            rect.anchorMax = new Vector2(0.95f, 0f);
-            rect.pivot = new Vector2(0.5f, 0f);
-            rect.anchoredPosition = new Vector2(0f, 4f);
-            rect.sizeDelta = new Vector2(0f, 6f);
 
-            Image bgImage = sliderObj.AddComponent<Image>();
-            bgImage.color = new Color(0.12f, 0.12f, 0.14f, 0.85f);
-
-            GameObject fillArea = new GameObject("Fill Area", typeof(RectTransform));
-            fillArea.transform.SetParent(sliderObj.transform, false);
-            RectTransform fillAreaRect = fillArea.GetComponent<RectTransform>();
-            fillAreaRect.anchorMin = Vector2.zero;
-            fillAreaRect.anchorMax = Vector2.one;
-            fillAreaRect.sizeDelta = Vector2.zero;
-
-            GameObject fillObj = new GameObject("Fill", typeof(RectTransform));
-            fillObj.transform.SetParent(fillArea.transform, false);
-            RectTransform fillRect = fillObj.GetComponent<RectTransform>();
-            fillRect.anchorMin = Vector2.zero;
-            fillRect.anchorMax = new Vector2(1f, 1f);
-            fillRect.sizeDelta = Vector2.zero;
-
-            Image fillImage = fillObj.AddComponent<Image>();
-            fillImage.color = new Color(0.1f, 0.85f, 0.55f, 0.95f);
-
-            _hpSlider = sliderObj.AddComponent<Slider>();
-            _hpSlider.interactable = false;
-            _hpSlider.transition = Selectable.Transition.None;
-            _hpSlider.navigation = new Navigation { mode = Navigation.Mode.None };
-            _hpSlider.fillRect = fillRect;
-            _hpSlider.minValue = 0f;
-            _hpSlider.maxValue = 1f;
-            _hpSlider.value = 1f;
-        }
 
         private Color GetClassColor(UnitClass unitClass)
         {

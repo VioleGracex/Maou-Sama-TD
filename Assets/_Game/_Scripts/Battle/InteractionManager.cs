@@ -44,8 +44,10 @@ namespace MaouSamaTD.Managers
         private Tile _currentHoverTile;
         private UnitBase _currentHoverUnit;
         private PlayerUnit _inspectedPlayerUnit;
+        private EnemyUnit _inspectedEnemyUnit;
         public UnitData SelectedUnitData => _activeUnitData;
         public PlayerUnit InspectedUnit => _inspectedPlayerUnit;
+        public EnemyUnit InspectedEnemy => _inspectedEnemyUnit;
         
         private bool _isSelectionLocked = true;
         public bool IsSelectionLocked { get => _isSelectionLocked; set => _isSelectionLocked = value; }
@@ -84,6 +86,7 @@ namespace MaouSamaTD.Managers
                 _unitInspectorUI.OnPanelHidden += () => 
                 {
                     _inspectedPlayerUnit = null;
+                    _inspectedEnemyUnit = null;
                     UpdateTileVisuals();
                 };
             }
@@ -220,7 +223,7 @@ namespace MaouSamaTD.Managers
             {
                  _tileVisualsHandler.AllowedTiles = _placementHandler.AllowedTiles;
             }
-            _tileVisualsHandler.UpdateVisuals(_activeUnitData, IsDragging, _isSkillTargeting, _selectedSkill, _currentHoverTile, _inspectedPlayerUnit);
+            _tileVisualsHandler.UpdateVisuals(_activeUnitData, IsDragging, _isSkillTargeting, _selectedSkill, _currentHoverTile, _inspectedPlayerUnit, _inspectedEnemyUnit);
         }
 
         public void SetPlacementRestriction(System.Collections.Generic.List<Vector2Int> allowedTiles)
@@ -311,14 +314,38 @@ namespace MaouSamaTD.Managers
                     }
 
                     _inspectedPlayerUnit = target;
+                    _inspectedEnemyUnit = null;
                     _unitInspectorUI.Show(target);
                     _tutorialManager?.OnActionTriggered("UnitSelected");
                 }
                 else
                 {
-                    _inspectedPlayerUnit = null;
-                    _unitInspectorUI.Hide();
-                    OnTileClicked?.Invoke(hitTile);
+                    // Check for Enemy selection if no PlayerUnit was found
+                    EnemyUnit enemyTarget = null;
+                    if (hitTile != null && hitTile.Occupant is EnemyUnit eUnit)
+                    {
+                        enemyTarget = eUnit;
+                    }
+                    else if (Physics.Raycast(ray, out RaycastHit unitHit, 100f, LayerMask.GetMask("Units", "Default")))
+                    {
+                        enemyTarget = unitHit.collider.GetComponent<EnemyUnit>() ?? unitHit.collider.GetComponentInParent<EnemyUnit>();
+                    }
+
+                    if (enemyTarget != null)
+                    {
+                        _inspectedPlayerUnit = null;
+                        _inspectedEnemyUnit = enemyTarget;
+                        // For now, we don't have an EnemyInspectorUI, but we want to show range
+                        // _unitInspectorUI.Show(enemyTarget); 
+                        UpdateTileVisuals();
+                    }
+                    else
+                    {
+                        _inspectedPlayerUnit = null;
+                        _inspectedEnemyUnit = null;
+                        _unitInspectorUI.Hide();
+                        OnTileClicked?.Invoke(hitTile);
+                    }
                 }
                 UpdateTileVisuals();
             }

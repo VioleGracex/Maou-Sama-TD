@@ -1,4 +1,4 @@
-# Vassal: Abyssal Dreadknight
+# Vassal: Mordred, The Abyssal Dreadknight
 **Rarity**: SSR
 **Race**: Undead
 **Class**: Vanguard

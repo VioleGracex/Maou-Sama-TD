@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 1ada1924-dd8c-4416-a191-068126fe1fa8
   CalculatedStats:
-  MaxHp: 1200
+  MaxHp: 300
     Attack: 150
-  Defense: 22
+  Defense: 8
     ClassIcon: {fileID: 0}
     ClassName: Assassin
   UnitName: Asmodeus
@@ -53,14 +53,14 @@ MonoBehaviour:
   AttackPattern: 4
   AttackType: 0
   DamageType: 0
-  DeploymentCost: 24
-  BlockCount: 1
+  DeploymentCost: 26
+  BlockCount: 3
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 1200
-  AttackPower: 150
-  AttackInterval: 0.8
-  Defense: 22
+  MaxHp: 300
+  AttackPower: 18
+  AttackInterval: 1.0
+  Defense: 8
   RespawnTime: 30.0
   Range: 1
   MaxCharge: 100

@@ -86,7 +86,35 @@ namespace MaouSamaTD.Grid
             GameObject vfx = null;
             if (skill.BaseVisuals.HitVFX != null)
             {
-                vfx = Instantiate(skill.BaseVisuals.HitVFX, transform.position, Quaternion.identity, transform);
+                // Instantiate flat horizontally on top of the tile with a small vertical offset to avoid Z-fighting
+                Vector3 spawnPos = transform.position + new Vector3(0f, 0.05f, 0f);
+                Quaternion spawnRot = Quaternion.Euler(90f, 0f, 0f);
+                vfx = Instantiate(skill.BaseVisuals.HitVFX, spawnPos, spawnRot, transform);
+
+                // Dynamically tint based on active rite spell type
+                Color tintColor = new Color(0.2f, 0.7f, 0.9f, 0.8f); // Cyan default
+                switch (skill.EffectType)
+                {
+                    case MaouSamaTD.Skills.SkillEffectType.Damage:
+                        tintColor = new Color(0.9f, 0.2f, 0.2f, 0.8f); // Red
+                        break;
+                    case MaouSamaTD.Skills.SkillEffectType.Buff:
+                        tintColor = new Color(0.2f, 0.9f, 0.2f, 0.8f); // Green
+                        break;
+                    case MaouSamaTD.Skills.SkillEffectType.Debuff:
+                        tintColor = new Color(0.6f, 0.2f, 0.9f, 0.8f); // Purple/Violet
+                        break;
+                    case MaouSamaTD.Skills.SkillEffectType.Zone:
+                        tintColor = new Color(0.2f, 0.7f, 0.9f, 0.8f); // Cyan
+                        break;
+                }
+
+                var sr = vfx.GetComponent<SpriteRenderer>();
+                if (sr == null) sr = vfx.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.color = tintColor;
+                }
             }
 
             var effect = new TileEffect(skill, vfx);

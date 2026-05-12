@@ -14,40 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Tutorial.TutorialDataSO
   ShowCustomEditor: 1
   Steps:
-  - StepName: Hide Lilith Btn
-    Type: 5
-    Dialogue: {fileID: 0}
-    TargetUI:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    AdditionalTargetUI: []
-    TargetTiles: []
-    DelayBefore: 0
-    Duration: 2
-    ActionKey: SetUnitButtonActive
-    ShowHand: 0
-    HandScale: 1
-    DragShowHand: 0
-    HandTargetUIOverride:
-      Name: 
-      Size: {x: 1, y: 1}
-      SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
-    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
-    WaveIndex: -1
-    RequiredCount: 1
-    UseBlocker: 0
-    FullBlocker: 0
-    ResetBlocker: 0
-    StopTime: 1
-    ResumeTime: 1
-    EnableMissInterception: 0
-    MissTargetBossName: Abyssal Shade
-    OnFailJumpToStepName: 
-    OnCompleteJumpToStepName: 
-    ConsecutiveMissDialogues: []
-    Comment: 
   - StepName: Set Seal Limit 50
     Type: 5
     Dialogue: {fileID: 0}

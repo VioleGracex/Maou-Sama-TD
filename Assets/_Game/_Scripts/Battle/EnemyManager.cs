@@ -38,6 +38,9 @@ namespace MaouSamaTD.Managers
         public int CurrentWaveIndex => _currentWaveIndex;
         public int TotalWaves => _waves != null ? _waves.Count : 0;
         
+        public int CurrentWaveRemainingEnemies => _waveEnemyCounts.ContainsKey(_currentWaveIndex) ? _waveEnemyCounts[_currentWaveIndex] : 0;
+        public int CurrentWaveTotalEnemies => GetTotalEnemiesInWave(_currentWaveIndex);
+        
         public event System.Action<string, int> OnWaveStarted;
 
         private Dictionary<int, int> _waveEnemyCounts = new Dictionary<int, int>();
@@ -48,6 +51,17 @@ namespace MaouSamaTD.Managers
         public bool IsWaveCleared(int waveIndex) => waveIndex < 0 || (_wavesFinishedSpawning.Contains(waveIndex) && (!_waveEnemyCounts.ContainsKey(waveIndex) || _waveEnemyCounts[waveIndex] <= 0));
         public bool HasWaveStarted(int waveIndex) => _wavesThatStartedSpawning.Contains(waveIndex);
         
+        public int GetTotalEnemiesInWave(int waveIndex)
+        {
+            if (_waves == null || waveIndex < 0 || waveIndex >= _waves.Count) return 0;
+            int total = 0;
+            foreach (var group in _waves[waveIndex].Groups)
+            {
+                total += group.Count;
+            }
+            return total;
+        }
+
         public int GetTotalSpawnedInWave(int waveIndex)
         {
             if (_waveSpawnedCounts.ContainsKey(waveIndex)) return _waveSpawnedCounts[waveIndex];
@@ -172,7 +186,6 @@ namespace MaouSamaTD.Managers
 
                 for (int i = 0; i < group.Count; i++)
                 {
-                    if (enemyCounter == 0 && _pathVisualizer != null) _pathVisualizer.Hide();
                     SpawnEnemy(group.EnemyType, waveIndex, enemyCounter, group.SpawnPointIndex);
                     _waveEnemyCounts[waveIndex]++;
                     enemyCounter++;
@@ -253,7 +266,13 @@ namespace MaouSamaTD.Managers
             MaouSamaTD.Units.EnemyUnit enemy = Instantiate(_enemyPrefab, startPos, Quaternion.identity, _enemyContainer);
             
             if (!_waveSpawnedCounts.ContainsKey(waveIndex)) _waveSpawnedCounts[waveIndex] = 0;
+            bool isFirstEnemyOfWave = _waveSpawnedCounts[waveIndex] == 0;
             _waveSpawnedCounts[waveIndex]++;
+
+            if (isFirstEnemyOfWave && _pathVisualizer != null)
+            {
+                _pathVisualizer.HideWithMinimumDuration(2f);
+            }
             
             // 4. Initialize
             enemy.gameObject.SetActive(true);
@@ -381,18 +400,9 @@ namespace MaouSamaTD.Managers
             if (group.InitialDelay > 0)
                 yield return new WaitForSeconds(group.InitialDelay);
 
-            // Re-show paths when this group starts spawning to remind the player of the route
-            if (_pathVisualizer != null && waveCounter >= 0 && waveCounter < _waves.Count)
-            {
-                _pathVisualizer.ShowPathsForWave(_waves[waveCounter]);
-            }
-
             for (int i = 0; i < group.Count; i++)
             {
                 if (!_isSpawning) yield break;
-
-                // On the very first enemy of the level, hide the visualizer if it was still showing
-                if (waveCounter == 0 && i == 0 && _pathVisualizer != null) _pathVisualizer.Hide();
                 
                 SpawnEnemy(group.EnemyType, waveCounter, i, group.SpawnPointIndex);
                 _waveEnemyCounts[waveCounter]++;

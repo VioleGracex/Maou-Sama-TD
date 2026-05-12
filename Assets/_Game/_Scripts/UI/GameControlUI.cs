@@ -24,6 +24,7 @@ namespace MaouSamaTD.UI
 
         [Header("Status Tracking")]
         [SerializeField] private TextMeshProUGUI _waveText;
+        [SerializeField] private TextMeshProUGUI _enemyCountText;
         [SerializeField] private TextMeshProUGUI _sealsText;
 
         [Header("Pause Control")]
@@ -112,18 +113,30 @@ namespace MaouSamaTD.UI
         {
             if (_waveText != null && _enemyManager != null && _enemyManager.TotalWaves > 0)
             {
-                _waveText.text = $"Wave: {_enemyManager.CurrentWaveIndex + 1} / {_enemyManager.TotalWaves}";
+                int currentWave = _enemyManager.CurrentWaveIndex + 1;
+                int totalWaves = _enemyManager.TotalWaves;
+                int remaining = _enemyManager.CurrentWaveRemainingEnemies;
+                int total = _enemyManager.CurrentWaveTotalEnemies;
+
+                if (_enemyCountText != null)
+                {
+                    _waveText.text = $"Wave: {currentWave} / {totalWaves}";
+                    _enemyCountText.text = $"({remaining}/{total})";
+                }
+                else
+                {
+                    _waveText.text = $"Wave: {currentWave} / {totalWaves} ({remaining}/{total})";
+                }
             }
             if (_sealsText != null && _currencyManager != null)
             {
                 _sealsText.text = $"{_currencyManager.CurrentSeals} / {_currencyManager.MaxSeals}";
             }
 
-            // Only grey-out the speed button when the tutorial has actively stopped time.
-            // The pause button is NEVER disabled — the player always needs it to exit/retreat.
-            bool tutorialStoppedTime = _gameManager != null && _gameManager.IsTutorialTimeStop;
+            // Allow the speed button to be interactable even during tutorial time stops.
+            // This ensures players can manually resume or change speed if they feel stuck.
             if (_speedButton != null)
-                _speedButton.interactable = !tutorialStoppedTime;
+                _speedButton.interactable = true;
         }
 
         private void OnDestroy()
@@ -421,8 +434,8 @@ namespace MaouSamaTD.UI
         private void OnSpeedClicked()
         {
             if (_gameManager == null) return;
-            // Block speed toggle only while tutorial has stopped time — prevent overriding StopTime steps
-            if (_tutorialManager != null && _tutorialManager.IsInTutorial && _gameManager.CurrentSpeed <= 0f && !_gameManager.IsPaused) return;
+            // Speed toggle is allowed during tutorial to prevent soft-locks/frustration.
+            // SetSpeed(newSpeed) will clear the IsTutorialTimeStop state in GameManager.
             
             // Cycle: 1x -> 2x -> 0x -> 1x
             float newSpeed = 1f;

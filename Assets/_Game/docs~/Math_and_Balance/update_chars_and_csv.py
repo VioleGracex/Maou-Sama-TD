@@ -8,20 +8,20 @@ char_dir = base_dir / "Characters"
 csv_path = base_dir / "Math_and_Balance" / "Balancing_PowerGrid.csv"
 
 ClassBases = {
-    "Vanguard": {"HP": 1500, "ATK": 60, "DEF": 30, "Range": 1},
-    "Executioner": {"HP": 800, "ATK": 100, "DEF": 15, "Range": 1},
-    "Assassin": {"HP": 800, "ATK": 100, "DEF": 15, "Range": 1},
-    "Bastion": {"HP": 2500, "ATK": 30, "DEF": 60, "Range": 1},
-    "Ranger": {"HP": 600, "ATK": 80, "DEF": 10, "Range": 3},
-    "Gunner": {"HP": 600, "ATK": 80, "DEF": 10, "Range": 3},
-    "Sage": {"HP": 600, "ATK": 90, "DEF": 10, "Range": 2},
-    "Warlock": {"HP": 600, "ATK": 90, "DEF": 10, "Range": 2},
-    "Necromancer": {"HP": 600, "ATK": 90, "DEF": 10, "Range": 2},
-    "Support": {"HP": 700, "ATK": 40, "DEF": 20, "Range": 2},
-    "Architect": {"HP": 700, "ATK": 40, "DEF": 20, "Range": 2},
-    "Overlord": {"HP": 2000, "ATK": 120, "DEF": 50, "Range": 1},
+    "Vanguard": {"HP": 150, "ATK": 6, "DEF": 3, "Range": 1},
+    "Executioner": {"HP": 80, "ATK": 10, "DEF": 2, "Range": 1},
+    "Assassin": {"HP": 80, "ATK": 10, "DEF": 2, "Range": 1},
+    "Bastion": {"HP": 250, "ATK": 3, "DEF": 8, "Range": 1},
+    "Ranger": {"HP": 60, "ATK": 8, "DEF": 1, "Range": 3},
+    "Gunner": {"HP": 60, "ATK": 8, "DEF": 1, "Range": 3},
+    "Sage": {"HP": 60, "ATK": 9, "DEF": 1, "Range": 2},
+    "Warlock": {"HP": 60, "ATK": 9, "DEF": 1, "Range": 2},
+    "Necromancer": {"HP": 60, "ATK": 9, "DEF": 1, "Range": 2},
+    "Support": {"HP": 70, "ATK": 4, "DEF": 2, "Range": 2},
+    "Architect": {"HP": 70, "ATK": 4, "DEF": 2, "Range": 2},
+    "Overlord": {"HP": 200, "ATK": 12, "DEF": 5, "Range": 1},
 }
-DEFAULT_BASE = {"HP": 1000, "ATK": 50, "DEF": 25, "Range": 1}
+DEFAULT_BASE = {"HP": 100, "ATK": 5, "DEF": 2, "Range": 1}
 RarityMultipliers = {
     "Common": 1.0,
     "UC": 1.1,

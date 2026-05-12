@@ -26,12 +26,12 @@ MonoBehaviour:
   AttackInterval: 2
   AttackRange: 1
   ExitDamage: 10
-  DamageType: 2
-  AttackPattern: 4
+  DamageType: 0
+  AttackPattern: 3
   MovementType: 0
   CollisionType: 0
-  EvasionType: 2
-  OnlyAttackIfBlocked: 1
+  EvasionType: 0
+  OnlyAttackIfBlocked: 0
   PhasingCharges: 0
   Immunities: 00000000
   Abilities:

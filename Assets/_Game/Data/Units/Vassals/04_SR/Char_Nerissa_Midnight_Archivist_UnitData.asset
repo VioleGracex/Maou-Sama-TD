@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: a6da1d5a-c10a-40e2-98f4-6d3af7f6e9c8
   CalculatedStats:
-  MaxHp: 1300
+  MaxHp: 78
     Attack: 39
-  Defense: 32
+  Defense: 1
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Nerissa
@@ -50,17 +50,17 @@ MonoBehaviour:
   Class: 5
   AttackPattern: 4
   AttackType: 0
-  DamageType: 0
+  DamageType: 2
   DeploymentCost: 18
   BlockCount: 1
-  CanAttackFlying: 0
+  CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 1300
-  AttackPower: 65
-  AttackInterval: 1.0
-  Defense: 32
+  MaxHp: 78
+  AttackPower: 12
+  AttackInterval: 1.5
+  Defense: 1
   RespawnTime: 22.0
-  Range: 1
+  Range: 2
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

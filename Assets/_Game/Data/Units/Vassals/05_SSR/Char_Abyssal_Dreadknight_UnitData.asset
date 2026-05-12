@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 4dfb8969-2bd5-4956-a632-80e795836899
   CalculatedStats:
-  MaxHp: 2100
-    Attack: 112
-  Defense: 42
-    ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
-    ClassName: Ranger
+    MaxHp: 0
+    Attack: 0
+    Defense: 0
+    ClassIcon: {fileID: 0}
+    ClassName: 
   UnitName: Abyssal Dreadknight
   UnitTitle: 
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -32,7 +32,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 81f2729f6a0c4238817bdddcc89e9e63, type: 3}
     Chibi: {fileID: 21300000, guid: 26a9993d06824208bb5ba9819eebd028, type: 3}
     WaistUp: {fileID: 21300000, guid: 7c767c7d705e41168fa29ea8ce6d1491, type: 3}
-    FullSplashArt: {fileID: 21300000, guid: 67955c0ab0fc4df8a6ebb420a7a1f191, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: 924c6b6a1d776a04dbf37fa58c55006c, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 67955c0ab0fc4df8a6ebb420a7a1f191, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -58,9 +58,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 2100
   AttackPower: 84
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 42
-  RespawnTime: 25.0
+  RespawnTime: 25
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

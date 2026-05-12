@@ -64,12 +64,22 @@ namespace MaouSamaTD.Units
 
         [Header("Combat Pattern")]
         public AttackPattern AttackPattern = AttackPattern.All;
+        public System.Collections.Generic.List<Vector2Int> CustomPatternOffsets = new System.Collections.Generic.List<Vector2Int>();
 
         [Header("Behavior")]
+        [Tooltip("Ground: Standard pathing. Flying: High-ground/Aerial pathing (Can be blocked by high-ground units).")]
         public EnemyMovementType MovementType;
+        
+        [Tooltip("BlockedByUnits: Stops when encountering a player unit. IgnoreUnits: Phasing behavior.")]
         public EnemyCollisionType CollisionType;
+        
+        [Tooltip("None: Standard behavior. BypassBlockers: Ignores physical obstruction. AttackBehind: Teleports behind blocker.")]
         public EnemyEvasionType EvasionType;
+        
+        [Tooltip("ReachExit: Prioritizes movement. KillUnits: Stops to attack any unit in range.")]
         public EnemyTargetingPriority TargetingPriority = EnemyTargetingPriority.ReachExit;
+
+        [Tooltip("CHECKED: Only stops to attack if physically blocked in its path. UNCHECKED: Stops and attacks any unit within its pattern/range (diagonal, adjacent, etc).")]
         public bool OnlyAttackIfBlocked;
         
         [Tooltip("Which types of ground tiles can this unit target and attack?")]

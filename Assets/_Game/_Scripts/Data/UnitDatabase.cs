@@ -19,12 +19,12 @@ namespace MaouSamaTD.Data
         {
             if (string.IsNullOrEmpty(id)) return null;
             
-            return AllUnits.Find(u => 
+            return AllUnits.Find(u => u != null && (
                 (u.UniqueID == id) || 
                 (u.name == id) || 
                 (u.UnitName == id) ||
                 (u.name.Replace("Char_", "").Replace("_UnitData", "") == id)
-            );
+            ));
         }
     }
 }

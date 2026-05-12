@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 0c31be79-352e-4087-af9b-aae4e9dff1e1
   CalculatedStats:
-  MaxHp: 660
+  MaxHp: 66
     Attack: 33
-  Defense: 11
+  Defense: 1
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Callum
@@ -54,10 +54,10 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 660
-  AttackPower: 88
+  MaxHp: 66
+  AttackPower: 9
   AttackInterval: 1.0
-  Defense: 11
+  Defense: 1
   RespawnTime: 18.0
   Range: 3
   MaxCharge: 100

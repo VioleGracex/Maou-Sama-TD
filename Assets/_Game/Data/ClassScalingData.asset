@@ -19,9 +19,9 @@ MonoBehaviour:
   - ClassType: 0
     OverrideClassName: Bastion
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    BaseHpMultiplier: 1.5
-    BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1.5
+    BaseHpMultiplier: 2.5
+    BaseAtkMultiplier: 0.3
+    BaseDefMultiplier: 1.2
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -50,9 +50,9 @@ MonoBehaviour:
   - ClassType: 1
     OverrideClassName: Vanguard
     ClassIcon: {fileID: 21300000, guid: 33b39977cf7fa404194b18d31210c071, type: 3}
-    BaseHpMultiplier: 1
-    BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1
+    BaseHpMultiplier: 1.5
+    BaseAtkMultiplier: 0.6
+    BaseDefMultiplier: 0.6
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -82,8 +82,8 @@ MonoBehaviour:
     OverrideClassName: Executioner
     ClassIcon: {fileID: 21300000, guid: e85a8a925d512b340b4cd0c78f377c71, type: 3}
     BaseHpMultiplier: 0.8
-    BaseAtkMultiplier: 1.4
-    BaseDefMultiplier: 1
+    BaseAtkMultiplier: 1
+    BaseDefMultiplier: 0.3
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -112,9 +112,9 @@ MonoBehaviour:
   - ClassType: 3
     OverrideClassName: Ranger
     ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
-    BaseHpMultiplier: 1
-    BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1
+    BaseHpMultiplier: 0.6
+    BaseAtkMultiplier: 0.8
+    BaseDefMultiplier: 0.2
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -143,9 +143,9 @@ MonoBehaviour:
   - ClassType: 4
     OverrideClassName: Warlock
     ClassIcon: {fileID: 0}
-    BaseHpMultiplier: 1
-    BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1
+    BaseHpMultiplier: 0.6
+    BaseAtkMultiplier: 0.9
+    BaseDefMultiplier: 0.2
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -174,9 +174,9 @@ MonoBehaviour:
   - ClassType: 5
     OverrideClassName: Sage
     ClassIcon: {fileID: 0}
-    BaseHpMultiplier: 1
-    BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1
+    BaseHpMultiplier: 0.6
+    BaseAtkMultiplier: 0.9
+    BaseDefMultiplier: 0.2
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -205,9 +205,9 @@ MonoBehaviour:
   - ClassType: 6
     OverrideClassName: Architect
     ClassIcon: {fileID: 0}
-    BaseHpMultiplier: 1
-    BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1
+    BaseHpMultiplier: 0.7
+    BaseAtkMultiplier: 0.4
+    BaseDefMultiplier: 0.4
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -236,9 +236,9 @@ MonoBehaviour:
   - ClassType: 7
     OverrideClassName: Necromancer
     ClassIcon: {fileID: 0}
-    BaseHpMultiplier: 1
-    BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1
+    BaseHpMultiplier: 0.6
+    BaseAtkMultiplier: 0.9
+    BaseDefMultiplier: 0.2
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -267,9 +267,9 @@ MonoBehaviour:
   - ClassType: 8
     OverrideClassName: Support
     ClassIcon: {fileID: 0}
-    BaseHpMultiplier: 1
-    BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1
+    BaseHpMultiplier: 0.7
+    BaseAtkMultiplier: 0.4
+    BaseDefMultiplier: 0.4
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -298,9 +298,9 @@ MonoBehaviour:
   - ClassType: 9
     OverrideClassName: Gunner
     ClassIcon: {fileID: 0}
-    BaseHpMultiplier: 0.7
-    BaseAtkMultiplier: 1.3
-    BaseDefMultiplier: 1
+    BaseHpMultiplier: 0.6
+    BaseAtkMultiplier: 0.8
+    BaseDefMultiplier: 0.2
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -329,9 +329,9 @@ MonoBehaviour:
   - ClassType: 10
     OverrideClassName: Assassin
     ClassIcon: {fileID: 0}
-    BaseHpMultiplier: 1
+    BaseHpMultiplier: 0.8
     BaseAtkMultiplier: 1
-    BaseDefMultiplier: 1
+    BaseDefMultiplier: 0.3
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10

@@ -40,7 +40,7 @@ MonoBehaviour:
   IsRitesLocked: 1
   MapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
   MissionXP: 100
-  StartingAuthoritySeals: 20
+  StartingAuthoritySeals: 30
   MaxAuthoritySeals: 30
   AuthoritySealsPerSecond: 1.5
   Waves:
@@ -52,6 +52,8 @@ MonoBehaviour:
       SpawnPointIndex: 0
     DelayBeforeNextWave: 5
     WaveMessage: 'Wave 1: Shadows approaching!'
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
       Count: 5
@@ -60,6 +62,8 @@ MonoBehaviour:
       SpawnPointIndex: 0
     DelayBeforeNextWave: 0
     WaveMessage: 'Final Wave: Darkness erupts!'
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
   HasTutorial: 1
   TutorialData: {fileID: 11400000, guid: 82c6c0a664a64034e81cbd9127cb1407, type: 2}
   HasStory: 1

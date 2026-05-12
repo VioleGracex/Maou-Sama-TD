@@ -373,10 +373,20 @@ namespace MaouSamaTD.Units
                 if (!string.IsNullOrEmpty(classMults.OverrideClassName))
                     CalculatedStats.ClassName = classMults.OverrideClassName;
 
-                // Base Multiply
-                float baseHp = MaxHp * classMults.BaseHpMultiplier;
-                float baseAtk = AttackPower * classMults.BaseAtkMultiplier;
-                float baseDef = Defense * classMults.BaseDefMultiplier;
+                // Multipliers do not affect level 1, but level 2+
+                float baseHp, baseAtk, baseDef;
+                if (Level <= 1)
+                {
+                    baseHp = MaxHp;
+                    baseAtk = AttackPower;
+                    baseDef = Defense;
+                }
+                else
+                {
+                    baseHp = MaxHp * classMults.BaseHpMultiplier;
+                    baseAtk = AttackPower * classMults.BaseAtkMultiplier;
+                    baseDef = Defense * classMults.BaseDefMultiplier;
+                }
 
                 // Growth
                 float hpGrowth = 0, atkGrowth = 0, defGrowth = 0;
@@ -385,16 +395,16 @@ namespace MaouSamaTD.Units
                 // Level-1 (Growth is per level AFTER 1)
                 int levelsGained = Mathf.Max(0, Level - 1);
                 
-                CalculatedStats.MaxHp = (baseHp + (hpGrowth * levelsGained)) * BaseStatMultiplier;
-                CalculatedStats.Attack = (baseAtk + (atkGrowth * levelsGained)) * BaseStatMultiplier;
-                CalculatedStats.Defense = (baseDef + (defGrowth * levelsGained)) * BaseStatMultiplier;
+                CalculatedStats.MaxHp = Mathf.Ceil((baseHp + (hpGrowth * levelsGained)) * BaseStatMultiplier);
+                CalculatedStats.Attack = Mathf.Ceil((baseAtk + (atkGrowth * levelsGained)) * BaseStatMultiplier);
+                CalculatedStats.Defense = Mathf.Ceil((baseDef + (defGrowth * levelsGained)) * BaseStatMultiplier);
             }
             else
             {
                 // Fallback to base
-                CalculatedStats.MaxHp = MaxHp * BaseStatMultiplier;
-                CalculatedStats.Attack = AttackPower * BaseStatMultiplier;
-                CalculatedStats.Defense = Defense * BaseStatMultiplier;
+                CalculatedStats.MaxHp = Mathf.Ceil(MaxHp * BaseStatMultiplier);
+                CalculatedStats.Attack = Mathf.Ceil(AttackPower * BaseStatMultiplier);
+                CalculatedStats.Defense = Mathf.Ceil(Defense * BaseStatMultiplier);
             }
         }
 

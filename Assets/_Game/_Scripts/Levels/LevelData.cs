@@ -81,6 +81,12 @@ namespace MaouSamaTD.Levels
         
         [Tooltip("Conditions that trigger level failure. If empty, default is BaseHPZero.")]
         public List<LevelCondition> LoseConditions = new List<LevelCondition>();
+
+        [Header("Cinematics")]
+        [Tooltip("If true, a cinematic slow-motion effect occurs when the level ends.")]
+        public bool EnableCinematicCombatEnd = true;
+        [Tooltip("Duration of the slow-motion effect in seconds.")]
+        public float CinematicDuration = 2f;
     }
 
     public enum LevelConditionType

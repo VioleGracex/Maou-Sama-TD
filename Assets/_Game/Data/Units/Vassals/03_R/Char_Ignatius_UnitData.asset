@@ -15,14 +15,13 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 932c44b4-8395-4b57-a4dc-09d44f3dc949
   CalculatedStats:
-  MaxHp: 840
+  MaxHp: 84
     Attack: 36
-  Defense: 24
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Ignatius
   UnitTitle: 
-  LoreEntries: []
   BaseSkin:
     Avatar: {fileID: 21300000, guid: 4a396d8e5773a0345993398fc0df7e1b, type: 3}
     Chibi: {fileID: 21300000, guid: d67602dd69510bd4a93515b656726383, type: 3}
@@ -51,10 +50,10 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 840
-  AttackPower: 48
+  MaxHp: 84
+  AttackPower: 5
   AttackInterval: 1.0
-  Defense: 24
+  Defense: 2
   RespawnTime: 20.0
   Range: 2
   MaxCharge: 100

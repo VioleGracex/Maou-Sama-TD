@@ -38,7 +38,8 @@ namespace MaouSamaTD.Editor
         private bool _isResizingDetails = false;
         
         // Zoom & Settings
-        private float _zoomFactor = 1.0f;
+        private float _previewZoom = 1.0f;
+        private float _listZoom = 1.0f;
         private bool _showTitles = true;
         private bool _sortAscending = true;
         
@@ -110,7 +111,8 @@ namespace MaouSamaTD.Editor
             _thumbnailType = (ThumbnailType)EditorPrefs.GetInt("MaouUnitBrowser_ThumbnailType", (int)ThumbnailType.Avatar);
             _sortMode = (SortMode)EditorPrefs.GetInt("MaouUnitBrowser_SortMode", (int)SortMode.Name);
             _browserWidth = EditorPrefs.GetFloat("MaouUnitBrowser_BrowserWidth", 450f);
-            _zoomFactor = EditorPrefs.GetFloat("MaouUnitBrowser_ZoomFactor", 1.0f);
+            _previewZoom = EditorPrefs.GetFloat("MaouUnitBrowser_PreviewZoom", 1.0f);
+            _listZoom = EditorPrefs.GetFloat("MaouUnitBrowser_ListZoom", 1.0f);
             _showTitles = EditorPrefs.GetBool("MaouUnitBrowser_ShowTitles", true);
             _sortAscending = EditorPrefs.GetBool("MaouUnitBrowser_SortAscending", true);
         }
@@ -126,7 +128,8 @@ namespace MaouSamaTD.Editor
             EditorPrefs.SetInt("MaouUnitBrowser_ThumbnailType", (int)_thumbnailType);
             EditorPrefs.SetInt("MaouUnitBrowser_SortMode", (int)_sortMode);
             EditorPrefs.SetFloat("MaouUnitBrowser_BrowserWidth", _browserWidth);
-            EditorPrefs.SetFloat("MaouUnitBrowser_ZoomFactor", _zoomFactor);
+            EditorPrefs.SetFloat("MaouUnitBrowser_PreviewZoom", _previewZoom);
+            EditorPrefs.SetFloat("MaouUnitBrowser_ListZoom", _listZoom);
             EditorPrefs.SetBool("MaouUnitBrowser_ShowTitles", _showTitles);
             EditorPrefs.SetBool("MaouUnitBrowser_SortAscending", _sortAscending);
         }
@@ -259,7 +262,19 @@ namespace MaouSamaTD.Editor
             if (e.type == EventType.ScrollWheel && (e.control || e.command))
             {
                 float delta = -e.delta.y * 0.05f;
-                _zoomFactor = Mathf.Clamp(_zoomFactor + delta, 0.5f, 2.5f);
+                
+                // Strictly contextual zoom based on mouse position
+                if (e.mousePosition.x < _browserWidth)
+                {
+                    _listZoom = Mathf.Clamp(_listZoom + delta, 0.5f, 2.5f);
+                    // Ensure list zoom doesn't leak to preview
+                }
+                else
+                {
+                    _previewZoom = Mathf.Clamp(_previewZoom + delta, 0.5f, 4.0f);
+                    // Ensure preview zoom doesn't leak to list
+                }
+                    
                 e.Use();
                 Repaint();
             }
@@ -378,7 +393,39 @@ namespace MaouSamaTD.Editor
             GUILayout.Space(5);
             _thumbnailType = (ThumbnailType)EditorGUILayout.EnumPopup(_thumbnailType, GUILayout.Width(80));
 
+            GUILayout.Space(10);
+            
+            // Draggable List Zoom
+            DrawDraggableZoom("List", ref _listZoom, 0.5f, 1.5f, 120);
+            
+            GUILayout.Space(10);
+            
+            // Draggable Preview Zoom
+            DrawDraggableZoom("Preview", ref _previewZoom, 0.5f, 4.0f, 120);
+
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void DrawDraggableZoom(string label, ref float value, float min, float max, float width)
+        {
+            Rect rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, GUILayout.Width(width));
+            
+            // Draw label that acts as a draggable handle
+            Rect labelRect = new Rect(rect.x, rect.y, width * 0.45f, rect.height);
+            EditorGUI.LabelField(labelRect, label, EditorStyles.miniLabel);
+            
+            // Draggable behavior for the label
+            EditorGUIUtility.AddCursorRect(labelRect, MouseCursor.SlideArrow);
+            if (Event.current.type == EventType.MouseDrag && labelRect.Contains(Event.current.mousePosition))
+            {
+                value = Mathf.Clamp(value + Event.current.delta.x * 0.01f, min, max);
+                Event.current.Use();
+                Repaint();
+            }
+
+            // The numeric field/slider part
+            Rect sliderRect = new Rect(rect.x + width * 0.5f, rect.y, width * 0.5f, rect.height);
+            value = EditorGUI.Slider(sliderRect, value, min, max);
         }
 
         private void DrawBrowserArea()
@@ -415,27 +462,27 @@ namespace MaouSamaTD.Editor
                 UnitData unit = _filteredUnits[i];
                 bool isSelected = _selectedUnit == unit;
                 
-                Rect rect = EditorGUILayout.BeginHorizontal(isSelected ? _selectionStyle : GUIStyle.none, GUILayout.Height(45 * _zoomFactor));
-                GUILayout.Space(10 * _zoomFactor); // Side padding
+                Rect rect = EditorGUILayout.BeginHorizontal(isSelected ? _selectionStyle : GUIStyle.none, GUILayout.Height(45 * _listZoom));
+                GUILayout.Space(10 * _listZoom); // Side padding
                 
                 // Avatar thumbnail
-                float thumbSize = 35 * _zoomFactor;
+                float thumbSize = 35 * _listZoom;
                 Rect iconRect = GUILayoutUtility.GetRect(thumbSize, thumbSize);
-                iconRect.y += ( (40 * _zoomFactor) - thumbSize) / 2f;
+                iconRect.y += ( (40 * _listZoom) - thumbSize) / 2f;
                 DrawUnitThumbnail(iconRect, unit);
                 
                 EditorGUILayout.BeginVertical();
                 GUILayout.FlexibleSpace();
                 
                 GUIStyle nameStyle = new GUIStyle(isSelected ? EditorStyles.whiteBoldLabel : EditorStyles.boldLabel);
-                nameStyle.fontSize = (int)(12 * _zoomFactor);
+                nameStyle.fontSize = (int)(12 * _listZoom);
                 EditorGUILayout.LabelField(unit.UnitName, nameStyle);
                 
                 if (_showTitles && !string.IsNullOrEmpty(unit.UnitTitle))
                 {
-                    GUILayout.Space(4 * _zoomFactor);
+                    GUILayout.Space(4 * _listZoom);
                     GUIStyle titleStyle = new GUIStyle(EditorStyles.miniLabel);
-                    titleStyle.fontSize = (int)(9 * _zoomFactor);
+                    titleStyle.fontSize = (int)(9 * _listZoom);
                     EditorGUILayout.LabelField(unit.UnitTitle, titleStyle);
                 }
                 
@@ -458,8 +505,8 @@ namespace MaouSamaTD.Editor
             int startIdx = _currentPage * _itemsPerPage;
             int endIdx = Mathf.Min(startIdx + _itemsPerPage, _filteredUnits.Count);
             
-                int cellWidth = (int)(120 * _zoomFactor);
-                int cellHeight = (int)(155 * _zoomFactor);
+                int cellWidth = (int)(120 * _listZoom);
+                int cellHeight = (int)(155 * _listZoom);
                 
                 int columns = Mathf.FloorToInt((containerWidth - 20) / (cellWidth + 10));
                 if (columns < 1) columns = 1;
@@ -488,22 +535,22 @@ namespace MaouSamaTD.Editor
                             DrawUnitThumbnail(thumbnailRect, unit);
                             
                             GUIStyle nameStyle = new GUIStyle(EditorStyles.miniLabel);
-                            nameStyle.fontSize = (int)(10 * _zoomFactor);
+                            nameStyle.fontSize = (int)(10 * _listZoom);
                             nameStyle.alignment = TextAnchor.MiddleCenter;
                             
                             EditorGUILayout.LabelField(unit.UnitName, nameStyle, GUILayout.Width(cellWidth - 10));
                             
                             if (_showTitles && !string.IsNullOrEmpty(unit.UnitTitle))
                             {
-                                GUILayout.Space(4 * _zoomFactor);
+                                GUILayout.Space(4 * _listZoom);
                                 GUIStyle titleStyle = new GUIStyle(EditorStyles.miniLabel);
-                                titleStyle.fontSize = (int)(9 * _zoomFactor);
+                                titleStyle.fontSize = (int)(9 * _listZoom);
                                 titleStyle.alignment = TextAnchor.MiddleCenter;
                                 titleStyle.normal.textColor = new Color(0.6f, 0.6f, 0.6f);
                                 EditorGUILayout.LabelField(unit.UnitTitle, titleStyle, GUILayout.Width(cellWidth - 10));
                             }
                             
-                            GUILayout.Space(10 * _zoomFactor); 
+                            GUILayout.Space(10 * _listZoom); 
 
                         // Overlay button for selection
                         if (GUI.Button(cardRect, "", GUIStyle.none))
@@ -592,14 +639,40 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.Space(10);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField(_selectedUnit.UnitName, new GUIStyle(EditorStyles.boldLabel) { fontSize = 28, fixedHeight = 34 });
-            GUILayout.Space(8);
-            EditorGUILayout.LabelField(_selectedUnit.UnitTitle, new GUIStyle(EditorStyles.label) { fontSize = 15, fontStyle = FontStyle.Italic, normal = { textColor = new Color(0.7f, 0.7f, 0.7f) } });
+            
+            EditorGUI.BeginChangeCheck();
+            
+            // Unit Name with uniqueness check
+            string newName = EditorGUILayout.TextField("Unit Name", _selectedUnit.UnitName, new GUIStyle(EditorStyles.boldLabel) { fontSize = 18, fixedHeight = 22 });
+            
+            bool nameExists = _allUnits.Exists(u => u != _selectedUnit && u.UnitName.Trim().Equals(newName.Trim(), System.StringComparison.OrdinalIgnoreCase));
+            if (nameExists && !string.IsNullOrEmpty(newName))
+            {
+                EditorGUILayout.HelpBox("Warning: A unit with this name already exists!", MessageType.Warning);
+            }
+            
+            _selectedUnit.UnitName = newName;
+
+            // Unit Title
+            _selectedUnit.UnitTitle = EditorGUILayout.TextField("Unit Title", _selectedUnit.UnitTitle, new GUIStyle(EditorStyles.label) { fontStyle = FontStyle.Italic });
+            
+            if (EditorGUI.EndChangeCheck())
+            {
+                UnityEditor.EditorUtility.SetDirty(_selectedUnit);
+            }
+            
             EditorGUILayout.EndVertical();
             
             if (GUILayout.Button("Ping Asset", GUILayout.Width(100), GUILayout.Height(30)))
             {
                 EditorGUIUtility.PingObject(_selectedUnit);
+            }
+            if (GUILayout.Button("Ping Image", GUILayout.Width(100), GUILayout.Height(30)))
+            {
+                if (_tempSplash != null)
+                    EditorGUIUtility.PingObject(_tempSplash);
+                else
+                    Debug.LogWarning("No image currently loaded to ping.");
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space(10);
@@ -628,7 +701,7 @@ namespace MaouSamaTD.Editor
             // 2. Main Preview (Centered)
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            float splashWidth = position.width * 0.45f;
+            float splashWidth = position.width * 0.45f * _previewZoom;
             Rect splashRect = GUILayoutUtility.GetRect(splashWidth, splashWidth * 1.4f, GUILayout.Width(splashWidth));
             if (_tempSplash != null)
                 GUI.DrawTexture(splashRect, _tempSplash, ScaleMode.ScaleToFit);
@@ -677,7 +750,14 @@ namespace MaouSamaTD.Editor
                     GUI.DrawTexture(r, tex, ScaleMode.ScaleToFit);
                     if (Event.current.type == EventType.MouseDown && r.Contains(Event.current.mousePosition))
                     {
-                        _tempSplash = tex;
+                        if (Event.current.button == 0) // Left click
+                        {
+                            _tempSplash = tex;
+                        }
+                        else if (Event.current.button == 1) // Right click
+                        {
+                            EditorGUIUtility.PingObject(sprite);
+                        }
                         Event.current.Use();
                     }
                 }
@@ -1070,11 +1150,11 @@ namespace MaouSamaTD.Editor
                 GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel);
                 titleStyle.fontSize = 20;
                 titleStyle.normal.textColor = Color.white;
-                GUILayout.Label(selClassData.Name.ToUpper(), titleStyle);
+                EditorGUILayout.SelectableLabel(selClassData.Name.ToUpper(), titleStyle, GUILayout.Height(30));
 
                 GUIStyle subtitleStyle = new GUIStyle(EditorStyles.miniLabel);
                 subtitleStyle.normal.textColor = new Color(0.7f, 0.7f, 0.7f);
-                GUILayout.Label($"{selClassData.Role}  |  {selClassData.ColorTheme}", subtitleStyle);
+                EditorGUILayout.SelectableLabel($"{selClassData.Role}  |  {selClassData.ColorTheme}", subtitleStyle, GUILayout.Height(20));
                 EditorGUILayout.EndVertical();
                 EditorGUILayout.EndHorizontal();
 
@@ -1092,7 +1172,7 @@ namespace MaouSamaTD.Editor
                 summaryTextStyle.fontStyle = FontStyle.Italic;
                 summaryTextStyle.fontSize = 12;
                 summaryTextStyle.normal.textColor = new Color(0.85f, 0.85f, 0.85f);
-                GUILayout.Label(selClassData.Summary, summaryTextStyle);
+                EditorGUILayout.SelectableLabel(selClassData.Summary, summaryTextStyle, GUILayout.Height(40));
                 EditorGUILayout.EndVertical();
 
                 GUILayout.Space(15);
@@ -1108,7 +1188,7 @@ namespace MaouSamaTD.Editor
                 descBodyStyle.wordWrap = true;
                 descBodyStyle.fontSize = 11;
                 descBodyStyle.normal.textColor = new Color(0.75f, 0.75f, 0.75f);
-                GUILayout.Label(selClassData.Description, descBodyStyle);
+                EditorGUILayout.SelectableLabel(selClassData.Description, descBodyStyle, GUILayout.Height(60));
 
                 GUILayout.Space(25);
 

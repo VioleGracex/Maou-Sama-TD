@@ -59,10 +59,14 @@ Strictly utilizes the primary approved demon races: Trueborn Demon, Demon Apostl
    - **Race/Class**: Demon Apostle / Support
    - **Weapon**: Enchanted Bastard Sword
    - **Lore**: A master strategist who abandoned humanity out of pure disgust.
-9. **Shade, The Phantom Stalker** (Beastkin       / Ranger) - *Weapon: Twin Shadow-Daggers*
-10. **Ignis Guard Captain** (Trueborn Demon       / Bastion) - *Weapon: Longsword*
-11. **Lilith, Duchess of Crimson Allure** (Succubus       / Warlock) - *Weapon: Crimson Heart Whip*
-12. **Aquila, The Harpy Queen** (Harpy       / Ranger) - *Weapon: Greatbow of Gales*
+9. **Ignis Guard Captain** (Trueborn Demon / Bastion) - *Weapon: Longsword*
+10. **Lilith, Duchess of Crimson Allure** (Succubus / Warlock) - *Weapon: Crimson Heart Whip*
+11. **Shade, The Ethereal Sentinel** (Elf / Ranger) - *Weapon: Dark Bow*
+12. **Vaelin, The Phantom Stalker** (Beastkin / Ranger) - *Weapon: Twin Shadow-Daggers*
+13. **Kaelthas, The Sanguine Sovereign** (Vampire / Warlock) - *Weapon: Blood Orb*
+14. **Morde, The Obsidian Bastion** (Demon / Bastion) - *Weapon: Obsidian Mace*
+15. **Malphas, The Nightmare Weaver** (Succubus / Support) - *Weapon: Whip*
+16. **Mordred, The Abyssal Dreadknight** (Undead / Vanguard) - *Weapon: Greatsword*
 
 ---
 

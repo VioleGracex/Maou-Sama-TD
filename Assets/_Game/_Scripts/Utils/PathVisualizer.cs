@@ -82,7 +82,16 @@ namespace MaouSamaTD.Utils
 
         public void ShowPathsForWave(WaveData wave)
         {
-            Hide();
+            if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
+            foreach (var lr in _activeLines)
+            {
+                lr.enabled = false;
+                _linePool.Add(lr);
+            }
+            _activeLines.Clear();
+            _currentAlpha = 0f;
+            SetAlpha(0f);
+            
             if (wave == null || wave.Groups == null) return;
 
             HashSet<(int index, EnemyMovementType moveType)> pathRequests = new HashSet<(int, EnemyMovementType)>();
@@ -117,7 +126,7 @@ namespace MaouSamaTD.Utils
         {
             LineRenderer lr = GetLineRenderer();
             
-            float visualHeight = moveType == EnemyMovementType.Flying ? 1.5f : 0.7f;
+            float visualHeight = 0.7f;
             List<Vector3> points = new List<Vector3>();
             points.Add(_gridManager.GridToWorldPosition(start) + Vector3.up * visualHeight);
 
@@ -174,13 +183,31 @@ namespace MaouSamaTD.Utils
             return lr;
         }
 
+        private float _shownTime;
+
         public void Show()
         {
+            _shownTime = Time.time;
             if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
             _fadeRoutine = StartCoroutine(FadeRoutine(1f, 1.0f));
             
             CancelInvoke("Hide");
-            Invoke("Hide", 15f);
+            Invoke("Hide", 6f);
+        }
+
+        public void HideWithMinimumDuration(float minDuration = 2f)
+        {
+            float elapsed = Time.time - _shownTime;
+            if (elapsed < minDuration)
+            {
+                float remaining = minDuration - elapsed;
+                CancelInvoke("Hide");
+                Invoke("Hide", remaining);
+            }
+            else
+            {
+                Hide();
+            }
         }
 
         public void Hide()

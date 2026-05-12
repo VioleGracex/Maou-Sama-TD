@@ -47,7 +47,7 @@ namespace MaouSamaTD.Units
         public int ReachCount { get; private set; }
 
         private System.Collections.Generic.List<EnemyUnit> _currentlyBlockedEnemies = new System.Collections.Generic.List<EnemyUnit>();
-        public bool CanBlock() => _currentlyBlockedEnemies.Count < BlockCount;
+        public bool CanBlock() => true;
 
         public void NotifyEncounter(EnemyUnit enemy)
         {
@@ -67,7 +67,6 @@ namespace MaouSamaTD.Units
             if (_currentlyBlockedEnemies.Contains(enemy))
             {
                 _currentlyBlockedEnemies.Remove(enemy);
-                if (_showDebugLogs) Debug.Log($"[Ultimate] {gameObject.name} released {enemy.gameObject.name}. Blocking: {_currentlyBlockedEnemies.Count}/{BlockCount}");
             }
         }
 
@@ -129,6 +128,8 @@ namespace MaouSamaTD.Units
 
             if (_showDebugLogs) Debug.Log($"[Ultimate] STARTING sequence for {Data.UnitName}. Prefab: {visuals.UltimatePrefab.name}");
 
+            IsCastingUltimate = true;
+
             // Start Cut-In Animation
             if (MaouSamaTD.UI.UltimateCutInUI.Instance != null)
             {
@@ -153,8 +154,7 @@ namespace MaouSamaTD.Units
             }
 
             if (_animator != null) _animator.Play("Ultimate", 0, 0f);
-            IsCastingUltimate = true;
-
+            
             Vector3 bestDir = FindBestUltimateDirection();
             if (_showDebugLogs) Debug.Log($"[Ultimate] Spawning prefab: {visuals.UltimatePrefab.name} towards {bestDir}");
 
@@ -267,10 +267,13 @@ namespace MaouSamaTD.Units
                 }
                 
                 bool isTargetRight = closestSpawnCoord.x > unitCoord.x;
-                Vector3 currentScale = transform.localScale;
-                // Default facing is Left (+1). To face Right, use -1.
-                currentScale.x = isTargetRight ? -1f : 1f;
-                transform.localScale = currentScale;
+                if (_spriteRenderer != null)
+                {
+                    Vector3 spriteScale = _spriteRenderer.transform.localScale;
+                    // Default facing is Left (+1). To face Right, use -1.
+                    spriteScale.x = isTargetRight ? -1f : 1f;
+                    _spriteRenderer.transform.localScale = spriteScale;
+                }
             }
         }
         
@@ -419,13 +422,15 @@ namespace MaouSamaTD.Units
         {
              if (_spriteRenderer == null) return;
              bool isTargetRight = targetPos.x > transform.position.x;
+             if (_spriteRenderer != null)
+             {
+                 Vector3 spriteScale = _spriteRenderer.transform.localScale;
+                 // Default facing is Left (+1). To face Right, use -1.
+                 spriteScale.x = isTargetRight ? -1f : 1f;
+                 _spriteRenderer.transform.localScale = spriteScale;
+             }
              
-             Vector3 currentScale = transform.localScale;
-             // Default facing is Left (+1). To face Right, use -1.
-             currentScale.x = isTargetRight ? -1f : 1f;
-             transform.localScale = currentScale;
-             
-             if (_showDebugLogs) Debug.Log($"[Facing] {gameObject.name} facing {(isTargetRight ? "Right (+x)" : "Left (-x)")}. Target X: {targetPos.x:F2}, My X: {transform.position.x:F2}");
+
         }
 
 
@@ -457,12 +462,96 @@ namespace MaouSamaTD.Units
             Destroy(gameObject);
         }
 
+        public override bool IsRanged()
+        {
+            if (_data != null)
+            {
+                if (_data.DamageType == DamageType.Ranged || _data.DamageType == DamageType.Magic)
+                    return true;
+                
+                if (_data.Class == UnitClass.Ranger ||
+                    _data.Class == UnitClass.Warlock ||
+                    _data.Class == UnitClass.Sage ||
+                    _data.Class == UnitClass.Support ||
+                    _data.Class == UnitClass.Gunner)
+                    return true;
+            }
+            
+            return _unitClass == UnitClass.Ranger ||
+                   _unitClass == UnitClass.Warlock ||
+                   _unitClass == UnitClass.Sage ||
+                   _unitClass == UnitClass.Support ||
+                   _unitClass == UnitClass.Gunner;
+        }
+
         private void ExecuteAttackOn(EnemyUnit target)
         {
-            if (_animator != null) _animator.Play("Attack", 0, 0f);
+            HandleAttack(target);
             DamageType dType = _data != null ? _data.DamageType : DamageType.Melee;
-            target.TakeDamage(AttackPower, this, dType);
             FaceTarget(target.transform.position);
+
+            bool isOnHighGround = CurrentTile != null && CurrentTile.IsHighGround;
+            bool shouldShootProjectile = IsRanged() || isOnHighGround;
+
+            if (shouldShootProjectile)
+            {
+                string prefabName = "VFX/Magic_Projectile"; // default fallback
+                UnitClass currentClass = _data != null ? _data.Class : _unitClass;
+
+                if (currentClass == UnitClass.Ranger) prefabName = "VFX/Arrow_Projectile";
+                else if (currentClass == UnitClass.Gunner) prefabName = "VFX/Bullet_Projectile";
+                else if (currentClass == UnitClass.Warlock || currentClass == UnitClass.Sage || currentClass == UnitClass.Support) prefabName = "VFX/Magic_Projectile";
+
+                GameObject prefab = Resources.Load<GameObject>(prefabName);
+                if (prefab != null)
+                {
+                    GameObject projObj = Instantiate(prefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
+                    
+                    // Enable billboarding on projectile
+                    var billboard = projObj.GetComponent<Billboard>();
+                    if (billboard == null)
+                    {
+                        billboard = projObj.AddComponent<Billboard>();
+                    }
+                    billboard.LockZ = true; // Lock Z so the projectile rotates towards its target in screen-space
+
+                    var projComp = projObj.GetComponent<MaouSamaTD.VFX.BasicProjectile>();
+                    if (projComp != null)
+                    {
+                        projComp.Launch(target, AttackPower, this, dType);
+                    }
+                    else
+                    {
+                        target.TakeDamage(AttackPower, this, dType);
+                    }
+                }
+                else
+                {
+                    target.TakeDamage(AttackPower, this, dType);
+                }
+            }
+            else
+            {
+                // Melee unit not on high ground
+                target.TakeDamage(AttackPower, this, dType);
+
+                // Spawn melee slash effect
+                GameObject slashPrefab = Resources.Load<GameObject>("VFX/Melee_Slash_VFX");
+                if (slashPrefab != null)
+                {
+                    Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-0.15f, 0.15f), UnityEngine.Random.Range(-0.15f, 0.15f) + 0.5f, 0f);
+                    GameObject slashObj = Instantiate(slashPrefab, target.transform.position + randomOffset, Quaternion.identity);
+                    
+                    // Enable billboarding on slash
+                    if (slashObj.GetComponent<Billboard>() == null)
+                    {
+                        slashObj.AddComponent<Billboard>();
+                    }
+                    
+                    // Make slashes bigger
+                    slashObj.transform.localScale = Vector3.one * 1.8f;
+                }
+            }
         }
 
         private EnemyUnit _lastAttacker;

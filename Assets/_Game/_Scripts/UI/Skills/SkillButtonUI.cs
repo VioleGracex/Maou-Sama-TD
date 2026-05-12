@@ -113,6 +113,12 @@ namespace MaouSamaTD.UI.Skills
             bool canAfford = currentSeals >= _data.SealCost;
             bool isReady = !isOnCooldown && canAfford;
             
+            if (_costText != null)
+            {
+                // Vibrant red for better visibility
+                _costText.color = canAfford ? Color.white : new Color(1f, 0.2f, 0.2f);
+            }
+            
             bool permanentlyLocked = _currencyManager != null && _currencyManager.MaxSeals < _data.SealCost;
 
             if (_lockOverlay != null)

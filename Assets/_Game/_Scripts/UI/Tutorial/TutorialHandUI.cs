@@ -72,20 +72,26 @@ namespace MaouSamaTD.UI.Tutorial
                 return;
             }
 
-            // If position changed significantly, smoothly glide to the new position instead of snapping instantly
+            // If position changed significantly, hide, teleport, and show instead of gliding across the screen
             if (dist >= 15f && _pulseSeq != null && _pulseSeq.IsActive() && gameObject.activeInHierarchy)
             {
-                _currentTargetStart = _handTransform.position;
-                _currentTargetEnd = screenPosition;
-                _lastShowScale = baseScale;
-
                 KillActiveSequence();
                 _pulseSeq = DOTween.Sequence();
-                _pulseSeq.Join(_handTransform.DOMove(screenPosition, 0.35f).SetEase(Ease.OutQuad))
-                         .Join(_handTransform.DOScale(baseScale, 0.35f).SetEase(Ease.OutQuad))
+                
+                // 1. Shrink down quickly
+                _pulseSeq.Append(_handTransform.DOScale(0f, 0.15f).SetEase(Ease.InQuad))
+                         .AppendCallback(() =>
+                         {
+                             // 2. Snap to new position while invisible
+                             _handTransform.position = screenPosition;
+                             _lastShowScale = baseScale;
+                         })
+                         .AppendInterval(0.05f)
+                         // 3. Grow back at the new position
+                         .Append(_handTransform.DOScale(baseScale, 0.2f).SetEase(Ease.OutBack))
                          .OnComplete(() =>
                          {
-                             // Once arrived, resume the continuous pulse animation loop
+                             // 4. Resume the continuous pulse animation loop
                              KillActiveSequence();
                              _pulseSeq = DOTween.Sequence();
                              _pulseSeq.Append(_handTransform.DOScale(baseScale + _pulseAmount, _pulseDuration).SetEase(Ease.InOutSine))

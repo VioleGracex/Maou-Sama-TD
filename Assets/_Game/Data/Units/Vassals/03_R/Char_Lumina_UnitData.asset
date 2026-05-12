@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: c11d4b42-14a9-40c5-bc78-2aa504a5b851
   CalculatedStats:
-  MaxHp: 960
+  MaxHp: 96
     Attack: 36
-  Defense: 18
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Lumina
@@ -55,10 +55,10 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 960
-  AttackPower: 120
+  MaxHp: 96
+  AttackPower: 12
   AttackInterval: 0.8
-  Defense: 18
+  Defense: 2
   RespawnTime: 20.0
   Range: 1
   MaxCharge: 100

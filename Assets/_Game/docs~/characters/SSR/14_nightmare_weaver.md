@@ -1,4 +1,4 @@
-# Vassal: Nightmare Weaver
+# Vassal: Malphas, The Nightmare Weaver
 **Rarity**: SSR
 **Race**: Succubus
 **Class**: Support

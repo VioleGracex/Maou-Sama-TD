@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: c7b8e2d4-1a2b-4c3d-8e5f-6a7b8c9d0e1f
   CalculatedStats:
-  MaxHp: 840
-    Attack: 126
-  Defense: 14
+  MaxHp: 84
+    Attack: 0
+  Defense: 1
     ClassIcon: {fileID: 0}
-    ClassName: Warlock
+    ClassName: 
   UnitName: Lilith
   UnitTitle: Matriarch of Lust
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -34,7 +34,7 @@ MonoBehaviour:
     Chibi: {fileID: 21300000, guid: f446520f4c8860b48bfaacf1dc42c71e, type: 3}
     WaistUp: {fileID: 21300000, guid: 59badf27a0d61384bb4b4aee330a84c1, type: 3}
     FullSplashArt: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
-    FullBodyCutout: {fileID: 21300000, guid: 450217a4e071ec34697d86d59f438acc, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: d31863fc2a2af69488c0dc1708d17f1c, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
   Skins:
@@ -101,10 +101,10 @@ MonoBehaviour:
   - {x: 0, y: -3}
   - {x: -1, y: -2}
   - {x: -1, y: -3}
-  MaxHp: 840
-  AttackPower: 126
+  MaxHp: 84
+  AttackPower: 13
   AttackInterval: 1.5
-  Defense: 14
+  Defense: 1
   RespawnTime: 25.0
   Range: 2
   MaxCharge: 100

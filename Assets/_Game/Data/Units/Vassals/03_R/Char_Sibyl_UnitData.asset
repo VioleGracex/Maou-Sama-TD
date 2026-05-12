@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 51c2014c-66eb-44e5-9d8d-681e0ceb1f02
   CalculatedStats:
-  MaxHp: 720
+  MaxHp: 72
     Attack: 36
-  Defense: 12
+  Defense: 1
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Sibyl
@@ -53,10 +53,10 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 720
-  AttackPower: 108
+  MaxHp: 72
+  AttackPower: 11
   AttackInterval: 1.5
-  Defense: 12
+  Defense: 1
   RespawnTime: 20.0
   Range: 2
   MaxCharge: 100

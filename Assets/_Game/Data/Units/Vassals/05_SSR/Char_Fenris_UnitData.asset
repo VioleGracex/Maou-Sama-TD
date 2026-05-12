@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5b19c9670a91e46927bf3c52b42386, type: 3}
+  m_Name: Char_Fenris_UnitData
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.UnitData
+  useDefaultInspector: 0
+  UniqueID: f917b050-cc75-4a16-aab5-c1240100f07d
+  CalculatedStats:
+  MaxHp: 112
+    Attack: 0
+  Defense: 3
+    ClassIcon: {fileID: 0}
+    ClassName: 
+  UnitName: Fenris
+  UnitTitle: Alpha Of The North
+  SummonQuote: Sovereign, it is an honor to serve you.
+  BriefDescription: Ancient ruler of the werewolf tribes, utterly loyal to strength.
+  LoreEntries:
+  - Title: Origin
+    Content: Ancient ruler of the werewolf tribes, utterly loyal to strength.
+  BaseSkin:
+    Avatar: {fileID: 21300000, guid: bca37ba1458d38040b4d94cc9b15579e, type: 3}
+    Chibi: {fileID: 21300000, guid: a7cf3af935bc78a49910ec87718ba0ed, type: 3}
+    WaistUp: {fileID: 21300000, guid: 5998884d20c20ab4c9e7401cc6a9e573, type: 3}
+    FullSplashArt: {fileID: 0}
+    FullBodyCutout: {fileID: 21300000, guid: f0088db1b81919c49a8c17bd825faf00, type: 3}
+    AnimatorController: {fileID: 0}
+  StarAdvancementVisuals: []
+  Skins: []
+  _equippedSkinID: 
+  CardSlotImageType: 4
+  ButtonImageType: 1
+  Level: 1
+  Experience: 0
+  StarRating: 1
+  Amity: 0
+  SkillLevel: 1
+  BaseStatMultiplier: 1
+  AcquisitionDate: 0
+  Rarity: 4
+  Class: 2
+  AttackPattern: 4
+  AttackType: 0
+  DamageType: 0
+  DeploymentCost: 22
+  BlockCount: 1
+  CanAttackFlying: 0
+  CustomPatternOffsets: []
+  MaxHp: 112
+  AttackPower: 14
+  AttackInterval: 0.8
+  Defense: 3
+  RespawnTime: 25.0
+  Range: 1
+  MaxCharge: 100
+  ChargePerSecond: 5
+  ChargePerAttack: 10
+  UltimateDamageResistance: 0
+  PassiveSkill: {fileID: 0}
+  ActiveSkill: {fileID: 0}
+  UltimateSkill: {fileID: 0}
+  AscensionNodes: []
+  _viableTiles: 
+  _unlockedSkinIDs: []

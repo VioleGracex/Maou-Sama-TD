@@ -43,6 +43,22 @@ namespace MaouSamaTD.Units
         }
 
         public int WaveIndex { get; private set; }
+        public override float Range 
+        {
+            get
+            {
+                if (_enemyData == null) return 0f;
+                float baseRange = _enemyData.AttackRange;
+                float mult = 1f;
+                if (_activeBuffs != null)
+                {
+                    foreach (var b in _activeBuffs) 
+                        if (b.Stat == MaouSamaTD.Skills.SkillStatType.Range) mult *= b.Multiplier;
+                }
+                return baseRange * mult;
+            }
+        }
+
         public void Initialize(EnemyData data, int waveIndex, int enemyIndex)
         {
             _enemyData = data;
@@ -139,8 +155,7 @@ namespace MaouSamaTD.Units
                 _hpFillImage.canvas.transform.localPosition = new Vector3(0, _enemyData.HpBarYOffset, 0);
             }
         }
-
-        public override float Range => _enemyData != null ? _enemyData.AttackRange : 1f; 
+        public override System.Collections.Generic.List<Vector2Int> CustomPatternOffsets => _enemyData != null ? _enemyData.CustomPatternOffsets : null;
 
         public void SetPath(Queue<Tile> path)
         {
@@ -169,6 +184,18 @@ namespace MaouSamaTD.Units
 
         public override void Die(UnitBase attacker = null)
         {
+            if (_isDead) return;
+
+            // Trigger tutorial action if this is the boss
+            if (_enemyData != null && _enemyData.EnemyName == "Abyssal Shade")
+            {
+                var tm = FindObjectOfType<TutorialManager>();
+                if (tm != null)
+                {
+                    tm.OnActionTriggered("BossDead");
+                }
+            }
+
             foreach (var ability in _runtimeAbilities)
             {
                 ability.OnDeath(this);
@@ -182,7 +209,7 @@ namespace MaouSamaTD.Units
             base.Die(attacker);
         }
 
-        public void RecalculatePath()
+        public void RecalculatePath(bool forceIgnore = false)
         {
             var gridMgr = FindFirstObjectByType<GridManager>();
             if (gridMgr == null || _enemyData == null) return;
@@ -190,7 +217,12 @@ namespace MaouSamaTD.Units
             Vector2Int startValues = gridMgr.WorldToGridCoordinates(transform.position);
             Vector2Int goal = GoalCoord.x != -1 ? GoalCoord : gridMgr.ExitPoint;
 
-            Queue<Tile> newPath = gridMgr.GetPath(startValues, goal, _enemyData.MovementType);
+            // Phasing logic: ignore occupants if we have charges, bypass evasion, or the collision type is set to ignore
+            bool shouldIgnore = forceIgnore || 
+                                _currentPhasingCharges > 0 || 
+                                (_enemyData != null && (_enemyData.EvasionType == EnemyEvasionType.BypassBlockers || _enemyData.CollisionType == EnemyCollisionType.IgnoreUnits));
+
+            Queue<Tile> newPath = gridMgr.GetPath(startValues, goal, _enemyData.MovementType, shouldIgnore);
             
             if (newPath != null && newPath.Count > 0)
             {
@@ -224,9 +256,14 @@ namespace MaouSamaTD.Units
                     RecalculatePath(); // Find way back to exit
                 }
             }
-            
+
+            if (_isMoving)
+            {
+                MoveTowardsTarget();
+            }
+
             // Re-evaluating blockers/targets
-            if (!_isCharmed)
+            if (!_isCharmed && !_isMoving && !_isCentering)
             {
                 if (_blockedBy != null)
                 {
@@ -274,27 +311,42 @@ namespace MaouSamaTD.Units
                             Vector2Int myPos = _gridManager.WorldToGridCoordinates(transform.position);
                             Vector2Int targetPos = _gridManager.WorldToGridCoordinates(_attackTarget.transform.position);
                             
-                            if (IsTargetInPattern(myPos, targetPos, _enemyData.AttackPattern, Range))
+                            bool inRange = IsTargetInPattern(myPos, targetPos, _enemyData.AttackPattern, Range);
+                            if (inRange)
                             {
                                 HandleAttack(_attackTarget);
                                 FaceTarget(_attackTarget.transform.position);
                                 
-                                // If melee and not flying, stop to attack? 
-                                // User said 'able to attack if on same tile', suggesting they might keep moving.
-                                // For now, let's keep them moving unless blocked.
+                                // If not set to bypass defenders, stop moving to focus on attacking
+                                if (!_enemyData.OnlyAttackIfBlocked)
+                                {
+                                    _isMoving = false;
+                                }
+                            }
+                            else if (!_isMoving && _blockedBy == null && !_isCharmed)
+                            {
+                                // Resume moving if we were stopped for combat but target is now out of range
+                                _isMoving = true;
                             }
                         }
                     }
                     else
                     {
                         _attackTarget = null;
+                        // If we were stopped for combat but no target remains, resume moving
+                        if (!_isMoving && _blockedBy == null && !_isCharmed && (_path != null && _path.Count > 0))
+                        {
+                            _isMoving = true;
+                        }
                     }
                 }
             }
 
-            if (_isMoving)
+            else if (_attackTarget == null && _blockedBy == null && _gridManager != null && !_isMoving)
             {
-                 MoveTowardsTarget();
+                // Orientation fallback: Face the exit if stationary and idle
+                var exitTile = _gridManager.GetTileAt(_gridManager.ExitPoint);
+                FaceTarget(exitTile != null ? exitTile.transform.position : transform.position + Vector3.right);
             }
 
             // Abilities are already ticked at the start of UpdateInternal
@@ -306,7 +358,8 @@ namespace MaouSamaTD.Units
             if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
             if (_gridManager == null) return false;
 
-            Collider[] hits = Physics.OverlapSphere(transform.position, Range);
+            // Use a slightly larger radius for the physical check to catch diagonal tiles accurately
+            Collider[] hits = Physics.OverlapSphere(transform.position, Range + 0.5f);
             PlayerUnit bestTarget = null;
             float bestScore = float.MinValue;
 
@@ -425,32 +478,107 @@ namespace MaouSamaTD.Units
             }
         }
 
-         private void FaceTarget(Vector3 targetPos)
-         {
-              if (_spriteRenderer == null) return;
+          private void FaceTarget(Vector3 targetPos)
+          {
+               if (_spriteRenderer == null) return;
 
-              float diff = targetPos.x - transform.position.x;
-              if (Mathf.Abs(diff) < 0.05f) return;
+               float diff = targetPos.x - transform.position.x;
+               
+               // If very close, check if we have a target or move direction to fall back on
+               if (Mathf.Abs(diff) < 0.01f)
+               {
+                   if (_attackTarget != null) 
+                       diff = _attackTarget.transform.position.x - transform.position.x;
+                   else if (_targetTile != null)
+                       diff = _targetTile.transform.position.x - transform.position.x;
+               }
 
-              bool isTargetRight = diff > 0;
-              
-              Vector3 currentScale = transform.localScale;
-              // Default facing is Left (+1). To face Right, use -1.
-              currentScale.x = isTargetRight ? -1f : 1f;
-              transform.localScale = currentScale;
-              
-              if (_showDebugLogs) Debug.Log($"[Facing] {gameObject.name} facing {(isTargetRight ? "Right (+x)" : "Left (-x)")}. Target X: {targetPos.x:F2}, My X: {transform.position.x:F2}");
-         }
+               if (Mathf.Abs(diff) < 0.01f) return;
 
-        private void HandleAttack(UnitBase target)
+               bool isTargetRight = diff > 0;
+               
+                if (_spriteRenderer != null)
+                {
+                    Vector3 spriteScale = _spriteRenderer.transform.localScale;
+                    // Default facing is Left (+1). To face Right, use -1.
+                    spriteScale.x = isTargetRight ? -1f : 1f;
+                    _spriteRenderer.transform.localScale = spriteScale;
+                }
+          }
+
+        public override bool IsRanged()
+        {
+            if (_enemyData == null) return false;
+            return _enemyData.DamageType == DamageType.Ranged ||
+                   _enemyData.DamageType == DamageType.Magic;
+        }
+
+        protected override void HandleAttack(UnitBase target)
         {
             if (target == null) return;
             if (Time.deltaTime <= 0f) return; // Don't attack while time is paused
             if (Time.time >= _lastAttackTime + _attackInterval)
             {
                 _lastAttackTime = Time.time;
-                if (_animator != null) _animator.Play("Attack", 0, 0f);
-                target.TakeDamage(_attackPower, this, _enemyData.DamageType);
+                base.HandleAttack(target);
+                
+                DamageType damageType = _enemyData != null ? _enemyData.DamageType : DamageType.Melee;
+
+                if (IsRanged())
+                {
+                    string prefabName = (_enemyData != null && _enemyData.DamageType == DamageType.Ranged) 
+                        ? "VFX/Arrow_Projectile" 
+                        : "VFX/Magic_Projectile";
+
+                    GameObject prefab = Resources.Load<GameObject>(prefabName);
+                    if (prefab != null)
+                    {
+                        GameObject projObj = Instantiate(prefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
+                        
+                        // Enable billboarding on projectile
+                        var billboard = projObj.GetComponent<Billboard>();
+                        if (billboard == null)
+                        {
+                            billboard = projObj.AddComponent<Billboard>();
+                        }
+                        billboard.LockZ = true; // Lock Z so the projectile rotates towards its target in screen-space
+
+                        var projComp = projObj.GetComponent<MaouSamaTD.VFX.BasicProjectile>();
+                        if (projComp != null)
+                        {
+                            projComp.Launch(target, _attackPower, this, damageType);
+                        }
+                        else
+                        {
+                            target.TakeDamage(_attackPower, this, damageType);
+                        }
+                    }
+                    else
+                    {
+                        target.TakeDamage(_attackPower, this, damageType);
+                    }
+                }
+                else
+                {
+                    target.TakeDamage(_attackPower, this, damageType);
+
+                    // Spawn melee slash effect
+                    GameObject slashPrefab = Resources.Load<GameObject>("VFX/Melee_Slash_VFX");
+                    if (slashPrefab != null)
+                    {
+                        Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-0.15f, 0.15f), UnityEngine.Random.Range(-0.15f, 0.15f) + 0.5f, 0f);
+                        GameObject slashObj = Instantiate(slashPrefab, target.transform.position + randomOffset, Quaternion.identity);
+                        
+                        // Enable billboarding on slash
+                        if (slashObj.GetComponent<Billboard>() == null)
+                        {
+                            slashObj.AddComponent<Billboard>();
+                        }
+                        
+                        // Make slashes bigger
+                        slashObj.transform.localScale = Vector3.one * 1.8f;
+                    }
+                }
 
                 foreach (var ability in _runtimeAbilities)
                 {
@@ -467,7 +595,9 @@ namespace MaouSamaTD.Units
             // 1. Check for range-based targets if not already centering/blocked
             // BYPASS: If we have phasing charges or Bypass evasion, we ignore units to reach the exit
             // NEW: If OnlyAttackIfBlocked is true, we ONLY target if we are actually blocked (see block detection below)
-            bool isPhasing = _currentPhasingCharges > 0 || _enemyData.EvasionType == EnemyEvasionType.BypassBlockers;
+            bool isPhasing = _currentPhasingCharges > 0 || 
+                             _enemyData.EvasionType == EnemyEvasionType.BypassBlockers ||
+                             _enemyData.CollisionType == EnemyCollisionType.IgnoreUnits;
             
             if (!_isCentering && _blockedBy == null && !_isCharmed && !_enemyData.OnlyAttackIfBlocked)
             {
@@ -489,22 +619,27 @@ namespace MaouSamaTD.Units
             }
 
             // 2. Check for blockers in moving path
-            if (!_isCentering && _enemyData.MovementType != EnemyMovementType.Flying && 
-                _enemyData.CollisionType == EnemyCollisionType.BlockedByUnits && !_isCharmed)
+            if (!_isCentering && _enemyData.CollisionType == EnemyCollisionType.BlockedByUnits && !_isCharmed)
             {
+                // Fix: Also check current tile in case we are already overlapping a unit that just became able to block (e.g. Ultimate)
+                Vector2Int currentCoord = _gridManager.WorldToGridCoordinates(transform.position);
+                Grid.Tile currentTile = _gridManager.GetTileAt(currentCoord);
+                if (currentTile != null && currentTile.IsOccupied && currentTile.Occupant is PlayerUnit currentInTilePlayer && currentInTilePlayer.CanBlock())
+                {
+                     if (_enemyData.EvasionType != EnemyEvasionType.BypassBlockers && _currentPhasingCharges <= 0)
+                     {
+                         _blockedBy = currentInTilePlayer;
+                         currentInTilePlayer.NotifyEncounter(this);
+                         InitiateCentering();
+                         return;
+                     }
+                }
+
                 if (_targetTile.IsOccupied && _targetTile.Occupant is PlayerUnit player && player.CanBlock())
                 {
-                    bool canEvade = false;
+                    bool canEvade = isPhasing;
                     
-                    if (_enemyData.EvasionType == EnemyEvasionType.BypassBlockers) 
-                    {
-                        canEvade = true;
-                    }
-                    else if (_enemyData.EvasionType == EnemyEvasionType.IgnoreIfTargetAttacking && player.IsAttacking())
-                    {
-                        canEvade = true;
-                    }
-                    else if (_currentPhasingCharges > 0)
+                    if (!canEvade && _enemyData.EvasionType == EnemyEvasionType.IgnoreIfTargetAttacking && player.IsAttacking())
                     {
                         canEvade = true;
                     }
@@ -576,6 +711,9 @@ namespace MaouSamaTD.Units
                             Immunities.Remove(DamageType.Melee);
                             if (_showDebugLogs) Debug.Log($"{gameObject.name} Phasing ended. TEMPORARY MELEE IMMUNITY REMOVED (Vulnerable)!");
                         }
+
+                        // IMPORTANT: Recalculate path now that we can no longer phase through units
+                        RecalculatePath();
                     }
                 }
 
@@ -715,6 +853,7 @@ namespace MaouSamaTD.Units
                 RecalculatePath();
             }
         }
+
 
         protected override Vector3 GetSpriteLocalPosition()
         {

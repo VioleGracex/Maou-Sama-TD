@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 9638e4fd-4c03-4da0-9baa-0b88eb172baf
   CalculatedStats:
-  MaxHp: 840
+  MaxHp: 84
     Attack: 36
-  Defense: 24
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Mina
@@ -53,10 +53,10 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 840
-  AttackPower: 48
+  MaxHp: 84
+  AttackPower: 5
   AttackInterval: 1.0
-  Defense: 24
+  Defense: 2
   RespawnTime: 20.0
   Range: 2
   MaxCharge: 100

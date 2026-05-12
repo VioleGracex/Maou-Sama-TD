@@ -30,7 +30,8 @@ namespace MaouSamaTD.Managers.Interaction
             bool isSkillTargeting, 
             SovereignRiteData selectedSkill,
             Tile hoverTile,
-            PlayerUnit inspectedUnit)
+            PlayerUnit inspectedUnit,
+            EnemyUnit inspectedEnemy = null)
         {
             if (_gridManager == null) return;
 
@@ -51,6 +52,7 @@ namespace MaouSamaTD.Managers.Interaction
 
                     if (hoverTile != null && activeUnit.Range > 0)
                     {
+                        // Use pattern for ghost range if available (or default to circular)
                         float dist = Vector2.Distance(
                             new Vector2(tile.Coordinate.x, tile.Coordinate.y), 
                             new Vector2(hoverTile.Coordinate.x, hoverTile.Coordinate.y));
@@ -83,17 +85,24 @@ namespace MaouSamaTD.Managers.Interaction
                         useFullFill = UseFullFillPlacement;
                     }
                 }
-                else if (inspectedUnit != null && inspectedUnit.Data != null)
+                else if (inspectedUnit != null)
                 {
-                    float dist = Vector2.Distance(
-                        new Vector2(tile.Coordinate.x, tile.Coordinate.y), 
-                        new Vector2(inspectedUnit.CurrentTile.Coordinate.x, inspectedUnit.CurrentTile.Coordinate.y));
-                    
-                    if (dist <= inspectedUnit.Range)
+                    if (inspectedUnit.IsTargetInPattern(inspectedUnit.CurrentTile.Coordinate, tile.Coordinate, inspectedUnit.Data.AttackPattern, inspectedUnit.Range))
                     {
                         shouldHighlight = true;
                         highlightColor = RangeColor;
-                        highlightColor.a = RangeColor.a; // Use the designed RangeColor alpha (soft)
+                        highlightColor.a = RangeColor.a; 
+                        useFullFill = UseFullFillRange;
+                    }
+                }
+                else if (inspectedEnemy != null)
+                {
+                    Vector2Int myCoord = _gridManager.WorldToGridCoordinates(inspectedEnemy.transform.position);
+                    if (inspectedEnemy.IsTargetInPattern(myCoord, tile.Coordinate, inspectedEnemy.EnemyData.AttackPattern, inspectedEnemy.Range))
+                    {
+                        shouldHighlight = true;
+                        highlightColor = RangeColor;
+                        highlightColor.a = RangeColor.a; 
                         useFullFill = UseFullFillRange;
                     }
                 }
@@ -103,7 +112,7 @@ namespace MaouSamaTD.Managers.Interaction
                     {
                         shouldHighlight = true;
                         highlightColor = selectedSkill.BaseVisuals.RangeIndicatorColor;
-                        highlightColor.a = (tile == hoverTile) ? 0.35f : 0.15f; // Softer skill range indicator colors
+                        highlightColor.a = (tile == hoverTile) ? 0.35f : 0.15f; 
                         useFullFill = UseFullFillSkills;
                     }
                 }

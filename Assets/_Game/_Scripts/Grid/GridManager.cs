@@ -617,8 +617,7 @@ namespace MaouSamaTD.Grid
                             tile.Type == TileType.SpawnPointHigh ||
                             tile.Type == TileType.ExitPointHigh ||
                             tile.Type == TileType.None ||
-                            tile.Type == TileType.Wall ||
-                            tile.Type == TileType.LowTile) // Adding LowTile as obstacle for ground if it's meant to be a pit/gap
+                            tile.Type == TileType.Wall) // Removed LowTile from obstacle list so ground units can traverse low ground paths
                             isWalkable = false;
                     }
                     else if (moveType == MaouSamaTD.Units.EnemyMovementType.Flying)

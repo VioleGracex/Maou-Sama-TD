@@ -64,6 +64,7 @@ namespace MaouSamaTD.Managers
         {
             _currentLevelData = levelData;
             Debug.Log("[GameManager] Initializing Game...");
+            TimeTaken = 0f; // Reset level timer on start/restart
             SetSpeed(1f); // Reset TimeScale on Restart
 
             if (_gridGenerator != null && levelData.MapData != null)
@@ -347,7 +348,7 @@ namespace MaouSamaTD.Managers
         private void Update()
         {
             if (IsGameEnded || IsPaused) return;
-            TimeTaken += Time.deltaTime;
+            TimeTaken += Time.unscaledDeltaTime;
         }
 
         public void ReportUnitLost()

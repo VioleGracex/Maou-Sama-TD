@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: ab2f97d1-2eaa-46d1-b7b5-24b931e4ffcc
   CalculatedStats:
-  MaxHp: 800
+  MaxHp: 80
     Attack: 30
-  Defense: 15
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Gnaw
@@ -53,10 +53,10 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 800
-  AttackPower: 100
+  MaxHp: 80
+  AttackPower: 10
   AttackInterval: 0.8
-  Defense: 15
+  Defense: 2
   RespawnTime: 15.0
   Range: 1
   MaxCharge: 100

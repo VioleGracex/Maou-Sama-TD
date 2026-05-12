@@ -1,2 +1,5 @@
 Key,English,Russian,German,French,Portuguese,Spanish,Japanese,Chinese
 Mission.Readiness.NoEdit,This level uses fixed characters and cannot be edited.,,,,,,,,このステージは固定キャラクターを使用するため、編成は変更できません。,
+SovereignHP_Level1,Wagon,Вагон,Wagen,Chariot,Vagão,Vagón,馬車,战车
+SovereignHP_Level2,Tina,Нексус,Nexus,Nexus,Nexus,Nexus,ネクサス,魔王圣域
+SovereignHP_Default,Sovereign,Суверен,Souverän,Souverain,Soberano,Soberano,支配者,魔王城

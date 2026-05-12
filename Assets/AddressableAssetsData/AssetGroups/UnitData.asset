@@ -169,13 +169,6 @@ MonoBehaviour:
     - UnitData
     - Unit_Legendary
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 33511f7128f395c4a90766f9f9ef83e2
-    m_Address: Char_Shade_UnitData
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - UnitData
-    - Unit_Master
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 36dd37f53d67e754aa7a8815492c9fbc
     m_Address: Char_Selene_Stray_Hunter_UnitData
     m_ReadOnly: 0

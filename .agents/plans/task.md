@@ -14,31 +14,33 @@
     - [ ] Ensure consistent map/unit scaling across different levels.
 
 ## Stage 2: Visual Clarity & UX 🔵
-- [ ] **Unit Visuals**
-    - [ ] Redesign HP bars for better visibility (Units & Enemies).
-    - [ ] Add numeric HP display to unit bars.
+- [ ] **Unit Visuals (HP Bar Polish)**
+    - [ ] Implement Camera-Distance Scale Compensation (keeps HP bar constant pixel size on screen regardless of camera distance).
+    - [ ] Standardize dynamic colors (Green for Vassals, Red for Enemies, pulsing Amber for Bosses).
+    - [ ] Implement selective visibility (only show world bars on damaged units or highlighted/selected ones).
+    - [ ] Implement segmented health tick notches (every 100/500 HP) instead of tiny pixelated numeric text overlays.
     - [ ] Create "Fallback" minimalistic VFX for skills/rites.
-- [ ] **UI Polish**
-    - [ ] **Tooltips**: Implement hover tips for skills/rites using UI prefabs.
+- [ ] **UI Polish & Mobile Adaptation**
+    - [ ] **PC Tooltips**: Implement hover tips for skills/rites (using dynamic `SkillTooltipUI` prefab).
+    - [ ] **Mobile Active Skill Dropdown**: Build top-center dropdown bar that appears when a skill is active (toggled or dragging).
+    - [ ] **Screen Anchor Matrix**: Enforce non-overlapping layout bounds across all screen ratios.
+        - [ ] Restructure top-center: Move `WaveNumberText` & `WaveEnemyCountText` into flanking pill panels alongside `BaseHP`.
+        - [ ] Reposition mini dialogue panel (`MiniTopPanel`) to sit cleanly below `ActiveSkillDetailsUI`.
+        - [ ] Coordinate `CombatLogUI` (middle-right) and `Unit_Inspector_UI` (bottom-right) state switching to auto-collapse on overlap.
     - [x] **Tactical Mode**: Implement "0x Time" toggle (Speed cycle x1->x2->x0) in `GameControlUI`.
+    - [ ] **Combat Log**: Add a smooth toggle button with slide expand/collapse docking animations.
+    - [ ] **Objective HP (Sovereign/Wagon/Tina)**: Set up theme-adaptive decorative borders per level theme.
     - [x] **Path Estimation**: Add arrival time simulation in Editor (MapDataEditor).
     - [ ] **Deployment Bar**:
         - [x] Distinct visual feedback for "Insufficient Seals" (Tinting).
         - [x] "Unit Already Placed" visual (Desaturation) + "Retreat" button integration.
-    - [ ] **Player HP**: Clarify distinction between Wagon/Nexus HP vs Maou HP.
-- [/] **Rethink UI Layout**
-    - [ ] Reposition UI elements to accommodate:
-        - [x] Combat Log (Implemented + Event Integrated).
-        - [ ] Wave Progress.
-        - [ ] Authority Seals.
-        - [ ] Top-Center Dialogue overlaps.
 
-## Stage 3: Automation & content  purple
+## Stage 3: Automation & Content 🟣
 - [ ] **Python Automation**
     - [ ] Refine `update_unity_stats.py` to handle full stat grid.
     - [ ] Update Power Scaling formulas to include skill multipliers.
 - [ ] **Skill Implementation**
-    - [ ] Define and write Ultimate Skill data for all 70+ units.
+    - [ ] Define and write Ultimate Skill data for all 70+ units (add Ultimate Icon to Stats browser).
     - [ ] Define enemy skills/abilities.
 - [ ] **Unit Browser Enhancements**
     - [ ] Add global info/checklist for Ultimates, Skins, and Passive counts.

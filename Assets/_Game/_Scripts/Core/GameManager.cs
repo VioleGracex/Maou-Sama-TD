@@ -36,7 +36,7 @@ namespace MaouSamaTD.Managers
         public LevelData CurrentLevelData => _currentLevelData;
 
         public int NexusIntegrity { get; private set; }
-        public int MaxNexusIntegrity { get; private set; } = 20;
+        public int MaxNexusIntegrity { get; private set; } = 100;
         public int EnemiesPassedCount { get; private set; }
         public System.Action<int> OnNexusIntegrityChanged;
         public event System.Action OnVictory;
@@ -258,7 +258,8 @@ namespace MaouSamaTD.Managers
                 if (levelData == null) Debug.LogError("[GameManager] LevelData is NULL!");
             }
 
-            MaxNexusIntegrity = 20; // Default or from level data
+            MaxNexusIntegrity = levelData != null ? levelData.SovereignMaxHp : 100;
+            if (MaxNexusIntegrity <= 0) MaxNexusIntegrity = 100;
             NexusIntegrity = MaxNexusIntegrity;
             EnemiesPassedCount = 0;
             OnNexusIntegrityChanged?.Invoke(NexusIntegrity);

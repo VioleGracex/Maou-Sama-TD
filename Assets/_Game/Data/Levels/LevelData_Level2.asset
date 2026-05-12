@@ -112,3 +112,5 @@ MonoBehaviour:
     AutoGrantInTutorial: 1
   WinConditions: []
   LoseConditions: []
+  SovereignHpNameKey: SovereignHP_Level2
+  SovereignMaxHp: 100

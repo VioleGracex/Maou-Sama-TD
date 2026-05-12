@@ -90,3 +90,5 @@ MonoBehaviour:
   - Description: Lose if 2 enemies pass
     Type: 2
     Value: 2
+  SovereignHpNameKey: SovereignHP_Level1
+  SovereignMaxHp: 100

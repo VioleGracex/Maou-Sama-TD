@@ -13,6 +13,10 @@ namespace MaouSamaTD.Levels
 
         [Header("Level Info")]
         public string LevelName = "Level 1";
+        [Tooltip("The localization key for the entity we are protecting (e.g., SovereignHP_Level1)")]
+        public string SovereignHpNameKey = "SovereignHP_Default";
+        [Tooltip("The maximum health/integrity of the wagon/nexus/sovereign for this level.")]
+        public int SovereignMaxHp = 100;
         [TextArea] public string Description = "The first battle.";
         
         [Tooltip("Time in seconds before the first wave starts")]

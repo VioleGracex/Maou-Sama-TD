@@ -67,7 +67,7 @@ namespace MaouSamaTD.UI
         [Inject(Optional = true)] private BattleCurrencyManager _currencyManager;
         [Inject(Optional = true)] private TutorialManager _tutorialManager;
 
-        private const float MaxNexusIntegrity = 20f; 
+        // Dynamic MaxNexusIntegrity is read from GameManager instead of a hardcoded constant
 
         private void Start()
         {
@@ -418,7 +418,10 @@ namespace MaouSamaTD.UI
 
         private void UpdateHp(int integrity)
         {
-            float pct = (float)integrity / MaxNexusIntegrity;
+            int maxIntegrity = _gameManager != null ? _gameManager.MaxNexusIntegrity : 100;
+            if (maxIntegrity <= 0) maxIntegrity = 100;
+
+            float pct = (float)integrity / maxIntegrity;
             
             if (_hpFillImage != null)
             {
@@ -427,7 +430,52 @@ namespace MaouSamaTD.UI
 
             if (_hpText != null)
             {
-                _hpText.text = $"Wagon: {Mathf.CeilToInt(pct * 100)}%";
+                string protectedName = "Sovereign";
+                if (_gameManager != null && _gameManager.CurrentLevelData != null)
+                {
+                    string key = _gameManager.CurrentLevelData.SovereignHpNameKey;
+                    
+                    // Level 2 (Tomb of Lilith): dynamically transition from "Tina" (SovereignHP_Level2)
+                    // to "Sovereign" (SovereignHP_Default) once Lilith is unsealed (active in hierarchy)
+                    if (_gameManager.CurrentLevelData.LevelID == "1-2")
+                    {
+                        bool lilithUnsealed = false;
+                        var buttons = FindObjectsByType<MaouSamaTD.UI.UnitButtonUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+                        foreach (var btn in buttons)
+                        {
+                            if (btn != null && btn.Data != null && btn.Data.UnitName == "Lilith")
+                            {
+                                if (btn.gameObject.activeInHierarchy)
+                                {
+                                    lilithUnsealed = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!lilithUnsealed)
+                        {
+                            key = "SovereignHP_Level2"; // Tina
+                        }
+                        else
+                        {
+                            key = "SovereignHP_Default"; // Sovereign
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        if (Assets.SimpleLocalization.Scripts.LocalizationManager.HasKey(key))
+                        {
+                            protectedName = Assets.SimpleLocalization.Scripts.LocalizationManager.Localize(key);
+                        }
+                        else
+                        {
+                            protectedName = key;
+                        }
+                    }
+                }
+                _hpText.text = $"{protectedName}: {Mathf.CeilToInt(pct * 100)}%";
             }
         }
 

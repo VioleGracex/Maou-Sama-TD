@@ -120,3 +120,5 @@ MonoBehaviour:
     AutoGrantInTutorial: 0
   WinConditions: []
   LoseConditions: []
+  SovereignHpNameKey: SovereignHP_Default
+  SovereignMaxHp: 100

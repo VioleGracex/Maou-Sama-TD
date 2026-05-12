@@ -26,7 +26,7 @@
     - [ ] **Screen Anchor Matrix**: Enforce non-overlapping layout bounds across all screen ratios.
         - [ ] Restructure top-center: Move `WaveNumberText` & `WaveEnemyCountText` into flanking pill panels alongside `BaseHP`.
         - [ ] Reposition mini dialogue panel (`MiniTopPanel`) to sit cleanly below `ActiveSkillDetailsUI`.
-        - [ ] Coordinate `CombatLogUI` (middle-right) and `Unit_Inspector_UI` (bottom-right) state switching to auto-collapse on overlap.
+        - [ ] Coordinate `CombatLogUI` (bottom-right) and `Unit_Inspector_UI` (bottom-right) state switching to auto-collapse on overlap.
     - [x] **Tactical Mode**: Implement "0x Time" toggle (Speed cycle x1->x2->x0) in `GameControlUI`.
     - [ ] **Combat Log**: Add a smooth toggle button with slide expand/collapse docking animations.
     - [ ] **Objective HP (Sovereign/Wagon/Tina)**: Set up theme-adaptive decorative borders per level theme.

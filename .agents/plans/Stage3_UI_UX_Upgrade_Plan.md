@@ -121,11 +121,11 @@ To guarantee that remade UI components and brand-new elements never overlap acro
 | **Top-Center (Mid)** | `ActiveSkillDetailsUI` | **[NEW] Dropdown** | Slides down from the top, but has a vertical offset anchor so it sits **directly below** the `BaseHP` bar without covering it. |
 | **Top-Center (Low)** | `DialogueUI -> MiniTopPanel` | *Repositioned Panel* | Mid-combat dialogue bubble is shifted to sit below both the `BaseHP` bar and the active skill dropdown. |
 | **Top-Right** | Time Controls (Pause/Speed) | *Static HUD* | Independent, compact button group in the top-right corner. |
-| **Middle-Left** | `SOVEREIGN_RITES_SKILLS_UI` | *Slide Panel (Remade)* | Slides out horizontally from the left edge on demand. |
-| **Middle-Right** | `CombatLogUI` | **[NEW] Slide Panel** | Placed on the middle-right. Slides out horizontally from the right edge. Collapses to a tiny 40px icon when closed. |
+| **Middle-Left** | `SOVEREIGN_RITES_SKILLS_UI` | *As-Is* | Unaltered; on-demand slide-out rite/skill dashboard. |
 | **Bottom-Left** | `UnitHolderPanel` (Vassal Cards) | *Horizontal Deck* | Anchored at absolute bottom-left with safe-area padding for mobile notches. |
-| **Bottom-Right** | `Unit_Inspector_UI` | *Inspect Panel* | Slides open from the bottom-right when a vassal is clicked. |
-| **Bottom-Right (Corner)** | Camera Controls (Lock, 2D/3D) | *Static Buttons* | Stacked neatly at the absolute corner, sliding out of view temporarily when the `Unit_Inspector_UI` is open. |
+| **Bottom-Right (HUD)** | `CombatLogUI` | **[NEW] Slide Panel** | Placed in the bottom-right. When open, displays clean log streams. Toggles/collapses dynamically. |
+| **Bottom-Right (Panel)**| `Unit_Inspector_UI` | *As-Is* | Unaltered; slides open from bottom-right on vassal selection. |
+| **Bottom-Right (Corner)** | Camera Controls (Lock, 2D/3D) | *Static Buttons* | Stacked neatly at the absolute corner, sliding out of view temporarily when the inspector is open. |
 
 ### 🔄 Interactive Overlap Resolution Logic
 
@@ -134,9 +134,10 @@ To guarantee that remade UI components and brand-new elements never overlap acro
    * The `DialogueUI` will temporarily fade its opacity to **25%** and shift down, allowing the golden `ActiveSkillDetailsUI` text to take visual priority.
    * Once targeting is complete/released, `DialogueUI` restores to 100% opacity.
 
-2. **Combat Log vs. Vassal Inspector (Right Side)**:
-   * The `CombatLogUI` sits at the middle-right. The `Unit_Inspector_UI` slides up from the bottom-right.
-   * If both are open, the Combat Log automatically collapses to its icon-only mode to prevent crowding, then restores itself once the inspector is closed.
+2. **Combat Log vs. Vassal Inspector (Bottom-Right)**:
+   * Both share the bottom-right real estate for optimized layout density.
+   * **When Unit_Inspector_UI is Active**: The `CombatLogUI` automatically minimizes/slides off-screen to clear the space completely for detailed stats.
+   * **When Unit_Inspector_UI is Closed**: The `CombatLogUI` automatically returns to its previous toggled state (fully expanded or iconified).
 
 3. **Compact Wave & Enemy Tracker Placement**:
    * We integrate the `WaveNumberText` (e.g. "Wave 1/3") and the `WaveEnemyCountText` (e.g., "Enemies: 12") as neat, horizontal pill badges anchored directly adjacent to the top-center `BaseHP` bar (left and right flanks), rather than loose floating texts.

@@ -37,6 +37,7 @@ namespace MaouSamaTD.UI.Skills
         
         // References to description UI elements
         private TMPro.TextMeshProUGUI _skillNameTxt;
+        private TMPro.TextMeshProUGUI _skillCostTxt;
         private UnityEngine.UI.Image _skillIconImg;
         private TMPro.TextMeshProUGUI _skillInfoTxt;
         private RangePatternUI _rangePatternUI;
@@ -126,6 +127,20 @@ namespace MaouSamaTD.UI.Skills
                     _interactionManager?.DeselectSkill();
                 });
 
+                // Find close button
+                Transform closeBtnTrans = sdc.Find("CloseButton");
+                if (closeBtnTrans != null)
+                {
+                    var closeBtn = closeBtnTrans.GetComponent<UnityEngine.UI.Button>();
+                    if (closeBtn != null)
+                    {
+                        closeBtn.onClick.RemoveAllListeners();
+                        closeBtn.onClick.AddListener(() => {
+                            _interactionManager?.DeselectSkill();
+                        });
+                    }
+                }
+
                 // 2. Get Title components
                 Transform skillTitle = sdc.Find("Skill_Title");
                 if (skillTitle != null)
@@ -135,34 +150,37 @@ namespace MaouSamaTD.UI.Skills
 
                     Transform nameTrans = skillTitle.Find("SkillName_Txt");
                     if (nameTrans != null) _skillNameTxt = nameTrans.GetComponent<TMPro.TextMeshProUGUI>();
+
+                    Transform costTrans = skillTitle.Find("SkillCost_Txt");
+                    if (costTrans != null) _skillCostTxt = costTrans.GetComponent<TMPro.TextMeshProUGUI>();
                 }
 
                 // 3. Get Description Text
-                Transform descTrans = sdc.Find("Skill_Info_Txt");
+                Transform descTrans = sdc.Find("MiddleSplit/Skill_Info_Txt") ?? sdc.Find("Skill_Info_Txt");
                 if (descTrans != null) _skillInfoTxt = descTrans.GetComponent<TMPro.TextMeshProUGUI>();
 
                 // 4. Get RangeGrid
-                Transform gridTrans = sdc.Find("RangeGrid");
+                Transform gridTrans = sdc.Find("MiddleSplit/Range_Container/RangeGrid") ?? sdc.Find("RangeGrid");
                 if (gridTrans != null)
                 {
                     _rangePatternUI = gridTrans.GetComponent<RangePatternUI>();
 
                     // Create or find RangeGrid_StatsTxt
-                    Transform statsTrans = sdc.Find("RangeGrid_StatsTxt");
+                    Transform statsTrans = sdc.Find("MiddleSplit/Range_Container/RangeGrid_StatsTxt") ?? sdc.Find("RangeGrid_StatsTxt");
                     if (statsTrans == null)
                     {
                         var statsGo = new GameObject("RangeGrid_StatsTxt", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
-                        statsGo.transform.SetParent(sdc, false);
+                        statsGo.transform.SetParent(gridTrans.parent != null ? gridTrans.parent : sdc, false);
                         statsTrans = statsGo.transform;
                         var srt = statsTrans.GetComponent<RectTransform>();
                         srt.anchorMin = new Vector2(0.5f, 0.5f);
                         srt.anchorMax = new Vector2(0.5f, 0.5f);
                         srt.pivot = new Vector2(0.5f, 0.5f);
-                        srt.sizeDelta = new Vector2(300f, 40f);
-                        srt.anchoredPosition = new Vector2(0f, -125.0f); // Centered nicely below RangeGrid
+                        srt.sizeDelta = new Vector2(130f, 40f);
+                        srt.anchoredPosition = new Vector2(0f, -70.0f);
                     }
                     _rangeStatsTxt = statsTrans.GetComponent<TMPro.TextMeshProUGUI>();
-                    _rangeStatsTxt.fontSize = 13f;
+                    _rangeStatsTxt.fontSize = 12f;
                     _rangeStatsTxt.alignment = TMPro.TextAlignmentOptions.Center;
                     _rangeStatsTxt.fontStyle = TMPro.FontStyles.Bold;
                 }
@@ -330,7 +348,11 @@ namespace MaouSamaTD.UI.Skills
             // 1. Title with Gold SP Cost
             if (_skillNameTxt != null)
             {
-                _skillNameTxt.text = $"{skill.SkillName} <color=#FFD700>({skill.SealCost} SP)</color>";
+                _skillNameTxt.text = skill.SkillName;
+            }
+            if (_skillCostTxt != null)
+            {
+                _skillCostTxt.text = $"{skill.SealCost} SP";
             }
 
             // 2. Icon Image

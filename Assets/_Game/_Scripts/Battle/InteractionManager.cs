@@ -91,11 +91,44 @@ namespace MaouSamaTD.Managers
                     UpdateTileVisuals();
                 };
             }
+            if (_currencyManager != null)
+            {
+                _currencyManager.OnSealsChanged -= HandleSealsChanged;
+                _currencyManager.OnSealsChanged += HandleSealsChanged;
+            }
             Debug.Log("[InteractionManager] Initialized.");
         }
 
-        private void OnEnable() => _inputHandler?.Enable();
-        private void OnDisable() => _inputHandler?.Disable();
+        private void OnEnable()
+        {
+            _inputHandler?.Enable();
+            if (_currencyManager != null)
+            {
+                _currencyManager.OnSealsChanged -= HandleSealsChanged;
+                _currencyManager.OnSealsChanged += HandleSealsChanged;
+            }
+        }
+
+        private void OnDisable()
+        {
+            _inputHandler?.Disable();
+            if (_currencyManager != null)
+            {
+                _currencyManager.OnSealsChanged -= HandleSealsChanged;
+            }
+        }
+
+        private void HandleSealsChanged(int seals)
+        {
+            if (_isSkillTargeting && _selectedSkill != null && seals < _selectedSkill.SealCost)
+            {
+                DeselectSkill();
+            }
+            if (_activeUnitData != null && seals < _activeUnitData.DeploymentCost)
+            {
+                DeselectUnit();
+            }
+        }
 
         private void Update()
         {
@@ -158,6 +191,7 @@ namespace MaouSamaTD.Managers
         #region Public API
         public void SelectUnit(UnitData data)
         {
+            DeselectSkill();
             if (_activeUnitData == data) 
             { 
                 DeselectUnit(); 
@@ -183,6 +217,7 @@ namespace MaouSamaTD.Managers
 
         public void StartDrag(UnitData data)
         {
+            DeselectSkill();
             _activeUnitData = data;
             IsDragging = true;
             _unitInspectorUI.Hide();

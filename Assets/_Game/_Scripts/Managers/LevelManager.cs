@@ -15,6 +15,7 @@ namespace MaouSamaTD.Managers
         [Inject] private EnemyManager _enemyManager;
         [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private Grid.GridManager _gridManager;
+        [Inject] private MaouSamaTD.UI.DeploymentUI _deploymentUI;
 
         #region Lifecycle
         private void Start()
@@ -66,17 +67,82 @@ namespace MaouSamaTD.Managers
         {
             bool hasTutorial = dataToLoad.HasTutorial && dataToLoad.TutorialData != null;
 
+            if (hasTutorial)
+            {
+                // We show the choice popup from GameControlUI!
+                MaouSamaTD.UI.GameControlUI ui = FindFirstObjectByType<MaouSamaTD.UI.GameControlUI>();
+                if (ui != null)
+                {
+                    ui.ShowTutorialPrompt(
+                        () => // Play Tutorial
+                        {
+                            InitializeLevel(dataToLoad, true);
+                        },
+                        () => // Skip Tutorial
+                        {
+                            InitializeLevel(dataToLoad, false);
+                        }
+                    );
+                }
+                else
+                {
+                    // Fallback if UI is missing
+                    InitializeLevel(dataToLoad, true);
+                }
+            }
+            else
+            {
+                InitializeLevel(dataToLoad, false);
+            }
+        }
+
+        private void InitializeLevel(LevelData dataToLoad, bool playTutorial)
+        {
             if (_enemyManager != null && dataToLoad != null)
             {
                 float gracePeriod = dataToLoad.GracePeriod;
-                Debug.Log($"[LevelManager] Initializing Enemy Manager. Tutorial Active: {hasTutorial}");
-                _enemyManager.Initialize(dataToLoad.Waves, _gridManager.EnemyContainer, gracePeriod, !hasTutorial);
+                Debug.Log($"[LevelManager] Initializing Enemy Manager. Tutorial Active: {playTutorial}");
+                _enemyManager.Initialize(dataToLoad.Waves, _gridManager.EnemyContainer, gracePeriod, !playTutorial);
             }
 
-            if (hasTutorial)
+            if (playTutorial && dataToLoad.HasTutorial && dataToLoad.TutorialData != null)
             {
                 Debug.Log($"[LevelManager] Level has tutorial: {dataToLoad.TutorialData.name}. Starting...");
                 _tutorialManager.StartTutorial(dataToLoad.TutorialData);
+            }
+            else
+            {
+                // If we skip the tutorial, and it is Level 2 (Tomb of Lilith), we must give Lilith to the player immediately!
+                if (dataToLoad != null && (dataToLoad.LevelID == "1-2" || dataToLoad.LevelName.Contains("Level 2") || dataToLoad.LevelName.Contains("Lilith")))
+                {
+                    StartCoroutine(LoadAndAddLilithSkippedTutorial());
+                }
+            }
+        }
+
+        private System.Collections.IEnumerator LoadAndAddLilithSkippedTutorial()
+        {
+            Debug.Log("[LevelManager] Player skipped tutorial on Level 2. Loading Lilith dynamically...");
+            var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<MaouSamaTD.Units.UnitData>("Char_Lilith_UnitData");
+            yield return handle;
+
+            if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+            {
+                var lilithData = handle.Result;
+                if (_deploymentUI != null)
+                {
+                    _deploymentUI.AddUnit(lilithData);
+                    _deploymentUI.SetUnitButtonVisibility("Lilith", true);
+                    Debug.Log($"[LevelManager] Successfully loaded and added Lilith to unit buttons.");
+                }
+                else
+                {
+                    Debug.LogWarning("[LevelManager] DeploymentUI is missing. Cannot add Lilith.");
+                }
+            }
+            else
+            {
+                Debug.LogError("[LevelManager] Failed to load Lilith from Addressables!");
             }
         }
         #endregion

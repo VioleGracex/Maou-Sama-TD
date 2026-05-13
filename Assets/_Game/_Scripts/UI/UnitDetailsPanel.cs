@@ -191,10 +191,14 @@ namespace MaouSamaTD.UI
         #region Populate — Stats
         private void PopulateStats(UnitData u)
         {
-            if (_hpText)    _hpText.text    = u.MaxHp.ToString("0");
-            if (_atkText)   _atkText.text   = u.AttackPower.ToString("0");
-            if (_defText)   _defText.text   = u.Defense.ToString("0");
-            if (_resText)   _resText.text   = u.Defense.ToString("0");
+            float displayHp = u.CalculatedStats.MaxHp > 0 ? u.CalculatedStats.MaxHp : u.MaxHp * 2f;
+            float displayAtk = u.CalculatedStats.Attack > 0 ? u.CalculatedStats.Attack : u.AttackPower * 2f;
+            float displayDef = u.CalculatedStats.Defense > 0 ? u.CalculatedStats.Defense : u.Defense * 2f;
+
+            if (_hpText)    _hpText.text    = displayHp.ToString("0");
+            if (_atkText)   _atkText.text   = displayAtk.ToString("0");
+            if (_defText)   _defText.text   = displayDef.ToString("0");
+            if (_resText)   _resText.text   = displayDef.ToString("0");
             if (_rangeText) _rangeText.text = u.Range.ToString("0.0");
             if (_blockText) _blockText.text = u.BlockCount.ToString();
             if (_costText)  _costText.text  = u.DeploymentCost.ToString();

@@ -35,9 +35,12 @@ namespace MaouSamaTD.Managers
         private LevelData _currentLevelData;
         public LevelData CurrentLevelData => _currentLevelData;
 
-        public int NexusIntegrity { get; private set; }
-        public int MaxNexusIntegrity { get; private set; } = 100;
+        public int ObjectiveHP { get; private set; }
+        public int MaxObjectiveHP { get; private set; } = 100;
         public int EnemiesPassedCount { get; private set; }
+        public System.Action<int> OnObjectiveHPChanged;
+        public int NexusIntegrity => ObjectiveHP;
+        public int MaxNexusIntegrity => MaxObjectiveHP;
         public System.Action<int> OnNexusIntegrityChanged;
         public event System.Action OnVictory;
         public event System.Action OnGameOver;
@@ -258,11 +261,12 @@ namespace MaouSamaTD.Managers
                 if (levelData == null) Debug.LogError("[GameManager] LevelData is NULL!");
             }
 
-            MaxNexusIntegrity = levelData != null ? levelData.SovereignMaxHp : 100;
-            if (MaxNexusIntegrity <= 0) MaxNexusIntegrity = 100;
-            NexusIntegrity = MaxNexusIntegrity;
+            MaxObjectiveHP = levelData != null ? levelData.SovereignMaxHp : 100;
+            if (MaxObjectiveHP <= 0) MaxObjectiveHP = 100;
+            ObjectiveHP = MaxObjectiveHP;
             EnemiesPassedCount = 0;
-            OnNexusIntegrityChanged?.Invoke(NexusIntegrity);
+            OnObjectiveHPChanged?.Invoke(ObjectiveHP);
+            OnNexusIntegrityChanged?.Invoke(ObjectiveHP);
 
             // Signal the loading screen that the level is ready
             if (_loadingScreen != null) _loadingScreen.NotifyLevelReady();
@@ -274,14 +278,15 @@ namespace MaouSamaTD.Managers
         {
             if (IsGameEnded) return;
 
-            NexusIntegrity -= amount;
-            if (NexusIntegrity < 0) NexusIntegrity = 0;
+            ObjectiveHP -= amount;
+            if (ObjectiveHP < 0) ObjectiveHP = 0;
             
-            OnNexusIntegrityChanged?.Invoke(NexusIntegrity);
+            OnObjectiveHPChanged?.Invoke(ObjectiveHP);
+            OnNexusIntegrityChanged?.Invoke(ObjectiveHP);
             
-            Debug.Log($"[GameManager] Base taking damage! Nexus Integrity remaining: {NexusIntegrity}");
+            Debug.Log($"[GameManager] Base taking damage! Objective HP remaining: {ObjectiveHP}");
 
-            if (NexusIntegrity <= 0)
+            if (ObjectiveHP <= 0)
             {
                 CheckLoseConditions(LevelConditionType.BaseHPZero);
             }
@@ -301,8 +306,9 @@ namespace MaouSamaTD.Managers
             if (isBoss)
             {
                 Debug.LogWarning("[GameManager] BOSS ESCAPED! Triggering Game Over.");
-                NexusIntegrity = 0;
-                OnNexusIntegrityChanged?.Invoke(NexusIntegrity);
+                ObjectiveHP = 0;
+                OnObjectiveHPChanged?.Invoke(ObjectiveHP);
+                OnNexusIntegrityChanged?.Invoke(ObjectiveHP);
                 GameOver();
                 return;
             }
@@ -321,7 +327,7 @@ namespace MaouSamaTD.Managers
             // Default behavior if no conditions defined
             if (_currentLevelData == null || _currentLevelData.LoseConditions.Count == 0)
             {
-                if (triggerType == LevelConditionType.BaseHPZero && NexusIntegrity <= 0) shouldLose = true;
+                if (triggerType == LevelConditionType.BaseHPZero && ObjectiveHP <= 0) shouldLose = true;
             }
             else
             {
@@ -330,7 +336,7 @@ namespace MaouSamaTD.Managers
                     switch (condition.Type)
                     {
                         case LevelConditionType.BaseHPZero:
-                            if (NexusIntegrity <= 0) shouldLose = true;
+                            if (ObjectiveHP <= 0) shouldLose = true;
                             break;
                         case LevelConditionType.EnemiesPassedLimit:
                             if (EnemiesPassedCount >= condition.Value) shouldLose = true;
@@ -460,30 +466,16 @@ namespace MaouSamaTD.Managers
         #region Internal Logic
         private void GameOver()
         {
-            Debug.Log($"[GameManager] GameOver() called. IsGameEnded: {IsGameEnded}, HasStory: {_currentLevelData?.HasStory}, OutroStory: {_currentLevelData?.OutroStory != null}");
+            Debug.Log($"[GameManager] GameOver() called. IsGameEnded: {IsGameEnded}");
             if (IsGameEnded) return;
             IsGameEnded = true;
             Time.timeScale = 0f; // Freeze game timescale immediately upon defeat
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Game", "", "Game Over - Defeat", 0);
             OnGameFinished?.Invoke();
-            Debug.Log("[GameManager] GameOver is being processed...");
+            Debug.Log("[GameManager] GameOver is being processed. Invoking OnGameOver event immediately...");
             
-            if (_currentLevelData != null && _currentLevelData.HasStory && _currentLevelData.OutroStory != null)
-            {
-                Debug.Log("[GameManager] Playing Defeat Outro Story before calling OnGameOver event...");
-                _storyManager.PlayStory(_currentLevelData.OutroStory, () => 
-                {
-                    Debug.Log("[GameManager] Defeat Outro Story finished. Invoking OnGameOver event...");
-                    OnGameOver?.Invoke();
-                    SetSpeed(0);
-                });
-            }
-            else
-            {
-                Debug.Log("[GameManager] No Defeat Outro Story. Invoking OnGameOver event immediately...");
-                OnGameOver?.Invoke();
-                SetSpeed(0);
-            }
+            OnGameOver?.Invoke();
+            SetSpeed(0);
         }
         #endregion
         public class StarResult
@@ -517,7 +509,7 @@ namespace MaouSamaTD.Managers
                             achieved = TimeTaken <= cond.TargetValue;
                             break;
                         case StarCondition.ConditionType.BaseHealth:
-                            float hpPct = (float)NexusIntegrity / (float)MaxNexusIntegrity * 100f;
+                            float hpPct = (float)ObjectiveHP / (float)MaxObjectiveHP * 100f;
                             achieved = hpPct >= cond.TargetValue;
                             break;
                         case StarCondition.ConditionType.UnitLossLimit:

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MaouSamaTD.Grid;
 using MaouSamaTD.Levels;
 using MaouSamaTD.Managers;
+using MaouSamaTD.Utils;
 
 namespace MaouSamaTD.Units
 {
@@ -499,9 +500,9 @@ namespace MaouSamaTD.Units
                
                 if (_spriteRenderer != null)
                 {
-                    Vector3 spriteScale = _spriteRenderer.transform.localScale;
+                    Vector3 spriteScale = _originalSpriteScale;
                     // Default facing is Left (+1). To face Right, use -1.
-                    spriteScale.x = isTargetRight ? -1f : 1f;
+                    spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? -1f : 1f);
                     _spriteRenderer.transform.localScale = spriteScale;
                 }
           }
@@ -767,7 +768,14 @@ namespace MaouSamaTD.Units
             }
 
             GridManager gridMgr = FindFirstObjectByType<GridManager>(); 
-            if (gridMgr != null) gridMgr.SetTileType(_targetTile.Coordinate, TileType.ExitPoint); 
+            if (gridMgr != null && _targetTile != null)
+            {
+                TileType currentType = _targetTile.Type;
+                if (currentType != TileType.ExitPoint && currentType != TileType.ExitPointHigh)
+                {
+                    gridMgr.SetTileType(_targetTile.Coordinate, TileType.ExitPoint); 
+                }
+            } 
             
             Destroy(gameObject);
         }

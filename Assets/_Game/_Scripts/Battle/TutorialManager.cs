@@ -1248,6 +1248,12 @@ namespace MaouSamaTD.Managers
                 }
             }
 
+            // Always allow clicking the unit stats/inspector window if it's active
+            if (_unitInspectorUI != null && _unitInspectorUI.IsPanelActive && _unitInspectorUI.PanelRect != null)
+            {
+                uiHits.Add(new UIPopupBlocker.UIHighlightData { Target = _unitInspectorUI.PanelRect, Size = Vector2.one });
+            }
+
             if (isDialogueActive) _uiBlocker.SetSortingOrder(2999);
             else _uiBlocker.SetSortingOrder(50);
 

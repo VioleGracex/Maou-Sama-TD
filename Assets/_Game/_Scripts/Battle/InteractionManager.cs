@@ -14,6 +14,7 @@ namespace MaouSamaTD.Managers
         #region Events
         public event System.Action<Tile> OnTileHovered;
         public event System.Action<Tile> OnTileClicked;
+        public event System.Action<SovereignRiteData> OnSkillSelectedChanged;
         #endregion
 
         #region Serialized Settings
@@ -125,6 +126,21 @@ namespace MaouSamaTD.Managers
                 if (isPressDown)
                 {
                     bool isOverUI = EventSystem.current.IsPointerOverGameObject();
+                    
+                    // Allow clicking on player units to inspect stats during tutorial blocker
+                    if (isOverUI && _tutorialManager != null && _tutorialManager.IsInTutorial)
+                    {
+                        Ray clickRay = _inputHandler.GetRayFromScreenPos(screenPos);
+                        if (Physics.Raycast(clickRay, out RaycastHit clickHit, 100f, LayerMask.GetMask("Units", "Default")))
+                        {
+                            var clickedUnit = clickHit.collider.GetComponent<PlayerUnit>() ?? clickHit.collider.GetComponentInParent<PlayerUnit>();
+                            if (clickedUnit != null)
+                            {
+                                isOverUI = false;
+                            }
+                        }
+                    }
+
                     if (isOverUI && _tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.IsPointerInWorldHole(screenPos))
                     {
                         isOverUI = false;
@@ -207,6 +223,7 @@ namespace MaouSamaTD.Managers
             _selectedSkill = skill;
             _isSkillTargeting = true;
             UpdateTileVisuals();
+            OnSkillSelectedChanged?.Invoke(_selectedSkill);
         }
 
         public void DeselectSkill()
@@ -214,6 +231,7 @@ namespace MaouSamaTD.Managers
             _isSkillTargeting = false;
             _selectedSkill = null;
             UpdateTileVisuals();
+            OnSkillSelectedChanged?.Invoke(null);
         }
 
         public void UpdateTileVisuals()
@@ -309,8 +327,7 @@ namespace MaouSamaTD.Managers
 
                     if (_isSelectionLocked && !isAllowedByTutorial)
                     {
-                        Debug.Log("[InteractionManager] Selection is currently LOCKED by tutorial.");
-                        return;
+                        Debug.Log("[InteractionManager] Selection was locked by tutorial, but bypassing to allow opening stats window.");
                     }
 
                     _inspectedPlayerUnit = target;

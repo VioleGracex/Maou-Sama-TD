@@ -15,6 +15,7 @@ namespace MaouSamaTD.UI.Tutorial
     public class DialogueUI : MonoBehaviour
     {
         public bool IsShowingDialogue => (_fullScreenPanel != null && _fullScreenPanel.activeInHierarchy) || (_miniTopPanel != null && _miniTopPanel.activeInHierarchy);
+        public bool IsShowingMiniDialogue => _miniTopPanel != null && _miniTopPanel.activeInHierarchy;
         public DialogueBackground ActiveBackground => _bgType;
 
         public RectTransform GetPanelRect(DialogueStyle style)

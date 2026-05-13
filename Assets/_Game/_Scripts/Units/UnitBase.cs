@@ -105,6 +105,7 @@ namespace MaouSamaTD.Units
         protected float _lastAttackTime;
         public float TotalDamageDealt { get; protected set; } = 0f;
         private Transform _camTransform;
+        protected Vector3 _originalSpriteScale = Vector3.one;
 
         private MaterialPropertyBlock _mpb;
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
@@ -165,6 +166,11 @@ namespace MaouSamaTD.Units
             }
             
             _camTransform = Camera.main != null ? Camera.main.transform : null;
+
+            if (_spriteRenderer != null)
+            {
+                _originalSpriteScale = _spriteRenderer.transform.localScale;
+            }
         }
 
         private void SetupBillboard(GameObject target)
@@ -209,9 +215,111 @@ namespace MaouSamaTD.Units
             if (_hpText != null)
             {
                 _hpText.text = $"{Mathf.CeilToInt(_currentHp)} / {Mathf.CeilToInt(_maxHp)}";
+                
+                // If the health bar is in World Space (i.e. on the field), hide the pixelated text to keep visuals premium
+                if (_hpText.canvas != null && _hpText.canvas.renderMode == RenderMode.WorldSpace)
+                {
+                    _hpText.gameObject.SetActive(false);
+                }
             }
 
+            UpdateHPBarColor();
+            GenerateHPNotches();
             UpdateVisuals();
+        }
+
+        protected virtual void UpdateHPBarColor()
+        {
+            if (_hpFillImage == null) return;
+
+            if (this is PlayerUnit)
+            {
+                // Vassal Green: beautiful premium emerald green
+                _hpFillImage.color = new Color(0.18f, 0.77f, 0.44f); // #2ecc71 emerald
+            }
+            else if (this is EnemyUnit enemy)
+            {
+                if (enemy.EnemyData != null && enemy.EnemyData.IsBoss)
+                {
+                    // Boss Pulsing Amber
+                    _hpFillImage.color = new Color(1f, 0.6f, 0f); 
+                }
+                else
+                {
+                    // Enemy Red: vibrant premium crimson/coral red
+                    _hpFillImage.color = new Color(0.9f, 0.22f, 0.27f); 
+                }
+            }
+        }
+
+        protected virtual void GenerateHPNotches()
+        {
+            if (_hpFillImage == null) return;
+
+            Transform notchContainer = _hpFillImage.transform.Find("NotchContainer");
+            if (notchContainer != null)
+            {
+                Destroy(notchContainer.gameObject);
+            }
+
+            GameObject containerObj = new GameObject("NotchContainer");
+            notchContainer = containerObj.transform;
+            notchContainer.SetParent(_hpFillImage.transform, false);
+            
+            RectTransform containerRect = containerObj.AddComponent<RectTransform>();
+            containerRect.anchorMin = Vector2.zero;
+            containerRect.anchorMax = Vector2.one;
+            containerRect.sizeDelta = Vector2.zero;
+            containerRect.anchoredPosition = Vector2.zero;
+
+            float maxHp = MaxHp;
+            if (maxHp <= 0) return;
+
+            float notchInterval = 100f;
+            if (maxHp >= 500f) notchInterval = 250f;
+            if (maxHp >= 1000f) notchInterval = 500f;
+
+            int notchCount = Mathf.FloorToInt(maxHp / notchInterval);
+            if (notchCount <= 0 || notchCount > 30) return;
+
+            for (int i = 1; i <= notchCount; i++)
+            {
+                float pct = (i * notchInterval) / maxHp;
+                if (pct >= 0.98f) continue;
+
+                GameObject notchObj = new GameObject($"Notch_{i}");
+                notchObj.transform.SetParent(notchContainer, false);
+
+                Image notchImage = notchObj.AddComponent<Image>();
+                notchImage.color = new Color(0f, 0f, 0f, 0.4f);
+
+                RectTransform notchRect = notchObj.GetComponent<RectTransform>();
+                notchRect.anchorMin = new Vector2(pct, 0f);
+                notchRect.anchorMax = new Vector2(pct, 1f);
+                notchRect.pivot = new Vector2(0.5f, 0.5f);
+                notchRect.sizeDelta = new Vector2(1.5f, 0f);
+                notchRect.anchoredPosition = Vector2.zero;
+            }
+        }
+
+        protected virtual void LateUpdate()
+        {
+            // 1. Distance compensation to keep world space health bar a constant screen size
+            if (_hpBarRoot != null && Camera.main != null)
+            {
+                float distance = Vector3.Distance(Camera.main.transform.position, _hpBarRoot.position);
+                float referenceDistance = 10f;
+                float scale = distance / referenceDistance;
+                scale = Mathf.Clamp(scale, 0.4f, 2.5f);
+                _hpBarRoot.localScale = new Vector3(scale, scale, 1f);
+            }
+
+            // 2. Boss HP Bar Pulsing Amber Effect
+            if (this is EnemyUnit enemyBoss && enemyBoss.EnemyData != null && enemyBoss.EnemyData.IsBoss && _hpFillImage != null)
+            {
+                float pulse = 0.8f + Mathf.PingPong(Time.time * 2f, 0.2f);
+                _hpFillImage.color = new Color(1f, 0.6f, 0f) * pulse;
+            }
         }
 
         protected virtual void UpdateInternal()
@@ -363,12 +471,20 @@ namespace MaouSamaTD.Units
             if (_spriteRenderer != null)
             {
                 // Kill previous to prevent stacking offsets
-                _spriteRenderer.DOKill(true); // Complete active tweens and reset to target
-                _spriteRenderer.transform.DOKill(true);
+                _spriteRenderer.DOKill(false);
+                _spriteRenderer.transform.DOKill(false);
                 
                 // Return to base position (in case kill didn't reset it perfectly due to stacking)
                 _spriteRenderer.transform.localPosition = GetSpriteLocalPosition();
+                
+                // Restore original non-squished scale, keeping the sign of x-scale for facing direction
+                Vector3 currentScale = _spriteRenderer.transform.localScale;
+                float currentSignX = Mathf.Sign(currentScale.x);
+                Vector3 targetScale = _originalSpriteScale;
+                targetScale.x = Mathf.Abs(_originalSpriteScale.x) * currentSignX;
+                _spriteRenderer.transform.localScale = targetScale;
 
+                _spriteRenderer.color = Color.white;
                 _spriteRenderer.DOColor(Color.red, 0.1f).OnComplete(() => _spriteRenderer.DOColor(Color.white, 0.1f));
                 _spriteRenderer.transform.DOShakePosition(0.2f, 0.15f, 15, 90f, false, true);
             }

@@ -8,6 +8,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using MaouSamaTD.Levels;
 using Zenject;
 using DG.Tweening;
+using MaouSamaTD.UI.Tutorial;
 
 namespace MaouSamaTD.UI
 {
@@ -19,8 +20,10 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _tacticalIndicator;
         
         [Header("Base HP")]
+        [SerializeField] private GameObject _baseHPContainer;
         [SerializeField] private Image _hpFillImage;
         [SerializeField] private TextMeshProUGUI _hpText;
+        [SerializeField] private TextMeshProUGUI _hpPercentageText;
 
         [Header("Status Tracking")]
         [SerializeField] private TextMeshProUGUI _waveText;
@@ -91,11 +94,11 @@ namespace MaouSamaTD.UI
 
             if (_gameManager != null)
             {
-                _gameManager.OnNexusIntegrityChanged += UpdateHp;
+                _gameManager.OnObjectiveHPChanged += UpdateHp;
                 _gameManager.OnVictory += ShowWin;
                 _gameManager.OnGameOver += ShowLose;
                 _gameManager.OnSpeedChanged += (s) => UpdateUI();
-                UpdateHp(_gameManager.NexusIntegrity);
+                UpdateHp(_gameManager.ObjectiveHP);
             }
 
             // Hide panels initially, dynamic find as fallback if null
@@ -128,9 +131,28 @@ namespace MaouSamaTD.UI
                     _waveText.text = $"Wave: {currentWave} / {totalWaves} ({remaining}/{total})";
                 }
             }
+            else if (_waveText != null)
+            {
+                _waveText.text = "Wave: 1";
+                if (_enemyCountText != null)
+                {
+                    _enemyCountText.text = "";
+                }
+            }
             if (_sealsText != null && _currencyManager != null)
             {
                 _sealsText.text = $"{_currencyManager.CurrentSeals} / {_currencyManager.MaxSeals}";
+            }
+
+            // Auto-hide Top-Middle HP bar if Mini-Dialogue is active (to prevent overlapping)
+            if (_baseHPContainer != null)
+            {
+                DialogueUI dialogueUI = FindFirstObjectByType<DialogueUI>();
+                bool showBaseHP = dialogueUI == null || !dialogueUI.IsShowingMiniDialogue;
+                if (_baseHPContainer.activeSelf != showBaseHP)
+                {
+                    _baseHPContainer.SetActive(showBaseHP);
+                }
             }
 
             // Allow the speed button to be interactable even during tutorial time stops.
@@ -143,7 +165,7 @@ namespace MaouSamaTD.UI
         {
             if (_gameManager != null)
             {
-                _gameManager.OnNexusIntegrityChanged -= UpdateHp;
+                _gameManager.OnObjectiveHPChanged -= UpdateHp;
                 _gameManager.OnVictory -= ShowWin;
                 _gameManager.OnGameOver -= ShowLose;
                 _gameManager.OnSpeedChanged -= (s) => UpdateUI();
@@ -418,7 +440,7 @@ namespace MaouSamaTD.UI
 
         private void UpdateHp(int integrity)
         {
-            int maxIntegrity = _gameManager != null ? _gameManager.MaxNexusIntegrity : 100;
+            int maxIntegrity = _gameManager != null ? _gameManager.MaxObjectiveHP : 100;
             if (maxIntegrity <= 0) maxIntegrity = 100;
 
             float pct = (float)integrity / maxIntegrity;
@@ -475,7 +497,14 @@ namespace MaouSamaTD.UI
                         }
                     }
                 }
-                _hpText.text = $"{protectedName}: {Mathf.CeilToInt(pct * 100)}%";
+                
+                // Format for objective hp name is just Name (e.g., Sovereign, Tina, Wagon etc etc)
+                _hpText.text = protectedName;
+            }
+
+            if (_hpPercentageText != null)
+            {
+                _hpPercentageText.text = $"{Mathf.CeilToInt(pct * 100)}%";
             }
         }
 
@@ -550,6 +579,169 @@ namespace MaouSamaTD.UI
                 // Show only if speed is 0 but NOT paused
                 _tacticalIndicator.SetActive(_gameManager.CurrentSpeed <= 0f && !_gameManager.IsPaused && !_gameManager.IsGameEnded);
             }
+        }
+
+        public void ShowTutorialPrompt(System.Action onYes, System.Action onNo)
+        {
+            // 1. Create Overlay
+            GameObject overlay = new GameObject("TutorialPromptOverlay", typeof(RectTransform));
+            overlay.transform.SetParent(this.transform, false);
+            
+            RectTransform overlayRect = overlay.GetComponent<RectTransform>();
+            overlayRect.anchorMin = Vector2.zero;
+            overlayRect.anchorMax = Vector2.one;
+            overlayRect.sizeDelta = Vector2.zero;
+            overlayRect.anchoredPosition = Vector2.zero;
+
+            Image overlayImg = overlay.AddComponent<Image>();
+            overlayImg.color = new Color(0f, 0f, 0f, 0f); // Animate fade-in
+            overlayImg.raycastTarget = true;
+
+            // 2. Create Dialog Box
+            GameObject dialog = new GameObject("DialogBox", typeof(RectTransform));
+            dialog.transform.SetParent(overlay.transform, false);
+            
+            RectTransform dialogRect = dialog.GetComponent<RectTransform>();
+            dialogRect.anchorMin = new Vector2(0.5f, 0.5f);
+            dialogRect.anchorMax = new Vector2(0.5f, 0.5f);
+            dialogRect.pivot = new Vector2(0.5f, 0.5f);
+            dialogRect.sizeDelta = new Vector2(500f, 260f);
+            dialogRect.anchoredPosition = new Vector2(0f, -50f); // Start lower for pop-up effect
+            dialog.transform.localScale = Vector3.zero;
+
+            Image dialogImg = dialog.AddComponent<Image>();
+            dialogImg.color = new Color(0.08f, 0.08f, 0.12f, 0.95f); // Sleek dark panel
+
+            // Add a subtle gold/white outline to look premium
+            GameObject border = new GameObject("Border", typeof(RectTransform));
+            border.transform.SetParent(dialog.transform, false);
+            RectTransform borderRect = border.GetComponent<RectTransform>();
+            borderRect.anchorMin = Vector2.zero;
+            borderRect.anchorMax = Vector2.one;
+            borderRect.sizeDelta = new Vector2(4f, 4f); // Slightly larger
+            borderRect.anchoredPosition = Vector2.zero;
+            Image borderImg = border.AddComponent<Image>();
+            borderImg.color = new Color(0.85f, 0.65f, 0.12f, 0.5f); // Gold outline
+            // Put border behind background
+            border.transform.SetAsFirstSibling();
+
+            // 3. Title Text
+            GameObject titleObj = new GameObject("TitleText", typeof(RectTransform));
+            titleObj.transform.SetParent(dialog.transform, false);
+            RectTransform titleRect = titleObj.GetComponent<RectTransform>();
+            titleRect.anchorMin = new Vector2(0f, 1f);
+            titleRect.anchorMax = new Vector2(1f, 1f);
+            titleRect.pivot = new Vector2(0.5f, 1f);
+            titleRect.sizeDelta = new Vector2(-40f, 40f);
+            titleRect.anchoredPosition = new Vector2(0f, -20f);
+
+            TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
+            titleText.text = "TUTORIAL DETECTED";
+            titleText.fontSize = 24f;
+            titleText.fontStyle = FontStyles.Bold;
+            titleText.alignment = TextAlignmentOptions.Center;
+            titleText.color = new Color(0.95f, 0.8f, 0.3f); // Premium gold color
+
+            // 4. Description Text
+            GameObject descObj = new GameObject("DescriptionText", typeof(RectTransform));
+            descObj.transform.SetParent(dialog.transform, false);
+            RectTransform descRect = descObj.GetComponent<RectTransform>();
+            descRect.anchorMin = new Vector2(0f, 0.5f);
+            descRect.anchorMax = new Vector2(1f, 0.5f);
+            descRect.pivot = new Vector2(0.5f, 0.5f);
+            descRect.sizeDelta = new Vector2(-40f, 60f);
+            descRect.anchoredPosition = new Vector2(0f, 10f);
+
+            TextMeshProUGUI descText = descObj.AddComponent<TextMeshProUGUI>();
+            descText.text = "Would you like to play the guided tutorial for this level, or conquer it yourself?";
+            descText.fontSize = 16f;
+            descText.alignment = TextAlignmentOptions.Center;
+            descText.color = Color.white;
+
+            // 5. Buttons Container
+            GameObject btnContainer = new GameObject("Buttons", typeof(RectTransform));
+            btnContainer.transform.SetParent(dialog.transform, false);
+            RectTransform btnContainerRect = btnContainer.GetComponent<RectTransform>();
+            btnContainerRect.anchorMin = new Vector2(0f, 0f);
+            btnContainerRect.anchorMax = new Vector2(1f, 0f);
+            btnContainerRect.pivot = new Vector2(0.5f, 0f);
+            btnContainerRect.sizeDelta = new Vector2(-40f, 60f);
+            btnContainerRect.anchoredPosition = new Vector2(0f, 20f);
+
+            HorizontalLayoutGroup layout = btnContainer.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 20f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+
+            // 5a. Yes Button
+            GameObject yesBtnObj = new GameObject("PlayTutorialBtn", typeof(RectTransform));
+            yesBtnObj.transform.SetParent(btnContainer.transform, false);
+            Button yesBtn = yesBtnObj.AddComponent<Button>();
+            Image yesImg = yesBtnObj.AddComponent<Image>();
+            yesImg.color = new Color(0.5f, 0.1f, 0.1f, 0.9f); // Dark crimson
+            
+            GameObject yesTxtObj = new GameObject("Text", typeof(RectTransform));
+            yesTxtObj.transform.SetParent(yesBtnObj.transform, false);
+            RectTransform yesTxtRect = yesTxtObj.GetComponent<RectTransform>();
+            yesTxtRect.anchorMin = Vector2.zero;
+            yesTxtRect.anchorMax = Vector2.one;
+            yesTxtRect.sizeDelta = Vector2.zero;
+            yesTxtRect.anchoredPosition = Vector2.zero;
+            TextMeshProUGUI yesTxt = yesTxtObj.AddComponent<TextMeshProUGUI>();
+            yesTxt.text = "PLAY TUTORIAL";
+            yesTxt.fontSize = 15f;
+            yesTxt.fontStyle = FontStyles.Bold;
+            yesTxt.alignment = TextAlignmentOptions.Center;
+            yesTxt.color = Color.white;
+
+            // 5b. No Button
+            GameObject noBtnObj = new GameObject("PlayMyselfBtn", typeof(RectTransform));
+            noBtnObj.transform.SetParent(btnContainer.transform, false);
+            Button noBtn = noBtnObj.AddComponent<Button>();
+            Image noImg = noBtnObj.AddComponent<Image>();
+            noImg.color = new Color(0.2f, 0.2f, 0.25f, 0.9f); // Sleek dark slate
+            
+            GameObject noTxtObj = new GameObject("Text", typeof(RectTransform));
+            noTxtObj.transform.SetParent(noBtnObj.transform, false);
+            RectTransform noTxtRect = noTxtObj.GetComponent<RectTransform>();
+            noTxtRect.anchorMin = Vector2.zero;
+            noTxtRect.anchorMax = Vector2.one;
+            noTxtRect.sizeDelta = Vector2.zero;
+            noTxtRect.anchoredPosition = Vector2.zero;
+            TextMeshProUGUI noTxt = noTxtObj.AddComponent<TextMeshProUGUI>();
+            noTxt.text = "PLAY MYSELF";
+            noTxt.fontSize = 15f;
+            noTxt.fontStyle = FontStyles.Bold;
+            noTxt.alignment = TextAlignmentOptions.Center;
+            noTxt.color = Color.white;
+
+            // Animations using DOTween
+            overlayImg.DOFade(0.7f, 0.3f).SetUpdate(true);
+            dialog.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+            dialogRect.DOAnchorPosY(0f, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+
+            // Click Actions
+            yesBtn.onClick.AddListener(() =>
+            {
+                dialog.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).SetUpdate(true);
+                overlayImg.DOFade(0f, 0.2f).SetUpdate(true).OnComplete(() =>
+                {
+                    Destroy(overlay);
+                    onYes?.Invoke();
+                });
+            });
+
+            noBtn.onClick.AddListener(() =>
+            {
+                dialog.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).SetUpdate(true);
+                overlayImg.DOFade(0f, 0.2f).SetUpdate(true).OnComplete(() =>
+                {
+                    Destroy(overlay);
+                    onNo?.Invoke();
+                });
+            });
         }
     }
 }

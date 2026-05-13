@@ -38,7 +38,11 @@ namespace MaouSamaTD.UI
         private Image _skillIcon;
         private PlayerUnit _selectedUnit;
         public event System.Action OnPanelHidden;
+        public event System.Action<PlayerUnit> OnPanelShown;
         public bool IsLocked { get; set; } = false;
+
+        public bool IsPanelActive => _panel != null && _panel.activeInHierarchy;
+        public RectTransform PanelRect => _panel != null ? _panel.GetComponent<RectTransform>() : null;
         
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private MaouSamaTD.Managers.GameSelectionState _gameSelectionState;
@@ -76,6 +80,7 @@ namespace MaouSamaTD.UI
             {
                 _selectedUnit.SetHighlight(true, Color.yellow); // Highlight new
                 UpdateVisuals();
+                OnPanelShown?.Invoke(_selectedUnit);
                 if (_panel != null)
                 {
                     _panel.transform.DOKill();

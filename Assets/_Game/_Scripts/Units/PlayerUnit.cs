@@ -238,6 +238,16 @@ namespace MaouSamaTD.Units
         public override void Initialize(UnitData data)
         {
             base.Initialize(data);
+            
+            // Safe guard: double the stats if the base initializer fell back to raw/non-doubled stats
+            if (data.CalculatedStats.MaxHp <= 0)
+            {
+                _maxHp *= 2f;
+                _currentHp = _maxHp;
+                _attackPower *= 2f;
+                _defense *= 2f;
+            }
+
             if (!ActiveUnits.Contains(this)) ActiveUnits.Add(this);
             _unitClass = data.Class;
             _deploymentCost = data.DeploymentCost;
@@ -269,9 +279,9 @@ namespace MaouSamaTD.Units
                 bool isTargetRight = closestSpawnCoord.x > unitCoord.x;
                 if (_spriteRenderer != null)
                 {
-                    Vector3 spriteScale = _spriteRenderer.transform.localScale;
+                    Vector3 spriteScale = _originalSpriteScale;
                     // Default facing is Left (+1). To face Right, use -1.
-                    spriteScale.x = isTargetRight ? -1f : 1f;
+                    spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? -1f : 1f);
                     _spriteRenderer.transform.localScale = spriteScale;
                 }
             }
@@ -424,13 +434,11 @@ namespace MaouSamaTD.Units
              bool isTargetRight = targetPos.x > transform.position.x;
              if (_spriteRenderer != null)
              {
-                 Vector3 spriteScale = _spriteRenderer.transform.localScale;
+                 Vector3 spriteScale = _originalSpriteScale;
                  // Default facing is Left (+1). To face Right, use -1.
-                 spriteScale.x = isTargetRight ? -1f : 1f;
+                 spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? -1f : 1f);
                  _spriteRenderer.transform.localScale = spriteScale;
              }
-             
-
         }
 
 

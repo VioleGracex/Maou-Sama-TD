@@ -31,6 +31,9 @@ namespace MaouSamaTD.UI
         [SerializeField] private RectTransform _panelRect; 
         [SerializeField] private Button _toggleButton;
         [SerializeField] private float _hideOffset = 200f; 
+        [SerializeField] private bool _enableButtonEntranceAnimation = true;
+        [SerializeField] private float _staggerDelay = 0.08f;
+        [SerializeField] private float _entranceDuration = 0.35f;
         private bool _isVisible = true;
         private Vector2 _visiblePos;
 
@@ -62,7 +65,7 @@ namespace MaouSamaTD.UI
 
         private void Update()
         {
-            // 1. Update live HP ratios for all deployed active instances
+            // 0. Update live HP ratios for all deployed active instances
             foreach (var kvp in _activeInstances)
             {
                 if (kvp.Value != null)
@@ -71,40 +74,55 @@ namespace MaouSamaTD.UI
                 }
             }
 
-            // 2. Regenerate benched/undeployed unit health over time
-            foreach (var unit in _availableUnits)
+            // 1. Recover HP for non-deployed units in real-time
+            List<UnitData> unitsToRecover = new List<UnitData>(_availableUnits);
+            foreach (var unit in _deployedUnits)
             {
-                if (unit == null) continue;
-                if (!_deployedUnits.Contains(unit))
-                {
-                    if (!_vassalHpRatios.ContainsKey(unit))
-                    {
-                        _vassalHpRatios[unit] = 1.0f;
-                    }
+                unitsToRecover.Remove(unit);
+            }
 
-                    float currentRatio = _vassalHpRatios[unit];
-                    if (currentRatio < 1.0f)
+            foreach (var unit in unitsToRecover)
+            {
+                if (unit != null && _vassalHpRatios.ContainsKey(unit))
+                {
+                    float ratio = _vassalHpRatios[unit];
+                    if (ratio < 1.0f)
                     {
-                        bool isManual = !_isManuallyRetreated.ContainsKey(unit) || _isManuallyRetreated[unit];
-                        float rate = isManual ? 0.10f : 0.02f; // Manual Retreat: 10%/s, Defeated/KO: 2%/s
-                        currentRatio = Mathf.Min(1.0f, currentRatio + rate * Time.deltaTime);
-                        _vassalHpRatios[unit] = currentRatio;
+                        // Healing Speed: Manual retreat = 10%/sec, Defeated/KO = 2%/sec
+                        bool isManual = _isManuallyRetreated.ContainsKey(unit) && _isManuallyRetreated[unit];
+                        float healRate = isManual ? 0.10f : 0.02f;
+                        
+                        ratio += healRate * Time.deltaTime;
+                        if (ratio > 1.0f) ratio = 1.0f;
+                        
+                        _vassalHpRatios[unit] = ratio;
                     }
                 }
             }
 
-            // 3. Process Cooldown Timers
+            // 2. Clear KO status when fully healed
+            foreach (var unit in _availableUnits)
+            {
+                if (unit != null && _vassalHpRatios.ContainsKey(unit) && _vassalHpRatios[unit] >= 1.0f)
+                {
+                    if (_isManuallyRetreated.ContainsKey(unit) && !_isManuallyRetreated[unit])
+                    {
+                        _isManuallyRetreated[unit] = true; // No longer KO, fully recovered
+                        RefreshButtonsState();
+                    }
+                }
+            }
+
+            // 3. Update Cooldown timers in real-time
             if (_cooldownTimers.Count > 0)
             {
+                List<UnitData> activeCooldowns = new List<UnitData>(_cooldownTimers.Keys);
                 List<UnitData> finishedCooldowns = new List<UnitData>();
-                List<UnitData> keys = new List<UnitData>(_cooldownTimers.Keys);
 
-                foreach (var unit in keys)
+                foreach (var unit in activeCooldowns)
                 {
                     _cooldownTimers[unit] -= Time.deltaTime;
-                    
-                    // Update UI immediately for smooth visual
-                    UpdateButtonCooldownVisual(unit);
+                    UpdateButtonCooldownVisual(unit); 
 
                     if (_cooldownTimers[unit] <= 0)
                     {
@@ -114,6 +132,7 @@ namespace MaouSamaTD.UI
 
                 foreach (var unit in finishedCooldowns)
                 {
+                    _cooldownTimers[unit].Equals(0); // Dummy/clean
                     _cooldownTimers.Remove(unit);
                     UpdateButtonCooldownVisual(unit); 
                     RefreshButtonsState(); 
@@ -212,6 +231,14 @@ namespace MaouSamaTD.UI
 
             btnUI.Initialize(unit);
             _unitButtons.Add(btnUI);
+
+            if (_enableButtonEntranceAnimation)
+            {
+                btnObj.transform.localScale = Vector3.zero;
+                btnObj.transform.DOScale(Vector3.one, _entranceDuration)
+                    .SetEase(Ease.OutBack)
+                    .SetUpdate(true);
+            }
             
             RefreshButtonsState();
         }
@@ -225,6 +252,7 @@ namespace MaouSamaTD.UI
             _cooldownTimers.Clear();
 
             Debug.Log($"[DeploymentUI] Starting GenerateButtons for {_availableUnits.Count} units.");
+            int index = 0;
             foreach (var unit in _availableUnits)
             {
                 if (unit == null)
@@ -241,6 +269,17 @@ namespace MaouSamaTD.UI
                 btnUI.Initialize(unit);
                 _unitButtons.Add(btnUI);
                 Debug.Log($"[DeploymentUI] Generated button for unit: {unit.UnitName} (Cost: {unit.DeploymentCost})");
+
+                if (_enableButtonEntranceAnimation)
+                {
+                    btnObj.transform.localScale = Vector3.zero;
+                    float delay = index * _staggerDelay;
+                    btnObj.transform.DOScale(Vector3.one, _entranceDuration)
+                        .SetEase(Ease.OutBack)
+                        .SetDelay(delay)
+                        .SetUpdate(true);
+                }
+                index++;
             }
             Debug.Log($"[DeploymentUI] Finished GenerateButtons. Total buttons in bar: {_unitButtons.Count}");
         }

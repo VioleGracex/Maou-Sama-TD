@@ -406,6 +406,11 @@ namespace MaouSamaTD.Units
                 CalculatedStats.Attack = Mathf.Ceil(AttackPower * BaseStatMultiplier);
                 CalculatedStats.Defense = Mathf.Ceil(Defense * BaseStatMultiplier);
             }
+
+            // Buff all player units x2 stats (they are too weak)
+            CalculatedStats.MaxHp *= 2f;
+            CalculatedStats.Attack *= 2f;
+            CalculatedStats.Defense *= 2f;
         }
 
         protected override void OnValidate()

@@ -32,9 +32,13 @@ namespace MaouSamaTD.UI
             if (u == null) return;
 
             // Stats Listing
-            if (_hpText) _hpText.text = u.MaxHp.ToString("F0");
-            if (_atkText) _atkText.text = u.AttackPower.ToString("F0");
-            if (_defText) _defText.text = u.Defense.ToString("F0");
+            float displayHp = u.CalculatedStats.MaxHp > 0 ? u.CalculatedStats.MaxHp : u.MaxHp * 2f;
+            float displayAtk = u.CalculatedStats.Attack > 0 ? u.CalculatedStats.Attack : u.AttackPower * 2f;
+            float displayDef = u.CalculatedStats.Defense > 0 ? u.CalculatedStats.Defense : u.Defense * 2f;
+
+            if (_hpText) _hpText.text = displayHp.ToString("F0");
+            if (_atkText) _atkText.text = displayAtk.ToString("F0");
+            if (_defText) _defText.text = displayDef.ToString("F0");
 
             if (_blockText) _blockText.text = u.BlockCount.ToString();
             if (_aspdText) _aspdText.text = GetASPDLabel(u.AttackInterval);

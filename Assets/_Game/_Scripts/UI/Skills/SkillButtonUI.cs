@@ -140,15 +140,21 @@ namespace MaouSamaTD.UI.Skills
         public void OnPointerClick(PointerEventData eventData)
         {
             if (_data == null) return;
-            if (_manager != null && !_manager.IsSkillReady(_data))
+            if (_manager != null && _manager.IsSkillReady(_data))
             {
-                return;
+                // Select Skill for Targeting
+                if (_interactionManager != null)
+                {
+                    _interactionManager.SelectSkill(_data);
+                }
             }
-
-            // Select Skill for Targeting
-            if (_interactionManager != null)
+            else
             {
-                _interactionManager.SelectSkill(_data);
+                // If not ready (insufficient seals or on cooldown), still allow viewing description!
+                if (_interactionManager != null)
+                {
+                    _interactionManager.SelectSkillForDescription(_data);
+                }
             }
         }
 

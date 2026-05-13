@@ -89,6 +89,23 @@ namespace MaouSamaTD.Skills.Editor
             EditorGUILayout.LabelField("Lore / Skill Description", EditorStyles.miniBoldLabel);
             SerializedProperty descProp = serializedObject.FindProperty("Description");
             descProp.stringValue = EditorGUILayout.TextArea(descProp.stringValue, EditorStyles.textArea, GUILayout.MinHeight(60), GUILayout.ExpandWidth(true));
+            EditorGUILayout.HelpBox("Use [KEY] tokens to insert dynamic properties (e.g. [DMG]).", MessageType.None);
+            EditorGUILayout.EndVertical();
+
+            GUILayout.Space(10);
+
+            // Dynamic Properties List
+            EditorGUILayout.BeginVertical("helpbox");
+            EditorGUILayout.LabelField("Dynamic Description Properties", EditorStyles.boldLabel);
+            SerializedProperty propsProp = serializedObject.FindProperty("Properties");
+            if (propsProp != null)
+            {
+                EditorGUILayout.PropertyField(propsProp, new GUIContent("Tokens List"), true);
+                if (GUILayout.Button("+ Add Property Token", GUILayout.Width(160)))
+                {
+                    propsProp.arraySize++;
+                }
+            }
             EditorGUILayout.EndVertical();
             
             EditorGUI.indentLevel--;

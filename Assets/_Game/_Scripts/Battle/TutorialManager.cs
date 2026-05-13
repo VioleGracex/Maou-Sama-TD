@@ -17,18 +17,18 @@ namespace MaouSamaTD.Managers
     public class TutorialManager : MonoBehaviour
     {
         #region Dependencies
-        [Inject] private DialogueManager _dialogueManager;
-        [Inject] private GameManager _gameManager;
-        [Inject] private Grid.GridManager _gridManager;
-        [Inject] private InteractionManager _interactionManager;
-        [Inject] private TutorialHandUI _handUI;
-        [Inject] private UIPopupBlocker _uiBlocker;
-        [Inject] private EnemyManager _enemyManager;
-        [Inject] private UnitInspectorUI _unitInspectorUI;
-        [Inject] private DeploymentUI _deploymentUI;
-        [Inject] private BattleCurrencyManager _currencyManager;
-        [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
-        [InjectOptional] private MaouSamaTD.Skills.SkillManager _skillManager;
+        [Inject(Optional = true)] private DialogueManager _dialogueManager;
+        [Inject(Optional = true)] private GameManager _gameManager;
+        [Inject(Optional = true)] private Grid.GridManager _gridManager;
+        [Inject(Optional = true)] private InteractionManager _interactionManager;
+        [Inject(Optional = true)] private TutorialHandUI _handUI;
+        [Inject(Optional = true)] private UIPopupBlocker _uiBlocker;
+        [Inject(Optional = true)] private EnemyManager _enemyManager;
+        [Inject(Optional = true)] private UnitInspectorUI _unitInspectorUI;
+        [Inject(Optional = true)] private DeploymentUI _deploymentUI;
+        [Inject(Optional = true)] private BattleCurrencyManager _currencyManager;
+        [Inject(Optional = true)] private MaouSamaTD.Managers.SaveManager _saveManager;
+        [Inject(Optional = true)] private MaouSamaTD.Skills.SkillManager _skillManager;
         #endregion
 
         #region Serialized Settings
@@ -204,6 +204,26 @@ namespace MaouSamaTD.Managers
         public void HideHand()
         {
             if (_handUI != null) _handUI.Hide();
+        }
+
+        /// <summary>Purges all tutorial systems for levels without tutorials.</summary>
+        public void Purge()
+        {
+            if (_showDebugLogs) Debug.Log("[tutorial] Purge called. Disabling TutorialManager and hiding visuals.");
+            
+            IsInTutorial = false;
+            StopAllCoroutines();
+            
+            if (_dialogueManager != null) _dialogueManager.HideDialogue();
+            if (_uiBlocker != null) _uiBlocker.HideBlocker(true);
+            if (_handUI != null)
+            {
+                _handUI.Hide();
+                _handUI.gameObject.SetActive(false);
+            }
+            if (_interactionManager != null) _interactionManager.IsSelectionLocked = false;
+
+            this.enabled = false;
         }
         #endregion
 

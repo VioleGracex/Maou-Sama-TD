@@ -16,6 +16,8 @@ MonoBehaviour:
   UniqueID: b448e225-ae5c-4f11-9eac-591e3ff27ec9
   LevelIndex: 2
   LevelName: Tomb of Lilith
+  SovereignHpNameKey: Tina
+  SovereignMaxHp: 100
   Description: Reclaim the First Succubus and restore your authority.
   GracePeriod: 10
   LevelID: 1-2
@@ -112,5 +114,5 @@ MonoBehaviour:
     AutoGrantInTutorial: 1
   WinConditions: []
   LoseConditions: []
-  SovereignHpNameKey: SovereignHP_Level2
-  SovereignMaxHp: 100
+  EnableCinematicCombatEnd: 1
+  CinematicDuration: 2

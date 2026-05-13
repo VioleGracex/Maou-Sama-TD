@@ -15,14 +15,22 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 77e5fbb8-4fa4-4d29-a1d9-158facfec238
   SkillName: Star-Fall Requiem
-  Description: Apocalyptic meteor shower of dark-crystal projectiles over a designated
-    area.
+  Description: An apocalyptic meteor shower of dark-crystal projectiles rains over
+    a designated area.
   Icon: {fileID: 21300000, guid: d98dfbccfcddc504ebb90fe3bed97ec3, type: 3}
   BaseVisuals:
+    UltimatePrefab: {fileID: 0}
     CastVFX: {fileID: 0}
     HitVFX: {fileID: 0}
     CastSFX: {fileID: 0}
     HitSFX: {fileID: 0}
+    UltimateColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleTextColor: {r: 0, g: 0, b: 0, a: 0}
+    NameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    NameTextColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameTextColor: {r: 0, g: 0, b: 0, a: 0}
     RangeIndicatorColor: {r: 0.4, g: 0, b: 0.8, a: 1}
     AnimationTriggerName: 
   Archetype: 1

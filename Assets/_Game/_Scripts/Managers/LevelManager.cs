@@ -10,7 +10,7 @@ namespace MaouSamaTD.Managers
         
         [Inject] private GameManager _gameManager;
         [Inject] private GameSelectionState _gameSelectionState;
-        [Inject] private TutorialManager _tutorialManager;
+        [Inject(Optional = true)] private TutorialManager _tutorialManager;
         [Inject] private StoryManager _storyManager;
         [Inject] private EnemyManager _enemyManager;
         [Inject] private BattleCurrencyManager _currencyManager;
@@ -66,13 +66,19 @@ namespace MaouSamaTD.Managers
         private void OnIntroFinished(LevelData dataToLoad)
         {
             bool hasTutorial = dataToLoad.HasTutorial && dataToLoad.TutorialData != null;
+            Debug.Log($"[LevelManager] OnIntroFinished triggered. HasTutorial: {dataToLoad.HasTutorial}, TutorialData: {(dataToLoad.TutorialData != null ? dataToLoad.TutorialData.name : "NULL")}, Final hasTutorial: {hasTutorial}");
 
             if (hasTutorial)
             {
                 // We show the choice popup from GameControlUI!
                 MaouSamaTD.UI.GameControlUI ui = FindFirstObjectByType<MaouSamaTD.UI.GameControlUI>();
+                Debug.Log($"[LevelManager] Searching for GameControlUI... Found: {(ui != null ? "YES" : "NO")}");
+                
                 if (ui != null)
                 {
+                    // STOP TIME while we ask the player!
+                    _gameManager.SetSpeed(0, true);
+
                     ui.ShowTutorialPrompt(
                         () => // Play Tutorial
                         {
@@ -108,10 +114,19 @@ namespace MaouSamaTD.Managers
             if (playTutorial && dataToLoad.HasTutorial && dataToLoad.TutorialData != null)
             {
                 Debug.Log($"[LevelManager] Level has tutorial: {dataToLoad.TutorialData.name}. Starting...");
-                _tutorialManager.StartTutorial(dataToLoad.TutorialData);
+                _tutorialManager?.StartTutorial(dataToLoad.TutorialData);
             }
             else
             {
+                // Purge Tutorial Systems if skipping or no tutorial exists
+                if (_tutorialManager != null)
+                {
+                    _tutorialManager.Purge();
+                }
+
+                // RESUME TIME if we are skipping (since the prompt or story might have stopped it)
+                _gameManager.SetSpeed(1);
+
                 // If we skip the tutorial, and it is Level 2 (Tomb of Lilith), we must give Lilith to the player immediately!
                 if (dataToLoad != null && (dataToLoad.LevelID == "1-2" || dataToLoad.LevelName.Contains("Level 2") || dataToLoad.LevelName.Contains("Lilith")))
                 {

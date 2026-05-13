@@ -14,7 +14,7 @@ namespace MaouSamaTD.UI
     {
         [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private DiContainer _container;
-        [Inject] private TutorialManager _tutorialManager;
+        [Inject(Optional = true)] private TutorialManager _tutorialManager;
 
         [Header("Config")]
         [SerializeField] private GameObject _buttonPrefab;

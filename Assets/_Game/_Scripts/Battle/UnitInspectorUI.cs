@@ -24,6 +24,9 @@ namespace MaouSamaTD.UI
         [Header("Range Shape")]
         [SerializeField] private RangePatternUI _rangePatternUI;
 
+        [Header("New Stats Panel")]
+        [SerializeField] private UnitInspectorStatsPanel _statsPanel;
+
         [Header("Ultimate Charge")]
         [SerializeField] private Image _ultChargeParent;
         [SerializeField] private Image _ultChargeFill;
@@ -171,6 +174,11 @@ namespace MaouSamaTD.UI
             UnitData data = _selectedUnit.Data;
 
             if (_unitNameText != null) _unitNameText.text = data.UnitName;
+
+            if (_statsPanel != null)
+            {
+                _statsPanel.Refresh(data);
+            }
 
             // HP Bar & Number
             if (_hpNumberText != null) 

@@ -60,7 +60,17 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _starConditionPrefab;
         [SerializeField] private Sprite _starFullSprite;
         [SerializeField] private Sprite _starEmptySprite;
+        [Header("Debug")]
+        [SerializeField] private bool _showDebugLogs = true;
 
+        [Header("HP Feedback Settings")]
+        [SerializeField] private float _damageSlowMoDuration = 0.5f;
+        [SerializeField] private float _damageSlowMoScale = 0.5f;
+        [SerializeField] private float _cameraShakeIntensity = 0.15f;
+        [SerializeField] private float _cameraShakeDuration = 0.25f;
+        [SerializeField] private float _hpFillDuration = 0.4f;
+
+        private int _lastHp = -1;
 
         [Inject] private GameManager _gameManager;
         [Inject] private MaouSamaTD.UI.UIPopupBlocker _uiBlocker;
@@ -447,8 +457,15 @@ namespace MaouSamaTD.UI
             
             if (_hpFillImage != null)
             {
-                _hpFillImage.fillAmount = pct;
+                _hpFillImage.DOFillAmount(pct, _hpFillDuration).SetUpdate(true);
             }
+
+            // Trigger feedback if damage taken (and not just initialization)
+            if (_lastHp != -1 && integrity < _lastHp)
+            {
+                TriggerDamageFeedback();
+            }
+            _lastHp = integrity;
 
             if (_hpText != null)
             {
@@ -506,6 +523,35 @@ namespace MaouSamaTD.UI
             {
                 _hpPercentageText.text = $"{Mathf.CeilToInt(pct * 100)}%";
             }
+        }
+
+        private void TriggerDamageFeedback()
+        {
+            // Camera Shake
+            Camera mainCam = Camera.main;
+            if (mainCam != null)
+            {
+                mainCam.transform.DOComplete();
+                mainCam.transform.DOShakePosition(_cameraShakeDuration, _cameraShakeIntensity).SetUpdate(true);
+            }
+
+            // Slow Motion (Hit-Stop effect)
+            if (_gameManager != null && !_gameManager.IsPaused && !_gameManager.IsGameEnded)
+            {
+                float currentBaseSpeed = _gameManager.CurrentSpeed;
+                Time.timeScale = _damageSlowMoScale;
+
+                // Use DOTween DelayedCall to restore time scale
+                DOVirtual.DelayedCall(_damageSlowMoDuration, () =>
+                {
+                    if (_gameManager != null && !_gameManager.IsPaused && !_gameManager.IsGameEnded)
+                    {
+                        Time.timeScale = _gameManager.CurrentSpeed;
+                    }
+                }, false).SetUpdate(true);
+            }
+
+            if (_showDebugLogs) Debug.Log("[GameControlUI] Damage feedback triggered (Slow-mo + Shake)");
         }
 
         private void OnSpeedClicked()
@@ -581,167 +627,77 @@ namespace MaouSamaTD.UI
             }
         }
 
+        [Header("Tutorial Skip")]
+        [SerializeField] private GameObject _tutorialSkipPrefab;
+
         public void ShowTutorialPrompt(System.Action onYes, System.Action onNo)
         {
-            // 1. Create Overlay
-            GameObject overlay = new GameObject("TutorialPromptOverlay", typeof(RectTransform));
-            overlay.transform.SetParent(this.transform, false);
-            
-            RectTransform overlayRect = overlay.GetComponent<RectTransform>();
-            overlayRect.anchorMin = Vector2.zero;
-            overlayRect.anchorMax = Vector2.one;
-            overlayRect.sizeDelta = Vector2.zero;
-            overlayRect.anchoredPosition = Vector2.zero;
-
-            Image overlayImg = overlay.AddComponent<Image>();
-            overlayImg.color = new Color(0f, 0f, 0f, 0f); // Animate fade-in
-            overlayImg.raycastTarget = true;
-
-            // 2. Create Dialog Box
-            GameObject dialog = new GameObject("DialogBox", typeof(RectTransform));
-            dialog.transform.SetParent(overlay.transform, false);
-            
-            RectTransform dialogRect = dialog.GetComponent<RectTransform>();
-            dialogRect.anchorMin = new Vector2(0.5f, 0.5f);
-            dialogRect.anchorMax = new Vector2(0.5f, 0.5f);
-            dialogRect.pivot = new Vector2(0.5f, 0.5f);
-            dialogRect.sizeDelta = new Vector2(500f, 260f);
-            dialogRect.anchoredPosition = new Vector2(0f, -50f); // Start lower for pop-up effect
-            dialog.transform.localScale = Vector3.zero;
-
-            Image dialogImg = dialog.AddComponent<Image>();
-            dialogImg.color = new Color(0.08f, 0.08f, 0.12f, 0.95f); // Sleek dark panel
-
-            // Add a subtle gold/white outline to look premium
-            GameObject border = new GameObject("Border", typeof(RectTransform));
-            border.transform.SetParent(dialog.transform, false);
-            RectTransform borderRect = border.GetComponent<RectTransform>();
-            borderRect.anchorMin = Vector2.zero;
-            borderRect.anchorMax = Vector2.one;
-            borderRect.sizeDelta = new Vector2(4f, 4f); // Slightly larger
-            borderRect.anchoredPosition = Vector2.zero;
-            Image borderImg = border.AddComponent<Image>();
-            borderImg.color = new Color(0.85f, 0.65f, 0.12f, 0.5f); // Gold outline
-            // Put border behind background
-            border.transform.SetAsFirstSibling();
-
-            // 3. Title Text
-            GameObject titleObj = new GameObject("TitleText", typeof(RectTransform));
-            titleObj.transform.SetParent(dialog.transform, false);
-            RectTransform titleRect = titleObj.GetComponent<RectTransform>();
-            titleRect.anchorMin = new Vector2(0f, 1f);
-            titleRect.anchorMax = new Vector2(1f, 1f);
-            titleRect.pivot = new Vector2(0.5f, 1f);
-            titleRect.sizeDelta = new Vector2(-40f, 40f);
-            titleRect.anchoredPosition = new Vector2(0f, -20f);
-
-            TextMeshProUGUI titleText = titleObj.AddComponent<TextMeshProUGUI>();
-            titleText.text = "TUTORIAL DETECTED";
-            titleText.fontSize = 24f;
-            titleText.fontStyle = FontStyles.Bold;
-            titleText.alignment = TextAlignmentOptions.Center;
-            titleText.color = new Color(0.95f, 0.8f, 0.3f); // Premium gold color
-
-            // 4. Description Text
-            GameObject descObj = new GameObject("DescriptionText", typeof(RectTransform));
-            descObj.transform.SetParent(dialog.transform, false);
-            RectTransform descRect = descObj.GetComponent<RectTransform>();
-            descRect.anchorMin = new Vector2(0f, 0.5f);
-            descRect.anchorMax = new Vector2(1f, 0.5f);
-            descRect.pivot = new Vector2(0.5f, 0.5f);
-            descRect.sizeDelta = new Vector2(-40f, 60f);
-            descRect.anchoredPosition = new Vector2(0f, 10f);
-
-            TextMeshProUGUI descText = descObj.AddComponent<TextMeshProUGUI>();
-            descText.text = "Would you like to play the guided tutorial for this level, or conquer it yourself?";
-            descText.fontSize = 16f;
-            descText.alignment = TextAlignmentOptions.Center;
-            descText.color = Color.white;
-
-            // 5. Buttons Container
-            GameObject btnContainer = new GameObject("Buttons", typeof(RectTransform));
-            btnContainer.transform.SetParent(dialog.transform, false);
-            RectTransform btnContainerRect = btnContainer.GetComponent<RectTransform>();
-            btnContainerRect.anchorMin = new Vector2(0f, 0f);
-            btnContainerRect.anchorMax = new Vector2(1f, 0f);
-            btnContainerRect.pivot = new Vector2(0.5f, 0f);
-            btnContainerRect.sizeDelta = new Vector2(-40f, 60f);
-            btnContainerRect.anchoredPosition = new Vector2(0f, 20f);
-
-            HorizontalLayoutGroup layout = btnContainer.AddComponent<HorizontalLayoutGroup>();
-            layout.spacing = 20f;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = true;
-
-            // 5a. Yes Button
-            GameObject yesBtnObj = new GameObject("PlayTutorialBtn", typeof(RectTransform));
-            yesBtnObj.transform.SetParent(btnContainer.transform, false);
-            Button yesBtn = yesBtnObj.AddComponent<Button>();
-            Image yesImg = yesBtnObj.AddComponent<Image>();
-            yesImg.color = new Color(0.5f, 0.1f, 0.1f, 0.9f); // Dark crimson
-            
-            GameObject yesTxtObj = new GameObject("Text", typeof(RectTransform));
-            yesTxtObj.transform.SetParent(yesBtnObj.transform, false);
-            RectTransform yesTxtRect = yesTxtObj.GetComponent<RectTransform>();
-            yesTxtRect.anchorMin = Vector2.zero;
-            yesTxtRect.anchorMax = Vector2.one;
-            yesTxtRect.sizeDelta = Vector2.zero;
-            yesTxtRect.anchoredPosition = Vector2.zero;
-            TextMeshProUGUI yesTxt = yesTxtObj.AddComponent<TextMeshProUGUI>();
-            yesTxt.text = "PLAY TUTORIAL";
-            yesTxt.fontSize = 15f;
-            yesTxt.fontStyle = FontStyles.Bold;
-            yesTxt.alignment = TextAlignmentOptions.Center;
-            yesTxt.color = Color.white;
-
-            // 5b. No Button
-            GameObject noBtnObj = new GameObject("PlayMyselfBtn", typeof(RectTransform));
-            noBtnObj.transform.SetParent(btnContainer.transform, false);
-            Button noBtn = noBtnObj.AddComponent<Button>();
-            Image noImg = noBtnObj.AddComponent<Image>();
-            noImg.color = new Color(0.2f, 0.2f, 0.25f, 0.9f); // Sleek dark slate
-            
-            GameObject noTxtObj = new GameObject("Text", typeof(RectTransform));
-            noTxtObj.transform.SetParent(noBtnObj.transform, false);
-            RectTransform noTxtRect = noTxtObj.GetComponent<RectTransform>();
-            noTxtRect.anchorMin = Vector2.zero;
-            noTxtRect.anchorMax = Vector2.one;
-            noTxtRect.sizeDelta = Vector2.zero;
-            noTxtRect.anchoredPosition = Vector2.zero;
-            TextMeshProUGUI noTxt = noTxtObj.AddComponent<TextMeshProUGUI>();
-            noTxt.text = "PLAY MYSELF";
-            noTxt.fontSize = 15f;
-            noTxt.fontStyle = FontStyles.Bold;
-            noTxt.alignment = TextAlignmentOptions.Center;
-            noTxt.color = Color.white;
-
-            // Animations using DOTween
-            overlayImg.DOFade(0.7f, 0.3f).SetUpdate(true);
-            dialog.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
-            dialogRect.DOAnchorPosY(0f, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
-
-            // Click Actions
-            yesBtn.onClick.AddListener(() =>
+            if (_tutorialSkipPrefab == null)
             {
-                dialog.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).SetUpdate(true);
-                overlayImg.DOFade(0f, 0.2f).SetUpdate(true).OnComplete(() =>
-                {
-                    Destroy(overlay);
-                    onYes?.Invoke();
-                });
-            });
+                Debug.LogWarning("[GameControlUI] _tutorialSkipPrefab is not assigned! Tutorial skip prompt cannot be shown.");
+                onYes?.Invoke(); // Fallback to playing tutorial
+                return;
+            }
 
-            noBtn.onClick.AddListener(() =>
+            // Find MainCanvas to ensure UI renders correctly
+            Canvas canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) canvas = FindFirstObjectByType<Canvas>();
+            
+            Transform parent = canvas != null ? canvas.transform : this.transform;
+            GameObject popup = Instantiate(_tutorialSkipPrefab, parent);
+            popup.SetActive(true);
+            popup.transform.SetAsLastSibling();
+
+
+            // Find Buttons in children
+            Button yesBtn = null;
+            Button noBtn = null;
+            
+            Button[] buttons = popup.GetComponentsInChildren<Button>(true);
+            foreach (var b in buttons)
             {
-                dialog.transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack).SetUpdate(true);
-                overlayImg.DOFade(0f, 0.2f).SetUpdate(true).OnComplete(() =>
+                if (b.name.Contains("Tutorial")) yesBtn = b;
+                else if (b.name.Contains("Myself")) noBtn = b;
+            }
+
+            if (yesBtn == null || noBtn == null)
+            {
+                Debug.LogError($"[GameControlUI] Could not find all buttons in TutorialSkip_Popup! Yes:{yesBtn!=null}, No:{noBtn!=null}");
+                // Fallback: if buttons missing, just invoke onYes to not softlock
+                if (yesBtn == null && noBtn == null) { onYes?.Invoke(); Destroy(popup); return; }
+            }
+
+            System.Action<System.Action> closePopup = (callback) =>
+            {
+                popup.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() =>
                 {
-                    Destroy(overlay);
-                    onNo?.Invoke();
+                    Destroy(popup);
+                    callback?.Invoke();
                 });
-            });
+            };
+
+            if (yesBtn != null)
+            {
+                yesBtn.onClick.AddListener(() =>
+                {
+                    if (_showDebugLogs) Debug.Log("[GameControlUI] User chose: Play Tutorial");
+                    closePopup(onYes);
+                });
+            }
+
+            if (noBtn != null)
+            {
+                noBtn.onClick.AddListener(() =>
+                {
+                    if (_showDebugLogs) Debug.Log("[GameControlUI] User chose: Skip Tutorial");
+                    closePopup(onNo);
+                });
+            }
+            
+            // Open Animation
+            popup.transform.localScale = Vector3.zero;
+            popup.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
         }
+
     }
 }

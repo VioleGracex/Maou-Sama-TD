@@ -19,13 +19,22 @@ MonoBehaviour:
     combat prowess.
   Icon: {fileID: 21300000, guid: 8c15469b668c19b4b9da5aefd66c196c, type: 3}
   BaseVisuals:
+    UltimatePrefab: {fileID: 0}
     CastVFX: {fileID: 0}
     HitVFX: {fileID: 0}
     CastSFX: {fileID: 0}
     HitSFX: {fileID: 0}
+    UltimateColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleTextColor: {r: 0, g: 0, b: 0, a: 0}
+    NameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    NameTextColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameTextColor: {r: 0, g: 0, b: 0, a: 0}
     RangeIndicatorColor: {r: 1, g: 0.8, b: 0, a: 0.5}
     AnimationTriggerName: 
   Archetype: 0
+  Tag: 
   SealCost: 15
   Cooldown: 15
   TargetType: 0

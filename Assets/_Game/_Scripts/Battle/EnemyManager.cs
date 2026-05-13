@@ -17,7 +17,7 @@ namespace MaouSamaTD.Managers
         [Inject] private GameManager _gameManager; 
         [Inject] private Grid.GridManager _gridManager;
         [Inject] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer;
-        [Inject] private TutorialManager _tutorialManager;
+        [Inject(Optional = true)] private TutorialManager _tutorialManager;
         [Inject] private StoryManager _storyManager;
         
         [Header("Containers")]

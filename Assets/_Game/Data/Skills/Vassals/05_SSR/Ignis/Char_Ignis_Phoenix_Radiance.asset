@@ -18,6 +18,7 @@ MonoBehaviour:
   Description: Ignis summons a celestial phoenix that sweeps across a column, dealing
     massive fire damage to all enemies in its path.
   Icon: {fileID: 21300000, guid: 55adbc734ec6af342ae3466f9a481709, type: 3}
+  Properties: []
   BaseVisuals:
     UltimatePrefab: {fileID: 1105572606693206307, guid: f3076b7deb92d6f4fbc2bf6fc410253e, type: 3}
     CastVFX: {fileID: 0}

@@ -18,6 +18,17 @@ namespace MaouSamaTD.Editor
         private string[] _tabNames = { "Layout", "Visuals" };
         private Vector2 _scrollPosition;
         private EnemyData _pathingSimulationEnemy;
+
+        // Section Foldouts
+        private static bool _showDimensions = true;
+        private static bool _showWalls = true;
+        private static bool _showInteractiveEditor = true;
+        private static bool _showTools = true;
+        private static bool _showPathing = true;
+        private static bool _showGeneration = true;
+        private static bool _showGlobalVisuals = true;
+        private static bool _showSideOverridesHeader = true;
+        private static bool _showBulkActions = true;
         
         private static Texture2D s_TextureClipboard;
         
@@ -48,6 +59,27 @@ namespace MaouSamaTD.Editor
             serializedObject.Update();
             MapData data = (MapData)target;
 
+            // Toggle button for Default/Custom inspector
+            GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+            buttonStyle.fontStyle = FontStyle.Bold;
+            buttonStyle.normal.textColor = data.useDefaultInspector ? Color.gray : new Color(0.1f, 0.7f, 0.2f);
+            buttonStyle.fontSize = 12;
+
+            if (GUILayout.Button(data.useDefaultInspector ? "Switch to Custom Editor" : "Switch to Default Editor", buttonStyle, GUILayout.Height(30)))
+            {
+                data.useDefaultInspector = !data.useDefaultInspector;
+                EditorUtility.SetDirty(data);
+            }
+
+            EditorGUILayout.Space();
+
+            if (data.useDefaultInspector)
+            {
+                DrawDefaultInspectorWithReadOnlyID();
+                serializedObject.ApplyModifiedProperties();
+                return;
+            }
+
             _selectedTab = GUILayout.Toolbar(_selectedTab, _tabNames);
             EditorGUILayout.Space();
 
@@ -63,231 +95,219 @@ namespace MaouSamaTD.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
+        private void DrawDefaultInspectorWithReadOnlyID()
+        {
+            SerializedProperty iter = serializedObject.GetIterator();
+            bool enterChildren = true;
+            while (iter.NextVisible(enterChildren))
+            {
+                using (new EditorGUI.DisabledScope(iter.name == "UniqueID" || iter.name == "m_Script"))
+                {
+                    EditorGUILayout.PropertyField(iter, true);
+                }
+                enterChildren = false;
+            }
+        }
+
         private void DrawLayoutTab(MapData data)
         {
-            if (!data.UseManualLayout)
+            if (DrawSectionHeader("Map Dimensions & Logic", ref _showDimensions))
             {
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("MapSeed"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("HighGroundChance"));
-            }
-            
-            EditorGUILayout.LabelField("Map Dimensions", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("Width"), new GUIContent("Width", "The horizontal size of the map (X axis)"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("Height"), new GUIContent("Height", "The vertical size of the map (Y axis)"));
-            
-            if (data.UseManualLayout)
-            {
-                EditorGUILayout.HelpBox("Changing dimensions while using Manual Layout will resize the grid. Tiles outside the new bounds will still be saved but won't be visible or editable in the preview.", MessageType.Info);
-            }
-
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("UseManualLayout"));
-            
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Wall Toggles", EditorStyles.boldLabel);
-            SerializedProperty wallsProp = serializedObject.FindProperty("Walls");
-            
-            float oldLabelWidth = EditorGUIUtility.labelWidth;
-            EditorGUIUtility.labelWidth = 20;
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("North"), new GUIContent("N"), GUILayout.Width(40));
-            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("South"), new GUIContent("S"), GUILayout.Width(40));
-            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("East"), new GUIContent("E"), GUILayout.Width(40));
-            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("West"), new GUIContent("W"), GUILayout.Width(40));
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("NW"), new GUIContent("NW"), GUILayout.Width(40));
-            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("NE"), new GUIContent("NE"), GUILayout.Width(40));
-            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("SW"), new GUIContent("SW"), GUILayout.Width(40));
-            EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("SE"), new GUIContent("SE"), GUILayout.Width(40));
-            EditorGUILayout.EndHorizontal();
-            EditorGUIUtility.labelWidth = oldLabelWidth;
-            
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("WallCascadeOnHoles"), new GUIContent("Wall Cascade On Holes"));
-
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Map Preview & Interactive Editor", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Click tiles to cycle types. In 'Visuals' tab, click walls to customize them individually.", MessageType.Info);
-
-            if (data.Width <= 0 || data.Height <= 0)
-            {
-                EditorGUILayout.HelpBox("Width and Height must be greater than 0 for preview.", MessageType.Warning);
-                return;
-            }
-
-            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition); // Start ScrollView
-            DrawMapPreview(data, true);
-            DrawPalette(data);
-            DrawSpawnPointConfig(data);
-            EditorGUILayout.EndScrollView(); // End ScrollView
-            
-            // Layout Tools
-            EditorGUILayout.LabelField("Layout Tools", EditorStyles.boldLabel);
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Flip Horizontal")) Flip(data, true); 
-            if (GUILayout.Button("Flip Vertical")) Flip(data, false);
-            if (GUILayout.Button("Rotate 90 CW")) Rotate(data);
-            if (GUILayout.Button("Refresh View")) { EditorUtility.SetDirty(data); GUI.changed = true; }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Shift N", GUILayout.Width(60))) Shift(data, 0, 1);
-            if (GUILayout.Button("Shift S", GUILayout.Width(60))) Shift(data, 0, -1);
-            if (GUILayout.Button("Shift E", GUILayout.Width(60))) Shift(data, 1, 0);
-            if (GUILayout.Button("Shift W", GUILayout.Width(60))) Shift(data, -1, 0);
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Shift NW", GUILayout.Width(60))) Shift(data, -1, 1);
-            if (GUILayout.Button("Shift NE", GUILayout.Width(60))) Shift(data, 1, 1);
-            if (GUILayout.Button("Shift SW", GUILayout.Width(60))) Shift(data, -1, -1);
-            if (GUILayout.Button("Shift SE", GUILayout.Width(60))) Shift(data, 1, -1);
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Editor Visualization", EditorStyles.boldLabel);
-            data.ShowPathing = EditorGUILayout.Toggle("Show Pathing Paths", data.ShowPathing);
-            if (data.ShowPathing)
-            {
-                EditorGUILayout.HelpBox("Showing Ground (Orange) and Flying (Cyan) paths from Spawns to Exits.", MessageType.None);
-                
-                _pathingSimulationEnemy = (EnemyData)EditorGUILayout.ObjectField("Simulation Enemy", _pathingSimulationEnemy, typeof(EnemyData), false);
-                if (_pathingSimulationEnemy != null)
+                if (!data.UseManualLayout)
                 {
-                    EditorGUILayout.LabelField($"Speed: {_pathingSimulationEnemy.MoveSpeed} blocks/sec", EditorStyles.miniBoldLabel);
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("MapSeed"));
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("HighGroundChance"));
+                }
+                
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("Width"), new GUIContent("Width", "The horizontal size of the map (X axis)"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("Height"), new GUIContent("Height", "The vertical size of the map (Y axis)"));
+                
+                if (data.UseManualLayout)
+                {
+                    EditorGUILayout.HelpBox("Changing dimensions while using Manual Layout will resize the grid. Tiles outside the new bounds will still be saved but won't be visible or editable in the preview.", MessageType.Info);
+                }
+
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("UseManualLayout"));
+            }
+            EndSection(_showDimensions);
+            
+            if (DrawSectionHeader("Wall Configuration", ref _showWalls))
+            {
+                SerializedProperty wallsProp = serializedObject.FindProperty("Walls");
+                
+                float oldLabelWidth = EditorGUIUtility.labelWidth;
+                EditorGUIUtility.labelWidth = 35;
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("North"), new GUIContent("N"), GUILayout.Width(55));
+                EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("South"), new GUIContent("S"), GUILayout.Width(55));
+                EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("East"), new GUIContent("E"), GUILayout.Width(55));
+                EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("West"), new GUIContent("W"), GUILayout.Width(55));
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("NW"), new GUIContent("NW"), GUILayout.Width(55));
+                EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("NE"), new GUIContent("NE"), GUILayout.Width(55));
+                EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("SW"), new GUIContent("SW"), GUILayout.Width(55));
+                EditorGUILayout.PropertyField(wallsProp.FindPropertyRelative("SE"), new GUIContent("SE"), GUILayout.Width(55));
+                EditorGUILayout.EndHorizontal();
+                EditorGUIUtility.labelWidth = oldLabelWidth;
+                
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("WallCascadeOnHoles"), new GUIContent("Wall Cascade On Holes"));
+            }
+            EndSection(_showWalls);
+
+            if (DrawSectionHeader("Interactive Editor", ref _showInteractiveEditor))
+            {
+                EditorGUILayout.HelpBox("Click tiles to cycle types. In 'Visuals' tab, click walls to customize them individually.", MessageType.Info);
+
+                if (data.Width > 0 && data.Height > 0)
+                {
+                    _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
+                    DrawMapPreview(data, true);
+                    DrawPalette(data);
+                    DrawSpawnPointConfig(data);
+                    EditorGUILayout.EndScrollView();
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("Width and Height must be greater than 0 for preview.", MessageType.Warning);
                 }
             }
-
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Map Generation", EditorStyles.boldLabel);
-            if (GUILayout.Button("Generate Map Prefab", GUILayout.Height(30)))
+            EndSection(_showInteractiveEditor);
+            
+            if (DrawSectionHeader("Layout Tools", ref _showTools))
             {
-                GenerateMapPrefab(data);
-            }
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Flip H")) Flip(data, true); 
+                if (GUILayout.Button("Flip V")) Flip(data, false);
+                if (GUILayout.Button("Rotate 90")) Rotate(data);
+                if (GUILayout.Button("Refresh")) { EditorUtility.SetDirty(data); GUI.changed = true; }
+                EditorGUILayout.EndHorizontal();
 
-            EditorGUILayout.Space();
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Clear Manual Layout"))
-            {
-                if (EditorUtility.DisplayDialog("Clear Layout", "Are you sure you want to clear the manual layout?", "Yes", "No"))
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Shift N", GUILayout.Width(60))) Shift(data, 0, 1);
+                if (GUILayout.Button("Shift S", GUILayout.Width(60))) Shift(data, 0, -1);
+                if (GUILayout.Button("Shift E", GUILayout.Width(60))) Shift(data, 1, 0);
+                if (GUILayout.Button("Shift W", GUILayout.Width(60))) Shift(data, -1, 0);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.Space(5);
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Clear Manual"))
                 {
-                    Undo.RecordObject(data, "Clear Manual Layout");
-                    data.ManualLayoutData.Clear();
-                    data.UseManualLayout = false;
+                    if (EditorUtility.DisplayDialog("Clear Layout", "Are you sure?", "Yes", "No"))
+                    {
+                        Undo.RecordObject(data, "Clear Manual Layout");
+                        data.ManualLayoutData.Clear();
+                        data.UseManualLayout = false;
+                        EditorUtility.SetDirty(data);
+                    }
+                }
+                if (GUILayout.Button("Capture Random")) CaptureRandomToManual(data);
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Sync Data Points"))
+                {
+                    Undo.RecordObject(data, "Sync Data Points");
+                    SyncPointsFromLayout(data);
                     EditorUtility.SetDirty(data);
                 }
-            }
-            if (GUILayout.Button("Capture Random to Manual"))
-            {
-                CaptureRandomToManual(data);
-            }
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Sync Data Points"))
-            {
-                Undo.RecordObject(data, "Sync Data Points");
-                SyncPointsFromLayout(data);
-                EditorUtility.SetDirty(data);
-            }
-            if (GUILayout.Button("Force Auto-Assign All Nearest"))
-            {
-                Undo.RecordObject(data, "Auto-Assign All Nearest Exits");
-                // Reset all to -1 and then sync
-                for (int i = 0; i < data.SpawnPoints.Count; i++) {
-                    var s = data.SpawnPoints[i];
-                    s.TargetExitIndex = -1;
-                    data.SpawnPoints[i] = s;
+                if (GUILayout.Button("Auto-Assign Exits"))
+                {
+                    Undo.RecordObject(data, "Auto-Assign All Nearest Exits");
+                    for (int i = 0; i < data.SpawnPoints.Count; i++) {
+                        var s = data.SpawnPoints[i];
+                        s.TargetExitIndex = -1;
+                        data.SpawnPoints[i] = s;
+                    }
+                    SyncPointsFromLayout(data);
+                    EditorUtility.SetDirty(data);
                 }
-                SyncPointsFromLayout(data);
-                EditorUtility.SetDirty(data);
+                EditorGUILayout.EndHorizontal();
             }
-            EditorGUILayout.EndHorizontal();
+            EndSection(_showTools);
 
-            EditorGUILayout.Space();
+            if (DrawSectionHeader("Visualization & Pathing", ref _showPathing))
+            {
+                data.ShowPathing = EditorGUILayout.Toggle("Show Pathing Paths", data.ShowPathing);
+                if (data.ShowPathing)
+                {
+                    EditorGUILayout.HelpBox("Showing Ground (Orange) and Flying (Cyan) paths.", MessageType.None);
+                    _pathingSimulationEnemy = (EnemyData)EditorGUILayout.ObjectField("Simulation Enemy", _pathingSimulationEnemy, typeof(EnemyData), false);
+                }
+            }
+            EndSection(_showPathing);
+
+            if (DrawSectionHeader("Prefab Generation", ref _showGeneration))
+            {
+                if (GUILayout.Button("Generate Map Prefab", GUILayout.Height(30)))
+                {
+                    GenerateMapPrefab(data);
+                }
+            }
+            EndSection(_showGeneration);
         }
 
         private void DrawVisualsTab(MapData data)
         {
-            EditorGUILayout.LabelField("Tile & Wall Visual Customization", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Select a tile or a boundary wall segment to override its texture or add decorations.", MessageType.Info);
-
-            if (data.Width <= 0 || data.Height <= 0)
+            if (DrawSectionHeader("Global Wall Visuals", ref _showGlobalVisuals))
             {
-                EditorGUILayout.HelpBox("Width and Height must be greater than 0 for preview.", MessageType.Warning);
-                return;
+                SerializedProperty wallVisualsProp = serializedObject.FindProperty("WallVisuals");
+                EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallPrefab"));
+                EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallMaterial"));
+                EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallScale"), new GUIContent("Wall Scale (X=Thick, Y=Height, Z=Length)"));
+                EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallOffset"), new GUIContent("Wall Global Offset"));
+                EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("SeamlessCorners"), new GUIContent("Seamless Wall Corners (Fix Gaps)"));
             }
+            EndSection(_showGlobalVisuals);
 
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField("Global Wall Visuals", EditorStyles.boldLabel);
-            SerializedProperty wallVisualsProp = serializedObject.FindProperty("WallVisuals");
-            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallPrefab"));
-            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallMaterial"));
-            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallScale"), new GUIContent("Wall Scale (X=Thick, Y=Height, Z=Length)"));
-            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("WallOffset"), new GUIContent("Wall Global Offset"));
-            EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("SeamlessCorners"), new GUIContent("Seamless Wall Corners (Fix Gaps)"));
-            EditorGUILayout.EndVertical();
-
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField("Side Overrides", EditorStyles.boldLabel);
-            DrawSideOverrides(data);
-            EditorGUILayout.EndVertical();
-
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField("Bulk Actions", EditorStyles.boldLabel);
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Clear All Wall Textures"))
+            if (DrawSectionHeader("Side & Edge Overrides", ref _showSideOverridesHeader))
             {
-                if (EditorUtility.DisplayDialog("Clear Wall Textures", "Are you sure you want to clear ALL wall texture overrides?", "Yes", "No"))
+                DrawSideOverrides(data);
+            }
+            EndSection(_showSideOverridesHeader);
+
+            if (DrawSectionHeader("Bulk Actions & Cleanup", ref _showBulkActions))
+            {
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Clear All Walls"))
                 {
-                    Undo.RecordObject(data, "Clear All Wall Textures");
-                    // Clear side-wide textures
-                    for (int i = 0; i < data.SideVisualOverrides.Count; i++) {
-                        var so = data.SideVisualOverrides[i];
-                        so.TextureOverride = null;
-                        data.SideVisualOverrides[i] = so;
-                    }
-                    // Clear individual wall textures and remove if empty
-                    for (int i = data.WallOverrides.Count - 1; i >= 0; i--) {
-                        var wo = data.WallOverrides[i];
-                        wo.TextureOverride = null;
-                        
-                        bool hasDecorations = wo.Decorations != null && wo.Decorations.Count > 0;
-                        if (!wo.OverrideScale && !wo.OverrideOffset && !hasDecorations) {
-                            data.WallOverrides.RemoveAt(i);
-                        } else {
-                            data.WallOverrides[i] = wo;
+                    if (EditorUtility.DisplayDialog("Clear Wall Textures", "Are you sure?", "Yes", "No"))
+                    {
+                        Undo.RecordObject(data, "Clear All Wall Textures");
+                        for (int i = 0; i < data.SideVisualOverrides.Count; i++) {
+                            var so = data.SideVisualOverrides[i];
+                            so.TextureOverride = null;
+                            data.SideVisualOverrides[i] = so;
+                        }
+                        for (int i = data.WallOverrides.Count - 1; i >= 0; i--) {
+                            var wo = data.WallOverrides[i];
+                            wo.TextureOverride = null;
+                            if (!wo.OverrideScale && !wo.OverrideOffset && (wo.Decorations == null || wo.Decorations.Count == 0)) data.WallOverrides.RemoveAt(i);
+                            else data.WallOverrides[i] = wo;
                         }
                     }
-                    EditorUtility.SetDirty(data);
                 }
-            }
-            if (GUILayout.Button("Clear All Floor Textures"))
-            {
-                if (EditorUtility.DisplayDialog("Clear Tile Textures", "Are you sure you want to clear ALL tile texture overrides?", "Yes", "No"))
+                if (GUILayout.Button("Clear All Floors"))
                 {
-                    Undo.RecordObject(data, "Clear All Tile Textures");
-                    for (int i = data.VisualOverrides.Count - 1; i >= 0; i--) {
-                        var to = data.VisualOverrides[i];
-                        to.Texture = null;
-
-                        bool hasDecorations = to.Decorations != null && to.Decorations.Count > 0;
-                        if (!hasDecorations) {
-                            data.VisualOverrides.RemoveAt(i);
-                        } else {
-                            data.VisualOverrides[i] = to;
+                    if (EditorUtility.DisplayDialog("Clear Tile Textures", "Are you sure?", "Yes", "No"))
+                    {
+                        Undo.RecordObject(data, "Clear All Tile Textures");
+                        for (int i = data.VisualOverrides.Count - 1; i >= 0; i--) {
+                            var to = data.VisualOverrides[i];
+                            to.Texture = null;
+                            if (to.Decorations == null || to.Decorations.Count == 0) data.VisualOverrides.RemoveAt(i);
+                            else data.VisualOverrides[i] = to;
                         }
                     }
-                    EditorUtility.SetDirty(data);
                 }
+                if (GUILayout.Button("Refresh View")) { EditorUtility.SetDirty(data); GUI.changed = true; }
+                EditorGUILayout.EndHorizontal();
             }
-            if (GUILayout.Button("Refresh View")) { EditorUtility.SetDirty(data); GUI.changed = true; }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
+            EndSection(_showBulkActions);
 
             EditorGUILayout.Space();
-
             DrawMapPreview(data, true);
-
             EditorGUILayout.Space();
 
             if (_selection.Count == 0)
@@ -2057,6 +2077,24 @@ namespace MaouSamaTD.Editor
             }
 
             EditorUtility.SetDirty(data);
+        }
+        private bool DrawSectionHeader(string label, ref bool foldout)
+        {
+            GUIStyle headerStyle = new GUIStyle(EditorStyles.foldout);
+            headerStyle.fontStyle = FontStyle.Bold;
+            headerStyle.fontSize = 12;
+            
+            GUILayout.BeginVertical("helpbox");
+            foldout = EditorGUILayout.Foldout(foldout, label, true, headerStyle);
+            if (foldout) EditorGUILayout.Space(2);
+            return foldout;
+        }
+
+        private void EndSection(bool foldout)
+        {
+            if (foldout) EditorGUILayout.Space(5);
+            GUILayout.EndVertical();
+            GUILayout.Space(2);
         }
     }
 }

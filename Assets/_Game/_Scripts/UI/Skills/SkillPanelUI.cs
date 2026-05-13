@@ -24,7 +24,7 @@ namespace MaouSamaTD.UI.Skills
         [Inject] private InteractionManager _interactionManager;
         [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private MaouSamaTD.Managers.GameSelectionState _gameSelectionState;
-        [Inject] private TutorialManager _tutorialManager;
+        [Inject(Optional = true)] private TutorialManager _tutorialManager;
         
         private List<SkillButtonUI> _spawnedButtons = new List<SkillButtonUI>();
         private bool _isVisible = false; // Default: Docked/Hidden
@@ -39,7 +39,8 @@ namespace MaouSamaTD.UI.Skills
         private TMPro.TextMeshProUGUI _skillNameTxt;
         private TMPro.TextMeshProUGUI _skillCostTxt;
         private UnityEngine.UI.Image _skillIconImg;
-        private TMPro.TextMeshProUGUI _skillInfoTxt;
+        private TMPro.TextMeshProUGUI _skillInfoTxt;   // lore / flavour text
+        private TMPro.TextMeshProUGUI _skillStatsTxt;  // colored stats block
         private RangePatternUI _rangePatternUI;
         private TMPro.TextMeshProUGUI _rangeStatsTxt;
 
@@ -155,9 +156,38 @@ namespace MaouSamaTD.UI.Skills
                     if (costTrans != null) _skillCostTxt = costTrans.GetComponent<TMPro.TextMeshProUGUI>();
                 }
 
-                // 3. Get Description Text
-                Transform descTrans = sdc.Find("MiddleSplit/Skill_Info_Txt") ?? sdc.Find("Skill_Info_Txt");
-                if (descTrans != null) _skillInfoTxt = descTrans.GetComponent<TMPro.TextMeshProUGUI>();
+                // 3a. Lore description text
+                Transform descTrans = sdc.Find("MiddleSplit/Description_BG/Skill_Info_Txt")
+                                   ?? sdc.Find("MiddleSplit/Skill_Info_Txt")
+                                   ?? sdc.Find("Skill_Info_Txt");
+                if (descTrans != null)
+                {
+                    _skillInfoTxt = descTrans.GetComponent<TMPro.TextMeshProUGUI>();
+                    if (_skillInfoTxt != null)
+                    {
+                        _skillInfoTxt.enableAutoSizing = true;
+                        _skillInfoTxt.fontSizeMin = 8f;
+                        _skillInfoTxt.fontSizeMax = 13f;
+                        _skillInfoTxt.enableWordWrapping = true;
+                        _skillInfoTxt.fontStyle = TMPro.FontStyles.Italic;
+                        _skillInfoTxt.color = new Color(0.88f, 0.88f, 0.95f, 1f);
+                    }
+                }
+
+                // 3b. Stats block text (new, lives beside lore inside Description_BG)
+                Transform statsTrans2 = sdc.Find("MiddleSplit/Description_BG/Skill_Stats_Txt");
+                if (statsTrans2 != null)
+                {
+                    _skillStatsTxt = statsTrans2.GetComponent<TMPro.TextMeshProUGUI>();
+                    if (_skillStatsTxt != null)
+                    {
+                        _skillStatsTxt.enableAutoSizing = true;
+                        _skillStatsTxt.fontSizeMin = 7f;
+                        _skillStatsTxt.fontSizeMax = 12f;
+                        _skillStatsTxt.enableWordWrapping = true;
+                        _skillStatsTxt.fontStyle = TMPro.FontStyles.Normal;
+                    }
+                }
 
                 // 4. Get RangeGrid
                 Transform gridTrans = sdc.Find("MiddleSplit/Range_Container/RangeGrid") ?? sdc.Find("RangeGrid");
@@ -165,24 +195,31 @@ namespace MaouSamaTD.UI.Skills
                 {
                     _rangePatternUI = gridTrans.GetComponent<RangePatternUI>();
 
-                    // Create or find RangeGrid_StatsTxt
-                    Transform statsTrans = sdc.Find("MiddleSplit/Range_Container/RangeGrid_StatsTxt") ?? sdc.Find("RangeGrid_StatsTxt");
+                    // RangeGrid_StatsTxt lives directly under Range_Container (not under RangeGrid)
+                    Transform rangeContainer = gridTrans.parent;
+                    Transform statsTrans = rangeContainer?.Find("RangeGrid_StatsTxt")
+                                       ?? sdc.Find("RangeGrid_StatsTxt");
                     if (statsTrans == null)
                     {
                         var statsGo = new GameObject("RangeGrid_StatsTxt", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
-                        statsGo.transform.SetParent(gridTrans.parent != null ? gridTrans.parent : sdc, false);
+                        statsGo.transform.SetParent(rangeContainer != null ? rangeContainer : sdc, false);
                         statsTrans = statsGo.transform;
                         var srt = statsTrans.GetComponent<RectTransform>();
-                        srt.anchorMin = new Vector2(0.5f, 0.5f);
-                        srt.anchorMax = new Vector2(0.5f, 0.5f);
-                        srt.pivot = new Vector2(0.5f, 0.5f);
-                        srt.sizeDelta = new Vector2(130f, 40f);
-                        srt.anchoredPosition = new Vector2(0f, -70.0f);
+                        srt.anchorMin = new Vector2(0f, 0f);
+                        srt.anchorMax = new Vector2(1f, 0f);
+                        srt.pivot     = new Vector2(0.5f, 0f);
+                        srt.anchoredPosition = new Vector2(0f, 4f);
+                        srt.sizeDelta = new Vector2(0f, 28f);
                     }
                     _rangeStatsTxt = statsTrans.GetComponent<TMPro.TextMeshProUGUI>();
-                    _rangeStatsTxt.fontSize = 12f;
-                    _rangeStatsTxt.alignment = TMPro.TextAlignmentOptions.Center;
-                    _rangeStatsTxt.fontStyle = TMPro.FontStyles.Bold;
+                    if (_rangeStatsTxt != null)
+                    {
+                        _rangeStatsTxt.fontSize        = 10f;
+                        _rangeStatsTxt.alignment       = TMPro.TextAlignmentOptions.Center;
+                        _rangeStatsTxt.fontStyle       = TMPro.FontStyles.Bold;
+                        _rangeStatsTxt.enableWordWrapping = true;
+                        _rangeStatsTxt.color           = new Color(0.85f, 0.75f, 0.50f, 0.9f);
+                    }
                 }
             }
 
@@ -345,101 +382,87 @@ namespace MaouSamaTD.UI.Skills
         {
             if (skill == null) return;
 
-            // 1. Title with Gold SP Cost
+            // 1. Skill name — no wrap, ellipsis
             if (_skillNameTxt != null)
             {
                 _skillNameTxt.text = skill.SkillName;
-            }
-            if (_skillCostTxt != null)
-            {
-                _skillCostTxt.text = $"{skill.SealCost} SP";
+                _skillNameTxt.enableWordWrapping = false;
+                _skillNameTxt.overflowMode = TMPro.TextOverflowModes.Ellipsis;
             }
 
-            // 2. Icon Image
+            // 2. SP cost — purple, no wrap
+            if (_skillCostTxt != null)
+            {
+                _skillCostTxt.text = $"<color=#CC88FF><b>{skill.SealCost} SP</b></color>";
+                _skillCostTxt.enableWordWrapping = false;
+                _skillCostTxt.overflowMode = TMPro.TextOverflowModes.Overflow;
+            }
+
+            // 3. Icon
             if (_skillIconImg != null)
             {
                 _skillIconImg.sprite = skill.Icon;
                 _skillIconImg.gameObject.SetActive(skill.Icon != null);
             }
 
-            // 3. Format Description Text with Gorgeous Colors and Math
+            // 4. LORE — plain narrative text from SO (italic, soft blue-white, auto-size)
             if (_skillInfoTxt != null)
+                _skillInfoTxt.text = skill.Description;
+
+            // 5. STATS — generated from SO data with unified color tokens (auto-size)
+            if (_skillStatsTxt != null)
             {
-                System.Text.StringBuilder descBuilder = new System.Text.StringBuilder();
-                descBuilder.AppendLine(skill.Description);
-                descBuilder.AppendLine();
-                descBuilder.AppendLine("<b><color=#FFCC00>RITE PROPERTIES:</color></b>");
+                var sb = new System.Text.StringBuilder();
 
-                // Type/Target Type
-                string targetDesc = skill.TargetType == SkillTargetType.Tile ? "Tile-Targeted" : "Unit-Targeted";
-                descBuilder.AppendLine($"• Target: <color=#00FFFF><b>{targetDesc}</b></color>");
+                // Target
+                string targetLabel = skill.TargetType == SkillTargetType.Tile ? "Tile" : "Unit";
+                sb.AppendLine($"<color=#AAAAAA>Target</color>  <color=#44CCFF><b>{targetLabel}</b></color>");
 
-                // Damage or Buff Values
+                // Damage
                 if (skill.EffectType == SkillEffectType.Damage)
+                    sb.AppendLine($"<color=#AAAAAA>Damage</color>  <color=#FF4444><b>{skill.Value:N0} Magic DMG</b></color>");
+
+                // Buff modifiers
+                if (skill.EffectType == SkillEffectType.Buff && skill.Modifiers != null)
                 {
-                    descBuilder.AppendLine($"• Damage: <color=#FF5555><b>{skill.Value:N0} Magic DMG</b></color>");
-                }
-                else if (skill.EffectType == SkillEffectType.Buff)
-                {
-                    if (skill.Modifiers != null && skill.Modifiers.Count > 0)
-                    {
-                        foreach (var mod in skill.Modifiers)
-                        {
-                            descBuilder.AppendLine($"• {mod.Stat}: <color=#55FF55><b>+{mod.Value}%</b></color>");
-                        }
-                    }
-                    else
-                    {
-                        descBuilder.AppendLine($"• Multiplier: <color=#55FF55><b>x{skill.Value} Boost</b></color>");
-                    }
+                    foreach (var mod in skill.Modifiers)
+                        sb.AppendLine($"<color=#AAAAAA>{mod.Stat}</color>  <color=#44FF88><b>+{mod.Value}%</b></color>");
                 }
 
-                // Cooldown and Duration
-                descBuilder.AppendLine($"• Cooldown: <color=#FF9900><b>{skill.Cooldown:F1}s</b></color>");
+                // Duration
                 if (skill.Duration > 0)
-                {
-                    descBuilder.AppendLine($"• Duration: <color=#00FFFF><b>{skill.Duration:F1}s</b></color>");
-                }
+                    sb.AppendLine($"<color=#AAAAAA>Duration</color>  <color=#44CCFF><b>{skill.Duration:F0}s</b></color>");
 
-                // Area / Shape metrics
+                // Area
                 if (skill.Radius > 0)
-                {
-                    string shapeName = skill.AoeShape.ToString();
-                    descBuilder.AppendLine($"• Area: <color=#FFFF00><b>{shapeName} (Radius {skill.Radius:F1})</b></color>");
-                }
+                    sb.AppendLine($"<color=#AAAAAA>Area</color>  <color=#FFDD44><b>{skill.AoeShape} r{skill.Radius:F0}</b></color>");
                 else
-                {
-                    descBuilder.AppendLine("• Area: <color=#FFFF00><b>Single Target</b></color>");
-                }
+                    sb.AppendLine($"<color=#AAAAAA>Area</color>  <color=#FFDD44><b>Single Point</b></color>");
 
-                descBuilder.AppendLine();
-                descBuilder.AppendLine("<size=12><color=#888888><i>Click anywhere here to cancel</i></color></size>");
-
-                _skillInfoTxt.text = descBuilder.ToString();
+                _skillStatsTxt.text = sb.ToString().TrimEnd();
             }
 
-            // 4. Update RangePatternUI Grid
+            // 6. Range grid pattern
             if (_rangePatternUI != null)
             {
                 AttackPattern pattern = AttackPattern.All;
-                if (skill.AoeShape == AoeShape.Cross) pattern = AttackPattern.Cross;
+                if (skill.AoeShape == AoeShape.Cross)      pattern = AttackPattern.Cross;
                 else if (skill.AoeShape == AoeShape.DiagonalX) pattern = AttackPattern.Diagonal;
-                else if (skill.AoeShape == AoeShape.Square) pattern = AttackPattern.All;
-                else if (skill.AoeShape == AoeShape.Circle) pattern = AttackPattern.All;
-                else if (skill.AoeShape == AoeShape.Star) pattern = AttackPattern.All;
 
-                int patternRange = Mathf.RoundToInt(skill.Radius);
-                if (patternRange <= 0) patternRange = 0; // Single target
-
-                _rangePatternUI.SetPattern(pattern, patternRange);
+                int range = Mathf.RoundToInt(skill.Radius);
+                _rangePatternUI.SetPattern(pattern, range);
             }
 
-            // 5. Numbers under RangeGrid
+            // 7. Range stats label below grid
             if (_rangeStatsTxt != null)
             {
-                string shapeName = skill.Radius > 0 ? skill.AoeShape.ToString() : "Point";
-                string sizeDesc = skill.Radius > 0 ? $"{skill.Radius:F0}x{skill.Radius:F0} Area" : "1x1 Tile";
-                _rangeStatsTxt.text = $"<b>Shape: <color=#FFFF00>{shapeName}</color> | Size: <color=#00FFFF>{sizeDesc}</color></b>";
+                string shape    = skill.Radius > 0 ? skill.AoeShape.ToString() : "Point";
+                string sizeDesc = skill.Radius > 0 ? $"{skill.Radius:F0}x{skill.Radius:F0}" : "1 Tile";
+                _rangeStatsTxt.text =
+                    $"<b><color=#FFDD44>{shape}</color>  <color=#44CCFF>{sizeDesc}</color></b>";
+                _rangeStatsTxt.enableAutoSizing = true;
+                _rangeStatsTxt.fontSizeMin = 7f;
+                _rangeStatsTxt.fontSizeMax = 11f;
             }
         }
     }

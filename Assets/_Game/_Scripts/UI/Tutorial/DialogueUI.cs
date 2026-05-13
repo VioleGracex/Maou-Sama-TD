@@ -44,7 +44,7 @@ namespace MaouSamaTD.UI.Tutorial
 
         [Inject] private UIPopupBlocker _uiBlocker;
         [Inject] private GameManager _gameManager;
-        [Inject] private TutorialManager _tutorialManager;
+        [Inject(Optional = true)] private TutorialManager _tutorialManager;
         [Header("Full Screen Layout")]
         [SerializeField] private GameObject _fullScreenPanel;
         [SerializeField] private TextMeshProUGUI _fullSpeakerText;

@@ -67,7 +67,7 @@ namespace MaouSamaTD.Managers
         [Inject] private BattleCurrencyManager _currencyManager;
         [Inject] private DeploymentUI _deploymentUI;
         [Inject] private SkillManager _skillManager;
-        [Inject] private TutorialManager _tutorialManager;
+        [Inject(Optional = true)] private TutorialManager _tutorialManager;
         [Inject] private UIPopupBlocker _uiBlocker;
         #endregion
 
@@ -257,6 +257,16 @@ namespace MaouSamaTD.Managers
             DeselectUnit();
             _selectedSkill = skill;
             _isSkillTargeting = true;
+            UpdateTileVisuals();
+            OnSkillSelectedChanged?.Invoke(_selectedSkill);
+        }
+
+        public void SelectSkillForDescription(SovereignRiteData skill)
+        {
+            if (_selectedSkill == skill && !_isSkillTargeting) { DeselectSkill(); return; }
+            DeselectUnit();
+            _selectedSkill = skill;
+            _isSkillTargeting = false;
             UpdateTileVisuals();
             OnSkillSelectedChanged?.Invoke(_selectedSkill);
         }

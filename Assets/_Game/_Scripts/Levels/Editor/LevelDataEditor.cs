@@ -12,6 +12,21 @@ namespace MaouSamaTD.Levels.Editor
         private static int _selectedTab = 0;
         private readonly string[] _tabNames = { "General", "Economy", "Units", "Encounter", "Story" };
 
+        // Section Foldouts
+        private static bool _showIdentity = true;
+        private static bool _showTutorial = true;
+        private static bool _showTiming = true;
+        private static bool _showEconomy = true;
+        private static bool _showRewards = true;
+        private static bool _showUnits = true;
+        private static bool _showRites = true;
+        private static bool _showMapSettings = true;
+        private static bool _showWaves = true;
+        private static bool _showStarConditions = true;
+        private static bool _showWinLose = true;
+        private static bool _showCinematics = true;
+        private static bool _showStorySettings = true;
+
         private void OnEnable()
         {
             _target = (LevelData)target;
@@ -78,146 +93,135 @@ namespace MaouSamaTD.Levels.Editor
 
         private void DrawGeneralTab()
         {
-            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Identity & Info", headerStyle);
-            EditorGUI.indentLevel++;
-            
-            using (new EditorGUI.DisabledScope(true))
+            if (DrawSectionHeader("Identity & Info", ref _showIdentity))
             {
-                DrawProperty("UniqueID", "Unique ID", "Permanent generic GUID for this scriptable object.");
+                using (new EditorGUI.DisabledScope(true))
+                {
+                    DrawProperty("UniqueID", "Unique ID", "Permanent generic GUID for this scriptable object.");
+                }
+
+                DrawProperty("LevelIndex", "Integer Index");
+                DrawProperty("LevelID", "String ID (e.g. 1-1)");
+                DrawProperty("LevelName", "Level Name");
+
+                EditorGUILayout.Space(5);
+                EditorGUILayout.LabelField("Objective (Sovereign / Base)", EditorStyles.miniBoldLabel);
+                DrawProperty("SovereignHpNameKey", "Objective Name Key", "Localization key for the objective HP bar (e.g. SovereignHP_Level2)");
+                DrawProperty("SovereignMaxHp", "Objective Max HP", "Total health of the sovereign/base for this level.");
+                
+                EditorGUILayout.LabelField("Description");
+                SerializedProperty descProp = serializedObject.FindProperty("Description");
+                descProp.stringValue = EditorGUILayout.TextArea(descProp.stringValue, EditorStyles.textArea, GUILayout.Height(60));
             }
+            EndSection(_showIdentity);
 
-            DrawProperty("LevelIndex", "Integer Index");
-            DrawProperty("LevelID", "String ID (e.g. 1-1)");
-            DrawProperty("LevelName", "Level Name");
-            
-            EditorGUILayout.LabelField("Description");
-            SerializedProperty descProp = serializedObject.FindProperty("Description");
-            descProp.stringValue = EditorGUILayout.TextArea(descProp.stringValue, EditorStyles.textArea, GUILayout.Height(60));
-            
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Tutorial Settings", headerStyle);
-            EditorGUI.indentLevel++;
-            SerializedProperty hasTutorialProp = serializedObject.FindProperty("HasTutorial");
-            EditorGUILayout.PropertyField(hasTutorialProp, new GUIContent("Enable Tutorial"));
-            
-            if (hasTutorialProp.boolValue)
+            if (DrawSectionHeader("Tutorial Settings", ref _showTutorial))
             {
-                DrawProperty("TutorialData", "Tutorial Sequence");
+                SerializedProperty hasTutorialProp = serializedObject.FindProperty("HasTutorial");
+                EditorGUILayout.PropertyField(hasTutorialProp, new GUIContent("Enable Tutorial"));
+                
+                if (hasTutorialProp.boolValue)
+                {
+                    DrawProperty("TutorialData", "Tutorial Sequence");
+                }
             }
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
+            EndSection(_showTutorial);
         }
 
         private void DrawEconomyTab()
         {
-            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
+            if (DrawSectionHeader("Timing & Rules", ref _showTiming))
+            {
+                DrawProperty("GracePeriod", "Grace Period (Sec)");
+            }
+            EndSection(_showTiming);
 
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Timing & Rules", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("GracePeriod", "Grace Period (Sec)");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
+            if (DrawSectionHeader("Economy (Authority Seals)", ref _showEconomy))
+            {
+                DrawProperty("StartingAuthoritySeals", "Starting Amount");
+                DrawProperty("MaxAuthoritySeals", "Max Capacity");
+                DrawProperty("AuthoritySealsPerSecond", "Passive Generation");
+            }
+            EndSection(_showEconomy);
 
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Economy (Authority Seals)", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("StartingAuthoritySeals", "Starting Amount");
-            DrawProperty("MaxAuthoritySeals", "Max Capacity");
-            DrawProperty("AuthoritySealsPerSecond", "Passive Generation");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Rewards", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("WinRewards", "Level Win Rewards");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
+            if (DrawSectionHeader("Rewards", ref _showRewards))
+            {
+                DrawProperty("WinRewards", "Level Win Rewards");
+            }
+            EndSection(_showRewards);
         }
 
         private void DrawUnitsTab()
         {
-            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
+            if (DrawSectionHeader("Unit Roster Settings", ref _showUnits))
+            {
+                DrawProperty("PremadeCohort", "Premade Cohort");
+                DrawProperty("IsCohortLocked", "Lock Cohort Slots");
+                EditorGUILayout.Space(5);
+                DrawProperty("SupportAssistant", "Support Assistant");
+                DrawProperty("IsAssistantLocked", "Lock Assistant Slot");
+            }
+            EndSection(_showUnits);
 
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Unit Roster Settings", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("PremadeCohort", "Premade Cohort");
-            DrawProperty("IsCohortLocked", "Lock Cohort Slots");
-            EditorGUILayout.Space(5);
-            DrawProperty("SupportAssistant", "Support Assistant");
-            DrawProperty("IsAssistantLocked", "Lock Assistant Slot");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Sovereign Rites", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("MaleSovereignRites", "Male Rites");
-            DrawProperty("FemaleSovereignRites", "Female Rites");
-            DrawProperty("IsRitesLocked", "Lock Rites Selection");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
+            if (DrawSectionHeader("Sovereign Rites", ref _showRites))
+            {
+                DrawProperty("MaleSovereignRites", "Male Rites");
+                DrawProperty("FemaleSovereignRites", "Female Rites");
+                DrawProperty("IsRitesLocked", "Lock Rites Selection");
+            }
+            EndSection(_showRites);
         }
 
         private void DrawEncounterTab()
         {
-            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
+            if (DrawSectionHeader("Map Settings", ref _showMapSettings))
+            {
+                DrawProperty("MapData", "Linked Map Data");
+            }
+            EndSection(_showMapSettings);
 
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Map Settings", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawProperty("MapData", "Linked Map Data");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
+            if (DrawSectionHeader("Enemy Waves", ref _showWaves))
+            {
+                DrawWavesProperty();
+            }
+            EndSection(_showWaves);
 
-            GUILayout.Space(10);
+            if (DrawSectionHeader("Star Conditions", ref _showStarConditions))
+            {
+                DrawProperty("StarConditions", "Conditions List");
+            }
+            EndSection(_showStarConditions);
 
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Enemy Waves", headerStyle);
-            EditorGUI.indentLevel++;
-            DrawWavesProperty();
-            EditorGUILayout.Space(10);
-            DrawProperty("StarConditions", "Star Clear Conditions");
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
+            if (DrawSectionHeader("Win / Lose Logic", ref _showWinLose))
+            {
+                DrawProperty("WinConditions", "Custom Win Conditions");
+                DrawProperty("LoseConditions", "Custom Lose Conditions");
+            }
+            EndSection(_showWinLose);
+
+            if (DrawSectionHeader("Cinematics", ref _showCinematics))
+            {
+                DrawProperty("EnableCinematicCombatEnd", "Enable Slow-Mo Victory");
+                DrawProperty("CinematicDuration", "Slow-Mo Duration");
+            }
+            EndSection(_showCinematics);
         }
 
         private void DrawStoryTab()
         {
-            GUIStyle headerStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13 };
-
-            GUILayout.BeginVertical("helpbox");
-            EditorGUILayout.LabelField("Story Settings", headerStyle);
-            EditorGUI.indentLevel++;
-            
-            SerializedProperty hasStoryProp = serializedObject.FindProperty("HasStory");
-            EditorGUILayout.PropertyField(hasStoryProp, new GUIContent("Enable Story Cutscenes"));
-
-            if (hasStoryProp.boolValue)
+            if (DrawSectionHeader("Story Settings", ref _showStorySettings))
             {
-                EditorGUILayout.Space(5);
-                DrawProperty("IntroStory", "Intro Sequence (Start)");
-                DrawProperty("OutroStory", "Outro Sequence (End)");
+                SerializedProperty hasStoryProp = serializedObject.FindProperty("HasStory");
+                EditorGUILayout.PropertyField(hasStoryProp, new GUIContent("Enable Story Cutscenes"));
+
+                if (hasStoryProp.boolValue)
+                {
+                    EditorGUILayout.Space(5);
+                    DrawProperty("IntroStory", "Intro Sequence (Start)");
+                    DrawProperty("OutroStory", "Outro Sequence (End)");
+                }
             }
-            
-            EditorGUI.indentLevel--;
-            GUILayout.EndVertical();
+            EndSection(_showStorySettings);
         }
 
         private void DrawWavesProperty()
@@ -249,6 +253,25 @@ namespace MaouSamaTD.Levels.Editor
             }
             
             EditorGUI.indentLevel--;
+        }
+
+        private bool DrawSectionHeader(string label, ref bool foldout)
+        {
+            GUIStyle headerStyle = new GUIStyle(EditorStyles.foldout);
+            headerStyle.fontStyle = FontStyle.Bold;
+            headerStyle.fontSize = 12;
+            
+            GUILayout.BeginVertical("helpbox");
+            foldout = EditorGUILayout.Foldout(foldout, label, true, headerStyle);
+            if (foldout) EditorGUILayout.Space(2);
+            return foldout;
+        }
+
+        private void EndSection(bool foldout)
+        {
+            if (foldout) EditorGUILayout.Space(5);
+            GUILayout.EndVertical();
+            GUILayout.Space(2);
         }
 
         private void DrawProperty(string propName, string customLabel = null, string tooltip = null)

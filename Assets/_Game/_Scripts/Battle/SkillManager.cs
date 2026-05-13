@@ -16,7 +16,7 @@ namespace MaouSamaTD.Skills
         private Dictionary<SovereignRiteData, float> _cooldowns = new Dictionary<SovereignRiteData, float>();
         
         [Inject] private BattleCurrencyManager _currencyManager;
-        [Inject] private TutorialManager _tutorialManager;
+        [Inject(Optional = true)] private TutorialManager _tutorialManager;
         [Inject] private Grid.GridManager _gridManager;
         [Inject] private DialogueManager _dialogueManager;
 

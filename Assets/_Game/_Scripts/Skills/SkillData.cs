@@ -46,6 +46,13 @@ namespace MaouSamaTD.Skills
     }
 
     [System.Serializable]
+    public struct SkillProperty
+    {
+        public string Key;
+        public float Value;
+    }
+
+    [System.Serializable]
     public struct SkillVisuals
     {
         public GameObject UltimatePrefab;
@@ -71,6 +78,22 @@ namespace MaouSamaTD.Skills
         [TextArea] public string Description;
         public Sprite Icon;
         
+        public System.Collections.Generic.List<SkillProperty> Properties = new System.Collections.Generic.List<SkillProperty>();
+
         public SkillVisuals BaseVisuals;
+
+        public string GetFormattedDescription()
+        {
+            if (string.IsNullOrEmpty(Description)) return string.Empty;
+            string formatted = Description;
+            if (Properties != null)
+            {
+                foreach (var prop in Properties)
+                {
+                    formatted = formatted.Replace($"[{prop.Key}]", prop.Value.ToString("F0"));
+                }
+            }
+            return formatted;
+        }
     }
 }

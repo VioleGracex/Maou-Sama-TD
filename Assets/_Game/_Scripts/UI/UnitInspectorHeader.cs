@@ -19,6 +19,8 @@ namespace MaouSamaTD.UI
         [SerializeField] private Transform _starsRoot;
         [SerializeField] private TextMeshProUGUI _expText;
         [SerializeField] private Image _levelFillImage;
+        [SerializeField] private TextMeshProUGUI _hpText;
+        [SerializeField] private TextMeshProUGUI _costText;
 
         public void Refresh(UnitData u)
         {
@@ -50,6 +52,17 @@ namespace MaouSamaTD.UI
                     if (img == null) img = star.GetComponentInChildren<Image>();
                     if (img) img.color = i < u.StarRating ? new Color(1f, 0.8f, 0f) : new Color(0.2f, 0.2f, 0.2f);
                 }
+            }
+
+            // HP & Cost
+            if (_hpText)
+            {
+                float displayHp = u.CalculatedStats.MaxHp > 0 ? u.CalculatedStats.MaxHp : u.MaxHp * 2f;
+                _hpText.text = $"HP {displayHp:F0}";
+            }
+            if (_costText)
+            {
+                _costText.text = $"{u.DeploymentCost} SP";
             }
         }
     }

@@ -117,23 +117,43 @@ namespace MaouSamaTD.UI
             {
                 if (_ultimateSection) _ultimateSection.SetActive(true);
                 if (_ultimateNameText) _ultimateNameText.text = u.UltimateSkill.SkillName?.ToUpper();
-                if (_ultimateDescText) _ultimateDescText.text = u.UltimateSkill.GetFormattedDescription();
+                
+                if (_ultimateDescText)
+                {
+                    string baseDesc = u.UltimateSkill.GetFormattedDescription();
+                    string rangeStr = GetRangeDescription(u);
+                    _ultimateDescText.text = $"{baseDesc}\n\n<color=#00FFFF>Range: {rangeStr}</color>";
+                }
+
                 if (_ultimateIcon) 
                 {
-                    var visuals = u.UltimateSkill.GetVisuals(u.EquippedSkinID);
                     _ultimateIcon.sprite = u.UltimateSkill.Icon;
                 }
-                if (_ultimateRangeGrid)
-                {
-                    // For ultimate range, we might need a custom pattern or just use a default
-                    // Assuming ultimate range is fixed or handled similarly
-                    _ultimateRangeGrid.SetPattern(u.AttackPattern, (int)u.Range); // Placeholder logic
-                }
+                
+                // Range grid is hidden in favor of text description as requested
+                if (_ultimateRangeGrid) _ultimateRangeGrid.gameObject.SetActive(false);
             }
             else
             {
                 if (_ultimateSection) _ultimateSection.SetActive(false);
             }
+        }
+
+        private string GetRangeDescription(UnitData u)
+        {
+            if (u.AttackPattern == AttackPattern.Custom) return "All Map";
+            
+            string patternName = u.AttackPattern switch
+            {
+                AttackPattern.Vertical => "Column",
+                AttackPattern.Horizontal => "Row",
+                AttackPattern.Diagonal => "Diagonal",
+                AttackPattern.Cross => "Cross",
+                AttackPattern.All => "Surrounding",
+                _ => "Target"
+            };
+
+            return $"{patternName} (Range: {u.Range:F0})";
         }
 
         private string GetASPDLabel(float interval)

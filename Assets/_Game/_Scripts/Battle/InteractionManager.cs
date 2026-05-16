@@ -166,6 +166,8 @@ namespace MaouSamaTD.Managers
                     if (Physics.Raycast(clickRay, out RaycastHit clickHit, 100f, LayerMask.GetMask("Units", "Default")))
                     {
                         var clickedUnit = clickHit.collider.GetComponent<PlayerUnit>() ?? clickHit.collider.GetComponentInParent<PlayerUnit>();
+                        // ALLOW clicking through to units if we are in targeting mode OR if we just want to avoid the UI blocker 
+                        // BUT we will block the actual selection logic in ProcessAction if a skill is active.
                         if (clickedUnit != null) isOverUI = false;
                     }
 
@@ -392,6 +394,10 @@ namespace MaouSamaTD.Managers
             // Placement and Selection happen on PRESS DOWN
             if (isReleased) return;
 
+            // BLOCK unit selection if we have a skill selected or are in targeting mode
+            // This prevents the unit inspector from opening and closing our skill descriptions.
+            if (_selectedSkill != null) return;
+            
             if (_activeUnitData != null && hitTile != null)
             {
                 if (_placementHandler.TryPlaceUnit(hitTile, _activeUnitData))

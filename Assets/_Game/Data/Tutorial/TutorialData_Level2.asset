@@ -206,7 +206,7 @@ MonoBehaviour:
       SizeOffset: {x: 0, y: 0}
     TargetTiles: []
     DelayBefore: 0
-    Duration: 2
+    Duration: 1
     ActionKey: RiteMenuOpened
     ShowHand: 1
     HandScale: 0.5
@@ -248,7 +248,7 @@ MonoBehaviour:
       Offset: {x: 0, y: 1, z: 0}
       Height: 0
     DelayBefore: 0
-    Duration: 2
+    Duration: 0
     ActionKey: SkillUsed
     ShowHand: 1
     HandScale: 1
@@ -318,7 +318,7 @@ MonoBehaviour:
     AdditionalTargetUI: []
     TargetTiles: []
     DelayBefore: 1
-    Duration: 2
+    Duration: 1
     ActionKey: 
     ShowHand: 0
     HandScale: 1
@@ -353,7 +353,7 @@ MonoBehaviour:
     AdditionalTargetUI: []
     TargetTiles: []
     DelayBefore: 0
-    Duration: 2
+    Duration: 1
     ActionKey: AwakenLilith
     ShowHand: 0
     HandScale: 1
@@ -805,7 +805,7 @@ MonoBehaviour:
     FullBlocker: 0
     ResetBlocker: 0
     StopTime: 1
-    ResumeTime: 0
+    ResumeTime: 1
     DelayBeforeStopTime: 0
     EnableMissInterception: 1
     MissTargetBossName: Abyssal Shade

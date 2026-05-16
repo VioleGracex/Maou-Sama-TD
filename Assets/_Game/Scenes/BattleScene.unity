@@ -6065,6 +6065,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.EnemyManager
   _enemyPrefab: {fileID: 5763568359040486182, guid: a18694488a0ba03459fc5f2a2272c0ad, type: 3}
+  _outroDelay: 2
   _showDebugLogs: 1
   _enemyContainer: {fileID: 0}
 --- !u!1 &824613763

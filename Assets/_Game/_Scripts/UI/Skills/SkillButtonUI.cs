@@ -132,8 +132,9 @@ namespace MaouSamaTD.UI.Skills
                 _lockOverlay.SetActive(permanentlyLocked);
             }
 
-            // 4. Removed Toggle Glow logic as requested
-            if (_toggledGlow != null) _toggledGlow.SetActive(false);
+            // 4. Selection Glow: Only show if selected AND ready
+            bool isSelected = _interactionManager != null && _interactionManager.SelectedSkill == _data;
+            if (_toggledGlow != null) _toggledGlow.SetActive(isSelected && isReady);
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -148,8 +149,8 @@ namespace MaouSamaTD.UI.Skills
 
             if (!isCurrentSelected)
             {
-                // Click: Show description first (non-targeting mode)
-                _interactionManager.SelectSkillForDescription(_data);
+                // Left Click: Select and enter targeting mode immediately
+                _interactionManager.SelectSkill(_data);
             }
             else
             {

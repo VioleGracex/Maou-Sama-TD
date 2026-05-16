@@ -623,12 +623,23 @@ namespace MaouSamaTD.Units
                 {
                     // Ranged units do not do the physical punch/lunge bump fallback.
                     // Instead, they use a soft, satisfying scale-recoil animation.
+                    // Kill previous to prevent stacking on AoE units
+                    _spriteRenderer.transform.DOKill(true);
+                    
+                    // Reset scale before starting new punch to prevent distortion
+                    Vector3 currentScale = _spriteRenderer.transform.localScale;
+                    float currentSignX = Mathf.Sign(currentScale.x);
+                    Vector3 targetScale = _originalSpriteScale;
+                    targetScale.x = Mathf.Abs(_originalSpriteScale.x) * currentSignX;
+                    _spriteRenderer.transform.localScale = targetScale;
+
                     _spriteRenderer.transform.DOPunchScale(new Vector3(-0.1f, 0.1f, 0f), 0.15f, 1, 0.5f);
                 }
                 else
                 {
                     // Melee bump towards target fallback
-                    Vector3 originalPos = _spriteRenderer.transform.localPosition;
+                    _spriteRenderer.transform.DOKill(true);
+                    Vector3 originalPos = GetSpriteLocalPosition();
                     Vector3 worldDir = (target.transform.position - transform.position).normalized * 0.3f;
                     _spriteRenderer.transform.DOLocalMove(originalPos + new Vector3(worldDir.x, worldDir.y, 0), 0.1f).SetLoops(2, LoopType.Yoyo);
                 }

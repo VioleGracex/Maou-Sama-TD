@@ -552,12 +552,7 @@ namespace MaouSamaTD.Managers
                                 }
                             }
 
-                            // Show highlight/blocker BEFORE dialogue so it's visible while talking
-                            if (step.UseBlocker)
-                            {
-                                HandleUIHighlight(step);
-                            }
-
+                            // USER REQUEST: Wait for dialogue to finish before showing highlights/blockers
                             bool dialogueDone = false;
                             if (step.Dialogue != null)
                             {
@@ -572,6 +567,11 @@ namespace MaouSamaTD.Managers
                             {
                                 if (_showDebugLogs) Debug.LogWarning($"[tutorial] DialogueOnly step '{step.StepName}' has no Dialogue data. Skipping dialogue.");
                             }
+
+                            if (step.UseBlocker)
+                            {
+                                HandleUIHighlight(step);
+                            }
                             
                             _handUI.Hide();
                         }
@@ -580,9 +580,6 @@ namespace MaouSamaTD.Managers
                     case TutorialStepType.HighlightUI:
                         // TRIGGER: Highlights a specific UI element and optionally shows dialogue.
                         {
-                            // Highlight BEFORE dialogue
-                            HandleUIHighlight(step);
-
                             bool uiDialogueDone = false;
                             if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                             {
@@ -593,6 +590,9 @@ namespace MaouSamaTD.Managers
                                 });
                                 yield return new WaitUntil(() => uiDialogueDone);
                             }
+
+                            // Highlight AFTER dialogue
+                            HandleUIHighlight(step);
                             
                             // If this is just a highlight step without a wait, we might need a small delay or just proceed
                             if (string.IsNullOrEmpty(step.ActionKey))
@@ -653,17 +653,17 @@ namespace MaouSamaTD.Managers
                         {
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
 
-                            // Show highlight and hand BEFORE dialogue
-                            if (step.UseBlocker)
-                            {
-                                HandleUIHighlight(step);
-                            }
-
                             if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                             {
                                 bool actionDialogueDone = false;
                                 _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
                                 yield return new WaitUntil(() => actionDialogueDone);
+                            }
+
+                            // Show highlight and hand AFTER dialogue
+                            if (step.UseBlocker)
+                            {
+                                HandleUIHighlight(step);
                             }
 
                             if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)

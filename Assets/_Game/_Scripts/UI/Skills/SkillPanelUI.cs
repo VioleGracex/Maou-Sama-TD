@@ -59,6 +59,12 @@ namespace MaouSamaTD.UI.Skills
             {
                 _descriptionGlowInstance.SetFloat(CustomTimeProp, Time.unscaledTime);
             }
+
+            // Real-time glow & cost update (for cooldowns and dynamic seal changes)
+            if (_interactionManager != null && _interactionManager.SelectedSkill != null)
+            {
+                RefreshDescriptionAffordability();
+            }
         }
 
         private void OnEnable()
@@ -478,18 +484,21 @@ namespace MaouSamaTD.UI.Skills
             
             var skill = _interactionManager.SelectedSkill;
             bool canAfford = _currencyManager != null && _currencyManager.CanAfford(skill.SealCost);
+            bool isOnCooldown = _skillManager != null && _skillManager.GetRemainingCooldown(skill) > 0;
+            bool isReady = canAfford && !isOnCooldown;
 
             // Update Cost Text Color: Red if cannot afford
             if (_skillCostTxt != null)
             {
                 string colorHex = canAfford ? "#CC88FF" : "#FF4444";
+                // Show cooldown in cost text if active? For now just color logic
                 _skillCostTxt.text = $"<color={colorHex}><b>{skill.SealCost} SP</b></color>";
             }
 
-            // Update Glow Visibility: Off if cannot afford
+            // Update Glow Visibility: Off if not ready
             if (_descriptionGlowImg != null)
             {
-                _descriptionGlowImg.gameObject.SetActive(canAfford);
+                _descriptionGlowImg.gameObject.SetActive(isReady);
             }
         }
 

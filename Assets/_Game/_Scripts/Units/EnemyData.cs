@@ -29,6 +29,12 @@ namespace MaouSamaTD.Units
         KillUnits     // Stops to kill any target in range, even if not blocking the path
     }
 
+    public enum ExitDamageType
+    {
+        Value,
+        Percentage
+    }
+
     [System.Flags]
     public enum TargetableGround
     {
@@ -61,6 +67,9 @@ namespace MaouSamaTD.Units
 
         [Tooltip("Damage dealt to the Player's Nexus health when this unit reaches the exit.")]
         public float ExitDamage = 1f;
+        
+        [Tooltip("Whether the ExitDamage is an absolute value or a percentage of the Nexus Max HP.")]
+        public ExitDamageType ExitDamageType = ExitDamageType.Value;
 
         [Header("Combat Pattern")]
         public AttackPattern AttackPattern = AttackPattern.All;

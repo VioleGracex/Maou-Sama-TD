@@ -206,7 +206,7 @@ MonoBehaviour:
       SizeOffset: {x: 0, y: 0}
     TargetTiles: []
     DelayBefore: 0
-    Duration: 1
+    Duration: 0
     ActionKey: RiteMenuOpened
     ShowHand: 1
     HandScale: 0.5
@@ -226,7 +226,7 @@ MonoBehaviour:
     ResumeTime: 1
     DelayBeforeStopTime: 0
     EnableMissInterception: 0
-    MissTargetBossName: Abyssal Shade
+    MissTargetBossName: 
     OnFailJumpToStepName: 
     OnCompleteJumpToStepName: 
     ConsecutiveMissDialogues: []
@@ -268,7 +268,7 @@ MonoBehaviour:
     ResumeTime: 1
     DelayBeforeStopTime: 0
     EnableMissInterception: 0
-    MissTargetBossName: Abyssal Shade
+    MissTargetBossName: 
     OnFailJumpToStepName: 
     OnCompleteJumpToStepName: 
     ConsecutiveMissDialogues: []

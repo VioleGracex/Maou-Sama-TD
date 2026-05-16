@@ -299,7 +299,19 @@ namespace MaouSamaTD.Managers
             EnemiesPassedCount++;
             
             bool isBoss = enemy != null && enemy.EnemyData != null && enemy.EnemyData.IsBoss;
-            int damage = enemy != null && enemy.EnemyData != null ? (int)enemy.EnemyData.ExitDamage : 1;
+            int damage = 1;
+            
+            if (enemy != null && enemy.EnemyData != null)
+            {
+                if (enemy.EnemyData.ExitDamageType == ExitDamageType.Percentage)
+                {
+                    damage = Mathf.CeilToInt(MaxObjectiveHP * (enemy.EnemyData.ExitDamage / 100f));
+                }
+                else
+                {
+                    damage = (int)enemy.EnemyData.ExitDamage;
+                }
+            }
 
             Debug.Log($"[GameManager] Enemy escaped (Boss: {isBoss})! Total passed: {EnemiesPassedCount}");
 

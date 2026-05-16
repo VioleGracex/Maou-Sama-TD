@@ -4,6 +4,7 @@ using MaouSamaTD.Grid;
 using MaouSamaTD.Levels;
 using MaouSamaTD.Managers;
 using MaouSamaTD.Utils;
+using DG.Tweening;
 
 namespace MaouSamaTD.Units
 {
@@ -166,8 +167,17 @@ namespace MaouSamaTD.Units
                 _targetTile = _path.Dequeue();
                 _isMoving = true;
                 _isCentering = false;
+                if (_enemyData != null && _enemyData.IsBoss) Debug.Log($"[EnemyUnit] {gameObject.name} (Boss) path set with {_path.Count + 1} tiles. Target: {_targetTile.Coordinate}");
+            }
+            else
+            {
+                if (_enemyData != null && _enemyData.IsBoss) Debug.LogWarning($"[EnemyUnit] {gameObject.name} (Boss) received an EMPTY or NULL path!");
+                _isMoving = false;
             }
         }
+
+
+
         public override void TakeDamage(float amount, UnitBase attacker = null, DamageType damageType = DamageType.Melee, bool isSkill = false)
         {
             float hpBefore = _currentHp;
@@ -222,19 +232,17 @@ namespace MaouSamaTD.Units
             bool shouldIgnore = forceIgnore || 
                                 _currentPhasingCharges > 0 || 
                                 (_enemyData != null && (_enemyData.EvasionType == EnemyEvasionType.BypassBlockers || _enemyData.CollisionType == EnemyCollisionType.IgnoreUnits));
-
+            
             Queue<Tile> newPath = gridMgr.GetPath(startValues, goal, _enemyData.MovementType, shouldIgnore);
             
-            if (newPath != null && newPath.Count > 0)
+            // If we couldn't find a path (e.g., player completely blocked the way), 
+            // pathfind ignoring occupants so we at least walk up to the blocker and attack it!
+            if ((newPath == null || newPath.Count == 0) && !shouldIgnore)
             {
-               _path = newPath;
-               if (_path.Count > 0)
-               {
-                   _targetTile = _path.Dequeue();
-                   _isMoving = true;
-                   _isCentering = false;
-               }
+                newPath = gridMgr.GetPath(startValues, goal, _enemyData.MovementType, true);
             }
+            
+            SetPath(newPath);
         }
 
         protected override void UpdateInternal()
@@ -359,14 +367,11 @@ namespace MaouSamaTD.Units
             if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
             if (_gridManager == null) return false;
 
-            // Use a slightly larger radius for the physical check to catch diagonal tiles accurately
-            Collider[] hits = Physics.OverlapSphere(transform.position, Range + 0.1f);
             PlayerUnit bestTarget = null;
             float bestScore = float.MinValue;
 
-            foreach (var hit in hits)
+            foreach (var unit in PlayerUnit.ActiveUnits)
             {
-                var unit = hit.GetComponent<PlayerUnit>();
                 if (unit != null && unit.CurrentHp > 0 && !unit.IsDead)
                 {
                     Vector2Int myPos = _gridManager.WorldToGridCoordinates(transform.position);
@@ -521,6 +526,16 @@ namespace MaouSamaTD.Units
             if (Time.time >= _lastAttackTime + _attackInterval)
             {
                 _lastAttackTime = Time.time;
+                
+                if (gameObject.name.ToLower().Contains("boss") && _gridManager != null)
+                {
+                    Vector2Int myCoord = _gridManager.WorldToGridCoordinates(transform.position);
+                    Vector2Int targetCoord = _gridManager.WorldToGridCoordinates(target.transform.position);
+                    int distance = Mathf.Abs(myCoord.x - targetCoord.x) + Mathf.Abs(myCoord.y - targetCoord.y);
+                    float configuredRange = Range;
+                    Debug.Log($"[BOSS DEBUG] Attacking! Boss Tile: {myCoord} | Target ({target.gameObject.name})  {targetCoord} | Tile Distance: {distance} | Configured Range: {configuredRange}");
+                }
+                
                 base.HandleAttack(target);
                 
                 DamageType damageType = _enemyData != null ? _enemyData.DamageType : DamageType.Melee;
@@ -591,7 +606,14 @@ namespace MaouSamaTD.Units
         private void MoveTowardsTarget()
         {
             if (_enemyData == null || _targetTile == null) return;
-            if (Time.deltaTime <= 0f) return; // Game paused — skip movement and avoid log spam
+            if (Time.deltaTime <= 0f) 
+            {
+                if (_enemyData.IsBoss && Time.frameCount % 120 == 0)
+                {
+                    Debug.LogWarning($"[EnemyUnit] {gameObject.name} (Boss) movement skipped because Time.deltaTime is 0 (TimeScale is likely 0).");
+                }
+                return;
+            }
 
             // 1. Check for range-based targets if not already centering/blocked
             // BYPASS: If we have phasing charges or Bypass evasion, we ignore units to reach the exit

@@ -40,6 +40,7 @@ namespace MaouSamaTD.Managers
         private UnitData _activeUnitData;
         private SovereignRiteData _selectedSkill;
         private bool _isSkillTargeting;
+        private bool _isSkillDragActive;
         public bool IsSkillTargeting => _isSkillTargeting;
         public SovereignRiteData SelectedSkill => _selectedSkill;
         
@@ -140,10 +141,15 @@ namespace MaouSamaTD.Managers
                     return;
                 }
 
+                Tile hitTile = _inputHandler.GetTileFromScreenPos(screenPos);
+                
+                // USER REQUEST: Always show hover/visuals even on the selection frame for immediate feedback
+                HandleHover(hitTile);
+                _placementHandler.UpdateGhost(hitTile, _activeUnitData, IsDragging, screenPos);
+                UpdateTileVisuals();
+
                 // If we just selected a skill this frame via UI, ignore input processing to prevent self-firing on the button click
                 if (Time.frameCount == _lastSkillSelectFrame) return;
-
-                Tile hitTile = _inputHandler.GetTileFromScreenPos(screenPos);
                 
                 if (IsDragging && _tutorialManager != null)
                 {
@@ -154,8 +160,20 @@ namespace MaouSamaTD.Managers
                     }
                 }
 
-                HandleHover(hitTile);
-                _placementHandler.UpdateGhost(hitTile, _activeUnitData, IsDragging, screenPos);
+                // HandleHover(hitTile); // MOVED UP
+                // _placementHandler.UpdateGhost(hitTile, _activeUnitData, IsDragging, screenPos); // MOVED UP
+                
+                // Dynamic readiness check: if skill is selected but wasn't targeting (e.g. on cooldown),
+                // check if it's now ready and enable targeting visuals.
+                if (_selectedSkill != null && !_isSkillTargeting && !_isSkillDragActive)
+                {
+                    bool isOnCooldown = _skillManager != null && _skillManager.GetRemainingCooldown(_selectedSkill) > 0;
+                    bool canAfford = _currencyManager != null && _currencyManager.CanAfford(_selectedSkill.SealCost);
+                    if (canAfford && !isOnCooldown)
+                    {
+                        _isSkillTargeting = true;
+                    }
+                }
 
                 bool isOverUI = EventSystem.current.IsPointerOverGameObject();
                 
@@ -283,13 +301,19 @@ namespace MaouSamaTD.Managers
 
         public void SelectSkill(SovereignRiteData skill)
         {
-            if (_selectedSkill == skill && _isSkillTargeting) { DeselectSkill(); return; }
-            DeselectUnit();
+            if (skill == null) return;
             _selectedSkill = skill;
             _isSkillTargeting = true;
-            _lastSkillSelectFrame = Time.frameCount; // Frame guard
-            UpdateTileVisuals();
+            _isSkillDragActive = false; // Reset drag state on fresh select
+            _lastSkillSelectFrame = Time.frameCount;
             OnSkillSelectedChanged?.Invoke(_selectedSkill);
+            UpdateTileVisuals();
+        }
+
+        public void SelectSkillForDrag(SovereignRiteData skill)
+        {
+            SelectSkill(skill);
+            _isSkillDragActive = true;
         }
 
         public void SelectSkillForDescription(SovereignRiteData skill)
@@ -297,7 +321,13 @@ namespace MaouSamaTD.Managers
             if (_selectedSkill == skill && !_isSkillTargeting) { DeselectSkill(); return; }
             DeselectUnit();
             _selectedSkill = skill;
-            _isSkillTargeting = false;
+            
+            // USER REQUEST: If the skill is ready to use, enable targeting mode immediately
+            // so the player sees the range/hover feedback without an extra click.
+            bool isOnCooldown = _skillManager != null && _skillManager.GetRemainingCooldown(skill) > 0;
+            bool canAfford = _currencyManager != null && _currencyManager.CanAfford(skill.SealCost);
+            _isSkillTargeting = canAfford && !isOnCooldown;
+
             _lastSkillSelectFrame = Time.frameCount; // Frame guard
             UpdateTileVisuals();
             OnSkillSelectedChanged?.Invoke(_selectedSkill);
@@ -376,6 +406,14 @@ namespace MaouSamaTD.Managers
                 // Skills only execute on RELEASE (allows previewing while holding)
                 if (isReleased)
                 {
+                    if (_isSkillDragActive)
+                    {
+                        bool success = HandleSkillInput(ray);
+                        // Drag drop always returns to skills state after release
+                        DeselectSkill();
+                        return;
+                    }
+
                     // Frame guard: Don't execute on the same frame we selected the skill
                     // (Prevents accidental cast from the click that selected it)
                     if (Time.frameCount == _lastSkillSelectFrame) return;
@@ -394,7 +432,7 @@ namespace MaouSamaTD.Managers
             // Placement and Selection happen on PRESS DOWN
             if (isReleased) return;
 
-            // BLOCK unit selection if we have a skill selected or are in targeting mode
+            // BLOCK unit selection if we have a skill selected (even if not targeting yet, i.e. description open)
             // This prevents the unit inspector from opening and closing our skill descriptions.
             if (_selectedSkill != null) return;
             

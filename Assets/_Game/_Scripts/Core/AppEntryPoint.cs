@@ -30,9 +30,25 @@ namespace MaouSamaTD.Core
             {
                 if (_loadedUnitDatabase == null)
                 {
-                    Debug.Log("[AppEntryPoint] LoadedUnitDatabase accessed while null. Attempting sync load...");
-                    var handle = Addressables.LoadAssetAsync<UnitDatabase>("UnitDatabase");
-                    _loadedUnitDatabase = handle.WaitForCompletion();
+                    // 1. Editor Fallback
+                    #if UNITY_EDITOR
+                    _loadedUnitDatabase = UnityEditor.AssetDatabase.LoadAssetAtPath<UnitDatabase>("Assets/_Game/Data/Units/UnitDatabase.asset");
+                    if (_loadedUnitDatabase != null) return _loadedUnitDatabase;
+                    #endif
+
+                    // 2. Runtime
+                    try 
+                    {
+                        var handle = Addressables.LoadAssetAsync<UnitDatabase>("UnitDatabase");
+                        if (handle.IsValid())
+                        {
+                            _loadedUnitDatabase = handle.WaitForCompletion();
+                        }
+                    } 
+                    catch (System.Exception e) 
+                    {
+                        Debug.LogWarning($"[AppEntryPoint] Failed to load UnitDatabase: {e.Message}");
+                    }
                 }
                 return _loadedUnitDatabase;
             }
@@ -45,20 +61,32 @@ namespace MaouSamaTD.Core
             {
                 if (_loadedLevelDatabase == null)
                 {
-                    Debug.Log("[AppEntryPoint] LoadedLevelDatabase accessed while null. Attempting sync load...");
-                    try {
+                    // 1. Editor Fallback: Try direct path first to avoid Addressables 'InvalidKey' errors in dev
+                    #if UNITY_EDITOR
+                    _loadedLevelDatabase = UnityEditor.AssetDatabase.LoadAssetAtPath<MaouSamaTD.Data.LevelDatabase>("Assets/_Game/Data/Levels/LevelDatabase.asset");
+                    if (_loadedLevelDatabase != null)
+                    {
+                        return _loadedLevelDatabase;
+                    }
+                    #endif
+
+                    // 2. Runtime/Build: Try Addressables
+                    try 
+                    {
                         var handle = Addressables.LoadAssetAsync<MaouSamaTD.Data.LevelDatabase>("LevelDatabase");
-                        _loadedLevelDatabase = handle.WaitForCompletion();
-                    } catch (System.Exception e) {
-                        Debug.LogWarning($"[AppEntryPoint] Addressables failed to load LevelDatabase: {e.Message}. Trying fallback path...");
+                        if (handle.IsValid())
+                        {
+                            _loadedLevelDatabase = handle.WaitForCompletion();
+                        }
+                    } 
+                    catch (System.Exception e) 
+                    {
+                        Debug.LogWarning($"[AppEntryPoint] Addressables failed to find 'LevelDatabase' key: {e.Message}. Ensure it is marked as Addressable.");
                     }
 
                     if (_loadedLevelDatabase == null)
                     {
-                        // Fallback to direct path for editor/dev stability
-                        #if UNITY_EDITOR
-                        _loadedLevelDatabase = UnityEditor.AssetDatabase.LoadAssetAtPath<MaouSamaTD.Data.LevelDatabase>("Assets/_Game/Data/Levels/LevelDatabase.asset");
-                        #endif
+                        Debug.LogWarning("[AppEntryPoint] LevelDatabase could not be loaded via Addressables or Fallback. Features relying on LevelData may fail.");
                     }
                 }
                 return _loadedLevelDatabase;
@@ -72,9 +100,25 @@ namespace MaouSamaTD.Core
             {
                 if (_loadedScalingData == null)
                 {
-                    Debug.Log("[AppEntryPoint] LoadedScalingData accessed while null. Attempting sync load...");
-                    var handle = Addressables.LoadAssetAsync<MaouSamaTD.Units.ClassScalingData>("ClassScaleData");
-                    _loadedScalingData = handle.WaitForCompletion();
+                    // 1. Editor Fallback
+                    #if UNITY_EDITOR
+                    _loadedScalingData = UnityEditor.AssetDatabase.LoadAssetAtPath<MaouSamaTD.Units.ClassScalingData>("Assets/_Game/Data/ClassScalingData.asset");
+                    if (_loadedScalingData != null) return _loadedScalingData;
+                    #endif
+
+                    // 2. Runtime
+                    try 
+                    {
+                        var handle = Addressables.LoadAssetAsync<MaouSamaTD.Units.ClassScalingData>("ClassScaleData");
+                        if (handle.IsValid())
+                        {
+                            _loadedScalingData = handle.WaitForCompletion();
+                        }
+                    } 
+                    catch (System.Exception e) 
+                    {
+                        Debug.LogWarning($"[AppEntryPoint] Failed to load ClassScalingData: {e.Message}");
+                    }
                 }
                 return _loadedScalingData;
             }

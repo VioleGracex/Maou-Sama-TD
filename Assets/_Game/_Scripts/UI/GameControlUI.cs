@@ -731,11 +731,23 @@ namespace MaouSamaTD.UI
 
             System.Action<System.Action> closePopup = (callback) =>
             {
-                popup.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() =>
+                Transform dialogTrans = popup.transform.Find("TutorialSkip_Dialog");
+                if (dialogTrans != null)
                 {
-                    Destroy(popup);
-                    callback?.Invoke();
-                });
+                    dialogTrans.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() =>
+                    {
+                        Destroy(popup);
+                        callback?.Invoke();
+                    });
+                }
+                else
+                {
+                    popup.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() =>
+                    {
+                        Destroy(popup);
+                        callback?.Invoke();
+                    });
+                }
             };
 
             if (yesBtn != null)
@@ -757,8 +769,17 @@ namespace MaouSamaTD.UI
             }
             
             // Open Animation
-            popup.transform.localScale = Vector3.zero;
-            popup.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+            Transform openDialogTrans = popup.transform.Find("TutorialSkip_Dialog");
+            if (openDialogTrans != null)
+            {
+                openDialogTrans.localScale = Vector3.zero;
+                openDialogTrans.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+            }
+            else
+            {
+                popup.transform.localScale = Vector3.zero;
+                popup.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+            }
         }
 
     }

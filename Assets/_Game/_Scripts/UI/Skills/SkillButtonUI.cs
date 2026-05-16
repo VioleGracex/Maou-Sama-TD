@@ -149,8 +149,8 @@ namespace MaouSamaTD.UI.Skills
 
             if (!isCurrentSelected)
             {
-                // Left Click: Select and enter targeting mode immediately
-                _interactionManager.SelectSkill(_data);
+                // Left Click: Select and show description (only enters targeting if ready)
+                _interactionManager.SelectSkillForDescription(_data);
             }
             else
             {
@@ -175,7 +175,7 @@ namespace MaouSamaTD.UI.Skills
             // Dragging activates targeting immediately
             if (_interactionManager.SelectedSkill != _data)
             {
-                _interactionManager.SelectSkill(_data);
+                _interactionManager.SelectSkillForDrag(_data);
             }
         }
 

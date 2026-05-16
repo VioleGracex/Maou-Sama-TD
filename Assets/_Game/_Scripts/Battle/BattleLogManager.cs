@@ -35,15 +35,23 @@ namespace MaouSamaTD.Battle
         public event System.Action<BattleLogEntry> OnEventLogged;
 
         private static BattleLogManager _instance;
+        private static bool _isQuitting = false;
+
         public static BattleLogManager Instance
         {
             get
             {
+                if (_isQuitting) return null;
+
                 if (_instance == null)
                 {
-                    var go = new GameObject("BattleLogManager");
-                    _instance = go.AddComponent<BattleLogManager>();
-                    DontDestroyOnLoad(go);
+                    _instance = FindFirstObjectByType<BattleLogManager>();
+                    if (_instance == null)
+                    {
+                        var go = new GameObject("BattleLogManager");
+                        _instance = go.AddComponent<BattleLogManager>();
+                    }
+                    DontDestroyOnLoad(_instance.gameObject);
                 }
                 return _instance;
             }
@@ -64,6 +72,19 @@ namespace MaouSamaTD.Battle
             }
             _instance = this;
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnApplicationQuit()
+        {
+            _isQuitting = true;
+        }
+
+        private void OnDestroy()
+        {
+            if (_instance == this)
+            {
+                _instance = null;
+            }
         }
 
         public void LogEvent(BattleLogType type, string source, string target, string message, float value = 0)

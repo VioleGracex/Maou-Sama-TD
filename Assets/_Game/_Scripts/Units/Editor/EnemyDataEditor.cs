@@ -101,7 +101,14 @@ namespace MaouSamaTD.Units.Editor
             DrawProperty("AttackPower", "Attack Power");
             DrawProperty("AttackInterval", "Attack Interval (Sec)");
             DrawProperty("AttackRange", "Attack Range (Tiles)");
+            EditorGUILayout.BeginHorizontal();
             DrawProperty("ExitDamage", "Exit Damage (To Player)");
+            SerializedProperty exitDamageTypeProp = serializedObject.FindProperty("ExitDamageType");
+            if (exitDamageTypeProp != null)
+            {
+                EditorGUILayout.PropertyField(exitDamageTypeProp, GUIContent.none, GUILayout.Width(110));
+            }
+            EditorGUILayout.EndHorizontal();
             DrawProperty("DamageType", "Damage Type");
             EndSection();
 

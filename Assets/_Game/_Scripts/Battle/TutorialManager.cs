@@ -212,6 +212,7 @@ namespace MaouSamaTD.Managers
             if (_showDebugLogs) Debug.Log("[tutorial] Purge called. Disabling TutorialManager and hiding visuals.");
             
             IsInTutorial = false;
+            _gameManager?.SetSpeed(1);
             StopAllCoroutines();
             
             if (_dialogueManager != null) _dialogueManager.HideDialogue();
@@ -640,6 +641,11 @@ namespace MaouSamaTD.Managers
                                 _waitingForAction = true;
                                 _waitingActionKey = step.ActionKey;
                                 yield return new WaitUntil(() => !_waitingForAction);
+                                
+                                // USER REQUEST: Close UI blocker right away when action is triggered
+                                // to avoid it 'floating' over the game while time is briefly resumed.
+                                _uiBlocker.HideBlocker();
+                                
                                 yield return StartCoroutine(HandlePostActionDelay(step));
                             }
 
@@ -691,22 +697,33 @@ namespace MaouSamaTD.Managers
                             }
                             
                             _waitingForAction = true;
-                            _waitingActionKey = step.ActionKey;
-                            yield return new WaitUntil(() => !_waitingForAction);
-                            yield return StartCoroutine(HandlePostActionDelay(step));
-                            
-                            _handUI.Hide();
-
                             // Auto-skip "Open Rite Menu" if it's already open
                             if (step.ActionKey == "RiteMenuOpened")
                             {
-                                var skillPanel = FindObjectOfType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                                var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
                                 if (skillPanel != null && skillPanel.IsVisible)
                                 {
                                     if (_showDebugLogs) Debug.Log("[tutorial] Rite Menu already open, auto-completing step.");
                                     _triggeredActionsBuffer.Add("RiteMenuOpened");
                                 }
                             }
+
+                            _waitingActionKey = step.ActionKey;
+                            
+                            if (_triggeredActionsBuffer.Contains(step.ActionKey))
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer early, proceeding.");
+                                _waitingForAction = false; 
+                                _triggeredActionsBuffer.Remove(step.ActionKey);
+                            }
+                            else
+                            {
+                                yield return new WaitUntil(() => !_waitingForAction);
+                            }
+                            
+                            yield return StartCoroutine(HandlePostActionDelay(step));
+                            
+                            _handUI.Hide();
 
                             // If executing the ultimate on boss, remove death prevention
                             if (step.StepName == "Execute the Ultimate")
@@ -829,7 +846,18 @@ namespace MaouSamaTD.Managers
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey}");
                             
                             // Ensure time flows if we are waiting for a dynamic condition, UNLESS StopTime is requested!
-                                                        if (step.StopTime || step.StepName == "One-Shot Rite")
+                                                        bool shouldStopTime = step.StopTime || step.StepName == "One-Shot Rite";
+                            
+                            // Safety Override: Don't stop time for conditions that require enemy movement to progress
+                            if (step.Type == TutorialStepType.WaitForAction && 
+                                (step.ActionKey == "BossPassedUnit" || step.ActionKey == "BossReachedIgnis"))
+                            {
+                                shouldStopTime = false;
+                                if (_showDebugLogs && _gameManager.CurrentSpeed < 0.1f) 
+                                    Debug.Log("[tutorial] Safety Override: Resuming time for boss movement condition.");
+                            }
+
+                            if (shouldStopTime)
                             {
                                 if (_gameManager.CurrentSpeed > 0.1f)
                                 {
@@ -1196,7 +1224,20 @@ namespace MaouSamaTD.Managers
                     RectTransform rt = FindTargetRect(ut.Name);
                     if (rt != null) 
                     {
-                        if (rt.gameObject.activeInHierarchy)
+                        bool isSkillButton = ut.Name.Contains("SovereignRite") || ut.Name.Contains("SkillButton");
+                        bool isMenuVisible = true;
+                        
+                        // If it's a skill button, check if the panel is actually visible (not slid off-screen)
+                        if (isSkillButton)
+                        {
+                            var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                            if (skillPanel != null && !skillPanel.IsVisible)
+                            {
+                                isMenuVisible = false;
+                            }
+                        }
+
+                        if (rt.gameObject.activeInHierarchy && isMenuVisible)
                         {
                             uiHits.Add(new UIPopupBlocker.UIHighlightData 
                             { 
@@ -1205,9 +1246,9 @@ namespace MaouSamaTD.Managers
                                  Offset = ut.SizeOffset
                             });
                         }
-                        else if (ut.Name.Contains("SovereignRite") || ut.Name.Contains("SkillButton"))
+                        else if (isSkillButton)
                         {
-                            // If a Rite button is inactive, the menu is likely closed.
+                            // If a Rite button is inactive or the menu is off-screen,
                             // Highlight the toggle button so the user can reopen it.
                             RectTransform toggleRt = FindTargetRect("SovereignRiteToggle");
                             // Use activeSelf instead of activeInHierarchy because if the whole skills panel is inactive, 
@@ -1700,7 +1741,11 @@ private RectTransform FindTargetRect(string name)
                 
                 // Briefly resume time
                 _gameManager.SetSpeed(1);
-                yield return new WaitForSeconds(2.0f);
+                
+                // USER REQUEST: Eliminate artificial delays. 
+                // Reducing from 2.0s to 0.5s so player sees the immediate impact but doesn't wait.
+                float delay = (step.ActionKey == "SkillUsed" && step.StepName.Contains("Empower")) ? 0.2f : 0.5f;
+                yield return new WaitForSeconds(delay);
                 
                 // Re-pause if this step requested StopTime, to maintain the state until transition
                 // EXCEPT for Level 2 Boss death steps, where we want the EnemyManager's cinematic to take over

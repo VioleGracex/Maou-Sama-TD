@@ -25,12 +25,17 @@ MonoBehaviour:
   AttackPower: 150
   AttackInterval: 2
   AttackRange: 0.8
-  DamageToPlayerBase: 1
+  DamageType: 0
+  ExitDamage: 100
+  ExitDamageType: 1
   AttackPattern: 4
+  CustomPatternOffsets: []
   MovementType: 0
   CollisionType: 0
   EvasionType: 0
+  TargetingPriority: 0
   OnlyAttackIfBlocked: 0
+  GroundAttackTargets: 1
   PhasingCharges: 0
   Immunities: 
   Abilities: []

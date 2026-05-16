@@ -26,7 +26,8 @@ MonoBehaviour:
   AttackInterval: 2
   AttackRange: 1
   DamageType: 0
-  ExitDamage: 10
+  ExitDamage: 100
+  ExitDamageType: 1
   AttackPattern: 3
   CustomPatternOffsets: []
   MovementType: 0

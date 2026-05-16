@@ -11,8 +11,8 @@ namespace MaouSamaTD.Data
 
         public LevelData GetLevelByID(string id)
         {
-            if (string.IsNullOrEmpty(id)) return null;
-            return AllLevels.Find(l => l.LevelID == id);
+            if (string.IsNullOrEmpty(id) || AllLevels == null) return null;
+            return AllLevels.Find(l => l != null && l.LevelID == id);
         }
 
         public LevelData GetNextLevel(LevelData current)

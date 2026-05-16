@@ -329,7 +329,32 @@ namespace MaouSamaTD.Units
                                 // If not set to bypass defenders, stop moving to focus on attacking
                                 if (!_enemyData.OnlyAttackIfBlocked)
                                 {
-                                    _isMoving = false;
+                                    // Melee units with 'All' pattern can technically attack diagonally (Manhattan dist 2),
+                                    // but they should try to get adjacent (dist 1) for a better 'melee' feel.
+                                    if (_enemyData.DamageType == DamageType.Melee)
+                                    {
+                                        Vector2Int myCoord = _gridManager.WorldToGridCoordinates(transform.position);
+                                        Vector2Int targetCoord = _gridManager.WorldToGridCoordinates(_attackTarget.transform.position);
+                                        int manhattanDist = Mathf.Abs(myCoord.x - targetCoord.x) + Mathf.Abs(myCoord.y - targetCoord.y);
+                                        
+                                        if (_enemyData.IsBoss)
+                                        {
+                                            Debug.Log($"[BOSS DEBUG] Evaluate Stop: ManhattanDist={manhattanDist}, Range={Range}, Pattern={_enemyData.AttackPattern}");
+                                        }
+
+                                        if (manhattanDist <= 1)
+                                        {
+                                            if (_enemyData.IsBoss) Debug.Log("[BOSS DEBUG] Stopping - Manhattan distance <= 1");
+                                            _isMoving = false;
+                                            InitiateCentering();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (_enemyData.IsBoss) Debug.Log("[BOSS DEBUG] Stopping - Ranged/Other");
+                                        _isMoving = false;
+                                        InitiateCentering();
+                                    }
                                 }
                             }
                             else if (!_isMoving && _blockedBy == null && !_isCharmed)
@@ -527,7 +552,7 @@ namespace MaouSamaTD.Units
             {
                 _lastAttackTime = Time.time;
                 
-                if (gameObject.name.ToLower().Contains("boss") && _gridManager != null)
+                if (_enemyData != null && _enemyData.IsBoss && _gridManager != null)
                 {
                     Vector2Int myCoord = _gridManager.WorldToGridCoordinates(transform.position);
                     Vector2Int targetCoord = _gridManager.WorldToGridCoordinates(target.transform.position);

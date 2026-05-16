@@ -60,7 +60,7 @@ MonoBehaviour:
   AcquisitionDate: 0
   Rarity: 4
   Class: 0
-  AttackPattern: 4
+  AttackPattern: 3
   AttackType: 0
   DamageType: 0
   DeploymentCost: 26

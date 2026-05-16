@@ -163,25 +163,7 @@ namespace MaouSamaTD.UI.Skills
                 }
                 clickBtn.onClick.RemoveAllListeners();
                 clickBtn.onClick.AddListener(() => {
-                    SovereignRiteData activeSkill = _interactionManager?.SelectedSkill;
-                    if (activeSkill != null)
-                    {
-                        if (_interactionManager.IsSkillTargeting)
-                        {
-                            // Already targeting -> Cancel/Back to description
-                            _interactionManager.SelectSkillForDescription(activeSkill);
-                        }
-                        else if (_skillManager != null && _skillManager.IsSkillReady(activeSkill))
-                        {
-                            // Viewing description + affordable -> Start targeting
-                            _interactionManager.SelectSkill(activeSkill);
-                        }
-                        else
-                        {
-                            // Unaffordable -> Keep description open but provide feedback
-                            // (Cost text is already red from RefreshDescriptionAffordability)
-                        }
-                    }
+                    _interactionManager?.DeselectSkill();
                 });
 
                 // 1b. Setup Description Glow

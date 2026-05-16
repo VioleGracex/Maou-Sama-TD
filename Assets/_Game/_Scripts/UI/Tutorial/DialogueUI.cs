@@ -109,7 +109,7 @@ namespace MaouSamaTD.UI.Tutorial
             _canvasGroup = GetComponent<CanvasGroup>();
             Debug.Log("[tutorial] DialogueUI Awake - Initializing listeners...");
 
-            // Ensure Canvas is top-level overlay
+            // Ensure Canvas is top-level overlay and parented to MainCanvas if it exists
             Canvas canvas = GetComponent<Canvas>();
             if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
             
@@ -118,6 +118,14 @@ namespace MaouSamaTD.UI.Tutorial
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 canvas.sortingOrder = 3000; // Much higher than blocker (999)
             }
+
+            GameObject mainCanvasGO = GameObject.FindWithTag("MainCanvas");
+            if (mainCanvasGO != null && transform.parent != mainCanvasGO.transform)
+            {
+                transform.SetParent(mainCanvasGO.transform, false);
+                transform.SetAsLastSibling();
+            }
+
             if (GetComponent<GraphicRaycaster>() == null) gameObject.AddComponent<GraphicRaycaster>();
 
             if (_fullScreenPanel != null) _fullScreenPanel.SetActive(false);
@@ -392,9 +400,8 @@ namespace MaouSamaTD.UI.Tutorial
                 if (_fullScreenDim != null)
                 {
                     _fullScreenDim.DOKill();
-                    _fullScreenDim.DOFade(0f, 0.3f).SetUpdate(true).OnComplete(() => {
-                        _fullScreenDim.gameObject.SetActive(false);
-                    });
+                    _fullScreenDim.alpha = 0f;
+                    _fullScreenDim.gameObject.SetActive(false);
                 }
             }
             
@@ -418,9 +425,8 @@ namespace MaouSamaTD.UI.Tutorial
                     if (_fullScreenDim != null)
                     {
                         _fullScreenDim.DOKill();
-                        _fullScreenDim.DOFade(0f, 0.3f).SetUpdate(true).OnComplete(() => {
-                            _fullScreenDim.gameObject.SetActive(false);
-                        });
+                        _fullScreenDim.alpha = 0f;
+                        _fullScreenDim.gameObject.SetActive(false);
                     }
                     RectTransform dialogueRT = GetActivePanelRect();
                     if (_uiBlocker != null && dialogueRT != null)
@@ -441,8 +447,7 @@ namespace MaouSamaTD.UI.Tutorial
                         if (img != null) img.color = Color.black;
                         
                         _fullScreenDim.DOKill();
-                        _fullScreenDim.alpha = 0f;
-                        _fullScreenDim.DOFade(0.7f, 0.3f).SetUpdate(true);
+                        _fullScreenDim.alpha = 0.7f; // Immediate set instead of animation
                     }
                     break;
             }

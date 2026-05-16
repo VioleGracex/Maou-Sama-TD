@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using UnityEngine.SceneManagement;
 using TMPro;
 using MaouSamaTD.Managers;
@@ -60,6 +61,10 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _starConditionPrefab;
         [SerializeField] private Sprite _starFullSprite;
         [SerializeField] private Sprite _starEmptySprite;
+
+        [Header("Stage Clear Banner")]
+        [SerializeField] private RectTransform _stageClearBanner;
+        [SerializeField] private float _bannerDuration = 2.5f;
         [Header("Debug")]
         [SerializeField] private bool _showDebugLogs = true;
 
@@ -232,37 +237,84 @@ namespace MaouSamaTD.UI
                     if (isFirstLevel) _winNextButton.gameObject.SetActive(true);
                     else if (isSecondLevel) _winNextButton.gameObject.SetActive(false);
                     else _winNextButton.gameObject.SetActive(nextLevel != null);
-
-                    Debug.Log($"[GameControlUI] Next Level Button: {_winNextButton.gameObject.activeSelf} (Level Index: {levelIdx})");
                 }
 
-                _winPanel.SetActive(true);
-                Debug.Log($"[GameControlUI] Activated _winPanel activeSelf is now: {_winPanel.activeSelf}");
-
-                if (_levelTitleText != null)
-                {
-                    _levelTitleText.text = currentLevel != null ? currentLevel.LevelName.ToUpper() : levelTitle;
-                }
-
-                if (_clearTimeText != null)
-                {
-                    float time = _gameManager.TimeTaken;
-                    int minutes = Mathf.FloorToInt(time / 60F);
-                    int seconds = Mathf.FloorToInt(time % 60F);
-                    _clearTimeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-                    Debug.Log($"[GameControlUI] Assigned Clear Time: {_clearTimeText.text} (Raw: {time})");
-                }
-                else
-                {
-                    Debug.LogWarning("[GameControlUI] Clear Time Text is NOT assigned in Inspector!");
-                }
-
-                PopulateStarConditions();
+                ShowWinPanel();
             }
             else
             {
                 Debug.LogError("[GameControlUI] SHOW WIN FAILED: _winPanel is null and could not be resolved dynamically!");
             }
+        }
+
+        public void ShowWinPanel()
+        {
+            if (_showDebugLogs) Debug.Log("[GameControlUI] Showing Win Panel.");
+            
+            StartCoroutine(StageClearSequence());
+        }
+
+        private IEnumerator StageClearSequence()
+        {
+            if (_stageClearBanner != null)
+            {
+                _stageClearBanner.gameObject.SetActive(true);
+                
+                // Arknights style: slightly tilted and centered
+                _stageClearBanner.localRotation = Quaternion.Euler(0, 0, -3.5f);
+                
+                Vector2 originalPos = _stageClearBanner.anchoredPosition;
+                _stageClearBanner.anchoredPosition = new Vector2(0, 1000); // Start off-screen top
+                _stageClearBanner.localScale = Vector3.one * 0.8f; // Start slightly smaller for "pop"
+
+                // Apply premium shadow styling to children texts
+                var texts = _stageClearBanner.GetComponentsInChildren<TextMeshProUGUI>();
+                foreach (var t in texts)
+                {
+                    Shadow shadow = t.GetComponent<Shadow>();
+                    if (shadow == null) shadow = t.gameObject.AddComponent<Shadow>();
+                    shadow.effectColor = new Color(0, 0, 0, 0.7f);
+                    shadow.effectDistance = new Vector2(8f, -8f);
+                }
+                
+                // Animate to center with impact
+                _stageClearBanner.DOAnchorPos(Vector2.zero, 0.8f).SetUpdate(true).SetEase(Ease.OutBack);
+                _stageClearBanner.DOScale(1f, 0.8f).SetUpdate(true).SetEase(Ease.OutBack);
+
+                yield return new WaitForSecondsRealtime(_bannerDuration);
+                
+                // Exit animation: Slide down off-screen
+                _stageClearBanner.DOAnchorPosY(-1000, 0.7f).SetUpdate(true).SetEase(Ease.InBack);
+                yield return new WaitForSecondsRealtime(0.7f);
+                
+                _stageClearBanner.gameObject.SetActive(false);
+                _stageClearBanner.anchoredPosition = originalPos;
+                _stageClearBanner.localRotation = Quaternion.identity;
+            }
+
+            if (_winPanel != null)
+            {
+                _winPanel.SetActive(true);
+                _winPanel.transform.localScale = Vector3.zero;
+                _winPanel.transform.DOScale(1f, 0.5f).SetUpdate(true).SetEase(Ease.OutBack);
+                
+                // Now that the win panel is up, we can finally stop time
+                _gameManager.SetSpeed(0f);
+            }
+            
+            if (_levelTitleText != null && _gameManager.CurrentLevelData != null)
+                _levelTitleText.text = _gameManager.CurrentLevelData.LevelName;
+
+            if (_clearTimeText != null)
+            {
+                float time = _gameManager.TimeTaken;
+                int minutes = Mathf.FloorToInt(time / 60);
+                int seconds = Mathf.FloorToInt(time % 60);
+                _clearTimeText.text = $"Clear Time: {minutes:00}:{seconds:00}";
+            }
+
+            // Populate Star Conditions
+            PopulateStarConditions();
         }
 
         private void PopulateStarConditions()
@@ -640,13 +692,23 @@ namespace MaouSamaTD.UI
             }
 
             // Find MainCanvas to ensure UI renders correctly
-            Canvas canvas = GetComponentInParent<Canvas>();
-            if (canvas == null) canvas = FindFirstObjectByType<Canvas>();
+            GameObject canvasGo = GameObject.FindWithTag("MainCanvas");
+            Canvas canvas = canvasGo != null ? canvasGo.GetComponent<Canvas>() : FindFirstObjectByType<Canvas>();
             
             Transform parent = canvas != null ? canvas.transform : this.transform;
             GameObject popup = Instantiate(_tutorialSkipPrefab, parent);
             popup.SetActive(true);
             popup.transform.SetAsLastSibling();
+
+            // Safety: Ensure it hasn't collapsed to 0 width/height
+            RectTransform popupRT = popup.GetComponent<RectTransform>();
+            if (popupRT != null)
+            {
+                if (popupRT.sizeDelta.x <= 0) popupRT.sizeDelta = new Vector2(500, popupRT.sizeDelta.y);
+                if (popupRT.sizeDelta.y <= 0) popupRT.sizeDelta = new Vector2(popupRT.sizeDelta.x, 300);
+                popupRT.localScale = Vector3.one;
+                popupRT.anchoredPosition = Vector2.zero;
+            }
 
 
             // Find Buttons in children

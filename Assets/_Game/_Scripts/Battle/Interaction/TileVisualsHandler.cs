@@ -112,7 +112,8 @@ namespace MaouSamaTD.Managers.Interaction
                     {
                         shouldHighlight = true;
                         highlightColor = selectedSkill.BaseVisuals.RangeIndicatorColor;
-                        highlightColor.a = (tile == hoverTile) ? 0.35f : 0.15f; 
+                        // INCREASED visibility for the AOE shape
+                        highlightColor.a = (tile == hoverTile) ? 0.6f : 0.4f; 
                         useFullFill = UseFullFillSkills;
                     }
                 }

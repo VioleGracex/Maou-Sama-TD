@@ -394,6 +394,16 @@ namespace MaouSamaTD.Managers
                 
                 ClearAllTileHighlights();
 
+                // Hardening: Clear triggered action buffer for WaitForAction steps to prevent stale triggers from previous steps skipping them
+                if (step.Type == TutorialStepType.WaitForAction && !string.IsNullOrEmpty(step.ActionKey))
+                {
+                    if (_showDebugLogs) Debug.Log($"[tutorial] Entering WaitForAction step '{step.StepName}'. Clearing action buffer to prevent stale skip.");
+                    _triggeredActionsBuffer.Remove(step.ActionKey);
+                    // Also remove generic SkillUsed if we are waiting for SkillUsed
+                    if (step.ActionKey == "SkillUsed") _triggeredActionsBuffer.Remove("RiteUsed");
+                    if (step.ActionKey == "RiteUsed") _triggeredActionsBuffer.Remove("SkillUsed");
+                }
+
                 // Skip step if already completed (e.g., unit already placed)
                 if (CheckStepAlreadyCompleted(step))
                 {
@@ -441,14 +451,19 @@ namespace MaouSamaTD.Managers
                 _isSkillTargetingLastFrame = _interactionManager != null && _interactionManager.IsSkillTargeting;
                 var currentSkillPanel = FindObjectOfType<MaouSamaTD.UI.Skills.SkillPanelUI>();
                 _isSkillPanelVisibleLastFrame = currentSkillPanel != null && currentSkillPanel.IsVisible;
-                // Special check for Level 2: Ensure player has the cost of the AOE spell during swarm/cast phase
+                // Special check for Level 2: Ensure player has enough seals for AOE/Boss phase
                 if (_activeTutorial != null && _activeTutorial.name.Contains("Level2") && 
-                    (step.StepName == "Mobs Swarming!" || step.StepName == "Teach AOE Rite" || step.StepName == "Cast AOE Rite"))
+                    (step.StepName == "Mobs Swarming!" || step.StepName == "Teach AOE Rite" || step.StepName == "Cast AOE Rite" || step.StepName == "Boss Appears" || step.StepName.Contains("Rite")))
                 {
-                    if (_currencyManager != null && _currencyManager.CurrentSeals < 25)
+                    if (_currencyManager != null)
                     {
-                        _currencyManager.SetSeals(25);
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Ensuring player has enough seals for AOE spell. Set seals to 25.");
+                        // Give 99 seals for the boss phase as requested
+                        int targetSeals = step.StepName.Contains("Rite") ? 99 : 25;
+                        if (_currencyManager.CurrentSeals < targetSeals)
+                        {
+                            _currencyManager.SetSeals(targetSeals);
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Ensuring player has enough seals for step: {step.StepName}. Set seals to {targetSeals}.");
+                        }
                     }
                 }
 
@@ -502,6 +517,7 @@ namespace MaouSamaTD.Managers
                                 _uiBlocker?.HideBlocker(true); // Hide blocker during wait/boss walk-up
                                 _handUI?.Hide();               // Hide hand during wait
                                 yield return new WaitUntil(() => CheckCondition(step));
+                                yield return StartCoroutine(HandlePostActionDelay(step));
                                 _isWaitingForDialogueCondition = false;
                             }
 
@@ -536,6 +552,12 @@ namespace MaouSamaTD.Managers
                                 }
                             }
 
+                            // Show highlight/blocker BEFORE dialogue so it's visible while talking
+                            if (step.UseBlocker)
+                            {
+                                HandleUIHighlight(step);
+                            }
+
                             bool dialogueDone = false;
                             if (step.Dialogue != null)
                             {
@@ -550,12 +572,6 @@ namespace MaouSamaTD.Managers
                             {
                                 if (_showDebugLogs) Debug.LogWarning($"[tutorial] DialogueOnly step '{step.StepName}' has no Dialogue data. Skipping dialogue.");
                             }
-
-                            // Only show highlight/blocker AFTER dialogue is finished, if requested
-                            if (step.UseBlocker)
-                            {
-                                HandleUIHighlight(step);
-                            }
                             
                             _handUI.Hide();
                         }
@@ -564,6 +580,9 @@ namespace MaouSamaTD.Managers
                     case TutorialStepType.HighlightUI:
                         // TRIGGER: Highlights a specific UI element and optionally shows dialogue.
                         {
+                            // Highlight BEFORE dialogue
+                            HandleUIHighlight(step);
+
                             bool uiDialogueDone = false;
                             if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                             {
@@ -575,9 +594,6 @@ namespace MaouSamaTD.Managers
                                 yield return new WaitUntil(() => uiDialogueDone);
                             }
                             
-                            // Highlight AFTER dialogue
-                            HandleUIHighlight(step);
-                            
                             // If this is just a highlight step without a wait, we might need a small delay or just proceed
                             if (string.IsNullOrEmpty(step.ActionKey))
                             {
@@ -588,6 +604,7 @@ namespace MaouSamaTD.Managers
                                 _waitingForAction = true;
                                 _waitingActionKey = step.ActionKey;
                                 yield return new WaitUntil(() => !_waitingForAction);
+                                yield return StartCoroutine(HandlePostActionDelay(step));
                             }
 
                             _handUI.Hide();
@@ -623,6 +640,7 @@ namespace MaouSamaTD.Managers
                                 _waitingForAction = true;
                                 _waitingActionKey = step.ActionKey;
                                 yield return new WaitUntil(() => !_waitingForAction);
+                                yield return StartCoroutine(HandlePostActionDelay(step));
                             }
 
                             _handUI.Hide();
@@ -635,17 +653,17 @@ namespace MaouSamaTD.Managers
                         {
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for action: {step.ActionKey}");
 
+                            // Show highlight and hand BEFORE dialogue
+                            if (step.UseBlocker)
+                            {
+                                HandleUIHighlight(step);
+                            }
+
                             if (step.Dialogue != null && step.Dialogue.Lines != null && step.Dialogue.Lines.Count > 0)
                             {
                                 bool actionDialogueDone = false;
                                 _dialogueManager.StartDialogue(step.Dialogue, () => actionDialogueDone = true);
                                 yield return new WaitUntil(() => actionDialogueDone);
-                            }
-                            
-                            // Show highlight and hand AFTER dialogue
-                            if (step.UseBlocker)
-                            {
-                                HandleUIHighlight(step);
                             }
 
                             if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)
@@ -675,6 +693,7 @@ namespace MaouSamaTD.Managers
                             _waitingForAction = true;
                             _waitingActionKey = step.ActionKey;
                             yield return new WaitUntil(() => !_waitingForAction);
+                            yield return StartCoroutine(HandlePostActionDelay(step));
                             
                             _handUI.Hide();
 
@@ -1063,7 +1082,9 @@ namespace MaouSamaTD.Managers
             _handUI.Hide();
 
             // Force victory at the end of tutorial levels if it hasn't been triggered yet
-            if (_gameManager != null && !_gameManager.IsGameEnded)
+            // Skip for Level 2 as it has its own cinematic boss death flow in EnemyManager
+            bool isLevel2 = _gameManager != null && _gameManager.CurrentLevelData != null && _gameManager.CurrentLevelData.LevelID.Contains("Level2");
+            if (_gameManager != null && !_gameManager.IsGameEnded && !isLevel2)
             {
                 Debug.Log("[tutorial] Tutorial ended. Triggering Level Victory.");
                 _gameManager.Victory();
@@ -1076,15 +1097,10 @@ namespace MaouSamaTD.Managers
         {
             if (step == null) return;
 
-            // Prevent double-dimming if dialogue has its own full screen dim active
-            if (_dialogueManager != null && _dialogueManager.DialogueUI != null && 
-                _dialogueManager.DialogueUI.IsShowingDialogue && 
-                _dialogueManager.DialogueUI.ActiveBackground == DialogueBackground.FullScreenDim)
-            {
-                _uiBlocker.HideBlocker();
-                _handUI.Hide();
-                return;
-            }
+            // Do not return early if dialogue is showing; we still want to process highlights
+            // even if there is a dim, to allow 'holes' through the dimming layer.
+            bool isDialogueShowing = _dialogueManager != null && _dialogueManager.DialogueUI != null && 
+                                   _dialogueManager.DialogueUI.IsShowingDialogue;
 
             bool hasDialogue = _dialogueManager != null && _dialogueManager.IsDialogueActive;
             if (!step.UseBlocker && !hasDialogue)
@@ -1628,16 +1644,70 @@ private RectTransform FindTargetRect(string name)
             if (_showDebugLogs) Debug.Log($"[tutorial] Delay finished. Proceeding from boss death.");
         }
 
-        public void OnActionTriggered(string actionKey)
+        public void OnActionTriggered(string key)
         {
-            _triggeredActionsBuffer.Add(actionKey);
+            if (key == "BossDead" && _activeTutorial != null && _activeTutorial.name.Contains("Level2"))
+            {
+                if (_showDebugLogs) Debug.Log("[tutorial] Boss death detected. Purging tutorial for cinematic flow.");
+                Purge();
+                return;
+            }
 
-            if (_waitingForAction && _waitingActionKey == actionKey)
+            // Handle Ignis Death in Tutorial Level 2
+            if (key == "UnitDied_Ignis" && _activeTutorial != null && _activeTutorial.name.Contains("Level2"))
+            {
+                if (_showDebugLogs) Debug.Log("[tutorial] Ignis died. Giving 99 seals and advancing step as requested.");
+                _currencyManager?.SetSeals(99);
+                _waitingForAction = false; // Stop waiting to advance
+                return; // Advance immediately
+            }
+
+            // Handle Boss Reaching Exit in Tutorial Level 2 (counts as bypass/fail but proceed)
+            if (key == "EnemyReachedExit_Abyssal Shade" && _activeTutorial != null && _activeTutorial.name.Contains("Level2"))
+            {
+                if (_showDebugLogs) Debug.Log("[tutorial] Boss reached exit. Advancing tutorial step.");
+                _waitingForAction = false;
+                return;
+            }
+
+            if (_waitingForAction && _waitingActionKey == key)
             {
                 _waitingForAction = false;
                 if (_currentStep != null && _currentStep.ResumeTime)
                 {
                     _gameManager.SetSpeed(1); 
+                }
+            }
+            else
+            {
+                _triggeredActionsBuffer.Add(key);
+            }
+        }
+
+        private IEnumerator HandlePostActionDelay(TutorialStep step)
+        {
+            if (string.IsNullOrEmpty(step.ActionKey)) yield break;
+            
+            // Special Case: Level 2 Rite Usage (e.g. AOE or Ultimate)
+            // We want time to resume briefly so the player sees the result (damage, death, floating text)
+            bool isLevel2RiteUsage = _activeTutorial != null && 
+                                     _activeTutorial.name.Contains("Level2") && 
+                                     (step.ActionKey == "RiteUsed" || step.ActionKey == "SkillUsed" || step.StepName.Contains("Rite"));
+
+            if (isLevel2RiteUsage)
+            {
+                if (_showDebugLogs) Debug.Log($"[tutorial] Post-Action delay (2s resume) for step: {step.StepName}");
+                
+                // Briefly resume time
+                _gameManager.SetSpeed(1);
+                yield return new WaitForSeconds(2.0f);
+                
+                // Re-pause if this step requested StopTime, to maintain the state until transition
+                // EXCEPT for Level 2 Boss death steps, where we want the EnemyManager's cinematic to take over
+                bool isBossDeathStep = step.StepName.Contains("One-Shot") || step.StepName.Contains("Boss");
+                if (step.StopTime && !isBossDeathStep)
+                {
+                    _gameManager.SetSpeed(0, true);
                 }
             }
         }

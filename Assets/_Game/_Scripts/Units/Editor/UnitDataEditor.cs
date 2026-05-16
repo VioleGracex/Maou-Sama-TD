@@ -89,6 +89,11 @@ namespace MaouSamaTD.Units.Editor
                 
                 DrawProperty("Class", "Tactical Class");
                 DrawProperty("AcquisitionDate", "Acquired (Ticks)");
+                
+                EditorGUILayout.Space(5);
+                DrawProperty("Experience", "EXP");
+                DrawProperty("SkillLevel", "Skill Level");
+                DrawProperty("Amity", "Bond / Amity %");
             }
             EndSection(progressionState);
 
@@ -160,6 +165,7 @@ namespace MaouSamaTD.Units.Editor
                 DrawProperty("DamageType", "Damage Flavor");
                 DrawProperty("BlockCount", "Block Count");
                 DrawProperty("DeploymentCost", "Deployment Cost");
+                DrawProperty("CanAttackFlying", "Can Hit Flyers?");
             }
             EndSection(rulesState);
 

@@ -148,10 +148,10 @@ namespace MaouSamaTD.Tutorial
 
 
         #region NaughtyAttributes Helpers
-        private bool HasUITarget => Type == TutorialStepType.HighlightUI || Type == TutorialStepType.WaitForAction || Type == TutorialStepType.WaitForCondition;
+        private bool HasUITarget => Type == TutorialStepType.HighlightUI || Type == TutorialStepType.WaitForAction || Type == TutorialStepType.WaitForCondition || Type == TutorialStepType.DialogueOnly;
         private bool HasTileTarget => Type == TutorialStepType.HighlightTile;
-        private bool HasDuration => Type == TutorialStepType.WaitTime;
-        private bool HasAction => Type == TutorialStepType.WaitForAction || Type == TutorialStepType.WaitForCondition;
+        private bool HasDuration => Type == TutorialStepType.WaitTime || Type == TutorialStepType.DialogueOnly;
+        private bool HasAction => Type == TutorialStepType.WaitForAction || Type == TutorialStepType.WaitForCondition || Type == TutorialStepType.DialogueOnly;
         private bool CanShowHand => Type != TutorialStepType.DialogueOnly && Type != TutorialStepType.WaitTime && Type != TutorialStepType.WaitForWave;
         private bool IsWaitAction => Type == TutorialStepType.WaitForAction;
         private bool IsWaveStep => Type == TutorialStepType.StartWave || Type == TutorialStepType.WaitForWave || Type == TutorialStepType.WaitForCondition;

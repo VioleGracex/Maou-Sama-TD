@@ -352,6 +352,13 @@ namespace MaouSamaTD.Managers
                 Debug.Log($"[CameraManager] Saved current position {_testMapPosition} as test position.");
             }
         }
+        public void Shake(float duration = 0.5f, float strength = 0.2f)
+        {
+            if (_cameraAnchor != null)
+            {
+                _cameraAnchor.DOShakePosition(duration, strength, 10, 90, false, true);
+            }
+        }
         #endregion
     }
 }

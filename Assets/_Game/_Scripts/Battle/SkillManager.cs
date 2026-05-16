@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using MaouSamaTD.Managers;using MaouSamaTD.Managers;
+using MaouSamaTD.Managers;
 using MaouSamaTD.Units;
 using Zenject;
 
@@ -35,6 +35,16 @@ namespace MaouSamaTD.Skills
                 _availableSkills.AddRange(skills);
             }
             if (_showDebugLogs) Debug.Log($"[SkillManager] Initialized with {_availableSkills.Count} rites.");
+        }
+
+        public void SetSkillOrder(List<SovereignRiteData> skills)
+        {
+            _availableSkills.Clear();
+            if (skills != null)
+            {
+                _availableSkills.AddRange(skills);
+            }
+            if (_showDebugLogs) Debug.Log($"[SkillManager] Updated skill order. Count: {_availableSkills.Count}");
         }
 
         public void ResetAllCooldowns()
@@ -349,7 +359,10 @@ namespace MaouSamaTD.Skills
                     {
                         if (unit is EnemyUnit enemyUnit && enemyUnit.EnemyData != null && enemyUnit.EnemyData.EnemyName == "Abyssal Shade")
                         {
-                            finalDamage = unit.CurrentHp + 999; // Ensure one-shot
+                            // Disable tutorial invincibility so he can actually die from the one-shot
+                            enemyUnit.PreventDeathForTutorial = false;
+                            
+                            finalDamage = unit.CurrentHp + 9999f; // Ensure one-shot even with massive defense
                             if (_showDebugLogs) Debug.Log("[SkillManager] Secret Tutorial Boost applied to Abyssal Shade!");
                         }
                     }

@@ -727,7 +727,7 @@ namespace MaouSamaTD.Units
         {
             int dx = Mathf.Abs(origin.x - target.x);
             int dy = Mathf.Abs(origin.y - target.y);
-            int iRange = Mathf.CeilToInt(range);
+            int iRange = Mathf.CeilToInt(range - 0.01f);
 
             // Always allow attacking if on the same tile
             if (dx == 0 && dy == 0) return true;

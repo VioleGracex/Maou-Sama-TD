@@ -5,6 +5,7 @@ using DG.Tweening;
 using Zenject;
 using MaouSamaTD.Managers;
 using MaouSamaTD.Units;
+using UnityEngine.UI;
 
 namespace MaouSamaTD.UI.Skills
 {
@@ -44,6 +45,22 @@ namespace MaouSamaTD.UI.Skills
         private RangePatternUI _rangePatternUI;
         private TMPro.TextMeshProUGUI _rangeStatsTxt;
 
+        [Header("Glow Settings")]
+        [SerializeField] private Material _skillGlowMat;
+        private Image _descriptionGlowImg;
+        private Material _descriptionGlowInstance;
+        private static readonly int CustomTimeProp = Shader.PropertyToID("_CustomTime");
+        private static readonly int GlowColorProp = Shader.PropertyToID("_Color");
+
+        private void Update()
+        {
+            // Animate glow shader if active
+            if (_descriptionGlowInstance != null && _descriptionGlowImg != null && _descriptionGlowImg.gameObject.activeSelf)
+            {
+                _descriptionGlowInstance.SetFloat(CustomTimeProp, Time.unscaledTime);
+            }
+        }
+
         private void OnEnable()
         {
             if (_toggleButton != null)
@@ -52,6 +69,11 @@ namespace MaouSamaTD.UI.Skills
             if (_interactionManager != null)
             {
                 _interactionManager.OnSkillSelectedChanged += HandleSkillSelectedChanged;
+            }
+
+            if (_currencyManager != null)
+            {
+                _currencyManager.OnSealsChanged += HandleSealsChanged;
             }
         }
 
@@ -64,6 +86,16 @@ namespace MaouSamaTD.UI.Skills
             {
                 _interactionManager.OnSkillSelectedChanged -= HandleSkillSelectedChanged;
             }
+
+            if (_currencyManager != null)
+            {
+                _currencyManager.OnSealsChanged -= HandleSealsChanged;
+            }
+        }
+
+        private void HandleSealsChanged(int seals)
+        {
+            RefreshDescriptionAffordability();
         }
 
         private void Start()
@@ -125,8 +157,55 @@ namespace MaouSamaTD.UI.Skills
                 }
                 clickBtn.onClick.RemoveAllListeners();
                 clickBtn.onClick.AddListener(() => {
-                    _interactionManager?.DeselectSkill();
+                    SovereignRiteData activeSkill = _interactionManager?.SelectedSkill;
+                    if (activeSkill != null)
+                    {
+                        if (_interactionManager.IsSkillTargeting)
+                        {
+                            // Already targeting -> Cancel/Back to description
+                            _interactionManager.SelectSkillForDescription(activeSkill);
+                        }
+                        else if (_skillManager != null && _skillManager.IsSkillReady(activeSkill))
+                        {
+                            // Viewing description + affordable -> Start targeting
+                            _interactionManager.SelectSkill(activeSkill);
+                        }
+                        else
+                        {
+                            // Unaffordable -> Keep description open but provide feedback
+                            // (Cost text is already red from RefreshDescriptionAffordability)
+                        }
+                    }
                 });
+
+                // 1b. Setup Description Glow
+                Transform glowTrans = sdc.Find("Glow_Overlay");
+                if (glowTrans == null)
+                {
+                    GameObject glowGo = new GameObject("Glow_Overlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                    glowGo.transform.SetParent(sdc, false);
+                    glowGo.transform.SetAsFirstSibling();
+                    glowTrans = glowGo.transform;
+
+                    RectTransform grt = glowGo.GetComponent<RectTransform>();
+                    grt.anchorMin = Vector2.zero;
+                    grt.anchorMax = Vector2.one;
+                    grt.pivot = new Vector2(0.5f, 0.5f);
+                    grt.anchoredPosition = Vector2.zero;
+                    grt.sizeDelta = new Vector2(25, 25); // Slightly larger than container for the outer glow effect
+                }
+
+                _descriptionGlowImg = glowTrans.GetComponent<Image>();
+                if (_descriptionGlowImg != null)
+                {
+                    _descriptionGlowImg.raycastTarget = false;
+                    if (_skillGlowMat != null)
+                    {
+                        _descriptionGlowInstance = new Material(_skillGlowMat);
+                        _descriptionGlowImg.material = _descriptionGlowInstance;
+                    }
+                    _descriptionGlowImg.gameObject.SetActive(false);
+                }
 
                 // Find close button
                 Transform closeBtnTrans = sdc.Find("CloseButton");
@@ -288,7 +367,7 @@ namespace MaouSamaTD.UI.Skills
                 if (skill == null) continue;
                 
                 var btn = Instantiate(_buttonPrefab, _buttonContainer);
-                btn.Initialize(skill, _skillManager, _interactionManager, _currencyManager);
+                btn.Initialize(skill, _skillManager, _interactionManager, _currencyManager, this);
                 
                 // Name the button based on skill asset name for Tutorial Targeting
                 string btnName = "SkillButton_" + skill.name.Replace(" ", "");
@@ -341,11 +420,11 @@ namespace MaouSamaTD.UI.Skills
                 // Update description UI fields first
                 UpdateSkillDescriptionUI(skill);
 
-                // Swapped/selected: Slide buttons out to Left (-360), slide description in from Right (0)
+                // Swapped/selected: Slide buttons out to Right (360), slide description in from Right (0)
                 if (_buttonsContainerRect != null)
                 {
                     _buttonsContainerRect.DOKill();
-                    _buttonsContainerRect.DOAnchorPosX(-360f, 0.25f).SetEase(Ease.OutQuad).SetUpdate(true);
+                    _buttonsContainerRect.DOAnchorPosX(360f, 0.25f).SetEase(Ease.OutQuad).SetUpdate(true);
                 }
 
                 if (_descriptionContainerRect != null)
@@ -353,6 +432,20 @@ namespace MaouSamaTD.UI.Skills
                     _descriptionContainerRect.DOKill();
                     _descriptionContainerRect.gameObject.SetActive(true);
                     _descriptionContainerRect.DOAnchorPosX(0f, 0.25f).SetEase(Ease.OutQuad).SetUpdate(true);
+                }
+
+                // Handle Description Glow
+                if (_descriptionGlowImg != null)
+                {
+                    if (_descriptionGlowInstance != null)
+                    {
+                        // Always use Gold for the description glow
+                        Color glowColor = new Color(1f, 0.8f, 0.1f, 1f);
+                        _descriptionGlowInstance.SetColor(GlowColorProp, glowColor);
+                    }
+                    
+                    // Refresh visibility based on affordability
+                    RefreshDescriptionAffordability();
                 }
             }
             else
@@ -372,9 +465,31 @@ namespace MaouSamaTD.UI.Skills
                         if (_interactionManager == null || _interactionManager.SelectedSkill == null)
                         {
                             if (_descriptionContainerRect != null) _descriptionContainerRect.gameObject.SetActive(false);
+                            if (_descriptionGlowImg != null) _descriptionGlowImg.gameObject.SetActive(false);
                         }
                     });
                 }
+            }
+        }
+
+        private void RefreshDescriptionAffordability()
+        {
+            if (_interactionManager == null || _interactionManager.SelectedSkill == null) return;
+            
+            var skill = _interactionManager.SelectedSkill;
+            bool canAfford = _currencyManager != null && _currencyManager.CanAfford(skill.SealCost);
+
+            // Update Cost Text Color: Red if cannot afford
+            if (_skillCostTxt != null)
+            {
+                string colorHex = canAfford ? "#CC88FF" : "#FF4444";
+                _skillCostTxt.text = $"<color={colorHex}><b>{skill.SealCost} SP</b></color>";
+            }
+
+            // Update Glow Visibility: Off if cannot afford
+            if (_descriptionGlowImg != null)
+            {
+                _descriptionGlowImg.gameObject.SetActive(canAfford);
             }
         }
 
@@ -388,15 +503,11 @@ namespace MaouSamaTD.UI.Skills
                 _skillNameTxt.text = skill.SkillName;
                 _skillNameTxt.enableWordWrapping = false;
                 _skillNameTxt.overflowMode = TMPro.TextOverflowModes.Ellipsis;
+                EnsureRectHealthy(_skillNameTxt.rectTransform);
             }
 
-            // 2. SP cost — purple, no wrap
-            if (_skillCostTxt != null)
-            {
-                _skillCostTxt.text = $"<color=#CC88FF><b>{skill.SealCost} SP</b></color>";
-                _skillCostTxt.enableWordWrapping = false;
-                _skillCostTxt.overflowMode = TMPro.TextOverflowModes.Overflow;
-            }
+            // 2. SP cost & Glow — color based on affordability
+            RefreshDescriptionAffordability();
 
             // 3. Icon
             if (_skillIconImg != null)
@@ -440,6 +551,7 @@ namespace MaouSamaTD.UI.Skills
                     sb.AppendLine($"<color=#AAAAAA>Area</color>  <color=#FFDD44><b>Single Point</b></color>");
 
                 _skillStatsTxt.text = sb.ToString().TrimEnd();
+                EnsureRectHealthy(_skillStatsTxt.rectTransform);
             }
 
             // 6. Range grid pattern
@@ -464,6 +576,71 @@ namespace MaouSamaTD.UI.Skills
                 _rangeStatsTxt.fontSizeMin = 7f;
                 _rangeStatsTxt.fontSizeMax = 11f;
             }
+        }
+
+        public void SwapSkills(SovereignRiteData s1, SovereignRiteData s2)
+        {
+            int i1 = _skillsToDisplay.IndexOf(s1);
+            int i2 = _skillsToDisplay.IndexOf(s2);
+            if (i1 == -1 || i2 == -1 || i1 == i2) return;
+
+            // Swap data in the primary list
+            _skillsToDisplay[i1] = s2;
+            _skillsToDisplay[i2] = s1;
+
+            // Animate the existing buttons
+            AnimateSwap(i1, i2);
+            
+            // Sync with SkillManager if necessary
+            _skillManager?.SetSkillOrder(_skillsToDisplay);
+        }
+
+        private void AnimateSwap(int i1, int i2)
+        {
+            if (i1 >= _spawnedButtons.Count || i2 >= _spawnedButtons.Count) return;
+
+            var b1 = _spawnedButtons[i1];
+            var b2 = _spawnedButtons[i2];
+
+            // 1. Capture current world positions
+            Vector3 p1 = b1.transform.position;
+            Vector3 p2 = b2.transform.position;
+
+            // 2. Swap in the spawned tracking list
+            _spawnedButtons[i1] = b2;
+            _spawnedButtons[i2] = b1;
+
+            // 3. Swap Sibling Indices to let LayoutGroup calculate new positions
+            int sib1 = b1.transform.GetSiblingIndex();
+            int sib2 = b2.transform.GetSiblingIndex();
+            
+            b1.transform.SetSiblingIndex(sib2);
+            b2.transform.SetSiblingIndex(sib1);
+
+            // 4. Force immediate layout update so we know where they SHOULD be
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_buttonContainer.GetComponent<RectTransform>());
+
+            // 5. Get the new target positions
+            Vector3 target1 = b1.transform.position;
+            Vector3 target2 = b2.transform.position;
+
+            // 6. Visual Snap-back and Tween
+            b1.transform.position = p1;
+            b2.transform.position = p2;
+
+            b1.transform.DOMove(target1, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+            b2.transform.DOMove(target2, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+        }
+        private void EnsureRectHealthy(RectTransform rt)
+        {
+            if (rt == null) return;
+            Vector2 size = rt.sizeDelta;
+            bool changed = false;
+            if (size.x <= 0.01f) { size.x = 200f; changed = true; }
+            if (size.y <= 0.01f) { size.y = 50f; changed = true; }
+            if (changed) rt.sizeDelta = size;
+            
+            if (rt.localScale.x < 0.1f) rt.localScale = Vector3.one;
         }
     }
 }

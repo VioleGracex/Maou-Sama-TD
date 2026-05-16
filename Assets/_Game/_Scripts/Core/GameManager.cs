@@ -368,7 +368,7 @@ namespace MaouSamaTD.Managers
             Debug.Log($"[GameManager] Victory() called. IsGameEnded: {IsGameEnded}, HasStory: {_currentLevelData?.HasStory}, OutroStory: {_currentLevelData?.OutroStory != null}");
             if (IsGameEnded) return;
             IsGameEnded = true;
-            Time.timeScale = 0f; // Freeze game timescale immediately upon victory
+            // Time.timeScale = 0f; // REMOVED: Allow time to run during stage clear banner
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Game", "", "Victory Achieved!", 0);
             OnGameFinished?.Invoke();
             Debug.Log("[GameManager] Victory is being processed...");
@@ -419,14 +419,14 @@ namespace MaouSamaTD.Managers
                 {
                     Debug.Log("[GameManager] Outro Story finished. Invoking OnVictory event...");
                     OnVictory?.Invoke();
-                    SetSpeed(0);
+                    // SetSpeed(0); // REMOVED: Controlled by UI sequence now
                 });
             }
             else
             {
                 Debug.Log("[GameManager] No Outro Story. Invoking OnVictory event immediately...");
                 OnVictory?.Invoke();
-                SetSpeed(0);
+                // SetSpeed(0); // REMOVED: Controlled by UI sequence now
             }
         }
         public bool IsTutorialTimeStop { get; private set; } = false;
@@ -435,13 +435,9 @@ namespace MaouSamaTD.Managers
         {
             CurrentSpeed = speed;
             IsTutorialTimeStop = isTutorialTimeStop;
-            if (!IsPaused && !IsGameEnded)
+            if (!IsPaused && (!IsGameEnded || speed == 0f))
             {
                 Time.timeScale = CurrentSpeed;
-            }
-            if (speed == 0f)
-            {
-                FloatingTextManager.Instance?.DestroyAllActiveTexts();
             }
             OnSpeedChanged?.Invoke(speed);
         }
@@ -450,11 +446,9 @@ namespace MaouSamaTD.Managers
         {
             if (IsGameEnded) return;
             
-            IsPaused = !IsPaused;
             if (IsPaused)
             {
                 Time.timeScale = 0f;
-                FloatingTextManager.Instance?.DestroyAllActiveTexts();
             }
             else
             {

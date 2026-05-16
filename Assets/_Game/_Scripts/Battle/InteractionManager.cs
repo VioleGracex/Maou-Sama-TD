@@ -5,6 +5,7 @@ using MaouSamaTD.Units;
 using MaouSamaTD.Skills;
 using MaouSamaTD.Managers.Interaction;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 using Zenject;
 
 namespace MaouSamaTD.Managers
@@ -52,6 +53,7 @@ namespace MaouSamaTD.Managers
         
         private bool _isSelectionLocked = true;
         public bool IsSelectionLocked { get => _isSelectionLocked; set => _isSelectionLocked = value; }
+        private int _lastSkillSelectFrame = -1;
         #endregion
 
         #region Handlers
@@ -120,10 +122,6 @@ namespace MaouSamaTD.Managers
 
         private void HandleSealsChanged(int seals)
         {
-            if (_isSkillTargeting && _selectedSkill != null && seals < _selectedSkill.SealCost)
-            {
-                DeselectSkill();
-            }
             if (_activeUnitData != null && seals < _activeUnitData.DeploymentCost)
             {
                 DeselectUnit();
@@ -134,13 +132,16 @@ namespace MaouSamaTD.Managers
         {
             if (_inputHandler == null) return;
 
-            if (_inputHandler.GetPointerState(out Vector2 screenPos, out bool isPressDown, out bool isRightClick))
+            if (_inputHandler.GetPointerState(out Vector2 screenPos, out bool isPressDown, out bool isReleased, out bool isRightClick))
             {
                 if (isRightClick)
                 {
                     CancelAllActions();
                     return;
                 }
+
+                // If we just selected a skill this frame via UI, ignore input processing to prevent self-firing on the button click
+                if (Time.frameCount == _lastSkillSelectFrame) return;
 
                 Tile hitTile = _inputHandler.GetTileFromScreenPos(screenPos);
                 
@@ -156,33 +157,60 @@ namespace MaouSamaTD.Managers
                 HandleHover(hitTile);
                 _placementHandler.UpdateGhost(hitTile, _activeUnitData, IsDragging, screenPos);
 
-                if (isPressDown)
+                bool isOverUI = EventSystem.current.IsPointerOverGameObject();
+                
+                // Tutorial Bypasses: Allow clicking through blocker for specific targets
+                if (isOverUI && _tutorialManager != null && _tutorialManager.IsInTutorial)
                 {
-                    bool isOverUI = EventSystem.current.IsPointerOverGameObject();
-                    
-                    // Allow clicking on player units to inspect stats during tutorial blocker
-                    if (isOverUI && _tutorialManager != null && _tutorialManager.IsInTutorial)
+                    Ray clickRay = _inputHandler.GetRayFromScreenPos(screenPos);
+                    if (Physics.Raycast(clickRay, out RaycastHit clickHit, 100f, LayerMask.GetMask("Units", "Default")))
                     {
-                        Ray clickRay = _inputHandler.GetRayFromScreenPos(screenPos);
-                        if (Physics.Raycast(clickRay, out RaycastHit clickHit, 100f, LayerMask.GetMask("Units", "Default")))
-                        {
-                            var clickedUnit = clickHit.collider.GetComponent<PlayerUnit>() ?? clickHit.collider.GetComponentInParent<PlayerUnit>();
-                            if (clickedUnit != null)
-                            {
-                                isOverUI = false;
-                            }
-                        }
+                        var clickedUnit = clickHit.collider.GetComponent<PlayerUnit>() ?? clickHit.collider.GetComponentInParent<PlayerUnit>();
+                        if (clickedUnit != null) isOverUI = false;
                     }
 
-                    if (isOverUI && _tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.IsPointerInWorldHole(screenPos))
+                    if (isOverUI && _uiBlocker != null && _uiBlocker.IsPointerInWorldHole(screenPos))
                     {
                         isOverUI = false;
                     }
+                }
 
-                    if (!isOverUI)
+                // WHILE TARGETING: allow clicking through the skill panel to the map
+                bool shouldBlockInput = isOverUI;
+                if (isOverUI && _isSkillTargeting)
+                {
+                    // If over UI, only block if it's NOT a skill button (allowing cast-on-release)
+                    // or if it's a specific "dead zone". We check the name for safety.
+                    PointerEventData ped = new PointerEventData(EventSystem.current);
+                    ped.position = screenPos;
+                    List<RaycastResult> results = new List<RaycastResult>();
+                    EventSystem.current.RaycastAll(ped, results);
+                    
+                    GameObject hoveredGO = results.Count > 0 ? results[0].gameObject : null;
+                    if (hoveredGO == null || hoveredGO.name.Contains("Skill") || hoveredGO.name.Contains("Panel"))
                     {
-                        ProcessAction(hitTile, _inputHandler.GetRayFromScreenPos(screenPos));
+                        shouldBlockInput = false;
                     }
+                }
+
+                if (isPressDown || isReleased)
+                {
+                    if (isRightClick)
+                    {
+                        DeselectUnit();
+                        DeselectSkill();
+                        return;
+                    }
+
+                    if (!shouldBlockInput)
+                    {
+                        ProcessAction(hitTile, _inputHandler.GetRayFromScreenPos(screenPos), isReleased);
+                    }
+                }
+                else if ((IsDragging || _isSkillTargeting) && !shouldBlockInput)
+                {
+                    // Update preview while dragging/hovering with unit or skill active
+                    ProcessAction(hitTile, _inputHandler.GetRayFromScreenPos(screenPos), false);
                 }
             }
         }
@@ -257,6 +285,7 @@ namespace MaouSamaTD.Managers
             DeselectUnit();
             _selectedSkill = skill;
             _isSkillTargeting = true;
+            _lastSkillSelectFrame = Time.frameCount; // Frame guard
             UpdateTileVisuals();
             OnSkillSelectedChanged?.Invoke(_selectedSkill);
         }
@@ -267,6 +296,7 @@ namespace MaouSamaTD.Managers
             DeselectUnit();
             _selectedSkill = skill;
             _isSkillTargeting = false;
+            _lastSkillSelectFrame = Time.frameCount; // Frame guard
             UpdateTileVisuals();
             OnSkillSelectedChanged?.Invoke(_selectedSkill);
         }
@@ -316,7 +346,7 @@ namespace MaouSamaTD.Managers
             }
 
             UnitBase newHoverUnit = null;
-            if (_inputHandler.GetPointerState(out Vector2 screenPos, out _, out _))
+            if (_inputHandler.GetPointerState(out Vector2 screenPos, out _, out _, out _))
             {
                 Ray ray = _inputHandler.GetRayFromScreenPos(screenPos);
                 if (Physics.Raycast(ray, out RaycastHit unitHit, 100f, LayerMask.GetMask("Units", "Default")))
@@ -335,15 +365,34 @@ namespace MaouSamaTD.Managers
             }
         }
 
-        private void ProcessAction(Tile hitTile, Ray ray)
+        private void ProcessAction(Tile hitTile, Ray ray, bool isReleased)
         {
             if (IsDragging) return;
 
             if (_isSkillTargeting)
             {
-                HandleSkillInput(ray);
+                // Skills only execute on RELEASE (allows previewing while holding)
+                if (isReleased)
+                {
+                    // Frame guard: Don't execute on the same frame we selected the skill
+                    // (Prevents accidental cast from the click that selected it)
+                    if (Time.frameCount == _lastSkillSelectFrame) return;
+
+                    if (HandleSkillInput(ray)) return;
+                }
+                else
+                {
+                    // If just pressing/holding, we don't cast yet, but we allow selection fallback
+                    // if it's not a valid tile for the rite anyway?
+                    // Actually, let's just keep it simple: Release to cast.
+                    return; 
+                }
             }
-            else if (_activeUnitData != null && hitTile != null)
+            
+            // Placement and Selection happen on PRESS DOWN
+            if (isReleased) return;
+
+            if (_activeUnitData != null && hitTile != null)
             {
                 if (_placementHandler.TryPlaceUnit(hitTile, _activeUnitData))
                 {
@@ -411,15 +460,15 @@ namespace MaouSamaTD.Managers
                 }
                 UpdateTileVisuals();
             }
-            else
+            else if (!_selectedSkill) // Only cancel everything if we don't have a skill selected (prevents closing description on UI click)
             {
                 CancelAllActions();
             }
         }
 
-        private void HandleSkillInput(Ray ray)
+        private bool HandleSkillInput(Ray ray)
         {
-            if (_selectedSkill == null) return;
+            if (_selectedSkill == null) return false;
             
             Vector3 targetPos = Vector3.zero;
             UnitBase targetUnit = null;
@@ -452,27 +501,26 @@ namespace MaouSamaTD.Managers
                     // Validation: Check if tile type is valid for rites
                     if (!IsTileValidForRite(targetTile))
                     {
-                        // Visual feedback: briefly show invalid highlight or just ignore
-                        return;
+                        return false;
                     }
 
                     if (_skillManager.TryExecuteRite(_selectedSkill, targetTile.transform.position, targetUnit))
                     {
                         DeselectSkill();
+                        return true;
                     }
-                    return;
+                    return false;
                 }
-                else
-                {
-                    // Ray missed the grid/map entirely
-                    return;
-                }
+                return false;
             }
 
             if (_skillManager.TryExecuteRite(_selectedSkill, targetPos, targetUnit))
             {
                 DeselectSkill();
+                return true;
             }
+
+            return false;
         }
 
         public bool TryCastSkillAtScreenPos(Vector2 screenPos)

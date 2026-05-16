@@ -360,7 +360,7 @@ namespace MaouSamaTD.Units
             if (_gridManager == null) return false;
 
             // Use a slightly larger radius for the physical check to catch diagonal tiles accurately
-            Collider[] hits = Physics.OverlapSphere(transform.position, Range + 0.5f);
+            Collider[] hits = Physics.OverlapSphere(transform.position, Range + 0.1f);
             PlayerUnit bestTarget = null;
             float bestScore = float.MinValue;
 
@@ -777,6 +777,12 @@ namespace MaouSamaTD.Units
                 }
             } 
             
+            var tm = FindFirstObjectByType<MaouSamaTD.Managers.TutorialManager>();
+            if (tm != null && _enemyData != null)
+            {
+                tm.OnActionTriggered("EnemyReachedExit_" + _enemyData.EnemyName);
+            }
+
             Destroy(gameObject);
         }
 

@@ -78,6 +78,14 @@ namespace MaouSamaTD.UI
 
             // Pre-allocate pixels
             _cachedPixels = new Color32[maskSize * maskSize];
+
+            // Dynamically parent to MainCanvas if found
+            GameObject mainCanvasGO = GameObject.FindWithTag("MainCanvas");
+            if (mainCanvasGO != null && transform.parent != mainCanvasGO.transform)
+            {
+                transform.SetParent(mainCanvasGO.transform, false);
+                transform.SetAsLastSibling();
+            }
         }
 
         public void SetSortingOrder(int order)
@@ -286,8 +294,7 @@ namespace MaouSamaTD.UI
             overlayRaycaster.SetWorldHighlights(isWorldHighlight, worldHighlights);
             
             canvasGroup.DOKill();
-            if (canvasGroup.alpha < 1) canvasGroup.DOFade(1f, transitionDuration).SetUpdate(true);
-            else canvasGroup.alpha = 1f;
+            canvasGroup.alpha = 1f; // Force immediate opaque to prevent 'weird movement' or fading artifacts
         }
 
         private void CreateOverlay()

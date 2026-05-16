@@ -7659,8 +7659,8 @@ GameObject:
   - component: {fileID: 691323466}
   - component: {fileID: 691323465}
   m_Layer: 5
-  m_Name: Canvas
-  m_TagString: Untagged
+  m_Name: MainCanvas
+  m_TagString: MainCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14093,10 +14093,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ad7ff7fb526a674faa88ab41e6df017, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.UnitInspectorStatsPanel
-  _hpText: {fileID: 8532076859845056305}
   _atkText: {fileID: 5058638312311669941}
   _defText: {fileID: 964085792521281925}
   _aspdText: {fileID: 4186302144733425321}
+  _rangeText: {fileID: 0}
   _amitySlider: {fileID: 0}
   _amityLevelText: {fileID: 565353614}
   _classIcon: {fileID: 6124745951822604557}
@@ -14104,6 +14104,11 @@ MonoBehaviour:
   _rarityTextLabel: {fileID: 7387367299917984397}
   _tagRangeText: {fileID: 8952601889111955627}
   _tagRoleText: {fileID: 4677309117016225616}
+  _ultimateSection: {fileID: 0}
+  _ultimateNameText: {fileID: 0}
+  _ultimateDescText: {fileID: 0}
+  _ultimateIcon: {fileID: 0}
+  _ultimateRangeGrid: {fileID: 0}
 --- !u!1 &1358540200
 GameObject:
   m_ObjectHideFlags: 0

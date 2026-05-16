@@ -25,8 +25,8 @@ namespace MaouSamaTD.UI
             float randomX = Random.Range(-0.5f, 0.5f);
             Vector3 targetPos = transform.localPosition + new Vector3(randomX, 2f, 0);
 
-            transform.DOLocalMove(targetPos, 1f).SetEase(Ease.OutCirc);
-            _textComponent.DOFade(0f, 1f).SetEase(Ease.InQuad).OnComplete(() => Destroy(gameObject));
+            transform.DOLocalMove(targetPos, 1f).SetEase(Ease.OutCirc).SetUpdate(true);
+            _textComponent.DOFade(0f, 1f).SetEase(Ease.InQuad).SetUpdate(true).OnComplete(() => Destroy(gameObject));
         }
 
         private void LateUpdate()

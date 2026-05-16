@@ -290,8 +290,9 @@ namespace MaouSamaTD.Units
         private void OnDestroy()
         {
             ActiveUnits.Remove(this);
-            // Ensure any blocked enemies are released so they can resume moving
-            foreach (var enemy in _currentlyBlockedEnemies)
+            // Release any remaining blocks to avoid leaking enemy state
+            var blockedArray = _currentlyBlockedEnemies.ToArray();
+            foreach (var enemy in blockedArray)
             {
                 if (enemy != null) enemy.ReleaseBlock();
             }
@@ -585,6 +586,9 @@ namespace MaouSamaTD.Units
             
             var gm = FindFirstObjectByType<Managers.GameManager>();
             if (gm != null) gm.ReportUnitLost();
+
+            var tm = FindFirstObjectByType<Managers.TutorialManager>();
+            if (tm != null && Data != null) tm.OnActionTriggered("UnitDied_" + Data.UnitName);
 
             base.Die();
         }

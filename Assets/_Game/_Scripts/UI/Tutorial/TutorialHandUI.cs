@@ -25,6 +25,14 @@ namespace MaouSamaTD.UI.Tutorial
             if (GetComponent<GraphicRaycaster>() == null) gameObject.AddComponent<GraphicRaycaster>();
             
             if (_panel != null) _panel.SetActive(false);
+
+            // Dynamically parent to MainCanvas if found
+            GameObject mainCanvasGO = GameObject.FindWithTag("MainCanvas");
+            if (mainCanvasGO != null && transform.parent != mainCanvasGO.transform)
+            {
+                transform.SetParent(mainCanvasGO.transform, false);
+                transform.SetAsLastSibling();
+            }
         }
 
         private void OnDisable()

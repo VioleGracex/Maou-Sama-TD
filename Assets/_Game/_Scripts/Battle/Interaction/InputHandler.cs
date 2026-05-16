@@ -28,10 +28,11 @@ namespace MaouSamaTD.Managers.Interaction
             EnhancedTouchSupport.Disable();
         }
 
-        public bool GetPointerState(out Vector2 screenPos, out bool isPressDown, out bool isRightClick)
+        public bool GetPointerState(out Vector2 screenPos, out bool isPressDown, out bool isReleased, out bool isRightClick)
         {
             screenPos = Vector2.zero;
             isPressDown = false;
+            isReleased = false;
             isRightClick = false;
 
             // Priority 1: Touch (Mobile)
@@ -40,6 +41,7 @@ namespace MaouSamaTD.Managers.Interaction
                 var touch = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches[0];
                 screenPos = touch.screenPosition;
                 isPressDown = touch.began;
+                isReleased = touch.ended;
                 return true;
             }
 
@@ -48,6 +50,7 @@ namespace MaouSamaTD.Managers.Interaction
             {
                 screenPos = Pointer.current.position.ReadValue();
                 isPressDown = Pointer.current.press.wasPressedThisFrame;
+                isReleased = Pointer.current.press.wasReleasedThisFrame;
                 
                 // Check Right Click for Cancel
                 if (Mouse.current != null)

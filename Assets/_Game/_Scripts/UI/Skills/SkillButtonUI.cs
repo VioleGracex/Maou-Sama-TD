@@ -4,6 +4,7 @@ using TMPro;
 using MaouSamaTD.Skills;
 using MaouSamaTD.Managers;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 namespace MaouSamaTD.UI.Skills
 {
@@ -27,13 +28,18 @@ namespace MaouSamaTD.UI.Skills
         private SkillManager _manager;
         private BattleCurrencyManager _currencyManager;
         private InteractionManager _interactionManager;
+        private SkillPanelUI _panel;
 
-        public void Initialize(SovereignRiteData data, SkillManager manager, InteractionManager interactionManager, BattleCurrencyManager currencyManager)
+        private Vector2 _dragStartPos;
+        private bool _isDraggingForSwap = false;
+
+        public void Initialize(SovereignRiteData data, SkillManager manager, InteractionManager interactionManager, BattleCurrencyManager currencyManager, SkillPanelUI panel)
         {
             _data = data;
             _manager = manager;
             _interactionManager = interactionManager;
             _currencyManager = currencyManager;
+            _panel = panel;
 
             if (_data != null)
             {
@@ -126,35 +132,29 @@ namespace MaouSamaTD.UI.Skills
                 _lockOverlay.SetActive(permanentlyLocked);
             }
 
-            // 4. Toggle Glow Logic
-            if (_toggledGlow != null && _interactionManager != null)
-            {
-                _toggledGlow.SetActive(_interactionManager.SelectedSkill == _data && _interactionManager.IsSkillTargeting);
-                if (_toggledGlow.activeSelf && _glowMat != null)
-                {
-                    _glowMat.SetFloat(CustomTimeProp, Time.unscaledTime);
-                }
-            }
+            // 4. Removed Toggle Glow logic as requested
+            if (_toggledGlow != null) _toggledGlow.SetActive(false);
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (_data == null) return;
-            if (_manager != null && _manager.IsSkillReady(_data))
+            if (_data == null || _interactionManager == null) return;
+
+            // Simple Toggle Logic:
+            // 1. If not selected -> Select (Shows Desc + Enters Targeting)
+            // 2. If already selected -> Deselect (Back to neutral)
+            
+            bool isCurrentSelected = (_interactionManager.SelectedSkill == _data);
+
+            if (!isCurrentSelected)
             {
-                // Select Skill for Targeting
-                if (_interactionManager != null)
-                {
-                    _interactionManager.SelectSkill(_data);
-                }
+                // Click: Show description first (non-targeting mode)
+                _interactionManager.SelectSkillForDescription(_data);
             }
             else
             {
-                // If not ready (insufficient seals or on cooldown), still allow viewing description!
-                if (_interactionManager != null)
-                {
-                    _interactionManager.SelectSkillForDescription(_data);
-                }
+                // Click again: Cancel
+                _interactionManager.DeselectSkill();
             }
         }
 
@@ -168,37 +168,24 @@ namespace MaouSamaTD.UI.Skills
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (_data == null) return;
+            if (_data == null || _interactionManager == null) return;
             if (_manager != null && !_manager.IsSkillReady(_data)) return;
 
-            if (_interactionManager != null)
+            // Dragging activates targeting immediately
+            if (_interactionManager.SelectedSkill != _data)
             {
-                // Ensure the skill is selected (do not toggle it off if already selected)
-                if (_interactionManager.SelectedSkill != _data || !_interactionManager.IsSkillTargeting)
-                {
-                    _interactionManager.SelectSkill(_data);
-                }
+                _interactionManager.SelectSkill(_data);
             }
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            // Required for Unity EventSystem drag registration
+            // InteractionManager handles map preview automatically
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if (_data == null || _interactionManager == null) return;
-
-            bool releasedOnButton = eventData.pointerEnter == gameObject;
-            if (!releasedOnButton)
-            {
-                // Dragged onto map -> Try cast!
-                _interactionManager.TryCastSkillAtScreenPos(eventData.position);
-            }
-
-            // Always clear skill targeting on drag release
-            _interactionManager.DeselectSkill();
+            // Release-to-cast is handled by InteractionManager.Update
         }
     }
 }

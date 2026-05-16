@@ -36,7 +36,6 @@ namespace MaouSamaTD.Managers
         #region Public API
         public void ShowDamage(Vector3 position, float amount, bool isCrit)
         {
-            if (Time.timeScale == 0f) return;
             if (_textPrefab == null) return;
 
             // Spawn slightly above with random offset
@@ -57,7 +56,6 @@ namespace MaouSamaTD.Managers
 
         public void ShowHeal(Vector3 position, float amount)
         {
-            if (Time.timeScale == 0f) return;
             if (_textPrefab == null) return;
             
             Vector3 randomOffset = Random.insideUnitSphere * _positionRandomness;

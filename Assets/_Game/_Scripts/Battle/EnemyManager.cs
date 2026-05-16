@@ -19,6 +19,11 @@ namespace MaouSamaTD.Managers
         [Inject] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer;
         [Inject(Optional = true)] private TutorialManager _tutorialManager;
         [Inject] private StoryManager _storyManager;
+        [Inject] private CameraManager _cameraManager;
+
+        [SerializeField] private float _outroDelay = 2.0f;
+        [Header("Debug")]
+        [SerializeField] private bool _showDebugLogs = true;
         
         [Header("Containers")]
         [SerializeField] private Transform _enemyContainer;
@@ -89,8 +94,8 @@ namespace MaouSamaTD.Managers
             {
                 if (EnemyUnit.ActiveEnemies.Count == 0)
                 {
-                    // Check if tutorial is still in progress
-                    if (_tutorialManager != null && _tutorialManager.IsInTutorial)
+                    // Check if tutorial is still in progress (Level 2 tutorial now uses standard victory)
+                    if (_tutorialManager != null && _tutorialManager.IsInTutorial && !UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.Contains("Level2"))
                     {
                         return;
                     }
@@ -122,6 +127,55 @@ namespace MaouSamaTD.Managers
             {
                 _waveEnemyCounts[waveIdx]--;
                 if (_waveEnemyCounts[waveIdx] < 0) _waveEnemyCounts[waveIdx] = 0;
+            }
+
+            // Detect last enemy death for level clear polish
+            if (_allWavesFinished && !_isSpawning && EnemyUnit.ActiveEnemies.Count == 0)
+            {
+                StartCoroutine(TriggerLevelClearSequence());
+            }
+        }
+
+        private IEnumerator TriggerLevelClearSequence()
+        {
+            if (_victoryTriggered) yield break;
+            _victoryTriggered = true;
+            
+            if (_showDebugLogs) Debug.Log("[EnemyManager] Last enemy defeated! Starting level clear sequence.");
+
+            // 1. Initial Impact: 0.5x Slow Motion
+            if (_gameManager != null)
+            {
+                _gameManager.SetSpeed(0.5f);
+            }
+
+            // 2. Camera Shake
+            if (_cameraManager != null)
+            {
+                _cameraManager.Shake(1.2f, 0.4f);
+            }
+
+            // 3. Brief slow-mo duration
+            yield return new WaitForSeconds(0.5f);
+
+            // 4. Resume Time (as requested: "after killing boss resume time")
+            if (_gameManager != null)
+            {
+                if (_showDebugLogs) Debug.Log("[EnemyManager] Resuming time to 1.0x for outro delay.");
+                _gameManager.SetSpeed(1.0f);
+            }
+
+            // 5. Optional Outro Delay (default 2s)
+            if (_outroDelay > 0)
+            {
+                if (_showDebugLogs) Debug.Log($"[EnemyManager] Waiting for outro delay: {_outroDelay}s");
+                yield return new WaitForSeconds(_outroDelay);
+            }
+
+            // 6. Trigger Victory UI (banner, panel, etc)
+            if (_gameManager != null)
+            {
+                _gameManager.Victory();
             }
         }
         #endregion

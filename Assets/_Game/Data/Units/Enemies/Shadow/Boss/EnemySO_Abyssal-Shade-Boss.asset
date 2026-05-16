@@ -22,22 +22,25 @@ MonoBehaviour:
   AnimatorController: {fileID: 0}
   MaxHp: 2500
   MoveSpeed: 0.5
-  AttackPower: 110
+  AttackPower: 30
   AttackInterval: 2
   AttackRange: 1
-  ExitDamage: 10
   DamageType: 0
+  ExitDamage: 10
   AttackPattern: 3
+  CustomPatternOffsets: []
   MovementType: 0
   CollisionType: 0
   EvasionType: 0
+  TargetingPriority: 0
   OnlyAttackIfBlocked: 0
+  GroundAttackTargets: 1
   PhasingCharges: 0
-  Immunities: 00000000
+  Immunities: 
   Abilities:
   - {fileID: 11400000, guid: e6034a0e964fb4543a9f84e84f6c1170, type: 2}
   CurrencyReward: 200
   Tint: {r: 0.2, g: 0, b: 0.2, a: 1}
   VisualYOffset: 0
-  BaseVisualHeight: 1.5
+  BaseVisualHeight: 1
   HpBarYOffset: 2

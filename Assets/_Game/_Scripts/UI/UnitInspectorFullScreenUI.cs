@@ -89,7 +89,7 @@ namespace MaouSamaTD.UI
         private void OnChamberClicked()
         {
             if (_currentUnit == null) return;
-            Debug.Log($"[UnitInspector] Chamber clicked for unit: {_currentUnit.UnitName}");
+            SwitchTab(5);
         }
 
         public void SetUnit(UnitData unit)
@@ -113,8 +113,7 @@ namespace MaouSamaTD.UI
             if (_visualRoot != null) _visualRoot.SetActive(true);
             if (_canvasGroup != null)
             {
-                _canvasGroup.alpha = 0;
-                _canvasGroup.DOFade(1, _fadeDuration).SetUpdate(true);
+                _canvasGroup.alpha = 1f;
             }
 
             if (_debug) Debug.Log($"[UnitInspector] Opening for: {_currentUnit.UnitName}");
@@ -124,15 +123,9 @@ namespace MaouSamaTD.UI
         {
             if (_canvasGroup != null)
             {
-                _canvasGroup.DOFade(0, _fadeDuration).SetUpdate(true).OnComplete(() => 
-                {
-                    if (_visualRoot != null) _visualRoot.SetActive(false);
-                });
+                _canvasGroup.alpha = 0f;
             }
-            else
-            {
-                if (_visualRoot != null) _visualRoot.SetActive(false);
-            }
+            if (_visualRoot != null) _visualRoot.SetActive(false);
         }
 
         public void ResetState() { }
@@ -150,15 +143,45 @@ namespace MaouSamaTD.UI
             return true; 
         }
 
-        private void SwitchTab(int index)
+        public void SwitchTab(int index)
         {
             if (_debug) Debug.Log($"[UnitInspector] SwitchTab to: {index}");
             _currentTabIndex = index;
-            if (_contentStats) _contentStats.SetActive(index == 0);
-            if (_contentSkills) _contentSkills.SetActive(index == 1);
-            if (_contentResonance) _contentResonance.SetActive(index == 2);
+
+            // Get Main_Content children
+            Transform mainLeft = null;
+            Transform mainPortrait = null;
+            Transform mainRight = null;
+            Transform mainTopBtns = null;
+
+            if (_visualRoot != null)
+            {
+                var mainContent = _visualRoot.transform.Find("Main_Content");
+                if (mainContent != null)
+                {
+                    mainLeft = mainContent.Find("Details_LeftSide");
+                    mainPortrait = mainContent.Find("Character_Panel");
+                    mainRight = mainContent.Find("Details_RightSide");
+                    mainTopBtns = mainContent.Find("TopMiddle_Btns");
+                }
+            }
+
+            bool isMainPage = (index == 0);
+
+            // Set main page elements active/inactive
+            if (mainLeft) mainLeft.gameObject.SetActive(isMainPage);
+            if (mainPortrait) mainPortrait.gameObject.SetActive(isMainPage);
+            if (mainRight) mainRight.gameObject.SetActive(isMainPage);
+            if (mainTopBtns) mainTopBtns.gameObject.SetActive(isMainPage);
+
+            // Ensure stats and skills panels are active if on main page
+            if (_contentStats) _contentStats.SetActive(isMainPage);
+            if (_contentSkills) _contentSkills.SetActive(isMainPage);
+
+            // Set sub-pages active/inactive
+            if (_contentResonance) _contentResonance.SetActive(index == 2 || index == 5);
             if (_contentSkins) _contentSkins.SetActive(index == 3);
-            if (_contentXP) _contentXP.SetActive(index == 4);
+            if (_contentXP) _contentXP.SetActive(index == 4); // assigned to Unit_Leveling_Page
 
             if (_btnHome) _btnHome.gameObject.SetActive(index != 3);
 
@@ -180,9 +203,10 @@ namespace MaouSamaTD.UI
             switch (_currentTabIndex)
             {
                 case 0: _statsPanel?.Refresh(_currentUnit); break;
-                case 2: _resonancePanel?.Refresh(_currentUnit); break;
+                case 2: _resonancePanel?.OpenAsResonance(_currentUnit); break;
                 case 3: _skinsPanel?.Refresh(_currentUnit); break;
                 case 4: _xpPanel?.Refresh(_currentUnit); break;
+                case 5: _resonancePanel?.OpenAsChamber(_currentUnit); break;
             }
             // Always refresh header as stats/levels might change
             _header?.Refresh(_currentUnit);

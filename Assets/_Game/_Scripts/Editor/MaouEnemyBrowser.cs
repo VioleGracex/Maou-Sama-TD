@@ -805,6 +805,12 @@ namespace MaouSamaTD.Editor
             {
                 _currentTab = EnemyBrowserTab.LootDrops;
             }
+            
+            if (GUILayout.Button(new GUIContent("🔄", "Force Refresh Assets"), EditorStyles.miniButtonRight, GUILayout.Width(35)))
+            {
+                AssetDatabase.Refresh();
+                RefreshData();
+            }
 
             EditorGUILayout.EndHorizontal();
             GUILayout.Space(5);
@@ -851,7 +857,15 @@ namespace MaouSamaTD.Editor
             GUILayout.Space(15);
 
             // --- Header & Title ---
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("⚖️  GLOBAL LOOT & DROPS SYSTEM CONFIG", new GUIStyle(EditorStyles.boldLabel) { fontSize = 16, normal = { textColor = Color.white } });
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button(new GUIContent(" Force Refresh", EditorGUIUtility.IconContent("d_Refresh").image), GUILayout.Width(130), GUILayout.Height(25)))
+            {
+                AssetDatabase.Refresh();
+                Repaint();
+            }
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.LabelField("Configure rates, quantities, categories, fallbacks, and overrides for the drop engine.", EditorStyles.miniLabel);
             GUILayout.Space(15);
 

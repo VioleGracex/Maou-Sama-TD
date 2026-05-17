@@ -193,7 +193,7 @@ namespace MaouSamaTD.UI.MainMenu
             
             if (_starsContainer != null)
             {
-                int starCount = (int)unit.Rarity + 1;
+                int starCount = unit.StarRating;
                 for (int i = 0; i < _starsContainer.childCount; i++)
                 {
                     _starsContainer.GetChild(i).gameObject.SetActive(i < starCount);

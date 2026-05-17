@@ -121,8 +121,7 @@ namespace MaouSamaTD.Units.Editor
 
                 EditorGUILayout.Space(5);
                 EditorGUILayout.LabelField("Promotion Requirements", EditorStyles.miniBoldLabel);
-                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("RequiredMaterialID"), new GUIContent("Req Material ID"));
-                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("BaseMaterialAmount"), new GUIContent("Base Mat Amount"));
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("RequiredMaterials"), new GUIContent("Required Materials"), true);
 
                 EditorGUILayout.Space(10);
                 DrawRarityGrowthTabs(scaling.FindPropertyRelative("RarityGrowths"));

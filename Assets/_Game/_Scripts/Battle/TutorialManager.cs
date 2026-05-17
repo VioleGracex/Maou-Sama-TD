@@ -285,6 +285,7 @@ namespace MaouSamaTD.Managers
         private bool _isDraggingLastFrame = false;
         private bool _isPlacementModeLastFrame = false;
         private bool _isSkillPanelVisibleLastFrame = false;
+        private bool _wasTargetActiveLastFrame = false;
         private float _nextHighlightRefreshTime = 0f;
 
         private void Update()
@@ -303,7 +304,14 @@ namespace MaouSamaTD.Managers
                 if (step.UseBlocker && step.TargetUI != null)
                 {
                     var rt = FindTargetRect(step.TargetUI.Name);
-                    if (rt == null || !rt.gameObject.activeInHierarchy)
+                    bool isActive = rt != null && rt.gameObject.activeInHierarchy;
+                    if (isActive != _wasTargetActiveLastFrame)
+                    {
+                        _wasTargetActiveLastFrame = isActive;
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Target active state changed to {isActive}. Refreshing highlights.");
+                        HandleUIHighlight(step);
+                    }
+                    else if (!isActive)
                     {
                         HandleUIHighlight(step);
                     }
@@ -458,6 +466,7 @@ namespace MaouSamaTD.Managers
                 _currentStep = step;
                 _currentStepMissCount = 0;
                 _uiTargetCache.Clear(); // Clear cache for new step
+                _wasTargetActiveLastFrame = false;
 
                 // Reset frame-state tracking variables for the new step to avoid stale transitions
                 _isSkillTargetingLastFrame = _interactionManager != null && _interactionManager.IsSkillTargeting;

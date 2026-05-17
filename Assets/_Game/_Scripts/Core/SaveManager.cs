@@ -116,6 +116,26 @@ namespace MaouSamaTD.Managers
                 }
 
                 CurrentData = loadedData;
+                
+                if (CurrentData.ItemInventory == null)
+                {
+                    CurrentData.ItemInventory = new List<ItemInventoryEntry>();
+                }
+                
+                // Give playtesting items if their inventory is empty
+                if (CurrentData.ItemInventory.Count == 0)
+                {
+                    CurrentData.ItemInventory.Add(new ItemInventoryEntry("xp_core_common", 15));
+                    CurrentData.ItemInventory.Add(new ItemInventoryEntry("xp_core_rare", 8));
+                    CurrentData.ItemInventory.Add(new ItemInventoryEntry("xp_core_epic", 3));
+                    CurrentData.ItemInventory.Add(new ItemInventoryEntry("xp_core_legendary", 1));
+                    CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_shadow_essence", 25));
+                    CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_bandit_insignia", 12));
+                    CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_animal_fang", 18));
+                    CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_golem_core", 5));
+                    Save();
+                }
+                
                 Debug.Log("[SaveManager] Save loaded successfully.");
             }
             catch (System.Exception e)
@@ -321,10 +341,20 @@ namespace MaouSamaTD.Managers
         private void CreateNewSave()
         {
             CurrentData = new PlayerData();
-            CurrentData.Gold = 0;
-            CurrentData.BloodCrest = 0;
+            CurrentData.Gold = 5000;
+            CurrentData.BloodCrest = 100;
             CurrentData.UnlockedUnits = new List<string>() { "Ignis" }; 
             CurrentData.UnitInventory = new List<UnitInventoryEntry>() { new UnitInventoryEntry("Ignis") };
+            
+            // Playtesting starting items
+            CurrentData.ItemInventory.Add(new ItemInventoryEntry("xp_core_common", 15));
+            CurrentData.ItemInventory.Add(new ItemInventoryEntry("xp_core_rare", 8));
+            CurrentData.ItemInventory.Add(new ItemInventoryEntry("xp_core_epic", 3));
+            CurrentData.ItemInventory.Add(new ItemInventoryEntry("xp_core_legendary", 1));
+            CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_shadow_essence", 25));
+            CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_bandit_insignia", 12));
+            CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_animal_fang", 18));
+            CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_golem_core", 5));
             
             Debug.Log($"[SaveManager] Created New Save Data. Granted Default Units: {string.Join(", ", CurrentData.UnlockedUnits)}");
             Save();

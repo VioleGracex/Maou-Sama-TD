@@ -1388,8 +1388,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00006866455, y: -69.696}
-  m_SizeDelta: {x: 0.00011077914, y: 32.575623}
+  m_AnchoredPosition: {x: 0, y: -38.9}
+  m_SizeDelta: {x: 0.0000897311, y: 26.386253}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &204982382
 MonoBehaviour:
@@ -1438,12 +1438,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 29.15
+  m_fontSize: 20
   m_fontSizeBase: 17.1
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 21.780003
-  m_fontSizeMax: 87.12001
+  m_fontSizeMin: 14
+  m_fontSizeMax: 20
   m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -3125,115 +3125,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!21 &442926755
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Rajdhani-Bold SDF Material + LiberationSans SDF Atlas (Instance)
-  m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Cube:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _FaceTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 28684132378477856, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OutlineTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _Ambient: 0.5
-    - _Bevel: 0.5
-    - _BevelClamp: 0
-    - _BevelOffset: 0
-    - _BevelRoundness: 0
-    - _BevelWidth: 0
-    - _BumpFace: 0
-    - _BumpOutline: 0
-    - _ColorMask: 15
-    - _CullMode: 0
-    - _Diffuse: 0.5
-    - _FaceDilate: 0
-    - _FaceUVSpeedX: 0
-    - _FaceUVSpeedY: 0
-    - _GlowInner: 0.05
-    - _GlowOffset: 0
-    - _GlowOuter: 0.05
-    - _GlowPower: 0.75
-    - _GradientScale: 10
-    - _LightAngle: 3.1416
-    - _MaskSoftnessX: 0
-    - _MaskSoftnessY: 0
-    - _OutlineSoftness: 0
-    - _OutlineUVSpeedX: 0
-    - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0
-    - _PerspectiveFilter: 0.875
-    - _Reflectivity: 10
-    - _ScaleRatioA: 0.9
-    - _ScaleRatioB: 0.73125
-    - _ScaleRatioC: 0.73125
-    - _ScaleX: 1
-    - _ScaleY: 1
-    - _ShaderFlags: 0
-    - _Sharpness: 0
-    - _SpecularPower: 2
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _TextureHeight: 1024
-    - _TextureWidth: 1024
-    - _UnderlayDilate: 0
-    - _UnderlayOffsetX: 0
-    - _UnderlayOffsetY: 0
-    - _UnderlaySoftness: 0
-    - _VertexOffsetX: 0
-    - _VertexOffsetY: 0
-    - _WeightBold: 0.75
-    - _WeightNormal: 0
-    m_Colors:
-    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
-    - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
-    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
-    - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
-    - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ReflectFaceColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ReflectOutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
-    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!21 &445854402
 Material:
   serializedVersion: 8
@@ -3782,8 +3673,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00006866455, y: -24.372871}
-  m_SizeDelta: {x: 0.00011077914, y: 32.575623}
+  m_AnchoredPosition: {x: 0, y: -12.15}
+  m_SizeDelta: {x: 0.0000897311, y: 26.386253}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &557683794
 MonoBehaviour:
@@ -3832,12 +3723,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24.6
+  m_fontSize: 18.9
   m_fontSizeBase: 17.1
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 21.780003
-  m_fontSizeMax: 87.12001
+  m_fontSizeMin: 17.6418
+  m_fontSizeMax: 20
   m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -3922,7 +3813,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 126.233246, y: 93.342865}
+  m_SizeDelta: {x: 97.2, y: 52.649998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &569964346
 MonoBehaviour:
@@ -4974,7 +4865,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 126.233246, y: 93.342865}
+  m_SizeDelta: {x: 97.2, y: 52.649998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &662658965
 MonoBehaviour:
@@ -11145,6 +11036,115 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1516618880}
   m_CullTransparentMesh: 1
+--- !u!21 &1520774463
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Rajdhani-Bold SDF Material (Instance) + LiberationSans SDF Atlas (Instance)
+  m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cube:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FaceTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 28684132378477856, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OutlineTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Ambient: 0.5
+    - _Bevel: 0.5
+    - _BevelClamp: 0
+    - _BevelOffset: 0
+    - _BevelRoundness: 0
+    - _BevelWidth: 0
+    - _BumpFace: 0
+    - _BumpOutline: 0
+    - _ColorMask: 15
+    - _CullMode: 0
+    - _Diffuse: 0.5
+    - _FaceDilate: 0
+    - _FaceUVSpeedX: 0
+    - _FaceUVSpeedY: 0
+    - _GlowInner: 0.05
+    - _GlowOffset: 0
+    - _GlowOuter: 0.05
+    - _GlowPower: 0.75
+    - _GradientScale: 10
+    - _LightAngle: 3.1416
+    - _MaskSoftnessX: 0
+    - _MaskSoftnessY: 0
+    - _OutlineSoftness: 0
+    - _OutlineUVSpeedX: 0
+    - _OutlineUVSpeedY: 0
+    - _OutlineWidth: 0
+    - _PerspectiveFilter: 0.875
+    - _Reflectivity: 10
+    - _ScaleRatioA: 0.9
+    - _ScaleRatioB: 0.73125
+    - _ScaleRatioC: 0.73125
+    - _ScaleX: 1
+    - _ScaleY: 1
+    - _ShaderFlags: 0
+    - _Sharpness: 0
+    - _SpecularPower: 2
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _TextureHeight: 1024
+    - _TextureWidth: 1024
+    - _UnderlayDilate: 0
+    - _UnderlayOffsetX: 0
+    - _UnderlayOffsetY: 0
+    - _UnderlaySoftness: 0
+    - _VertexOffsetX: 0
+    - _VertexOffsetY: 0
+    - _WeightBold: 0.75
+    - _WeightNormal: 0
+    m_Colors:
+    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
+    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
+    - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
+    - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ReflectFaceColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ReflectOutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &1533124321
 GameObject:
   m_ObjectHideFlags: 0
@@ -11532,7 +11532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0becde9f03fa53d40ba8df82dd8ac1d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.LevelManager
-  _levelData: {fileID: 11400000, guid: e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6, type: 2}
+  _levelData: {fileID: 11400000, guid: a2c6c0a664a64034e81cbd9127cb1407, type: 2}
 --- !u!1 &1634765511
 GameObject:
   m_ObjectHideFlags: 0
@@ -13134,8 +13134,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00006866455, y: -24.372871}
-  m_SizeDelta: {x: 0.00011077914, y: 32.575623}
+  m_AnchoredPosition: {x: 0, y: -12.15}
+  m_SizeDelta: {x: 0.0000897311, y: 26.386253}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1823109611
 MonoBehaviour:
@@ -13184,12 +13184,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 29.15
+  m_fontSize: 20
   m_fontSizeBase: 17.1
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 21.780003
-  m_fontSizeMax: 87.12001
+  m_fontSizeMin: 14
+  m_fontSizeMax: 20
   m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -14177,17 +14177,22 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lore text placeholder...
+  m_text: 'Ignis summons a celestial phoenix that sweeps across a column, dealing
+    massive fire damage to all enemies in its path.
+
+
+    <color=#00FFFF>Range: Cross
+    (Range: 1)</color>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c5bdc0b98fc62854ab90269d7cad80d0, type: 2}
   m_sharedMaterial: {fileID: 1677274916}
   m_fontSharedMaterials:
   - {fileID: 1677274916}
-  - {fileID: 442926755}
+  - {fileID: 1520774463}
   m_fontMaterial: {fileID: 1677274916}
   m_fontMaterials:
   - {fileID: 1677274916}
-  - {fileID: 442926755}
+  - {fileID: 1520774463}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4291611852
@@ -14208,8 +14213,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 13.5
+  m_fontSizeBase: 13.5
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -14275,7 +14280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 40
+  m_MinHeight: 60
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
@@ -15052,7 +15057,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 398.8708, y: 254.0653}
+  m_SizeDelta: {x: 398.8708, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2044719985
 MonoBehaviour:
@@ -15068,7 +15073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 200
+  m_MinHeight: 300
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
@@ -15279,8 +15284,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00006866455, y: -69.696}
-  m_SizeDelta: {x: 0.00011077914, y: 32.575623}
+  m_AnchoredPosition: {x: 0, y: -38.9}
+  m_SizeDelta: {x: 0.0000897311, y: 26.386253}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2069063128
 MonoBehaviour:
@@ -15329,12 +15334,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 29.15
+  m_fontSize: 20
   m_fontSizeBase: 17.1
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 21.780003
-  m_fontSizeMax: 87.12001
+  m_fontSizeMin: 17.6418
+  m_fontSizeMax: 20
   m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -16565,6 +16570,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7387965140717175061}
   - component: {fileID: 3532997714367962746}
+  - component: {fileID: 7387965140717175062}
   m_Layer: 0
   m_Name: LayoutStats
   m_TagString: Untagged
@@ -16870,12 +16876,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 29.15
+  m_fontSize: 20
   m_fontSizeBase: 17.1
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 21.780003
-  m_fontSizeMax: 87.12001
+  m_fontSizeMin: 17.6418
+  m_fontSizeMax: 20
   m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -17266,8 +17272,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00006866455, y: -69.696}
-  m_SizeDelta: {x: 0.00011077914, y: 32.575623}
+  m_AnchoredPosition: {x: 0, y: -38.9}
+  m_SizeDelta: {x: 0.0000897311, y: 26.386253}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &1343672635836531232
 RectTransform:
@@ -20261,7 +20267,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 126.233246, y: 93.342865}
+  m_SizeDelta: {x: 97.2, y: 52.649998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3532997714367962746
 MonoBehaviour:
@@ -22530,12 +22536,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 29.15
+  m_fontSize: 20
   m_fontSizeBase: 17.1
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 21.780003
-  m_fontSizeMax: 87.12001
+  m_fontSizeMin: 17.6418
+  m_fontSizeMax: 20
   m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -23543,7 +23549,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 230.5635, y: 0}
-  m_SizeDelta: {x: 450, y: 550}
+  m_SizeDelta: {x: 450, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6507119444024563014
 MonoBehaviour:
@@ -25032,8 +25038,22 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0.00002307892}
-  m_SizeDelta: {x: 435.6, y: 93.342865}
+  m_SizeDelta: {x: 352.836, y: 56.699997}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &7387965140717175062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 858170153131791030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18918a76a9e7b64194ce306c00596b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RectTransformScaler
+  _autoScaleChildren: 0
+  _manualScaleFactor: 0.9
 --- !u!224 &7427478992052796510
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25356,8 +25376,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00006866455, y: -24.372871}
-  m_SizeDelta: {x: 0.00011077914, y: 32.575623}
+  m_AnchoredPosition: {x: 0, y: -12.15}
+  m_SizeDelta: {x: 0.0000897311, y: 26.386253}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7654195278143749071
 CanvasRenderer:
@@ -25539,7 +25559,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 93.34286}
+  m_SizeDelta: {x: 0, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7768108748886695004
 MonoBehaviour:
@@ -25958,10 +25978,10 @@ RectTransform:
   - {fileID: 7360918106192996476}
   m_Father: {fileID: 3272971293994070575}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 57}
-  m_SizeDelta: {x: 366.45718, y: 72.6}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 366.46, y: 72.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8181828524733329731
 CanvasRenderer:

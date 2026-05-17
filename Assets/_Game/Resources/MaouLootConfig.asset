@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a531f39992d87d409a3df1a8ca80e46, type: 3}
+  m_Name: MaouLootConfig
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Units.MaouLootConfig
+  FallbackCategory: 2
+  CommonWeight: 0.75
+  RareWeight: 0.2
+  EpicWeight: 0.05
+  CategorySettings:
+  - Category: 1
+    PrimaryMaterialID: mat_shadow_essence
+    NormalMaterialChance: 0.4
+    NormalXpCoreChance: 0.2
+    EliteMaterialChance: 0.4
+    EliteXpCoreChance: 0.2
+    EliteMaterialQuantity: 2
+    BossMaterialQuantity: 3
+    BossGuaranteedXpCoreID: xp_core_legendary
+  - Category: 2
+    PrimaryMaterialID: mat_bandit_insignia
+    NormalMaterialChance: 0.4
+    NormalXpCoreChance: 0.2
+    EliteMaterialChance: 0.4
+    EliteXpCoreChance: 0.2
+    EliteMaterialQuantity: 2
+    BossMaterialQuantity: 3
+    BossGuaranteedXpCoreID: xp_core_legendary
+  - Category: 3
+    PrimaryMaterialID: mat_animal_fang
+    NormalMaterialChance: 0.4
+    NormalXpCoreChance: 0.2
+    EliteMaterialChance: 0.4
+    EliteXpCoreChance: 0.2
+    EliteMaterialQuantity: 2
+    BossMaterialQuantity: 3
+    BossGuaranteedXpCoreID: xp_core_legendary
+  - Category: 4
+    PrimaryMaterialID: mat_golem_core
+    NormalMaterialChance: 0.4
+    NormalXpCoreChance: 0.2
+    EliteMaterialChance: 0.4
+    EliteXpCoreChance: 0.2
+    EliteMaterialQuantity: 2
+    BossMaterialQuantity: 3
+    BossGuaranteedXpCoreID: xp_core_legendary
+  - Category: 5
+    PrimaryMaterialID: mat_shadow_essence
+    NormalMaterialChance: 0.4
+    NormalXpCoreChance: 0.2
+    EliteMaterialChance: 0.4
+    EliteXpCoreChance: 0.2
+    EliteMaterialQuantity: 2
+    BossMaterialQuantity: 3
+    BossGuaranteedXpCoreID: xp_core_legendary
+  - Category: 6
+    PrimaryMaterialID: mat_shadow_essence
+    NormalMaterialChance: 0.4
+    NormalXpCoreChance: 0.2
+    EliteMaterialChance: 0.4
+    EliteXpCoreChance: 0.2
+    EliteMaterialQuantity: 2
+    BossMaterialQuantity: 3
+    BossGuaranteedXpCoreID: xp_core_legendary
+  SpecialOverrides: []

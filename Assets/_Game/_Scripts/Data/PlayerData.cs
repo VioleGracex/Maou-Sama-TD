@@ -169,6 +169,17 @@ namespace MaouSamaTD.Data
             InstanceID = Guid.NewGuid().ToString();
             UnitID = unitID;
             AcquisitionDate = DateTime.UtcNow.Ticks;
+
+            // Load starting star rating from database if loaded
+            if (MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase != null)
+            {
+                var unitData = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(unitID);
+                if (unitData != null)
+                {
+                    // Enforce starting rank based on character's base rarity
+                    StarRating = Mathf.Clamp((int)unitData.Rarity + 1, 1, 6);
+                }
+            }
         }
     }
 

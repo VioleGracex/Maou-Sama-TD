@@ -25,8 +25,35 @@ MonoBehaviour:
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A loyal combatant in the Maou's forces holding the rank of R.
   LoreEntries:
-  - Title: Origin
-    Content: A loyal combatant in the Maou's forces holding the rank of R.
+  - Title: THE EMBER'S AWAKENING
+    Content: Born within the deep volcanic veins of the Abyssal Core, Ignis was shaped
+      by liquid fire itself. Unlike other demons, her flame did not burn with malicious
+      destruction, but with a vibrant, eternal radiance. She spent her early decades
+      meditating inside the molten chambers, learning the art of heat flow and thermal
+      containment.
+  - Title: MAOU'S SHIELD
+    Content: During the Great Crusade of the Sanctus Alliance, the Demon Lord was
+      ambushed by celestial archers. From the shadows, a young Ignis leaped forward,
+      expanding her soul-flame into a massive incandescent barrier. She absorbed
+      three hundred consecutive high-tier arrows without faltering, earning her place
+      as the Maou's trusted guardian.
+  - Title: THE PHOENIX RITE
+    Content: To achieve the status of Master, Ignis underwent the legendary Phoenix
+      Rite inside the Smoldering Crag. She dissolved her own physical form into pure
+      ashes, only to reconstitute her body three days later, clad in indestructible
+      obsidian armor and carrying a greatsword forged from her own solid soul-fire.
+  - Title: GUARDIAN'S VOW
+    Content: 'Ignis''s ultimate pride lies not in her offensive capabilities, but
+      in her unyielding defense. She swore a sacred oath on her Greatsword: ''As
+      long as my heart carries a spark, no ally behind my shield shall feel the chill
+      of defeat or the sting of arrows.'' A vow she has kept through a hundred siege
+      battles.'
+  - Title: REBIRTH ANIMUS
+    Content: A legendary memory documenting the nature of her immortal core. Even
+      if her armor is shattered and her physical body succumbs to steel, the embers
+      within her heart can never be fully extinguished. When her core is triggered
+      by high-voltage emotional bond with the Lord, she gains complete, unconditional
+      rebirth.
   BaseSkin:
     Avatar: {fileID: 21300000, guid: 7574f7ea97aaa0a45936d69a523867b5, type: 3}
     Chibi: {fileID: 21300000, guid: 2b7269185b2d93f4bb6017781c2f99a0, type: 3}
@@ -53,7 +80,7 @@ MonoBehaviour:
   ButtonImageType: 0
   Level: 1
   Experience: 0
-  StarRating: 6
+  StarRating: 5
   Amity: 0
   SkillLevel: 1
   BaseStatMultiplier: 1
@@ -81,7 +108,42 @@ MonoBehaviour:
   PassiveSkill: {fileID: 0}
   ActiveSkill: {fileID: 0}
   UltimateSkill: {fileID: 11400000, guid: e20c62474bbc31f40a06dc66077f2aaa, type: 2}
-  AscensionNodes: []
+  AscensionNodes:
+  - TierLabel: NODE TIER 01
+    NodeName: PHOENIX SPARK
+    NodeDescription: Permanent increase to Max HP by 5%. Spawns with a small protective
+      fire shield.
+    DuplicatesRequired: 1
+    NodeIcon: {fileID: 21300000, guid: 02a3e382f7f380c4a8ec0c626b3a513b, type: 3}
+    IsAwakening: 0
+  - TierLabel: NODE TIER 02
+    NodeName: BLAZING RESOLVE
+    NodeDescription: Permanent increase to Defense by 5%. Generates +10% charge rate
+      from incoming attacks.
+    DuplicatesRequired: 1
+    NodeIcon: {fileID: 21300000, guid: 02a3e382f7f380c4a8ec0c626b3a513b, type: 3}
+    IsAwakening: 0
+  - TierLabel: NODE TIER 03
+    NodeName: CINDER HEART
+    NodeDescription: Unlocks the Phoenix Spark visual aura. Attacks inflict a burn
+      that reduces enemy defense by 5%.
+    DuplicatesRequired: 1
+    NodeIcon: {fileID: 21300000, guid: 02a3e382f7f380c4a8ec0c626b3a513b, type: 3}
+    IsAwakening: 1
+  - TierLabel: NODE TIER 04
+    NodeName: INFERNO SHELL
+    NodeDescription: Permanent increase to Max HP by 5%. Reflected 10% of blocked
+      physical damage as fire damage.
+    DuplicatesRequired: 1
+    NodeIcon: {fileID: 21300000, guid: 02a3e382f7f380c4a8ec0c626b3a513b, type: 3}
+    IsAwakening: 0
+  - TierLabel: NODE TIER 05
+    NodeName: REBIRTH ANIMUS
+    NodeDescription: Once per battle, on taking fatal damage, revives with 30% Max
+      HP and unleashes a fiery shockwave.
+    DuplicatesRequired: 1
+    NodeIcon: {fileID: 21300000, guid: 02a3e382f7f380c4a8ec0c626b3a513b, type: 3}
+    IsAwakening: 1
   _viableTiles: 01000000
   _unlockedSkinIDs:
   - pool_party_ignis

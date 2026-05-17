@@ -207,8 +207,10 @@ namespace MaouSamaTD.Units
                 // Setup Billboard on HP Canvas if it's world space
                 if (_hpFillImage.canvas != null && _hpFillImage.canvas.renderMode == RenderMode.WorldSpace)
                 {
-                    _hpFillImage.canvas.worldCamera = Camera.main;
-                    SetupBillboard(_hpFillImage.canvas.gameObject);
+                    var canvas = _hpFillImage.canvas;
+                    canvas.worldCamera = Camera.main;
+                    canvas.sortingOrder = 1000; // Force high sorting order to render on top of map textures
+                    SetupBillboard(canvas.gameObject);
                 }
             }
 

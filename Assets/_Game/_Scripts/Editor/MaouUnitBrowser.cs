@@ -952,6 +952,13 @@ namespace MaouSamaTD.Editor
             {
                 _currentTab = BrowserTab.Classes;
             }
+            
+            if (GUILayout.Button(new GUIContent("🔄", "Force Refresh Assets"), EditorStyles.miniButtonRight, GUILayout.Width(35)))
+            {
+                AssetDatabase.Refresh();
+                RefreshData();
+                InitializeClassInfo();
+            }
 
             EditorGUILayout.EndHorizontal();
             GUILayout.Space(2);
@@ -1094,6 +1101,11 @@ namespace MaouSamaTD.Editor
             // Sidebar header/toolbar
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             GUILayout.Label("Classes", EditorStyles.miniBoldLabel);
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button(new GUIContent(" Refresh", EditorGUIUtility.IconContent("d_Refresh").image), EditorStyles.toolbarButton))
+            {
+                RefreshData();
+            }
             EditorGUILayout.EndHorizontal();
 
             _classListScroll = EditorGUILayout.BeginScrollView(_classListScroll, GUILayout.ExpandHeight(true));
@@ -1223,49 +1235,27 @@ namespace MaouSamaTD.Editor
                     {
                         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                         
-                        EditorGUI.BeginChangeCheck();
-                        
-                        string reqMat = scalingData.ClassScalings[elementIndex].RequiredMaterialID;
-                        int baseAmt = scalingData.ClassScalings[elementIndex].BaseMaterialAmount;
-                        
-                        if (string.IsNullOrEmpty(reqMat))
-                        {
-                            reqMat = scalingData.GetRequiredMaterialID(_selectedClass); // Show effective/fallback
-                        }
+                        SerializedObject so = new SerializedObject(scalingData);
+                        SerializedProperty classScalingsProp = so.FindProperty("ClassScalings");
+                        SerializedProperty scalingElementProp = classScalingsProp.GetArrayElementAtIndex(elementIndex);
+                        SerializedProperty requiredMatsProp = scalingElementProp.FindPropertyRelative("RequiredMaterials");
 
-                        EditorGUILayout.LabelField("Primary Rank-Up Material:", EditorStyles.miniBoldLabel);
-                        string[] materialOptions = new string[] { 
-                            "mat_bandit_insignia", 
-                            "mat_golem_core", 
-                            "mat_animal_fang", 
-                            "mat_shadow_essence" 
-                        };
-                        
-                        int selectedMatIdx = System.Array.IndexOf(materialOptions, reqMat);
-                        if (selectedMatIdx < 0) selectedMatIdx = 0;
-                        
-                        int newMatIdx = EditorGUILayout.Popup("Material Type", selectedMatIdx, materialOptions);
-                        int newBaseAmt = EditorGUILayout.IntField("Base Material Amount", baseAmt <= 0 ? 5 : baseAmt);
-                        
-                        if (EditorGUI.EndChangeCheck())
+                        EditorGUILayout.PropertyField(requiredMatsProp, new GUIContent("Promotion Required Materials"), true);
+
+                        if (so.ApplyModifiedProperties())
                         {
-                            Undo.RecordObject(scalingData, "Modify Class Promotion Settings");
-                            scalingData.ClassScalings[elementIndex].RequiredMaterialID = materialOptions[newMatIdx];
-                            scalingData.ClassScalings[elementIndex].BaseMaterialAmount = newBaseAmt;
-                            EditorUtility.SetDirty(scalingData);
                             AssetDatabase.SaveAssets();
                         }
                         
-                        string effectiveMat = scalingData.GetRequiredMaterialID(_selectedClass);
-                        int effectiveAmt2Star = scalingData.GetRequiredMaterialAmount(_selectedClass, 2);
-                        int effectiveAmt6Star = scalingData.GetRequiredMaterialAmount(_selectedClass, 6);
-                        
+                        var reqMats = scalingData.GetRequiredMaterials(_selectedClass);
                         EditorGUILayout.Space(4);
-                        EditorGUILayout.HelpBox(
-                            $"Effective Promotion Material: {effectiveMat}\n" +
-                            $"Cost for 2⭐ Rank-Up: {effectiveAmt2Star}x\n" +
-                            $"Cost for 6⭐ Rank-Up: {effectiveAmt6Star}x", 
-                            MessageType.Info);
+                        
+                        string info = "Cost for 2⭐ Rank-Up:\n";
+                        foreach(var m in reqMats) { info += $"- {m.ItemID}: {m.BaseAmount * 2}x\n"; }
+                        info += "\nCost for 6⭐ Rank-Up:\n";
+                        foreach(var m in reqMats) { info += $"- {m.ItemID}: {m.BaseAmount * 6}x\n"; }
+                        
+                        EditorGUILayout.HelpBox(info, MessageType.Info);
 
                         EditorGUILayout.EndVertical();
                     }

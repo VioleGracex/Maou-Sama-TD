@@ -187,8 +187,8 @@ MonoBehaviour:
     BaseHpMultiplier: 0.6
     BaseAtkMultiplier: 0.9
     BaseDefMultiplier: 0.2
-    RequiredMaterialID: 
-    BaseMaterialAmount: 0
+    RequiredMaterialID: mat_golem_core
+    BaseMaterialAmount: 5
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10

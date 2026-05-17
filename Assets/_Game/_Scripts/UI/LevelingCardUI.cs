@@ -15,5 +15,10 @@ namespace MaouSamaTD.UI
         public GameObject MinusButtonObj;
         public Button MinusButton;
         public Button CardButton;
+
+        [HideInInspector]
+        public GameObject PlusButtonObj;
+        [HideInInspector]
+        public Button PlusButton;
     }
 }

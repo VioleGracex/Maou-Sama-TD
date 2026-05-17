@@ -4,6 +4,15 @@ using UnityEngine;
 namespace MaouSamaTD.Units
 {
     [System.Serializable]
+    public struct PromotionMaterialRequirement
+    {
+        [Tooltip("The ID of the loot item required to rank up / promote this class.")]
+        public string ItemID;
+        [Tooltip("Base material cost, which is multiplied by the target star rank (e.g., 5 * star).")]
+        public int BaseAmount;
+    }
+
+    [System.Serializable]
     public struct RarityStatGrowth
     {
         public UnitRarity Rarity;
@@ -28,10 +37,8 @@ namespace MaouSamaTD.Units
         public float BaseDefMultiplier;
 
         [Header("Promotion Requirements")]
-        [Tooltip("The ID of the primary loot item required to rank up / promote this class.")]
-        public string RequiredMaterialID;
-        [Tooltip("Base material cost, which is multiplied by the target star rank (e.g., 5 * star).")]
-        public int BaseMaterialAmount;
+        [Tooltip("List of items required to rank up / promote this class.")]
+        public PromotionMaterialRequirement[] RequiredMaterials;
 
         [Header("Rarity (Star) Growth")]
         public RarityStatGrowth[] RarityGrowths;
@@ -43,14 +50,14 @@ namespace MaouSamaTD.Units
         public string AssetLabel;
         public ClassStatMultipliers[] ClassScalings;
 
-        public string GetRequiredMaterialID(UnitClass classType)
+        public PromotionMaterialRequirement[] GetRequiredMaterials(UnitClass classType)
         {
-            if (TryGetMultipliers(classType, out var result) && !string.IsNullOrEmpty(result.RequiredMaterialID))
+            if (TryGetMultipliers(classType, out var result) && result.RequiredMaterials != null && result.RequiredMaterials.Length > 0)
             {
-                return result.RequiredMaterialID;
+                return result.RequiredMaterials;
             }
             // Fallback based on class
-            return classType switch
+            string defaultItem = classType switch
             {
                 UnitClass.Bastion => "mat_golem_core",
                 UnitClass.Vanguard => "mat_bandit_insignia",
@@ -62,17 +69,14 @@ namespace MaouSamaTD.Units
                 UnitClass.Assassin => "mat_bandit_insignia",
                 _ => "mat_bandit_insignia" // Default Fallback
             };
+
+            return new PromotionMaterialRequirement[]
+            {
+                new PromotionMaterialRequirement { ItemID = defaultItem, BaseAmount = 5 }
+            };
         }
 
-        public int GetRequiredMaterialAmount(UnitClass classType, int targetStar)
-        {
-            int baseAmt = 5;
-            if (TryGetMultipliers(classType, out var result) && result.BaseMaterialAmount > 0)
-            {
-                baseAmt = result.BaseMaterialAmount;
-            }
-            return baseAmt * targetStar;
-        }
+
 
         public bool TryGetMultipliers(UnitClass classType, out ClassStatMultipliers result)
         {

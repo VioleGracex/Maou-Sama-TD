@@ -93,6 +93,12 @@ namespace MaouSamaTD.UI.Vassals
 
             _listView = new GenericListView<UnitData, UnitCardUI>(_cardContainer, _cardPrefab);
             
+            if (_inspectorPanel != null)
+            {
+                _inspectorPanel.OnLevelUpRequest += HandleInspectorLevelUpRequest;
+                _inspectorPanel.OnPromoteRequest += HandleInspectorPromoteRequest;
+            }
+
             InitializeClassFilters();
         }
 
@@ -161,7 +167,13 @@ namespace MaouSamaTD.UI.Vassals
             if (_visualRoot != null) _visualRoot.SetActive(false);
             if (_inspectorPanel != null) _inspectorPanel.Close();
             if (_fullScreenInspector != null) _fullScreenInspector.Close();
-            // If we are a child of a page, don't necessarily disable the parent unless we are the main page
+            
+            // Fix: set parent Vassals_Page_UI inactive when closing
+            if (transform.parent != null)
+            {
+                transform.parent.gameObject.SetActive(false);
+            }
+            
             UpdateScrollRectLayout(false);
         }
 
@@ -449,6 +461,28 @@ namespace MaouSamaTD.UI.Vassals
             DOTween.To(() => _scrollViewRect.offsetMin, x => _scrollViewRect.offsetMin = x, targetMin, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
             DOTween.To(() => _scrollViewRect.offsetMax, x => _scrollViewRect.offsetMax = x, targetMax, 0.3f).SetEase(Ease.OutQuad).SetUpdate(true);
             */
+        }
+
+        private void HandleInspectorLevelUpRequest(UnitData unit)
+        {
+            if (unit == null) return;
+            if (_fullScreenInspector != null)
+            {
+                _fullScreenInspector.SetUnit(unit);
+                UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
+                _fullScreenInspector.SwitchTab(4); // Tab 4 is Level Up / XP
+            }
+        }
+
+        private void HandleInspectorPromoteRequest(UnitData unit)
+        {
+            if (unit == null) return;
+            if (_fullScreenInspector != null)
+            {
+                _fullScreenInspector.SetUnit(unit);
+                UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
+                _fullScreenInspector.SwitchTab(2); // Tab 2 is Resonance / Promotion
+            }
         }
     }
 }

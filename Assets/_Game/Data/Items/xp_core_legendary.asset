@@ -15,7 +15,7 @@ MonoBehaviour:
   ItemID: xp_core_legendary
   ItemName: Legendary Core
   Description: 
-  ItemIcon: {fileID: 0}
+  ItemIcon: {fileID: 21300000, guid: 3e31b1bb8a6fde546bdf6aba604cfa9b, type: 3}
   BackgroundColor: {r: 0.15, g: 0.15, b: 0.2, a: 0.9}
   TextColor: {r: 1, g: 1, b: 1, a: 1}
   ValueAmount: 10000

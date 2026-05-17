@@ -71,7 +71,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnMandates != null) _btnMandates.onClick.AddListener(OnMandatesClicked);
             if (_btnThrone != null) _btnThrone.onClick.AddListener(OnThroneClicked);
             if (_btnTreasury != null) _btnTreasury.onClick.AddListener(OnVaultClicked);
-            if (_btnVault != null) _btnVault.onClick.AddListener(OnVaultClicked);
+            if (_btnVault != null) _btnVault.onClick.AddListener(OnVaultInventoryClicked);
             if (_btnRanks != null) _btnRanks.onClick.AddListener(OnRanksClicked);
             if (_btnDaily != null) _btnDaily.onClick.AddListener(OnDailyClicked);
             if (_btnGrimoire != null) _btnGrimoire.onClick.AddListener(OnGrimoireClicked);
@@ -253,6 +253,18 @@ namespace MaouSamaTD.UI.MainMenu
             if (panel != null)
             {
                 UIFlowManager.Instance.OpenPanel(panel);
+            }
+        }
+        private void OnVaultInventoryClicked()
+        {
+            var panel = Object.FindAnyObjectByType<VaultInventoryUI>(FindObjectsInactive.Include);
+            if (panel != null)
+            {
+                UIFlowManager.Instance.OpenPanel(panel);
+            }
+            else
+            {
+                Debug.LogWarning("[HomeUIManager] VaultInventoryUI could not be found!");
             }
         }
         private void OnRanksClicked() { Debug.Log("[HomeUIManager] Ranks clicked (Not Implemented Yet)"); }

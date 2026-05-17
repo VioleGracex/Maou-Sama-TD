@@ -428,8 +428,9 @@ namespace MaouSamaTD.Units
         protected override void OnValidate()
         {
             base.OnValidate();
-            if (StarRating < 1) StarRating = 1;
-            if (StarRating > 6) StarRating = 6;
+            
+            // Enforce that character base star rating matches its rarity
+            StarRating = Mathf.Clamp((int)Rarity + 1, 1, 6);
 
             // Recalculate stats in editor if we have a global reference
             if (MaouSamaTD.Core.AppEntryPoint.LoadedScalingData != null)

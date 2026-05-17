@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 using MaouSamaTD.Progression;
 using MaouSamaTD.Units;
@@ -47,6 +48,9 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _txtXpGain;
         [SerializeField] private TextMeshProUGUI _txtLevelPreview;
         [SerializeField] private Button _btnConfirmLevelUp;
+        [SerializeField] private Image _portraitImage;
+        [SerializeField] private Image _xpCurrentFill;
+        [SerializeField] private Image _xpAddFill;
 
         [Header("Auto-Add")]
         [SerializeField] private Button _btnAutoAdd;
@@ -63,11 +67,29 @@ namespace MaouSamaTD.UI
         private bool _autoSettingsVisible = false;
         private List<System.Action> _updateCallbacks = new List<System.Action>();
 
+        private Button _btnAddAll;
+        private Button _btnDeselectAll;
+        private bool _isAnimating = false;
+
         public void Initialize(SaveManager saveManager)
         {
             _saveManager = saveManager;
             if (_btnConfirmLevelUp) _btnConfirmLevelUp.onClick.AddListener(PerformLevelUp);
             if (_btnAutoAdd) _btnAutoAdd.onClick.AddListener(OnAutoAdd);
+
+            // Opaque ScrollRect viewport to prevent transparent masking issues making cards invisible
+            if (_duplicatesScrollRect != null && _duplicatesScrollRect.viewport != null)
+            {
+                var viewportImg = _duplicatesScrollRect.viewport.GetComponent<Image>();
+                if (viewportImg != null)
+                {
+                    var c = viewportImg.color;
+                    c.a = 1f;
+                    viewportImg.color = c;
+                }
+            }
+
+            SetupExtraPageButtons();
         }
 
         public void Refresh(UnitData u)
@@ -82,6 +104,14 @@ namespace MaouSamaTD.UI
             _autoSettingsVisible = false;
 
             if (u == null || _saveManager == null || _saveManager.CurrentData == null) return;
+
+            ApplyInterItalicFont();
+
+            if (_portraitImage)
+            {
+                _portraitImage.sprite = u.GetSprite(UnitData.UnitImageType.WaistUp);
+                if (_portraitImage.sprite == null) _portraitImage.sprite = u.GetSprite(UnitData.UnitImageType.Chibi);
+            }
 
             RebuildCardsList();
             UpdatePreview();
@@ -148,12 +178,8 @@ namespace MaouSamaTD.UI
                     }
                     if (ui.TitleText != null) ui.TitleText.text = title;
                     
-                    ui.CardButton.onClick.AddListener(() => {
-                        if (_selectedCores[coreIndex] < availableCount) { _selectedCores[coreIndex]++; UpdatePreview(); }
-                    });
-                    ui.MinusButton.onClick.AddListener(() => {
-                        if (_selectedCores[coreIndex] > 0) { _selectedCores[coreIndex]--; UpdatePreview(); }
-                    });
+                    SetupPlusButton(ui, () => { _selectedCores[coreIndex]++; UpdatePreview(); }, () => _selectedCores[coreIndex] < availableCount);
+                    SetupMinusButton(ui, () => { _selectedCores[coreIndex]--; UpdatePreview(); }, () => _selectedCores[coreIndex] > 0);
 
                     _updateCallbacks.Add(() => {
                         int sel = _selectedCores[coreIndex];
@@ -225,7 +251,7 @@ namespace MaouSamaTD.UI
                     if (ui.BackgroundImage != null) ui.BackgroundImage.color = new Color(0.3f, 0.1f, 0.1f, 0.9f);
                     if (ui.IconImage != null)
                     {
-                        ui.IconImage.sprite = _currentUnit.GetSprite(UnitData.UnitImageType.WaistUp);
+                        ui.IconImage.sprite = _currentUnit.GetSprite(UnitData.UnitImageType.Avatar);
                         if (ui.IconImage.sprite == null) ui.IconImage.sprite = _currentUnit.GetSprite(UnitData.UnitImageType.Chibi);
                         ui.IconImage.preserveAspect = true;
                         ui.IconImage.color = Color.white;
@@ -233,12 +259,8 @@ namespace MaouSamaTD.UI
                     if (ui.TitleText != null) { ui.TitleText.text = "DUPLICATES"; ui.TitleText.color = new Color(1f, 0.4f, 0.4f); }
                     if (ui.SelectedOverlay != null) ui.SelectedOverlay.GetComponent<Image>().color = new Color(1, 0, 0, 0.4f);
                     
-                    ui.CardButton.onClick.AddListener(() => {
-                        if (_selectedDuplicatesCount < totalCount) { _selectedDuplicatesCount++; UpdatePreview(); }
-                    });
-                    ui.MinusButton.onClick.AddListener(() => {
-                        if (_selectedDuplicatesCount > 0) { _selectedDuplicatesCount--; UpdatePreview(); }
-                    });
+                    SetupPlusButton(ui, () => { _selectedDuplicatesCount++; UpdatePreview(); }, () => _selectedDuplicatesCount < totalCount);
+                    SetupMinusButton(ui, () => { _selectedDuplicatesCount--; UpdatePreview(); }, () => _selectedDuplicatesCount > 0);
 
                     _updateCallbacks.Add(() => {
                         int sel = _selectedDuplicatesCount;
@@ -259,7 +281,7 @@ namespace MaouSamaTD.UI
             
             var iconObj = new GameObject("Icon"); iconObj.transform.SetParent(fbObj.transform, false);
             var iconImg = iconObj.AddComponent<Image>();
-            iconImg.sprite = _currentUnit.GetSprite(UnitData.UnitImageType.WaistUp);
+            iconImg.sprite = _currentUnit.GetSprite(UnitData.UnitImageType.Avatar);
             if (iconImg.sprite == null) iconImg.sprite = _currentUnit.GetSprite(UnitData.UnitImageType.Chibi);
             iconImg.preserveAspect = true;
             var iconRect = iconImg.GetComponent<RectTransform>(); iconRect.anchorMin = new Vector2(0.05f, 0.25f); iconRect.anchorMax = new Vector2(0.95f, 0.95f); iconRect.sizeDelta = Vector2.zero;
@@ -313,6 +335,23 @@ namespace MaouSamaTD.UI
             if (_txtLevelPreview)  _txtLevelPreview.text  = newLevel > _currentUnit.Level
                                                             ? $"Lv {_currentUnit.Level} → {newLevel}"
                                                             : $"Lv {_currentUnit.Level}";
+
+            // Update XP fills
+            if (_xpCurrentFill)
+            {
+                float currentPct = (float)_currentUnit.Experience / reqXP;
+                _xpCurrentFill.fillAmount = currentPct;
+            }
+            if (_xpAddFill)
+            {
+                int simulatedXP = _currentUnit.Experience + totalXP;
+                float addPct = (float)simulatedXP / reqXP;
+                if (newLevel > _currentUnit.Level)
+                {
+                    addPct = 1.0f; // Maxed out this level bar
+                }
+                _xpAddFill.fillAmount = Mathf.Min(1.0f, addPct);
+            }
 
             if (_btnConfirmLevelUp) _btnConfirmLevelUp.interactable = totalXP > 0;
             
@@ -417,24 +456,422 @@ namespace MaouSamaTD.UI
             int totalXP = CalculateTotalXP();
             if (totalXP <= 0) return;
 
-            ProgressionLogic.AddXP(_currentUnit, totalXP);
-
-            for (int i = 0; i < 4; i++)
+            // Warning Check: Sacrificing duplicates when not all memories are unlocked
+            if (_selectedDuplicatesCount > 0)
             {
-                if (_selectedCores[i] > 0)
-                    _saveManager.RemoveItem(CoreIDs[i], _selectedCores[i]);
+                var entry = _saveManager.CurrentData.UnitInventory.Find(e => e.UnitID == _currentUnit.name && !e.IsDuplicate);
+                var unlocked = entry?.UnlockedLores ?? new List<int> { 0 };
+                int memCount = _currentUnit.LoreEntries != null ? _currentUnit.LoreEntries.Count : 0;
+                int totalChambers = Mathf.Max(memCount, 5);
+
+                if (unlocked.Count < totalChambers)
+                {
+                    ShowMemorySacrificeWarning(totalXP);
+                    return;
+                }
             }
 
+            ExecutePerformLevelUp(totalXP);
+        }
+
+        private void ShowMemorySacrificeWarning(int totalXP)
+        {
+            var overlay = new GameObject("SacrificeWarningOverlay", typeof(RectTransform));
+            overlay.transform.SetParent(this.transform, false);
+            var rect = overlay.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.sizeDelta = Vector2.zero;
+
+            var bgImg = overlay.AddComponent<Image>();
+            bgImg.color = new Color(0.05f, 0.05f, 0.08f, 0.9f);
+
+            var dialogBox = new GameObject("DialogBox", typeof(RectTransform));
+            dialogBox.transform.SetParent(overlay.transform, false);
+            var dbRect = dialogBox.GetComponent<RectTransform>();
+            dbRect.anchorMin = new Vector2(0.5f, 0.5f);
+            dbRect.anchorMax = new Vector2(0.5f, 0.5f);
+            dbRect.pivot = new Vector2(0.5f, 0.5f);
+            dbRect.sizeDelta = new Vector2(480, 260);
+
+            var dbImg = dialogBox.AddComponent<Image>();
+            dbImg.color = new Color(0.12f, 0.12f, 0.16f, 1f);
+            var dbOutline = dialogBox.AddComponent<Outline>();
+            dbOutline.effectColor = new Color(0.85f, 0.25f, 0.2f, 0.8f);
+            dbOutline.effectDistance = new Vector2(2, 2);
+
+            var title = new GameObject("Title", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            title.transform.SetParent(dialogBox.transform, false);
+            title.text = "⚠️ WARNING: LORE CHAMBERS LOCKED";
+            title.fontSize = 20;
+            title.fontStyle = FontStyles.Bold;
+            title.color = new Color(0.95f, 0.3f, 0.25f);
+            title.alignment = TextAlignmentOptions.Center;
+            var tRect = title.GetComponent<RectTransform>();
+            tRect.anchorMin = new Vector2(0.05f, 0.8f);
+            tRect.anchorMax = new Vector2(0.95f, 0.95f);
+            tRect.sizeDelta = Vector2.zero;
+
+            var body = new GameObject("Body", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            body.transform.SetParent(dialogBox.transform, false);
+            body.text = "This Vassal still has locked Lore Chambers/Memories. Sacrificing their duplicates as leveling fodder will consume copies that are needed to unlock those chambers.\n\nDo you want to proceed with sacrificing them?";
+            body.fontSize = 14;
+            body.alignment = TextAlignmentOptions.Center;
+            body.color = Color.white;
+            var bRect = body.GetComponent<RectTransform>();
+            bRect.anchorMin = new Vector2(0.05f, 0.25f);
+            bRect.anchorMax = new Vector2(0.95f, 0.75f);
+            bRect.sizeDelta = Vector2.zero;
+
+            // Confirm Button
+            var btnConfirm = new GameObject("ConfirmBtn", typeof(RectTransform));
+            btnConfirm.transform.SetParent(dialogBox.transform, false);
+            var bcImg = btnConfirm.AddComponent<Image>();
+            bcImg.color = new Color(0.8f, 0.2f, 0.15f, 1f);
+            var bcBtn = btnConfirm.AddComponent<Button>();
+            var bcTxt = new GameObject("Text", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            bcTxt.transform.SetParent(btnConfirm.transform, false);
+            bcTxt.text = "SACRIFICE";
+            bcTxt.fontSize = 14;
+            bcTxt.fontStyle = FontStyles.Bold;
+            bcTxt.alignment = TextAlignmentOptions.Center;
+            bcTxt.color = Color.white;
+            var bctRect = bcTxt.GetComponent<RectTransform>();
+            bctRect.anchorMin = Vector2.zero;
+            bctRect.anchorMax = Vector2.one;
+            bctRect.sizeDelta = Vector2.zero;
+            var bcRect = btnConfirm.GetComponent<RectTransform>();
+            bcRect.anchorMin = new Vector2(0.15f, 0.05f);
+            bcRect.anchorMax = new Vector2(0.45f, 0.2f);
+            bcRect.sizeDelta = Vector2.zero;
+
+            bcBtn.onClick.AddListener(() =>
+            {
+                Destroy(overlay);
+                ExecutePerformLevelUp(totalXP);
+            });
+
+            // Cancel Button
+            var btnCancel = new GameObject("CancelBtn", typeof(RectTransform));
+            btnCancel.transform.SetParent(dialogBox.transform, false);
+            var blImg = btnCancel.AddComponent<Image>();
+            blImg.color = new Color(0.25f, 0.25f, 0.3f, 1f);
+            var blBtn = btnCancel.AddComponent<Button>();
+            var blTxt = new GameObject("Text", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            blTxt.transform.SetParent(btnCancel.transform, false);
+            blTxt.text = "CANCEL";
+            blTxt.fontSize = 14;
+            blTxt.fontStyle = FontStyles.Bold;
+            blTxt.alignment = TextAlignmentOptions.Center;
+            blTxt.color = Color.white;
+            var bltRect = blTxt.GetComponent<RectTransform>();
+            bltRect.anchorMin = Vector2.zero;
+            bltRect.anchorMax = Vector2.one;
+            bltRect.sizeDelta = Vector2.zero;
+            var blRect = btnCancel.GetComponent<RectTransform>();
+            blRect.anchorMin = new Vector2(0.55f, 0.05f);
+            blRect.anchorMax = new Vector2(0.85f, 0.2f);
+            blRect.sizeDelta = Vector2.zero;
+
+            blBtn.onClick.AddListener(() =>
+            {
+                Destroy(overlay);
+            });
+        }
+
+        private void ExecutePerformLevelUp(int totalXP)
+        {
+            if (_isAnimating) return;
+            StartCoroutine(AnimateXPProgression(_currentUnit.Level, _currentUnit.Experience, totalXP));
+        }
+
+        private void ApplyInterItalicFont()
+        {
+            if (_xpMeterValueText == null) return;
+            _xpMeterValueText.fontStyle = FontStyles.Italic | FontStyles.Bold;
+            var fonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
+            foreach (var f in fonts)
+            {
+                if (f.name.Contains("Inter-Italic") || f.name.Contains("Inter_Italic"))
+                {
+                    _xpMeterValueText.font = f;
+                    break;
+                }
+            }
+        }
+
+        private void SetupPlusButton(LevelingCardUI ui, System.Action onAdd, System.Func<bool> canAdd)
+        {
+            if (ui == null) return;
+            if (ui.PlusButtonObj != null) Destroy(ui.PlusButtonObj);
+
+            var plusObj = new GameObject("PlusBtn", typeof(RectTransform));
+            plusObj.transform.SetParent(ui.transform, false);
+            ui.PlusButtonObj = plusObj;
+
+            var rect = plusObj.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0f, 0.7f);
+            rect.anchorMax = new Vector2(0.3f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.sizeDelta = Vector2.zero;
+            rect.anchoredPosition = Vector2.zero;
+
+            var img = plusObj.AddComponent<Image>();
+            img.color = new Color(0.2f, 0.65f, 0.3f, 0.9f);
+
+            var btn = plusObj.AddComponent<Button>();
+            ui.PlusButton = btn;
+
+            var txtObj = new GameObject("Text", typeof(RectTransform));
+            txtObj.transform.SetParent(plusObj.transform, false);
+            var txt = txtObj.AddComponent<TextMeshProUGUI>();
+            txt.text = "+";
+            txt.fontSize = 24;
+            txt.fontStyle = FontStyles.Bold;
+            txt.alignment = TextAlignmentOptions.Center;
+            txt.color = Color.white;
+
+            var txtRect = txtObj.GetComponent<RectTransform>();
+            txtRect.anchorMin = Vector2.zero;
+            txtRect.anchorMax = Vector2.one;
+            txtRect.sizeDelta = Vector2.zero;
+
+            var holdPlus = plusObj.AddComponent<PointerHoldTrigger>();
+            holdPlus.OnClick = () => { if (canAdd()) onAdd(); };
+            holdPlus.OnHoldTick = () => { if (canAdd()) onAdd(); };
+
+            if (ui.CardButton != null)
+            {
+                ui.CardButton.onClick.RemoveAllListeners();
+                var holdCard = ui.CardButton.gameObject.GetComponent<PointerHoldTrigger>();
+                if (holdCard == null) holdCard = ui.CardButton.gameObject.AddComponent<PointerHoldTrigger>();
+                holdCard.OnClick = () => { if (canAdd()) onAdd(); };
+                holdCard.OnHoldTick = () => { if (canAdd()) onAdd(); };
+            }
+        }
+
+        private void SetupMinusButton(LevelingCardUI ui, System.Action onMinus, System.Func<bool> canMinus)
+        {
+            if (ui == null || ui.MinusButton == null) return;
+            ui.MinusButton.onClick.RemoveAllListeners();
+
+            var holdMinus = ui.MinusButton.gameObject.GetComponent<PointerHoldTrigger>();
+            if (holdMinus == null) holdMinus = ui.MinusButton.gameObject.AddComponent<PointerHoldTrigger>();
+            holdMinus.OnClick = () => { if (canMinus()) onMinus(); };
+            holdMinus.OnHoldTick = () => { if (canMinus()) onMinus(); };
+        }
+
+        private void AddAll()
+        {
+            if (_currentUnit == null || _saveManager == null) return;
+            for (int i = 0; i < 4; i++)
+            {
+                int have = _saveManager.GetItemCount(CoreIDs[i]);
+                _selectedCores[i] = have;
+            }
+            _selectedDuplicatesCount = _availableDuplicates.Count;
+            UpdatePreview();
+            foreach (var cb in _updateCallbacks) cb?.Invoke();
+        }
+
+        private void DeselectAll()
+        {
+            System.Array.Clear(_selectedCores, 0, 4);
+            _selectedDuplicatesCount = 0;
+            UpdatePreview();
+            foreach (var cb in _updateCallbacks) cb?.Invoke();
+        }
+
+        private void SetupExtraPageButtons()
+        {
+            var controlsObj = GameObject.Find("MainCanvas/MainUIContainer/Page_Content_Area/Vassals_Page_UI/UnitInspector_FullScreen_UI/Unit_Leveling_Page/MainLayout/RightPanel/BottomControls");
+            if (controlsObj == null) return;
+
+            var existingAddAll = controlsObj.transform.Find("AddAll_Button");
+            if (existingAddAll != null) Destroy(existingAddAll.gameObject);
+            var existingDeselectAll = controlsObj.transform.Find("DeselectAll_Button");
+            if (existingDeselectAll != null) Destroy(existingDeselectAll.gameObject);
+
+            var autoAddTemplate = controlsObj.transform.Find("AutoAdd_Button");
+            if (autoAddTemplate == null) return;
+
+            var addAllObj = Instantiate(autoAddTemplate.gameObject, controlsObj.transform);
+            addAllObj.name = "AddAll_Button";
+            _btnAddAll = addAllObj.GetComponent<Button>();
+            _btnAddAll.onClick.RemoveAllListeners();
+            _btnAddAll.onClick.AddListener(AddAll);
+
+            var addAllRect = addAllObj.GetComponent<RectTransform>();
+            addAllRect.anchorMin = new Vector2(0f, 0.5f);
+            addAllRect.anchorMax = new Vector2(0f, 0.5f);
+            addAllRect.pivot = new Vector2(0f, 0.5f);
+            addAllRect.sizeDelta = new Vector2(180, 60);
+            addAllRect.anchoredPosition = new Vector2(220, 0);
+
+            var addAllText = addAllObj.GetComponentInChildren<TextMeshProUGUI>();
+            if (addAllText != null) { addAllText.text = "ADD ALL"; addAllText.fontSize = 16; }
+            var addAllImage = addAllObj.GetComponent<Image>();
+            if (addAllImage != null) addAllImage.color = new Color(0.18f, 0.45f, 0.7f, 1f);
+
+            var deselectAllObj = Instantiate(autoAddTemplate.gameObject, controlsObj.transform);
+            deselectAllObj.name = "DeselectAll_Button";
+            _btnDeselectAll = deselectAllObj.GetComponent<Button>();
+            _btnDeselectAll.onClick.RemoveAllListeners();
+            _btnDeselectAll.onClick.AddListener(DeselectAll);
+
+            var deselectRect = deselectAllObj.GetComponent<RectTransform>();
+            deselectRect.anchorMin = new Vector2(0f, 0.5f);
+            deselectRect.anchorMax = new Vector2(0f, 0.5f);
+            deselectRect.pivot = new Vector2(0f, 0.5f);
+            deselectRect.sizeDelta = new Vector2(180, 60);
+            deselectRect.anchoredPosition = new Vector2(420, 0);
+
+            var deselectText = deselectAllObj.GetComponentInChildren<TextMeshProUGUI>();
+            if (deselectText != null) { deselectText.text = "DESELECT ALL"; deselectText.fontSize = 16; }
+            var deselectImage = deselectAllObj.GetComponent<Image>();
+            if (deselectImage != null) deselectImage.color = new Color(0.6f, 0.2f, 0.2f, 1f);
+        }
+
+        private void TriggerLevelUpVFX()
+        {
+            if (_xpMeterValueText == null) return;
+            Vector3 spawnPos = _xpMeterValueText.transform.position;
+            string[] symbols = { "✦", "★", "✦", "✨", "+1" };
+            Color[] colors = { new Color(1f, 0.85f, 0.2f), new Color(1f, 0.6f, 0.1f), new Color(1f, 1f, 1f), new Color(0.3f, 1f, 0.4f) };
+
+            for (int i = 0; i < 15; i++)
+            {
+                var symbol = symbols[Random.Range(0, symbols.Length)];
+                var color = colors[Random.Range(0, colors.Length)];
+                var go = new GameObject("XP_VFX_Particle", typeof(RectTransform));
+                go.transform.SetParent(this.transform.parent, false);
+                go.transform.position = spawnPos + new Vector3(Random.Range(-50f, 50f), Random.Range(-10f, 10f), 0);
+
+                var txt = go.AddComponent<TextMeshProUGUI>();
+                txt.text = symbol;
+                txt.fontSize = Random.Range(20, 36);
+                txt.fontStyle = FontStyles.Bold;
+                txt.color = color;
+                txt.alignment = TextAlignmentOptions.Center;
+
+                StartCoroutine(AnimateVFXParticle(go.GetComponent<RectTransform>(), txt));
+            }
+        }
+
+        private System.Collections.IEnumerator AnimateVFXParticle(RectTransform rect, TextMeshProUGUI txt)
+        {
+            float duration = Random.Range(0.5f, 0.8f);
+            float elapsed = 0f;
+            Vector2 velocity = new Vector2(Random.Range(-250f, 250f), Random.Range(100f, 400f));
+            float gravity = -500f;
+            Vector3 startScale = Vector3.one * Random.Range(0.5f, 1.2f);
+            Vector3 endScale = Vector3.zero;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+                velocity.y += gravity * Time.deltaTime;
+                rect.anchoredPosition += velocity * Time.deltaTime;
+                rect.localScale = Vector3.Lerp(startScale, endScale, t);
+                txt.color = new Color(txt.color.r, txt.color.g, txt.color.b, Mathf.Lerp(1f, 0f, t));
+                yield return null;
+            }
+            Destroy(rect.gameObject);
+        }
+
+        private System.Collections.IEnumerator AnimateXPProgression(int startLevel, int startXP, int totalXPGain)
+        {
+            _isAnimating = true;
+            if (_btnConfirmLevelUp) _btnConfirmLevelUp.interactable = false;
+            if (_btnAutoAdd) _btnAutoAdd.interactable = false;
+            if (_btnAddAll) _btnAddAll.interactable = false;
+            if (_btnDeselectAll) _btnDeselectAll.interactable = false;
+
+            int currentLevel = startLevel;
+            int maxLevel = _currentUnit.MaxLevel;
+            float animDuration = 1.0f;
+            float elapsed = 0f;
+
+            int totalStartXP = 0;
+            for (int l = 1; l < startLevel; l++) totalStartXP += ProgressionLogic.GetRequiredXP(l);
+            totalStartXP += startXP;
+
+            int totalTargetXP = totalStartXP + totalXPGain;
+
+            while (elapsed < animDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / animDuration);
+                int currentTotalSimulated = Mathf.RoundToInt(Mathf.Lerp(totalStartXP, totalTargetXP, t));
+                
+                int simLevel = 1;
+                int tempXP = currentTotalSimulated;
+                while (simLevel < maxLevel)
+                {
+                    int req = ProgressionLogic.GetRequiredXP(simLevel);
+                    if (tempXP >= req) { tempXP -= req; simLevel++; }
+                    else break;
+                }
+
+                if (simLevel > currentLevel)
+                {
+                    currentLevel = simLevel;
+                    TriggerLevelUpVFX();
+                }
+
+                int reqXPForSimLevel = ProgressionLogic.GetRequiredXP(simLevel);
+                float pct = (float)tempXP / reqXPForSimLevel;
+
+                if (_xpCurrentFill) _xpCurrentFill.fillAmount = pct;
+                if (_xpAddFill) _xpAddFill.fillAmount = pct;
+                if (_xpMeterValueText) _xpMeterValueText.text = $"{tempXP} / {reqXPForSimLevel}";
+                if (_txtLevelPreview)
+                {
+                    _txtLevelPreview.text = simLevel > startLevel 
+                        ? $"Lv {startLevel} → {simLevel}"
+                        : $"Lv {startLevel}";
+                }
+                yield return null;
+            }
+
+            int finalLevel = SimulateLevelGain(startLevel, startXP, totalXPGain, maxLevel);
+            int finalXP = (startXP + totalXPGain);
+            for (int l = startLevel; l < finalLevel; l++) finalXP -= ProgressionLogic.GetRequiredXP(l);
+
+            int finalReq = ProgressionLogic.GetRequiredXP(finalLevel);
+            float finalPct = (float)finalXP / finalReq;
+            
+            if (_xpCurrentFill) _xpCurrentFill.fillAmount = finalPct;
+            if (_xpAddFill) _xpAddFill.fillAmount = finalPct;
+            if (_xpMeterValueText) _xpMeterValueText.text = $"{finalXP} / {finalReq}";
+            if (_txtLevelPreview)
+            {
+                _txtLevelPreview.text = finalLevel > startLevel 
+                    ? $"Lv {startLevel} → {finalLevel}"
+                    : $"Lv {startLevel}";
+            }
+
+            ProgressionLogic.AddXP(_currentUnit, totalXPGain);
+            for (int i = 0; i < 4; i++)
+            {
+                if (_selectedCores[i] > 0) _saveManager.RemoveItem(CoreIDs[i], _selectedCores[i]);
+            }
             for (int i = 0; i < _selectedDuplicatesCount; i++)
             {
-                if (i < _availableDuplicates.Count)
-                    _saveManager.CurrentData.UnitInventory.Remove(_availableDuplicates[i]);
+                if (i < _availableDuplicates.Count) _saveManager.CurrentData.UnitInventory.Remove(_availableDuplicates[i]);
             }
 
             _saveManager.Save();
+            yield return new WaitForSeconds(0.3f);
+
+            _isAnimating = false;
             Refresh(_currentUnit);
 
-            Debug.Log($"[XPPanel] Level up! Gained {totalXP} XP. New level: {_currentUnit.Level}");
+            if (_btnAutoAdd) _btnAutoAdd.interactable = true;
+            if (_btnAddAll) _btnAddAll.interactable = true;
+            if (_btnDeselectAll) _btnDeselectAll.interactable = true;
+            if (_btnConfirmLevelUp) _btnConfirmLevelUp.interactable = true;
         }
     }
 }

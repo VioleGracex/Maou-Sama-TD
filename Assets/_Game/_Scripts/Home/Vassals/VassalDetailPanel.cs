@@ -93,6 +93,9 @@ namespace MaouSamaTD.UI.Vassals
         public bool   IsOpen        { get; private set; }
         public GameObject VisualRoot => _visualRoot;
 
+        public event System.Action<UnitData> OnLevelUpRequest;
+        public event System.Action<UnitData> OnPromoteRequest;
+
         private UnitData        _currentUnit;
         private int             _activeTab = 0;
         private UnitData.SkinData _selectedSkin; // The skin being previewed (not necessarily equipped)
@@ -118,6 +121,7 @@ namespace MaouSamaTD.UI.Vassals
             if (_btnSkins)         _btnSkins.onClick.AddListener(()     => SwitchTab(3));
             if (_btnUpgradeSkills) _btnUpgradeSkills.onClick.AddListener(() => SwitchTab(3));
             if (_btnPromote)   _btnPromote.onClick.AddListener(OnPromoteClicked);
+            if (_btnLevelUp)   _btnLevelUp.onClick.AddListener(()   => OnLevelUpRequest?.Invoke(_currentUnit));
             
             // Initial Localization
             LocalizeUI();
@@ -138,7 +142,7 @@ namespace MaouSamaTD.UI.Vassals
         private void OnPromoteClicked()
         {
             Debug.Log("[VassalDetailPanel] Promote (Rank Up) clicked");
-            // Integration with promotion system logic
+            OnPromoteRequest?.Invoke(_currentUnit);
         }
         #endregion
 

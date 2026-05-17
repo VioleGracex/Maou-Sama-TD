@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 2a378fd5-ce1e-4c44-ad86-9255c7037547
   CalculatedStats:
-  MaxHp: 66
-    Attack: 33
-  Defense: 1
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 132
+    Attack: 18
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
+    ClassName: Ranger
   UnitName: Skyra
   UnitTitle: Nightwing Harpy
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -30,7 +30,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 5671e4e19e323f64fb1774a46bcb5f29, type: 3}
     Chibi: {fileID: 21300000, guid: b3f9f909062b9b544af7f8bb698ba2a7, type: 3}
     WaistUp: {fileID: 21300000, guid: 71a800ae6a982bb4089db57312bdd8cd, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 0c541670e57c27345accd8d3678797e6, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 0c541670e57c27345accd8d3678797e6, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -45,6 +45,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 1
   Class: 3
   AttackPattern: 1
@@ -56,9 +57,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 66
   AttackPower: 9
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 1
-  RespawnTime: 18.0
+  RespawnTime: 18
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

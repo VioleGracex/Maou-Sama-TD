@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 67e67592-6078-4510-8166-a5a22e673f59
   CalculatedStats:
-  MaxHp: 96
-    Attack: 36
-  Defense: 2
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 192
+    Attack: 24
+    Defense: 4
+    ClassIcon: {fileID: 21300000, guid: ef81af5d0aa54b94b997151c0cebf567, type: 3}
+    ClassName: Assassin
   UnitName: Vane
   UnitTitle: Shadow Assassin
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 8f695416f43450943ba8cd2a1bea5de8, type: 3}
     Chibi: {fileID: 21300000, guid: af5dbf9749778d441b097ff042b8326e, type: 3}
     WaistUp: {fileID: 21300000, guid: 2bfcd5eedd298e34fbb2ba08cb7f9306, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: a865257cdb8ca8f44982d8e713cbb0d7, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: a865257cdb8ca8f44982d8e713cbb0d7, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 2
   Class: 10
   AttackPattern: 4
@@ -57,7 +58,7 @@ MonoBehaviour:
   AttackPower: 12
   AttackInterval: 0.8
   Defense: 2
-  RespawnTime: 20.0
+  RespawnTime: 20
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

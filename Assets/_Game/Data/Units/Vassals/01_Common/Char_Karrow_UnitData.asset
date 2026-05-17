@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 486fe993-9d47-4fa2-b9e0-6bb83d2f3f72
   CalculatedStats:
-  MaxHp: 250
-    Attack: 30
-  Defense: 8
+    MaxHp: 500
+    Attack: 6
+    Defense: 16
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Karrow
@@ -29,7 +29,7 @@ MonoBehaviour:
     Content: A loyal combatant in the Maou's forces holding the rank of SR.
   BaseSkin:
     Avatar: {fileID: 21300000, guid: fb99404c16cc8dd4d91e23965c1842e8, type: 3}
-    Chibi: {fileID: 21300000, guid: f66a83756d53259409a2cb05b821edb3, type: 3}
+    Chibi: {fileID: 21300000, guid: 6df7820fd0df8a3498e50f20433e0095, type: 3}
     WaistUp: {fileID: 21300000, guid: 1f4562de7c06c684c89f837b2b8d059a, type: 3}
     FullSplashArt: {fileID: 21300000, guid: bfe9e514b4c6ce34fb9116c0de286256, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: bfe9e514b4c6ce34fb9116c0de286256, type: 3}
@@ -46,6 +46,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 0
   Class: 0
   AttackPattern: 4
@@ -59,7 +60,7 @@ MonoBehaviour:
   AttackPower: 3
   AttackInterval: 1.2
   Defense: 8
-  RespawnTime: 15.0
+  RespawnTime: 15
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

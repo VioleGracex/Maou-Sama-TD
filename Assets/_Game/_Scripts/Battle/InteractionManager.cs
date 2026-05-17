@@ -520,8 +520,15 @@ namespace MaouSamaTD.Managers
             
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, ~LayerMask.GetMask("Ignore Raycast")))
             {
-                targetUnit = hit.collider.GetComponent<UnitBase>();
-                targetPos = new Vector3(hit.point.x, 0, hit.point.z);
+                targetUnit = hit.collider.GetComponent<UnitBase>() ?? hit.collider.GetComponentInParent<UnitBase>();
+                if (targetUnit != null)
+                {
+                    targetPos = targetUnit.transform.position;
+                }
+                else
+                {
+                    targetPos = new Vector3(hit.point.x, 0, hit.point.z);
+                }
             }
             
             // Try to find the tile if it's a tile/ground skill
@@ -587,8 +594,15 @@ namespace MaouSamaTD.Managers
             
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, ~LayerMask.GetMask("Ignore Raycast")))
             {
-                targetUnit = hit.collider.GetComponent<UnitBase>();
-                targetPos = new Vector3(hit.point.x, 0, hit.point.z);
+                targetUnit = hit.collider.GetComponent<UnitBase>() ?? hit.collider.GetComponentInParent<UnitBase>();
+                if (targetUnit != null)
+                {
+                    targetPos = targetUnit.transform.position;
+                }
+                else
+                {
+                    targetPos = new Vector3(hit.point.x, 0, hit.point.z);
+                }
             }
             
             // Try to find the tile if it's a tile/ground skill

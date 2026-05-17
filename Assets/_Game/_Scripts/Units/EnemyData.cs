@@ -43,6 +43,24 @@ namespace MaouSamaTD.Units
         HighGround = 1 << 1
     }
 
+    public enum EnemyCategory
+    {
+        None    = 0, // Will use fallback logic when dropping loot
+        Shadow  = 1,
+        Bandit  = 2,
+        Animal  = 3,
+        Golem   = 4,
+        Undead  = 5,
+        Demon   = 6,
+    }
+
+    public enum EnemyRank
+    {
+        Normal  = 0,
+        Elite   = 1,
+        Boss    = 2,
+    }
+
     [CreateAssetMenu(fileName = "NewEnemyData", menuName = "Maou-Sama-TD/Enemy Data")]
     public class EnemyData : MaouSamaTD.Core.GameDataSO
     {
@@ -102,7 +120,32 @@ namespace MaouSamaTD.Units
 
         [Header("Rewards")]
         public int CurrencyReward = 10;
-        
+
+        [Header("Classification")]
+        [Tooltip("Which category of enemy this is. Used for loot drops and rank-up material assignment. Set to None to use automatic fallback.")]
+        public EnemyCategory Category = EnemyCategory.None;
+
+        [Tooltip("Rank of this enemy. Bosses always drop premium loot. Set to Boss here OR check IsBoss above.")]
+        public EnemyRank Rank = EnemyRank.Normal;
+
+        /// <summary>
+        /// Returns the effective category for loot. Falls back to Golem for bosses, Bandit for standards.
+        /// </summary>
+        public EnemyCategory GetEffectiveCategory()
+        {
+            if (Category != EnemyCategory.None) return Category;
+            return (IsBoss || Rank == EnemyRank.Boss) ? EnemyCategory.Golem : EnemyCategory.Bandit;
+        }
+
+        /// <summary>
+        /// Returns the effective rank. IsBoss always overrides to Boss rank.
+        /// </summary>
+        public EnemyRank GetEffectiveRank()
+        {
+            if (IsBoss) return EnemyRank.Boss;
+            return Rank;
+        }
+
         [Header("Visuals")]
         public Color Tint = Color.white; // Optional tint
         public float VisualYOffset = 0f; // Offset for sprite height (e.g. to stand on top of tiles)

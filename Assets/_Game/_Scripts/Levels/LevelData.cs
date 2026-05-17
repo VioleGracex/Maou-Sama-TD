@@ -27,6 +27,19 @@ namespace MaouSamaTD.Levels
 
         [Tooltip("List of rewards granted upon clearing the level for the first time or repeatedly (depending on logic).")]
         public List<MaouSamaTD.Data.RewardData> WinRewards = new List<MaouSamaTD.Data.RewardData>();
+
+        [System.Serializable]
+        public struct LevelLootItem
+        {
+            public string ItemID;
+            public int MinQuantity;
+            public int MaxQuantity;
+            [Range(0f, 1f)] public float DropChance;
+        }
+
+        [Header("Stage Completion Loot")]
+        [Tooltip("Guaranteed or chance-based item drops awarded upon level completion.")]
+        public List<LevelLootItem> StageLootConfig = new List<LevelLootItem>();
         
         [Tooltip("If populated, forces the player to use this specific cohort for the first 11 slots. Existing cohort selection is ignored.")]
         public List<MaouSamaTD.Units.UnitData> PremadeCohort;

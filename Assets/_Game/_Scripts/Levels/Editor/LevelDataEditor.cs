@@ -147,6 +147,8 @@ namespace MaouSamaTD.Levels.Editor
             if (DrawSectionHeader("Rewards", ref _showRewards))
             {
                 DrawProperty("WinRewards", "Level Win Rewards");
+                DrawProperty("StageLootConfig", "Stage Completion Loot");
+                DrawProperty("MissionXP", "Mission Base XP");
             }
             EndSection(_showRewards);
         }

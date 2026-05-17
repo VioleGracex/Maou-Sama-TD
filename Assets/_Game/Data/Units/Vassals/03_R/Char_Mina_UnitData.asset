@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 9638e4fd-4c03-4da0-9baa-0b88eb172baf
   CalculatedStats:
-  MaxHp: 84
-    Attack: 36
-  Defense: 2
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 168
+    Attack: 10
+    Defense: 4
+    ClassIcon: {fileID: 21300000, guid: 388393a245da00049a44d7c48a196e4c, type: 3}
+    ClassName: Support
   UnitName: Mina
   UnitTitle: Charming Novice
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: f474426e38873864aae3eaa82670415a, type: 3}
     Chibi: {fileID: 21300000, guid: d6ffa849a0083094fb0efc923f8bc1cb, type: 3}
     WaistUp: {fileID: 21300000, guid: 4e976bec584bada4198d45626901fb5f, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 01a94d9041bf1ea408ab5d807bb99b5e, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 01a94d9041bf1ea408ab5d807bb99b5e, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 2
   Class: 8
   AttackPattern: 4
@@ -55,9 +56,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 84
   AttackPower: 5
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 2
-  RespawnTime: 20.0
+  RespawnTime: 20
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

@@ -233,6 +233,9 @@ namespace MaouSamaTD.Units
         public float BaseStatMultiplier = 1.0f; // Permanent boost from advancements
         public long AcquisitionDate;
 
+        [HideInInspector]
+        public int UnlockedResonanceCount = 0; // Runtime: set from save data on load
+
         [Header("Class & Rules")]
         public UnitRarity Rarity;
         public UnitClass Class;
@@ -411,6 +414,15 @@ namespace MaouSamaTD.Units
             CalculatedStats.MaxHp *= 2f;
             CalculatedStats.Attack *= 2f;
             CalculatedStats.Defense *= 2f;
+
+            // Resonance node bonus: +5% per node (max 6 nodes = +30%)
+            if (UnlockedResonanceCount > 0)
+            {
+                float resonanceBonus = 1f + (UnlockedResonanceCount * 0.05f);
+                CalculatedStats.MaxHp   *= resonanceBonus;
+                CalculatedStats.Attack  *= resonanceBonus;
+                CalculatedStats.Defense *= resonanceBonus;
+            }
         }
 
         protected override void OnValidate()

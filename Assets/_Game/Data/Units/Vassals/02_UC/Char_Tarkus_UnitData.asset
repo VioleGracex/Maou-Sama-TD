@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 92274525-03f4-483c-a55a-6be6dd7b77a5
   CalculatedStats:
-  MaxHp: 275
-    Attack: 33
-  Defense: 9
+    MaxHp: 550
+    Attack: 6
+    Defense: 18
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Tarkus
@@ -30,7 +30,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: a70434d051ab01a468c3ceef7c841f9e, type: 3}
     Chibi: {fileID: 21300000, guid: 21fb40f7ebc49ed4aa6f0ff1486d87b3, type: 3}
     WaistUp: {fileID: 21300000, guid: 79875933f2579bb46a6bee89f80d01b6, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 90410ec2841559a4c902042c3ab1eb18, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 90410ec2841559a4c902042c3ab1eb18, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -45,6 +45,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 1
   Class: 0
   AttackPattern: 4
@@ -58,7 +59,7 @@ MonoBehaviour:
   AttackPower: 3
   AttackInterval: 1.2
   Defense: 9
-  RespawnTime: 18.0
+  RespawnTime: 18
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

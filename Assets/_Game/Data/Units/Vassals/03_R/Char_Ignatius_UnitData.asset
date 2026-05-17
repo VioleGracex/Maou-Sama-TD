@@ -15,13 +15,16 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 932c44b4-8395-4b57-a4dc-09d44f3dc949
   CalculatedStats:
-  MaxHp: 84
-    Attack: 36
-  Defense: 2
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 168
+    Attack: 10
+    Defense: 4
+    ClassIcon: {fileID: 21300000, guid: 872d1038e22e6fa489265971409ff0a9, type: 3}
+    ClassName: Architect
   UnitName: Ignatius
   UnitTitle: 
+  SummonQuote: 
+  BriefDescription: 
+  LoreEntries: []
   BaseSkin:
     Avatar: {fileID: 21300000, guid: 4a396d8e5773a0345993398fc0df7e1b, type: 3}
     Chibi: {fileID: 21300000, guid: d67602dd69510bd4a93515b656726383, type: 3}
@@ -41,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 2
   Class: 6
   AttackPattern: 4
@@ -52,9 +56,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 84
   AttackPower: 5
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 2
-  RespawnTime: 20.0
+  RespawnTime: 20
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

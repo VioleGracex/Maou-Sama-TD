@@ -119,6 +119,11 @@ namespace MaouSamaTD.Units.Editor
                 EditorGUILayout.PropertyField(scaling.FindPropertyRelative("BaseAtkMultiplier"), new GUIContent("ATK Multiplier"));
                 EditorGUILayout.PropertyField(scaling.FindPropertyRelative("BaseDefMultiplier"), new GUIContent("DEF Multiplier"));
 
+                EditorGUILayout.Space(5);
+                EditorGUILayout.LabelField("Promotion Requirements", EditorStyles.miniBoldLabel);
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("RequiredMaterialID"), new GUIContent("Req Material ID"));
+                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("BaseMaterialAmount"), new GUIContent("Base Mat Amount"));
+
                 EditorGUILayout.Space(10);
                 DrawRarityGrowthTabs(scaling.FindPropertyRelative("RarityGrowths"));
                 

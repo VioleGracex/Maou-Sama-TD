@@ -15,6 +15,7 @@ namespace MaouSamaTD.Editor
         private List<EnemyData> _filteredEnemies = new List<EnemyData>();
         private string _searchText = "";
         private int _movementFilter = -1; // -1 for All
+        private int _categoryFilter = -1;  // -1 for All
         
         // Layout & Paging
         private ViewMode _currentViewMode = ViewMode.Grid;
@@ -47,6 +48,15 @@ namespace MaouSamaTD.Editor
         private GUIStyle _cardStyle;
         private GUIStyle _selectionStyle;
 
+        private enum EnemyBrowserTab
+        {
+            Enemies,
+            LootDrops
+        }
+        private EnemyBrowserTab _currentTab = EnemyBrowserTab.Enemies;
+        private Vector2 _lootScrollPos;
+        private Dictionary<EnemyCategory, bool> _categoryExpanded = new Dictionary<EnemyCategory, bool>();
+
         [MenuItem("Maou-TD/Enemy Browser")]
         public static void Open()
         {
@@ -77,6 +87,7 @@ namespace MaouSamaTD.Editor
         {
             _searchText = EditorPrefs.GetString("MaouEnemyBrowser_SearchText", "");
             _movementFilter = EditorPrefs.GetInt("MaouEnemyBrowser_MovementFilter", -1);
+            _categoryFilter = EditorPrefs.GetInt("MaouEnemyBrowser_CategoryFilter", -1);
             _currentViewMode = (ViewMode)EditorPrefs.GetInt("MaouEnemyBrowser_ViewMode", (int)ViewMode.Grid);
             _itemsPerPage = EditorPrefs.GetInt("MaouEnemyBrowser_ItemsPerPage", 24);
             _currentPage = EditorPrefs.GetInt("MaouEnemyBrowser_CurrentPage", 0);
@@ -93,6 +104,7 @@ namespace MaouSamaTD.Editor
         {
             EditorPrefs.SetString("MaouEnemyBrowser_SearchText", _searchText);
             EditorPrefs.SetInt("MaouEnemyBrowser_MovementFilter", _movementFilter);
+            EditorPrefs.SetInt("MaouEnemyBrowser_CategoryFilter", _categoryFilter);
             EditorPrefs.SetInt("MaouEnemyBrowser_ViewMode", (int)_currentViewMode);
             EditorPrefs.SetInt("MaouEnemyBrowser_ItemsPerPage", _itemsPerPage);
             EditorPrefs.SetInt("MaouEnemyBrowser_CurrentPage", _currentPage);
@@ -126,11 +138,12 @@ namespace MaouSamaTD.Editor
                 // Search filter
                 bool matchesSearch = string.IsNullOrEmpty(_searchText) || 
                                      e.EnemyName.ToLower().Contains(_searchText.ToLower());
-                
                 // Movement filter
                 bool matchesMovement = _movementFilter == -1 || (int)e.MovementType == _movementFilter;
+                // Category filter (-1 = Any, 0 = None/Fallback, 1-6 = specific)
+                bool matchesCategory = _categoryFilter == -1 || (int)e.GetEffectiveCategory() == _categoryFilter;
                 
-                return matchesSearch && matchesMovement;
+                return matchesSearch && matchesMovement && matchesCategory;
             }).ToList();
 
             ApplySort();
@@ -187,19 +200,28 @@ namespace MaouSamaTD.Editor
             DrawToolbar();
             HandleGlobalInput();
 
-            EditorGUILayout.BeginHorizontal();
+            DrawTabsHeader();
 
-            // --- Sidebar / Browser (Left) ---
-            DrawBrowserArea();
-
-            // --- Details (Right) ---
-            if (_showDetails)
+            if (_currentTab == EnemyBrowserTab.LootDrops)
             {
-                DrawSplitter();
-                DrawDetailsArea();
+                DrawLootDropsArea();
             }
+            else
+            {
+                EditorGUILayout.BeginHorizontal();
 
-            EditorGUILayout.EndHorizontal();
+                // --- Sidebar / Browser (Left) ---
+                DrawBrowserArea();
+
+                // --- Details (Right) ---
+                if (_showDetails)
+                {
+                    DrawSplitter();
+                    DrawDetailsArea();
+                }
+
+                EditorGUILayout.EndHorizontal();
+            }
 
             if (Event.current.type == EventType.MouseMove)
             {
@@ -262,6 +284,19 @@ namespace MaouSamaTD.Editor
             if (newMove != _movementFilter)
             {
                 _movementFilter = newMove;
+                ApplyFilter();
+            }
+
+            GUILayout.Space(6);
+            GUILayout.Label("Cat:", GUILayout.Width(30));
+            string[] catOptions = new string[] { "Any", "None", "Shadow", "Bandit", "Animal", "Golem", "Undead", "Demon" };
+            int[] catValues     = new int[]    {  -1,    0,      1,        2,        3,        4,       5,        6 };
+            int curCatIdx = System.Array.IndexOf(catValues, _categoryFilter);
+            if (curCatIdx < 0) curCatIdx = 0;
+            int newCatIdx = EditorGUILayout.Popup(curCatIdx, catOptions, GUILayout.Width(70));
+            if (catValues[newCatIdx] != _categoryFilter)
+            {
+                _categoryFilter = catValues[newCatIdx];
                 ApplyFilter();
             }
 
@@ -499,6 +534,7 @@ namespace MaouSamaTD.Editor
                 _infoScrollPos = EditorGUILayout.BeginScrollView(_infoScrollPos);
                 DrawStats();
                 DrawAbilities();
+                DrawCategoryAndDrops();
                 EditorGUILayout.EndScrollView();
                 EditorGUILayout.EndVertical();
                 
@@ -604,6 +640,81 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.EndVertical();
             EditorGUILayout.Space(10);
         }
+        private void DrawCategoryAndDrops()
+        {
+            EditorGUILayout.LabelField("Category & Loot Drops", EditorStyles.boldLabel);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+            // ── Category Picker ────────────────────────────────────────────
+            EditorGUI.BeginChangeCheck();
+            var newCat = (EnemyCategory)EditorGUILayout.EnumPopup(
+                new GUIContent("Category", "Which loot pool this enemy drops from. 'None' uses the auto-fallback."),
+                _selectedEnemy.Category);
+            var newRank = (EnemyRank)EditorGUILayout.EnumPopup(
+                new GUIContent("Rank", "Enemy rank: Normal, Elite (2x drops), or Boss (guaranteed loot)."),
+                _selectedEnemy.Rank);
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(_selectedEnemy, "Edit Enemy Category/Rank");
+                _selectedEnemy.Category = newCat;
+                _selectedEnemy.Rank     = newRank;
+                EditorUtility.SetDirty(_selectedEnemy);
+            }
+
+            // ── Effective values with fallback indicator ───────────────────
+            var effectiveCat  = _selectedEnemy.GetEffectiveCategory();
+            var effectiveRank = _selectedEnemy.GetEffectiveRank();
+            bool catFallback  = _selectedEnemy.Category == EnemyCategory.None;
+            bool rankFallback = !_selectedEnemy.IsBoss && _selectedEnemy.Rank == effectiveRank;
+
+            EditorGUILayout.Space(4);
+            GUIStyle effectiveStyle = new GUIStyle(EditorStyles.miniLabel);
+            effectiveStyle.normal.textColor = catFallback ? new Color(1f, 0.6f, 0.2f) : new Color(0.4f, 0.9f, 0.5f);
+            string catLabel = catFallback ? $"⚠ Fallback → {effectiveCat}" : $"✓ {effectiveCat}";
+            EditorGUILayout.LabelField("Effective Category:", catLabel, effectiveStyle);
+
+            GUIStyle rankStyle = new GUIStyle(EditorStyles.miniLabel);
+            rankStyle.normal.textColor = _selectedEnemy.IsBoss ? new Color(1f, 0.3f, 0.3f) : new Color(0.4f, 0.9f, 0.5f);
+            string rankLabel = _selectedEnemy.IsBoss ? $"⚡ IsBoss → {effectiveRank}" : $"✓ {effectiveRank}";
+            EditorGUILayout.LabelField("Effective Rank:", rankLabel, rankStyle);
+
+            EditorGUILayout.Space(6);
+
+            // ── Drop Preview ───────────────────────────────────────────────
+            string matID = CategoryToMaterialPreview(effectiveCat);
+            EditorGUILayout.LabelField("Drop Preview:", EditorStyles.miniBoldLabel);
+
+            if (effectiveRank == EnemyRank.Boss)
+            {
+                EditorGUILayout.LabelField($"  ✦ 100%  → 3x {matID}", EditorStyles.miniLabel);
+                EditorGUILayout.LabelField($"  ✦ 100%  → 1x xp_core_legendary", EditorStyles.miniLabel);
+            }
+            else
+            {
+                int qty = effectiveRank == EnemyRank.Elite ? 2 : 1;
+                EditorGUILayout.LabelField($"  ◆ 40%   → {qty}x {matID}", EditorStyles.miniLabel);
+                EditorGUILayout.LabelField($"  ◆ 15%   → 1x xp_core_common", EditorStyles.miniLabel);
+                EditorGUILayout.LabelField($"  ◆  4%   → 1x xp_core_rare", EditorStyles.miniLabel);
+                EditorGUILayout.LabelField($"  ◆  1%   → 1x xp_core_epic", EditorStyles.miniLabel);
+            }
+
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(10);
+        }
+
+        private static string CategoryToMaterialPreview(EnemyCategory cat)
+        {
+            return cat switch
+            {
+                EnemyCategory.Shadow => "mat_shadow_essence",
+                EnemyCategory.Bandit => "mat_bandit_insignia",
+                EnemyCategory.Animal => "mat_animal_fang",
+                EnemyCategory.Golem  => "mat_golem_core",
+                EnemyCategory.Undead => "mat_shadow_essence",
+                EnemyCategory.Demon  => "mat_shadow_essence",
+                _                    => "mat_bandit_insignia",
+            };
+        }
 
         private void SelectEnemy(EnemyData enemy)
         {
@@ -659,6 +770,255 @@ namespace MaouSamaTD.Editor
             GUI.Label(new Rect(paddingRect.x, paddingRect.y + 38, paddingRect.width, 16), $"HP: {_hoveredEnemy.MaxHp} | Speed: {_hoveredEnemy.MoveSpeed}", badgeStyle);
 
             Handles.EndGUI();
+        }
+
+        private void DrawTabsHeader()
+        {
+            EditorGUILayout.BeginHorizontal();
+            
+            GUIStyle tabStyleLeft = new GUIStyle(EditorStyles.miniButtonLeft);
+            GUIStyle tabStyleRight = new GUIStyle(EditorStyles.miniButtonRight);
+            
+            tabStyleLeft.fontSize = 12;
+            tabStyleLeft.fontStyle = FontStyle.Bold;
+            tabStyleLeft.fixedHeight = 26;
+            
+            tabStyleRight.fontSize = 12;
+            tabStyleRight.fontStyle = FontStyle.Bold;
+            tabStyleRight.fixedHeight = 26;
+            
+            if (_currentTab == EnemyBrowserTab.Enemies)
+            {
+                tabStyleLeft.normal.textColor = new Color(0.2f, 0.6f, 1.0f);
+            }
+            else
+            {
+                tabStyleRight.normal.textColor = new Color(0.2f, 0.6f, 1.0f);
+            }
+
+            if (GUILayout.Button("💀  ENEMY BESTIARY", tabStyleLeft, GUILayout.ExpandWidth(true)))
+            {
+                _currentTab = EnemyBrowserTab.Enemies;
+            }
+            
+            if (GUILayout.Button("⚖️  LOOT CONFIG", tabStyleRight, GUILayout.ExpandWidth(true)))
+            {
+                _currentTab = EnemyBrowserTab.LootDrops;
+            }
+
+            EditorGUILayout.EndHorizontal();
+            GUILayout.Space(5);
+        }
+
+        private void DrawLootDropsArea()
+        {
+            // Find and load LootConfig
+            MaouLootConfig lootConfig = null;
+            string[] guids = AssetDatabase.FindAssets("t:MaouLootConfig");
+            if (guids.Length > 0)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                lootConfig = AssetDatabase.LoadAssetAtPath<MaouLootConfig>(path);
+            }
+
+            if (lootConfig == null)
+            {
+                EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                EditorGUILayout.HelpBox("Loot Configuration ScriptableObject not found. Create one to begin customizing drops.", MessageType.Warning);
+                if (GUILayout.Button("Create New Loot Configuration Asset", GUILayout.Height(30)))
+                {
+                    var config = ScriptableObject.CreateInstance<MaouLootConfig>();
+                    
+                    // Create direct under _Game/Resources if exists, or Assets/
+                    string dir = "Assets/_Game/Resources";
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+                    AssetDatabase.CreateAsset(config, "Assets/_Game/Resources/MaouLootConfig.asset");
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                }
+                EditorGUILayout.EndVertical();
+                return;
+            }
+
+            _lootScrollPos = EditorGUILayout.BeginScrollView(_lootScrollPos, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+            
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(15);
+            EditorGUILayout.BeginVertical();
+            GUILayout.Space(15);
+
+            // --- Header & Title ---
+            EditorGUILayout.LabelField("⚖️  GLOBAL LOOT & DROPS SYSTEM CONFIG", new GUIStyle(EditorStyles.boldLabel) { fontSize = 16, normal = { textColor = Color.white } });
+            EditorGUILayout.LabelField("Configure rates, quantities, categories, fallbacks, and overrides for the drop engine.", EditorStyles.miniLabel);
+            GUILayout.Space(15);
+
+            EditorGUI.BeginChangeCheck();
+
+            // --- Section 1: Default Fallback & General Settings ---
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("FALLBACKS & GLOBAL SETTINGS", EditorStyles.boldLabel);
+            lootConfig.FallbackCategory = (EnemyCategory)EditorGUILayout.EnumPopup("Default Category Fallback", lootConfig.FallbackCategory);
+            EditorGUILayout.EndVertical();
+            GUILayout.Space(15);
+
+            // --- Section 2: XP Core Weights ---
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("XP CORE WEIGHT DISTRIBUTIONS", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("Weights will be normalized automatically when rolled.", MessageType.Info);
+            
+            lootConfig.CommonWeight = EditorGUILayout.Slider("Common Core Weight", lootConfig.CommonWeight, 0f, 1f);
+            lootConfig.RareWeight = EditorGUILayout.Slider("Rare Core Weight", lootConfig.RareWeight, 0f, 1f);
+            lootConfig.EpicWeight = EditorGUILayout.Slider("Epic Core Weight", lootConfig.EpicWeight, 0f, 1f);
+            
+            float sum = lootConfig.CommonWeight + lootConfig.RareWeight + lootConfig.EpicWeight;
+            if (sum > 0f)
+            {
+                EditorGUILayout.HelpBox(
+                    $"Effective Rates:\n" +
+                    $"- Common: {lootConfig.CommonWeight / sum:P1}\n" +
+                    $"- Rare: {lootConfig.RareWeight / sum:P1}\n" +
+                    $"- Epic: {lootConfig.EpicWeight / sum:P1}", 
+                    MessageType.None);
+            }
+            EditorGUILayout.EndVertical();
+            GUILayout.Space(15);
+
+            // --- Section 3: Category Settings ---
+            EditorGUILayout.LabelField("CATEGORY DROP RATES & QUANTITIES", EditorStyles.boldLabel);
+            
+            var categories = new EnemyCategory[] { 
+                EnemyCategory.Shadow, 
+                EnemyCategory.Bandit, 
+                EnemyCategory.Animal, 
+                EnemyCategory.Golem, 
+                EnemyCategory.Undead, 
+                EnemyCategory.Demon 
+            };
+
+            foreach (var cat in categories)
+            {
+                var settings = lootConfig.GetSettingsForCategory(cat);
+                
+                if (!_categoryExpanded.ContainsKey(cat))
+                {
+                    _categoryExpanded[cat] = false;
+                }
+
+                _categoryExpanded[cat] = EditorGUILayout.Foldout(_categoryExpanded[cat], $"💀 {cat.ToString().ToUpper()} Drops Configuration", true, EditorStyles.foldoutHeader);
+
+                if (_categoryExpanded[cat])
+                {
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                    GUILayout.Space(5);
+                    
+                    settings.PrimaryMaterialID = EditorGUILayout.TextField("Primary Material ID", settings.PrimaryMaterialID);
+                    
+                    GUILayout.Space(5);
+                    EditorGUILayout.LabelField("Normal Enemies:", EditorStyles.miniBoldLabel);
+                    settings.NormalMaterialChance = EditorGUILayout.Slider("  Material Drop Chance", settings.NormalMaterialChance, 0f, 1f);
+                    settings.NormalXpCoreChance = EditorGUILayout.Slider("  XP Core Drop Chance", settings.NormalXpCoreChance, 0f, 1f);
+
+                    GUILayout.Space(5);
+                    EditorGUILayout.LabelField("Elite Enemies:", EditorStyles.miniBoldLabel);
+                    settings.EliteMaterialChance = EditorGUILayout.Slider("  Material Drop Chance", settings.EliteMaterialChance, 0f, 1f);
+                    settings.EliteXpCoreChance = EditorGUILayout.Slider("  XP Core Drop Chance", settings.EliteXpCoreChance, 0f, 1f);
+                    settings.EliteMaterialQuantity = EditorGUILayout.IntField("  Material Quantity", settings.EliteMaterialQuantity);
+
+                    GUILayout.Space(5);
+                    EditorGUILayout.LabelField("Boss Enemies:", EditorStyles.miniBoldLabel);
+                    settings.BossMaterialQuantity = EditorGUILayout.IntField("  Guaranteed Mat Qty", settings.BossMaterialQuantity);
+                    settings.BossGuaranteedXpCoreID = EditorGUILayout.TextField("  Guaranteed XP Core ID", settings.BossGuaranteedXpCoreID);
+                    
+                    GUILayout.Space(5);
+                    EditorGUILayout.EndVertical();
+                }
+                GUILayout.Space(6);
+            }
+
+            GUILayout.Space(15);
+
+            // --- Section 4: Special Overrides ---
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("🎯 SPECIAL ENEMY OVERRIDES", EditorStyles.boldLabel);
+            if (GUILayout.Button("+ Add Override", GUILayout.Width(110)))
+            {
+                lootConfig.SpecialOverrides.Add(new SpecialEnemyOverride { EnableOverride = true });
+            }
+            EditorGUILayout.EndHorizontal();
+            GUILayout.Space(8);
+
+            int overrideToDelete = -1;
+            for (int i = 0; i < lootConfig.SpecialOverrides.Count; i++)
+            {
+                var over = lootConfig.SpecialOverrides[i];
+                
+                EditorGUILayout.BeginVertical(GUI.skin.box);
+                
+                EditorGUILayout.BeginHorizontal();
+                over.EnableOverride = EditorGUILayout.ToggleLeft("Enable Override", over.EnableOverride, GUILayout.Width(130));
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("🗑️ Remove", GUILayout.Width(75)))
+                {
+                    overrideToDelete = i;
+                }
+                EditorGUILayout.EndHorizontal();
+                
+                // Select Enemy Dropdown
+                if (_allEnemies != null && _allEnemies.Count > 0)
+                {
+                    string[] enemyNames = _allEnemies.Select(e => $"{e.EnemyName} ({e.UniqueID})").ToArray();
+                    string[] enemyIds = _allEnemies.Select(e => e.UniqueID).ToArray();
+                    
+                    int currentIdx = System.Array.IndexOf(enemyIds, over.EnemyUniqueID);
+                    if (currentIdx < 0) currentIdx = 0;
+                    
+                    int newIdx = EditorGUILayout.Popup("Target Enemy", currentIdx, enemyNames);
+                    if (newIdx >= 0 && newIdx < enemyIds.Length)
+                    {
+                        over.EnemyUniqueID = enemyIds[newIdx];
+                        over.EnemyName = _allEnemies[newIdx].EnemyName;
+                    }
+                }
+                else
+                {
+                    over.EnemyUniqueID = EditorGUILayout.TextField("Target Unique ID", over.EnemyUniqueID);
+                }
+
+                over.CustomMaterialID = EditorGUILayout.TextField("Custom Material ID", over.CustomMaterialID);
+                over.CustomMaterialQuantity = EditorGUILayout.IntField("Custom Material Qty", over.CustomMaterialQuantity);
+                over.CustomMaterialChance = EditorGUILayout.Slider("Custom Material Chance", over.CustomMaterialChance, 0f, 1f);
+
+                over.CustomXpCoreID = EditorGUILayout.TextField("Custom XP Core ID", over.CustomXpCoreID);
+                over.CustomXpCoreChance = EditorGUILayout.Slider("Custom XP Core Chance", over.CustomXpCoreChance, 0f, 1f);
+
+                EditorGUILayout.EndVertical();
+                GUILayout.Space(5);
+            }
+
+            if (overrideToDelete >= 0)
+            {
+                lootConfig.SpecialOverrides.RemoveAt(overrideToDelete);
+            }
+
+            EditorGUILayout.EndVertical();
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(lootConfig, "Modify Global Loot Drops Settings");
+                EditorUtility.SetDirty(lootConfig);
+                AssetDatabase.SaveAssets();
+            }
+
+            GUILayout.Space(40);
+            EditorGUILayout.EndVertical();
+            GUILayout.Space(15);
+            EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.EndScrollView();
         }
     }
 }

@@ -126,16 +126,6 @@ namespace MaouSamaTD.UI.Tutorial
                 transform.SetAsLastSibling();
             }
 
-            // USER REQUEST: Ensure the full-screen dim is parented to the root DialogueUI
-            // rather than a sub-panel, so that panel-level animations (like scale-in)
-            // do not affect the background dimming.
-            if (_fullScreenDim != null)
-            {
-                _fullScreenDim.transform.SetParent(this.transform, false);
-                _fullScreenDim.transform.SetAsFirstSibling();
-                _fullScreenDim.transform.localScale = Vector3.one;
-            }
-
             if (GetComponent<GraphicRaycaster>() == null) gameObject.AddComponent<GraphicRaycaster>();
 
             if (_fullScreenPanel != null) _fullScreenPanel.SetActive(false);

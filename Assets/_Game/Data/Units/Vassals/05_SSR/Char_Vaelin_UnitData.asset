@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 3854612a-88cf-4717-86f1-275e1b90c984
   CalculatedStats:
-  MaxHp: 84
-    Attack: 0
-  Defense: 1
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 168
+    Attack: 22
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
+    ClassName: Ranger
   UnitName: Vaelin
   UnitTitle: The Phantom Stalker
   SummonQuote: 
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 5e4b7774c3a583a4f8f9ed6167ba8b3f, type: 3}
     Chibi: {fileID: 21300000, guid: 0b3d2b4bb70fbff40bdd9d3b00843944, type: 3}
     WaistUp: {fileID: 21300000, guid: ccfe1b6a98809064abc685e6103ffcdd, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 56bbdbe139198174ab490cee11561290, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 56bbdbe139198174ab490cee11561290, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 3
   AttackPattern: 1
@@ -55,9 +56,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 84
   AttackPower: 11
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 1
-  RespawnTime: 25.0
+  RespawnTime: 25
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

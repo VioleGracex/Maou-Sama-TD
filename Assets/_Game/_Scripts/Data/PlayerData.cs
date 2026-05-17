@@ -13,12 +13,12 @@ namespace MaouSamaTD.Data
         public List<LevelStarData> LevelStars = new List<LevelStarData>();
         public List<string> UnlockedUnits = new List<string>(); // Legacy / Discovery list
         public List<UnitInventoryEntry> UnitInventory = new List<UnitInventoryEntry>();
-        
+        public List<ItemInventoryEntry> ItemInventory = new List<ItemInventoryEntry>();
+
         [Header("Mandates/Quests")]
         public List<MandateProgressData> MandateProgress = new List<MandateProgressData>();
         public List<string> ClaimedMandates = new List<string>();
 
-        
         public int Gold;
         public int BloodCrest;
         public bool IsLilithAwakened;
@@ -29,7 +29,7 @@ namespace MaouSamaTD.Data
         public string PlayerName = "Mephisto"; // Custom input
         public string TrueName = "Tyrant"; // e.g. "Tyrant" or "Sovereign"
         public MaouGender Gender = MaouGender.Male; // e.g. Male(Force) / Female(Guile)
-        
+
         // Anti-cheat activity log
         public List<ActivityEntry> Activities = new List<ActivityEntry>();
 
@@ -93,14 +93,14 @@ namespace MaouSamaTD.Data
     {
         public string CohortName;
         // 12 slots for unit IDs (matching UnitData.UnitID or name)
-        public List<string> UnitIDs; 
-        
+        public List<string> UnitIDs;
+
         public CohortData() { }
 
         public CohortData(string name)
         {
             CohortName = name;
-            UnitIDs = new List<string>(new string[12]); // Initialize with 12 empty slots
+            UnitIDs = new List<string>(new string[12]);
         }
     }
 
@@ -109,7 +109,7 @@ namespace MaouSamaTD.Data
     {
         public string LevelID;
         public int Stars;
-        
+
         public LevelStarData(string levelID, int stars)
         {
             LevelID = levelID;
@@ -122,7 +122,7 @@ namespace MaouSamaTD.Data
     {
         public string ActivityName;
         public int Count;
-        
+
         public ActivityEntry(string activityName, int count)
         {
             ActivityName = activityName;
@@ -143,7 +143,6 @@ namespace MaouSamaTD.Data
         }
     }
 
-
     [Serializable]
     public class UnitInventoryEntry
     {
@@ -153,6 +152,12 @@ namespace MaouSamaTD.Data
         public int Potential = 0;  // Arknights-style potential (from duplicates)
         public int Experience = 0;
         public long AcquisitionDate;
+
+        [Header("Progression Persistence")]
+        public int StarRating = 1;
+        public int Amity = 0;
+        public List<int> UnlockedNodes = new List<int>();
+        public List<int> UnlockedLores = new List<int>() { 0 }; // Lore index 0 is free by default
 
         [Header("Gacha Metadata")]
         public bool IsDuplicate;
@@ -164,6 +169,19 @@ namespace MaouSamaTD.Data
             InstanceID = Guid.NewGuid().ToString();
             UnitID = unitID;
             AcquisitionDate = DateTime.UtcNow.Ticks;
+        }
+    }
+
+    [Serializable]
+    public class ItemInventoryEntry
+    {
+        public string ItemID;
+        public int Quantity;
+
+        public ItemInventoryEntry(string itemID, int quantity)
+        {
+            ItemID = itemID;
+            Quantity = quantity;
         }
     }
 

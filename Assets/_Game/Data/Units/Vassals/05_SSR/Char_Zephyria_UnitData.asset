@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 2d40de4b-c49d-4089-b94c-84d5859fa3be
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 1680
+    Attack: 224
+    Defense: 28
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    ClassName: Bastion
   UnitName: Zephyria
   UnitTitle: Cloud Sovereign
   SummonQuote: 
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 779a0369f60236d409b0120eff6ecf84, type: 3}
     Chibi: {fileID: 21300000, guid: 32ad1a4ce42033e4cb2feee70d8e7530, type: 3}
     WaistUp: {fileID: 21300000, guid: 5dc868ef0fe01404c8266af5541b17fb, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: b66ea48c569a32f429d0227a2102b4ad, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: b66ea48c569a32f429d0227a2102b4ad, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 0
   AttackPattern: 0

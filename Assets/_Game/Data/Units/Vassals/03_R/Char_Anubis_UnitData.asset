@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 2138acb0-86fa-41e3-8fcf-0c4553c196cb
   CalculatedStats:
-  MaxHp: 96
-    Attack: 36
-  Defense: 2
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 192
+    Attack: 24
+    Defense: 4
+    ClassIcon: {fileID: 21300000, guid: b2eefbfa594336941be1d0a2f90217c8, type: 3}
+    ClassName: Executioner
   UnitName: Anubis
   UnitTitle: Tomb Guardian
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 7281c38dd6e9c3a41bfb2134f3e5b099, type: 3}
     Chibi: {fileID: 21300000, guid: 3c5c927107fa3b046818df3e404c59fe, type: 3}
     WaistUp: {fileID: 21300000, guid: f2cf9fd9190c5f24c85ce3fe46d153c1, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 379f1f222a3f9e84f9e6287523ec877b, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 379f1f222a3f9e84f9e6287523ec877b, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 2
   Class: 2
   AttackPattern: 4
@@ -57,7 +58,7 @@ MonoBehaviour:
   AttackPower: 12
   AttackInterval: 0.8
   Defense: 2
-  RespawnTime: 20.0
+  RespawnTime: 20
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

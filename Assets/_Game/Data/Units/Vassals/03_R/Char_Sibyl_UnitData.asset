@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 51c2014c-66eb-44e5-9d8d-681e0ceb1f02
   CalculatedStats:
-  MaxHp: 72
-    Attack: 36
-  Defense: 1
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 144
+    Attack: 22
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
+    ClassName: Warlock
   UnitName: Sibyl
   UnitTitle: Bloodied Oracle
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: a7e8e93f8aabbe74a93822c4e4708f7c, type: 3}
     Chibi: {fileID: 21300000, guid: 18796b2afbecf2d4b9b5ca0abaf79773, type: 3}
     WaistUp: {fileID: 21300000, guid: acda7212bf86a934298cf9fa8d1c0cd6, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 7ce2a186106cb994c9ef8323e3b0b708, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 7ce2a186106cb994c9ef8323e3b0b708, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 2
   Class: 4
   AttackPattern: 4
@@ -57,7 +58,7 @@ MonoBehaviour:
   AttackPower: 11
   AttackInterval: 1.5
   Defense: 1
-  RespawnTime: 20.0
+  RespawnTime: 20
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

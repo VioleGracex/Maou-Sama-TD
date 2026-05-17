@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: d4fa2a8b-c780-4cb3-8c56-172358c56c35
   CalculatedStats:
-  MaxHp: 104
-    Attack: 39
-  Defense: 3
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 208
+    Attack: 26
+    Defense: 6
+    ClassIcon: {fileID: 21300000, guid: b2eefbfa594336941be1d0a2f90217c8, type: 3}
+    ClassName: Executioner
   UnitName: Astaroth
   UnitTitle: Queen Of Pain
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -46,6 +46,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 3
   Class: 2
   AttackPattern: 4
@@ -59,7 +60,7 @@ MonoBehaviour:
   AttackPower: 13
   AttackInterval: 0.8
   Defense: 3
-  RespawnTime: 22.0
+  RespawnTime: 22
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

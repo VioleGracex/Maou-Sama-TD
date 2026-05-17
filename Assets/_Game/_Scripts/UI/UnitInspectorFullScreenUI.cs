@@ -34,6 +34,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private UnitInspectorSkillsPanel _skillsPanel;
         [SerializeField] private UnitInspectorXPPanel _xpPanel;
         [SerializeField] private UnitInspectorSkinsPanel _skinsPanel;
+        [SerializeField] private UnitInspectorResonancePanel _resonancePanel;
 
         [Header("Tab Content Roots")]
         [SerializeField] private GameObject _contentStats;
@@ -56,6 +57,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private bool _debug = true;
 
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
+        [Inject] private MaouSamaTD.Managers.EconomyManager _economyManager;
 
         private UnitData _currentUnit;
         private int _currentTabIndex = 0;
@@ -79,8 +81,9 @@ namespace MaouSamaTD.UI
             if (_btnChamber) _btnChamber.onClick.AddListener(OnChamberClicked);
 
             // Initialize Sub-Managers
-            if (_xpPanel) _xpPanel.Initialize(_saveManager);
-            if (_skinsPanel) _skinsPanel.Initialize();
+            if (_xpPanel)        _xpPanel.Initialize(_saveManager);
+            if (_skinsPanel)     _skinsPanel.Initialize();
+            if (_resonancePanel) _resonancePanel.Initialize(_saveManager, _economyManager);
         }
 
         private void OnChamberClicked()
@@ -164,11 +167,12 @@ namespace MaouSamaTD.UI
 
         private void RefreshAllPanels()
         {
-            if (_header) _header.Refresh(_currentUnit);
-            if (_statsPanel) _statsPanel.Refresh(_currentUnit);
-            if (_skillsPanel) _skillsPanel.Refresh(_currentUnit);
-            if (_xpPanel) _xpPanel.Refresh(_currentUnit);
-            if (_skinsPanel) _skinsPanel.Refresh(_currentUnit);
+            if (_header)          _header.Refresh(_currentUnit);
+            if (_statsPanel)      _statsPanel.Refresh(_currentUnit);
+            if (_skillsPanel)     _skillsPanel.Refresh(_currentUnit);
+            if (_xpPanel)         _xpPanel.Refresh(_currentUnit);
+            if (_skinsPanel)      _skinsPanel.Refresh(_currentUnit);
+            if (_resonancePanel)  _resonancePanel.Refresh(_currentUnit);
         }
 
         private void RefreshActivePanel()
@@ -176,6 +180,7 @@ namespace MaouSamaTD.UI
             switch (_currentTabIndex)
             {
                 case 0: _statsPanel?.Refresh(_currentUnit); break;
+                case 2: _resonancePanel?.Refresh(_currentUnit); break;
                 case 3: _skinsPanel?.Refresh(_currentUnit); break;
                 case 4: _xpPanel?.Refresh(_currentUnit); break;
             }

@@ -367,6 +367,17 @@ namespace MaouSamaTD.Managers
                 {
                     HandleUIHighlight(step);
                 }
+
+                // Ensure player continuously has enough seals to deploy during this placement step
+                if (_currencyManager != null && step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
+                {
+                    int requiredCost = GetUnitDeploymentCost(step.TargetUI.Name);
+                    if (requiredCost > 0 && _currencyManager.CurrentSeals < requiredCost)
+                    {
+                        _currencyManager.SetSeals(requiredCost);
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Update: Set seals to {requiredCost} for step '{step.StepName}' (unit: {step.TargetUI.Name})");
+                    }
+                }
             }
         }
 
@@ -693,6 +704,18 @@ namespace MaouSamaTD.Managers
                                 {
                                     _currencyManager.SetSeals(requiredCost);
                                     if (_showDebugLogs) Debug.Log($"[tutorial] Set seals to {requiredCost} for step '{step.StepName}' (rite: {step.TargetUI.Name})");
+                                }
+                            }
+                            
+                            // Ensure the player has enough seals to place the unit in this step.
+                            if (_currencyManager != null && step.ActionKey == "UnitPlaced" &&
+                                step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
+                            {
+                                int requiredCost = GetUnitDeploymentCost(step.TargetUI.Name);
+                                if (requiredCost > 0 && _currencyManager.CurrentSeals < requiredCost)
+                                {
+                                    _currencyManager.SetSeals(requiredCost);
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Set seals to {requiredCost} for step '{step.StepName}' (unit placement: {step.TargetUI.Name})");
                                 }
                             }
                             
@@ -1212,6 +1235,10 @@ namespace MaouSamaTD.Managers
                     Vector2 size = (ut.Size != Vector2.zero) ? ut.Size : _unitWorldHoleSizeDefault;
                     // Multiply size by specific offset if needed, or just use default unit settings.
                     float yOffset = _unitWorldHoleYOffset + ut.SizeOffset.y;
+                    if (eu != null && eu.EnemyData != null && eu.EnemyData.EnemyName == "Abyssal Shade")
+                    {
+                        yOffset += 1.0f;
+                    }
                     worldHighlights.Add(new UIPopupBlocker.WorldHighlightData
                     {
                         Position = t.position + new Vector3(0, yOffset, 0),
@@ -1284,7 +1311,7 @@ namespace MaouSamaTD.Managers
                             var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
                             if (boss != null)
                             {
-                                position = boss.transform.position + new Vector3(0, _unitWorldHoleYOffset, 0);
+                                position = boss.transform.position + new Vector3(0, _unitWorldHoleYOffset + 1.0f, 0);
                             }
                         }
 
@@ -1304,7 +1331,7 @@ namespace MaouSamaTD.Managers
                 var boss = EnemyUnit.ActiveEnemies.FirstOrDefault(e => e.EnemyData != null && e.EnemyData.EnemyName == "Abyssal Shade");
                 if (boss != null)
                 {
-                    Vector3 position = boss.transform.position + new Vector3(0, _unitWorldHoleYOffset, 0);
+                    Vector3 position = boss.transform.position + new Vector3(0, _unitWorldHoleYOffset + 1.0f, 0);
                     worldHighlights.Add(new UIPopupBlocker.WorldHighlightData 
                     {
                         Position = position,
@@ -2270,6 +2297,39 @@ private RectTransform FindTargetRect(string name)
             if (resolvedName == "Ult_Btn") return 0;
 
             if (_showDebugLogs) Debug.LogWarning($"[tutorial] GetRiteSealCostFromButtonName: Could not find rite for button '{buttonName}' (resolved: '{resolvedName}')");
+            return 0;
+        }
+
+        private int GetUnitDeploymentCost(string unitName)
+        {
+            if (string.IsNullOrEmpty(unitName)) return 0;
+
+            string cleanedName = unitName;
+            if (cleanedName.StartsWith("Unit_")) cleanedName = cleanedName.Replace("Unit_", "");
+            if (cleanedName.StartsWith("Enemy_")) cleanedName = cleanedName.Replace("Enemy_", "");
+
+            if (_deploymentUI != null)
+            {
+                var units = _deploymentUI.AvailableUnits;
+                if (units != null)
+                {
+                    foreach (var u in units)
+                    {
+                        if (u != null && (u.UnitName.Equals(cleanedName, System.StringComparison.OrdinalIgnoreCase) || 
+                                          u.name.Equals(cleanedName, System.StringComparison.OrdinalIgnoreCase) ||
+                                          u.name.Contains(cleanedName) ||
+                                          cleanedName.Contains(u.UnitName)))
+                        {
+                            return u.DeploymentCost;
+                        }
+                    }
+                }
+            }
+
+            // Fallback hardcoded values for standard units just in case
+            if (cleanedName.Equals("Ignis", System.StringComparison.OrdinalIgnoreCase)) return 20;
+            if (cleanedName.Equals("Lilith", System.StringComparison.OrdinalIgnoreCase)) return 10;
+
             return 0;
         }
     }

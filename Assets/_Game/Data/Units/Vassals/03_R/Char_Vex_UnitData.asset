@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 895b33ea-ae93-45d6-be4b-336b38c94d5b
   CalculatedStats:
-  MaxHp: 300
-    Attack: 36
-  Defense: 10
+    MaxHp: 600
+    Attack: 8
+    Defense: 20
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Vex
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 05452aba81d0a154295dad12bbdb341b, type: 3}
     Chibi: {fileID: 21300000, guid: 29a119d59099cd54180003add4efcc10, type: 3}
     WaistUp: {fileID: 21300000, guid: 4bb935f1486cbef419903f14c0a1a3c8, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: a28efa7491df7074c803f59902392e1a, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: a28efa7491df7074c803f59902392e1a, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 2
   Class: 0
   AttackPattern: 4
@@ -57,7 +58,7 @@ MonoBehaviour:
   AttackPower: 4
   AttackInterval: 1.2
   Defense: 10
-  RespawnTime: 20.0
+  RespawnTime: 20
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 1156a6d9-2066-40f6-8f92-6823c97a8818
   CalculatedStats:
-  MaxHp: 78
-    Attack: 39
-  Defense: 1
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 156
+    Attack: 24
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
+    ClassName: Warlock
   UnitName: Azazel
   UnitTitle: Ruined Choirboy
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -31,7 +31,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 3c941c280eca17742b574bdd825e1027, type: 3}
     Chibi: {fileID: 21300000, guid: ac703857550186f43aa049dc448f7455, type: 3}
     WaistUp: {fileID: 21300000, guid: 1dae2d0819113384a80c379aa65e42b3, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 656e2a1a2106ff245b35df2ed9a80960, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 656e2a1a2106ff245b35df2ed9a80960, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -46,6 +46,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 3
   Class: 4
   AttackPattern: 4
@@ -59,7 +60,7 @@ MonoBehaviour:
   AttackPower: 12
   AttackInterval: 1.5
   Defense: 1
-  RespawnTime: 22.0
+  RespawnTime: 22
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

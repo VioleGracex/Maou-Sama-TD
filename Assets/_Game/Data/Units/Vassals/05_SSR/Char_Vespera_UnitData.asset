@@ -15,22 +15,22 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 194375e2-b34b-4b76-b4cf-8499b45329c9
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 1680
+    Attack: 252
+    Defense: 28
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    ClassName: Bastion
   UnitName: Vespera
   UnitTitle: Void-Caller Supreme
   SummonQuote: 
   BriefDescription: 
   LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: 9a9d2e86228075945b25b0f5f8785747, type: 3}
-    Chibi: {fileID: 21300000, guid: 7147bb2b8f348884ebab9277ae89eb7b, type: 3}
-    WaistUp: {fileID: 21300000, guid: 237e813cfa3b78948acf40dd42e10e20, type: 3}
-    FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: 99a500561e270f646a949d9723b89f39, type: 3}
+    Avatar: {fileID: 21300000, guid: 33977d9ad1a4bc248b800bc219f89cf0, type: 3}
+    Chibi: {fileID: 21300000, guid: 10f78a02f7f2be94787026a619297a34, type: 3}
+    WaistUp: {fileID: 21300000, guid: e372562f3e1ee5f428b51c8da85bc039, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: 00768cad01e9b2b4d98b0d44d1f9aa2a, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 00768cad01e9b2b4d98b0d44d1f9aa2a, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
   Skins: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 0
   AttackPattern: 0

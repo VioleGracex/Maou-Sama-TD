@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: a47c9f79-791c-48db-bae8-1ac002872bc6
   CalculatedStats:
-  MaxHp: 78
-    Attack: 39
-  Defense: 1
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 156
+    Attack: 24
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: eb6b1878a1c9b1841ba09c17fa760644, type: 3}
+    ClassName: Necromancer
   UnitName: Blight
   UnitTitle: The Rotting King
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -31,7 +31,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: 98c3d572f62d6b747ac7c05c3a82b42b, type: 3}
     Chibi: {fileID: 21300000, guid: 711c2f37b81196643b4a882828b6080e, type: 3}
     WaistUp: {fileID: 21300000, guid: 46fd1bac3b2613f46829eb11ca17ba84, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 38320c07f33b34d4ca8bb546ac4dc6e4, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 38320c07f33b34d4ca8bb546ac4dc6e4, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -46,6 +46,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 3
   Class: 7
   AttackPattern: 4
@@ -59,7 +60,7 @@ MonoBehaviour:
   AttackPower: 12
   AttackInterval: 1.5
   Defense: 1
-  RespawnTime: 22.0
+  RespawnTime: 22
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

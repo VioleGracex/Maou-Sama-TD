@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 using MaouSamaTD.Grid;
+using MaouSamaTD.Units;
+
 using Zenject;
 
 namespace MaouSamaTD.Managers.Interaction
@@ -72,6 +74,22 @@ namespace MaouSamaTD.Managers.Interaction
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 Tile tile = hit.collider.GetComponent<Tile>();
+                if (tile == null)
+                {
+                    UnitBase unit = hit.collider.GetComponent<UnitBase>() ?? hit.collider.GetComponentInParent<UnitBase>();
+                    if (unit != null)
+                    {
+                        if (unit is PlayerUnit pu && pu.CurrentTile != null)
+                        {
+                            tile = pu.CurrentTile;
+                        }
+                        else if (_gridManager != null)
+                        {
+                            Vector2Int coord = _gridManager.WorldToGridCoordinates(unit.transform.position);
+                            tile = _gridManager.GetTileAt(coord);
+                        }
+                    }
+                }
                 // Fallback to Grid Coordinate check
                 if (tile == null && _gridManager != null)
                 {

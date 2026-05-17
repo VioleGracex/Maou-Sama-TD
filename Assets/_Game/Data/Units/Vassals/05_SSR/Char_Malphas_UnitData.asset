@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 7ee8810b-4a3c-40f9-9038-484f39bdbaa3
   CalculatedStats:
-    MaxHp: 0
-    Attack: 0
-    Defense: 0
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 1960
+    Attack: 112
+    Defense: 56
+    ClassIcon: {fileID: 21300000, guid: 388393a245da00049a44d7c48a196e4c, type: 3}
+    ClassName: Support
   UnitName: Nightmare Weaver
   UnitTitle: 
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -47,6 +47,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 8
   AttackPattern: 4

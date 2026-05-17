@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 8d960501-6676-4843-8abb-84cb4022e263
   CalculatedStats:
-  MaxHp: 1040
-    Attack: 39
-  Defense: 20
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 2080
+    Attack: 260
+    Defense: 40
+    ClassIcon: {fileID: 21300000, guid: b2eefbfa594336941be1d0a2f90217c8, type: 3}
+    ClassName: Executioner
   UnitName: Kaelia
   UnitTitle: Cursed Blademaster
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -31,7 +31,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: d1ed27f412d5e3a4685f45b98812d2ea, type: 3}
     Chibi: {fileID: 21300000, guid: 53b1030d7d4d2e8409fa55a4eaa9b462, type: 3}
     WaistUp: {fileID: 21300000, guid: b772a31f8a9fcf244ac43882c535293d, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 734e1fefd904e3548bf428288e8b98df, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: a98def0d944cb634dbbc247caa549d54, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -46,6 +46,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 3
   Class: 2
   AttackPattern: 4
@@ -59,7 +60,7 @@ MonoBehaviour:
   AttackPower: 130
   AttackInterval: 0.8
   Defense: 20
-  RespawnTime: 22.0
+  RespawnTime: 22
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

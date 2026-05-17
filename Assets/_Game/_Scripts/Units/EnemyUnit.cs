@@ -217,8 +217,180 @@ namespace MaouSamaTD.Units
                 _blockedBy.UnregisterBlockedEnemy(this);
             }
 
+            // ── Loot Drop Engine ─────────────────────────────────────────────
+            if (_enemyData != null)
+            {
+                var saveManager = FindFirstObjectByType<SaveManager>();
+                if (saveManager != null)
+                    RollLootDrops(saveManager);
+            }
+
             base.Die(attacker);
         }
+
+        private void RollLootDrops(SaveManager saveManager)
+        {
+            var rank = _enemyData.GetEffectiveRank();
+            var cat  = _enemyData.GetEffectiveCategory();
+
+            // Attempt to load MaouLootConfig ScriptableObject
+            MaouLootConfig lootConfig = Resources.Load<MaouLootConfig>("MaouLootConfig");
+            if (lootConfig == null)
+            {
+#if UNITY_EDITOR
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("t:MaouLootConfig");
+                if (guids.Length > 0)
+                {
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+                    lootConfig = UnityEditor.AssetDatabase.LoadAssetAtPath<MaouLootConfig>(path);
+                }
+#endif
+            }
+
+            if (lootConfig != null)
+            {
+                // 1. Check Special Overrides first
+                if (!string.IsNullOrEmpty(_enemyData.UniqueID))
+                {
+                    var specialOverride = lootConfig.SpecialOverrides.Find(o => o.EnemyUniqueID == _enemyData.UniqueID && o.EnableOverride);
+                    if (specialOverride != null)
+                    {
+                        if (!string.IsNullOrEmpty(specialOverride.CustomMaterialID) && Random.value < specialOverride.CustomMaterialChance)
+                        {
+                            AwardLoot(saveManager, specialOverride.CustomMaterialID, specialOverride.CustomMaterialQuantity);
+                            Debug.Log($"[Loot] Special Override Defeated: {_enemyData.EnemyName}! Obtained {specialOverride.CustomMaterialQuantity}x {specialOverride.CustomMaterialID}");
+                        }
+                        if (!string.IsNullOrEmpty(specialOverride.CustomXpCoreID) && Random.value < specialOverride.CustomXpCoreChance)
+                        {
+                            AwardLoot(saveManager, specialOverride.CustomXpCoreID, 1);
+                            Debug.Log($"[Loot] Special Override Defeated: {_enemyData.EnemyName}! Obtained 1x {specialOverride.CustomXpCoreID}");
+                        }
+                        return; // Override completely handles loot
+                    }
+                }
+
+                // 2. Fallback category logic
+                if (cat == EnemyCategory.None)
+                {
+                    cat = lootConfig.FallbackCategory;
+                }
+
+                var settings = lootConfig.GetSettingsForCategory(cat);
+                string matID = string.IsNullOrEmpty(settings.PrimaryMaterialID) ? CategoryToMaterialID(cat) : settings.PrimaryMaterialID;
+
+                if (rank == EnemyRank.Boss)
+                {
+                    AwardLoot(saveManager, matID, settings.BossMaterialQuantity);
+                    string bossCore = string.IsNullOrEmpty(settings.BossGuaranteedXpCoreID) ? "xp_core_legendary" : settings.BossGuaranteedXpCoreID;
+                    AwardLoot(saveManager, bossCore, 1);
+                    Debug.Log($"[Loot] Boss defeated: {_enemyData.EnemyName}! Obtained {settings.BossMaterialQuantity}x {matID} + 1x {bossCore}");
+                }
+                else if (rank == EnemyRank.Elite)
+                {
+                    float roll = Random.value;
+                    if (roll < settings.EliteMaterialChance)
+                    {
+                        AwardLoot(saveManager, matID, settings.EliteMaterialQuantity);
+                        Debug.Log($"[Loot] Defeated Elite {_enemyData.EnemyName}! Obtained {settings.EliteMaterialQuantity}x {matID}");
+                    }
+                    else if (roll < settings.EliteMaterialChance + settings.EliteXpCoreChance)
+                    {
+                        float xpRoll = Random.value;
+                        float totalW = lootConfig.CommonWeight + lootConfig.RareWeight + lootConfig.EpicWeight;
+                        float commonThresh = lootConfig.CommonWeight / totalW;
+                        float rareThresh = (lootConfig.CommonWeight + lootConfig.RareWeight) / totalW;
+                        
+                        string xpID = xpRoll < commonThresh ? "xp_core_common"
+                                    : xpRoll < rareThresh ? "xp_core_rare"
+                                    : "xp_core_epic";
+                                    
+                        AwardLoot(saveManager, xpID, 1);
+                        Debug.Log($"[Loot] Defeated Elite {_enemyData.EnemyName}! Obtained 1x {xpID}");
+                    }
+                }
+                else // Normal
+                {
+                    float roll = Random.value;
+                    if (roll < settings.NormalMaterialChance)
+                    {
+                        AwardLoot(saveManager, matID, 1);
+                        Debug.Log($"[Loot] Defeated Normal {_enemyData.EnemyName}! Obtained 1x {matID}");
+                    }
+                    else if (roll < settings.NormalMaterialChance + settings.NormalXpCoreChance)
+                    {
+                        float xpRoll = Random.value;
+                        float totalW = lootConfig.CommonWeight + lootConfig.RareWeight + lootConfig.EpicWeight;
+                        float commonThresh = lootConfig.CommonWeight / totalW;
+                        float rareThresh = (lootConfig.CommonWeight + lootConfig.RareWeight) / totalW;
+                        
+                        string xpID = xpRoll < commonThresh ? "xp_core_common"
+                                    : xpRoll < rareThresh ? "xp_core_rare"
+                                    : "xp_core_epic";
+                                    
+                        AwardLoot(saveManager, xpID, 1);
+                        Debug.Log($"[Loot] Defeated Normal {_enemyData.EnemyName}! Obtained 1x {xpID}");
+                    }
+                }
+            }
+            else
+            {
+                // Fallback default logic
+                string matID = CategoryToMaterialID(cat);
+                if (rank == EnemyRank.Boss)
+                {
+                    AwardLoot(saveManager, matID, 3);
+                    AwardLoot(saveManager, "xp_core_legendary", 1);
+                    Debug.Log($"[Loot Fallback] Boss defeated: {_enemyData.EnemyName}! Obtained 3x {matID} + 1x xp_core_legendary");
+                }
+                else
+                {
+                    float roll = Random.value;
+                    if (roll < 0.40f)
+                    {
+                        int qty = rank == EnemyRank.Elite ? 2 : 1;
+                        AwardLoot(saveManager, matID, qty);
+                        Debug.Log($"[Loot Fallback] Defeated {_enemyData.EnemyName}! Obtained {qty}x {matID}");
+                    }
+                    else if (roll < 0.60f)
+                    {
+                        float xpRoll = Random.value;
+                        string xpID = xpRoll < 0.75f ? "xp_core_common"
+                                    : xpRoll < 0.95f ? "xp_core_rare"
+                                    : "xp_core_epic";
+                        AwardLoot(saveManager, xpID, 1);
+                        Debug.Log($"[Loot Fallback] Defeated {_enemyData.EnemyName}! Obtained 1x {xpID}");
+                    }
+                }
+            }
+        }
+
+        private void AwardLoot(SaveManager saveManager, string itemID, int quantity)
+        {
+            var gameManager = FindFirstObjectByType<MaouSamaTD.Managers.GameManager>();
+            if (gameManager != null)
+            {
+                gameManager.RegisterLoot(itemID, quantity);
+            }
+            else if (saveManager != null)
+            {
+                saveManager.AddItem(itemID, quantity);
+            }
+        }
+
+        private static string CategoryToMaterialID(EnemyCategory cat)
+        {
+            return cat switch
+            {
+                EnemyCategory.Shadow => "mat_shadow_essence",
+                EnemyCategory.Bandit => "mat_bandit_insignia",
+                EnemyCategory.Animal => "mat_animal_fang",
+                EnemyCategory.Golem  => "mat_golem_core",
+                EnemyCategory.Undead => "mat_shadow_essence",  // Undead → same pool as Shadows
+                EnemyCategory.Demon  => "mat_shadow_essence",  // Demons → same pool as Shadows
+                _                    => "mat_bandit_insignia", // Fallback
+            };
+        }
+
 
         public void RecalculatePath(bool forceIgnore = false)
         {
@@ -321,6 +493,25 @@ namespace MaouSamaTD.Units
                             Vector2Int targetPos = _gridManager.WorldToGridCoordinates(_attackTarget.transform.position);
                             
                             bool inRange = IsTargetInPattern(myPos, targetPos, _enemyData.AttackPattern, Range);
+                            
+                            // [STRICT MELEE ENGAGEMENT]
+                            // All melee units must be forced to Manhattan distance matching their range to prevent diagonal engagement at range 1
+                            if (inRange && _enemyData != null && _enemyData.DamageType == DamageType.Melee)
+                            {
+                                int manhattan = Mathf.Abs(myPos.x - targetPos.x) + Mathf.Abs(myPos.y - targetPos.y);
+                                int maxManhattan = Mathf.FloorToInt(Range + 0.01f);
+                                
+                                if (manhattan > maxManhattan)
+                                {
+                                    inRange = false;
+                                }
+                                else if (_isMoving || _isCentering)
+                                {
+                                    // Melee units must be centered before they can trigger HandleAttack
+                                    inRange = false; 
+                                }
+                            }
+
                             if (inRange)
                             {
                                 HandleAttack(_attackTarget);
@@ -329,37 +520,18 @@ namespace MaouSamaTD.Units
                                 // If not set to bypass defenders, stop moving to focus on attacking
                                 if (!_enemyData.OnlyAttackIfBlocked)
                                 {
-                                    // Melee units with 'All' pattern can technically attack diagonally (Manhattan dist 2),
-                                    // but they should try to get adjacent (dist 1) for a better 'melee' feel.
-                                    if (_enemyData.DamageType == DamageType.Melee)
-                                    {
-                                        Vector2Int myCoord = _gridManager.WorldToGridCoordinates(transform.position);
-                                        Vector2Int targetCoord = _gridManager.WorldToGridCoordinates(_attackTarget.transform.position);
-                                        int manhattanDist = Mathf.Abs(myCoord.x - targetCoord.x) + Mathf.Abs(myCoord.y - targetCoord.y);
-                                        
-                                        if (_enemyData.IsBoss)
-                                        {
-                                            Debug.Log($"[BOSS DEBUG] Evaluate Stop: ManhattanDist={manhattanDist}, Range={Range}, Pattern={_enemyData.AttackPattern}");
-                                        }
-
-                                        if (manhattanDist <= 1)
-                                        {
-                                            if (_enemyData.IsBoss) Debug.Log("[BOSS DEBUG] Stopping - Manhattan distance <= 1");
-                                            _isMoving = false;
-                                            InitiateCentering();
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (_enemyData.IsBoss) Debug.Log("[BOSS DEBUG] Stopping - Ranged/Other");
-                                        _isMoving = false;
-                                        InitiateCentering();
-                                    }
+                                    _isMoving = false;
+                                    InitiateCentering();
+                                }
+                                else if (!_isMoving && _blockedBy == null && !_isCharmed)
+                                {
+                                    // If OnlyAttackIfBlocked is true, and we are stationary but not blocked, we must resume moving!
+                                    _isMoving = true;
                                 }
                             }
                             else if (!_isMoving && _blockedBy == null && !_isCharmed)
                             {
-                                // Resume moving if we were stopped for combat but target is now out of range
+                                // Resume moving if we were stopped for combat but target is now out of range/not strictly adjacent
                                 _isMoving = true;
                             }
                         }
@@ -431,7 +603,18 @@ namespace MaouSamaTD.Units
                         }
                     }
 
-                    if (IsTargetInPattern(myPos, targetPos, _enemyData != null ? _enemyData.AttackPattern : AttackPattern.All, Range))
+                    bool inRange = IsTargetInPattern(myPos, targetPos, _enemyData != null ? _enemyData.AttackPattern : AttackPattern.All, Range);
+                    
+                    // [STRICT MELEE ENGAGEMENT]
+                    // Scan logic must also respect the Manhattan distance limit for all melee units
+                    if (inRange && _enemyData != null && _enemyData.DamageType == DamageType.Melee)
+                    {
+                        int manhattan = Mathf.Abs(myPos.x - targetPos.x) + Mathf.Abs(myPos.y - targetPos.y);
+                        int maxManhattan = Mathf.FloorToInt(Range + 0.01f);
+                        if (manhattan > maxManhattan) inRange = false;
+                    }
+
+                    if (inRange)
                     {
                         float score = 0;
                         
@@ -470,11 +653,43 @@ namespace MaouSamaTD.Units
         {
             if (attacker is PlayerUnit player && player.CurrentHp > 0)
             {
+                if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
+
                 // Aggro logic: if we don't have a target, or if the current target isn't on high ground but the attacker is
                 if (_attackTarget == null && _blockedBy == null)
                 {
                     _attackTarget = player;
-                    if (_isMoving) InitiateCentering();
+                    
+                    // Strictly do NOT stop or center if OnlyAttackIfBlocked is true (bypass/boss behavior)
+                    if (_isMoving && _enemyData != null && !_enemyData.OnlyAttackIfBlocked)
+                    {
+                        // Check if the attacker is actually within our attack range and pattern
+                        if (_gridManager != null)
+                        {
+                            Vector2Int myPos = _gridManager.WorldToGridCoordinates(transform.position);
+                            Vector2Int targetPos = _gridManager.WorldToGridCoordinates(player.transform.position);
+                            
+                            bool inRange = IsTargetInPattern(myPos, targetPos, _enemyData.AttackPattern, Range);
+                            
+                            // Respect strict melee range/Manhattan checks
+                            if (inRange && _enemyData.DamageType == DamageType.Melee)
+                            {
+                                int manhattan = Mathf.Abs(myPos.x - targetPos.x) + Mathf.Abs(myPos.y - targetPos.y);
+                                int maxManhattan = Mathf.FloorToInt(Range + 0.01f);
+                                if (manhattan > maxManhattan) inRange = false;
+                            }
+
+                            // Only stop if the attacker is actually within our range to engage
+                            if (inRange)
+                            {
+                                InitiateCentering();
+                            }
+                        }
+                        else
+                        {
+                            InitiateCentering();
+                        }
+                    }
                 }
                 else if (_attackTarget != null)
                 {

@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: fd38b1d9-2674-4a71-8ac5-53f777b32763
   CalculatedStats:
-  MaxHp: 70
-    Attack: 30
-  Defense: 2
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 140
+    Attack: 8
+    Defense: 4
+    ClassIcon: {fileID: 21300000, guid: 388393a245da00049a44d7c48a196e4c, type: 3}
+    ClassName: Support
   UnitName: Lila
   UnitTitle: Fledgling Succubus
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 0
   Class: 8
   AttackPattern: 4
@@ -55,9 +56,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 70
   AttackPower: 4
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 2
-  RespawnTime: 15.0
+  RespawnTime: 15
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

@@ -149,6 +149,13 @@ namespace MaouSamaTD.Managers
                     _deploymentUI.AddUnit(lilithData);
                     _deploymentUI.SetUnitButtonVisibility("Lilith", true);
                     Debug.Log($"[LevelManager] Successfully loaded and added Lilith to unit buttons.");
+
+                    if (_currencyManager != null)
+                    {
+                        _currencyManager.SetMaxSeals(99);
+                        _currencyManager.SetSeals(99);
+                        Debug.Log("[LevelManager] Skipper Lilith Bonus: Max Seals and Current Seals set to 99.");
+                    }
                 }
                 else
                 {

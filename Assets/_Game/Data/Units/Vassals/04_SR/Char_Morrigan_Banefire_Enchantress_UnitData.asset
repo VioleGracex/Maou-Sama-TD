@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 72cc95ec-a837-4042-90cc-cc536e10b076
   CalculatedStats:
-  MaxHp: 78
-    Attack: 39
-  Defense: 1
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 156
+    Attack: 24
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
+    ClassName: Warlock
   UnitName: Morrigan
   UnitTitle: Banefire Enchantress
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -31,7 +31,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: addb50d8d40d9394ca11e7aa3f29c1a7, type: 3}
     Chibi: {fileID: 21300000, guid: 66115e194ad14fd468486f2fb1c78b2f, type: 3}
     WaistUp: {fileID: 21300000, guid: 684130af94a913a4cb9d5417c354669d, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 63fa6f6305db7424b943f25d55fcd3f4, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 63fa6f6305db7424b943f25d55fcd3f4, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -46,6 +46,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 3
   Class: 4
   AttackPattern: 4
@@ -59,7 +60,7 @@ MonoBehaviour:
   AttackPower: 12
   AttackInterval: 1.5
   Defense: 1
-  RespawnTime: 22.0
+  RespawnTime: 22
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

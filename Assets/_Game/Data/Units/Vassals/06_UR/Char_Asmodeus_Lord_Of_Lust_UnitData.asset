@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 1ada1924-dd8c-4416-a191-068126fe1fa8
   CalculatedStats:
-  MaxHp: 300
-    Attack: 150
-  Defense: 8
-    ClassIcon: {fileID: 0}
-    ClassName: Assassin
+    MaxHp: 600
+    Attack: 36
+    Defense: 16
+    ClassIcon: {fileID: 21300000, guid: 791ddb5597a8af845b23b7e6a246d380, type: 3}
+    ClassName: EnemyMelee
   UnitName: Asmodeus
   UnitTitle: Lord Of Lust
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -33,7 +33,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: d10a184aaf155de4285cd8229ccbe38c, type: 3}
     Chibi: {fileID: 21300000, guid: bdb91b5cb89f970489826e2310eb7c79, type: 3}
     WaistUp: {fileID: 21300000, guid: 05c8932c51f990d44a7398d7a886f9aa, type: 3}
-    FullSplashArt: {fileID: 21300000, guid: 85f5dbfe1a352004e80998e2f65bc892, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: 162451763402e3c42ab84fa2446dfc25, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 162451763402e3c42ab84fa2446dfc25, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -48,6 +48,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 5
   Class: 11
   AttackPattern: 4
@@ -59,9 +60,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 300
   AttackPower: 18
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 8
-  RespawnTime: 30.0
+  RespawnTime: 30
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

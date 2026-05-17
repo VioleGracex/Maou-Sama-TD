@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: e0ed263e-2650-435e-8d63-e9dc00a21d46
   CalculatedStats:
-  MaxHp: 72
-    Attack: 36
-  Defense: 1
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 144
+    Attack: 22
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: 714b3cedddc0e4a4d8bdefd2c718ac5a, type: 3}
+    ClassName: Sage
   UnitName: Corvus
   UnitTitle: Plague Doctor
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: e56335254f94a35439a4fe6fcd5f922d, type: 3}
     Chibi: {fileID: 21300000, guid: d76ff78f7c371a842a439da6685fc8d1, type: 3}
     WaistUp: {fileID: 21300000, guid: 25fac84323660a741bc60ae97154f8c1, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 7563c43c0e173b5468851917f906409f, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 7563c43c0e173b5468851917f906409f, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 2
   Class: 5
   AttackPattern: 4
@@ -57,7 +58,7 @@ MonoBehaviour:
   AttackPower: 11
   AttackInterval: 1.5
   Defense: 1
-  RespawnTime: 20.0
+  RespawnTime: 20
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: d03e1742-e5be-40ef-bdbd-4db8e6f903e2
   CalculatedStats:
-  MaxHp: 98
-    Attack: 0
-  Defense: 3
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 196
+    Attack: 12
+    Defense: 6
+    ClassIcon: {fileID: 21300000, guid: 388393a245da00049a44d7c48a196e4c, type: 3}
+    ClassName: Support
   UnitName: Valerius
   UnitTitle: Crimson Defector
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -28,11 +28,11 @@ MonoBehaviour:
   - Title: Origin
     Content: A master strategist who abandoned humanity out of pure disgust.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: e0e90f621f6cb8d4ebd5d77984da54f6, type: 3}
-    Chibi: {fileID: 21300000, guid: 3d641cd83b2fa444c9b3efcbd8456f70, type: 3}
-    WaistUp: {fileID: 21300000, guid: 24d853c89477f7144931d9ce785e0759, type: 3}
-    FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: b611fdf53f45b8843970c7391431ddaa, type: 3}
+    Avatar: {fileID: 21300000, guid: 4a8fb85afd35e2e4cb80980c6242721c, type: 3}
+    Chibi: {fileID: 21300000, guid: 3037d479eb1e2fc4784e0d602147e47c, type: 3}
+    WaistUp: {fileID: 21300000, guid: 5a426cb5880687045badf4eff09d0980, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: 57fc7adf1e8534443b372b7c58acc777, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 57fc7adf1e8534443b372b7c58acc777, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
   Skins: []
@@ -46,6 +46,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 8
   AttackPattern: 4
@@ -57,9 +58,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 98
   AttackPower: 6
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 3
-  RespawnTime: 25.0
+  RespawnTime: 25
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

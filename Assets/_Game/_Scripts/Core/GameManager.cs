@@ -4,6 +4,8 @@ using UnityEngine;
 using Zenject;
 using MaouSamaTD.Levels;
 using MaouSamaTD.Units;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MaouSamaTD.Managers
 {
@@ -53,6 +55,12 @@ namespace MaouSamaTD.Managers
         public float TimeTaken { get; private set; } = 0f;
         public bool PreventDeathForTutorial { get; set; } = false;
         public int UnitsLostCount { get; private set; } = 0;
+
+        private System.Collections.Generic.Dictionary<UnitData, float> _unitDamageDealt = new System.Collections.Generic.Dictionary<UnitData, float>();
+        public System.Collections.Generic.Dictionary<UnitData, float> UnitDamageDealt => _unitDamageDealt;
+        
+        public System.Collections.Generic.List<LootDropRecord> SessionLoot { get; private set; } = new System.Collections.Generic.List<LootDropRecord>();
+        public System.Collections.Generic.List<XPProgressInfo> DeployedUnitsXPInfo { get; private set; } = new System.Collections.Generic.List<XPProgressInfo>();
         #endregion
 
         #region Initialization
@@ -395,12 +403,48 @@ namespace MaouSamaTD.Managers
                 _saveManager.LevelComplete(_currentLevelData.LevelID, stars);
                 
                 // Distribute Mission XP to all deployed units
+                DeployedUnitsXPInfo.Clear();
                 if (_deploymentUI != null && _currentLevelData != null)
                 {
+                    // Snapshot before distribution
+                    foreach (var u in _deploymentUI.DeployedUnits)
+                    {
+                        if (u != null)
+                        {
+                            DeployedUnitsXPInfo.Add(new XPProgressInfo
+                            {
+                                Unit = u, OldLevel = u.Level, OldXP = u.Experience, XPAwarded = _currentLevelData.MissionXP
+                            });
+                        }
+                    }
+
                     MaouSamaTD.Progression.ProgressionLogic.DistributeMissionXP(
                         new System.Collections.Generic.List<UnitData>(_deploymentUI.DeployedUnits), 
                         _currentLevelData.MissionXP
                     );
+
+                    // Update New XP Values
+                    for (int i = 0; i < DeployedUnitsXPInfo.Count; i++)
+                    {
+                        DeployedUnitsXPInfo[i].NewLevel = DeployedUnitsXPInfo[i].Unit.Level;
+                        DeployedUnitsXPInfo[i].NewXP = DeployedUnitsXPInfo[i].Unit.Experience;
+                    }
+                }
+
+                // Roll Level Stage Loot
+                if (_currentLevelData.StageLootConfig != null)
+                {
+                    foreach (var loot in _currentLevelData.StageLootConfig)
+                    {
+                        if (UnityEngine.Random.value <= loot.DropChance)
+                        {
+                            int qty = UnityEngine.Random.Range(loot.MinQuantity, loot.MaxQuantity + 1);
+                            if (qty > 0)
+                            {
+                                RegisterLoot(loot.ItemID, qty);
+                            }
+                        }
+                    }
                 }
 
                 // Process all rewards for winning the level
@@ -410,11 +454,13 @@ namespace MaouSamaTD.Managers
                     {
                         if (reward.Type == MaouSamaTD.Data.RewardType.GoldCoins)
                         {
+                            RegisterLoot("gold_coins", reward.Amount);
                             if (_economyManager != null) _economyManager.AddGold(reward.Amount);
                             else _saveManager.AddGold(reward.Amount);
                         }
                         else if (reward.Type == MaouSamaTD.Data.RewardType.BloodCrests)
                         {
+                            RegisterLoot("blood_crests", reward.Amount);
                             if (_economyManager != null) _economyManager.AddBloodCrest(reward.Amount);
                             else _saveManager.AddBloodCrest(reward.Amount);
                         }
@@ -458,6 +504,7 @@ namespace MaouSamaTD.Managers
         {
             if (IsGameEnded) return;
             
+            IsPaused = !IsPaused;
             if (IsPaused)
             {
                 Time.timeScale = 0f;
@@ -533,5 +580,76 @@ namespace MaouSamaTD.Managers
 
             return results;
         }
+        public void RegisterLoot(string itemID, int qty)
+        {
+            if (string.IsNullOrEmpty(itemID) || qty <= 0) return;
+            
+            var existing = SessionLoot.Find(x => x.ItemID == itemID);
+            if (existing != null) existing.Quantity += qty;
+            else SessionLoot.Add(new LootDropRecord { ItemID = itemID, Quantity = qty });
+
+            // Only add to save manager if it's a standard inventory item (gold/blood crests are handled separately)
+            if (itemID != "gold_coins" && itemID != "blood_crests")
+            {
+                if (_saveManager != null)
+                {
+                    _saveManager.AddItem(itemID, qty);
+                    _saveManager.Save();
+                }
+            }
+        }
+
+        public void RegisterDamageDealt(UnitData unit, float damage)
+        {
+            if (unit == null) return;
+            if (_unitDamageDealt.ContainsKey(unit)) _unitDamageDealt[unit] += damage;
+            else _unitDamageDealt[unit] = damage;
+        }
+
+        public UnitData GetMVPUnit()
+        {
+            UnitData mvp = null;
+            float maxDamage = -1f;
+
+            foreach (var kvp in _unitDamageDealt)
+            {
+                if (kvp.Value > maxDamage)
+                {
+                    maxDamage = kvp.Value;
+                    mvp = kvp.Key;
+                }
+            }
+
+            // Fallback 1: first deployed unit
+            if (mvp == null && _deploymentUI != null && _deploymentUI.DeployedUnits.Any())
+            {
+                foreach (var u in _deploymentUI.DeployedUnits) { if (u != null) { mvp = u; break; } }
+            }
+
+            // Fallback 2: first selected cohort
+            if (mvp == null && _gameSelectionState != null && _gameSelectionState.SelectedCohort != null)
+            {
+                foreach (var u in _gameSelectionState.SelectedCohort) { if (u != null) { mvp = u; break; } }
+            }
+
+            return mvp;
+        }
+    }
+
+    public class XPProgressInfo
+    {
+        public UnitData Unit;
+        public int OldLevel;
+        public int OldXP;
+        public int NewLevel;
+        public int NewXP;
+        public int XPAwarded;
+    }
+
+    [System.Serializable]
+    public class LootDropRecord
+    {
+        public string ItemID;
+        public int Quantity;
     }
 }

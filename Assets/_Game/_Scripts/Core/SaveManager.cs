@@ -246,7 +246,7 @@ namespace MaouSamaTD.Managers
         public void AddActivity(string activityName)
         {
             if (CurrentData == null) return;
-            
+
             int index = CurrentData.Activities.FindIndex(x => x.ActivityName == activityName);
             if (index != -1)
             {
@@ -258,6 +258,34 @@ namespace MaouSamaTD.Managers
             {
                 CurrentData.Activities.Add(new ActivityEntry(activityName, 1));
             }
+        }
+
+        // ── Item Inventory Helpers ───────────────────────────────────────────
+        public void AddItem(string itemID, int qty = 1)
+        {
+            if (CurrentData == null || qty <= 0) return;
+            var entry = CurrentData.ItemInventory.Find(x => x.ItemID == itemID);
+            if (entry != null)
+                entry.Quantity += qty;
+            else
+                CurrentData.ItemInventory.Add(new ItemInventoryEntry(itemID, qty));
+        }
+
+        public bool RemoveItem(string itemID, int qty = 1)
+        {
+            if (CurrentData == null || qty <= 0) return false;
+            var entry = CurrentData.ItemInventory.Find(x => x.ItemID == itemID);
+            if (entry == null || entry.Quantity < qty) return false;
+            entry.Quantity -= qty;
+            if (entry.Quantity <= 0) CurrentData.ItemInventory.Remove(entry);
+            return true;
+        }
+
+        public int GetItemCount(string itemID)
+        {
+            if (CurrentData == null) return 0;
+            var entry = CurrentData.ItemInventory.Find(x => x.ItemID == itemID);
+            return entry?.Quantity ?? 0;
         }
         
         public List<string> GetCohort(int index)

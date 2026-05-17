@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 1a1de488-b996-49b9-a860-621f22429799
   CalculatedStats:
-  MaxHp: 350
-    Attack: 0
-  Defense: 11
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 700
+    Attack: 8
+    Defense: 22
+    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
+    ClassName: Bastion
   UnitName: Infernal Behemoth
   UnitTitle: 
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -47,6 +47,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 0
   AttackPattern: 4
@@ -60,7 +61,7 @@ MonoBehaviour:
   AttackPower: 4
   AttackInterval: 1.2
   Defense: 11
-  RespawnTime: 25.0
+  RespawnTime: 25
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

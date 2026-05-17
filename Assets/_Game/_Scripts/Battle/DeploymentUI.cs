@@ -26,6 +26,7 @@ namespace MaouSamaTD.UI
 
         // Dynamic State
         private List<UnitData> _availableUnits = new List<UnitData>();
+        public List<UnitData> AvailableUnits => _availableUnits;
         
         [Header("Animation")]
         [SerializeField] private RectTransform _panelRect; 

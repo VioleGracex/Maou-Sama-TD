@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 65f4cf11-c14f-4e6e-b2ff-40b020735db6
   CalculatedStats:
-  MaxHp: 84
-    Attack: 0
-  Defense: 1
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 168
+    Attack: 26
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
+    ClassName: Warlock
   UnitName: Kaelthas Blood Drinker
   UnitTitle: 
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -47,6 +47,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 4
   AttackPattern: 4
@@ -60,7 +61,7 @@ MonoBehaviour:
   AttackPower: 13
   AttackInterval: 1.5
   Defense: 1
-  RespawnTime: 25.0
+  RespawnTime: 25
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

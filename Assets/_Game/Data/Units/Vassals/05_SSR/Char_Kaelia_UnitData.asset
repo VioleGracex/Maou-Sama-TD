@@ -15,22 +15,22 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: e9c1766f-e63a-440f-b7ba-1bac109a8e5d
   CalculatedStats:
-  MaxHp: 104
-    Attack: 0
-  Defense: 3
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 208
+    Attack: 26
+    Defense: 6
+    ClassIcon: {fileID: 21300000, guid: b2eefbfa594336941be1d0a2f90217c8, type: 3}
+    ClassName: Executioner
   UnitName: Kaelia
   UnitTitle: Cursed Blademaster
   SummonQuote: 
   BriefDescription: 
   LoreEntries: []
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: 490c9146234a9cb408362b773be82d1a, type: 3}
-    Chibi: {fileID: 21300000, guid: d3b2d313d8ad77c4b86a00b660b02556, type: 3}
-    WaistUp: {fileID: 21300000, guid: 388ed45e85c7d4a44acd9f8b1e24fa32, type: 3}
-    FullSplashArt: {fileID: 0}
-    FullBodyCutout: {fileID: 21300000, guid: ceb96f9e8327429418771499bb2db9c0, type: 3}
+    Avatar: {fileID: 21300000, guid: a5d29948b156cee44813d9b6d3ce1c83, type: 3}
+    Chibi: {fileID: 21300000, guid: fbc647aca3d3bd24ebdb7377c2b41ab1, type: 3}
+    WaistUp: {fileID: 21300000, guid: 82adc8e6b5fb3e54986b8a9b4dfe0b37, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: 734e1fefd904e3548bf428288e8b98df, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 734e1fefd904e3548bf428288e8b98df, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
   Skins: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 2
   AttackPattern: 4
@@ -57,7 +58,7 @@ MonoBehaviour:
   AttackPower: 13
   AttackInterval: 0.8
   Defense: 3
-  RespawnTime: 22.0
+  RespawnTime: 22
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

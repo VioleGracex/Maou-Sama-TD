@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 3e4e5596-5e80-43de-b456-b42c51af2a7a
   CalculatedStats:
-  MaxHp: 66
-    Attack: 33
-  Defense: 1
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 132
+    Attack: 18
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: a22c2788fc8b0464b806d60f527fe3b2, type: 3}
+    ClassName: Gunner
   UnitName: Korr
   UnitTitle: Skeletal Archer
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -30,7 +30,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: e5aaa129a5a189745a2ad9771d2a87a2, type: 3}
     Chibi: {fileID: 21300000, guid: 00c4272f48625574dadcef72b944159d, type: 3}
     WaistUp: {fileID: 21300000, guid: 22c53d8b25c5c054b808faf22d5df83f, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 8930cdbbf419ea741a3d341dda9361a1, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 8930cdbbf419ea741a3d341dda9361a1, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -45,6 +45,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 1
   Class: 9
   AttackPattern: 1
@@ -56,9 +57,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 66
   AttackPower: 9
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 1
-  RespawnTime: 18.0
+  RespawnTime: 18
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

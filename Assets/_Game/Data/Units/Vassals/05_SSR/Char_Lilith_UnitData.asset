@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: c7b8e2d4-1a2b-4c3d-8e5f-6a7b8c9d0e1f
   CalculatedStats:
-  MaxHp: 84
-    Attack: 0
-  Defense: 1
-    ClassIcon: {fileID: 0}
-    ClassName: 
+    MaxHp: 168
+    Attack: 26
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
+    ClassName: Warlock
   UnitName: Lilith
   UnitTitle: Matriarch of Lust
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -60,6 +60,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 4
   AttackPattern: 4
@@ -105,7 +106,7 @@ MonoBehaviour:
   AttackPower: 13
   AttackInterval: 1.5
   Defense: 1
-  RespawnTime: 25.0
+  RespawnTime: 25
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

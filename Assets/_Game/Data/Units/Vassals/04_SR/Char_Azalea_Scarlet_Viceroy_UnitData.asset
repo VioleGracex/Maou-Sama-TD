@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: b9bdb7ff-aa4f-414d-be53-8a023d490ad1
   CalculatedStats:
-  MaxHp: 325
-    Attack: 39
-  Defense: 10
+    MaxHp: 650
+    Attack: 8
+    Defense: 20
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Azalea
@@ -31,7 +31,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: cd9c553a0978cdb489f735a286be708d, type: 3}
     Chibi: {fileID: 21300000, guid: 81a2dea3d01923e4c8ca7ac474477f00, type: 3}
     WaistUp: {fileID: 21300000, guid: 51d0c2f29e4e7e24283ba064755015fc, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: 1b1efbe872ceb174a9d97798c036cc5b, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 1b1efbe872ceb174a9d97798c036cc5b, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -46,6 +46,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 3
   Class: 0
   AttackPattern: 4
@@ -59,7 +60,7 @@ MonoBehaviour:
   AttackPower: 4
   AttackInterval: 1.2
   Defense: 10
-  RespawnTime: 22.0
+  RespawnTime: 22
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

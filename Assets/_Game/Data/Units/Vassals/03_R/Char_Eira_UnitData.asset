@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 11328411-6d42-43cb-ae2e-bcd65165f316
   CalculatedStats:
-  MaxHp: 72
-    Attack: 36
-  Defense: 1
-    ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
-    ClassName: Bastion
+    MaxHp: 144
+    Attack: 20
+    Defense: 2
+    ClassIcon: {fileID: 21300000, guid: a22c2788fc8b0464b806d60f527fe3b2, type: 3}
+    ClassName: Gunner
   UnitName: Eira
   UnitTitle: Frostbane Sniper
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -29,7 +29,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: d42986730d99ed5479ca768c99151238, type: 3}
     Chibi: {fileID: 21300000, guid: 653f5b10eb4685d46ab26b386be9d744, type: 3}
     WaistUp: {fileID: 21300000, guid: 551a58a7851fc4e48a9881a2847e43e7, type: 3}
-    FullSplashArt: {fileID: 0}
+    FullSplashArt: {fileID: 21300000, guid: b7dad43f8c3376c4795eb24f5734ec06, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: b7dad43f8c3376c4795eb24f5734ec06, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -44,6 +44,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 2
   Class: 9
   AttackPattern: 1
@@ -55,9 +56,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 72
   AttackPower: 10
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 1
-  RespawnTime: 20.0
+  RespawnTime: 20
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

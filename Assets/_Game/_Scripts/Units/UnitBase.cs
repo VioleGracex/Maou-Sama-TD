@@ -738,7 +738,7 @@ namespace MaouSamaTD.Units
         {
             int dx = Mathf.Abs(origin.x - target.x);
             int dy = Mathf.Abs(origin.y - target.y);
-            int iRange = Mathf.CeilToInt(range - 0.01f);
+            int iRange = Mathf.FloorToInt(range + 0.01f);
 
             // Always allow attacking if on the same tile
             if (dx == 0 && dy == 0) return true;
@@ -769,6 +769,11 @@ namespace MaouSamaTD.Units
         public virtual void RecordDamageDealt(float amount)
         {
             TotalDamageDealt += amount;
+            if (this is PlayerUnit player && player.Data != null)
+            {
+                var gm = UnityEngine.Object.FindFirstObjectByType<MaouSamaTD.Managers.GameManager>();
+                if (gm != null) gm.RegisterDamageDealt(player.Data, amount);
+            }
         }
 
         protected virtual void RegisterAttacker(UnitBase attacker)

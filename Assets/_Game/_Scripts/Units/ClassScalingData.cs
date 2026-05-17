@@ -27,6 +27,12 @@ namespace MaouSamaTD.Units
         public float BaseAtkMultiplier;
         public float BaseDefMultiplier;
 
+        [Header("Promotion Requirements")]
+        [Tooltip("The ID of the primary loot item required to rank up / promote this class.")]
+        public string RequiredMaterialID;
+        [Tooltip("Base material cost, which is multiplied by the target star rank (e.g., 5 * star).")]
+        public int BaseMaterialAmount;
+
         [Header("Rarity (Star) Growth")]
         public RarityStatGrowth[] RarityGrowths;
     }
@@ -36,6 +42,37 @@ namespace MaouSamaTD.Units
     {
         public string AssetLabel;
         public ClassStatMultipliers[] ClassScalings;
+
+        public string GetRequiredMaterialID(UnitClass classType)
+        {
+            if (TryGetMultipliers(classType, out var result) && !string.IsNullOrEmpty(result.RequiredMaterialID))
+            {
+                return result.RequiredMaterialID;
+            }
+            // Fallback based on class
+            return classType switch
+            {
+                UnitClass.Bastion => "mat_golem_core",
+                UnitClass.Vanguard => "mat_bandit_insignia",
+                UnitClass.Executioner => "mat_animal_fang",
+                UnitClass.Ranger => "mat_animal_fang",
+                UnitClass.Warlock => "mat_shadow_essence",
+                UnitClass.Sage => "mat_shadow_essence",
+                UnitClass.Gunner => "mat_bandit_insignia",
+                UnitClass.Assassin => "mat_bandit_insignia",
+                _ => "mat_bandit_insignia" // Default Fallback
+            };
+        }
+
+        public int GetRequiredMaterialAmount(UnitClass classType, int targetStar)
+        {
+            int baseAmt = 5;
+            if (TryGetMultipliers(classType, out var result) && result.BaseMaterialAmount > 0)
+            {
+                baseAmt = result.BaseMaterialAmount;
+            }
+            return baseAmt * targetStar;
+        }
 
         public bool TryGetMultipliers(UnitClass classType, out ClassStatMultipliers result)
         {

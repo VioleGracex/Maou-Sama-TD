@@ -502,6 +502,29 @@ namespace MaouSamaTD.UI
             private bool isWorldHighlight;
             private List<WorldHighlightData> worldHighlights = new List<WorldHighlightData>();
 
+            private MaouSamaTD.Managers.GameManager _gameManager;
+            private GameControlUI _gameControlUI;
+
+            private bool IsRectTransformHit(RectTransform rt, Vector2 screenPoint)
+            {
+                if (rt == null || !rt.gameObject.activeInHierarchy) return false;
+                
+                Camera targetCam = null;
+                Canvas canvas = rt.GetComponentInParent<Canvas>();
+                if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay) targetCam = Camera.main;
+
+                Vector3[] corners = new Vector3[4];
+                rt.GetWorldCorners(corners);
+                Vector3 center = (corners[0] + corners[2]) * 0.5f;
+                Vector3 size = (corners[2] - corners[0]);
+
+                Vector2 sMin = RectTransformUtility.WorldToScreenPoint(targetCam, center - size * 0.5f);
+                Vector2 sMax = RectTransformUtility.WorldToScreenPoint(targetCam, center + size * 0.5f);
+                
+                return screenPoint.x >= Mathf.Min(sMin.x, sMax.x) && screenPoint.x <= Mathf.Max(sMin.x, sMax.x) && 
+                       screenPoint.y >= Mathf.Min(sMin.y, sMax.y) && screenPoint.y <= Mathf.Max(sMin.y, sMax.y);
+            }
+
             public void SetUITargets(List<UIHighlightData> rects)
             {
                 uiHighlights.Clear();
@@ -515,8 +538,45 @@ namespace MaouSamaTD.UI
                 if (highlights != null) worldHighlights.AddRange(highlights);
             }
 
+            private float _lastLookupTime = -1f;
+
             public override bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
             {
+                if (_gameManager == null || _gameControlUI == null)
+                {
+                    if (Time.unscaledTime - _lastLookupTime > 1.0f)
+                    {
+                        _lastLookupTime = Time.unscaledTime;
+                        if (_gameManager == null)
+                        {
+                            _gameManager = UnityEngine.Object.FindObjectOfType<MaouSamaTD.Managers.GameManager>();
+                        }
+                        if (_gameControlUI == null)
+                        {
+                            _gameControlUI = UnityEngine.Object.FindObjectOfType<GameControlUI>();
+                        }
+                    }
+                }
+
+                // 1. If game is paused, do not block any clicks so the player can interact with Pause menu options (Resume, Restart, Retreat)
+                if (_gameManager != null && _gameManager.IsPaused)
+                {
+                    return false;
+                }
+
+                // 2. Always allow clicking the Pause button and Speed button
+                if (_gameControlUI != null)
+                {
+                    if (_gameControlUI.PauseButton != null && IsRectTransformHit(_gameControlUI.PauseButton.transform as RectTransform, screenPoint))
+                    {
+                        return false;
+                    }
+                    if (_gameControlUI.SpeedButton != null && IsRectTransformHit(_gameControlUI.SpeedButton.transform as RectTransform, screenPoint))
+                    {
+                        return false;
+                    }
+                }
+
                 foreach (var h in uiHighlights)
                 {
                     if (h.Target == null) continue;

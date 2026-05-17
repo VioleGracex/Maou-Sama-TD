@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 41a75c20-bba4-405f-acdf-d9fc46a487a1
   CalculatedStats:
-  MaxHp: 84
-    Attack: 112
-  Defense: 1
+    MaxHp: 168
+    Attack: 22
+    Defense: 2
     ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
     ClassName: Ranger
   UnitName: Shade
@@ -29,11 +29,11 @@ MonoBehaviour:
   - Title: Origin
     Content: Ruler of the highest peaks, commands the storms with a flap of her wings.
   BaseSkin:
-    Avatar: {fileID: 21300000, guid: b0ebda7fb0a56f4478cf8311800df6e9, type: 3}
-    Chibi: {fileID: 21300000, guid: 50a484f1d84de134ebea55eac775df8d, type: 3}
-    WaistUp: {fileID: 21300000, guid: ad21cbd4a0bcf74449bba31d40560dca, type: 3}
-    FullSplashArt: {fileID: 21300000, guid: 5ce6f2a2fdb42474081f7f6c046c06ef, type: 3}
-    FullBodyCutout: {fileID: 21300000, guid: 5ce6f2a2fdb42474081f7f6c046c06ef, type: 3}
+    Avatar: {fileID: 21300000, guid: f7c4fd480865db843b65a8004706a7f8, type: 3}
+    Chibi: {fileID: 21300000, guid: 6c6b604ad4b96c54284baf63542f9925, type: 3}
+    WaistUp: {fileID: 21300000, guid: 168d484e5c48a074aaeb30b4e902038c, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: a98245ed863a80241b030f041eb697d7, type: 3}
+    FullBodyCutout: {fileID: 21300000, guid: 9a8e5b602e866254c97116b34c8a760f, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
   Skins: []
@@ -47,6 +47,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 4
   Class: 3
   AttackPattern: 1
@@ -58,9 +59,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 84
   AttackPower: 11
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 1
-  RespawnTime: 25.0
+  RespawnTime: 25
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

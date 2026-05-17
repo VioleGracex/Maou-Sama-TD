@@ -15,11 +15,11 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 9fb6bb04-3959-41fc-9a73-0c66d1be03e0
   CalculatedStats:
-  MaxHp: 300
-    Attack: 135
-  Defense: 8
-    ClassIcon: {fileID: 0}
-    ClassName: Warlock
+    MaxHp: 600
+    Attack: 36
+    Defense: 16
+    ClassIcon: {fileID: 21300000, guid: 791ddb5597a8af845b23b7e6a246d380, type: 3}
+    ClassName: EnemyMelee
   UnitName: Balthazar
   UnitTitle: Lord Of Sloth
   SummonQuote: Sovereign, it is an honor to serve you.
@@ -33,7 +33,7 @@ MonoBehaviour:
     Avatar: {fileID: 21300000, guid: b851799b128c8e2478c7efa9770924ca, type: 3}
     Chibi: {fileID: 21300000, guid: b15659fdfbce0a84996cae1229372c7c, type: 3}
     WaistUp: {fileID: 21300000, guid: 371e8bc70519eb143a8804c49faa9449, type: 3}
-    FullSplashArt: {fileID: 21300000, guid: 9a0b0c1c2eac0844f9057c50117580da, type: 3}
+    FullSplashArt: {fileID: 21300000, guid: 9c112a9cf50b91840a3f490e33844a9b, type: 3}
     FullBodyCutout: {fileID: 21300000, guid: 9c112a9cf50b91840a3f490e33844a9b, type: 3}
     AnimatorController: {fileID: 0}
   StarAdvancementVisuals: []
@@ -48,6 +48,7 @@ MonoBehaviour:
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
+  UnlockedResonanceCount: 0
   Rarity: 5
   Class: 11
   AttackPattern: 4
@@ -59,9 +60,9 @@ MonoBehaviour:
   CustomPatternOffsets: []
   MaxHp: 300
   AttackPower: 18
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 8
-  RespawnTime: 30.0
+  RespawnTime: 30
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

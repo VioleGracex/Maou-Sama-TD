@@ -1190,6 +1190,95 @@ namespace MaouSamaTD.Editor
                 descBodyStyle.normal.textColor = new Color(0.75f, 0.75f, 0.75f);
                 EditorGUILayout.SelectableLabel(selClassData.Description, descBodyStyle, GUILayout.Height(60));
 
+                // --- Promotion & Rank-Up Configuration ---
+                GUILayout.Space(15);
+                GUILayout.Label("Promotion & Rank-Up Configuration", descTitleStyle);
+                GUILayout.Space(6);
+
+                ClassScalingData scalingData = null;
+                string[] scalingGuids = AssetDatabase.FindAssets("t:ClassScalingData");
+                if (scalingGuids.Length > 0)
+                {
+                    string scalingPath = AssetDatabase.GUIDToAssetPath(scalingGuids[0]);
+                    scalingData = AssetDatabase.LoadAssetAtPath<ClassScalingData>(scalingPath);
+                }
+
+                if (scalingData != null)
+                {
+                    // Find the multiplier entry for this class
+                    int elementIndex = -1;
+                    if (scalingData.ClassScalings != null)
+                    {
+                        for (int i = 0; i < scalingData.ClassScalings.Length; i++)
+                        {
+                            if (scalingData.ClassScalings[i].ClassType == _selectedClass)
+                            {
+                                elementIndex = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (elementIndex >= 0)
+                    {
+                        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                        
+                        EditorGUI.BeginChangeCheck();
+                        
+                        string reqMat = scalingData.ClassScalings[elementIndex].RequiredMaterialID;
+                        int baseAmt = scalingData.ClassScalings[elementIndex].BaseMaterialAmount;
+                        
+                        if (string.IsNullOrEmpty(reqMat))
+                        {
+                            reqMat = scalingData.GetRequiredMaterialID(_selectedClass); // Show effective/fallback
+                        }
+
+                        EditorGUILayout.LabelField("Primary Rank-Up Material:", EditorStyles.miniBoldLabel);
+                        string[] materialOptions = new string[] { 
+                            "mat_bandit_insignia", 
+                            "mat_golem_core", 
+                            "mat_animal_fang", 
+                            "mat_shadow_essence" 
+                        };
+                        
+                        int selectedMatIdx = System.Array.IndexOf(materialOptions, reqMat);
+                        if (selectedMatIdx < 0) selectedMatIdx = 0;
+                        
+                        int newMatIdx = EditorGUILayout.Popup("Material Type", selectedMatIdx, materialOptions);
+                        int newBaseAmt = EditorGUILayout.IntField("Base Material Amount", baseAmt <= 0 ? 5 : baseAmt);
+                        
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            Undo.RecordObject(scalingData, "Modify Class Promotion Settings");
+                            scalingData.ClassScalings[elementIndex].RequiredMaterialID = materialOptions[newMatIdx];
+                            scalingData.ClassScalings[elementIndex].BaseMaterialAmount = newBaseAmt;
+                            EditorUtility.SetDirty(scalingData);
+                            AssetDatabase.SaveAssets();
+                        }
+                        
+                        string effectiveMat = scalingData.GetRequiredMaterialID(_selectedClass);
+                        int effectiveAmt2Star = scalingData.GetRequiredMaterialAmount(_selectedClass, 2);
+                        int effectiveAmt6Star = scalingData.GetRequiredMaterialAmount(_selectedClass, 6);
+                        
+                        EditorGUILayout.Space(4);
+                        EditorGUILayout.HelpBox(
+                            $"Effective Promotion Material: {effectiveMat}\n" +
+                            $"Cost for 2⭐ Rank-Up: {effectiveAmt2Star}x\n" +
+                            $"Cost for 6⭐ Rank-Up: {effectiveAmt6Star}x", 
+                            MessageType.Info);
+
+                        EditorGUILayout.EndVertical();
+                    }
+                    else
+                    {
+                        EditorGUILayout.HelpBox($"No scaling entry found for {_selectedClass} in ClassScalingData. Please initialize it in the scaling asset first.", MessageType.Warning);
+                    }
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("ClassScalingData asset not found in project.", MessageType.Error);
+                }
+
                 GUILayout.Space(25);
 
                 // Vassals lists

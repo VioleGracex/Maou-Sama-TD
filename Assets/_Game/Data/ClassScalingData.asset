@@ -22,6 +22,8 @@ MonoBehaviour:
     BaseHpMultiplier: 2.5
     BaseAtkMultiplier: 0.3
     BaseDefMultiplier: 1.2
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -53,6 +55,8 @@ MonoBehaviour:
     BaseHpMultiplier: 1.5
     BaseAtkMultiplier: 0.6
     BaseDefMultiplier: 0.6
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -80,10 +84,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 2
     OverrideClassName: Executioner
-    ClassIcon: {fileID: 21300000, guid: e85a8a925d512b340b4cd0c78f377c71, type: 3}
+    ClassIcon: {fileID: 21300000, guid: b2eefbfa594336941be1d0a2f90217c8, type: 3}
     BaseHpMultiplier: 0.8
     BaseAtkMultiplier: 1
     BaseDefMultiplier: 0.3
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -115,6 +121,8 @@ MonoBehaviour:
     BaseHpMultiplier: 0.6
     BaseAtkMultiplier: 0.8
     BaseDefMultiplier: 0.2
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -142,10 +150,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 4
     OverrideClassName: Warlock
-    ClassIcon: {fileID: 0}
+    ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
     BaseHpMultiplier: 0.6
     BaseAtkMultiplier: 0.9
     BaseDefMultiplier: 0.2
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -173,10 +183,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 5
     OverrideClassName: Sage
-    ClassIcon: {fileID: 0}
+    ClassIcon: {fileID: 21300000, guid: 714b3cedddc0e4a4d8bdefd2c718ac5a, type: 3}
     BaseHpMultiplier: 0.6
     BaseAtkMultiplier: 0.9
     BaseDefMultiplier: 0.2
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -204,10 +216,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 6
     OverrideClassName: Architect
-    ClassIcon: {fileID: 0}
+    ClassIcon: {fileID: 21300000, guid: 872d1038e22e6fa489265971409ff0a9, type: 3}
     BaseHpMultiplier: 0.7
     BaseAtkMultiplier: 0.4
     BaseDefMultiplier: 0.4
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -235,10 +249,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 7
     OverrideClassName: Necromancer
-    ClassIcon: {fileID: 0}
+    ClassIcon: {fileID: 21300000, guid: eb6b1878a1c9b1841ba09c17fa760644, type: 3}
     BaseHpMultiplier: 0.6
     BaseAtkMultiplier: 0.9
     BaseDefMultiplier: 0.2
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -266,10 +282,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 8
     OverrideClassName: Support
-    ClassIcon: {fileID: 0}
+    ClassIcon: {fileID: 21300000, guid: 388393a245da00049a44d7c48a196e4c, type: 3}
     BaseHpMultiplier: 0.7
     BaseAtkMultiplier: 0.4
     BaseDefMultiplier: 0.4
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -297,10 +315,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 9
     OverrideClassName: Gunner
-    ClassIcon: {fileID: 0}
+    ClassIcon: {fileID: 21300000, guid: a22c2788fc8b0464b806d60f527fe3b2, type: 3}
     BaseHpMultiplier: 0.6
     BaseAtkMultiplier: 0.8
     BaseDefMultiplier: 0.2
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -328,10 +348,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 10
     OverrideClassName: Assassin
-    ClassIcon: {fileID: 0}
+    ClassIcon: {fileID: 21300000, guid: ef81af5d0aa54b94b997151c0cebf567, type: 3}
     BaseHpMultiplier: 0.8
     BaseAtkMultiplier: 1
     BaseDefMultiplier: 0.3
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -359,10 +381,12 @@ MonoBehaviour:
       DefGrowthPerLevel: 5
   - ClassType: 11
     OverrideClassName: EnemyMelee
-    ClassIcon: {fileID: 0}
+    ClassIcon: {fileID: 21300000, guid: 791ddb5597a8af845b23b7e6a246d380, type: 3}
     BaseHpMultiplier: 1
     BaseAtkMultiplier: 1
     BaseDefMultiplier: 1
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -394,6 +418,8 @@ MonoBehaviour:
     BaseHpMultiplier: 1
     BaseAtkMultiplier: 1
     BaseDefMultiplier: 1
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10
@@ -425,6 +451,8 @@ MonoBehaviour:
     BaseHpMultiplier: 5
     BaseAtkMultiplier: 2
     BaseDefMultiplier: 2
+    RequiredMaterialID: 
+    BaseMaterialAmount: 0
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10

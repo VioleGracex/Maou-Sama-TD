@@ -29,7 +29,11 @@ MonoBehaviour:
   ExitDamage: 100
   ExitDamageType: 1
   AttackPattern: 3
-  CustomPatternOffsets: []
+  CustomPatternOffsets:
+  - {x: 1, y: 0}
+  - {x: -1, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: -1}
   MovementType: 0
   CollisionType: 0
   EvasionType: 0
@@ -44,4 +48,4 @@ MonoBehaviour:
   Tint: {r: 0.2, g: 0, b: 0.2, a: 1}
   VisualYOffset: 0
   BaseVisualHeight: 1
-  HpBarYOffset: 2
+  HpBarYOffset: 1

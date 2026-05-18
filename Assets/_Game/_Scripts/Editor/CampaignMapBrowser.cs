@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using MaouSamaTD.Levels;
 using MaouSamaTD.UI.MainMenu;
+using MaouSamaTD.Data;
 using System.Collections.Generic;
 using System.Linq;
 

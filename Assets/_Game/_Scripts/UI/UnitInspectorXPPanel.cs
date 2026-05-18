@@ -337,28 +337,18 @@ namespace MaouSamaTD.UI
                                                             ? $"Lv {_currentUnit.Level} ➔ {newLevel}"
                                                             : $"Lv {_currentUnit.Level}";
 
-            // Update XP fills
+            // Update XP fills smoothly using DOTween
             if (_xpCurrentFill)
             {
-                if (newLevel > _currentUnit.Level)
-                {
-                    _xpCurrentFill.fillAmount = 0f;
-                }
-                else
-                {
-                    _xpCurrentFill.fillAmount = (float)_currentUnit.Experience / reqXP;
-                }
+                _xpCurrentFill.DOKill();
+                float targetFill = (newLevel > _currentUnit.Level) ? 0f : (float)_currentUnit.Experience / reqXP;
+                _xpCurrentFill.DOFillAmount(targetFill, 0.25f).SetEase(Ease.OutQuad).SetUpdate(true);
             }
             if (_xpAddFill)
             {
-                if (newLevel > _currentUnit.Level)
-                {
-                    _xpAddFill.fillAmount = (float)simXP / simReqXP;
-                }
-                else
-                {
-                    _xpAddFill.fillAmount = (float)(_currentUnit.Experience + totalXP) / reqXP;
-                }
+                _xpAddFill.DOKill();
+                float targetFill = (newLevel > _currentUnit.Level) ? (float)simXP / simReqXP : (float)(_currentUnit.Experience + totalXP) / reqXP;
+                _xpAddFill.DOFillAmount(targetFill, 0.25f).SetEase(Ease.OutQuad).SetUpdate(true);
             }
 
             // Stats Preview (Genshin-style green text)
@@ -942,7 +932,7 @@ namespace MaouSamaTD.UI
         {
             if (_statsPreviewContainer != null) return;
 
-            var rightPanel = this.transform.Find("MainLayout/RightPanel");
+            var rightPanel = _duplicatesScrollRect != null ? _duplicatesScrollRect.transform.parent : null;
             if (rightPanel == null) return;
 
             // Check if already created procedurally

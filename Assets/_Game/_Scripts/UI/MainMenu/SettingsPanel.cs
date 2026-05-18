@@ -47,6 +47,7 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private CustomToggle _toggleFPS; 
         [SerializeField] private CustomToggle _toggleAntiAliasing;
         [SerializeField] private CustomToggle _toggleBatterySave;
+        [SerializeField] private CustomToggle _toggleDisableLootAnimation;
         #endregion
 
         #region Audio Settings
@@ -107,6 +108,41 @@ namespace MaouSamaTD.UI.MainMenu
             if (_toggleFPS != null) _toggleFPS.OnValueChanged.AddListener(OnFPSToggle);
             if (_toggleAntiAliasing != null) _toggleAntiAliasing.OnValueChanged.AddListener(OnAntiAliasingToggle);
             if (_toggleBatterySave != null) _toggleBatterySave.OnValueChanged.AddListener(OnBatterySaveToggle);
+            
+            // Dynamic premium cloning of DisableLootAnimation toggle from BatterySave row/toggle if not pre-assigned in prefab
+            if (_toggleDisableLootAnimation == null && _toggleBatterySave != null)
+            {
+                Transform parentToClone = _toggleBatterySave.transform;
+                bool clonedParent = false;
+                
+                if (_toggleBatterySave.transform.parent != null && 
+                    (_toggleBatterySave.transform.parent.name.Contains("Row") || 
+                     _toggleBatterySave.transform.parent.name.Contains("Item") || 
+                     _toggleBatterySave.transform.parent.name.Contains("Setting")))
+                {
+                    parentToClone = _toggleBatterySave.transform.parent;
+                    clonedParent = true;
+                }
+                
+                var clonedRow = Instantiate(parentToClone, parentToClone.parent);
+                clonedRow.gameObject.name = "Row_DisableLootAnim";
+                
+                _toggleDisableLootAnimation = clonedParent ? 
+                    clonedRow.GetComponentInChildren<CustomToggle>() : 
+                    clonedRow.GetComponent<CustomToggle>();
+                
+                var texts = clonedRow.GetComponentsInChildren<TextMeshProUGUI>(true);
+                foreach (var txt in texts)
+                {
+                    if (txt.gameObject != _toggleDisableLootAnimation.gameObject && 
+                        !txt.name.Contains("ON") && !txt.name.Contains("OFF"))
+                    {
+                        txt.text = "Disable Loot Anim";
+                    }
+                }
+            }
+
+            if (_toggleDisableLootAnimation != null) _toggleDisableLootAnimation.OnValueChanged.AddListener(OnDisableLootAnimToggle);
 
             if (_btnBack != null) _btnBack.onClick.AddListener(OnBackClicked);
 
@@ -191,6 +227,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_toggleFPS != null) _toggleFPS.SetIsOnWithoutNotify(_settingsManager.TargetFPS == 60); // ON means 60, OFF means 30
             if (_toggleAntiAliasing != null) _toggleAntiAliasing.SetIsOnWithoutNotify(_settingsManager.AntiAliasing);
             if (_toggleBatterySave != null) _toggleBatterySave.SetIsOnWithoutNotify(_settingsManager.BatterySaveMode);
+            if (_toggleDisableLootAnimation != null) _toggleDisableLootAnimation.SetIsOnWithoutNotify(_settingsManager.DisableLootAnimation);
 
             if (_dropdownLanguage != null)
             {
@@ -325,6 +362,7 @@ namespace MaouSamaTD.UI.MainMenu
         private void OnFPSToggle(bool val) => _settingsManager.SetTargetFPS(val ? 60 : 30);
         private void OnAntiAliasingToggle(bool val) => _settingsManager.SetAntiAliasing(val);
         private void OnBatterySaveToggle(bool val) => _settingsManager.SetBatterySaveMode(val);
+        private void OnDisableLootAnimToggle(bool val) => _settingsManager.SetDisableLootAnimation(val);
 
 
         private void OnBackClicked()

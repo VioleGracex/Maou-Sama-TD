@@ -21,6 +21,7 @@ namespace MaouSamaTD.Managers
         public int TargetFPS => _saveManager?.CurrentData?.Settings?.TargetFPS ?? 30;
         public bool BatterySaveMode => _saveManager?.CurrentData?.Settings?.BatterySaveMode ?? false;
         public bool AntiAliasing => _saveManager?.CurrentData?.Settings?.AntiAliasing ?? true;
+        public bool DisableLootAnimation => _saveManager?.CurrentData?.Settings?.DisableLootAnimation ?? false;
 
 
         private void Start()
@@ -143,6 +144,15 @@ namespace MaouSamaTD.Managers
             {
                 _saveManager.CurrentData.Settings.AntiAliasing = enabled;
                 QualitySettings.antiAliasing = enabled ? 2 : 0;
+                SaveSettings();
+            }
+        }
+
+        public void SetDisableLootAnimation(bool disabled)
+        {
+            if (_saveManager?.CurrentData?.Settings != null)
+            {
+                _saveManager.CurrentData.Settings.DisableLootAnimation = disabled;
                 SaveSettings();
             }
         }

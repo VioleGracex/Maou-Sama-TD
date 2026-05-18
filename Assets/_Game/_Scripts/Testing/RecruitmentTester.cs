@@ -75,8 +75,48 @@ namespace MaouSamaTD.Testing
                 count++;
             }
 
-            _saveManager.Save();
+                        _saveManager.Save();
             Debug.Log($"[RecruitmentTester] Successfully unlocked {count} unique characters.");
+        }
+
+        [Button("Add XP Cores (+50 All)")]
+        public void AddAllXPCores()
+        {
+            if (_saveManager == null) return;
+            _saveManager.AddItem("xp_core_common", 50);
+            _saveManager.AddItem("xp_core_rare", 50);
+            _saveManager.AddItem("xp_core_epic", 50);
+            _saveManager.AddItem("xp_core_legendary", 50);
+            _saveManager.Save();
+            Debug.Log("[RecruitmentTester] Added 50 of each XP Core tier to inventory.");
+        }
+
+        [Button("Add Promotion Materials (+50 All)")]
+        public void AddAllPromotionMaterials()
+        {
+            if (_saveManager == null) return;
+            _saveManager.AddItem("mat_shadow_essence", 50);
+            _saveManager.AddItem("mat_bandit_insignia", 50);
+            _saveManager.AddItem("mat_animal_fang", 50);
+            _saveManager.AddItem("mat_golem_core", 50);
+            _saveManager.Save();
+            Debug.Log("[RecruitmentTester] Added 50 of all promotion materials to inventory.");
+        }
+
+        [Button("Max Level All Vassals (Level 99)")]
+        public void MaxLevelAllVassals()
+        {
+            if (_saveManager == null || _saveManager.CurrentData == null) return;
+            int count = 0;
+            foreach (var entry in _saveManager.CurrentData.UnitInventory)
+            {
+                if (entry == null) continue;
+                entry.Level = 99;
+                entry.Experience = 0;
+                count++;
+            }
+            _saveManager.Save();
+            Debug.Log($"[RecruitmentTester] Set {count} vassals in inventory to Level 99.");
         }
     }
 }

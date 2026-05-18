@@ -229,6 +229,8 @@ namespace MaouSamaTD.Units
         public int Experience = 0;
         public int StarRating = 1; // 1 to 6 Stars
         public float Amity = 0f; // New field for Amity % (Bond)
+        public MaouSamaTD.Data.MaouGender Gender = MaouSamaTD.Data.MaouGender.Female; // Gender of the vassal
+        public int Vigor = 100; // Vigor status (0-100)
         public int SkillLevel = 1; // Global skill level for the unit
         public float BaseStatMultiplier = 1.0f; // Permanent boost from advancements
         public long AcquisitionDate;
@@ -422,6 +424,20 @@ namespace MaouSamaTD.Units
                 CalculatedStats.MaxHp   *= resonanceBonus;
                 CalculatedStats.Attack  *= resonanceBonus;
                 CalculatedStats.Defense *= resonanceBonus;
+            }
+
+            // Vigor debuff: -20% stats if unit suffers from low vigor (Vigor < 100). Major stats drop (50%) at 0 Vigor.
+            if (Vigor == 0)
+            {
+                CalculatedStats.MaxHp   *= 0.5f;
+                CalculatedStats.Attack  *= 0.5f;
+                CalculatedStats.Defense *= 0.5f;
+            }
+            else if (Vigor < 100)
+            {
+                CalculatedStats.MaxHp   *= 0.8f;
+                CalculatedStats.Attack  *= 0.8f;
+                CalculatedStats.Defense *= 0.8f;
             }
         }
 

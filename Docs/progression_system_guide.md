@@ -100,3 +100,42 @@ The Memories / Chambers system allows players to explore character backstories, 
 * **Chamber 0 (Introduction)**: Unlocked by default upon obtaining the unit.
 * **Chambers 1 - 4**: Unlocked using duplicate copies.
 * **Unlock Cost**: Unlocking a locked lore chamber requires consuming **1 duplicate copy** of the character. Unlocked lore is permanently accessible and readable, expanding the player's connection to their vassals.
+
+---
+
+## 6. Vigor & Battle Debuffs System
+
+Vassals possess a **Vigor** attribute that represents their mental and physical combat readiness. Managing Vigor is critical to ensuring your army operates at peak combat efficiency.
+
+### Vigor Attributes
+* **Maximum Vigor**: $100$
+* **Initial/Normal Vigor**: $100$
+
+### Vigor Loss on Battle Death
+When a unit is defeated (reaches 0 HP) in a level, they suffer physical strain and trauma, resulting in **Vigor Loss**. To reward tactical care and penalize reckless play, Vigor loss escalates if a unit dies multiple times within the **same level stage**:
+* **1st Death in Level**: $-20$ Vigor
+* **2nd Death in Level**: $-30$ Vigor (cumulative $-50$ Vigor)
+* **3rd+ Death in Level**: $-40$ Vigor per death (cumulative $-90$ or worse)
+* **Retreating**: Units who retreat safely from the battlefield (via active withdrawal) **do not** suffer any Vigor loss.
+
+### Vigor Debuff & Stat Penalties
+Lower Vigor levels degrade a unit's combat performance in subsequent battles, applying severe penalties to their primary stats (Max HP, Attack, Defense):
+* **Perfect Vigor ($100$)**: $1.0\times$ (Normal Stats). **Grants a +5% Attack Speed buff** as a reward for keeping the vassal in pristine condition.
+* **Low Vigor ($1 - 99$)**: $0.8\times$ (**-20% Stat Penalty**). A minor debuff indicating the vassal is fatigued.
+* **Depleted Vigor ($0$)**: $0.5\times$ (**-50% Major Stat Drop**). A catastrophic penalty that renders the unit extremely weak and vulnerable.
+
+### Vigor Restoration Mechanics
+Vigor is a purely gameplay-driven mechanic and **never requires or supports premium currency**. It can only be recovered using non-premium in-game options inside the **Chamber Page**:
+
+1. **In-Game Gold Coins**:
+   * Players can expend standard **Gold** (earned exclusively from completing battles and clearing content) to cure the vassal and restore Vigor instantly back to $100$.
+
+2. **Gifts**:
+   * Giving presents and items of interest to vassals replenishes their Vigor. Offering gifts that match their personality or lore background yields more optimal Vigor recovery.
+
+3. **Dates & Romance (Romanceable Characters Only)**:
+   * Engaging in dates and romantic stories with vassals recovers substantial Vigor.
+   * **Romance Exclusions**:
+     * **Not all characters are romanceable**: Some characters can only develop platonic bonds or professional comradeship.
+     * **Gender Constraints**: Romance paths are strictly limited to opposite-gender pairings (e.g., Male Maou with Female vassal, or Female Maou with Male vassal). Same-gender pairings **cannot** initiate romantic interactions, dates, or romance stories, but can fully utilize gold restoration and gifting to manage Vigor.
+

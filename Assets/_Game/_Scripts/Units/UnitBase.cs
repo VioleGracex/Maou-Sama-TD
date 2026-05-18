@@ -56,6 +56,13 @@ namespace MaouSamaTD.Units
                     foreach (var b in _activeBuffs) 
                         if (b.Stat == MaouSamaTD.Skills.SkillStatType.AttackSpeed) mult *= (1f / b.Multiplier); // Higher speed = lower interval
                 }
+
+                // Perfect Vigor (100) grants a very small +5% attack speed buff (decreases attack interval)
+                if (_data != null && _data.Vigor == 100)
+                {
+                    mult *= (1f / 1.05f);
+                }
+
                 return _attackInterval * mult;
             }
         }

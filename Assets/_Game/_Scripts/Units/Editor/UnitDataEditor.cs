@@ -94,6 +94,8 @@ namespace MaouSamaTD.Units.Editor
                 DrawProperty("Experience", "EXP");
                 DrawProperty("SkillLevel", "Skill Level");
                 DrawProperty("Amity", "Bond / Amity %");
+                DrawProperty("Gender", "Vassal Gender");
+                DrawProperty("Vigor", "Vassal Vigor (0-100)");
             }
             EndSection(progressionState);
 

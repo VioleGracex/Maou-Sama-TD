@@ -57,13 +57,14 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private Button _btnSortLevel;
         [SerializeField] private Button _btnSortRarity;
         [SerializeField] private Button _btnSortDate;
+        [SerializeField] private Button _btnSortName;
 
         [Header("Debug")]
         [SerializeField] private bool _debug = true;
 
         private GenericListView<UnitData, UnitCardUI> _listView;
 
-        public enum SortMode { Level, Rarity, Date }
+        public enum SortMode { Level, Rarity, Date, Name }
         private SortMode _currentSortMode = SortMode.Level;
 
         // Operational State
@@ -78,6 +79,8 @@ namespace MaouSamaTD.UI.Vassals
 
         private UnitClass? _currentClassFilter = null;
         private bool _filtersInitialized = false;
+        private string _nameFilter = "";
+        private TMP_InputField _searchBarField;
 
         public GameObject VisualRoot => _visualRoot;
         public bool AddsToHistory => true; // Essential for "Back" button to return from selection to squad
@@ -107,6 +110,7 @@ namespace MaouSamaTD.UI.Vassals
                 _inspectorPanel.OnPromoteRequest += HandleInspectorPromoteRequest;
             }
 
+            CreateSearchInputField();
             EnsureSortButtonsWired();
             InitializeClassFilters();
         }
@@ -116,7 +120,7 @@ namespace MaouSamaTD.UI.Vassals
             if (_visualRoot == null) return;
 
             // Auto-wire sort buttons if currently null
-            if (_btnSortLevel == null || _btnSortRarity == null || _btnSortDate == null)
+            if (_btnSortLevel == null || _btnSortRarity == null || _btnSortDate == null || _btnSortName == null)
             {
                 var btns = _visualRoot.GetComponentsInChildren<Button>(true);
                 foreach (var b in btns)
@@ -127,8 +131,11 @@ namespace MaouSamaTD.UI.Vassals
                         _btnSortRarity = b;
                     else if (b.name == "BtnSort_Date" || b.name.Contains("SortDate") || b.name.Contains("Sort_Date"))
                         _btnSortDate = b;
+                    else if (b.name == "BtnSort_Name" || b.name.Contains("SortName") || b.name.Contains("Sort_Name"))
+                        _btnSortName = b;
                 }
             }
+
 
             if (_btnSortLevel != null)
             {
@@ -145,6 +152,11 @@ namespace MaouSamaTD.UI.Vassals
                 _btnSortDate.onClick.RemoveAllListeners();
                 _btnSortDate.onClick.AddListener(() => { _currentSortMode = SortMode.Date; RefreshInventory(); UpdateSortButtonVisuals(); });
             }
+            if (_btnSortName != null)
+            {
+                _btnSortName.onClick.RemoveAllListeners();
+                _btnSortName.onClick.AddListener(() => { _currentSortMode = SortMode.Name; RefreshInventory(); UpdateSortButtonVisuals(); });
+            }
 
             UpdateSortButtonVisuals();
         }
@@ -152,7 +164,12 @@ namespace MaouSamaTD.UI.Vassals
         public void Open()
         {
             _currentMode = OperationMode.View;
-            if (_visualRoot != null) _visualRoot.SetActive(true);
+            if (_visualRoot != null)
+            {
+                _visualRoot.SetActive(true);
+                var mainPage = _visualRoot.transform.Find("Main_Page");
+                if (mainPage != null) mainPage.gameObject.SetActive(true);
+            }
             
             if (transform.parent != null) transform.parent.gameObject.SetActive(true);
 
@@ -167,6 +184,10 @@ namespace MaouSamaTD.UI.Vassals
 
             EnsureSortButtonsWired();
             UpdateMultiSelectUI();
+
+            _nameFilter = "";
+            if (_searchBarField != null) _searchBarField.text = "";
+
             RefreshInventory();
         }
 
@@ -181,7 +202,12 @@ namespace MaouSamaTD.UI.Vassals
             
             if (_inspectorPanel != null) _inspectorPanel.SetLayout(true); // Left side for selection
 
-            if (_visualRoot != null) _visualRoot.SetActive(true);
+            if (_visualRoot != null)
+            {
+                _visualRoot.SetActive(true);
+                var mainPage = _visualRoot.transform.Find("Main_Page");
+                if (mainPage != null) mainPage.gameObject.SetActive(true);
+            }
             // Ensure parent page is active for selection overlay
             if (transform.parent != null) transform.parent.gameObject.SetActive(true);
 
@@ -189,6 +215,10 @@ namespace MaouSamaTD.UI.Vassals
             
             EnsureSortButtonsWired();
             UpdateMultiSelectUI();
+
+            _nameFilter = "";
+            if (_searchBarField != null) _searchBarField.text = "";
+
             RefreshInventory();
         }
 
@@ -203,7 +233,12 @@ namespace MaouSamaTD.UI.Vassals
             _tempSelectedIds = new List<string>(currentIds);
             _tempSelectedIds.RemoveAll(string.IsNullOrEmpty);
 
-            if (_visualRoot != null) _visualRoot.SetActive(true);
+            if (_visualRoot != null)
+            {
+                _visualRoot.SetActive(true);
+                var mainPage = _visualRoot.transform.Find("Main_Page");
+                if (mainPage != null) mainPage.gameObject.SetActive(true);
+            }
             // Ensure parent page is active for selection overlay
             if (transform.parent != null) transform.parent.gameObject.SetActive(true);
 
@@ -211,6 +246,10 @@ namespace MaouSamaTD.UI.Vassals
             
             EnsureSortButtonsWired();
             UpdateMultiSelectUI();
+
+            _nameFilter = "";
+            if (_searchBarField != null) _searchBarField.text = "";
+
             RefreshInventory();
         }
     
@@ -348,6 +387,10 @@ namespace MaouSamaTD.UI.Vassals
                         if (_currentClassFilter.HasValue && unit.Class != _currentClassFilter.Value)
                             continue;
 
+                        // Apply Name Filter
+                        if (!string.IsNullOrEmpty(_nameFilter) && !unit.UnitName.ToLower().Contains(_nameFilter.ToLower()))
+                            continue;
+
                         ownedUnits.Add(unit);
                     }
                 }
@@ -383,6 +426,15 @@ namespace MaouSamaTD.UI.Vassals
                         return idxB.CompareTo(idxA); // Newest (latest in list) first
                     });
                 }
+            }
+            else if (_currentSortMode == SortMode.Name)
+            {
+                ownedUnits.Sort((a, b) => {
+                    int compare = (a.UnitName ?? "").CompareTo(b.UnitName ?? "");
+                    if (compare == 0) compare = b.Level.CompareTo(a.Level);
+                    if (compare == 0) compare = b.Rarity.CompareTo(a.Rarity);
+                    return compare;
+                });
             }
 
             // Insert a "NONE" slot if we are in single-select mode to allow unsetting a cohort slot
@@ -473,9 +525,7 @@ namespace MaouSamaTD.UI.Vassals
                 // Always use Full Screen Inspector for View mode, per user refinement
                 if (_fullScreenInspector != null)
                 {
-                    if (_debug) Debug.Log($"[VassalManager] Inspecting unit: {data.UnitName}");
-                    _fullScreenInspector.SetUnit(data);
-                    UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
+                    OpenInspector(data, 0);
                 }
                 else
                 {
@@ -547,26 +597,36 @@ namespace MaouSamaTD.UI.Vassals
             */
         }
 
+        private void OpenInspector(UnitData data, int tabIndex)
+        {
+            if (_fullScreenInspector != null)
+            {
+                if (_debug) Debug.Log($"[VassalManager] OpenInspector for {data.UnitName}, Tab {tabIndex}");
+                
+                // Disable Main_Page to save GPU rendering, draw calls, RAM, and CPU power
+                var mainPage = _visualRoot.transform.Find("Main_Page");
+                if (mainPage != null)
+                {
+                    mainPage.gameObject.SetActive(false);
+                    if (_debug) Debug.Log("[VassalManager] Deactivated Main_Page to optimize rendering.");
+                }
+
+                _fullScreenInspector.SetUnit(data);
+                UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
+                _fullScreenInspector.SwitchTab(tabIndex);
+            }
+        }
+
         private void HandleInspectorLevelUpRequest(UnitData unit)
         {
             if (unit == null) return;
-            if (_fullScreenInspector != null)
-            {
-                _fullScreenInspector.SetUnit(unit);
-                UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
-                _fullScreenInspector.SwitchTab(4); // Tab 4 is Level Up / XP
-            }
+            OpenInspector(unit, 4); // Tab 4 is Level Up / XP
         }
 
         private void HandleInspectorPromoteRequest(UnitData unit)
         {
             if (unit == null) return;
-            if (_fullScreenInspector != null)
-            {
-                _fullScreenInspector.SetUnit(unit);
-                UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
-                _fullScreenInspector.SwitchTab(2); // Tab 2 is Resonance / Promotion
-            }
+            OpenInspector(unit, 2); // Tab 2 is Resonance / Promotion
         }
 
         private int GetUnlockedIndex(List<string> unlockedList, UnitData unit)
@@ -592,6 +652,7 @@ namespace MaouSamaTD.UI.Vassals
             SetSortButtonColor(_btnSortLevel, _currentSortMode == SortMode.Level);
             SetSortButtonColor(_btnSortRarity, _currentSortMode == SortMode.Rarity);
             SetSortButtonColor(_btnSortDate, _currentSortMode == SortMode.Date);
+            SetSortButtonColor(_btnSortName, _currentSortMode == SortMode.Name);
         }
 
         private void SetSortButtonColor(Button btn, bool active)
@@ -607,6 +668,86 @@ namespace MaouSamaTD.UI.Vassals
             {
                 txt.color = active ? Color.white : new Color(0.7f, 0.7f, 0.7f, 0.8f);
             }
+        }
+
+        private void CreateSearchInputField()
+        {
+            if (_visualRoot == null) return;
+            var mainPage = _visualRoot.transform.Find("Main_Page");
+            if (mainPage == null) return;
+
+            // Check if already created
+            if (mainPage.Find("SearchBarContainer") != null) return;
+
+            // 1. Create Container
+            var container = new GameObject("SearchBarContainer", typeof(RectTransform));
+            container.transform.SetParent(mainPage, false);
+            var rect = container.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(1f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 1f);
+            rect.anchoredPosition = new Vector2(-750f, 0f);
+            rect.sizeDelta = new Vector2(300f, 60f);
+
+            // 2. Add Background Glassmorphic Style
+            var bgImg = container.AddComponent<Image>();
+            bgImg.color = new Color(0.08f, 0.08f, 0.12f, 0.85f);
+            
+            var outline = container.AddComponent<Outline>();
+            outline.effectColor = new Color(0.9f, 0.65f, 0.2f, 0.5f);
+            outline.effectDistance = new Vector2(1, 1);
+
+            // 3. Add Input Field Component
+            _searchBarField = container.AddComponent<TMP_InputField>();
+
+            // 4. Create Text Area (Viewport)
+            var textArea = new GameObject("TextArea", typeof(RectTransform));
+            textArea.transform.SetParent(container.transform, false);
+            var taRect = textArea.GetComponent<RectTransform>();
+            taRect.anchorMin = Vector2.zero;
+            taRect.anchorMax = Vector2.one;
+            taRect.sizeDelta = new Vector2(-20, -10); // padding
+
+            // RectMask2D for clipping
+            textArea.AddComponent<RectMask2D>();
+
+            // 5. Create Placeholder Text
+            var placeholderGo = new GameObject("Placeholder", typeof(RectTransform));
+            placeholderGo.transform.SetParent(textArea.transform, false);
+            var pRect = placeholderGo.GetComponent<RectTransform>();
+            pRect.anchorMin = Vector2.zero;
+            pRect.anchorMax = Vector2.one;
+            pRect.sizeDelta = Vector2.zero;
+            var pText = placeholderGo.AddComponent<TextMeshProUGUI>();
+            pText.text = "Search by name...";
+            pText.fontSize = 18;
+            pText.fontStyle = FontStyles.Italic;
+            pText.color = new Color(0.5f, 0.5f, 0.5f, 0.8f);
+            pText.alignment = TextAlignmentOptions.MidlineLeft;
+
+            // 6. Create Text Component
+            var textGo = new GameObject("Text", typeof(RectTransform));
+            textGo.transform.SetParent(textArea.transform, false);
+            var tRect = textGo.GetComponent<RectTransform>();
+            tRect.anchorMin = Vector2.zero;
+            tRect.anchorMax = Vector2.one;
+            tRect.sizeDelta = Vector2.zero;
+            var textComp = textGo.AddComponent<TextMeshProUGUI>();
+            textComp.fontSize = 18;
+            textComp.color = new Color(0.9f, 0.9f, 0.9f, 1f);
+            textComp.alignment = TextAlignmentOptions.MidlineLeft;
+
+            // Connect input field references
+            _searchBarField.textViewport = taRect;
+            _searchBarField.textComponent = textComp;
+            _searchBarField.placeholder = pText;
+
+            // Wire callback
+            _searchBarField.onValueChanged.AddListener((val) =>
+            {
+                _nameFilter = val;
+                RefreshInventory();
+            });
         }
     }
 }

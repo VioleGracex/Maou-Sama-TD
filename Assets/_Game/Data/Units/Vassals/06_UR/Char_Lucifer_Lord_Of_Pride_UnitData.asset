@@ -25,9 +25,43 @@ MonoBehaviour:
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The Fallen Morning Star.
   LoreEntries:
-  - Title: Origin
-    Content: The Fallen Morning Star. He bowed to no one, and now even the heavens
-      tremble at his name. His pride is the anvil upon which reality breaks.
+  - Title: THE FALLEN MORNING STAR
+    Content: Known once as the most beautiful and radiant presence in the celestial
+      realm, Lucifer refused to bow to standard cosmic order. Her pride was absolute,
+      her conviction unyielding. Cast out into the dark void, she embraced the shadows
+      not as a curse, but as a canvas for her true sovereignty. Her wings turned
+      pitch black, and she established her domain in the deepest circles of the underworld,
+      waiting for someone with a soul strong enough to command her respect.
+  - Title: PRIDE'S RECKONING
+    Content: When the Demon Lord first crossed blades with Lucifer at the gates of
+      Pandemonium, the heavens trembled. For three days and nights, their powers
+      locked in a glorious stalemate of shadow and force. Instead of a bitter death
+      match, the Lord lowered their weapon, offering Lucifer a seat at their side
+      rather than subjugation. Amused and deeply intrigued by a ruler who valued
+      her majestic pride rather than seeking to break it, she accepted the pact,
+      her ancient isolation finally melting away.
+  - Title: COVENANT OF THE SOVEREIGN
+    Content: 'Lucifer is not a mere servant; she is a sovereign entity in her own
+      right. Under the dark moon of Pandemonium, she signed the Covenant of Pride
+      with the Demon Lord. She agreed to lead the Legion''s vanguard under one condition:
+      she would only serve a master who could match her intellectual wit and command
+      the absolute loyalty of her heart. In private, she has begun to notice that
+      the Lord''s presence is the only thing that can soothe her eternal, restless
+      ambition.'
+  - Title: ECLIPSE OF THE HEART
+    Content: 'During a rare astronomical eclipse over the Maou''s Castle, Lucifer
+      invited the Lord to the highest tower. Standing on the precipice, she unfurled
+      her six massive black wings, shielding both of them from the cold cosmic winds.
+      In the quiet darkness, her voice dropped its usual playful sarcasm: ''Rulers
+      are always lonely, my Lord. But under my wings, we share the weight of the
+      throne. Let the world call us sinners; I only care that you are mine.'''
+  - Title: EVENING STAR'S DEVOTION (ROMANCE)
+    Content: A sacred memory revealing Lucifer's deepest secret. For all her towering
+      pride and cold demeanor, her loyalty, once given, is completely unbreakable.
+      She places her crown at the Lord's feet, choosing to walk beside them not as
+      a distant goddess, but as a deeply devoted companion. 'The morning star has
+      fallen, but in your eyes, I have found a sky worth shining in. Hold me close,
+      my Lord, and let our shadows merge for eternity.'
   BaseSkin:
     Avatar: {fileID: 21300000, guid: 07f5a3e3cbf859b41b41bbd41f7db2b0, type: 3}
     Chibi: {fileID: 21300000, guid: fbb0ef53f1abb514f9329511ab9ed6c9, type: 3}
@@ -42,8 +76,10 @@ MonoBehaviour:
   ButtonImageType: 0
   Level: 1
   Experience: 0
-  StarRating: 1
+  StarRating: 6
   Amity: 0
+  Gender: 1
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

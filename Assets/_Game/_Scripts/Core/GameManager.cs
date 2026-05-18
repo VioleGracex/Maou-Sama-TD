@@ -61,6 +61,7 @@ namespace MaouSamaTD.Managers
         
         public System.Collections.Generic.List<LootDropRecord> SessionLoot { get; private set; } = new System.Collections.Generic.List<LootDropRecord>();
         public System.Collections.Generic.List<XPProgressInfo> DeployedUnitsXPInfo { get; private set; } = new System.Collections.Generic.List<XPProgressInfo>();
+        private System.Collections.Generic.Dictionary<string, int> _unitDeathCounts = new System.Collections.Generic.Dictionary<string, int>();
         #endregion
 
         #region Initialization
@@ -381,6 +382,24 @@ namespace MaouSamaTD.Managers
         public void ReportUnitLost()
         {
             UnitsLostCount++;
+        }
+
+        public void ReportUnitLost(string unitId)
+        {
+            UnitsLostCount++;
+            if (_unitDeathCounts.ContainsKey(unitId))
+            {
+                _unitDeathCounts[unitId]++;
+            }
+            else
+            {
+                _unitDeathCounts[unitId] = 1;
+            }
+        }
+
+        public int GetUnitDeathCount(string unitId)
+        {
+            return _unitDeathCounts.TryGetValue(unitId, out int count) ? count : 0;
         }
 
         public void Victory()

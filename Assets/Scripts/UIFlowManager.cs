@@ -121,8 +121,7 @@ namespace MaouSamaTD.UI
             var closingPanel = _panelStack.Pop();
             if (_debug) Debug.Log($"[UIFlow] Popped: {closingPanel.GetType().Name}. Stack remaining: {_panelStack.Count}");
             
-            if (closingPanel != null) closingPanel.Close();
-
+            // Reactivate the previous panel first to ensure continuous rendering and minimum resource interruption
             if (_panelStack.Count > 0)
             {
                 var previousPanel = _panelStack.Peek();
@@ -137,10 +136,15 @@ namespace MaouSamaTD.UI
                     else
                     {
                         if (_debug) Debug.Log($"[UIFlow] Returning to already active parent: {previousPanel.GetType().Name}");
+                        // Explicitly open/refresh it to ensure its sub-panels (like Main_Page) are properly set active
+                        previousPanel.Open();
                     }
                     if (NavigationOverlay != null) NavigationOverlay.UpdateHighlight(previousPanel.GetType());
                 }
             }
+
+            // Deactivate the closing panel second
+            if (closingPanel != null) closingPanel.Close();
             
             _isProcessing = false;
             UpdateGlobalButtons();

@@ -414,7 +414,11 @@ namespace MaouSamaTD.UI.Tutorial
                     {
                         _uiBlocker.RemoveTarget(dialogueRT);
                     }
-                    _uiBlocker.HideBlocker(immediate: false);
+                    bool isLevel1 = _tutorialManager != null && 
+                                    _tutorialManager.IsInTutorial && 
+                                    _tutorialManager.ActiveTutorial != null && 
+                                    _tutorialManager.ActiveTutorial.name.Contains("Level1");
+                    _uiBlocker.HideBlocker(immediate: isLevel1);
                 }
             }
 
@@ -438,7 +442,11 @@ namespace MaouSamaTD.UI.Tutorial
                 case DialogueBackground.FullScreenDim:
                     if (_uiBlocker != null)
                     {
-                        _uiBlocker.HideBlocker();
+                        bool isLevel1 = _tutorialManager != null && 
+                                        _tutorialManager.IsInTutorial && 
+                                        _tutorialManager.ActiveTutorial != null && 
+                                        _tutorialManager.ActiveTutorial.name.Contains("Level1");
+                        _uiBlocker.HideBlocker(isLevel1);
                     }
                     if (_fullScreenDim != null)
                     {

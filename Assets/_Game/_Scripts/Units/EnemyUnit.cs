@@ -375,6 +375,13 @@ namespace MaouSamaTD.Units
             {
                 saveManager.AddItem(itemID, quantity);
             }
+
+            // Spawn visual procedural flying loot animation on HUD
+            var gameControlUI = FindFirstObjectByType<MaouSamaTD.UI.GameControlUI>();
+            if (gameControlUI != null)
+            {
+                gameControlUI.SpawnLootFlyEffect(itemID, quantity, transform.position);
+            }
         }
 
         private static string CategoryToMaterialID(EnemyCategory cat)

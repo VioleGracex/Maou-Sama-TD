@@ -10,6 +10,8 @@ using MaouSamaTD.UI.Cohorts;
 using MaouSamaTD.UI.Vassals;
 using MaouSamaTD.UI.Mandates;
 using MaouSamaTD.UI.Treasury;
+using MaouSamaTD.Mandates;
+using System.Linq;
 
 
 namespace MaouSamaTD.UI.MainMenu
@@ -92,6 +94,7 @@ namespace MaouSamaTD.UI.MainMenu
 
             // Check if we should trigger the Gacha Tutorial (post Level 2)
             StartCoroutine(CheckGachaTutorial());
+            StartCoroutine(NotificationUpdateRoutine());
         }
 
         /// <summary>
@@ -337,6 +340,81 @@ namespace MaouSamaTD.UI.MainMenu
                 // ... and so on, but usually they start interactable in prefab.
                 
                 if (_navOverlay != null) _navOverlay.gameObject.SetActive(true);
+            }
+        }
+
+        private IEnumerator NotificationUpdateRoutine()
+        {
+            while (true)
+            {
+                UpdateNotifications();
+                yield return new WaitForSeconds(2.0f);
+            }
+        }
+
+        private void UpdateNotifications()
+        {
+            if (_saveManager == null || _saveManager.CurrentData == null) return;
+
+            // 1. Mandates notification: Unclaimed completed mandates
+            var mandateManager = Object.FindFirstObjectByType<MandatesPanel>(FindObjectsInactive.Include)?.MandateManager;
+            if (mandateManager == null)
+            {
+                mandateManager = Object.FindFirstObjectByType<MandateManager>(FindObjectsInactive.Include);
+            }
+
+            bool hasMandateNotif = false;
+            if (mandateManager != null && mandateManager.AllMandates != null)
+            {
+                hasMandateNotif = mandateManager.AllMandates.Any(m => mandateManager.CanClaim(m));
+            }
+
+            SetNotificationBadge(_btnMandates, hasMandateNotif);
+
+            // 2. Chambers notification: Any owned unit has Vigor < 100
+            bool hasChamberNotif = _saveManager.CurrentData.UnitInventory.Any(u => u.Vigor < 100);
+            SetNotificationBadge(_btnVassals, hasChamberNotif);
+        }
+
+        private void SetNotificationBadge(Button button, bool show)
+        {
+            if (button == null) return;
+
+            var badgeName = "NotificationBadge_RedCircle";
+            var existingBadge = button.transform.Find(badgeName);
+
+            if (show)
+            {
+                if (existingBadge == null)
+                {
+                    var badgeGo = new GameObject(badgeName, typeof(RectTransform), typeof(Image));
+                    badgeGo.transform.SetParent(button.transform, false);
+
+                    var rect = badgeGo.GetComponent<RectTransform>();
+                    rect.anchorMin = new Vector2(1f, 1f);
+                    rect.anchorMax = new Vector2(1f, 1f);
+                    rect.pivot = new Vector2(0.5f, 0.5f);
+                    rect.anchoredPosition = new Vector2(-10, -10);
+                    rect.sizeDelta = new Vector2(18, 18);
+
+                    var img = badgeGo.GetComponent<Image>();
+                    img.color = new Color(1f, 0.2f, 0.2f, 1f);
+
+                    var outline = badgeGo.AddComponent<Outline>();
+                    outline.effectColor = Color.white;
+                    outline.effectDistance = new Vector2(1, 1);
+                }
+                else
+                {
+                    existingBadge.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                if (existingBadge != null)
+                {
+                    existingBadge.gameObject.SetActive(false);
+                }
             }
         }
     }

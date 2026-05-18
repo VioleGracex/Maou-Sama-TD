@@ -121,6 +121,9 @@ namespace MaouSamaTD.UI.MainMenu
                 _inputRootCanvasGroup.interactable = false;
                 _inputRootCanvasGroup.blocksRaycasts = false;
             }
+
+            // Select Male (Tyrant) by default
+            OnClassSelected(MaouGender.Male, "Sovereign of Force");
         }
         #endregion
 

@@ -76,6 +76,7 @@ namespace MaouSamaTD.Data
         public int TargetFPS = 30;
         public bool BatterySaveMode = false;
         public bool AntiAliasing = true;
+        public bool DisableLootAnimation = false;
 
         // Audio
         public float MusicVolume = 0.8f;
@@ -156,6 +157,7 @@ namespace MaouSamaTD.Data
         [Header("Progression Persistence")]
         public int StarRating = 1;
         public int Amity = 0;
+        public int Vigor = 100;
         public List<int> UnlockedNodes = new List<int>();
         public List<int> UnlockedLores = new List<int>() { 0 }; // Lore index 0 is free by default
 

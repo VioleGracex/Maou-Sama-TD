@@ -10,6 +10,7 @@ using MaouSamaTD.Levels;
 using Zenject;
 using DG.Tweening;
 using MaouSamaTD.UI.Tutorial;
+using MaouSamaTD.Data;
 
 namespace MaouSamaTD.UI
 {
@@ -75,6 +76,10 @@ namespace MaouSamaTD.UI
         [SerializeField] private float _cameraShakeDuration = 0.25f;
         [SerializeField] private float _hpFillDuration = 0.4f;
 
+        [Header("Loot Drop Animation Settings")]
+        [SerializeField] private System.Collections.Generic.List<ItemConfigSO> _lootItemConfigs = new System.Collections.Generic.List<ItemConfigSO>();
+        [SerializeField] private Transform _lootDestinationTarget;
+
         private int _lastHp = -1;
 
         [Inject] private GameManager _gameManager;
@@ -84,6 +89,7 @@ namespace MaouSamaTD.UI
         [Inject(Optional = true)] private EnemyManager _enemyManager;
         [Inject(Optional = true)] private BattleCurrencyManager _currencyManager;
         [Inject(Optional = true)] private TutorialManager _tutorialManager;
+        [Inject(Optional = true)] private SettingsManager _settingsManager;
 
         // Dynamic MaxNexusIntegrity is read from GameManager instead of a hardcoded constant
 
@@ -256,6 +262,23 @@ namespace MaouSamaTD.UI
 
         private IEnumerator StageClearSequence()
         {
+            // Close active gameplay panels instantly to avoid post-battle overlaps
+            var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+            if (skillPanel != null && skillPanel.IsVisible)
+            {
+                skillPanel.ToggleVisibility();
+            }
+            var unitInspector = FindFirstObjectByType<MaouSamaTD.UI.UnitInspectorUI>();
+            if (unitInspector != null && unitInspector.IsPanelActive)
+            {
+                unitInspector.Hide();
+            }
+            var fullScreenInspector = FindFirstObjectByType<MaouSamaTD.UI.UnitInspectorFullScreenUI>();
+            if (fullScreenInspector != null && fullScreenInspector.VisualRoot != null && fullScreenInspector.VisualRoot.activeSelf)
+            {
+                fullScreenInspector.Close();
+            }
+
             if (_stageClearBanner != null)
             {
                 _stageClearBanner.gameObject.SetActive(true);
@@ -1114,6 +1137,224 @@ namespace MaouSamaTD.UI
                     cardObj.transform.DOScale(1f, 0.4f).SetEase(Ease.OutBack).SetDelay(Random.Range(0f, 0.3f)).SetUpdate(true);
                 }
             }
+        }
+        #endregion
+
+        #region Loot Flying Effects
+        public void SpawnLootFlyEffect(string itemID, int quantity, Vector3 worldPosition)
+        {
+            if (_settingsManager != null && _settingsManager.DisableLootAnimation)
+                return;
+
+            Camera cam = Camera.main;
+            if (cam == null) return;
+
+            Vector2 screenPos = cam.WorldToScreenPoint(worldPosition);
+
+            // Create Canvas GameObject for procedural premium visual
+            GameObject effectObj = new GameObject("ProceduralLootEffect", typeof(RectTransform));
+            effectObj.transform.SetParent(this.transform, false);
+
+            var rectTransform = effectObj.GetComponent<RectTransform>();
+            rectTransform.position = screenPos;
+            rectTransform.sizeDelta = new Vector2(80, 80);
+
+            var canvasGroup = effectObj.AddComponent<CanvasGroup>();
+
+            // 1. Glowing outer glassmorphic container
+            var bgObj = new GameObject("BgGlow", typeof(RectTransform));
+            bgObj.transform.SetParent(effectObj.transform, false);
+            var bgRect = bgObj.GetComponent<RectTransform>();
+            bgRect.anchorMin = Vector2.zero;
+            bgRect.anchorMax = Vector2.one;
+            bgRect.sizeDelta = Vector2.zero;
+
+            var bgImage = bgObj.AddComponent<Image>();
+            bgImage.color = new Color(0.08f, 0.08f, 0.12f, 0.9f);
+
+            var outline = bgObj.AddComponent<Outline>();
+            Color glowColor = new Color(0.95f, 0.75f, 0.3f, 1f); // Gold Amber
+            string itemName = "Loot";
+
+            if (itemID == "gold_coins")
+            {
+                glowColor = new Color(1f, 0.85f, 0f, 1f);
+                itemName = "Gold";
+            }
+            else if (itemID == "blood_crests")
+            {
+                glowColor = new Color(0.85f, 0.08f, 0.23f, 1f);
+                itemName = "Blood Crest";
+            }
+            else if (itemID.Contains("common"))
+            {
+                glowColor = new Color(0.2f, 0.85f, 0.3f, 1f);
+                itemName = "Common Core";
+            }
+            else if (itemID.Contains("rare"))
+            {
+                glowColor = new Color(0.1f, 0.6f, 1f, 1f);
+                itemName = "Rare Core";
+            }
+            else if (itemID.Contains("epic"))
+            {
+                glowColor = new Color(0.68f, 0.25f, 0.95f, 1f);
+                itemName = "Epic Core";
+            }
+            else if (itemID.Contains("legendary"))
+            {
+                glowColor = new Color(1f, 0.55f, 0f, 1f);
+                itemName = "Legendary Core";
+            }
+            else if (itemID.Contains("shadow_essence"))
+            {
+                glowColor = new Color(0.5f, 0f, 0.5f, 1f);
+                itemName = "Shadow Essence";
+            }
+            else if (itemID.Contains("bandit_insignia"))
+            {
+                glowColor = new Color(0.7f, 0.45f, 0.25f, 1f);
+                itemName = "Bandit Insignia";
+            }
+            else if (itemID.Contains("animal_fang"))
+            {
+                glowColor = new Color(0.85f, 0.85f, 0.85f, 1f);
+                itemName = "Animal Fang";
+            }
+            else if (itemID.Contains("golem_core"))
+            {
+                glowColor = new Color(0f, 0.85f, 0.85f, 1f);
+                itemName = "Golem Core";
+            }
+
+            outline.effectColor = glowColor;
+            outline.effectDistance = new Vector2(2, 2);
+
+            // 2. Icon visual inside
+            var innerIconObj = new GameObject("Icon", typeof(RectTransform));
+            innerIconObj.transform.SetParent(effectObj.transform, false);
+            var iconRect = innerIconObj.GetComponent<RectTransform>();
+            iconRect.anchorMin = new Vector2(0.25f, 0.35f);
+            iconRect.anchorMax = new Vector2(0.75f, 0.85f);
+            iconRect.sizeDelta = Vector2.zero;
+
+            var iconImage = innerIconObj.AddComponent<Image>();
+            iconImage.color = glowColor;
+
+            Sprite matchedSprite = null;
+            if (_lootItemConfigs != null)
+            {
+                var found = _lootItemConfigs.Find(c => c != null && c.name == itemID);
+                if (found != null && found.ItemIcon != null)
+                {
+                    matchedSprite = found.ItemIcon;
+                }
+            }
+
+            if (matchedSprite != null)
+            {
+                iconImage.sprite = matchedSprite;
+                iconImage.color = Color.white;
+            }
+            else
+            {
+                // Procedural rotated diamond
+                innerIconObj.transform.localRotation = Quaternion.Euler(0, 0, 45);
+            }
+
+            // 3. Text Label at bottom showing qty
+            var textObj = new GameObject("QtyText", typeof(RectTransform));
+            textObj.transform.SetParent(effectObj.transform, false);
+            var textRect = textObj.GetComponent<RectTransform>();
+            textRect.anchorMin = new Vector2(0.05f, 0.05f);
+            textRect.anchorMax = new Vector2(0.95f, 0.35f);
+            textRect.sizeDelta = Vector2.zero;
+
+            var textLabel = textObj.AddComponent<TextMeshProUGUI>();
+            textLabel.text = $"+{quantity}";
+            textLabel.fontSize = 16;
+            textLabel.fontStyle = FontStyles.Bold;
+            textLabel.alignment = TextAlignmentOptions.Center;
+            textLabel.color = Color.white;
+            textLabel.outlineColor = Color.black;
+            textLabel.outlineWidth = 0.2f;
+
+            // 4. Physical pop & bounce animation onto tile
+            float randX = Random.Range(-60f, 60f);
+            float randY = Random.Range(-30f, 30f);
+            Vector3 popPos = effectObj.transform.localPosition + new Vector3(randX, randY + 60f, 0f);
+            Vector3 bouncePos = effectObj.transform.localPosition + new Vector3(randX, randY - 15f, 0f);
+
+            effectObj.transform.localScale = Vector3.zero;
+
+            Sequence lootSeq = DOTween.Sequence();
+            lootSeq.SetUpdate(true); // Ensure it runs even when timescale is manipulated
+            
+            // Spawn pop-up
+            lootSeq.Append(effectObj.transform.DOLocalMove(popPos, 0.22f).SetEase(Ease.OutQuad));
+            lootSeq.Join(effectObj.transform.DOScale(1.2f, 0.22f).SetEase(Ease.OutBack));
+
+            // Drop bounce down
+            lootSeq.Append(effectObj.transform.DOLocalMove(bouncePos, 0.2f).SetEase(Ease.InQuad));
+            lootSeq.Join(effectObj.transform.DOScale(1.0f, 0.2f).SetEase(Ease.OutBounce));
+
+            // Hover on tile
+            lootSeq.AppendInterval(0.35f);
+
+            // Fly away looted!
+            Transform destination = _lootDestinationTarget;
+            if (destination == null && _waveText != null)
+                destination = _waveText.transform;
+
+            Vector3 destLocal;
+            if (destination != null)
+            {
+                destLocal = this.transform.InverseTransformPoint(destination.position);
+            }
+            else
+            {
+                destLocal = new Vector3(Screen.width * 0.45f, Screen.height * 0.45f, 0f);
+            }
+
+            lootSeq.Append(effectObj.transform.DOLocalMove(destLocal, 0.75f).SetEase(Ease.InBack));
+            lootSeq.Join(effectObj.transform.DOScale(0.25f, 0.75f).SetEase(Ease.InQuad));
+            lootSeq.Join(canvasGroup.DOFade(0.1f, 0.75f));
+
+            // Arrived trigger burst
+            lootSeq.OnComplete(() =>
+            {
+                if (destination != null)
+                {
+                    destination.DOPunchScale(new Vector3(1.15f, 1.15f, 1.15f), 0.15f, 5, 0.5f);
+                }
+
+                // Satisfying star scatter particles
+                for (int i = 0; i < 6; i++)
+                {
+                    GameObject pStar = new GameObject("BurstStar", typeof(RectTransform));
+                    pStar.transform.SetParent(this.transform, false);
+                    var pRect = pStar.GetComponent<RectTransform>();
+                    pRect.localPosition = destLocal;
+                    pRect.sizeDelta = new Vector2(10, 10);
+                    pRect.localRotation = Quaternion.Euler(0, 0, 45);
+
+                    var pImg = pStar.AddComponent<Image>();
+                    pImg.color = glowColor;
+
+                    var pGroup = pStar.AddComponent<CanvasGroup>();
+
+                    float angle = i * 60f * Mathf.Deg2Rad;
+                    Vector3 direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+                    float dist = Random.Range(25f, 50f);
+                    Vector3 targetPos = destLocal + direction * dist;
+
+                    pStar.transform.DOLocalMove(targetPos, 0.35f).SetEase(Ease.OutQuad);
+                    pStar.transform.DOScale(0f, 0.35f).SetEase(Ease.InQuad);
+                    pGroup.DOFade(0f, 0.35f).OnComplete(() => Destroy(pStar));
+                }
+
+                Destroy(effectObj);
+            });
         }
         #endregion
 

@@ -586,7 +586,44 @@ namespace MaouSamaTD.Units
             if (_interactionManager != null) _interactionManager.NotifyUnitRemoved(this);
             
             var gm = FindFirstObjectByType<Managers.GameManager>();
-            if (gm != null) gm.ReportUnitLost();
+
+            if (Data != null)
+            {
+                var saveManager = FindFirstObjectByType<MaouSamaTD.Managers.SaveManager>();
+                if (saveManager != null && saveManager.CurrentData != null)
+                {
+                    string unitId = Data.name;
+                    var entry = saveManager.CurrentData.UnitInventory.Find(e => e.UnitID == unitId && !e.IsDuplicate);
+                    if (entry != null)
+                    {
+                        // Check if they have died multiple times in this same level to escalate penalty
+                        int previousDeaths = 0;
+                        if (gm != null)
+                        {
+                            previousDeaths = gm.GetUnitDeathCount(unitId);
+                        }
+
+                        int penalty = 20; // First death
+                        if (previousDeaths == 1) penalty = 30; // Second death
+                        else if (previousDeaths >= 2) penalty = 40; // Third+ death
+
+                        entry.Vigor = Mathf.Max(0, entry.Vigor - penalty);
+                        Data.Vigor = entry.Vigor;
+                        if (MaouSamaTD.Core.AppEntryPoint.LoadedScalingData != null)
+                        {
+                            Data.RefreshStats(MaouSamaTD.Core.AppEntryPoint.LoadedScalingData);
+                        }
+                        saveManager.Save();
+                        Debug.Log($"[PlayerUnit] {Data.UnitName} has died. Previous deaths this level: {previousDeaths}. Vigor reduced by {penalty} to {entry.Vigor}/100.");
+                    }
+                }
+            }
+
+            if (gm != null)
+            {
+                if (Data != null) gm.ReportUnitLost(Data.name);
+                else gm.ReportUnitLost();
+            }
 
             var tm = FindFirstObjectByType<Managers.TutorialManager>();
             if (tm != null && Data != null) tm.OnActionTriggered("UnitDied_" + Data.UnitName);

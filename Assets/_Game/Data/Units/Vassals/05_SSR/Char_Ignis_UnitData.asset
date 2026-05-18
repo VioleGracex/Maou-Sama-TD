@@ -30,30 +30,41 @@ MonoBehaviour:
       by liquid fire itself. Unlike other demons, her flame did not burn with malicious
       destruction, but with a vibrant, eternal radiance. She spent her early decades
       meditating inside the molten chambers, learning the art of heat flow and thermal
-      containment.
+      containment. Her heart, however, remained cold and isolated, waiting for a
+      master whose sovereignty could match her inner blaze.
   - Title: MAOU'S SHIELD
-    Content: During the Great Crusade of the Sanctus Alliance, the Demon Lord was
+    Content: "During the Great Crusade of the Sanctus Alliance, the Demon Lord was
       ambushed by celestial archers. From the shadows, a young Ignis leaped forward,
       expanding her soul-flame into a massive incandescent barrier. She absorbed
       three hundred consecutive high-tier arrows without faltering, earning her place
-      as the Maou's trusted guardian.
+      as the Maou's trusted guardian. When the battle settled and the Lord pulled
+      a stray shard of celestial iron from her arm, their eyes met for the first
+      time\u2014igniting a silent, deep-rooted devotion that transcended mere military
+      contract."
   - Title: THE PHOENIX RITE
     Content: To achieve the status of Master, Ignis underwent the legendary Phoenix
       Rite inside the Smoldering Crag. She dissolved her own physical form into pure
       ashes, only to reconstitute her body three days later, clad in indestructible
       obsidian armor and carrying a greatsword forged from her own solid soul-fire.
-  - Title: GUARDIAN'S VOW
+      In her darkest hour of burning dissolution, it was the voice of the Demon Lord
+      calling her name across the astral rift that anchored her soul, guiding her
+      back to the realm of the living.
+  - Title: SHIELD AND SOUL
     Content: 'Ignis''s ultimate pride lies not in her offensive capabilities, but
       in her unyielding defense. She swore a sacred oath on her Greatsword: ''As
       long as my heart carries a spark, no ally behind my shield shall feel the chill
-      of defeat or the sting of arrows.'' A vow she has kept through a hundred siege
-      battles.'
-  - Title: REBIRTH ANIMUS
-    Content: A legendary memory documenting the nature of her immortal core. Even
+      of defeat or the sting of arrows.'' Yet, in the quiet midnight hours outside
+      the Lord''s private chambers, she confessed a deeper, unwritten vow: she would
+      protect the Maou not just as a loyal vassal, but as a woman whose very soul
+      beats in absolute, burning resonance with theirs.'
+  - Title: ETERNAL EMBERS (ROMANCE)
+    Content: 'A legendary memory documenting the nature of her immortal core. Even
       if her armor is shattered and her physical body succumbs to steel, the embers
       within her heart can never be fully extinguished. When her core is triggered
-      by high-voltage emotional bond with the Lord, she gains complete, unconditional
-      rebirth.
+      by a high-voltage emotional bond with the Lord, she gains complete, unconditional
+      rebirth. Under the crimson starlight, Ignis leaned in close, her breath warm
+      as a desert wind: ''My fire exists solely to warm your throne, my Lord. Take
+      my heart, keep it in your palm, and I shall never burn out.'''
   BaseSkin:
     Avatar: {fileID: 21300000, guid: 7574f7ea97aaa0a45936d69a523867b5, type: 3}
     Chibi: {fileID: 21300000, guid: 2b7269185b2d93f4bb6017781c2f99a0, type: 3}
@@ -82,6 +93,8 @@ MonoBehaviour:
   Experience: 0
   StarRating: 5
   Amity: 0
+  Gender: 1
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

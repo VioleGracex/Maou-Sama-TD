@@ -45,6 +45,7 @@ namespace MaouSamaTD.Managers
         
         #region State
         public bool IsInTutorial { get; private set; }
+        public TutorialDataSO ActiveTutorial => _activeTutorial;
         private TutorialDataSO _activeTutorial;
         private int _currentStepIndex = -1;
         private TutorialStep _currentStep;
@@ -400,11 +401,12 @@ namespace MaouSamaTD.Managers
         #region Core Tutorial Loop
         private IEnumerator TutorialRoutine()
         {
+            bool isLevel1 = _activeTutorial != null && _activeTutorial.name.Contains("Level1");
             while (_currentStepIndex < _activeTutorial.Steps.Count)
             {
                 TutorialStep step = _activeTutorial.Steps[_currentStepIndex];
                 
-                if (step.DelayBefore > 0)
+                if (step.DelayBefore > 0 && !isLevel1)
                 {
                     if (_showDebugLogs) Debug.Log($"[tutorial] Delaying for {step.DelayBefore}s before step {step.StepName}");
                     yield return new WaitForSecondsRealtime(step.DelayBefore);
@@ -505,7 +507,7 @@ namespace MaouSamaTD.Managers
                 // 1. Handle StopTime for all step types at the start
                 if (step.StopTime)
                 {
-                    if (step.DelayBeforeStopTime > 0f)
+                    if (step.DelayBeforeStopTime > 0f && !isLevel1)
                     {
                         if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime with delay of {step.DelayBeforeStopTime}s.");
                         StartCoroutine(DelayedTimeStop(step.DelayBeforeStopTime, step.StepName));
@@ -545,7 +547,7 @@ namespace MaouSamaTD.Managers
                             // Apply StopTime AFTER the condition wait, so the game pauses for the actual dialogue
                             if (step.StopTime)
                             {
-                                if (step.DelayBeforeStopTime > 0f)
+                                if (step.DelayBeforeStopTime > 0f && !isLevel1)
                                 {
                                     if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime with delay of {step.DelayBeforeStopTime}s (after condition).");
                                     StartCoroutine(DelayedTimeStop(step.DelayBeforeStopTime, step.StepName));
@@ -618,13 +620,22 @@ namespace MaouSamaTD.Managers
                             // If this is just a highlight step without a wait, we might need a small delay or just proceed
                             if (string.IsNullOrEmpty(step.ActionKey))
                             {
-                                yield return new WaitForSecondsRealtime(0.5f);
+                                if (!isLevel1)
+                                    yield return new WaitForSecondsRealtime(0.5f);
                             }
                             else
                             {
                                 _waitingForAction = true;
                                 _waitingActionKey = step.ActionKey;
-                                yield return new WaitUntil(() => !_waitingForAction);
+                                if (CheckStepAlreadyCompleted(step))
+                                {
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} is already satisfied upon entering wait, bypassing.");
+                                    _waitingForAction = false;
+                                }
+                                else
+                                {
+                                    yield return new WaitUntil(() => !_waitingForAction);
+                                }
                                 yield return StartCoroutine(HandlePostActionDelay(step));
                             }
 
@@ -654,17 +665,26 @@ namespace MaouSamaTD.Managers
                             
                             if (string.IsNullOrEmpty(step.ActionKey))
                             {
-                                yield return new WaitForSecondsRealtime(0.5f);
+                                if (!isLevel1)
+                                    yield return new WaitForSecondsRealtime(0.5f);
                             }
                             else
                             {
                                 _waitingForAction = true;
                                 _waitingActionKey = step.ActionKey;
-                                yield return new WaitUntil(() => !_waitingForAction);
+                                if (CheckStepAlreadyCompleted(step))
+                                {
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} is already satisfied upon entering wait, bypassing.");
+                                    _waitingForAction = false;
+                                }
+                                else
+                                {
+                                    yield return new WaitUntil(() => !_waitingForAction);
+                                }
                                 
                                 // USER REQUEST: Close UI blocker right away when action is triggered
                                 // to avoid it 'floating' over the game while time is briefly resumed.
-                                _uiBlocker.HideBlocker();
+                                _uiBlocker.HideBlocker(isLevel1);
                                 
                                 yield return StartCoroutine(HandlePostActionDelay(step));
                             }
@@ -742,7 +762,12 @@ namespace MaouSamaTD.Managers
 
                             _waitingActionKey = step.ActionKey;
                             
-                            if (_triggeredActionsBuffer.Contains(step.ActionKey))
+                            if (CheckStepAlreadyCompleted(step))
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} is already satisfied upon entering wait, bypassing.");
+                                _waitingForAction = false;
+                            }
+                            else if (_triggeredActionsBuffer.Contains(step.ActionKey))
                             {
                                 if (_showDebugLogs) Debug.Log($"[tutorial] Action {step.ActionKey} found in buffer early, proceeding.");
                                 _waitingForAction = false; 
@@ -823,7 +848,7 @@ namespace MaouSamaTD.Managers
                                 {
                                     if (_showDebugLogs) Debug.Log("[tutorial] Boss Dead: Resuming time and hiding blocker for 2 seconds...");
                                     _gameManager.SetSpeed(1);
-                                    _uiBlocker.HideBlocker();
+                                    _uiBlocker.HideBlocker(isLevel1);
                                     yield return new WaitForSecondsRealtime(2f);
                                 }
                             }
@@ -1138,7 +1163,7 @@ namespace MaouSamaTD.Managers
             if (_interactionManager != null) _interactionManager.IsSelectionLocked = false;
             
             if (_showDebugLogs) Debug.Log("[tutorial] Tutorial Sequence Completed.");
-            _uiBlocker.HideBlocker();
+            _uiBlocker.HideBlocker(isLevel1);
             _handUI.Hide();
 
             // Force victory at the end of tutorial levels if it hasn't been triggered yet
@@ -1165,7 +1190,8 @@ namespace MaouSamaTD.Managers
             bool hasDialogue = _dialogueManager != null && _dialogueManager.IsDialogueActive;
             if (!step.UseBlocker && !hasDialogue)
             {
-                _uiBlocker.HideBlocker();
+                bool isLevel1 = _activeTutorial != null && _activeTutorial.name.Contains("Level1");
+                _uiBlocker.HideBlocker(isLevel1);
                 if (!step.ShowHand && !step.DragShowHand) _handUI.Hide();
                 return;
             }
@@ -1573,7 +1599,12 @@ private RectTransform FindTargetRect(string name)
         /// </summary>
         private string ResolveGenderSuffix(string name)
         {
-            if (_saveManager == null || _saveManager.CurrentData == null) return name;
+            // Male is fallback in case of error/uninitialized save data
+            bool isMale = true;
+            if (_saveManager != null && _saveManager.CurrentData != null)
+            {
+                isMale = _saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male;
+            }
 
             // If it is a generic skill button alias (starts with SkillButton_)
             if (name.StartsWith("SkillButton_") && _skillManager != null && _skillManager.AvailableSkills != null)
@@ -1590,7 +1621,6 @@ private RectTransform FindTargetRect(string name)
                 }
             }
 
-            bool isMale = _saveManager.CurrentData.Gender == MaouSamaTD.Data.MaouGender.Male;
             string targetSuffix = isMale ? "_Male" : "_Female";
             string oppositeSuffix = isMale ? "_Female" : "_Male";
 
@@ -2193,18 +2223,49 @@ private RectTransform FindTargetRect(string name)
                     }
                 }
                 
-                // Special case for UnitSelected
-                if (step.ActionKey == "UnitSelected")
+                // Special case for UnitSelected / UnitStatsOpened
+                if (step.ActionKey == "UnitSelected" || step.ActionKey == "UnitStatsOpened")
                 {
                     if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
                     {
                         string unitName = step.TargetUI.Name;
                         if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
+                        if (unitName.StartsWith("Enemy_")) unitName = unitName.Replace("Enemy_", "");
                         
                         if (_interactionManager != null && _interactionManager.InspectedUnit != null)
                         {
                             var selected = _interactionManager.InspectedUnit;
-                            return selected.Data != null && (selected.Data.UnitName == unitName || selected.name.Contains(unitName));
+                            if (selected.Data != null && 
+                                (selected.Data.UnitName.Equals(unitName, System.StringComparison.OrdinalIgnoreCase) || 
+                                 selected.name.Contains(unitName)))
+                            {
+                                return true;
+                            }
+                        }
+                        
+                        if (_unitInspectorUI != null && _unitInspectorUI.IsPanelActive)
+                        {
+                            if (_interactionManager != null && _interactionManager.InspectedUnit != null)
+                            {
+                                var selected = _interactionManager.InspectedUnit;
+                                if (selected.Data != null && 
+                                    (selected.Data.UnitName.Equals(unitName, System.StringComparison.OrdinalIgnoreCase) || 
+                                     selected.name.Contains(unitName)))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (_interactionManager != null && _interactionManager.InspectedUnit != null)
+                        {
+                            return true;
+                        }
+                        if (_unitInspectorUI != null && _unitInspectorUI.IsPanelActive)
+                        {
+                            return true;
                         }
                     }
                 }
@@ -2251,7 +2312,6 @@ private RectTransform FindTargetRect(string name)
         }
         #endregion
 
-        public MaouSamaTD.Tutorial.TutorialDataSO ActiveTutorial => _activeTutorial;
         public int GetCurrentStepIndex() => _currentStepIndex;
         public MaouSamaTD.Tutorial.TutorialStep GetCurrentStep() => _activeTutorial != null && _currentStepIndex >= 0 && _currentStepIndex < _activeTutorial.Steps.Count ? _activeTutorial.Steps[_currentStepIndex] : null;
 

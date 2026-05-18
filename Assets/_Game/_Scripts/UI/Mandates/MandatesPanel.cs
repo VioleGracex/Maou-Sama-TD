@@ -31,6 +31,7 @@ namespace MaouSamaTD.UI.Mandates
         [SerializeField] private MaouSamaTD.UI.Common.CustomToggle _toggleShowFinished;
 
         [Inject] private MandateManager _mandateManager;
+        public MandateManager MandateManager => _mandateManager;
         [InjectOptional] private UIFlowManager _uiFlow;
 
         private UIFlowManager UIControl => _uiFlow ?? UIFlowManager.Instance;

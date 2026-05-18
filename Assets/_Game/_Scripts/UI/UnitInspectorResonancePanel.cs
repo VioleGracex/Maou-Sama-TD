@@ -487,22 +487,22 @@ namespace MaouSamaTD.UI
                 bool hasDupe = HasDuplicate();
                 bool canUnlock = !isUnlocked && isPriorUnlocked && hasDupe;
 
-                var btnGo = new GameObject($"NodeButton_{i}", typeof(RectTransform), typeof(Image), typeof(Button));
-                btnGo.transform.SetParent(_leftNodeContainer, false);
-                var btnRect = btnGo.GetComponent<RectTransform>();
-                btnRect.anchorMin = Vector2.zero;
-                btnRect.anchorMax = Vector2.zero;
-                btnRect.anchoredPosition = NodePositions[i];
-                btnRect.sizeDelta = new Vector2(70, 70);
+                var nodeBtnGo = new GameObject($"NodeButton_{i}", typeof(RectTransform), typeof(Image), typeof(Button));
+                nodeBtnGo.transform.SetParent(_leftNodeContainer, false);
+                var nodeBtnRect = nodeBtnGo.GetComponent<RectTransform>();
+                nodeBtnRect.anchorMin = Vector2.zero;
+                nodeBtnRect.anchorMax = Vector2.zero;
+                nodeBtnRect.anchoredPosition = NodePositions[i];
+                nodeBtnRect.sizeDelta = new Vector2(70, 70);
 
-                var img = btnGo.GetComponent<Image>();
+                var img = nodeBtnGo.GetComponent<Image>();
                 img.sprite = GetOrCreateCircleSprite();
                 img.color = isUnlocked ? new Color(0.9f, 0.7f, 0.2f, 1f) : 
                             (canUnlock ? new Color(0.5f, 0.7f, 1f, 1f) : new Color(0.2f, 0.2f, 0.25f, 1f));
 
                 // Add nice inner dark circle
                 var innerGo = new GameObject("InnerCircle", typeof(RectTransform), typeof(Image));
-                innerGo.transform.SetParent(btnGo.transform, false);
+                innerGo.transform.SetParent(nodeBtnGo.transform, false);
                 var innerRect = innerGo.GetComponent<RectTransform>();
                 innerRect.anchorMin = Vector2.zero;
                 innerRect.anchorMax = Vector2.one;
@@ -527,7 +527,7 @@ namespace MaouSamaTD.UI
                 if (_selectedNodeIndex == i)
                 {
                     var targetRing = new GameObject("SelectedHighlight", typeof(RectTransform), typeof(Image));
-                    targetRing.transform.SetParent(btnGo.transform, false);
+                    targetRing.transform.SetParent(nodeBtnGo.transform, false);
                     var targetRect = targetRing.GetComponent<RectTransform>();
                     targetRect.anchorMin = Vector2.zero;
                     targetRect.anchorMax = Vector2.one;
@@ -543,7 +543,7 @@ namespace MaouSamaTD.UI
 
                 // Node number tag
                 var tagGo = new GameObject("NumberTag", typeof(RectTransform), typeof(TextMeshProUGUI));
-                tagGo.transform.SetParent(btnGo.transform, false);
+                tagGo.transform.SetParent(nodeBtnGo.transform, false);
                 var tagRect = tagGo.GetComponent<RectTransform>();
                 tagRect.anchorMin = new Vector2(0.5f, 0f);
                 tagRect.anchorMax = new Vector2(0.5f, 0f);
@@ -557,8 +557,8 @@ namespace MaouSamaTD.UI
                 tagTxt.color = isUnlocked ? new Color(0.9f, 0.7f, 0.2f, 1f) : new Color(0.6f, 0.6f, 0.6f, 1f);
 
                 // Add button click listener
-                var btn = btnGo.GetComponent<Button>();
-                btn.onClick.AddListener(() =>
+                var nodeBtn = nodeBtnGo.GetComponent<Button>();
+                nodeBtn.onClick.AddListener(() =>
                 {
                     _selectedNodeIndex = idx;
                     RefreshNodes();
@@ -671,7 +671,7 @@ namespace MaouSamaTD.UI
             var previewIconGo = new GameObject("DupePreviewIcon", typeof(RectTransform), typeof(Image));
             previewIconGo.transform.SetParent(reqHolder.transform, false);
             var previewIcon = previewIconGo.GetComponent<Image>();
-            previewIcon.sprite = _currentUnit.GetSprite(UnitImageType.Avatar);
+            previewIcon.sprite = _currentUnit.GetSprite(UnitData.UnitImageType.Avatar);
             var previewRect = previewIconGo.GetComponent<RectTransform>();
             previewRect.anchorMin = new Vector2(0f, 0.5f);
             previewRect.anchorMax = new Vector2(0f, 0.5f);

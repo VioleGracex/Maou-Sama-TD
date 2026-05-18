@@ -32,6 +32,7 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private Button _btnConquest;
         [SerializeField] private Button _btnCohorts;
         [SerializeField] private Button _btnVassals;
+        [SerializeField] private Button _btnChambers;
         [SerializeField] private Button _btnMandates;
         [SerializeField] private Button _btnThrone;
         [SerializeField] private Button _btnTreasury;
@@ -70,6 +71,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_btnConquest != null) _btnConquest.onClick.AddListener(OnConquestClicked);
             if (_btnCohorts != null) _btnCohorts.onClick.AddListener(OnCohortsClicked);
             if (_btnVassals != null) _btnVassals.onClick.AddListener(OnVassalsClicked);
+            if (_btnChambers != null) _btnChambers.onClick.AddListener(OnChambersClicked);
             if (_btnMandates != null) _btnMandates.onClick.AddListener(OnMandatesClicked);
             if (_btnThrone != null) _btnThrone.onClick.AddListener(OnThroneClicked);
             if (_btnTreasury != null) _btnTreasury.onClick.AddListener(OnVaultClicked);
@@ -236,7 +238,21 @@ namespace MaouSamaTD.UI.MainMenu
             }
             else
             {
-                Debug.LogWarning("[HomeUIManager] CohortManagerUI could not be found!");
+                Debug.LogWarning("[HomeUIManager] VassalManagerUI could not be found!");
+            }
+        }
+
+        private void OnChambersClicked()
+        {
+            var panel = Object.FindAnyObjectByType<ChambersPageUI>(FindObjectsInactive.Include);
+            if (panel != null)
+            {
+                UIFlowManager.Instance.ClearHistory(true, true);
+                UIFlowManager.Instance.OpenPanel(panel);
+            }
+            else
+            {
+                Debug.LogWarning("[HomeUIManager] ChambersPageUI could not be found!");
             }
         }
 
@@ -316,6 +332,7 @@ namespace MaouSamaTD.UI.MainMenu
                 
                 if (_btnCohorts != null) _btnCohorts.interactable = false;
                 if (_btnVassals != null) _btnVassals.interactable = false;
+                if (_btnChambers != null) _btnChambers.interactable = false;
                 if (_btnMandates != null) _btnMandates.interactable = false;
                 if (_btnThrone != null) _btnThrone.interactable = false;
                 if (_btnTreasury != null) _btnTreasury.interactable = false;
@@ -373,7 +390,7 @@ namespace MaouSamaTD.UI.MainMenu
 
             // 2. Chambers notification: Any owned unit has Vigor < 100
             bool hasChamberNotif = _saveManager.CurrentData.UnitInventory.Any(u => u.Vigor < 100);
-            SetNotificationBadge(_btnVassals, hasChamberNotif);
+            SetNotificationBadge(_btnChambers, hasChamberNotif);
         }
 
         private void SetNotificationBadge(Button button, bool show)

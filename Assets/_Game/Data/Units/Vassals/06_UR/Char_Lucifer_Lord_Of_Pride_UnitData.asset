@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: EnemyMelee
   UnitName: Lucifer
   UnitTitle: Lord Of Pride
+  IsRomanceable: 1
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The Fallen Morning Star.
   LoreEntries:
@@ -78,7 +79,7 @@ MonoBehaviour:
   Experience: 0
   StarRating: 6
   Amity: 0
-  Gender: 1
+  Gender: 0
   Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1

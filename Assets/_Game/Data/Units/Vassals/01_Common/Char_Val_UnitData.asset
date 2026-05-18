@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: Assassin
   UnitName: Val
   UnitTitle: Lesser Vampire
+  IsRomanceable: 1
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A master strategist who abandoned humanity out of pure disgust.
   LoreEntries:
@@ -43,6 +44,8 @@ MonoBehaviour:
   Experience: 0
   StarRating: 1
   Amity: 0
+  Gender: 0
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

@@ -92,11 +92,17 @@ namespace MaouSamaTD.UI
             var unit = _currentUnit;
             // 1. Clear UIFlowManager history completely to close both this inspector and the underlying VassalManager list.
             UIFlowManager.Instance.ClearHistory(true, true);
-            // 2. Open this full-screen inspector panel directly as the new single page in UIFlowManager history.
-            UIFlowManager.Instance.OpenPanel(this);
-            // 3. Re-assign the unit and switch tab to 5 (Memorial Chambers page).
-            SetUnit(unit);
-            SwitchTab(5);
+            
+            var chambersPage = Object.FindFirstObjectByType<MaouSamaTD.UI.Vassals.ChambersPageUI>(FindObjectsInactive.Include);
+            if (chambersPage != null)
+            {
+                UIFlowManager.Instance.OpenPanel(chambersPage);
+                chambersPage.SelectUnit(unit);
+            }
+            else
+            {
+                Debug.LogWarning("[UnitInspector] ChambersPageUI not found!");
+            }
         }
 
         public void SetUnit(UnitData unit)

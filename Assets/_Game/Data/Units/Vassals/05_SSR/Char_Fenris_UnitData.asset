@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: Executioner
   UnitName: Fenris
   UnitTitle: Alpha Of The North
+  IsRomanceable: 1
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: Ancient ruler of the werewolf tribes, utterly loyal to strength.
   LoreEntries:
@@ -41,8 +42,10 @@ MonoBehaviour:
   ButtonImageType: 1
   Level: 1
   Experience: 0
-  StarRating: 1
+  StarRating: 5
   Amity: 0
+  Gender: 0
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

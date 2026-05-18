@@ -56,6 +56,7 @@ namespace MaouSamaTD.Units
         [Header("Identity (Data)")]
         public string UnitName;
         public string UnitTitle;
+        public bool IsRomanceable = false;
         [TextArea(2, 5)]
         public string SummonQuote; // Quote shown when summoned
         [TextArea(2, 5)]

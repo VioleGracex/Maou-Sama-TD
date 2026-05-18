@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: Warlock
   UnitName: Sibyl
   UnitTitle: Bloodied Oracle
+  IsRomanceable: 1
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: 
   LoreEntries: []
@@ -39,8 +40,10 @@ MonoBehaviour:
   ButtonImageType: 1
   Level: 1
   Experience: 0
-  StarRating: 1
+  StarRating: 3
   Amity: 0
+  Gender: 0
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: EnemyMelee
   UnitName: Balthazar
   UnitTitle: Lord Of Sloth
+  IsRomanceable: 1
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: The Dreamweaver.
   LoreEntries:
@@ -43,8 +44,10 @@ MonoBehaviour:
   ButtonImageType: 0
   Level: 1
   Experience: 0
-  StarRating: 1
+  StarRating: 6
   Amity: 0
+  Gender: 0
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

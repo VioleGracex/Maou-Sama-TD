@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: Ranger
   UnitName: Fang
   UnitTitle: Wolf Pup
+  IsRomanceable: 1
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: 
   LoreEntries: []
@@ -41,6 +42,8 @@ MonoBehaviour:
   Experience: 0
   StarRating: 1
   Amity: 0
+  Gender: 0
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

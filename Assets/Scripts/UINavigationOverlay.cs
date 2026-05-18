@@ -29,6 +29,7 @@ namespace MaouSamaTD.UI
         [SerializeField] public Button _btnVassals;
         [SerializeField] public Button _btnCohorts;
         [SerializeField] public Button _btnManifest;
+        [SerializeField] public Button _btnChambers;
 
         [Header("Indicators")]
         [SerializeField] private GameObject _indicatorHome;
@@ -38,6 +39,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _indicatorVassals;
         [SerializeField] private GameObject _indicatorCohorts;
         [SerializeField] private GameObject _indicatorManifest;
+        [SerializeField] private GameObject _indicatorChambers;
 
         private bool _isOpen = false;
 
@@ -55,6 +57,7 @@ namespace MaouSamaTD.UI
             if (_btnCohorts) _btnCohorts.onClick.AddListener(() => NavigateTo<CohortSquadUI>());
             if (_btnManifest) _btnManifest.onClick.AddListener(() => NavigateTo<GachaPanel>());
             if (_btnTreasury) _btnTreasury.onClick.AddListener(() => NavigateTo<TreasuryVaultUI>());
+            if (_btnChambers) _btnChambers.onClick.AddListener(() => NavigateTo<ChambersPageUI>(true));
             
             LocalizeUI();
         }
@@ -66,6 +69,7 @@ namespace MaouSamaTD.UI
             if (_btnVassals) _btnVassals.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Vassals");
             if (_btnCohorts) _btnCohorts.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Cohorts");
             if (_btnManifest) _btnManifest.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Manifest");
+            if (_btnChambers) _btnChambers.GetComponentInChildren<TextMeshProUGUI>().text = LocalizationManager.Localize("Home.Navigation.Chambers");
         }
 
         public void Toggle()
@@ -113,11 +117,13 @@ namespace MaouSamaTD.UI
             if (_indicatorVassals) _indicatorVassals.SetActive(pageType == typeof(MaouSamaTD.UI.Vassals.VassalManagerUI));
             if (_indicatorCohorts) _indicatorCohorts.SetActive(pageType == typeof(CohortSquadUI));
             if (_indicatorManifest) _indicatorManifest.SetActive(pageType == typeof(GachaPanel));
+            if (_indicatorChambers) _indicatorChambers.SetActive(pageType == typeof(ChambersPageUI));
         }
 
-        private void NavigateTo<T>() where T : MonoBehaviour, IUIController
+        private void NavigateTo<T>(bool clearHistory = false) where T : MonoBehaviour, IUIController
         {
             Hide();
+            if (clearHistory) UIFlowManager.Instance.ClearHistory(true, true);
             var panel = Object.FindAnyObjectByType<T>(FindObjectsInactive.Include);
             if (panel != null) UIFlowManager.Instance.OpenPanel(panel);
         }

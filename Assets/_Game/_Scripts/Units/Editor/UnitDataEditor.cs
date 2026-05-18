@@ -75,6 +75,7 @@ namespace MaouSamaTD.Units.Editor
                 using (new EditorGUI.DisabledScope(true)) DrawProperty("UniqueID", "Unique ID");
                 DrawProperty("UnitName", "Unit Name");
                 DrawProperty("UnitTitle", "Unit Title");
+                DrawProperty("IsRomanceable", "Romanceable");
             }
             EndSection(identityState);
 

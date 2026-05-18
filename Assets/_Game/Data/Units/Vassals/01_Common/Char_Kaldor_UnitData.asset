@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: Vanguard
   UnitName: Kaldor
   UnitTitle: Infantry of Drakmora
+  IsRomanceable: 1
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A disciplined vanguard of the Drakmora empire, Kaldor carries
     the weight of his kingdom on his shield.
@@ -45,6 +46,8 @@ MonoBehaviour:
   Experience: 0
   StarRating: 1
   Amity: 0
+  Gender: 0
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

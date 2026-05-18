@@ -22,6 +22,7 @@ MonoBehaviour:
     ClassName: Necromancer
   UnitName: Eidon
   UnitTitle: Archlich Supreme
+  IsRomanceable: 1
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: Prehistoric king-lich ruling the dead north.
   LoreEntries:
@@ -41,8 +42,10 @@ MonoBehaviour:
   ButtonImageType: 1
   Level: 1
   Experience: 0
-  StarRating: 1
+  StarRating: 5
   Amity: 0
+  Gender: 0
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0

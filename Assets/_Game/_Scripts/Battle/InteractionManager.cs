@@ -470,8 +470,8 @@ namespace MaouSamaTD.Managers
 
                     _inspectedPlayerUnit = target;
                     _inspectedEnemyUnit = null;
-                    _unitInspectorUI.Show(target);
                     _tutorialManager?.OnActionTriggered("UnitSelected");
+                    _unitInspectorUI.Show(target);
                 }
                 else
                 {

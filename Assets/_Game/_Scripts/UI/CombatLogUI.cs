@@ -188,11 +188,123 @@ namespace MaouSamaTD.UI
             }
         }
 
+        private string CleanUnitName(string rawName)
+        {
+            if (string.IsNullOrEmpty(rawName)) return "";
+            
+            // Remove "(Clone)" suffix
+            string clean = rawName.Replace("(Clone)", "").Trim();
+            
+            // Remove "Unit_" or "Enemy_" prefixes (case-insensitive)
+            if (clean.StartsWith("Unit_", System.StringComparison.OrdinalIgnoreCase))
+            {
+                clean = clean.Substring(5);
+            }
+            else if (clean.StartsWith("Enemy_", System.StringComparison.OrdinalIgnoreCase))
+            {
+                clean = clean.Substring(6);
+            }
+            
+            // Replace underscores with spaces
+            clean = clean.Replace("_", " ");
+            
+            // Trim any trailing/leading wave identifiers or object pools if they exist
+            // e.g. "Lesser Shadow W0 O0" -> remove wave markers " W\d+ O\d+" or similar
+            clean = System.Text.RegularExpressions.Regex.Replace(clean, @"\s+W\d+.*", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            clean = System.Text.RegularExpressions.Regex.Replace(clean, @"\s+O\d+.*", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            
+            clean = clean.Trim();
+            
+            // Capitalize first letter of name for professional look
+            if (clean.Length > 0)
+            {
+                if (clean.Equals("ignis", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    return "Ignis";
+                }
+                
+                if (char.IsLower(clean[0]))
+                {
+                    clean = char.ToUpper(clean[0]) + clean.Substring(1);
+                }
+            }
+            
+            return clean;
+        }
+
         private void AddLogEntry(BattleLogEntry entry)
         {
             string color = GetColorForType(entry.Type);
             string timestamp = $"[{TimeSpanToFormatted(entry.Timestamp)}]";
-            string logLine = $"<color={color}>{timestamp} <b>{entry.Source}</b>: {entry.Message}</color>";
+            
+            string cleanSource = CleanUnitName(entry.Source);
+            string cleanTarget = CleanUnitName(entry.Target);
+            
+            string message = "";
+            
+            switch (entry.Type)
+            {
+                case BattleLogType.Damage:
+                    if (string.IsNullOrEmpty(cleanSource) || cleanSource.Equals("Unknown", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        message = $"{cleanTarget} received {entry.Value:F0} damage";
+                    }
+                    else
+                    {
+                        message = $"{cleanTarget} received {entry.Value:F0} damage from {cleanSource}";
+                    }
+                    break;
+                    
+                case BattleLogType.Heal:
+                    message = $"{cleanTarget} restored {entry.Value:F0} HP";
+                    break;
+                    
+                case BattleLogType.Death:
+                    if (string.IsNullOrEmpty(cleanSource) || cleanSource.Equals("Unknown", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        message = $"{cleanTarget} was defeated";
+                    }
+                    else
+                    {
+                        message = $"{cleanTarget} was defeated by {cleanSource}";
+                    }
+                    break;
+                    
+                case BattleLogType.WaveStart:
+                case BattleLogType.System:
+                    // If source is a system actor like Director/Game/Sovereign, do not write their name prefix. Just print the message itself.
+                    if (string.IsNullOrEmpty(cleanSource) || 
+                        cleanSource.Equals("Director", System.StringComparison.OrdinalIgnoreCase) || 
+                        cleanSource.Equals("Game", System.StringComparison.OrdinalIgnoreCase) ||
+                        cleanSource.Equals("System", System.StringComparison.OrdinalIgnoreCase) ||
+                        cleanSource.Equals("Sovereign", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        message = entry.Message.Replace("_", " ");
+                    }
+                    else
+                    {
+                        message = $"{cleanSource}: {entry.Message.Replace("_", " ")}";
+                    }
+                    break;
+                    
+                default:
+                    // General fallback
+                    string cleanMsg = entry.Message.Replace("_", " ");
+                    if (string.IsNullOrEmpty(cleanSource) || cleanSource.Equals("Unknown", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        message = $"{cleanTarget}: {cleanMsg}";
+                    }
+                    else
+                    {
+                        message = $"{cleanSource} -> {cleanTarget}: {cleanMsg}";
+                    }
+                    break;
+            }
+            
+            // Clean up any double spaces/formatting in message
+            message = System.Text.RegularExpressions.Regex.Replace(message, @"\s+", " ").Trim();
+            
+            string logLine = $"<color={color}>{timestamp} {message}</color>";
             
             _displayLogs.Enqueue(logLine);
             if (_displayLogs.Count > _maxDisplayLines) _displayLogs.Dequeue();

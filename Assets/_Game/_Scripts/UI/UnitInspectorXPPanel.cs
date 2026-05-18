@@ -327,30 +327,72 @@ namespace MaouSamaTD.UI
             if (_currentUnit == null) return;
 
             int totalXP = CalculateTotalXP();
-            int newLevel = SimulateLevelGain(_currentUnit.Level, _currentUnit.Experience, totalXP, _currentUnit.MaxLevel);
-            int reqXP    = ProgressionLogic.GetRequiredXP(_currentUnit.Level);
+            GetSimulatedLevelAndXP(_currentUnit.Level, _currentUnit.Experience, totalXP, _currentUnit.MaxLevel, out int newLevel, out int simXP, out int simReqXP);
+            int reqXP = ProgressionLogic.GetRequiredXP(_currentUnit.Level);
 
-            if (_xpMeterValueText) _xpMeterValueText.text = $"{_currentUnit.Experience} / {reqXP}";
+            if (_xpMeterValueText) _xpMeterValueText.text = $"{simXP} / {simReqXP}";
             if (_txtXpGain)        _txtXpGain.text        = totalXP > 0 ? $"+{totalXP} XP" : "";
             if (_txtLevelPreview)  _txtLevelPreview.text  = newLevel > _currentUnit.Level
-                                                            ? $"Lv {_currentUnit.Level} → {newLevel}"
+                                                            ? $"Lv {_currentUnit.Level} ➔ {newLevel}"
                                                             : $"Lv {_currentUnit.Level}";
 
             // Update XP fills
             if (_xpCurrentFill)
             {
-                float currentPct = (float)_currentUnit.Experience / reqXP;
-                _xpCurrentFill.fillAmount = currentPct;
+                if (newLevel > _currentUnit.Level)
+                {
+                    _xpCurrentFill.fillAmount = 0f;
+                }
+                else
+                {
+                    _xpCurrentFill.fillAmount = (float)_currentUnit.Experience / reqXP;
+                }
             }
             if (_xpAddFill)
             {
-                int simulatedXP = _currentUnit.Experience + totalXP;
-                float addPct = (float)simulatedXP / reqXP;
                 if (newLevel > _currentUnit.Level)
                 {
-                    addPct = 1.0f; // Maxed out this level bar
+                    _xpAddFill.fillAmount = (float)simXP / simReqXP;
                 }
-                _xpAddFill.fillAmount = Mathf.Min(1.0f, addPct);
+                else
+                {
+                    _xpAddFill.fillAmount = (float)(_currentUnit.Experience + totalXP) / reqXP;
+                }
+            }
+
+            // Stats Preview (Genshin-style green text)
+            EnsureStatsPreviewUI();
+            if (_statsPreviewContainer != null)
+            {
+                float curHp = _currentUnit.CalculatedStats.MaxHp;
+                float curAtk = _currentUnit.CalculatedStats.Attack;
+                float curDef = _currentUnit.CalculatedStats.Defense;
+
+                CalculateSimulatedStats(_currentUnit, newLevel, out float nextHp, out float nextAtk, out float nextDef);
+
+                if (_txtHpPreview)
+                {
+                    if (newLevel > _currentUnit.Level)
+                        _txtHpPreview.text = $"{curHp:F0} <color=#00FF00>➔ {nextHp:F0} (+{(nextHp - curHp):F0})</color>";
+                    else
+                        _txtHpPreview.text = $"{curHp:F0}";
+                }
+
+                if (_txtAtkPreview)
+                {
+                    if (newLevel > _currentUnit.Level)
+                        _txtAtkPreview.text = $"{curAtk:F0} <color=#00FF00>➔ {nextAtk:F0} (+{(nextAtk - curAtk):F0})</color>";
+                    else
+                        _txtAtkPreview.text = $"{curAtk:F0}";
+                }
+
+                if (_txtDefPreview)
+                {
+                    if (newLevel > _currentUnit.Level)
+                        _txtDefPreview.text = $"{curDef:F0} <color=#00FF00>➔ {nextDef:F0} (+{(nextDef - curDef):F0})</color>";
+                    else
+                        _txtDefPreview.text = $"{curDef:F0}";
+                }
             }
 
             if (_btnConfirmLevelUp) _btnConfirmLevelUp.interactable = totalXP > 0;
@@ -848,9 +890,14 @@ namespace MaouSamaTD.UI
             if (_txtLevelPreview)
             {
                 _txtLevelPreview.text = finalLevel > startLevel 
-                    ? $"Lv {startLevel} → {finalLevel}"
+                    ? $"Lv {startLevel} ➔ {finalLevel}"
                     : $"Lv {startLevel}";
             }
+
+            int oldLevel = _currentUnit.Level;
+            float oldHp = _currentUnit.CalculatedStats.MaxHp;
+            float oldAtk = _currentUnit.CalculatedStats.Attack;
+            float oldDef = _currentUnit.CalculatedStats.Defense;
 
             ProgressionLogic.AddXP(_currentUnit, totalXPGain);
             for (int i = 0; i < 4; i++)
@@ -863,6 +910,17 @@ namespace MaouSamaTD.UI
             }
 
             _saveManager.Save();
+            
+            int finalLvlAfterXP = _currentUnit.Level;
+            float finalHp = _currentUnit.CalculatedStats.MaxHp;
+            float finalAtk = _currentUnit.CalculatedStats.Attack;
+            float finalDef = _currentUnit.CalculatedStats.Defense;
+
+            if (finalLvlAfterXP > oldLevel)
+            {
+                ShowLevelUpSuccessBanner(oldLevel, finalLvlAfterXP, oldHp, finalHp, oldAtk, finalAtk, oldDef, finalDef);
+            }
+
             yield return new WaitForSeconds(0.3f);
 
             _isAnimating = false;
@@ -872,6 +930,267 @@ namespace MaouSamaTD.UI
             if (_btnAddAll) _btnAddAll.interactable = true;
             if (_btnDeselectAll) _btnDeselectAll.interactable = true;
             if (_btnConfirmLevelUp) _btnConfirmLevelUp.interactable = true;
+        }
+
+        private GameObject _statsPreviewContainer;
+        private TextMeshProUGUI _txtHpPreview;
+        private TextMeshProUGUI _txtAtkPreview;
+        private TextMeshProUGUI _txtDefPreview;
+
+        private void EnsureStatsPreviewUI()
+        {
+            if (_statsPreviewContainer != null) return;
+
+            var rightPanel = this.transform.Find("MainLayout/RightPanel");
+            if (rightPanel == null) return;
+
+            // Check if already created procedurally
+            var existing = rightPanel.Find("LevelingStatsPreviewContainer");
+            if (existing != null)
+            {
+                _statsPreviewContainer = existing.gameObject;
+                _txtHpPreview = _statsPreviewContainer.transform.Find("HpRow/ValueText")?.GetComponent<TextMeshProUGUI>();
+                _txtAtkPreview = _statsPreviewContainer.transform.Find("AtkRow/ValueText")?.GetComponent<TextMeshProUGUI>();
+                _txtDefPreview = _statsPreviewContainer.transform.Find("DefRow/ValueText")?.GetComponent<TextMeshProUGUI>();
+                return;
+            }
+
+            // Create container
+            _statsPreviewContainer = new GameObject("LevelingStatsPreviewContainer", typeof(RectTransform));
+            _statsPreviewContainer.transform.SetParent(rightPanel, false);
+
+            var rect = _statsPreviewContainer.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.05f, 0.25f);
+            rect.anchorMax = new Vector2(0.95f, 0.45f);
+            rect.sizeDelta = Vector2.zero;
+
+            // Add background glassmorphic style
+            var bgImg = _statsPreviewContainer.AddComponent<Image>();
+            bgImg.color = new Color(0.08f, 0.08f, 0.12f, 0.85f);
+            
+            var outline = _statsPreviewContainer.AddComponent<Outline>();
+            outline.effectColor = new Color(0.9f, 0.65f, 0.2f, 0.5f);
+            outline.effectDistance = new Vector2(1, 1);
+
+            // Vertical Layout Group
+            var vlg = _statsPreviewContainer.AddComponent<VerticalLayoutGroup>();
+            vlg.padding = new RectOffset(15, 15, 10, 10);
+            vlg.spacing = 8;
+            vlg.childAlignment = TextAnchor.MiddleCenter;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+
+            // Create Rows
+            _txtHpPreview = CreatePreviewRow("Max HP", "HpRow");
+            _txtAtkPreview = CreatePreviewRow("Attack", "AtkRow");
+            _txtDefPreview = CreatePreviewRow("Defense", "DefRow");
+
+            // Ensure proper hierarchy placement (above BottomControls)
+            var bottomControls = rightPanel.Find("BottomControls");
+            if (bottomControls != null)
+            {
+                _statsPreviewContainer.transform.SetSiblingIndex(bottomControls.GetSiblingIndex());
+            }
+        }
+
+        private TextMeshProUGUI CreatePreviewRow(string statName, string rowName)
+        {
+            var row = new GameObject(rowName, typeof(RectTransform));
+            row.transform.SetParent(_statsPreviewContainer.transform, false);
+
+            var layout = row.AddComponent<HorizontalLayoutGroup>();
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+
+            var nameTxtObj = new GameObject("LabelText", typeof(RectTransform));
+            nameTxtObj.transform.SetParent(row.transform, false);
+            var nameTxt = nameTxtObj.AddComponent<TextMeshProUGUI>();
+            nameTxt.text = statName;
+            nameTxt.fontSize = 15;
+            nameTxt.fontStyle = FontStyles.Bold;
+            nameTxt.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+            nameTxt.alignment = TextAlignmentOptions.Left;
+
+            var valTxtObj = new GameObject("ValueText", typeof(RectTransform));
+            valTxtObj.transform.SetParent(row.transform, false);
+            var valTxt = valTxtObj.AddComponent<TextMeshProUGUI>();
+            valTxt.text = "---";
+            valTxt.fontSize = 15;
+            valTxt.fontStyle = FontStyles.Bold;
+            valTxt.alignment = TextAlignmentOptions.Right;
+
+            return valTxt;
+        }
+
+        private void GetSimulatedLevelAndXP(int startLvl, int startXp, int totalXpGain, int maxLvl, out int newLevel, out int simXP, out int simReqXP)
+        {
+            newLevel = startLvl;
+            simXP = startXp + totalXpGain;
+            simReqXP = ProgressionLogic.GetRequiredXP(newLevel);
+
+            while (newLevel < maxLvl)
+            {
+                int req = ProgressionLogic.GetRequiredXP(newLevel);
+                if (simXP >= req)
+                {
+                    simXP -= req;
+                    newLevel++;
+                    simReqXP = ProgressionLogic.GetRequiredXP(newLevel);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        private void CalculateSimulatedStats(UnitData unit, int simLevel, out float maxHp, out float attack, out float defense)
+        {
+            int originalLevel = unit.Level;
+            unit.Level = simLevel;
+            unit.RefreshStats(MaouSamaTD.Core.AppEntryPoint.LoadedScalingData);
+            maxHp = unit.CalculatedStats.MaxHp;
+            attack = unit.CalculatedStats.Attack;
+            defense = unit.CalculatedStats.Defense;
+            unit.Level = originalLevel;
+            unit.RefreshStats(MaouSamaTD.Core.AppEntryPoint.LoadedScalingData);
+        }
+
+        private void ShowLevelUpSuccessBanner(int oldLvl, int newLvl, float hp1, float hp2, float atk1, float atk2, float def1, float def2)
+        {
+            var overlay = new GameObject("LevelUpSuccessOverlay", typeof(RectTransform));
+            overlay.transform.SetParent(this.transform.parent, false);
+            var rect = overlay.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.sizeDelta = Vector2.zero;
+
+            var bgImg = overlay.AddComponent<Image>();
+            bgImg.color = new Color(0.02f, 0.02f, 0.04f, 0.85f);
+
+            var dialogBox = new GameObject("BannerCard", typeof(RectTransform));
+            dialogBox.transform.SetParent(overlay.transform, false);
+            var dbRect = dialogBox.GetComponent<RectTransform>();
+            dbRect.anchorMin = new Vector2(0.5f, 0.5f);
+            dbRect.anchorMax = new Vector2(0.5f, 0.5f);
+            dbRect.pivot = new Vector2(0.5f, 0.5f);
+            dbRect.sizeDelta = new Vector2(500, 320);
+            dbRect.anchoredPosition = new Vector2(0, -500); // Start below for enter animation!
+
+            var dbImg = dialogBox.AddComponent<Image>();
+            dbImg.color = new Color(0.08f, 0.08f, 0.1f, 0.95f);
+            var dbOutline = dialogBox.AddComponent<Outline>();
+            dbOutline.effectColor = new Color(0.9f, 0.65f, 0.2f, 0.8f);
+            dbOutline.effectDistance = new Vector2(2, 2);
+
+            // Title
+            var title = new GameObject("Title", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            title.transform.SetParent(dialogBox.transform, false);
+            title.text = "LEVEL UP!";
+            title.fontSize = 32;
+            title.fontStyle = FontStyles.Bold | FontStyles.Italic;
+            title.color = new Color(0.95f, 0.7f, 0.2f);
+            title.alignment = TextAlignmentOptions.Center;
+            var tRect = title.GetComponent<RectTransform>();
+            tRect.anchorMin = new Vector2(0.05f, 0.75f);
+            tRect.anchorMax = new Vector2(0.95f, 0.95f);
+            tRect.sizeDelta = Vector2.zero;
+
+            // Subtitle level change
+            var lvlText = new GameObject("LvlText", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            lvlText.transform.SetParent(dialogBox.transform, false);
+            lvlText.text = $"Lv {oldLvl} ➔ <color=#00FF00>Lv {newLvl}</color>";
+            lvlText.fontSize = 22;
+            lvlText.fontStyle = FontStyles.Bold;
+            lvlText.alignment = TextAlignmentOptions.Center;
+            lvlText.color = Color.white;
+            var lRect = lvlText.GetComponent<RectTransform>();
+            lRect.anchorMin = new Vector2(0.05f, 0.6f);
+            lRect.anchorMax = new Vector2(0.95f, 0.72f);
+            lRect.sizeDelta = Vector2.zero;
+
+            // Stats grid container
+            var statsGrid = new GameObject("StatsGrid", typeof(RectTransform));
+            statsGrid.transform.SetParent(dialogBox.transform, false);
+            var sgRect = statsGrid.GetComponent<RectTransform>();
+            sgRect.anchorMin = new Vector2(0.1f, 0.2f);
+            sgRect.anchorMax = new Vector2(0.9f, 0.55f);
+            sgRect.sizeDelta = Vector2.zero;
+
+            var vlg = statsGrid.AddComponent<VerticalLayoutGroup>();
+            vlg.spacing = 10;
+            vlg.childAlignment = TextAnchor.MiddleCenter;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+
+            CreateRow(statsGrid.transform, "HP", hp1, hp2);
+            CreateRow(statsGrid.transform, "ATK", atk1, atk2);
+            CreateRow(statsGrid.transform, "DEF", def1, def2);
+
+            // Close button
+            var btnClose = new GameObject("CloseBtn", typeof(RectTransform));
+            btnClose.transform.SetParent(dialogBox.transform, false);
+            var bcImg = btnClose.AddComponent<Image>();
+            bcImg.color = new Color(0.2f, 0.65f, 0.3f, 1f);
+            var bcBtn = btnClose.AddComponent<Button>();
+            var bcTxt = new GameObject("Text", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            bcTxt.transform.SetParent(btnClose.transform, false);
+            bcTxt.text = "CONFIRM";
+            bcTxt.fontSize = 16;
+            bcTxt.fontStyle = FontStyles.Bold;
+            bcTxt.alignment = TextAlignmentOptions.Center;
+            bcTxt.color = Color.white;
+            var bctRect = bcTxt.GetComponent<RectTransform>();
+            bctRect.anchorMin = Vector2.zero;
+            bctRect.anchorMax = Vector2.one;
+            bctRect.sizeDelta = Vector2.zero;
+            var bcRect = btnClose.GetComponent<RectTransform>();
+            bcRect.anchorMin = new Vector2(0.35f, 0.05f);
+            bcRect.anchorMax = new Vector2(0.65f, 0.16f);
+            bcRect.sizeDelta = Vector2.zero;
+
+            bcBtn.onClick.AddListener(() =>
+            {
+                // Slide out on confirm using DOTween
+                dbRect.DOAnchorPosY(-800f, 0.3f).SetEase(Ease.InBack).OnComplete(() => Destroy(overlay));
+            });
+
+            // Slide in animation using DOTween!
+            dbRect.DOAnchorPosY(0f, 0.5f).SetEase(Ease.OutBack);
+        }
+
+        private void CreateRow(Transform parent, string stat, float v1, float v2)
+        {
+            var row = new GameObject(stat + "Row", typeof(RectTransform));
+            row.transform.SetParent(parent, false);
+            var hlg = row.AddComponent<HorizontalLayoutGroup>();
+            hlg.childAlignment = TextAnchor.MiddleCenter;
+            hlg.childControlWidth = true;
+            hlg.childControlHeight = true;
+            hlg.childForceExpandWidth = true;
+            hlg.childForceExpandHeight = true;
+
+            var lbl = new GameObject("Label", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            lbl.transform.SetParent(row.transform, false);
+            lbl.text = stat;
+            lbl.fontSize = 16;
+            lbl.fontStyle = FontStyles.Bold;
+            lbl.color = new Color(0.7f, 0.7f, 0.7f);
+            lbl.alignment = TextAlignmentOptions.Left;
+
+            var val = new GameObject("Val", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            val.transform.SetParent(row.transform, false);
+            val.text = $"{v1:F0} ➔ <color=#00FF00>{v2:F0} (+{(v2 - v1):F0})</color>";
+            val.fontSize = 16;
+            val.fontStyle = FontStyles.Bold;
+            val.alignment = TextAlignmentOptions.Right;
         }
     }
 }

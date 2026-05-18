@@ -53,10 +53,18 @@ namespace MaouSamaTD.UI.Vassals
         [SerializeField] private VassalDetailPanel _inspectorPanel; // Side Bar
         public UnitInspectorFullScreenUI _fullScreenInspector;
 
+        [Header("Sorting")]
+        [SerializeField] private Button _btnSortLevel;
+        [SerializeField] private Button _btnSortRarity;
+        [SerializeField] private Button _btnSortDate;
+
         [Header("Debug")]
         [SerializeField] private bool _debug = true;
 
         private GenericListView<UnitData, UnitCardUI> _listView;
+
+        public enum SortMode { Level, Rarity, Date }
+        private SortMode _currentSortMode = SortMode.Level;
 
         // Operational State
         private OperationMode _currentMode = OperationMode.View;
@@ -99,7 +107,46 @@ namespace MaouSamaTD.UI.Vassals
                 _inspectorPanel.OnPromoteRequest += HandleInspectorPromoteRequest;
             }
 
+            EnsureSortButtonsWired();
             InitializeClassFilters();
+        }
+
+        private void EnsureSortButtonsWired()
+        {
+            if (_visualRoot == null) return;
+
+            // Auto-wire sort buttons if currently null
+            if (_btnSortLevel == null || _btnSortRarity == null || _btnSortDate == null)
+            {
+                var btns = _visualRoot.GetComponentsInChildren<Button>(true);
+                foreach (var b in btns)
+                {
+                    if (b.name == "BtnSort_Level" || b.name.Contains("SortLevel") || b.name.Contains("Sort_Level"))
+                        _btnSortLevel = b;
+                    else if (b.name == "BtnSort_Rarity" || b.name.Contains("SortRarity") || b.name.Contains("Sort_Rarity"))
+                        _btnSortRarity = b;
+                    else if (b.name == "BtnSort_Date" || b.name.Contains("SortDate") || b.name.Contains("Sort_Date"))
+                        _btnSortDate = b;
+                }
+            }
+
+            if (_btnSortLevel != null)
+            {
+                _btnSortLevel.onClick.RemoveAllListeners();
+                _btnSortLevel.onClick.AddListener(() => { _currentSortMode = SortMode.Level; RefreshInventory(); UpdateSortButtonVisuals(); });
+            }
+            if (_btnSortRarity != null)
+            {
+                _btnSortRarity.onClick.RemoveAllListeners();
+                _btnSortRarity.onClick.AddListener(() => { _currentSortMode = SortMode.Rarity; RefreshInventory(); UpdateSortButtonVisuals(); });
+            }
+            if (_btnSortDate != null)
+            {
+                _btnSortDate.onClick.RemoveAllListeners();
+                _btnSortDate.onClick.AddListener(() => { _currentSortMode = SortMode.Date; RefreshInventory(); UpdateSortButtonVisuals(); });
+            }
+
+            UpdateSortButtonVisuals();
         }
 
         public void Open()
@@ -118,6 +165,7 @@ namespace MaouSamaTD.UI.Vassals
                 _inspectorPanel.CloseButton.onClick.AddListener(() => _inspectorPanel.Close());
             }
 
+            EnsureSortButtonsWired();
             UpdateMultiSelectUI();
             RefreshInventory();
         }
@@ -138,6 +186,8 @@ namespace MaouSamaTD.UI.Vassals
             if (transform.parent != null) transform.parent.gameObject.SetActive(true);
 
             if (_fullScreenInspector != null) _fullScreenInspector.Close();
+            
+            EnsureSortButtonsWired();
             UpdateMultiSelectUI();
             RefreshInventory();
         }
@@ -158,6 +208,8 @@ namespace MaouSamaTD.UI.Vassals
             if (transform.parent != null) transform.parent.gameObject.SetActive(true);
 
             if (_fullScreenInspector != null) _fullScreenInspector.Close();
+            
+            EnsureSortButtonsWired();
             UpdateMultiSelectUI();
             RefreshInventory();
         }
@@ -298,6 +350,38 @@ namespace MaouSamaTD.UI.Vassals
 
                         ownedUnits.Add(unit);
                     }
+                }
+            }
+
+            // Apply sorting
+            if (_currentSortMode == SortMode.Level)
+            {
+                ownedUnits.Sort((a, b) => {
+                    int compare = b.Level.CompareTo(a.Level);
+                    if (compare == 0) compare = b.Rarity.CompareTo(a.Rarity);
+                    if (compare == 0) compare = (a.UnitName ?? "").CompareTo(b.UnitName ?? "");
+                    return compare;
+                });
+            }
+            else if (_currentSortMode == SortMode.Rarity)
+            {
+                ownedUnits.Sort((a, b) => {
+                    int compare = b.Rarity.CompareTo(a.Rarity);
+                    if (compare == 0) compare = b.Level.CompareTo(a.Level);
+                    if (compare == 0) compare = (a.UnitName ?? "").CompareTo(b.UnitName ?? "");
+                    return compare;
+                });
+            }
+            else if (_currentSortMode == SortMode.Date)
+            {
+                if (_saveManager != null && _saveManager.CurrentData != null)
+                {
+                    var unlockedList = _saveManager.CurrentData.UnlockedUnits;
+                    ownedUnits.Sort((a, b) => {
+                        int idxA = GetUnlockedIndex(unlockedList, a);
+                        int idxB = GetUnlockedIndex(unlockedList, b);
+                        return idxB.CompareTo(idxA); // Newest (latest in list) first
+                    });
                 }
             }
 
@@ -482,6 +566,46 @@ namespace MaouSamaTD.UI.Vassals
                 _fullScreenInspector.SetUnit(unit);
                 UIFlowManager.Instance.OpenPanel(_fullScreenInspector);
                 _fullScreenInspector.SwitchTab(2); // Tab 2 is Resonance / Promotion
+            }
+        }
+
+        private int GetUnlockedIndex(List<string> unlockedList, UnitData unit)
+        {
+            if (unlockedList == null || unit == null) return -1;
+            
+            for (int i = 0; i < unlockedList.Count; i++)
+            {
+                string id = unlockedList[i];
+                if (string.Equals(unit.UniqueID, id, System.StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(unit.name, id, System.StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(unit.UnitName, id, System.StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(unit.name.Replace("Char_", "").Replace("_UnitData", ""), id, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private void UpdateSortButtonVisuals()
+        {
+            SetSortButtonColor(_btnSortLevel, _currentSortMode == SortMode.Level);
+            SetSortButtonColor(_btnSortRarity, _currentSortMode == SortMode.Rarity);
+            SetSortButtonColor(_btnSortDate, _currentSortMode == SortMode.Date);
+        }
+
+        private void SetSortButtonColor(Button btn, bool active)
+        {
+            if (btn == null) return;
+            var img = btn.GetComponent<Image>();
+            if (img != null)
+            {
+                img.color = active ? new Color(0.9f, 0.65f, 0.2f, 1f) : new Color(0.15f, 0.15f, 0.2f, 0.8f);
+            }
+            var txt = btn.GetComponentInChildren<TextMeshProUGUI>();
+            if (txt != null)
+            {
+                txt.color = active ? Color.white : new Color(0.7f, 0.7f, 0.7f, 0.8f);
             }
         }
     }

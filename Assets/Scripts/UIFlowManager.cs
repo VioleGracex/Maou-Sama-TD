@@ -151,12 +151,22 @@ namespace MaouSamaTD.UI
             // Reset overlay
             if (NavigationOverlay != null) NavigationOverlay.Hide();
 
-            if (closeCurrent && _panelStack.Count > 0)
+            if (_panelStack.Count > 0)
             {
-                var top = _panelStack.Peek();
-                if (!force && top != null && !top.RequestClose()) return;
-                var current = _panelStack.Pop();
-                if (current != null) current.Close();
+                if (closeCurrent)
+                {
+                    var top = _panelStack.Peek();
+                    if (!force && top != null && !top.RequestClose()) return;
+                }
+
+                while (_panelStack.Count > 0)
+                {
+                    var panel = _panelStack.Pop();
+                    if (panel != null)
+                    {
+                        panel.Close();
+                    }
+                }
             }
             _panelStack.Clear();
             UpdateGlobalButtons();

@@ -358,57 +358,419 @@ namespace MaouSamaTD.UI
             RefreshMemories();
         }
 
-        // ── Resonance Nodes ───────────────────────────────────────────────────
+        // ── Resonance Nodes (Honkai Star Rail Constellation Style) ───────────
+        private GameObject _hsrLayoutRoot;
+        private RectTransform _leftNodeContainer;
+        private RectTransform _rightDetailPanel;
+        private int _selectedNodeIndex = 0;
+        private Sprite _circleSprite;
+
+        private static readonly Vector2[] NodePositions = new Vector2[]
+        {
+            new Vector2(120, 100),
+            new Vector2(300, 180),
+            new Vector2(180, 320),
+            new Vector2(380, 430),
+            new Vector2(230, 560),
+            new Vector2(420, 670)
+        };
+
+        private Sprite GetOrCreateCircleSprite()
+        {
+            if (_circleSprite == null)
+            {
+                int size = 128;
+                Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+                float radius = size / 2f;
+                Vector2 center = new Vector2(radius, radius);
+                for (int y = 0; y < size; y++)
+                {
+                    for (int x = 0; x < size; x++)
+                    {
+                        float dist = Vector2.Distance(new Vector2(x, y), center);
+                        if (dist < radius - 1)
+                        {
+                            float alpha = Mathf.Clamp01(radius - dist);
+                            tex.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                        }
+                        else
+                        {
+                            tex.SetPixel(x, y, Color.clear);
+                        }
+                    }
+                }
+                tex.Apply();
+                _circleSprite = Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
+            }
+            return _circleSprite;
+        }
+
+        private void CreateUILine(RectTransform parent, Vector2 pA, Vector2 pB, Color color, float thickness)
+        {
+            var lineObj = new GameObject("ConstellationLine", typeof(RectTransform), typeof(Image));
+            lineObj.transform.SetParent(parent, false);
+            var img = lineObj.GetComponent<Image>();
+            img.color = color;
+            img.raycastTarget = false;
+
+            var rect = lineObj.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.zero;
+            
+            Vector2 dir = pB - pA;
+            float distance = dir.magnitude;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+            rect.sizeDelta = new Vector2(distance, thickness);
+            rect.anchoredPosition = pA + dir * 0.5f;
+            rect.localRotation = Quaternion.Euler(0, 0, angle);
+        }
+
+        private int GetDuplicateCount()
+        {
+            if (_saveManager?.CurrentData == null || _currentUnit == null) return 0;
+            string id = _currentUnit.name;
+            return _saveManager.CurrentData.UnitInventory.FindAll(e => e.UnitID == id && e.IsDuplicate).Count;
+        }
+
         private void RefreshNodes()
         {
-            if (_nodesScrollRect == null || _nodesScrollRect.content == null) return;
-            foreach (Transform c in _nodesScrollRect.content) Destroy(c.gameObject);
+            // Hide the old scroll rect and summary if they exist
+            if (_nodesScrollRect != null) _nodesScrollRect.gameObject.SetActive(false);
+            if (_txtNodeSummary != null) _txtNodeSummary.gameObject.SetActive(false);
 
             if (_currentUnit == null || _saveManager == null) return;
 
-            var entry   = GetMainEntry();
+            // Recreate visual root for HSR layout
+            if (_hsrLayoutRoot != null)
+            {
+                Destroy(_hsrLayoutRoot);
+            }
+
+            _hsrLayoutRoot = new GameObject("HSR_Nodes_Layout_Container", typeof(RectTransform));
+            _hsrLayoutRoot.transform.SetParent(_rootNodes.transform, false);
+            var layoutRect = _hsrLayoutRoot.GetComponent<RectTransform>();
+            layoutRect.anchorMin = Vector2.zero;
+            layoutRect.anchorMax = Vector2.one;
+            layoutRect.sizeDelta = Vector2.zero;
+
+            // Create Left Container for Constellation
+            var leftGo = new GameObject("LeftContainer", typeof(RectTransform));
+            leftGo.transform.SetParent(_hsrLayoutRoot.transform, false);
+            _leftNodeContainer = leftGo.GetComponent<RectTransform>();
+            _leftNodeContainer.anchorMin = Vector2.zero;
+            _leftNodeContainer.anchorMax = new Vector2(0.55f, 1f);
+            _leftNodeContainer.sizeDelta = Vector2.zero;
+
+            var entry = GetMainEntry();
             var unlocked = entry?.UnlockedNodes ?? new List<int>();
-            int unlockedCount = unlocked.Count;
 
-            if (_txtNodeSummary) _txtNodeSummary.text =
-                $"Nodes Unlocked: {unlockedCount}/6  |  Stat Bonus: +{unlockedCount * 5}% HP/ATK/DEF";
+            // Draw Constellation Lines
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 pA = NodePositions[i];
+                Vector2 pB = NodePositions[i + 1];
+                bool isGlow = unlocked.Contains(i) && unlocked.Contains(i + 1);
+                Color lineColor = isGlow ? new Color(0.9f, 0.65f, 0.2f, 0.8f) : new Color(1f, 1f, 1f, 0.15f);
+                float thickness = isGlow ? 4f : 2f;
+                CreateUILine(_leftNodeContainer, pA, pB, lineColor, thickness);
+            }
 
+            // Spawn 6 Node Buttons
             var nodes = _currentUnit.AscensionNodes;
-            int total = nodes != null ? Mathf.Min(nodes.Count, 6) : 6;
-
+            int total = 6;
             for (int i = 0; i < total; i++)
             {
+                int idx = i;
                 bool isUnlocked = unlocked.Contains(i);
-                bool canUnlock  = !isUnlocked && (i == 0 || unlocked.Contains(i - 1)) && HasDuplicate();
-                
-                string roman = i switch { 0 => "I", 1 => "II", 2 => "III", 3 => "IV", 4 => "V", 5 => "VI", _ => (i + 1).ToString() };
-                
-                string tier = nodes != null && i < nodes.Count && nodes[i] != null && !string.IsNullOrEmpty(nodes[i].TierLabel)
-                                ? nodes[i].TierLabel
-                                : $"RESONANCE {roman}";
-                                
-                string name = nodes != null && i < nodes.Count && nodes[i] != null && !string.IsNullOrEmpty(nodes[i].NodeName)
-                                ? nodes[i].NodeName
-                                : $"Resonance Node {i + 1}";
-                                
-                string desc = nodes != null && i < nodes.Count && nodes[i] != null && !string.IsNullOrEmpty(nodes[i].NodeDescription)
-                                ? nodes[i].NodeDescription
-                                : "Increases Unit stats dynamically on deployment.";
-                                
-                Sprite icon = nodes != null && i < nodes.Count && nodes[i] != null ? nodes[i].NodeIcon : null;
+                bool isPriorUnlocked = i == 0 || unlocked.Contains(i - 1);
+                bool hasDupe = HasDuplicate();
+                bool canUnlock = !isUnlocked && isPriorUnlocked && hasDupe;
 
-                if (_nodeEntryPrefab == null) continue;
-                var go   = Instantiate(_nodeEntryPrefab, _nodesScrollRect.content);
-                var item = go.GetComponent<NodeEntryUI>();
-                if (item != null)
+                var btnGo = new GameObject($"NodeButton_{i}", typeof(RectTransform), typeof(Image), typeof(Button));
+                btnGo.transform.SetParent(_leftNodeContainer, false);
+                var btnRect = btnGo.GetComponent<RectTransform>();
+                btnRect.anchorMin = Vector2.zero;
+                btnRect.anchorMax = Vector2.zero;
+                btnRect.anchoredPosition = NodePositions[i];
+                btnRect.sizeDelta = new Vector2(70, 70);
+
+                var img = btnGo.GetComponent<Image>();
+                img.sprite = GetOrCreateCircleSprite();
+                img.color = isUnlocked ? new Color(0.9f, 0.7f, 0.2f, 1f) : 
+                            (canUnlock ? new Color(0.5f, 0.7f, 1f, 1f) : new Color(0.2f, 0.2f, 0.25f, 1f));
+
+                // Add nice inner dark circle
+                var innerGo = new GameObject("InnerCircle", typeof(RectTransform), typeof(Image));
+                innerGo.transform.SetParent(btnGo.transform, false);
+                var innerRect = innerGo.GetComponent<RectTransform>();
+                innerRect.anchorMin = Vector2.zero;
+                innerRect.anchorMax = Vector2.one;
+                innerRect.sizeDelta = new Vector2(-6, -6);
+                var innerImg = innerGo.GetComponent<Image>();
+                innerImg.sprite = GetOrCreateCircleSprite();
+                innerImg.color = new Color(0.08f, 0.08f, 0.12f, 1f);
+
+                // Add Node custom/default icon
+                Sprite nodeIcon = (nodes != null && i < nodes.Count) ? nodes[i]?.NodeIcon : null;
+                var iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+                iconGo.transform.SetParent(innerGo.transform, false);
+                var iconRect = iconGo.GetComponent<RectTransform>();
+                iconRect.anchorMin = Vector2.zero;
+                iconRect.anchorMax = Vector2.one;
+                iconRect.sizeDelta = new Vector2(-16, -16);
+                var iconImg = iconGo.GetComponent<Image>();
+                iconImg.sprite = nodeIcon != null ? nodeIcon : _starFullSprite;
+                iconImg.color = isUnlocked ? new Color(0.9f, 0.7f, 0.2f, 1f) : new Color(0.4f, 0.4f, 0.4f, 1f);
+
+                // If selected, add a glowing target highlight ring around it
+                if (_selectedNodeIndex == i)
                 {
-                    int capturedIdx = i;
-                    item.SetupRich(tier, name, desc, isUnlocked, canUnlock, () => OnUnlockNode(capturedIdx, entry, item), icon);
+                    var targetRing = new GameObject("SelectedHighlight", typeof(RectTransform), typeof(Image));
+                    targetRing.transform.SetParent(btnGo.transform, false);
+                    var targetRect = targetRing.GetComponent<RectTransform>();
+                    targetRect.anchorMin = Vector2.zero;
+                    targetRect.anchorMax = Vector2.one;
+                    targetRect.sizeDelta = new Vector2(16, 16);
+                    var targetImg = targetRing.GetComponent<Image>();
+                    targetImg.sprite = GetOrCreateCircleSprite();
+                    targetImg.color = new Color(0.9f, 0.7f, 0.2f, 0.4f);
+
+                    var outline = targetRing.AddComponent<Outline>();
+                    outline.effectColor = new Color(0.9f, 0.7f, 0.2f, 1f);
+                    outline.effectDistance = new Vector2(2, 2);
                 }
+
+                // Node number tag
+                var tagGo = new GameObject("NumberTag", typeof(RectTransform), typeof(TextMeshProUGUI));
+                tagGo.transform.SetParent(btnGo.transform, false);
+                var tagRect = tagGo.GetComponent<RectTransform>();
+                tagRect.anchorMin = new Vector2(0.5f, 0f);
+                tagRect.anchorMax = new Vector2(0.5f, 0f);
+                tagRect.anchoredPosition = new Vector2(0, -18);
+                tagRect.sizeDelta = new Vector2(40, 20);
+                var tagTxt = tagGo.GetComponent<TextMeshProUGUI>();
+                tagTxt.font = _txtCurrentStars?.parent?.GetComponentInChildren<TextMeshProUGUI>()?.font;
+                tagTxt.fontSize = 14;
+                tagTxt.alignment = TextAlignmentOptions.Center;
+                tagTxt.text = (i + 1).ToString();
+                tagTxt.color = isUnlocked ? new Color(0.9f, 0.7f, 0.2f, 1f) : new Color(0.6f, 0.6f, 0.6f, 1f);
+
+                // Add button click listener
+                var btn = btnGo.GetComponent<Button>();
+                btn.onClick.AddListener(() =>
+                {
+                    _selectedNodeIndex = idx;
+                    RefreshNodes();
+                });
+            }
+
+            // Create Right Detail Panel
+            var rightGo = new GameObject("RightDetailPanel", typeof(RectTransform), typeof(Image));
+            rightGo.transform.SetParent(_hsrLayoutRoot.transform, false);
+            _rightDetailPanel = rightGo.GetComponent<RectTransform>();
+            _rightDetailPanel.anchorMin = new Vector2(0.58f, 0.05f);
+            _rightDetailPanel.anchorMax = new Vector2(0.98f, 0.95f);
+            _rightDetailPanel.sizeDelta = Vector2.zero;
+
+            var panelBg = rightGo.GetComponent<Image>();
+            panelBg.color = new Color(0.08f, 0.08f, 0.12f, 0.94f);
+
+            var outline2 = rightGo.AddComponent<Outline>();
+            outline2.effectColor = new Color(0.9f, 0.65f, 0.2f, 0.3f);
+            outline2.effectDistance = new Vector2(1, 1);
+
+            var rightLayout = rightGo.AddComponent<VerticalLayoutGroup>();
+            rightLayout.padding = new RectOffset(40, 40, 40, 40);
+            rightLayout.spacing = 24;
+            rightLayout.childAlignment = TextAnchor.UpperLeft;
+            rightLayout.childControlHeight = false;
+            rightLayout.childControlWidth = false;
+            rightLayout.childForceExpandHeight = false;
+            rightLayout.childForceExpandWidth = false;
+
+            // Fetch details for the selected node index
+            int selIdx = _selectedNodeIndex;
+            string roman = selIdx switch { 0 => "I", 1 => "II", 2 => "III", 3 => "IV", 4 => "V", 5 => "VI", _ => (selIdx + 1).ToString() };
+            
+            string nodeTierLabel = (nodes != null && selIdx < nodes.Count && nodes[selIdx] != null && !string.IsNullOrEmpty(nodes[selIdx].TierLabel))
+                                    ? nodes[selIdx].TierLabel
+                                    : $"RESONANCE {roman}";
+                                    
+            string nodeName = (nodes != null && selIdx < nodes.Count && nodes[selIdx] != null && !string.IsNullOrEmpty(nodes[selIdx].NodeName))
+                                ? nodes[selIdx].NodeName
+                                : $"Resonance Node {selIdx + 1}";
+                                
+            string nodeDesc = (nodes != null && selIdx < nodes.Count && nodes[selIdx] != null && !string.IsNullOrEmpty(nodes[selIdx].NodeDescription))
+                                ? nodes[selIdx].NodeDescription
+                                : "Increases Unit stats dynamically on deployment by 5%.";
+
+            bool selectedIsUnlocked = unlocked.Contains(selIdx);
+            bool selectedIsPriorUnlocked = selIdx == 0 || unlocked.Contains(selIdx - 1);
+            int ownedDupes = GetDuplicateCount();
+            bool selectedHasDupe = ownedDupes >= 1;
+            bool selectedCanUnlock = !selectedIsUnlocked && selectedIsPriorUnlocked && selectedHasDupe;
+
+            // 1. Tier Label
+            var tierGo = new GameObject("TierText", typeof(RectTransform), typeof(TextMeshProUGUI));
+            tierGo.transform.SetParent(rightGo.transform, false);
+            var tierTxt = tierGo.GetComponent<TextMeshProUGUI>();
+            tierTxt.font = _txtCurrentStars?.parent?.GetComponentInChildren<TextMeshProUGUI>()?.font;
+            tierTxt.fontSize = 20;
+            tierTxt.fontStyle = FontStyles.Bold;
+            tierTxt.color = new Color(0.9f, 0.65f, 0.2f, 1f);
+            tierTxt.text = nodeTierLabel.ToUpper();
+
+            // 2. Name Text
+            var nameGo = new GameObject("NameText", typeof(RectTransform), typeof(TextMeshProUGUI));
+            nameGo.transform.SetParent(rightGo.transform, false);
+            var nameTxt = nameGo.GetComponent<TextMeshProUGUI>();
+            nameTxt.font = tierTxt.font;
+            nameTxt.fontSize = 32;
+            nameTxt.fontStyle = FontStyles.Bold;
+            nameTxt.color = Color.white;
+            nameTxt.text = nodeName.ToUpper();
+
+            // 3. Status Badge
+            var statusGo = new GameObject("StatusText", typeof(RectTransform), typeof(TextMeshProUGUI));
+            statusGo.transform.SetParent(rightGo.transform, false);
+            var statusTxt = statusGo.GetComponent<TextMeshProUGUI>();
+            statusTxt.font = tierTxt.font;
+            statusTxt.fontSize = 18;
+            statusTxt.fontStyle = FontStyles.Bold;
+            statusTxt.text = selectedIsUnlocked ? "✦ ACTIVE" : "◌ LOCKED";
+            statusTxt.color = selectedIsUnlocked ? new Color(0.9f, 0.7f, 0.2f, 1f) : new Color(0.5f, 0.5f, 0.5f, 1f);
+
+            // Divider Line
+            var divGo = new GameObject("Divider", typeof(RectTransform), typeof(Image));
+            divGo.transform.SetParent(rightGo.transform, false);
+            var divRect = divGo.GetComponent<RectTransform>();
+            divRect.sizeDelta = new Vector2(400, 2);
+            var divImg = divGo.GetComponent<Image>();
+            divImg.color = new Color(0.9f, 0.65f, 0.2f, 0.3f);
+
+            // 4. Description Text
+            var descGo = new GameObject("DescText", typeof(RectTransform), typeof(TextMeshProUGUI));
+            descGo.transform.SetParent(rightGo.transform, false);
+            var descTxt = descGo.GetComponent<TextMeshProUGUI>();
+            descTxt.font = tierTxt.font;
+            descTxt.fontSize = 18;
+            descTxt.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+            descTxt.enableWordWrapping = true;
+            descTxt.text = nodeDesc;
+            var descRect = descGo.GetComponent<RectTransform>();
+            descRect.sizeDelta = new Vector2(480, 160);
+
+            // 5. Requirements Holder
+            var reqHolder = new GameObject("ReqHolder", typeof(RectTransform));
+            reqHolder.transform.SetParent(rightGo.transform, false);
+            var reqRect = reqHolder.GetComponent<RectTransform>();
+            reqRect.sizeDelta = new Vector2(480, 70);
+
+            // Duplicate Unit Face Icon Preview
+            var previewIconGo = new GameObject("DupePreviewIcon", typeof(RectTransform), typeof(Image));
+            previewIconGo.transform.SetParent(reqHolder.transform, false);
+            var previewIcon = previewIconGo.GetComponent<Image>();
+            previewIcon.sprite = _currentUnit.GetSprite(UnitImageType.Avatar);
+            var previewRect = previewIconGo.GetComponent<RectTransform>();
+            previewRect.anchorMin = new Vector2(0f, 0.5f);
+            previewRect.anchorMax = new Vector2(0f, 0.5f);
+            previewRect.anchoredPosition = new Vector2(30, 0);
+            previewRect.sizeDelta = new Vector2(56, 56);
+
+            // Round border for avatar
+            var avatarOutline = previewIconGo.AddComponent<Outline>();
+            avatarOutline.effectColor = new Color(0.9f, 0.65f, 0.2f, 0.4f);
+            avatarOutline.effectDistance = new Vector2(1, 1);
+
+            // Duplicate count status text
+            var costGo = new GameObject("CostText", typeof(RectTransform), typeof(TextMeshProUGUI));
+            costGo.transform.SetParent(reqHolder.transform, false);
+            var costTxt = costGo.GetComponent<TextMeshProUGUI>();
+            costTxt.font = tierTxt.font;
+            costTxt.fontSize = 18;
+            costTxt.alignment = TextAlignmentOptions.Left;
+            costTxt.text = $"Duplicate Shards: <color={(selectedHasDupe ? "green" : "red")}>{ownedDupes} / 1</color>";
+            var costRect = costGo.GetComponent<RectTransform>();
+            costRect.anchorMin = new Vector2(0f, 0.5f);
+            costRect.anchorMax = new Vector2(0f, 0.5f);
+            costRect.anchoredPosition = new Vector2(240, 0);
+            costRect.sizeDelta = new Vector2(250, 40);
+
+            // Space
+            var spacer = new GameObject("Spacer", typeof(RectTransform));
+            spacer.transform.SetParent(rightGo.transform, false);
+            spacer.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 20);
+
+            // 6. Activation / Unlock Button
+            var btnGo = new GameObject("UnlockButton", typeof(RectTransform), typeof(Image), typeof(Button));
+            btnGo.transform.SetParent(rightGo.transform, false);
+            var btnRect = btnGo.GetComponent<RectTransform>();
+            btnRect.sizeDelta = new Vector2(400, 60);
+
+            var btnImg = btnGo.GetComponent<Image>();
+            var btn = btnGo.GetComponent<Button>();
+
+            var btnTxtGo = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
+            btnTxtGo.transform.SetParent(btnGo.transform, false);
+            var btnTxt = btnTxtGo.GetComponent<TextMeshProUGUI>();
+            btnTxt.font = tierTxt.font;
+            btnTxt.fontSize = 20;
+            btnTxt.fontStyle = FontStyles.Bold;
+            btnTxt.color = Color.white;
+            btnTxt.alignment = TextAlignmentOptions.Center;
+            var btnTxtRect = btnTxtGo.GetComponent<RectTransform>();
+            btnTxtRect.anchorMin = Vector2.zero;
+            btnTxtRect.anchorMax = Vector2.one;
+            btnTxtRect.sizeDelta = Vector2.zero;
+
+            var buttonShadow = btnGo.AddComponent<Shadow>();
+            buttonShadow.effectColor = new Color(0, 0, 0, 0.5f);
+            buttonShadow.effectDistance = new Vector2(2, -2);
+
+            // Configure Button State
+            if (selectedIsUnlocked)
+            {
+                btnImg.color = new Color(0.2f, 0.2f, 0.25f, 1f);
+                btnTxt.text = "✦ RESONANCE ACTIVE";
+                btnTxt.color = new Color(0.6f, 0.6f, 0.6f, 1f);
+                btn.interactable = false;
+            }
+            else if (!selectedIsPriorUnlocked)
+            {
+                btnImg.color = new Color(0.3f, 0.2f, 0.2f, 1f);
+                btnTxt.text = "PREVIOUS NODE REQUIRED";
+                btnTxt.color = new Color(0.7f, 0.5f, 0.5f, 1f);
+                btn.interactable = false;
+            }
+            else if (!selectedHasDupe)
+            {
+                btnImg.color = new Color(0.3f, 0.2f, 0.2f, 1f);
+                btnTxt.text = "REQUIRES DUPLICATE SHARD";
+                btnTxt.color = new Color(0.7f, 0.5f, 0.5f, 1f);
+                btn.interactable = false;
+            }
+            else
+            {
+                btnImg.color = new Color(0.9f, 0.65f, 0.2f, 1f);
+                btnTxt.text = "ACTIVATE RESONANCE";
+                btnTxt.color = Color.white;
+                btn.interactable = true;
+
+                // Add glow border outline
+                var glow = btnGo.AddComponent<Outline>();
+                glow.effectColor = new Color(0.9f, 0.7f, 0.2f, 0.5f);
+                glow.effectDistance = new Vector2(2, 2);
+
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() =>
+                {
+                    OnUnlockNode(selIdx, entry);
+                });
             }
         }
 
-        private void OnUnlockNode(int idx, UnitInventoryEntry entry, NodeEntryUI item)
+        private void OnUnlockNode(int idx, UnitInventoryEntry entry)
         {
             if (!ConsumeDuplicate()) return;
             if (entry != null && !entry.UnlockedNodes.Contains(idx))

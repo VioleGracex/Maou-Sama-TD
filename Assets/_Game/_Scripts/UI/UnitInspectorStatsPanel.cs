@@ -37,6 +37,8 @@ namespace MaouSamaTD.UI
         {
             if (u == null) return;
 
+            ConfigureAdaptiveStats();
+
             // Stats Listing
             float displayHp = u.CalculatedStats.MaxHp > 0 ? u.CalculatedStats.MaxHp : u.MaxHp * 2f;
             float displayAtk = u.CalculatedStats.Attack > 0 ? u.CalculatedStats.Attack : u.AttackPower * 2f;
@@ -161,6 +163,21 @@ namespace MaouSamaTD.UI
             if (interval <= 0) return "0/sec";
             float attacksPerSec = 1.0f / interval;
             return $"{attacksPerSec:F1}/sec";
+        }
+
+        private void ConfigureAdaptiveStats()
+        {
+            var allTexts = GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (var t in allTexts)
+            {
+                if (t == null) continue;
+                if (t.name.Contains("Label") || t.name.Contains("Value") || t.name.Contains("Txt") || t.name.Contains("Text") || t.name.Contains("aspd") || t.name.Contains("atk") || t.name.Contains("def") || t.name.Contains("range"))
+                {
+                    t.enableAutoSizing = true;
+                    t.fontSizeMin = 8;
+                    t.fontSizeMax = Mathf.Min(t.fontSizeMax > 0 ? t.fontSizeMax : 20, 20);
+                }
+            }
         }
     }
 }

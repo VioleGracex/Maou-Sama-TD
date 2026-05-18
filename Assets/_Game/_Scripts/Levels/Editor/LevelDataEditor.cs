@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using MaouSamaTD.Levels;
+using MaouSamaTD.UI.MainMenu;
 
 namespace MaouSamaTD.Levels.Editor
 {
@@ -179,6 +180,13 @@ namespace MaouSamaTD.Levels.Editor
             if (DrawSectionHeader("Map Settings", ref _showMapSettings))
             {
                 DrawProperty("MapData", "Linked Map Data");
+                
+                SerializedProperty posProp = serializedObject.FindProperty("CampaignMapPosition");
+                if (posProp != null)
+                {
+                    EditorGUILayout.PropertyField(posProp, new GUIContent("Campaign Map Position", "Pixel coordinates on the 2048x1143 Gehenna map. X: 0..2048, Y: 0..1143"));
+                    DrawMapCoordinatePicker(posProp);
+                }
             }
             EndSection(_showMapSettings);
 
@@ -289,6 +297,120 @@ namespace MaouSamaTD.Levels.Editor
             else
             {
                 EditorGUILayout.HelpBox($"Property '{propName}' not found.", MessageType.Error);
+            }
+        }
+
+        private void DrawMapCoordinatePicker(SerializedProperty posProp)
+        {
+            Texture2D mapTexture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Art/Gehenna.png");
+            if (mapTexture == null)
+            {
+                EditorGUILayout.HelpBox("Map texture not found at Assets/_Game/Art/Gehenna.png", MessageType.Warning);
+                return;
+            }
+
+            EditorGUILayout.Space(5);
+            EditorGUILayout.LabelField("Interactive Map Position Picker (Click/Drag to Set)", EditorStyles.miniBoldLabel);
+
+            // Calculate sizing keeping aspect ratio (2048 / 1143)
+            float aspect = 2048f / 1143f;
+            float padding = 30f;
+            float width = EditorGUIUtility.currentViewWidth - padding;
+            // Clamp width to a reasonable maximum to avoid huge inspector blocks
+            width = Mathf.Min(width, 400f);
+            float height = width / aspect;
+
+            // Rect for the map drawing
+            Rect mapRect = GUILayoutUtility.GetRect(width, height);
+            
+            // Draw background frame / box
+            GUI.Box(new Rect(mapRect.x - 2, mapRect.y - 2, mapRect.width + 4, mapRect.height + 4), GUIContent.none, EditorStyles.helpBox);
+            
+            // Draw the map texture
+            GUI.DrawTexture(mapRect, mapTexture, ScaleMode.ScaleToFit);
+
+            // Get current coordinate
+            Vector2 currentPos = posProp.vector2Value;
+            
+            // Calculate marker GUI position relative to the mapRect
+            // Since coordinates start from bottom-left (0,0) to top-right (2048,1143)
+            float markerPctX = currentPos.x / 2048f;
+            float markerPctY = 1f - (currentPos.y / 1143f); // Invert Y for GUI
+
+            float markerGuiX = mapRect.x + (markerPctX * mapRect.width);
+            float markerGuiY = mapRect.y + (markerPctY * mapRect.height);
+
+            // Draw a beautiful crosshair/marker at this position
+            Color oldColor = GUI.color;
+            
+            // Draw the marker circle
+            GUI.color = new Color(1.0f, 0.2f, 0.1f, 0.9f); // Hot demonic crimson
+            Rect markerRect = new Rect(markerGuiX - 8, markerGuiY - 8, 16, 16);
+            
+            // Load selection circle icon if it exists, otherwise fall back to standard radio button
+            Texture2D dotTex = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Game/Art/UI/Icons/Circle.png");
+            if (dotTex != null)
+            {
+                GUI.DrawTexture(markerRect, dotTex);
+            }
+            else
+            {
+                GUI.Box(markerRect, GUIContent.none, EditorStyles.radioButton);
+            }
+            
+            // Draw visual coordinate text over the marker or below it
+            GUI.color = Color.white;
+            GUIStyle labelStyle = new GUIStyle(EditorStyles.boldLabel);
+            labelStyle.normal.textColor = Color.black;
+            labelStyle.alignment = TextAnchor.MiddleCenter;
+            labelStyle.fontSize = 9;
+
+            // Subdued background shadow label
+            GUI.Label(new Rect(markerGuiX - 40, markerGuiY - 26, 80, 20), $"({(int)currentPos.x}, {(int)currentPos.y})", labelStyle);
+            labelStyle.normal.textColor = new Color(1.0f, 0.6f, 0.1f, 1f); // Flame gold
+            GUI.Label(new Rect(markerGuiX - 40, markerGuiY - 25, 80, 20), $"({(int)currentPos.x}, {(int)currentPos.y})", labelStyle);
+
+            GUI.color = oldColor;
+
+            // Handle Mouse click/drag events on the mapRect
+            Event evt = Event.current;
+            if (mapRect.Contains(evt.mousePosition))
+            {
+                if (evt.type == EventType.MouseDown || evt.type == EventType.MouseDrag)
+                {
+                    // Compute relative click coordinates (0 to 1)
+                    float relX = (evt.mousePosition.x - mapRect.x) / mapRect.width;
+                    float relY = 1f - ((evt.mousePosition.y - mapRect.y) / mapRect.height); // Invert Y back
+
+                    // Map to 2048 x 1143 space
+                    float posX = Mathf.Clamp(relX * 2048f, 0f, 2048f);
+                    float posY = Mathf.Clamp(relY * 1143f, 0f, 1143f);
+
+                    // Snap/Round for cleaner coordinates
+                    posX = Mathf.Round(posX);
+                    posY = Mathf.Round(posY);
+
+                    posProp.vector2Value = new Vector2(posX, posY);
+                    serializedObject.ApplyModifiedProperties();
+                    
+                    // Mark target as dirty
+                    EditorUtility.SetDirty(target);
+                    
+                    // Repaint the inspector
+                    evt.Use();
+                    
+                    // Real-time Scene refresh: Find CampaignPage in the editor and force a visual redraw!
+                    CampaignPage campaignPage = null;
+#if UNITY_2023_1_OR_NEWER
+                    campaignPage = Object.FindAnyObjectByType<CampaignPage>();
+#else
+                    campaignPage = (CampaignPage)Object.FindObjectOfType(typeof(CampaignPage));
+#endif
+                    if (campaignPage != null)
+                    {
+                        campaignPage.Refresh();
+                    }
+                }
             }
         }
     }

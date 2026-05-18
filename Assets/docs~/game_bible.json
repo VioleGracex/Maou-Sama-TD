@@ -1,0 +1,60 @@
+{
+    "gameTitle": "Maou-Sama-TD",
+    "gameGenre": "Tower Defense RPG / Kingdom Builder",
+    "logline": "You are the 13th Demon Lord. Resurrected 50 years after a stalemate with the Hero, you seek your rematch. First, you must rebuild your Kingdom, defeat the Ten Stars of the Adventurer Guild, and ally with your sworn enemy to stop the Inverse World.",
+    "themes": [
+        "Kingdom Restoration",
+        "Resurrection & Loyalty",
+        "The Inevitable Clash",
+        "The World's Trap",
+        "Unwilling Alliances"
+    ],
+    "factions": [
+        "The Demon Lord's Legion",
+        "The Adventurer Guilds (The Ten Stars)",
+        "The Church of Heroes",
+        "The Inverse World (First Maou)"
+    ],
+    "characters": [
+        {
+            "name": "The Maou",
+            "role": "13th Demon Lord",
+            "description": "Used a 'Pact with the World' 50 years ago to ensure a rematch with the Hero."
+        },
+        {
+            "name": "Ignis",
+            "role": "The Crimson Bastion",
+            "description": "Betrayed by the Church 50 years ago. Loyal defender of the tomb."
+        },
+        {
+            "name": "Tina",
+            "role": "Guide",
+            "description": "Awakens the Maou."
+        },
+        {
+            "name": "Lilith",
+            "role": "The First Succubus",
+            "description": "Unsealed early on. Provides soul-siphoning magic."
+        },
+        {
+            "name": "The True Hero (MC)",
+            "role": "Rival",
+            "description": "The Hero from 50 years ago. Forced to ally with the Maou in Arc 4."
+        },
+        {
+            "name": "The Mercenary King",
+            "role": "Ten Stars Member",
+            "description": "Warlord leader of the Guild fodder."
+        },
+        {
+            "name": "The Sword Saint",
+            "role": "Ten Stars Member",
+            "description": "Blind swordsman capable of one-shotting units."
+        },
+        {
+            "name": "The First Maou",
+            "role": "Ultimate Threat",
+            "description": "Creator of the Inverse World."
+        }
+    ]
+}

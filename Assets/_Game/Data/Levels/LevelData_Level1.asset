@@ -14,8 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
   useDefaultInspector: 0
   UniqueID: c4964e5f-4250-4bf0-8819-b7c021745d61
+  Category: 0
+  LevelIcon: {fileID: 0}
   LevelIndex: 1
   LevelName: 'Chapter 1: The Awakening'
+  SovereignHpNameKey: SovereignHP_Level1
+  SovereignMaxHp: 100
   Description: The Maou awakens from a long slumber. Re-establish your authority.
   GracePeriod: 10
   LevelID: 1-1
@@ -24,6 +28,7 @@ MonoBehaviour:
     Amount: 800
   - Type: 1
     Amount: 800
+  StageLootConfig: []
   PremadeCohort:
   - {fileID: 11400000, guid: fc288bac2fbb05147ae9f01dd64f25a7, type: 2}
   IsCohortLocked: 1
@@ -39,6 +44,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a9a829afd63fe2b4093fd25db7d8bd99, type: 2}
   IsRitesLocked: 1
   MapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
+  CampaignMapPosition: {x: 925, y: 661}
+  ConnectedLevels: []
   MissionXP: 100
   StartingAuthoritySeals: 30
   MaxAuthoritySeals: 30
@@ -90,5 +97,5 @@ MonoBehaviour:
   - Description: Lose if 2 enemies pass
     Type: 2
     Value: 2
-  SovereignHpNameKey: SovereignHP_Level1
-  SovereignMaxHp: 100
+  EnableCinematicCombatEnd: 1
+  CinematicDuration: 2

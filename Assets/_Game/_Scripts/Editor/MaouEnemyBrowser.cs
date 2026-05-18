@@ -863,6 +863,7 @@ namespace MaouSamaTD.Editor
             if (GUILayout.Button(new GUIContent(" Force Refresh", EditorGUIUtility.IconContent("d_Refresh").image), GUILayout.Width(130), GUILayout.Height(25)))
             {
                 AssetDatabase.Refresh();
+                RefreshData();
                 Repaint();
             }
             EditorGUILayout.EndHorizontal();

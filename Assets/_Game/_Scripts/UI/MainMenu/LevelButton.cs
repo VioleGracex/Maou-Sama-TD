@@ -37,7 +37,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Setup(LevelDisplayData data, Action<UnityEngine.Component> onClick = null)
         {
-            if (onClick != null) _onClick = (comp) => (onClick as Action<LevelButton>)?.Invoke(this); // This is a bit messy, let's fix it
+            if (onClick != null) _onClick = (levelData) => onClick(this);
             
             _displayData = data;
             var level = data.Level;

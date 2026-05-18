@@ -14,8 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
   useDefaultInspector: 0
   UniqueID: fc4b4d2b-8f5c-4a6e-9f93-d1f8e089977g
+  Category: 0
+  LevelIcon: {fileID: 0}
   LevelIndex: 3
   LevelName: Forest Road Ambush
+  SovereignHpNameKey: SovereignHP_Default
+  SovereignMaxHp: 100
   Description: The Drakmora road is dangerous. Defend the center at all costs!
   GracePeriod: 8
   LevelID: 1-3
@@ -24,6 +28,7 @@ MonoBehaviour:
     Amount: 1200
   - Type: 1
     Amount: 1000
+  StageLootConfig: []
   PremadeCohort: []
   IsCohortLocked: 0
   SupportAssistant: {fileID: 0}
@@ -38,6 +43,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fb5431989bc19e94194d518202dec6d9, type: 2}
   IsRitesLocked: 1
   MapData: {fileID: 11400000, guid: d92f88ece5bd3c44e847a460f6169a1a, type: 2}
+  CampaignMapPosition: {x: 1000, y: 420}
+  ConnectedLevels:
+  - {fileID: 11400000, guid: 1c26ad8bf22320340a30f14f9d7bcd1c, type: 2}
   MissionXP: 250
   StartingAuthoritySeals: 30
   MaxAuthoritySeals: 60
@@ -56,6 +64,8 @@ MonoBehaviour:
       SpawnPointIndex: 1
     DelayBeforeNextWave: 15
     WaveMessage: Bandits are ambushing us from the East and West!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 6098614b310370a469f6fff2791fc95d, type: 2}
       Count: 5
@@ -79,6 +89,8 @@ MonoBehaviour:
       SpawnPointIndex: 1
     DelayBeforeNextWave: 20
     WaveMessage: Fast Wolf Riders incoming from North and South!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
   - Groups:
     - EnemyType: {fileID: 11400000, guid: ccd2b0230709b24478ecb7de75ddb12b, type: 2}
       Count: 1
@@ -102,6 +114,8 @@ MonoBehaviour:
       SpawnPointIndex: 2
     DelayBeforeNextWave: 0
     WaveMessage: The Bandit Boss has arrived! Slay him!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
   HasTutorial: 0
   TutorialData: {fileID: 0}
   HasStory: 0
@@ -120,5 +134,5 @@ MonoBehaviour:
     AutoGrantInTutorial: 0
   WinConditions: []
   LoseConditions: []
-  SovereignHpNameKey: SovereignHP_Default
-  SovereignMaxHp: 100
+  EnableCinematicCombatEnd: 1
+  CinematicDuration: 2

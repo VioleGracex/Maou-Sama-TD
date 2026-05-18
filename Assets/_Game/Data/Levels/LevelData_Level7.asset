@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd8e99080aa85214c9d7d8ee3ade7292, type: 3}
+  m_Name: LevelData_Level7
+  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
+  useDefaultInspector: 0
+  UniqueID: 
+  Category: 0
+  LevelIcon: {fileID: 0}
+  LevelIndex: 7
+  LevelName: The Iron Foundry
+  SovereignHpNameKey: SovereignHP_Default
+  SovereignMaxHp: 100
+  Description: Secure weapon production. Industrial zone with magma furnaces, conveyor
+    belts.
+  GracePeriod: 5
+  LevelID: 1-7
+  WinRewards: []
+  StageLootConfig: []
+  PremadeCohort: []
+  IsCohortLocked: 1
+  SupportAssistant: {fileID: 0}
+  IsAssistantLocked: 1
+  MaleSovereignRites: []
+  FemaleSovereignRites: []
+  IsRitesLocked: 1
+  MapData: {fileID: 0}
+  CampaignMapPosition: {x: 1580, y: 520}
+  ConnectedLevels:
+  - {fileID: 11400000, guid: 17a11e9bc25f455428cb9e09aa3de6f5, type: 2}
+  MissionXP: 300
+  StartingAuthoritySeals: 10
+  MaxAuthoritySeals: 99
+  AuthoritySealsPerSecond: 1
+  Waves: []
+  HasTutorial: 0
+  TutorialData: {fileID: 0}
+  HasStory: 0
+  IntroStory: {fileID: 0}
+  OutroStory: {fileID: 0}
+  StarConditions: []
+  WinConditions: []
+  LoseConditions: []
+  EnableCinematicCombatEnd: 1
+  CinematicDuration: 2

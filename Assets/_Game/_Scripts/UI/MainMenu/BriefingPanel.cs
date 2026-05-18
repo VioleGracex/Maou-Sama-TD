@@ -21,6 +21,10 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private TextMeshProUGUI _rewardValueText;
         [SerializeField] private Button _engageButton;
         
+        [Header("Rewards Grid")]
+        [SerializeField] private Transform _rewardsContainer;
+        [SerializeField] private RewardItemUI _rewardPrefab;
+        
         [Header("Animation")]
         [SerializeField] private float _animDuration = 0.3f;
         [SerializeField] private Ease _animEase = Ease.OutBack;
@@ -48,13 +52,38 @@ namespace MaouSamaTD.UI.MainMenu
 
             if (_titleText != null) _titleText.text = level.LevelName;
             if (_descriptionText != null) _descriptionText.text = level.Description;
-            if (_rewardValueText != null) 
+            
+            // Populate Rewards dynamically
+            if (_rewardsContainer != null && _rewardPrefab != null)
             {
-                // Simple placeholder: display the first reward amount, or 0 if none.
-                // You can expand this later to instantiate a prefab per reward!
-                _rewardValueText.text = level.WinRewards != null && level.WinRewards.Count > 0 
-                    ? level.WinRewards[0].Amount.ToString() 
-                    : "0";
+                // Clear old rewards
+                foreach (Transform child in _rewardsContainer)
+                {
+                    Destroy(child.gameObject);
+                }
+
+                // Add Guaranteed Rewards
+                if (level.WinRewards != null)
+                {
+                    foreach (var reward in level.WinRewards)
+                    {
+                        RewardItemUI item = Instantiate(_rewardPrefab, _rewardsContainer);
+                        item.Setup(null, $"{reward.Amount} {reward.Type}");
+                    }
+                }
+
+                // Add Potential Loot Drops
+                if (level.StageLootConfig != null)
+                {
+                    foreach (var loot in level.StageLootConfig)
+                    {
+                        RewardItemUI item = Instantiate(_rewardPrefab, _rewardsContainer);
+                        string qty = loot.MinQuantity == loot.MaxQuantity 
+                            ? loot.MinQuantity.ToString() 
+                            : $"{loot.MinQuantity}-{loot.MaxQuantity}";
+                        item.Setup(null, $"{qty} {loot.ItemID} ({(loot.DropChance * 100f):0}%)");
+                    }
+                }
             }
         }
 

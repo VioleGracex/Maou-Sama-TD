@@ -1,0 +1,151 @@
+{
+    "boards": [
+        {
+            "id": "board-arc-1",
+            "name": "Arc 1: Awakening & Kingdom",
+            "elements": [
+                {
+                    "id": "node-1",
+                    "title": "Level 1: Awakening (Tutorial)",
+                    "content": "Wake up. Tina guides. Ignis defends. Fend off feral spirits and holy interlopers.",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": [
+                        "node-2"
+                    ]
+                },
+                {
+                    "id": "node-2",
+                    "title": "Level 2: Unsealing Lilith",
+                    "content": "Reach the sealed tower. Awaken Lilith to gain soul-siphoning mechanics.",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": [
+                        "node-3"
+                    ]
+                },
+                {
+                    "id": "node-3",
+                    "title": "Level 3: The Merchant Wagon",
+                    "content": "Defend a merchant wagon from bandits. Secure human merchants for the Kingdom.",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": [
+                        "node-4"
+                    ]
+                },
+                {
+                    "id": "node-4",
+                    "title": "Prosperity Phase",
+                    "content": "Return to kingdom. Rebuild resources, recruit vassals, explore dungeons for Rite Spells.",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": []
+                }
+            ]
+        },
+        {
+            "id": "board-arc-2",
+            "name": "Arc 2: The Ten Stars",
+            "elements": [
+                {
+                    "id": "node-10",
+                    "title": "The Guild War",
+                    "content": "The Adventurer Guild realizes the Maou is back and attacks.",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": [
+                        "node-11"
+                    ]
+                },
+                {
+                    "id": "node-11",
+                    "title": "Boss Rush: The Ten Stars",
+                    "content": "Fight through the 10 legendary heroes (Mercenary King, Phoenix User, Sword Saint, etc.)",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": []
+                }
+            ]
+        },
+        {
+            "id": "board-arc-3",
+            "name": "Arc 3 & 4 & 5: The True Hero",
+            "elements": [
+                {
+                    "id": "node-20",
+                    "title": "Arc 3: The Duel Interrupted",
+                    "content": "Fight the True Church Hero. The First Maou interrupts the battle.",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": [
+                        "node-21"
+                    ]
+                },
+                {
+                    "id": "node-21",
+                    "title": "Arc 4: Unwilling Alliance",
+                    "content": "Adventure alongside the Hero to fight the Inverse World.",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": [
+                        "node-22"
+                    ]
+                },
+                {
+                    "id": "node-22",
+                    "title": "Arc 5: The Final Duel",
+                    "content": "Gaia allows the final unrestricted fight against the True Hero to end the story.",
+                    "rect": {
+                        "serializedVersion": "2",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 0.0,
+                        "height": 0.0
+                    },
+                    "childrenIds": []
+                }
+            ]
+        }
+    ]
+}

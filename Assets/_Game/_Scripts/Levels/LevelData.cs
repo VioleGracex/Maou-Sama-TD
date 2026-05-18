@@ -4,9 +4,21 @@ using NaughtyAttributes; // For better list display if available, or just standa
 
 namespace MaouSamaTD.Levels
 {
+    public enum LevelCategory
+    {
+        MainStory,
+        ResourceDungeon,
+        RiteDungeon,
+        VassalDungeon
+    }
+
     [CreateAssetMenu(fileName = "NewLevelData", menuName = "MaouSamaTD/Level Data")]
     public class LevelData : MaouSamaTD.Core.GameDataSO
     {
+        [Header("Classification")]
+        public LevelCategory Category = LevelCategory.MainStory;
+        public Sprite LevelIcon;
+
         [Header("Identity")]
         [Tooltip("Unique integer ID for Addressables and easier logic (e.g., 1, 2, 3...)")]
         public int LevelIndex;
@@ -63,6 +75,13 @@ namespace MaouSamaTD.Levels
 
         [Header("Map Settings")]
         public MapData MapData;
+
+        [Header("Campaign Map Coordinates")]
+        [Tooltip("Pixel coordinates on the 2048x1143 Gehenna map. X: 0..2048, Y: 0..1143")]
+        public Vector2 CampaignMapPosition = new Vector2(1024f, 571f);
+
+        [Tooltip("Levels that this level directly connects to. The map will draw beautiful spline connections to these targets.")]
+        public List<LevelData> ConnectedLevels = new List<LevelData>();
 
         [Header("Progression Rewards")]
         [Tooltip("Base XP rewarded to every deployed unit upon winning the level.")]

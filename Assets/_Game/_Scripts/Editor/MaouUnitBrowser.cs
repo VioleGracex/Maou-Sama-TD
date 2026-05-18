@@ -1204,7 +1204,16 @@ namespace MaouSamaTD.Editor
 
                 // --- Promotion & Rank-Up Configuration ---
                 GUILayout.Space(15);
+                EditorGUILayout.BeginHorizontal();
                 GUILayout.Label("Promotion & Rank-Up Configuration", descTitleStyle);
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button(new GUIContent(" Force Refresh", EditorGUIUtility.IconContent("d_Refresh").image), GUILayout.Width(130), GUILayout.Height(25)))
+                {
+                    AssetDatabase.Refresh();
+                    RefreshData();
+                    Repaint();
+                }
+                EditorGUILayout.EndHorizontal();
                 GUILayout.Space(6);
 
                 ClassScalingData scalingData = null;

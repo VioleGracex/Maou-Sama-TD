@@ -13,18 +13,24 @@ MonoBehaviour:
   m_Name: LevelData_Level10
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: 66cd03fe-3d05-4f79-a1f5-3f8b4d81b2e2
   Category: 0
   LevelIcon: {fileID: 0}
   LevelIndex: 10
   LevelName: The Throne of Gehenna
   SovereignHpNameKey: SovereignHP_Default
   SovereignMaxHp: 100
-  Description: Defeat usurper's inner circle. Heart of the Sovereign Keep with huge
-    demonic throne.
-  GracePeriod: 5
+  Description: The Saintess of Light leads the ultimate Crusade in the throne room.
+    Reclaim your rightful seat!
+  GracePeriod: 8
   LevelID: 1-10
-  WinRewards: []
+  WinRewards:
+  - Type: 0
+    Amount: 3000
+  - Type: 1
+    Amount: 2300
+  - Type: 4
+    Amount: 100
   StageLootConfig: []
   PremadeCohort: []
   IsCohortLocked: 1
@@ -33,19 +39,69 @@ MonoBehaviour:
   MaleSovereignRites: []
   FemaleSovereignRites: []
   IsRitesLocked: 1
-  MapData: {fileID: 0}
-  CampaignMapPosition: {x: 1950, y: 580}
+  MapData: {fileID: 11400000, guid: 417cde742071095428ff7e53ab62d11d, type: 2}
+  CampaignMapPosition: {x: 1850, y: 530}
   ConnectedLevels: []
-  MissionXP: 300
-  StartingAuthoritySeals: 10
-  MaxAuthoritySeals: 99
-  AuthoritySealsPerSecond: 1
-  Waves: []
+  MissionXP: 700
+  StartingAuthoritySeals: 70
+  MaxAuthoritySeals: 150
+  AuthoritySealsPerSecond: 2
+  Waves:
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
+      Count: 20
+      SpawnInterval: 0.8
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: e0794d572780145479dfb13267b7c045, type: 2}
+      Count: 5
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 15
+    WaveMessage: Vanguard forces approaching!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 25341c9061e058b40abf648a48843b9b, type: 2}
+      Count: 11
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 9ce405bdab53a984c8ec1b11424746a6, type: 2}
+      Count: 7
+      SpawnInterval: 2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 20
+    WaveMessage: Flanking forces detected!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 479fb6620cf11e341b226f03c87e44b0, type: 2}
+      Count: 1
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 25341c9061e058b40abf648a48843b9b, type: 2}
+      Count: 8
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    - EnemyType: {fileID: 11400000, guid: 9ce405bdab53a984c8ec1b11424746a6, type: 2}
+      Count: 6
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 10
+    WaveMessage: The Enemy General has joined the battle!
+    PreWaveStory: {fileID: 11400000, guid: 5a7a58c4fae9c4b4dbbb6dee5d0267f6, type: 2}
+    PostWaveStory: {fileID: 0}
   HasTutorial: 0
   TutorialData: {fileID: 0}
-  HasStory: 0
-  IntroStory: {fileID: 0}
-  OutroStory: {fileID: 0}
+  HasStory: 1
+  IntroStory: {fileID: 11400000, guid: 4c865e58d23630540bf87497af148a1a, type: 2}
+  OutroStory: {fileID: 11400000, guid: 3a7895ec7167a6b4cba2269fa89321a6, type: 2}
   StarConditions: []
   WinConditions: []
   LoseConditions: []

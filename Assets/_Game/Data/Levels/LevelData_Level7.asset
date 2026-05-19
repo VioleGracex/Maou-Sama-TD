@@ -13,18 +13,22 @@ MonoBehaviour:
   m_Name: LevelData_Level7
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: cbb43aa2-62b4-475f-ab04-b660bc80f04a
   Category: 0
   LevelIcon: {fileID: 0}
   LevelIndex: 7
   LevelName: The Iron Foundry
   SovereignHpNameKey: SovereignHP_Default
   SovereignMaxHp: 100
-  Description: Secure weapon production. Industrial zone with magma furnaces, conveyor
-    belts.
-  GracePeriod: 5
+  Description: The Guild is trying to seize our molten resource foundries. Stop them
+    before they forge anti-demon siege engines!
+  GracePeriod: 8
   LevelID: 1-7
-  WinRewards: []
+  WinRewards:
+  - Type: 0
+    Amount: 2400
+  - Type: 1
+    Amount: 1850
   StageLootConfig: []
   PremadeCohort: []
   IsCohortLocked: 1
@@ -33,20 +37,70 @@ MonoBehaviour:
   MaleSovereignRites: []
   FemaleSovereignRites: []
   IsRitesLocked: 1
-  MapData: {fileID: 0}
-  CampaignMapPosition: {x: 1580, y: 520}
+  MapData: {fileID: 11400000, guid: d83c35bc3020df94f87fcceb32083961, type: 2}
+  CampaignMapPosition: {x: 1250, y: 560}
   ConnectedLevels:
   - {fileID: 11400000, guid: 17a11e9bc25f455428cb9e09aa3de6f5, type: 2}
-  MissionXP: 300
-  StartingAuthoritySeals: 10
-  MaxAuthoritySeals: 99
-  AuthoritySealsPerSecond: 1
-  Waves: []
+  MissionXP: 550
+  StartingAuthoritySeals: 55
+  MaxAuthoritySeals: 120
+  AuthoritySealsPerSecond: 2
+  Waves:
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
+      Count: 17
+      SpawnInterval: 0.8
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: e0794d572780145479dfb13267b7c045, type: 2}
+      Count: 5
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 15
+    WaveMessage: Vanguard forces approaching!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 25341c9061e058b40abf648a48843b9b, type: 2}
+      Count: 9
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 9ce405bdab53a984c8ec1b11424746a6, type: 2}
+      Count: 6
+      SpawnInterval: 2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 20
+    WaveMessage: Flanking forces detected!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: ccd2b0230709b24478ecb7de75ddb12b, type: 2}
+      Count: 1
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 25341c9061e058b40abf648a48843b9b, type: 2}
+      Count: 8
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    - EnemyType: {fileID: 11400000, guid: 9ce405bdab53a984c8ec1b11424746a6, type: 2}
+      Count: 6
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 10
+    WaveMessage: The Enemy General has joined the battle!
+    PreWaveStory: {fileID: 11400000, guid: a6d21dcf700d71b498c4ec867e7138df, type: 2}
+    PostWaveStory: {fileID: 0}
   HasTutorial: 0
   TutorialData: {fileID: 0}
-  HasStory: 0
-  IntroStory: {fileID: 0}
-  OutroStory: {fileID: 0}
+  HasStory: 1
+  IntroStory: {fileID: 11400000, guid: c54cc5dcb67cf7a4ca63f80068ca0392, type: 2}
+  OutroStory: {fileID: 11400000, guid: 4680262a8e2715e45bfde8df9532c8ef, type: 2}
   StarConditions: []
   WinConditions: []
   LoseConditions: []

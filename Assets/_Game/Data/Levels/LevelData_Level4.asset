@@ -13,18 +13,21 @@ MonoBehaviour:
   m_Name: LevelData_Level4
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: fbee3442-c051-4346-8b01-e3ec1a007a3e
   Category: 0
   LevelIcon: {fileID: 0}
   LevelIndex: 4
   LevelName: The Black Walls
   SovereignHpNameKey: SovereignHP_Default
   SovereignMaxHp: 100
-  Description: Break through opportunistic siege camps and enter the capital. Outer
-    siege perimeter surrounding the Demon Capital.
-  GracePeriod: 5
+  Description: Break through opportunistic siege camps and enter the capital.
+  GracePeriod: 8
   LevelID: 1-4
-  WinRewards: []
+  WinRewards:
+  - Type: 0
+    Amount: 1800
+  - Type: 1
+    Amount: 1400
   StageLootConfig: []
   PremadeCohort: []
   IsCohortLocked: 1
@@ -33,20 +36,70 @@ MonoBehaviour:
   MaleSovereignRites: []
   FemaleSovereignRites: []
   IsRitesLocked: 1
-  MapData: {fileID: 0}
-  CampaignMapPosition: {x: 1150, y: 450}
+  MapData: {fileID: 11400000, guid: a6a378b73dbf1414db88aa314ae437a9, type: 2}
+  CampaignMapPosition: {x: 650, y: 480}
   ConnectedLevels:
   - {fileID: 11400000, guid: fdd6f9b681771a540983b7b3131aecef, type: 2}
-  MissionXP: 300
-  StartingAuthoritySeals: 10
-  MaxAuthoritySeals: 99
-  AuthoritySealsPerSecond: 1
-  Waves: []
+  MissionXP: 400
+  StartingAuthoritySeals: 40
+  MaxAuthoritySeals: 90
+  AuthoritySealsPerSecond: 2
+  Waves:
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 10
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 6
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 15
+    WaveMessage: Vanguard forces approaching!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 6098614b310370a469f6fff2791fc95d, type: 2}
+      Count: 8
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 2
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 8
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 20
+    WaveMessage: Flanking forces detected!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: ccd2b0230709b24478ecb7de75ddb12b, type: 2}
+      Count: 1
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: a62d9b8ecb35fea49b46e270178df719, type: 2}
+      Count: 10
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 6098614b310370a469f6fff2791fc95d, type: 2}
+      Count: 5
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 10
+    WaveMessage: The Enemy General has joined the battle!
+    PreWaveStory: {fileID: 11400000, guid: 0dad78092215a304f882253926545afc, type: 2}
+    PostWaveStory: {fileID: 0}
   HasTutorial: 0
   TutorialData: {fileID: 0}
-  HasStory: 0
-  IntroStory: {fileID: 0}
-  OutroStory: {fileID: 0}
+  HasStory: 1
+  IntroStory: {fileID: 11400000, guid: 7bc75a0e5b557194d8131167a1df9fc3, type: 2}
+  OutroStory: {fileID: 11400000, guid: 518fc3fc0dd474143b889529576ca702, type: 2}
   StarConditions: []
   WinConditions: []
   LoseConditions: []

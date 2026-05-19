@@ -13,18 +13,22 @@ MonoBehaviour:
   m_Name: LevelData_Level8
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: 7637edfc-aeea-4cdb-bb7e-792385ada3ff
   Category: 0
   LevelIcon: {fileID: 0}
   LevelIndex: 8
   LevelName: The Whispering Vaults
   SovereignHpNameKey: SovereignHP_Default
   SovereignMaxHp: 100
-  Description: Secure capital's treasury and ancient archives. Underground complex
-    with long corridors.
-  GracePeriod: 5
+  Description: Shadow assassins have entered the deep treasury vaults. Hunt them
+    in the dark labyrinth.
+  GracePeriod: 8
   LevelID: 1-8
-  WinRewards: []
+  WinRewards:
+  - Type: 0
+    Amount: 2600
+  - Type: 1
+    Amount: 2000
   StageLootConfig: []
   PremadeCohort: []
   IsCohortLocked: 1
@@ -33,20 +37,70 @@ MonoBehaviour:
   MaleSovereignRites: []
   FemaleSovereignRites: []
   IsRitesLocked: 1
-  MapData: {fileID: 0}
-  CampaignMapPosition: {x: 1700, y: 430}
+  MapData: {fileID: 11400000, guid: 10b5b7f4fa7516a4983be976f67e856b, type: 2}
+  CampaignMapPosition: {x: 1450, y: 510}
   ConnectedLevels:
   - {fileID: 11400000, guid: ca9823aecddf9814890d4d9640f357ff, type: 2}
-  MissionXP: 300
-  StartingAuthoritySeals: 10
-  MaxAuthoritySeals: 99
-  AuthoritySealsPerSecond: 1
-  Waves: []
+  MissionXP: 600
+  StartingAuthoritySeals: 60
+  MaxAuthoritySeals: 130
+  AuthoritySealsPerSecond: 2
+  Waves:
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
+      Count: 18
+      SpawnInterval: 0.8
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: e0794d572780145479dfb13267b7c045, type: 2}
+      Count: 5
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 15
+    WaveMessage: Vanguard forces approaching!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 25341c9061e058b40abf648a48843b9b, type: 2}
+      Count: 10
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 9ce405bdab53a984c8ec1b11424746a6, type: 2}
+      Count: 6
+      SpawnInterval: 2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 20
+    WaveMessage: Flanking forces detected!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 479fb6620cf11e341b226f03c87e44b0, type: 2}
+      Count: 1
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 25341c9061e058b40abf648a48843b9b, type: 2}
+      Count: 8
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    - EnemyType: {fileID: 11400000, guid: 9ce405bdab53a984c8ec1b11424746a6, type: 2}
+      Count: 6
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 10
+    WaveMessage: The Enemy General has joined the battle!
+    PreWaveStory: {fileID: 11400000, guid: 52cea9ec0aa2d174caf33c2e33a9fa91, type: 2}
+    PostWaveStory: {fileID: 0}
   HasTutorial: 0
   TutorialData: {fileID: 0}
-  HasStory: 0
-  IntroStory: {fileID: 0}
-  OutroStory: {fileID: 0}
+  HasStory: 1
+  IntroStory: {fileID: 11400000, guid: 7a93945d9dda3694c86825465b6bdbf9, type: 2}
+  OutroStory: {fileID: 11400000, guid: efe890de7c239ef4db1cb62667ca2614, type: 2}
   StarConditions: []
   WinConditions: []
   LoseConditions: []

@@ -13,18 +13,22 @@ MonoBehaviour:
   m_Name: LevelData_Level6
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.LevelData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: c8cb2edb-6df4-445f-b5fa-d2f0183a7bce
   Category: 0
   LevelIcon: {fileID: 0}
   LevelIndex: 6
   LevelName: The Obsidian Bastion
   SovereignHpNameKey: SovereignHP_Default
   SovereignMaxHp: 100
-  Description: Reclaim the core military structure. Inner fortification with high
-    walls, heavy barricades.
-  GracePeriod: 5
+  Description: Hold the fortress walls of the outer bastion against the Guild's Heavy
+    Vanguard.
+  GracePeriod: 8
   LevelID: 1-6
-  WinRewards: []
+  WinRewards:
+  - Type: 0
+    Amount: 2200
+  - Type: 1
+    Amount: 1700
   StageLootConfig: []
   PremadeCohort: []
   IsCohortLocked: 1
@@ -33,20 +37,70 @@ MonoBehaviour:
   MaleSovereignRites: []
   FemaleSovereignRites: []
   IsRitesLocked: 1
-  MapData: {fileID: 0}
-  CampaignMapPosition: {x: 1450, y: 600}
+  MapData: {fileID: 11400000, guid: 9d0b7f768a2ea154087356723d606d81, type: 2}
+  CampaignMapPosition: {x: 1050, y: 490}
   ConnectedLevels:
   - {fileID: 11400000, guid: ec027156bd7f6994c8f1827c66e1f3d9, type: 2}
-  MissionXP: 300
-  StartingAuthoritySeals: 10
-  MaxAuthoritySeals: 99
-  AuthoritySealsPerSecond: 1
-  Waves: []
+  MissionXP: 500
+  StartingAuthoritySeals: 50
+  MaxAuthoritySeals: 110
+  AuthoritySealsPerSecond: 2
+  Waves:
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
+      Count: 16
+      SpawnInterval: 0.8
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: e0794d572780145479dfb13267b7c045, type: 2}
+      Count: 5
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 15
+    WaveMessage: Vanguard forces approaching!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 25341c9061e058b40abf648a48843b9b, type: 2}
+      Count: 9
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 9ce405bdab53a984c8ec1b11424746a6, type: 2}
+      Count: 6
+      SpawnInterval: 2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    DelayBeforeNextWave: 20
+    WaveMessage: Flanking forces detected!
+    PreWaveStory: {fileID: 0}
+    PostWaveStory: {fileID: 0}
+  - Groups:
+    - EnemyType: {fileID: 11400000, guid: 479fb6620cf11e341b226f03c87e44b0, type: 2}
+      Count: 1
+      SpawnInterval: 1
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    - EnemyType: {fileID: 11400000, guid: 25341c9061e058b40abf648a48843b9b, type: 2}
+      Count: 8
+      SpawnInterval: 1.2
+      InitialDelay: 0
+      SpawnPointIndex: 1
+    - EnemyType: {fileID: 11400000, guid: 9ce405bdab53a984c8ec1b11424746a6, type: 2}
+      Count: 6
+      SpawnInterval: 1.5
+      InitialDelay: 0
+      SpawnPointIndex: 0
+    DelayBeforeNextWave: 10
+    WaveMessage: The Enemy General has joined the battle!
+    PreWaveStory: {fileID: 11400000, guid: ad7c54ca204d48a4580709f9c07dd323, type: 2}
+    PostWaveStory: {fileID: 0}
   HasTutorial: 0
   TutorialData: {fileID: 0}
-  HasStory: 0
-  IntroStory: {fileID: 0}
-  OutroStory: {fileID: 0}
+  HasStory: 1
+  IntroStory: {fileID: 11400000, guid: 2a0302d3ca4ad4a42ba4f5ab6b2228a9, type: 2}
+  OutroStory: {fileID: 11400000, guid: e4d3030ff26e6fb4aa88824fb5ce1918, type: 2}
   StarConditions: []
   WinConditions: []
   LoseConditions: []

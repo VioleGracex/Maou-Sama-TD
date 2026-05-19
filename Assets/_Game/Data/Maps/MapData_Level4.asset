@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MapData_Level4
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.MapData
   useDefaultInspector: 0
-  UniqueID: 
+  UniqueID: e267b38f-51c0-4680-a350-521f565a2ad8
   MapSeed: 10004
   Width: 15
   Height: 15

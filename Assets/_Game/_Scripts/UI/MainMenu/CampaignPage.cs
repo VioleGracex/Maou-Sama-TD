@@ -4,6 +4,8 @@ using MaouSamaTD.Levels;
 using MaouSamaTD.Managers;
 using MaouSamaTD.UI.Common;
 using Zenject;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace MaouSamaTD.UI.MainMenu
 {
@@ -19,9 +21,16 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("References")]
         [SerializeField] private Transform _levelContainer;
         [SerializeField] private LevelButton _levelButtonPrefab;
-        [SerializeField] private List<LevelData> _allLevels;
+        [System.NonSerialized] private List<LevelData> _allLevels = new List<LevelData>();
         [SerializeField] private BriefingPanel _briefingPanel;
         [SerializeField] private Sprite _mapSprite;
+
+        // Categorized lists
+        private List<LevelData> _mainStoryLevels = new List<LevelData>();
+        private List<LevelData> _resourceDungeons = new List<LevelData>();
+        private List<LevelData> _riteDungeons = new List<LevelData>();
+        private List<LevelData> _vassalDungeons = new List<LevelData>();
+        private bool _isLevelsLoaded = false;
         
         [Header("Tabs")]
         [SerializeField] private UnityEngine.UI.Button _mainStoryTabButton;
@@ -38,8 +47,39 @@ namespace MaouSamaTD.UI.MainMenu
         private List<LevelButton> _spawnedButtons = new List<LevelButton>();
         private Canvas _canvas;
 
+        // Left sidebar procedurally-created fields
+        private GameObject _sidebarRoot;
+        private Transform _sidebarContentContainer;
+
+        // Dynamic Zoom buttons
+        private UnityEngine.UI.Button _zoomInButton;
+        private UnityEngine.UI.Button _zoomOutButton;
+
         public Transform LevelContainer => _levelContainer;
-        public List<LevelData> AllLevels => _allLevels;
+        public List<LevelData> AllLevels
+        {
+            get
+            {
+                if (_allLevels == null || _allLevels.Count == 0)
+                {
+#if UNITY_EDITOR
+                    // Fallback load in editor
+                    var dbGuid = UnityEditor.AssetDatabase.FindAssets("t:LevelDatabase");
+                    if (dbGuid.Length > 0)
+                    {
+                        var path = UnityEditor.AssetDatabase.GUIDToAssetPath(dbGuid[0]);
+                        var db = UnityEditor.AssetDatabase.LoadAssetAtPath<MaouSamaTD.Data.LevelDatabase>(path);
+                        if (db != null)
+                        {
+                            _allLevels = new List<LevelData>(db.AllLevels);
+                            SeparateLevelsByCategory();
+                        }
+                    }
+#endif
+                }
+                return _allLevels;
+            }
+        }
         public List<LevelButton> SpawnedButtons => _spawnedButtons;
 
         private void OnEnable()
@@ -60,6 +100,11 @@ namespace MaouSamaTD.UI.MainMenu
             if (_specialDungeonsTabButton != null) _specialDungeonsTabButton.onClick.AddListener(() => SelectTab(LevelCategory.RiteDungeon));
 
             UpdateTabVisuals();
+            EnsureZoomButtonsExist();
+            EnsureLeftSidebarExists();
+
+            if (_zoomInButton != null) _zoomInButton.onClick.AddListener(OnZoomInClicked);
+            if (_zoomOutButton != null) _zoomOutButton.onClick.AddListener(OnZoomOutClicked);
         }
 
         private void Start()
@@ -94,16 +139,9 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Preheat()
         {
-            // Ensure levels are loaded into memory
-            if (MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase != null)
-            {
-                _allLevels = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase.AllLevels;
-                Debug.Log($"[CampaignPage] Preheating: Loaded {_allLevels.Count} levels from global database.");
-            }
-            else if (_allLevels == null || _allLevels.Count == 0)
-            {
-                Debug.LogWarning("[CampaignPage] Preheating: No levels assigned and LevelDatabase not found!");
-            }
+            EnsureLevelsLoaded(() => {
+                Debug.Log($"[CampaignPage] Preheated: {_allLevels?.Count ?? 0} levels loaded.");
+            });
             
             // Validate save manager status
             if (_saveManager != null)
@@ -121,26 +159,106 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
-        public void Refresh()
+        private void EnsureLevelsLoaded(System.Action onComplete)
         {
-            if (MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase != null)
+            if (_isLevelsLoaded)
             {
-                _allLevels = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase.AllLevels;
-            }
-            else
-            {
-#if UNITY_EDITOR
-                // In Edit Mode, load from AssetDatabase to support full visual previewing and coordinate updates
-                var dbGuid = UnityEditor.AssetDatabase.FindAssets("t:LevelDatabase");
-                if (dbGuid.Length > 0)
-                {
-                    var path = UnityEditor.AssetDatabase.GUIDToAssetPath(dbGuid[0]);
-                    var db = UnityEditor.AssetDatabase.LoadAssetAtPath<MaouSamaTD.Data.LevelDatabase>(path);
-                    if (db != null) _allLevels = db.AllLevels;
-                }
-#endif
+                onComplete?.Invoke();
+                return;
             }
 
+            if (MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase != null &&
+                MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase.AllLevels != null &&
+                MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase.AllLevels.Count > 0)
+            {
+                _allLevels = new List<LevelData>(MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase.AllLevels);
+                SeparateLevelsByCategory();
+                _isLevelsLoaded = true;
+                onComplete?.Invoke();
+                return;
+            }
+
+            Addressables.LoadAssetsAsync<LevelData>("LevelData", null).Completed += handle =>
+            {
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    _allLevels = new List<LevelData>(handle.Result);
+                    _allLevels.Sort((a, b) => a.LevelIndex.CompareTo(b.LevelIndex));
+                    SeparateLevelsByCategory();
+                    _isLevelsLoaded = true;
+                    onComplete?.Invoke();
+                }
+                else
+                {
+#if UNITY_EDITOR
+                    // Fallback to Editor loading
+                    var dbGuid = UnityEditor.AssetDatabase.FindAssets("t:LevelDatabase");
+                    if (dbGuid.Length > 0)
+                    {
+                        var path = UnityEditor.AssetDatabase.GUIDToAssetPath(dbGuid[0]);
+                        var db = UnityEditor.AssetDatabase.LoadAssetAtPath<MaouSamaTD.Data.LevelDatabase>(path);
+                        if (db != null)
+                        {
+                            _allLevels = new List<LevelData>(db.AllLevels);
+                            SeparateLevelsByCategory();
+                            _isLevelsLoaded = true;
+                            onComplete?.Invoke();
+                            return;
+                        }
+                    }
+#endif
+                    Debug.LogError("[CampaignPage] Failed to load levels from Addressables!");
+                    onComplete?.Invoke();
+                }
+            };
+        }
+
+        private void SeparateLevelsByCategory()
+        {
+            _mainStoryLevels.Clear();
+            _resourceDungeons.Clear();
+            _riteDungeons.Clear();
+            _vassalDungeons.Clear();
+
+            if (_allLevels == null) return;
+
+            var seenStoryIds = new HashSet<string>();
+            foreach (var level in _allLevels)
+            {
+                if (level == null) continue;
+
+                switch (level.Category)
+                {
+                    case LevelCategory.MainStory:
+                        // "dont allow same level to be repeated twice for story type levels"
+                        if (!seenStoryIds.Contains(level.LevelID))
+                        {
+                            seenStoryIds.Add(level.LevelID);
+                            _mainStoryLevels.Add(level);
+                        }
+                        break;
+                    case LevelCategory.ResourceDungeon:
+                        _resourceDungeons.Add(level);
+                        break;
+                    case LevelCategory.RiteDungeon:
+                        _riteDungeons.Add(level);
+                        break;
+                    case LevelCategory.VassalDungeon:
+                        _vassalDungeons.Add(level);
+                        break;
+                }
+            }
+        }
+
+        public void Refresh()
+        {
+            EnsureLevelsLoaded(() => {
+                DoRefresh();
+            });
+        }
+
+        private void DoRefresh()
+        {
             if (_levelContainer == null || _levelButtonPrefab == null || _allLevels == null || _allLevels.Count == 0)
             {
                 Debug.LogWarning("[CampaignPage] Missing references or levels! Cannot spawn level buttons.");
@@ -172,26 +290,32 @@ namespace MaouSamaTD.UI.MainMenu
             Debug.Log($"[CampaignPage] Starting Refresh. Total levels: {_allLevels.Count}");
 
             List<LevelDisplayData> displayDataList = new List<LevelDisplayData>();
-            for (int i = 0; i < _allLevels.Count; i++)
+            
+            List<LevelData> targetList = null;
+            if (_currentTab == LevelCategory.MainStory) targetList = _mainStoryLevels;
+            else if (_currentTab == LevelCategory.ResourceDungeon) targetList = _resourceDungeons;
+            else if (_currentTab == LevelCategory.RiteDungeon)
             {
-                LevelData level = _allLevels[i];
-                if (level == null) continue;
+                // Rite & Vassal dungeons combined under special dungeons tab
+                targetList = new List<LevelData>(_riteDungeons);
+                targetList.AddRange(_vassalDungeons);
+            }
 
-                // Tab Filter
-                bool shouldDisplay = false;
-                if (_currentTab == LevelCategory.MainStory && level.Category == LevelCategory.MainStory) shouldDisplay = true;
-                else if (_currentTab == LevelCategory.ResourceDungeon && level.Category == LevelCategory.ResourceDungeon) shouldDisplay = true;
-                else if (_currentTab == LevelCategory.RiteDungeon && (level.Category == LevelCategory.RiteDungeon || level.Category == LevelCategory.VassalDungeon)) shouldDisplay = true;
-
-                if (!shouldDisplay) continue;
-
-                displayDataList.Add(new LevelDisplayData
+            if (targetList != null)
+            {
+                for (int i = 0; i < targetList.Count; i++)
                 {
-                    Level = level,
-                    Index = i,
-                    IsLocked = !IsLevelUnlocked(level, i),
-                    StarCount = GetLevelStars(level)
-                });
+                    LevelData level = targetList[i];
+                    if (level == null) continue;
+
+                    displayDataList.Add(new LevelDisplayData
+                    {
+                        Level = level,
+                        Index = i,
+                        IsLocked = !IsLevelUnlocked(level, i, targetList),
+                        StarCount = GetLevelStars(level)
+                    });
+                }
             }
 
             // Manual instantiation for Node Map layout
@@ -448,7 +572,7 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
-        private void CenterScrollOnPosition(Vector2 position)
+        public void CenterScrollOnPosition(Vector2 position)
         {
             if (_levelContainer != null)
             {
@@ -494,12 +618,12 @@ namespace MaouSamaTD.UI.MainMenu
             scrollRect.content.anchoredPosition = targetContentPos;
         }
 
-        private bool IsLevelUnlocked(LevelData level, int index)
+        private bool IsLevelUnlocked(LevelData level, int index, List<LevelData> list)
         {
             if (index == 0) return true; // First level always unlocked
             
-            // Check if previous level is completed
-            var prevLevel = _allLevels[index - 1];
+            if (list == null || index < 0 || index >= list.Count) return false;
+            var prevLevel = list[index - 1];
             if (prevLevel == null) return false;
             
             if (_saveManager == null) return false; // Fallback if SaveManager is missing
@@ -564,6 +688,353 @@ namespace MaouSamaTD.UI.MainMenu
             else
             {
                 Debug.LogError("[CampaignPage] Cohort Manager UI is not assigned in CampaignPage!");
+            }
+        }
+
+        private void OnZoomInClicked()
+        {
+            if (_levelContainer != null)
+            {
+                var zoomPan = _levelContainer.GetComponent<CampaignMapZoomPan>();
+                if (zoomPan != null) zoomPan.ZoomIn();
+            }
+        }
+
+        private void OnZoomOutClicked()
+        {
+            if (_levelContainer != null)
+            {
+                var zoomPan = _levelContainer.GetComponent<CampaignMapZoomPan>();
+                if (zoomPan != null) zoomPan.ZoomOut();
+            }
+        }
+
+        private void EnsureZoomButtonsExist()
+        {
+            if (_zoomInButton != null && _zoomOutButton != null) return;
+
+            // Try to find them first
+            _zoomInButton = transform.Find("ZoomInButton")?.GetComponent<UnityEngine.UI.Button>();
+            _zoomOutButton = transform.Find("ZoomOutButton")?.GetComponent<UnityEngine.UI.Button>();
+
+            if (_zoomInButton != null && _zoomOutButton != null) return;
+
+            // Create Zoom Container
+            GameObject zoomContainer = new GameObject("ZoomContainer", typeof(RectTransform));
+            zoomContainer.transform.SetParent(transform, false);
+
+            var containerRect = zoomContainer.GetComponent<RectTransform>();
+            containerRect.sizeDelta = new Vector2(60f, 130f);
+            containerRect.anchorMin = new Vector2(1f, 0f);
+            containerRect.anchorMax = new Vector2(1f, 0f);
+            containerRect.pivot = new Vector2(1f, 0f);
+            containerRect.anchoredPosition = new Vector2(-20f, 20f); // Bottom-right corner
+
+            // Create Zoom In
+            if (_zoomInButton == null)
+            {
+                GameObject zoomInGo = new GameObject("ZoomInButton", typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+                zoomInGo.transform.SetParent(zoomContainer.transform, false);
+                _zoomInButton = zoomInGo.GetComponent<UnityEngine.UI.Button>();
+
+                GameObject txtGo = new GameObject("Text", typeof(TMPro.TextMeshProUGUI));
+                txtGo.transform.SetParent(zoomInGo.transform, false);
+                var tmp = txtGo.GetComponent<TMPro.TextMeshProUGUI>();
+                tmp.text = "+";
+                tmp.fontSize = 28;
+                tmp.alignment = TMPro.TextAlignmentOptions.Center;
+                tmp.color = Color.white;
+
+                var rect = zoomInGo.GetComponent<RectTransform>();
+                rect.sizeDelta = new Vector2(50f, 50f);
+                rect.anchorMin = new Vector2(0.5f, 1f);
+                rect.anchorMax = new Vector2(0.5f, 1f);
+                rect.pivot = new Vector2(0.5f, 1f);
+                rect.anchoredPosition = new Vector2(0f, 0f);
+
+                var txtRect = txtGo.GetComponent<RectTransform>();
+                txtRect.anchorMin = Vector2.zero;
+                txtRect.anchorMax = Vector2.one;
+                txtRect.sizeDelta = Vector2.zero;
+
+                var img = zoomInGo.GetComponent<UnityEngine.UI.Image>();
+                img.color = new Color(0.15f, 0.15f, 0.17f, 0.8f);
+            }
+
+            // Create Zoom Out
+            if (_zoomOutButton == null)
+            {
+                GameObject zoomOutGo = new GameObject("ZoomOutButton", typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+                zoomOutGo.transform.SetParent(zoomContainer.transform, false);
+                _zoomOutButton = zoomOutGo.GetComponent<UnityEngine.UI.Button>();
+
+                GameObject txtGo = new GameObject("Text", typeof(TMPro.TextMeshProUGUI));
+                txtGo.transform.SetParent(zoomOutGo.transform, false);
+                var tmp = txtGo.GetComponent<TMPro.TextMeshProUGUI>();
+                tmp.text = "-";
+                tmp.fontSize = 28;
+                tmp.alignment = TMPro.TextAlignmentOptions.Center;
+                tmp.color = Color.white;
+
+                var rect = zoomOutGo.GetComponent<RectTransform>();
+                rect.sizeDelta = new Vector2(50f, 50f);
+                rect.anchorMin = new Vector2(0.5f, 0f);
+                rect.anchorMax = new Vector2(0.5f, 0f);
+                rect.pivot = new Vector2(0.5f, 0f);
+                rect.anchoredPosition = new Vector2(0f, 0f);
+
+                var txtRect = txtGo.GetComponent<RectTransform>();
+                txtRect.anchorMin = Vector2.zero;
+                txtRect.anchorMax = Vector2.one;
+                txtRect.sizeDelta = Vector2.zero;
+
+                var img = zoomOutGo.GetComponent<UnityEngine.UI.Image>();
+                img.color = new Color(0.15f, 0.15f, 0.17f, 0.8f);
+            }
+        }
+
+        private void EnsureLeftSidebarExists()
+        {
+            if (_sidebarRoot != null) return;
+
+            // Check if there is already a LeftSidebar
+            var existing = transform.Find("LeftSidebar");
+            if (existing != null)
+            {
+                _sidebarRoot = existing.gameObject;
+                _sidebarContentContainer = _sidebarRoot.transform.Find("ScrollView/Viewport/Content");
+                return;
+            }
+
+            // Create LeftSidebar panel
+            _sidebarRoot = new GameObject("LeftSidebar", typeof(UnityEngine.UI.Image));
+            _sidebarRoot.transform.SetParent(transform, false);
+            _sidebarRoot.transform.SetAsLastSibling(); // Draw in front
+
+            var sidebarRect = _sidebarRoot.GetComponent<RectTransform>();
+            sidebarRect.sizeDelta = new Vector2(340f, 0f);
+            sidebarRect.anchorMin = new Vector2(0f, 0f);
+            sidebarRect.anchorMax = new Vector2(0f, 1f);
+            sidebarRect.pivot = new Vector2(0f, 0.5f);
+            sidebarRect.anchoredPosition = new Vector2(0f, 0f);
+
+            var sidebarImg = _sidebarRoot.GetComponent<UnityEngine.UI.Image>();
+            sidebarImg.color = new Color(0.1f, 0.1f, 0.12f, 0.95f); // Rich dark glassmorphism
+
+            // Add thin elegant border on the right
+            GameObject borderGo = new GameObject("RightBorder", typeof(UnityEngine.UI.Image));
+            borderGo.transform.SetParent(_sidebarRoot.transform, false);
+            var borderRect = borderGo.GetComponent<RectTransform>();
+            borderRect.sizeDelta = new Vector2(2f, 0f);
+            borderRect.anchorMin = new Vector2(1f, 0f);
+            borderRect.anchorMax = new Vector2(1f, 1f);
+            borderRect.pivot = new Vector2(1f, 0.5f);
+            borderRect.anchoredPosition = Vector2.zero;
+            borderGo.GetComponent<UnityEngine.UI.Image>().color = new Color(0.9f, 0.45f, 0.1f, 0.4f); // Warm glowing gold line
+
+            // Add Header Title
+            GameObject titleGo = new GameObject("SidebarTitle", typeof(TMPro.TextMeshProUGUI));
+            titleGo.transform.SetParent(_sidebarRoot.transform, false);
+            var titleTmp = titleGo.GetComponent<TMPro.TextMeshProUGUI>();
+            titleTmp.text = "DEMONIC CAMPAIGNS";
+            titleTmp.fontSize = 20;
+            titleTmp.alignment = TMPro.TextAlignmentOptions.Center;
+            titleTmp.fontStyle = TMPro.FontStyles.Bold;
+            titleTmp.color = new Color(0.9f, 0.45f, 0.1f, 1f); // Warm gold
+
+            var titleRect = titleGo.GetComponent<RectTransform>();
+            titleRect.sizeDelta = new Vector2(320f, 40f);
+            titleRect.anchorMin = new Vector2(0.5f, 1f);
+            titleRect.anchorMax = new Vector2(0.5f, 1f);
+            titleRect.pivot = new Vector2(0.5f, 1f);
+            titleRect.anchoredPosition = new Vector2(0f, -20f);
+
+            // Create Scroll View for items
+            GameObject scrollViewGo = new GameObject("ScrollView", typeof(UnityEngine.UI.ScrollRect));
+            scrollViewGo.transform.SetParent(_sidebarRoot.transform, false);
+            var scrollRect = scrollViewGo.GetComponent<UnityEngine.UI.ScrollRect>();
+
+            var scrollRectTransform = scrollViewGo.GetComponent<RectTransform>();
+            scrollRectTransform.anchorMin = new Vector2(0f, 0f);
+            scrollRectTransform.anchorMax = new Vector2(1f, 1f);
+            scrollRectTransform.pivot = new Vector2(0.5f, 0.5f);
+            scrollRectTransform.offsetMin = new Vector2(10f, 10f);
+            scrollRectTransform.offsetMax = new Vector2(-10f, -70f); // Leave room for title at top
+
+            // Viewport
+            GameObject viewportGo = new GameObject("Viewport", typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Mask));
+            viewportGo.transform.SetParent(scrollViewGo.transform, false);
+            viewportGo.GetComponent<UnityEngine.UI.Mask>().showMaskGraphic = false;
+            viewportGo.GetComponent<UnityEngine.UI.Image>().color = Color.clear;
+
+            var viewportRect = viewportGo.GetComponent<RectTransform>();
+            viewportRect.anchorMin = Vector2.zero;
+            viewportRect.anchorMax = Vector2.one;
+            viewportRect.sizeDelta = Vector2.zero;
+
+            // Content
+            GameObject contentGo = new GameObject("Content", typeof(RectTransform), typeof(UnityEngine.UI.VerticalLayoutGroup), typeof(UnityEngine.UI.ContentSizeFitter));
+            contentGo.transform.SetParent(viewportGo.transform, false);
+            _sidebarContentContainer = contentGo.transform;
+
+            var contentRect = contentGo.GetComponent<RectTransform>();
+            contentRect.anchorMin = new Vector2(0f, 1f);
+            contentRect.anchorMax = new Vector2(1f, 1f);
+            contentRect.pivot = new Vector2(0.5f, 1f);
+            contentRect.sizeDelta = new Vector2(0f, 0f);
+
+            var layout = contentGo.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
+            layout.spacing = 8f;
+            layout.childControlHeight = false;
+            layout.childControlWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.childForceExpandWidth = true;
+            layout.padding = new RectOffset(5, 5, 5, 5);
+
+            var fitter = contentGo.GetComponent<UnityEngine.UI.ContentSizeFitter>();
+            fitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
+
+            scrollRect.viewport = viewportRect;
+            scrollRect.content = contentRect;
+            scrollRect.horizontal = false;
+            scrollRect.vertical = true;
+        }
+
+        private void RefreshLeftSidebar()
+        {
+            EnsureLeftSidebarExists();
+
+            // Clear old sidebar items
+            foreach (Transform child in _sidebarContentContainer)
+            {
+                if (Application.isPlaying)
+                {
+                    Destroy(child.gameObject);
+                }
+                else
+                {
+                    DestroyImmediate(child.gameObject);
+                }
+            }
+
+            if (_allLevels == null) return;
+
+            // Populate all levels in the current category
+            List<LevelData> targetList = null;
+            if (_currentTab == LevelCategory.MainStory) targetList = _mainStoryLevels;
+            else if (_currentTab == LevelCategory.ResourceDungeon) targetList = _resourceDungeons;
+            else if (_currentTab == LevelCategory.RiteDungeon)
+            {
+                targetList = new List<LevelData>(_riteDungeons);
+                targetList.AddRange(_vassalDungeons);
+            }
+
+            if (targetList == null) return;
+
+            for (int i = 0; i < targetList.Count; i++)
+            {
+                var level = targetList[i];
+                if (level == null) continue;
+
+                // Check placement
+                bool isPlaced = level.CampaignMapPosition != Vector2.zero && level.CampaignMapPosition != new Vector2(1024f, 571f);
+                bool isUnlocked = IsLevelUnlocked(level, i, targetList);
+                bool isCompleted = _saveManager != null && _saveManager.IsLevelCompleted(level.LevelID);
+
+                // Create Sidebar Item
+                GameObject itemGo = new GameObject($"SidebarItem_{level.LevelID}", typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+                itemGo.transform.SetParent(_sidebarContentContainer, false);
+
+                var itemRect = itemGo.GetComponent<RectTransform>();
+                itemRect.sizeDelta = new Vector2(0f, 55f);
+
+                var itemImg = itemGo.GetComponent<UnityEngine.UI.Image>();
+                itemImg.color = new Color(0.15f, 0.15f, 0.18f, 0.85f); // Beautiful dark glass list item
+
+                // Left accent bar showing color based on placement status
+                GameObject accentGo = new GameObject("Accent", typeof(UnityEngine.UI.Image));
+                accentGo.transform.SetParent(itemGo.transform, false);
+                var accentRect = accentGo.GetComponent<RectTransform>();
+                accentRect.sizeDelta = new Vector2(4f, 0f);
+                accentRect.anchorMin = new Vector2(0f, 0f);
+                accentRect.anchorMax = new Vector2(0f, 1f);
+                accentRect.pivot = new Vector2(0f, 0.5f);
+                accentRect.anchoredPosition = Vector2.zero;
+                accentGo.GetComponent<UnityEngine.UI.Image>().color = isPlaced ? new Color(0.1f, 0.8f, 1.0f, 0.8f) : new Color(0.5f, 0.5f, 0.5f, 0.5f);
+
+                // Name Text
+                GameObject nameGo = new GameObject("Text", typeof(TMPro.TextMeshProUGUI));
+                nameGo.transform.SetParent(itemGo.transform, false);
+                var nameTmp = nameGo.GetComponent<TMPro.TextMeshProUGUI>();
+                nameTmp.text = $"{level.LevelID} {level.LevelName}";
+                nameTmp.fontSize = 14;
+                nameTmp.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
+                nameTmp.color = isUnlocked ? Color.white : new Color(0.6f, 0.6f, 0.6f, 0.7f);
+
+                var nameRect = nameGo.GetComponent<RectTransform>();
+                nameRect.anchorMin = new Vector2(0f, 0f);
+                nameRect.anchorMax = new Vector2(1f, 1f);
+                nameRect.pivot = new Vector2(0.5f, 0.5f);
+                nameRect.offsetMin = new Vector2(15f, 0f);
+                nameRect.offsetMax = new Vector2(-40f, 0f);
+
+                // Icon for Placed & Completed
+                GameObject statusGo = new GameObject("StatusIcon", typeof(TMPro.TextMeshProUGUI));
+                statusGo.transform.SetParent(itemGo.transform, false);
+                var statusTmp = statusGo.GetComponent<TMPro.TextMeshProUGUI>();
+                
+                string statusText = "";
+                if (isCompleted)
+                {
+                    statusText = "<color=#E6B800>✔</color>"; // Gold check
+                }
+                else if (!isUnlocked)
+                {
+                    statusText = "<color=#777777>🔒</color>"; // Lock
+                }
+                else
+                {
+                    statusText = isPlaced ? "<color=#00CCFF>📍</color>" : "<color=#888888>◌</color>"; // Placed (Cyan Pin) vs Unplaced (Dot)
+                }
+
+                statusTmp.text = statusText;
+                statusTmp.fontSize = 16;
+                statusTmp.alignment = TMPro.TextAlignmentOptions.Center;
+
+                var statusRect = statusGo.GetComponent<RectTransform>();
+                statusRect.sizeDelta = new Vector2(30f, 30f);
+                statusRect.anchorMin = new Vector2(1f, 0.5f);
+                statusRect.anchorMax = new Vector2(1f, 0.5f);
+                statusRect.pivot = new Vector2(1f, 0.5f);
+                statusRect.anchoredPosition = new Vector2(-5f, 0f);
+
+                // Button setup
+                var btn = itemGo.GetComponent<UnityEngine.UI.Button>();
+                
+                float lastClickTime = 0f;
+                btn.onClick.AddListener(() => {
+                    float currentTime = Time.unscaledTime;
+                    if (currentTime - lastClickTime < 0.3f)
+                    {
+                        if (isPlaced)
+                        {
+                            CenterScrollOnPosition(level.CampaignMapPosition);
+                            var mapBtn = _spawnedButtons.Find(b => b != null && b.LevelDataForCallback == level);
+                            if (mapBtn != null)
+                            {
+                                OnLevelClicked(level);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (isPlaced)
+                        {
+                            CenterScrollOnPosition(level.CampaignMapPosition);
+                        }
+                    }
+                    lastClickTime = currentTime;
+                });
             }
         }
     }

@@ -51,6 +51,11 @@ namespace MaouSamaTD.Editor
         private bool _linkMode = false;
         private LevelData _linkSourceNode = null;
         
+        // Collapsible category foldouts
+        private bool _foldoutMainStory = true;
+        private bool _foldoutResource = true;
+        private bool _foldoutSpecial = true;
+        
         // Style variables
         private GUIStyle _headerStyle;
         private GUIStyle _cardStyle;
@@ -338,6 +343,32 @@ namespace MaouSamaTD.Editor
                 {
                     _currentTab = tab;
                     ApplyFilter();
+                    
+                    // Automatically expand/collapse foldouts based on selected tab
+                    if (tab == TabType.MainStory)
+                    {
+                        _foldoutMainStory = true;
+                        _foldoutResource = false;
+                        _foldoutSpecial = false;
+                    }
+                    else if (tab == TabType.ResourceDungeon)
+                    {
+                        _foldoutMainStory = false;
+                        _foldoutResource = true;
+                        _foldoutSpecial = false;
+                    }
+                    else if (tab == TabType.SpecialDungeons)
+                    {
+                        _foldoutMainStory = false;
+                        _foldoutResource = false;
+                        _foldoutSpecial = true;
+                    }
+                    else if (tab == TabType.All)
+                    {
+                        _foldoutMainStory = true;
+                        _foldoutResource = true;
+                        _foldoutSpecial = true;
+                    }
                 }
             }
             GUI.color = originalColor;
@@ -364,84 +395,59 @@ namespace MaouSamaTD.Editor
 
             GUILayout.Box("DRAG LEVEL TO MAP WORKSPACE", EditorStyles.centeredGreyMiniLabel);
 
-            // Scrollable Category list
+            // Scrollable list showing the docked categories
             _sidebarScroll = EditorGUILayout.BeginScrollView(_sidebarScroll, EditorStyles.helpBox);
             
             EditorGUILayout.BeginHorizontal();
             GUILayout.Space(6); // Inner left margin
             EditorGUILayout.BeginVertical();
             
-            if (_filteredLevels.Count == 0)
+            // 1. Main Story Category
+            if (_currentTab == TabType.All || _currentTab == TabType.MainStory)
             {
-                EditorGUILayout.HelpBox("No levels found for the selected category filter.", MessageType.Info);
-            }
-            else
-            {
-                foreach (var level in _filteredLevels)
+                var mainStoryLevels = _allLevels.Where(l => l.Category == LevelCategory.MainStory).ToList();
+                if (!string.IsNullOrEmpty(_searchText))
                 {
-                    if (level == null) continue;
-                    
-                    bool isSelected = _selectedLevel == level;
-                    GUIStyle style = isSelected ? _selectedCardStyle : _cardStyle;
-                    
-                    EditorGUILayout.BeginVertical(style);
-                    EditorGUILayout.BeginHorizontal();
-                    
-                    Color indicatorColor = GetCategoryColor(level.Category);
-                    Rect r = GUILayoutUtility.GetRect(12, 12);
-                    r.y += 2;
-                    Handles.BeginGUI();
-                    Handles.color = indicatorColor;
-                    Handles.DrawSolidDisc(new Vector3(r.x + 6, r.y + 6, 0), Vector3.forward, 5f);
-                    Handles.EndGUI();
-                    
-                    GUILayout.Space(4);
-                    
-                    EditorGUILayout.BeginVertical();
-                    EditorGUILayout.BeginHorizontal();
-                    GUILayout.Label($"[{level.LevelID}] {level.LevelName}", _titleStyle, GUILayout.ExpandWidth(true));
-                    
-                    // Placed/Unplaced Icon Mark
-                    bool isPlaced = IsLevelPlaced(level);
-                    GUI.color = isPlaced ? new Color(0.4f, 1.0f, 0.4f) : new Color(0.9f, 0.5f, 0.5f);
-                    GUILayout.Label(isPlaced ? "📍 Placed" : "⚠️ Unplaced", EditorStyles.miniLabel, GUILayout.Width(70));
-                    GUI.color = Color.white;
-                    EditorGUILayout.EndHorizontal();
-                    
-                    GUILayout.Label($"Index: {level.LevelIndex} | Pos: ({Mathf.RoundToInt(level.CampaignMapPosition.x)}, {Mathf.RoundToInt(level.CampaignMapPosition.y)})", EditorStyles.miniLabel);
-                    EditorGUILayout.EndVertical();
-                    
-                    EditorGUILayout.EndHorizontal();
-                    
-                    var lastRect = GUILayoutUtility.GetLastRect();
-                    
-                    // Support drag-and-drop from the sidebar list onto the map workspace
-                    HandleSidebarDragStart(level, lastRect);
-                    
-                    // Mouse Down Selection
-                    if (Event.current.type == EventType.MouseDown && lastRect.Contains(Event.current.mousePosition))
-                    {
-                        _selectedLevel = level;
-                        GUI.FocusControl(null);
-                        
-                        // Detect Double Click (button 0 is left click)
-                        if (Event.current.clickCount == 2 && Event.current.button == 0)
-                        {
-                            if (IsLevelPlaced(level))
-                            {
-                                FocusOnLevel(level);
-                            }
-                            else
-                            {
-                                ShowNotification(new GUIContent($"Level [{level.LevelID}] is not placed. Drag it to the map first."));
-                            }
-                        }
-                        
-                        Event.current.Use();
-                    }
-                    
-                    EditorGUILayout.EndVertical();
+                    mainStoryLevels = mainStoryLevels.Where(l => MatchSearch(l, _searchText)).ToList();
                 }
+                _foldoutMainStory = DrawCollapsibleHeader($"MAIN STORY LEVELS ({mainStoryLevels.Count})", _foldoutMainStory);
+                if (_foldoutMainStory)
+                {
+                    DrawSidebarLevelList(mainStoryLevels);
+                }
+                GUILayout.Space(8);
+            }
+            
+            // 2. Resource Dungeon Category
+            if (_currentTab == TabType.All || _currentTab == TabType.ResourceDungeon)
+            {
+                var resourceLevels = _allLevels.Where(l => l.Category == LevelCategory.ResourceDungeon).ToList();
+                if (!string.IsNullOrEmpty(_searchText))
+                {
+                    resourceLevels = resourceLevels.Where(l => MatchSearch(l, _searchText)).ToList();
+                }
+                _foldoutResource = DrawCollapsibleHeader($"RESOURCE DUNGEONS ({resourceLevels.Count})", _foldoutResource);
+                if (_foldoutResource)
+                {
+                    DrawSidebarLevelList(resourceLevels);
+                }
+                GUILayout.Space(8);
+            }
+            
+            // 3. Special/Rite Dungeons Category
+            if (_currentTab == TabType.All || _currentTab == TabType.SpecialDungeons)
+            {
+                var specialLevels = _allLevels.Where(l => l.Category == LevelCategory.RiteDungeon || l.Category == LevelCategory.VassalDungeon).ToList();
+                if (!string.IsNullOrEmpty(_searchText))
+                {
+                    specialLevels = specialLevels.Where(l => MatchSearch(l, _searchText)).ToList();
+                }
+                _foldoutSpecial = DrawCollapsibleHeader($"SPECIAL / RITE DUNGEONS ({specialLevels.Count})", _foldoutSpecial);
+                if (_foldoutSpecial)
+                {
+                    DrawSidebarLevelList(specialLevels);
+                }
+                GUILayout.Space(8);
             }
             
             EditorGUILayout.EndVertical();
@@ -721,6 +727,38 @@ namespace MaouSamaTD.Editor
             _selectedLevel.Category = (LevelCategory)EditorGUILayout.EnumPopup("Category", _selectedLevel.Category);
             _selectedLevel.LevelIcon = (Sprite)EditorGUILayout.ObjectField("Level Icon", _selectedLevel.LevelIcon, typeof(Sprite), false);
 
+            // Nearby / Overlapping select arrows cycling
+            var nearby = GetNearbyLevels(_selectedLevel, 50f);
+            if (nearby.Count > 0)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+                GUI.color = new Color(1f, 0.8f, 0.2f);
+                GUILayout.Label($"⚠️ Nearby Nodes ({nearby.Count + 1}):", EditorStyles.boldLabel);
+                GUI.color = Color.white;
+                
+                if (GUILayout.Button("◀ Prev", GUILayout.Width(60)))
+                {
+                    var cycleList = new List<LevelData> { _selectedLevel };
+                    cycleList.AddRange(nearby);
+                    int currentIdx = cycleList.IndexOf(_selectedLevel);
+                    int nextIdx = (currentIdx - 1 + cycleList.Count) % cycleList.Count;
+                    _selectedLevel = cycleList[nextIdx];
+                    FocusOnLevel(_selectedLevel);
+                }
+                
+                if (GUILayout.Button("Next ▶", GUILayout.Width(60)))
+                {
+                    var cycleList = new List<LevelData> { _selectedLevel };
+                    cycleList.AddRange(nearby);
+                    int currentIdx = cycleList.IndexOf(_selectedLevel);
+                    int nextIdx = (currentIdx + 1) % cycleList.Count;
+                    _selectedLevel = cycleList[nextIdx];
+                    FocusOnLevel(_selectedLevel);
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("COORDINATES ON MAP (2048 x 1143)", EditorStyles.boldLabel);
             
@@ -886,12 +924,16 @@ namespace MaouSamaTD.Editor
                         points[i] = new Vector3(pos.x, pos.y, 0f);
                     }
 
+                    // Dynamic node/line size scaling using _zoomLevel (zoomed-in -> nodes and lines get smaller/more accurate relative to background)
+                    float nodeZoomScale = Mathf.Lerp(1.2f, 0.45f, Mathf.InverseLerp(0.25f, 4.0f, _zoomLevel));
+                    float dynamicScale = _nodeScale * _zoomLevel * nodeZoomScale;
+
                     // Render gorgeous curved path line shadow/glow
                     Handles.color = new Color(pathColor.r, pathColor.g, pathColor.b, 0.3f);
-                    Handles.DrawAAPolyLine(6f * _nodeScale * _zoomLevel, points);
+                    Handles.DrawAAPolyLine(6f * dynamicScale, points);
                     
                     Handles.color = pathColor;
-                    Handles.DrawAAPolyLine(3f * _nodeScale * _zoomLevel, points);
+                    Handles.DrawAAPolyLine(3f * dynamicScale, points);
 
                     // Flow direction indicator
                     Vector2 mid = (0.25f) * fromGui + 0.5f * control + 0.25f * toGui; // Curve midpoint
@@ -899,11 +941,11 @@ namespace MaouSamaTD.Editor
                     Vector2 flowDir = tangent.normalized;
                     Vector2 flowPerp = new Vector2(-flowDir.y, flowDir.x);
                     
-                    Vector2 arrowA = mid - flowDir * 6f * _zoomLevel + flowPerp * 5f * _zoomLevel;
-                    Vector2 arrowB = mid - flowDir * 6f * _zoomLevel - flowPerp * 5f * _zoomLevel;
+                    Vector2 arrowA = mid - flowDir * 6f * dynamicScale + flowPerp * 5f * dynamicScale;
+                    Vector2 arrowB = mid - flowDir * 6f * dynamicScale - flowPerp * 5f * dynamicScale;
                     
                     Handles.color = Color.white;
-                    Handles.DrawAAPolyLine(2f * _nodeScale * _zoomLevel, arrowA, mid, arrowB);
+                    Handles.DrawAAPolyLine(2f * dynamicScale, arrowA, mid, arrowB);
                 }
             }
             Handles.EndGUI();
@@ -926,7 +968,11 @@ namespace MaouSamaTD.Editor
                     if (level == null) continue;
                     
                     Vector2 guiPos = MapToGuiPosition(level.CampaignMapPosition, localMapRenderRect);
-                    float clickRadius = 14f * _nodeScale * _zoomLevel;
+                    
+                    // Dynamic node size scaling using _zoomLevel (zoomed-in -> nodes get smaller/more accurate relative to background)
+                    float nodeZoomScale = Mathf.Lerp(1.2f, 0.45f, Mathf.InverseLerp(0.25f, 4.0f, _zoomLevel));
+                    float dynamicScale = _nodeScale * _zoomLevel * nodeZoomScale;
+                    float clickRadius = 14f * dynamicScale;
                     
                     if (Vector2.Distance(localMouse, guiPos) <= clickRadius)
                     {
@@ -1026,28 +1072,66 @@ namespace MaouSamaTD.Editor
                 bool isLinkSource = _linkSourceNode == level;
                 Color nodeColor = GetCategoryColor(level.Category);
                 
+                // Dynamic node size scaling using _zoomLevel (zoomed-in -> nodes get smaller/more accurate relative to background)
+                float nodeZoomScale = Mathf.Lerp(1.2f, 0.45f, Mathf.InverseLerp(0.25f, 4.0f, _zoomLevel));
+                float dynamicScale = _nodeScale * _zoomLevel * nodeZoomScale;
+                
                 // Ring Selection Glow
                 if (isSelected)
                 {
                     Handles.color = new Color(0.2f, 0.8f, 1.0f, 0.45f);
-                    Handles.DrawSolidDisc(guiPos, Vector3.forward, 15f * _nodeScale * _zoomLevel);
+                    Handles.DrawSolidDisc(guiPos, Vector3.forward, 15f * dynamicScale);
                     Handles.color = new Color(0.2f, 0.8f, 1.0f, 0.9f);
-                    Handles.DrawWireDisc(guiPos, Vector3.forward, 15f * _nodeScale * _zoomLevel);
+                    Handles.DrawWireDisc(guiPos, Vector3.forward, 15f * dynamicScale);
+                    
+                    // Direct Map Selection arrow cycling overlay if overlapping/close nodes exist
+                    var nearby = GetNearbyLevels(level, 40f);
+                    if (nearby.Count > 0)
+                    {
+                        Rect leftArrowRect = new Rect(guiPos.x - 38f * dynamicScale, guiPos.y - 10f * dynamicScale, 20f * dynamicScale, 20f * dynamicScale);
+                        Rect rightArrowRect = new Rect(guiPos.x + 18f * dynamicScale, guiPos.y - 10f * dynamicScale, 20f * dynamicScale, 20f * dynamicScale);
+                        
+                        GUIStyle arrowStyle = new GUIStyle(EditorStyles.miniButton)
+                        {
+                            fontSize = Mathf.RoundToInt(10 * dynamicScale),
+                            alignment = TextAnchor.MiddleCenter,
+                            padding = new RectOffset(0, 0, 0, 0)
+                        };
+
+                        if (GUI.Button(leftArrowRect, "◀", arrowStyle))
+                        {
+                            var cycleList = new List<LevelData> { level };
+                            cycleList.AddRange(nearby);
+                            int currentIdx = cycleList.IndexOf(_selectedLevel);
+                            int nextIdx = (currentIdx - 1 + cycleList.Count) % cycleList.Count;
+                            _selectedLevel = cycleList[nextIdx];
+                            currentEvent.Use();
+                        }
+                        if (GUI.Button(rightArrowRect, "▶", arrowStyle))
+                        {
+                            var cycleList = new List<LevelData> { level };
+                            cycleList.AddRange(nearby);
+                            int currentIdx = cycleList.IndexOf(_selectedLevel);
+                            int nextIdx = (currentIdx + 1) % cycleList.Count;
+                            _selectedLevel = cycleList[nextIdx];
+                            currentEvent.Use();
+                        }
+                    }
                 }
                 else if (isLinkSource)
                 {
                     // Green link mode source indicator
                     Handles.color = new Color(0.2f, 1.0f, 0.4f, 0.45f);
-                    Handles.DrawSolidDisc(guiPos, Vector3.forward, 16f * _nodeScale * _zoomLevel);
+                    Handles.DrawSolidDisc(guiPos, Vector3.forward, 16f * dynamicScale);
                     Handles.color = new Color(0.2f, 1.0f, 0.4f, 0.9f);
-                    Handles.DrawWireDisc(guiPos, Vector3.forward, 16f * _nodeScale * _zoomLevel);
+                    Handles.DrawWireDisc(guiPos, Vector3.forward, 16f * dynamicScale);
                 }
 
                 // Core Node Disc
                 Handles.color = Color.white;
-                Handles.DrawSolidDisc(guiPos, Vector3.forward, 10f * _nodeScale * _zoomLevel);
+                Handles.DrawSolidDisc(guiPos, Vector3.forward, 10f * dynamicScale);
                 Handles.color = nodeColor;
-                Handles.DrawSolidDisc(guiPos, Vector3.forward, 8f * _nodeScale * _zoomLevel);
+                Handles.DrawSolidDisc(guiPos, Vector3.forward, 8f * dynamicScale);
 
                 // Label text ID inside the bubble
                 GUIStyle nodeLabelStyle = new GUIStyle(EditorStyles.miniLabel)
@@ -1057,7 +1141,7 @@ namespace MaouSamaTD.Editor
                     normal = { textColor = Color.white }
                 };
                 
-                Vector2 idRectSize = new Vector2(28f, 16f) * _nodeScale * _zoomLevel;
+                Vector2 idRectSize = new Vector2(28f, 16f) * dynamicScale;
                 Rect idRect = new Rect(guiPos.x - idRectSize.x/2f, guiPos.y - idRectSize.y/2f, idRectSize.x, idRectSize.y);
                 
                 if (_showNames)
@@ -1068,7 +1152,7 @@ namespace MaouSamaTD.Editor
                         normal = { textColor = isSelected ? new Color(0.2f, 0.8f, 1.0f) : Color.white }
                     };
                     
-                    Rect nameRect = new Rect(guiPos.x - 75f, guiPos.y + 11f * _nodeScale * _zoomLevel, 150f, 16f);
+                    Rect nameRect = new Rect(guiPos.x - 75f, guiPos.y + 11f * dynamicScale, 150f, 16f);
                     GUI.Label(nameRect, level.LevelName, nameStyle);
                 }
 
@@ -1228,6 +1312,118 @@ namespace MaouSamaTD.Editor
                     return new Color(1.0f, 0.35f, 0.35f); // Red / Coral
                 default:
                     return Color.white;
+            }
+        }
+
+        // --- Helper functions for Premium Collapsible Categories lists & Overlapping arrow cycling ---
+        private List<LevelData> GetNearbyLevels(LevelData level, float threshold = 40f)
+        {
+            if (level == null) return new List<LevelData>();
+            return _allLevels.Where(l => l != level && Vector2.Distance(l.CampaignMapPosition, level.CampaignMapPosition) < threshold).ToList();
+        }
+
+        private bool MatchSearch(LevelData level, string searchText)
+        {
+            if (level == null) return false;
+            string search = searchText.ToLower();
+            return (level.LevelName != null && level.LevelName.ToLower().Contains(search)) ||
+                   (level.LevelID != null && level.LevelID.ToLower().Contains(search)) ||
+                   level.LevelIndex.ToString().Contains(search);
+        }
+
+        private bool DrawCollapsibleHeader(string title, bool expanded)
+        {
+            var headerStyle = new GUIStyle(EditorStyles.boldLabel)
+            {
+                fontSize = 12,
+                normal = { textColor = new Color(0.9f, 0.9f, 0.9f) }
+            };
+            
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            string arrow = expanded ? "▼" : "▶";
+            bool clicked = GUILayout.Button($"{arrow} {title}", headerStyle, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+            
+            if (clicked)
+            {
+                expanded = !expanded;
+                GUI.FocusControl(null);
+            }
+            return expanded;
+        }
+
+        private void DrawSidebarLevelList(List<LevelData> levels)
+        {
+            if (levels.Count == 0)
+            {
+                EditorGUILayout.HelpBox("No levels in this category.", MessageType.Info);
+                return;
+            }
+
+            foreach (var level in levels)
+            {
+                if (level == null) continue;
+                
+                bool isSelected = _selectedLevel == level;
+                GUIStyle style = isSelected ? _selectedCardStyle : _cardStyle;
+                
+                EditorGUILayout.BeginVertical(style);
+                EditorGUILayout.BeginHorizontal();
+                
+                Color indicatorColor = GetCategoryColor(level.Category);
+                Rect r = GUILayoutUtility.GetRect(12, 12);
+                r.y += 2;
+                Handles.BeginGUI();
+                Handles.color = indicatorColor;
+                Handles.DrawSolidDisc(new Vector3(r.x + 6, r.y + 6, 0), Vector3.forward, 5f);
+                Handles.EndGUI();
+                
+                GUILayout.Space(4);
+                
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label($"[{level.LevelID}] {level.LevelName}", _titleStyle, GUILayout.ExpandWidth(true));
+                
+                // Placed/Unplaced Icon Mark
+                bool isPlaced = IsLevelPlaced(level);
+                GUI.color = isPlaced ? new Color(0.4f, 1.0f, 0.4f) : new Color(0.9f, 0.5f, 0.5f);
+                GUILayout.Label(isPlaced ? "📍 Placed" : "⚠️ Unplaced", EditorStyles.miniLabel, GUILayout.Width(70));
+                GUI.color = Color.white;
+                EditorGUILayout.EndHorizontal();
+                
+                GUILayout.Label($"Index: {level.LevelIndex} | Pos: ({Mathf.RoundToInt(level.CampaignMapPosition.x)}, {Mathf.RoundToInt(level.CampaignMapPosition.y)})", EditorStyles.miniLabel);
+                EditorGUILayout.EndVertical();
+                
+                EditorGUILayout.EndHorizontal();
+                
+                var lastRect = GUILayoutUtility.GetLastRect();
+                
+                // Support drag-and-drop from the sidebar list onto the map workspace
+                HandleSidebarDragStart(level, lastRect);
+                
+                // Mouse Down Selection
+                if (Event.current.type == EventType.MouseDown && lastRect.Contains(Event.current.mousePosition))
+                {
+                    _selectedLevel = level;
+                    GUI.FocusControl(null);
+                    
+                    // Detect Double Click (button 0 is left click)
+                    if (Event.current.clickCount == 2 && Event.current.button == 0)
+                    {
+                        if (IsLevelPlaced(level))
+                        {
+                            FocusOnLevel(level);
+                        }
+                        else
+                        {
+                            ShowNotification(new GUIContent($"Level [{level.LevelID}] is not placed. Drag it to the map first."));
+                        }
+                    }
+                    
+                    Event.current.Use();
+                }
+                
+                EditorGUILayout.EndVertical();
             }
         }
     }

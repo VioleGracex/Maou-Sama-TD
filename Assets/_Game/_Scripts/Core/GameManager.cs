@@ -419,6 +419,7 @@ namespace MaouSamaTD.Managers
             
             if (_saveManager != null && _currentLevelData != null)
             {
+                bool isFirstClear = _saveManager.CurrentData != null && !_saveManager.CurrentData.CompletedLevels.Contains(_currentLevelData.LevelID);
                 _saveManager.LevelComplete(_currentLevelData.LevelID, stars);
                 
                 // Distribute Mission XP to all deployed units
@@ -479,9 +480,25 @@ namespace MaouSamaTD.Managers
                         }
                         else if (reward.Type == MaouSamaTD.Data.RewardType.BloodCrests)
                         {
-                            RegisterLoot("blood_crests", reward.Amount);
-                            if (_economyManager != null) _economyManager.AddBloodCrest(reward.Amount);
-                            else _saveManager.AddBloodCrest(reward.Amount);
+                            if (isFirstClear)
+                            {
+                                RegisterLoot("blood_crests", reward.Amount);
+                                if (_economyManager != null) _economyManager.AddBloodCrest(reward.Amount);
+                                else _saveManager.AddBloodCrest(reward.Amount);
+                            }
+                            else
+                            {
+                                Debug.Log($"[GameManager] Level {_currentLevelData.LevelID} already cleared. Skipping repeat premium reward of {reward.Amount} BloodCrests.");
+                            }
+                        }
+                        else if (reward.Type == MaouSamaTD.Data.RewardType.Gems)
+                        {
+                            if (isFirstClear)
+                            {
+                                RegisterLoot("gems", reward.Amount);
+                                if (_economyManager != null) _economyManager.AddBloodCrest(reward.Amount); // Or whichever premium API exists
+                                else _saveManager.AddBloodCrest(reward.Amount);
+                            }
                         }
                     }
                 }

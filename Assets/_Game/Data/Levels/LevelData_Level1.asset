@@ -45,7 +45,8 @@ MonoBehaviour:
   IsRitesLocked: 1
   MapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
   CampaignMapPosition: {x: 925, y: 661}
-  ConnectedLevels: []
+  ConnectedLevels:
+  - {fileID: 11400000, guid: e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6, type: 2}
   MissionXP: 100
   StartingAuthoritySeals: 30
   MaxAuthoritySeals: 30

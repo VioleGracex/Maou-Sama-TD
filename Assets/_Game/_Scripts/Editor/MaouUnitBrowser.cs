@@ -299,9 +299,11 @@ namespace MaouSamaTD.Editor
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             
-            if (GUILayout.Button(new GUIContent(" Refresh", EditorGUIUtility.IconContent("d_Refresh").image), EditorStyles.toolbarButton))
+            if (GUILayout.Button(new GUIContent(" Force Refresh", EditorGUIUtility.IconContent("d_Refresh").image), EditorStyles.toolbarButton))
             {
+                AssetDatabase.Refresh();
                 RefreshData();
+                Repaint();
             }
 
             GUILayout.Space(10);
@@ -1102,9 +1104,11 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             GUILayout.Label("Classes", EditorStyles.miniBoldLabel);
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button(new GUIContent(" Refresh", EditorGUIUtility.IconContent("d_Refresh").image), EditorStyles.toolbarButton))
+            if (GUILayout.Button(new GUIContent(" Force Refresh", EditorGUIUtility.IconContent("d_Refresh").image), EditorStyles.toolbarButton))
             {
+                AssetDatabase.Refresh();
                 RefreshData();
+                Repaint();
             }
             EditorGUILayout.EndHorizontal();
 

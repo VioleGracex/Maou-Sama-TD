@@ -305,8 +305,19 @@ namespace MaouSamaTD.Core
             }
 
             // ── Normal returning player: open Home hub
-            if (_homeUIManager != null) _homeUIManager.Open();
+            if (_homeUIManager != null)
+            {
+                if (MaouSamaTD.UI.UIFlowManager.Instance != null)
+                {
+                    MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_homeUIManager);
+                }
+                else
+                {
+                    _homeUIManager.Open();
+                }
+            }
         }
-    }
 }
+}
+// Refresh telemetry
 

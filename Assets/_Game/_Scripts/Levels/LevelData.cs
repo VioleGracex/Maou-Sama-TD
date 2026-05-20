@@ -19,6 +19,12 @@ namespace MaouSamaTD.Levels
         public LevelCategory Category = LevelCategory.MainStory;
         public Sprite LevelIcon;
 
+        [Header("Monster Details")]
+        [Tooltip("Minimum level of monsters in this stage.")]
+        public int MinMonsterLevel = 1;
+        [Tooltip("Maximum level of monsters in this stage.")]
+        public int MaxMonsterLevel = 5;
+
         [Header("Identity")]
         [Tooltip("Unique integer ID for Addressables and easier logic (e.g., 1, 2, 3...)")]
         public int LevelIndex;

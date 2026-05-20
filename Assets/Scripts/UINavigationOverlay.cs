@@ -133,7 +133,7 @@ namespace MaouSamaTD.UI
             Hide();
             UIFlowManager.Instance.ClearHistory(true, true);
             var home = Object.FindAnyObjectByType<HomeUIManager>(FindObjectsInactive.Include);
-            if (home != null) home.Open();
+            if (home != null) UIFlowManager.Instance.OpenPanel(home);
         }
     }
 }

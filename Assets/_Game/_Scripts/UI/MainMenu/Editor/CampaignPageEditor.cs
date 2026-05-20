@@ -10,12 +10,11 @@ namespace MaouSamaTD.UI.MainMenu.Editor
     public class CampaignPageEditor : UnityEditor.Editor
     {
         private CampaignPage _campaignPage;
-        private int _sourceIndex = 0;
-        private int _targetIndex = 0;
 
         private void OnEnable()
         {
             _campaignPage = (CampaignPage)target;
+            AutoAssignFields(false); // Silent auto-assign on enable
         }
 
         public override void OnInspectorGUI()
@@ -27,72 +26,18 @@ namespace MaouSamaTD.UI.MainMenu.Editor
             EditorGUILayout.Space(15);
             EditorGUILayout.LabelField("🔮 Demonic Map Coordinates Editor", EditorStyles.boldLabel);
 
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("🔄 Refresh Map Nodes", GUILayout.Height(30)))
             {
                 _campaignPage.Refresh();
                 EditorUtility.SetDirty(_campaignPage);
             }
 
-            EditorGUILayout.Space(10);
-            
-            var levels = _campaignPage.AllLevels;
-            if (levels != null && levels.Count > 0)
+            if (GUILayout.Button("🔌 Auto-Assign Missing UI", GUILayout.Height(30)))
             {
-                EditorGUILayout.BeginVertical("helpbox");
-                EditorGUILayout.LabelField("⛓️ Quick Node Connector", EditorStyles.miniBoldLabel);
-
-                string[] levelNames = new string[levels.Count];
-                for (int i = 0; i < levels.Count; i++)
-                {
-                    levelNames[i] = $"{levels[i].LevelID} - {levels[i].LevelName}";
-                }
-
-                if (_sourceIndex >= levels.Count) _sourceIndex = 0;
-                if (_targetIndex >= levels.Count) _targetIndex = 0;
-
-                _sourceIndex = EditorGUILayout.Popup("Source Level", _sourceIndex, levelNames);
-                _targetIndex = EditorGUILayout.Popup("Target Level", _targetIndex, levelNames);
-
-                EditorGUILayout.Space(5);
-                if (GUILayout.Button("Toggle Connection (Connect/Disconnect)", GUILayout.Height(25)))
-                {
-                    if (_sourceIndex >= 0 && _sourceIndex < levels.Count &&
-                        _targetIndex >= 0 && _targetIndex < levels.Count)
-                    {
-                        var sourceLvl = levels[_sourceIndex];
-                        var targetLvl = levels[_targetIndex];
-
-                        if (sourceLvl != targetLvl)
-                        {
-                            Undo.RecordObject(sourceLvl, "Toggle Node Connection");
-                            if (sourceLvl.ConnectedLevels == null)
-                            {
-                                sourceLvl.ConnectedLevels = new List<LevelData>();
-                            }
-
-                            if (sourceLvl.ConnectedLevels.Contains(targetLvl))
-                            {
-                                sourceLvl.ConnectedLevels.Remove(targetLvl);
-                                Debug.Log($"[CampaignPageEditor] Disconnected: {sourceLvl.LevelID} and {targetLvl.LevelID}");
-                            }
-                            else
-                            {
-                                sourceLvl.ConnectedLevels.Add(targetLvl);
-                                Debug.Log($"[CampaignPageEditor] Connected: {sourceLvl.LevelID} -> {targetLvl.LevelID}");
-                            }
-
-                            EditorUtility.SetDirty(sourceLvl);
-                            AssetDatabase.SaveAssets();
-                            _campaignPage.Refresh();
-                        }
-                        else
-                        {
-                            EditorUtility.DisplayDialog("Connection Error", "Cannot connect a node to itself.", "OK");
-                        }
-                    }
-                }
-                EditorGUILayout.EndVertical();
+                AutoAssignFields(true);
             }
+            EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space(10);
             EditorGUILayout.HelpBox("✨ Professional Workflow:\n" +
@@ -102,6 +47,124 @@ namespace MaouSamaTD.UI.MainMenu.Editor
                                     "4. Supports Ctrl+Z (Undo) seamlessly.", MessageType.Info);
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void AutoAssignFields(bool logSuccess)
+        {
+            if (_campaignPage == null) return;
+
+            bool isDirty = false;
+
+            var propRoot = serializedObject.FindProperty("_sidebarRoot");
+            if (propRoot != null && propRoot.objectReferenceValue == null)
+            {
+                var root = GameObject.Find("LeftSidebar");
+                if (root == null)
+                {
+                    var t = _campaignPage.transform.Find("LeftSidebar");
+                    if (t != null) root = t.gameObject;
+                }
+                if (root != null)
+                {
+                    propRoot.objectReferenceValue = root;
+                    isDirty = true;
+                }
+            }
+
+            var propContainer = serializedObject.FindProperty("_sidebarContentContainer");
+            if (propContainer != null && propContainer.objectReferenceValue == null)
+            {
+                var content = GameObject.Find("LeftSidebar/ScrollView/Viewport/Content");
+                if (content == null)
+                {
+                    var t = _campaignPage.transform.Find("LeftSidebar/ScrollView/Viewport/Content");
+                    if (t == null) t = _campaignPage.transform.Find("LeftSidebar/Viewport/Content");
+                    if (t != null) content = t.gameObject;
+                }
+                if (content != null)
+                {
+                    propContainer.objectReferenceValue = content.transform;
+                    isDirty = true;
+                }
+            }
+
+            var propZoomIn = serializedObject.FindProperty("_zoomInButton");
+            if (propZoomIn != null && propZoomIn.objectReferenceValue == null)
+            {
+                var btnGo = GameObject.Find("ZoomContainer/ZoomInButton");
+                if (btnGo == null) btnGo = GameObject.Find("ZoomInButton");
+                if (btnGo == null)
+                {
+                    var t = _campaignPage.transform.Find("ZoomContainer/ZoomInButton");
+                    if (t == null) t = _campaignPage.transform.Find("ZoomInButton");
+                    if (t != null) btnGo = t.gameObject;
+                }
+                if (btnGo != null)
+                {
+                    var btn = btnGo.GetComponent<UnityEngine.UI.Button>();
+                    if (btn != null)
+                    {
+                        propZoomIn.objectReferenceValue = btn;
+                        isDirty = true;
+                    }
+                }
+            }
+
+            var propZoomOut = serializedObject.FindProperty("_zoomOutButton");
+            if (propZoomOut != null && propZoomOut.objectReferenceValue == null)
+            {
+                var btnGo = GameObject.Find("ZoomContainer/ZoomOutButton");
+                if (btnGo == null) btnGo = GameObject.Find("ZoomOutButton");
+                if (btnGo == null)
+                {
+                    var t = _campaignPage.transform.Find("ZoomContainer/ZoomOutButton");
+                    if (t == null) t = _campaignPage.transform.Find("ZoomOutButton");
+                    if (t != null) btnGo = t.gameObject;
+                }
+                if (btnGo != null)
+                {
+                    var btn = btnGo.GetComponent<UnityEngine.UI.Button>();
+                    if (btn != null)
+                    {
+                        propZoomOut.objectReferenceValue = btn;
+                        isDirty = true;
+                    }
+                }
+            }
+
+            var propPrefab = serializedObject.FindProperty("_sidebarItemPrefab");
+            if (propPrefab != null && propPrefab.objectReferenceValue == null)
+            {
+                var guids = AssetDatabase.FindAssets("StageLevel_Prefab t:GameObject");
+                if (guids.Length == 0)
+                {
+                    guids = AssetDatabase.FindAssets("t:GameObject SidebarLevelItem");
+                }
+                if (guids.Length > 0)
+                {
+                    var path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                    var go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                    if (go != null)
+                    {
+                        var comp = go.GetComponent<SidebarLevelItem>();
+                        if (comp != null)
+                        {
+                            propPrefab.objectReferenceValue = comp;
+                            isDirty = true;
+                        }
+                    }
+                }
+            }
+
+            if (isDirty)
+            {
+                serializedObject.ApplyModifiedProperties();
+                EditorUtility.SetDirty(_campaignPage);
+                if (logSuccess)
+                {
+                    Debug.Log("[CampaignPageEditor] Automatically assigned missing CampaignPage UI fields from the scene!");
+                }
+            }
         }
 
         private void OnSceneGUI()
@@ -130,7 +193,7 @@ namespace MaouSamaTD.UI.MainMenu.Editor
                 EditorGUI.BeginChangeCheck();
 
                 Handles.color = new Color(0f, 0.8f, 1.0f, 0.8f); // Demonic glowing cyan
-                var fmh_136_21_639147550679331565 = Quaternion.identity; Vector3 newWorldPos = Handles.FreeMoveHandle(
+                Vector3 newWorldPos = Handles.FreeMoveHandle(
                     btn.GetInstanceID(),
                     worldPos,
                     size,

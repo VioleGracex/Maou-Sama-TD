@@ -8,7 +8,7 @@ namespace MaouSamaTD.UI.MainMenu
     {
         [Header("Zoom Settings")]
         [SerializeField] private float _minZoom = 0.5f;
-        [SerializeField] private float _maxZoom = 2.0f;
+        [SerializeField] private float _maxZoom = 4.0f;
         [SerializeField] private float _zoomSensitivity = 0.08f;
         [SerializeField] private float _zoomSmoothTime = 0.08f;
 
@@ -31,39 +31,72 @@ namespace MaouSamaTD.UI.MainMenu
 
         private bool _isDragging = false;
 
+        private bool _minZoomInitialized = false;
+
+        public float MinZoom
+        {
+            get => _minZoom;
+            set => _minZoom = value;
+        }
+
+        public float MaxZoom
+        {
+            get => _maxZoom;
+            set => _maxZoom = value;
+        }
+
         private void EnsureInitialized()
         {
             if (_rectTransform == null)
             {
                 _rectTransform = GetComponent<RectTransform>();
-                
-                // Configure RectTransform for Zoom & Pan
                 _rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
                 _rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
                 _rectTransform.pivot = new Vector2(0.5f, 0.5f);
                 _rectTransform.sizeDelta = new Vector2(2048f, 1143f);
             }
             if (_parentRectTransform == null && _rectTransform != null)
-            {
                 _parentRectTransform = _rectTransform.parent as RectTransform;
-            }
             if (_canvas == null)
-            {
                 _canvas = GetComponentInParent<Canvas>();
-            }
 
-            // Dynamically calculate the absolute minimum zoom to ensure the map always covers the screen
-            if (_parentRectTransform != null && _rectTransform != null)
+            // Only compute the fill-screen minimum once on first init, when sizes are valid
+            if (!_minZoomInitialized && _parentRectTransform != null && _rectTransform != null)
             {
-                float minZoomX = _parentRectTransform.rect.width / _rectTransform.rect.width;
-                float minZoomY = _parentRectTransform.rect.height / _rectTransform.rect.height;
-                _minZoom = Mathf.Max(minZoomX, minZoomY);
+                float parentWidth = _parentRectTransform.rect.width;
+                float parentHeight = _parentRectTransform.rect.height;
+                float mapWidth = _rectTransform.rect.width;
+                float mapHeight = _rectTransform.rect.height;
+
+                if (parentWidth > 0f && parentHeight > 0f && mapWidth > 0f && mapHeight > 0f)
+                {
+                    float minZoomX = parentWidth / mapWidth;
+                    float minZoomY = parentHeight / mapHeight;
+                    // fillMin = minimum to cover the screen; _minZoom is user setting floor
+                    float fillMin = Mathf.Max(minZoomX, minZoomY);
+                    // Only override if inspector value is too small (would show black bars)
+                    if (_minZoom < fillMin) _minZoom = fillMin;
+                    _minZoomInitialized = true;
+                }
             }
         }
 
         private void Awake()
         {
             EnsureInitialized();
+
+            // Enable EnhancedTouchSupport for high-precision pinch-to-zoom on touch screens
+            try
+            {
+                if (!UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.enabled)
+                {
+                    UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.Enable();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"[CampaignMapZoomPan] Could not enable EnhancedTouchSupport: {ex.Message}");
+            }
 
             _targetPosition = _rectTransform.anchoredPosition;
             _currentPosition = _targetPosition;
@@ -80,40 +113,138 @@ namespace MaouSamaTD.UI.MainMenu
         {
             EnsureInitialized();
 
-            // Adjust current zoom if minZoom changes dynamically (e.g. screen/editor resize)
+            // Enforce minZoom floor but never fight user input by resetting _targetZoom here
             if (_currentZoom < _minZoom)
             {
                 _currentZoom = _minZoom;
-                _targetZoom = Mathf.Max(_targetZoom, _minZoom);
+                if (_targetZoom < _minZoom) _targetZoom = _minZoom;
                 _rectTransform.localScale = new Vector3(_currentZoom, _currentZoom, 1f);
             }
 
             HandleZoomInput();
+
+            // Smoothly interpolate current zoom to target zoom
+            if (Mathf.Abs(_currentZoom - _targetZoom) > 0.001f)
+            {
+                _currentZoom = Mathf.SmoothDamp(_currentZoom, _targetZoom, ref _zoomVelocity, _zoomSmoothTime);
+                _rectTransform.localScale = new Vector3(_currentZoom, _currentZoom, 1f);
+            }
+
             UpdateMovement();
         }
 
         private void HandleZoomInput()
         {
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (Mathf.Abs(scroll) > 0.005f)
+            float zoomDelta = 0f;
+            Vector2 zoomCenterScreen = Vector2.zero;
+            bool hasZoomInput = false;
+
+            // 1. Check Multi-touch (Pinch-to-Zoom)
+            if (UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.enabled &&
+                UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count >= 2)
             {
-                // Zoom towards mouse pointer
-                Vector2 localMousePos;
-                Camera uiCamera = _canvas != null && _canvas.renderMode != RenderMode.ScreenSpaceOverlay ? _canvas.worldCamera : null;
-                
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_parentRectTransform, Input.mousePosition, uiCamera, out localMousePos))
+                var touch0 = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches[0];
+                var touch1 = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches[1];
+
+                float currentDist = Vector2.Distance(touch0.screenPosition, touch1.screenPosition);
+                float prevDist = Vector2.Distance(touch0.screenPosition - touch0.delta, touch1.screenPosition - touch1.delta);
+
+                if (prevDist > 0f)
                 {
-                    Vector2 beforeZoomLocal = (localMousePos - _rectTransform.anchoredPosition) / _currentZoom;
-
-                    _targetZoom = Mathf.Clamp(_targetZoom + scroll * _zoomSensitivity * 12f, _minZoom, _maxZoom);
-
-                    _currentZoom = Mathf.SmoothDamp(_currentZoom, _targetZoom, ref _zoomVelocity, _zoomSmoothTime);
-                    _rectTransform.localScale = new Vector3(_currentZoom, _currentZoom, 1f);
-
-                    Vector2 afterZoomLocal = beforeZoomLocal * _currentZoom;
-                    _targetPosition = localMousePos - afterZoomLocal;
+                    float deltaDist = currentDist - prevDist;
+                    // Scale pinch sensitivity
+                    zoomDelta = deltaDist * 0.005f;
+                    zoomCenterScreen = (touch0.screenPosition + touch1.screenPosition) * 0.5f;
+                    hasZoomInput = Mathf.Abs(zoomDelta) > 0.0001f;
                 }
             }
+            // 2. Check Mouse Scroll Wheel (supporting BOTH new and legacy input systems)
+            float scrollDelta = 0f;
+            bool scrollInputDetected = false;
+
+            if (UnityEngine.InputSystem.Mouse.current != null)
+            {
+                var val = UnityEngine.InputSystem.Mouse.current.scroll.ReadValue();
+                if (Mathf.Abs(val.y) > 0.01f)
+                {
+                    // Scale scroll y value down
+                    scrollDelta = val.y * 0.0005f;
+                    scrollInputDetected = true;
+                }
+            }
+
+
+
+            if (scrollInputDetected)
+            {
+                zoomDelta = scrollDelta;
+                if (UnityEngine.InputSystem.Pointer.current != null)
+                {
+                    zoomCenterScreen = UnityEngine.InputSystem.Pointer.current.position.ReadValue();
+                }
+                else if (UnityEngine.InputSystem.Mouse.current != null)
+                {
+                    zoomCenterScreen = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+                }
+                else
+                {
+                    zoomCenterScreen = new Vector2(Screen.width / 2f, Screen.height / 2f);
+                }
+                hasZoomInput = true;
+            }
+
+            if (hasZoomInput)
+            {
+                Vector2 localZoomCenter;
+                Camera uiCamera = _canvas != null && _canvas.renderMode != RenderMode.ScreenSpaceOverlay ? _canvas.worldCamera : null;
+
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_parentRectTransform, zoomCenterScreen, uiCamera, out localZoomCenter))
+                {
+                    ZoomRelative(zoomDelta * _zoomSensitivity * 30f, localZoomCenter);
+                }
+            }
+        }
+
+        private void ZoomRelative(float zoomDelta, Vector2 localZoomCenter)
+        {
+            Vector2 beforeZoomLocal = (localZoomCenter - _rectTransform.anchoredPosition) / _currentZoom;
+
+            _targetZoom = Mathf.Clamp(_targetZoom + zoomDelta, _minZoom, _maxZoom);
+
+            // Calculate target position based on new zoom target to center it perfectly
+            Vector2 afterZoomLocal = beforeZoomLocal * _targetZoom;
+            _targetPosition = localZoomCenter - afterZoomLocal;
+        }
+
+        public void ZoomIn()
+        {
+            EnsureInitialized();
+            ZoomRelative(0.25f, Vector2.zero); // Center of screen
+        }
+
+        public void ZoomOut()
+        {
+            EnsureInitialized();
+            ZoomRelative(-0.25f, Vector2.zero);
+        }
+
+        /// <summary>Set zoom from normalized 0-1 value mapping minZoom..maxZoom.</summary>
+        public void SetZoomNormalized(float normalizedValue)
+        {
+            EnsureInitialized();
+            float targetZoom = Mathf.Lerp(_minZoom, _maxZoom, normalizedValue);
+            _targetZoom = Mathf.Clamp(targetZoom, _minZoom, _maxZoom);
+            _currentZoom = _targetZoom;
+            _rectTransform.localScale = new Vector3(_currentZoom, _currentZoom, 1f);
+            _zoomVelocity = 0f;
+        }
+
+        /// <summary>Returns current zoom as 0-1 normalized relative to min/max zoom.</summary>
+        public float GetZoomNormalized()
+        {
+            EnsureInitialized();
+            if (Mathf.Approximately(_maxZoom, _minZoom)) return 0f;
+            return Mathf.InverseLerp(_minZoom, _maxZoom, _currentZoom);
         }
 
         private void UpdateMovement()

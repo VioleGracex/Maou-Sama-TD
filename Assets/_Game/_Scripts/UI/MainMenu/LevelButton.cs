@@ -24,6 +24,9 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private TextMeshProUGUI _levelNumberText; // e.g. "01"
         [SerializeField] private GameObject _lockedOverlay;
         [SerializeField] private GameObject[] _stars; // Array of star objects (e.g., 3 stars)
+        [SerializeField] private Image[] _starImages; // Array of 3 star Image components
+        [SerializeField] private Sprite _starFullSprite;  // UI_Icon_Star_Full
+        [SerializeField] private Sprite _starEmptySprite; // UI_Icon_Star_Empty
         [SerializeField] private Button _button;
         
         private LevelDisplayData _displayData;
@@ -35,6 +38,28 @@ namespace MaouSamaTD.UI.MainMenu
         public string GetContentID() => _displayData.LevelID;
         public int GetContentVersion() => _displayData.Version;
 
+        public static string FormatLevelID(string levelID)
+        {
+            if (string.IsNullOrEmpty(levelID)) return levelID;
+            
+            if (levelID.StartsWith("1-"))
+            {
+                string suffix = levelID.Substring(2);
+                if (int.TryParse(suffix, out int index))
+                {
+                    if (index <= 3)
+                    {
+                        return $"0-{index}";
+                    }
+                    else
+                    {
+                        return $"1-{index - 3}";
+                    }
+                }
+            }
+            return levelID;
+        }
+
         public void Setup(LevelDisplayData data, Action<UnityEngine.Component> onClick = null)
         {
             if (onClick != null) _onClick = (levelData) => onClick(this);
@@ -45,8 +70,20 @@ namespace MaouSamaTD.UI.MainMenu
             if (_levelNameText != null) 
                 _levelNameText.text = level.LevelName.ToUpper();
             
+            // Dynamic resolving if not assigned
+            if (_levelNumberText == null)
+            {
+                _levelNumberText = transform.Find("StageNum_Text")?.GetComponent<TextMeshProUGUI>();
+                if (_levelNumberText == null)
+                {
+                    _levelNumberText = transform.Find("Canvas/StageNum_Text")?.GetComponent<TextMeshProUGUI>();
+                }
+            }
+
             if (_levelNumberText != null)
-                _levelNumberText.text = (data.Index + 1).ToString("D2"); // "01", "02"
+            {
+                _levelNumberText.text = FormatLevelID(level.LevelID);
+            }
             
             if (_lockedOverlay != null) 
                 _lockedOverlay.SetActive(data.IsLocked);
@@ -58,12 +95,86 @@ namespace MaouSamaTD.UI.MainMenu
                 _button.onClick.AddListener(OnClicked);
             }
 
+            // Dynamic resolving for star images if not assigned
+            if (_starImages == null || _starImages.Length == 0)
+            {
+                var starHolder = transform.Find("Stage_StarHolder");
+                if (starHolder == null)
+                {
+                    starHolder = transform.Find("Canvas/Stage_StarHolder");
+                }
+
+                if (starHolder != null)
+                {
+                    starHolder.gameObject.SetActive(true);
+                    var imgList = new System.Collections.Generic.List<Image>();
+                    for (int i = 1; i <= 3; i++)
+                    {
+                        var starTrans = starHolder.Find($"Star_{i}");
+                        if (starTrans != null)
+                        {
+                            var img = starTrans.GetComponent<Image>();
+                            if (img != null) imgList.Add(img);
+                        }
+                    }
+                    if (imgList.Count > 0)
+                    {
+                        _starImages = imgList.ToArray();
+                    }
+                }
+            }
+
+            // Load star sprites dynamically if not assigned
+            if (_starFullSprite == null)
+            {
+#if UNITY_EDITOR
+                _starFullSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI/Icons/UI_Icon_Star_Full.png");
+#endif
+            }
+            if (_starEmptySprite == null)
+            {
+#if UNITY_EDITOR
+                _starEmptySprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI/Icons/UI_Icon_Star_Empty.png");
+#endif
+            }
+
+            // 1. If _starImages is empty but _stars is not, populate _starImages from _stars!
+            if ((_starImages == null || _starImages.Length == 0) && _stars != null && _stars.Length > 0)
+            {
+                var imgList = new System.Collections.Generic.List<Image>();
+                foreach (var starObj in _stars)
+                {
+                    if (starObj != null)
+                    {
+                        var img = starObj.GetComponent<Image>();
+                        if (img != null) imgList.Add(img);
+                    }
+                }
+                _starImages = imgList.ToArray();
+            }
+
+            // 2. Ensure all star GameObjects are ALWAYS active (so empty stars are visible),
+            // and control the sprite on the Image components!
             if (_stars != null)
             {
                 for (int i = 0; i < _stars.Length; i++)
                 {
-                    if (_stars[i] != null) 
-                        _stars[i].SetActive(i < data.StarCount);
+                    if (_stars[i] != null)
+                    {
+                        _stars[i].SetActive(true); // Keep them active so empty stars are visible!
+                    }
+                }
+            }
+
+            if (_starImages != null)
+            {
+                for (int i = 0; i < _starImages.Length; i++)
+                {
+                    if (_starImages[i] != null)
+                    {
+                        _starImages[i].gameObject.SetActive(true);
+                        _starImages[i].sprite = (i < data.StarCount) ? _starFullSprite : _starEmptySprite;
+                    }
                 }
             }
         }

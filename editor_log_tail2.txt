@@ -1,0 +1,59 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Ouikio" at "2026-05-19T15:01:19.1876708Z"
+Built from '6000.4/staging' branch; Version is '6000.4.5f1 (cc83ebd631f8) revision 13403115'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26200) CoreSingleLanguage' Language: 'en' Physical Memory: 48492 MB
+BatchMode: 0, IsHumanControllingUs: 1, StartBugReporterOnCrash: 1, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-05-19T15:01:19Z
+
+COMMAND LINE ARGUMENTS:
+D:\Unity\6000.4.5f1\Editor\Unity.exe
+-projectPath
+d:\OuikiDev\Maou-Sama-TD
+Successfully changed project path to: d:\OuikiDev\Maou-Sama-TD
+D:/OuikiDev/Maou-Sama-TD
+[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.18.1'.
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-Ouikio"
+[Licensing::IpcConnector] LicenseClient-Ouikio channel disconnected successfully.
+[Licensing::IpcConnector] Channel LicenseClient-Ouikio-6000.4.5 doesn't exist
+[Licensing::Module] Successfully launched the LicensingClient (PId: 41948)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Ouikio-6000.4.5" at "2026-05-19T15:01:24.7950248Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 41948, path: "D:/Unity/6000.4.5f1/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.1+9fbee8e
+  Session Id:              d51920a160914635b24173d6149fe8a2
+  Correlation Id:          2976cee49c130edd28f5e21d0a8ec5f8
+  External correlation Id: 3204697293769905925
+  Machine Id:              WDKI3yO7gH7JzfUE2csoN2W+Brs=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-Ouikio-6000.4.5" (connect: 4.37s, validation: 0.32s, handshake: 0.01s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-Ouikio-6000.4.5-notifications" at "2026-05-19T15:01:25.1222773Z"
+[Licensing::Module] Connected to LicensingClient (PId: 41948, launch time: 0.00, total connection time: 4.69s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-F6NZ-XVCU-J2BQ-AAC7-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: Unlimited
+[Licensing::Module] License group:
+  Id: 3610157-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-F6NZ-XVCU-J2BQ-AAC7-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: Unlimited
+[Licensing::Module] License group:
+  Id: 3610157-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Module] Licensing Background thread has ended after 5.97s

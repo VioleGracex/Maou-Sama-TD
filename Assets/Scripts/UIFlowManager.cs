@@ -177,32 +177,115 @@ namespace MaouSamaTD.UI
             if (NavigationOverlay != null) NavigationOverlay.UpdateHighlight(null);
         }
 
+        private GameObject _navigationHolderCached;
+        private GameObject GetNavigationHolder()
+        {
+            if (_navigationHolderCached != null) return _navigationHolderCached;
+
+            if (_backBtnRoot != null)
+            {
+                Transform current = _backBtnRoot.transform;
+                while (current != null)
+                {
+                    if (current.name == "NavigationHolder")
+                    {
+                        _navigationHolderCached = current.gameObject;
+                        return _navigationHolderCached;
+                    }
+                    current = current.parent;
+                }
+            }
+
+            // Fallback: search parents of this UIFlowManager
+            Transform t = transform;
+            while (t != null)
+            {
+                var found = t.Find("NavigationHolder");
+                if (found != null)
+                {
+                    _navigationHolderCached = found.gameObject;
+                    return _navigationHolderCached;
+                }
+                t = t.parent;
+            }
+
+            // Fallback: search from all root GameObjects of the active scene
+            foreach (var root in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                if (root.name == "NavigationHolder")
+                {
+                    _navigationHolderCached = root;
+                    return _navigationHolderCached;
+                }
+                var child = FindDeepChild(root.transform, "NavigationHolder");
+                if (child != null)
+                {
+                    _navigationHolderCached = child.gameObject;
+                    return _navigationHolderCached;
+                }
+            }
+
+            return null;
+        }
+
+        private Transform FindDeepChild(Transform parent, string name)
+        {
+            foreach (Transform child in parent)
+            {
+                if (child.name == name) return child;
+                var found = FindDeepChild(child, name);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
         private void UpdateGlobalButtons()
         {
+            GameObject navigationHolder = GetNavigationHolder();
+
             if (_panelStack.Count == 0)
             {
                 if (_backBtnRoot != null) _backBtnRoot.SetActive(false);
                 if (_citadelBtnRoot != null) _citadelBtnRoot.SetActive(false);
+                if (navigationHolder != null) navigationHolder.SetActive(false);
                 return;
             }
 
             var top = _panelStack.Peek();
             var features = top.ConfiguredNavFeatures;
 
+            bool showBack = (features & NavigationFeatures.BackButton) != 0;
+            bool showCitadel = (features & NavigationFeatures.CitadelButton) != 0;
+
             if (_backBtnRoot != null) 
-                _backBtnRoot.SetActive((features & NavigationFeatures.BackButton) != 0);
+                _backBtnRoot.SetActive(showBack);
             
             if (_citadelBtnRoot != null) 
-                _citadelBtnRoot.SetActive((features & NavigationFeatures.CitadelButton) != 0);
+                _citadelBtnRoot.SetActive(showCitadel);
+
+            if (navigationHolder != null)
+            {
+                navigationHolder.SetActive(showBack || showCitadel);
+            }
         }
 
         public void UpdateNavigationFeatures(NavigationFeatures features)
         {
+            bool showBack = (features & NavigationFeatures.BackButton) != 0;
+            bool showCitadel = (features & NavigationFeatures.CitadelButton) != 0;
+
             if (_backBtnRoot != null) 
-                _backBtnRoot.SetActive((features & NavigationFeatures.BackButton) != 0);
+                _backBtnRoot.SetActive(showBack);
             
             if (_citadelBtnRoot != null) 
-                _citadelBtnRoot.SetActive((features & NavigationFeatures.CitadelButton) != 0);
+                _citadelBtnRoot.SetActive(showCitadel);
+
+            GameObject navigationHolder = GetNavigationHolder();
+
+            if (navigationHolder != null)
+            {
+                navigationHolder.SetActive(showBack || showCitadel);
+            }
         }
         private bool IsChildOf(IUIController child, IUIController parent)
         {

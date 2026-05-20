@@ -43,11 +43,19 @@ namespace MaouSamaTD.Units.Editor
             GUIStyle titleStyle = new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Bold, fontSize = 14, alignment = TextAnchor.MiddleCenter };
             GUIStyle buttonStyle = new GUIStyle(GUI.skin.button) { fontStyle = FontStyle.Bold, fontSize = 12 };
             
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button(_target.useDefaultInspector ? "Switch to Custom Editor" : "Switch to Default Editor", buttonStyle, GUILayout.Height(30)))
             {
                 _target.useDefaultInspector = !_target.useDefaultInspector;
                 EditorUtility.SetDirty(_target);
             }
+            if (GUILayout.Button(new GUIContent(" Force Refresh", EditorGUIUtility.IconContent("d_Refresh").image), buttonStyle, GUILayout.Height(30)))
+            {
+                AssetDatabase.Refresh();
+                RefreshClasses();
+                EditorUtility.SetDirty(_target);
+            }
+            EditorGUILayout.EndHorizontal();
 
             if (_target.useDefaultInspector)
             {
@@ -121,7 +129,7 @@ namespace MaouSamaTD.Units.Editor
 
                 EditorGUILayout.Space(5);
                 EditorGUILayout.LabelField("Promotion Requirements", EditorStyles.miniBoldLabel);
-                EditorGUILayout.PropertyField(scaling.FindPropertyRelative("RequiredMaterials"), new GUIContent("Required Materials"), true);
+                DrawRequiredMaterialsList(scaling.FindPropertyRelative("RequiredMaterials"));
 
                 EditorGUILayout.Space(10);
                 DrawRarityGrowthTabs(scaling.FindPropertyRelative("RarityGrowths"));
@@ -196,6 +204,61 @@ namespace MaouSamaTD.Units.Editor
             EditorGUILayout.PropertyField(selectedGrowth.FindPropertyRelative("HpGrowthPerLevel"), new GUIContent("HP Growth"));
             EditorGUILayout.PropertyField(selectedGrowth.FindPropertyRelative("AtkGrowthPerLevel"), new GUIContent("ATK Growth"));
             EditorGUILayout.PropertyField(selectedGrowth.FindPropertyRelative("DefGrowthPerLevel"), new GUIContent("DEF Growth"));
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawRequiredMaterialsList(SerializedProperty materialsProp)
+        {
+            if (materialsProp == null || !materialsProp.isArray) return;
+
+            EditorGUILayout.BeginVertical("box");
+            
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Item ID", EditorStyles.boldLabel, GUILayout.Width(180));
+            EditorGUILayout.LabelField("Base Amount", EditorStyles.boldLabel, GUILayout.Width(120));
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("+ Add", EditorStyles.miniButton, GUILayout.Width(60)))
+            {
+                int newIndex = materialsProp.arraySize;
+                materialsProp.InsertArrayElementAtIndex(newIndex);
+                if (materialsProp.arraySize > 0)
+                {
+                    SerializedProperty newElem = materialsProp.GetArrayElementAtIndex(newIndex);
+                    newElem.FindPropertyRelative("ItemID").stringValue = "";
+                    newElem.FindPropertyRelative("BaseAmount").intValue = 1;
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.Space(2);
+
+            int indexToRemove = -1;
+            for (int i = 0; i < materialsProp.arraySize; i++)
+            {
+                SerializedProperty element = materialsProp.GetArrayElementAtIndex(i);
+                SerializedProperty itemIdProp = element.FindPropertyRelative("ItemID");
+                SerializedProperty baseAmountProp = element.FindPropertyRelative("BaseAmount");
+
+                EditorGUILayout.BeginHorizontal();
+                
+                itemIdProp.stringValue = EditorGUILayout.TextField(itemIdProp.stringValue, GUILayout.Width(180));
+                baseAmountProp.intValue = EditorGUILayout.IntField(baseAmountProp.intValue, GUILayout.Width(120));
+                
+                GUILayout.FlexibleSpace();
+                
+                if (GUILayout.Button("✕", EditorStyles.miniButton, GUILayout.Width(30)))
+                {
+                    indexToRemove = i;
+                }
+
+                EditorGUILayout.EndHorizontal();
+            }
+
+            if (indexToRemove >= 0)
+            {
+                materialsProp.DeleteArrayElementAtIndex(indexToRemove);
+            }
+
             EditorGUILayout.EndVertical();
         }
     }

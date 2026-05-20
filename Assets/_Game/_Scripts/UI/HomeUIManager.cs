@@ -20,7 +20,7 @@ namespace MaouSamaTD.UI.MainMenu
     /// Central hub for the Main Menu. Listens to all main buttons (Conquest, Cohorts, etc.)
     /// and routes them to the correct UI pages via the UIFlowManager.
     /// </summary>
-    public class HomeUIManager : MonoBehaviour
+    public class HomeUIManager : MonoBehaviour, IUIController
     {
         [Header("System Panels")]
         [SerializeField] private NavigationFeatures _navFeatures = NavigationFeatures.None;
@@ -65,6 +65,12 @@ namespace MaouSamaTD.UI.MainMenu
 
         [Inject] private MaouSamaTD.Managers.SaveManager _saveManager;
 
+        // IUIController Implementation
+        public GameObject VisualRoot => _visualRoot;
+        public bool AddsToHistory => true;
+        public bool RequestClose() => false;
+        public void ResetState() { }
+
         private void Start()
         {
             // Hook up all navigation buttons
@@ -88,10 +94,10 @@ namespace MaouSamaTD.UI.MainMenu
             PreheatData();
             UpdateNavButtons();
 
-            // Ensure the navigation history is cleared when we are back at the Home Page
+            // Register this home panel as the root panel in UIFlowManager
             if (UIFlowManager.Instance != null)
             {
-                UIFlowManager.Instance.ClearHistory(false, true);
+                UIFlowManager.Instance.OpenPanel(this);
             }
 
             // Check if we should trigger the Gacha Tutorial (post Level 2)

@@ -34,6 +34,8 @@ namespace UIPresetManager
 
         public string createdAt;
 
+        public string group = "";
+
         public List<UIObjectState> entries = new List<UIObjectState>();
     }
 

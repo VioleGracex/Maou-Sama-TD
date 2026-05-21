@@ -111,6 +111,16 @@ namespace MaouSamaTD.UI.MainMenu
             // Removed GenericListView to implement custom Node Map layout
             _canvas = GetComponentInParent<Canvas>();
             
+            // Dynamic fallback search for _briefingPanel if reference is lost
+            if (_briefingPanel == null)
+            {
+                _briefingPanel = FindObjectOfType<BriefingPanel>(true);
+                if (_briefingPanel == null)
+                {
+                    Debug.LogWarning("[CampaignPage] BriefingPanel was not found in the scene! Click interactions will not show details.");
+                }
+            }
+
             if (_mainStoryTabButton != null) _mainStoryTabButton.onClick.AddListener(() => ToggleCategory(LevelCategory.MainStory));
             if (_resourceDungeonsTabButton != null) _resourceDungeonsTabButton.onClick.AddListener(() => ToggleCategory(LevelCategory.ResourceDungeon));
             if (_specialDungeonsTabButton != null) _specialDungeonsTabButton.onClick.AddListener(() => ToggleCategory(LevelCategory.RiteDungeon));
@@ -118,6 +128,17 @@ namespace MaouSamaTD.UI.MainMenu
             UpdateTabVisuals();
             EnsureZoomButtonsExist();
             EnsureLeftSidebarExists();
+
+            if (_sidebarContentContainer != null)
+            {
+                foreach (Transform child in _sidebarContentContainer)
+                {
+                    if (child != null)
+                    {
+                        child.gameObject.SetActive(false);
+                    }
+                }
+            }
 
             if (_zoomInButton != null) _zoomInButton.onClick.AddListener(OnZoomInClicked);
             if (_zoomOutButton != null) _zoomOutButton.onClick.AddListener(OnZoomOutClicked);
@@ -354,8 +375,48 @@ namespace MaouSamaTD.UI.MainMenu
             });
         }
 
+        public void ClearSpawnedNodesAndSplinesEditorTime()
+        {
+            if (_levelContainer == null) return;
+
+            var children = new List<GameObject>();
+            foreach (Transform child in _levelContainer)
+            {
+                if (child == null) continue;
+                string name = child.name;
+                if (name.Contains("StageLevel_Prefab") || name.Contains("NodeGlow") || name.Contains("SplineDot"))
+                {
+                    children.Add(child.gameObject);
+                }
+            }
+
+            foreach (var go in children)
+            {
+                if (go != null)
+                {
+                    if (Application.isPlaying)
+                    {
+                        Destroy(go);
+                    }
+                    else
+                    {
+                        DestroyImmediate(go);
+                    }
+                }
+            }
+
+            _spawnedButtons.Clear();
+            _spawnedLevelNodes.Clear();
+        }
+
         private void DoRefresh()
         {
+            if (!Application.isPlaying)
+            {
+                ClearSpawnedNodesAndSplinesEditorTime();
+                return;
+            }
+
             if (_levelContainer == null || _levelButtonPrefab == null || _allLevels == null || _allLevels.Count == 0)
             {
                 Debug.LogWarning("[CampaignPage] Missing references or levels! Cannot spawn level buttons.");
@@ -808,138 +869,30 @@ namespace MaouSamaTD.UI.MainMenu
 
 
 
-        private void EnsureTabIconAndLayout(UnityEngine.UI.Button button, string iconPath)
-        {
-            if (button == null) return;
-
-            // Make it compact: sizeDelta e.g. 150f, 32f
-            var rect = button.GetComponent<RectTransform>();
-            if (rect != null)
-            {
-                rect.sizeDelta = new Vector2(165f, 32f); // Compact, not too big!
-            }
-
-            // Ensure HorizontalLayoutGroup is set up on the button
-            var layout = button.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
-            if (layout == null)
-            {
-                layout = button.gameObject.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
-            }
-            layout.spacing = 6f;
-            layout.padding = new RectOffset(8, 8, 4, 4);
-            layout.childAlignment = TextAnchor.MiddleCenter;
-            layout.childControlWidth = false;
-            layout.childControlHeight = false;
-            layout.childForceExpandWidth = false;
-            layout.childForceExpandHeight = false;
-
-            // Ensure ContentSizeFitter is set up on the button
-            var fitter = button.GetComponent<UnityEngine.UI.ContentSizeFitter>();
-            if (fitter == null)
-            {
-                fitter = button.gameObject.AddComponent<UnityEngine.UI.ContentSizeFitter>();
-            }
-            fitter.horizontalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
-            fitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained;
-
-            // Find or create the icon child (fallback only)
-            var iconTrans = button.transform.Find("Icon");
-            if (iconTrans == null)
-            {
-                GameObject iconGo = new GameObject("Icon", typeof(RectTransform), typeof(UnityEngine.UI.Image));
-                iconGo.transform.SetParent(button.transform, false);
-                iconGo.transform.SetAsFirstSibling(); // Put it before the text
-                iconTrans = iconGo.transform;
-            }
-            var iconImg = iconTrans.GetComponent<UnityEngine.UI.Image>();
-
-            // Load sprite
-            if (iconImg != null)
-            {
-                Sprite sp = null;
-#if UNITY_EDITOR
-                sp = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
-#endif
-                if (sp != null)
-                {
-                    iconImg.sprite = sp;
-                    iconImg.enabled = true;
-                }
-                else if (iconImg.sprite == null)
-                {
-                    iconImg.enabled = false;
-                }
-
-                var iconRect = iconImg.GetComponent<RectTransform>();
-                iconRect.sizeDelta = new Vector2(18f, 18f); // Neat and compact!
-            }
-
-            // Style Text
-            var tmp = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            if (tmp != null)
-            {
-                tmp.fontSize = 13f; // Neat, compact font size
-                tmp.enableWordWrapping = false;
-            }
-        }
-
         private void UpdateTabVisuals()
         {
-            EnsureTabIconAndLayout(_mainStoryTabButton, "Assets/_Game/Art/UI_Pages/Home/cmd_node_manifest_soul.png");
-            EnsureTabIconAndLayout(_resourceDungeonsTabButton, "Assets/_Game/Art/UI/Icons/Gacha/icon_gold_pile.png");
-            EnsureTabIconAndLayout(_specialDungeonsTabButton, "Assets/_Game/Art/UI/Icons/Gacha/icon_blood_crest.png");
-
-            SetTabActiveVisuals(_mainStoryTabButton, _showMainStory);
-            SetTabActiveVisuals(_resourceDungeonsTabButton, _showResourceDungeons);
-            SetTabActiveVisuals(_specialDungeonsTabButton, _showSpecialDungeons);
+            // Visual state is baked in the scene (editor-mode). At runtime we only nudge
+            // the image alpha to signal which tab is "pressed / active" vs inactive.
+            // No color, outline, or font overrides here — they break the Scene view.
+            ApplyTabActiveAlpha(_mainStoryTabButton, _showMainStory);
+            ApplyTabActiveAlpha(_resourceDungeonsTabButton, _showResourceDungeons);
+            ApplyTabActiveAlpha(_specialDungeonsTabButton, _showSpecialDungeons);
         }
 
-        private void SetTabActiveVisuals(UnityEngine.UI.Button button, bool isActive)
+        /// <summary>
+        /// Pure runtime feedback only: fade the image alpha to show active/inactive state.
+        /// All base colors, outlines, and text styles are authored once in the Unity Editor
+        /// via execute_code and saved into the scene — do NOT set them here.
+        /// </summary>
+        private void ApplyTabActiveAlpha(UnityEngine.UI.Button button, bool isActive)
         {
             if (button == null) return;
-            
             var img = button.GetComponent<UnityEngine.UI.Image>();
-            var tmp = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            var iconTrans = button.transform.Find("Icon");
-            var iconImg = iconTrans != null ? iconTrans.GetComponent<UnityEngine.UI.Image>() : null;
-            
-            if (isActive)
+            if (img != null)
             {
-                // Active premium style: Maou Crimson background, bold white text, Maou Gold outline
-                if (img != null) img.color = new Color(0.92f, 0.3f, 0.29f, 1f); 
-                if (tmp != null)
-                {
-                    tmp.color = Color.white;
-                    tmp.fontStyle = TMPro.FontStyles.Bold;
-                }
-                if (iconImg != null)
-                {
-                    iconImg.color = Color.white;
-                }
-                
-                var outline = button.GetComponent<UnityEngine.UI.Outline>();
-                if (outline == null) outline = button.gameObject.AddComponent<UnityEngine.UI.Outline>();
-                outline.effectColor = new Color(0.97f, 0.79f, 0.14f, 0.85f);
-                outline.effectDistance = new Vector2(1.5f, 1.5f);
-            }
-            else
-            {
-                // Inactive dim style: dark-glass gray background, semi-transparent gray text, dim gold outline
-                if (img != null) img.color = new Color(0.06f, 0.06f, 0.08f, 0.85f);
-                if (tmp != null)
-                {
-                    tmp.color = new Color(0.7f, 0.8f, 0.9f, 0.55f);
-                    tmp.fontStyle = TMPro.FontStyles.Normal;
-                }
-                if (iconImg != null)
-                {
-                    iconImg.color = new Color(0.7f, 0.8f, 0.9f, 0.55f);
-                }
-                
-                var outline = button.GetComponent<UnityEngine.UI.Outline>();
-                if (outline == null) outline = button.gameObject.AddComponent<UnityEngine.UI.Outline>();
-                outline.effectColor = new Color(0.97f, 0.79f, 0.14f, 0.15f);
-                outline.effectDistance = new Vector2(1f, 1f);
+                // Active = fully opaque baked Crimson; Inactive = semi-transparent dark glass
+                var c = img.color;
+                img.color = new Color(c.r, c.g, c.b, isActive ? 1f : 0.80f);
             }
         }
 
@@ -1196,39 +1149,9 @@ namespace MaouSamaTD.UI.MainMenu
 
             if (_zoomInButton != null && _zoomOutButton != null && _zoomSlider != null)
             {
-                // Make the existing zoom slider taller/longer
-                var sliderRect = _zoomSlider.GetComponent<RectTransform>();
-                if (sliderRect != null)
-                {
-                    sliderRect.offsetMin = new Vector2(sliderRect.offsetMin.x, 50f);
-                    sliderRect.offsetMax = new Vector2(sliderRect.offsetMax.x, -50f);
-                }
-                var containerRect = _zoomSlider.transform.parent?.GetComponent<RectTransform>();
-                if (containerRect != null)
-                {
-                    containerRect.sizeDelta = new Vector2(containerRect.sizeDelta.x, 380f); // Longer slider
-                }
+                // Layout is baked in the scene — do NOT override sizeDelta, offsets,
+                // handle size, fill width, or track width here. Only wire up events.
 
-                // Adjust handles & track of pre-placed slider to make it much thicker/larger
-                if (_zoomSlider.handleRect != null)
-                {
-                    _zoomSlider.handleRect.sizeDelta = new Vector2(32f, 32f); // Extra large handle
-                }
-                if (_zoomSlider.fillRect != null)
-                {
-                    _zoomSlider.fillRect.sizeDelta = new Vector2(14f, 0f); // Thicker fill track
-                }
-                var backgroundTrans = _zoomSlider.transform.Find("Background");
-                if (backgroundTrans != null)
-                {
-                    var bgRect = backgroundTrans.GetComponent<RectTransform>();
-                    if (bgRect != null)
-                    {
-                        bgRect.sizeDelta = new Vector2(14f, bgRect.sizeDelta.y); // Thicker background track
-                    }
-                }
-
-                // Wire them up!
                 _zoomInButton.onClick.RemoveAllListeners();
                 _zoomInButton.onClick.AddListener(OnZoomInClicked);
 
@@ -1253,10 +1176,10 @@ namespace MaouSamaTD.UI.MainMenu
                 GameObject containerGo = new GameObject("ZoomContainer", typeof(RectTransform));
                 containerGo.transform.SetParent(targetParent, false);
                 var rect = containerGo.GetComponent<RectTransform>();
-                rect.anchorMin = new Vector2(0f, 0.5f);
-                rect.anchorMax = new Vector2(0f, 0.5f);
-                rect.pivot = new Vector2(0f, 0.5f);
-                rect.anchoredPosition = new Vector2(310f, 0f);
+                rect.anchorMin = new Vector2(1f, 0.5f);
+                rect.anchorMax = new Vector2(1f, 0.5f);
+                rect.pivot = new Vector2(1f, 0.5f);
+                rect.anchoredPosition = new Vector2(-30f, 0f);
                 rect.sizeDelta = new Vector2(44f, 380f); // Make the zoom slider container much longer (380f instead of 220f)
                 zoomContainer = containerGo.transform;
             }
@@ -1612,6 +1535,7 @@ namespace MaouSamaTD.UI.MainMenu
                     {
                         toggleImg.sprite = _arrowLeftSprite;
                         toggleImg.color = Color.white;
+                        toggleImg.transform.localScale = Vector3.one;
                     }
 
                     toggleBtn.onClick.AddListener(() => {
@@ -1620,17 +1544,10 @@ namespace MaouSamaTD.UI.MainMenu
                         
                         if (toggleImg != null)
                         {
-                            toggleImg.sprite = isExpanded ? _arrowLeftSprite : _arrowRightSprite;
+                            toggleImg.transform.localScale = new Vector3(isExpanded ? 1f : -1f, 1f, 1f);
                         }
                         
                         rect.DOAnchorPosX(targetX, 0.35f).SetEase(Ease.OutQuad).SetUpdate(true);
-
-                        var zoomContainer = rect.parent?.Find("ZoomContainer")?.GetComponent<RectTransform>();
-                        if (zoomContainer != null)
-                        {
-                            float zoomTargetX = isExpanded ? 310f : 20f;
-                            zoomContainer.DOAnchorPosX(zoomTargetX, 0.35f).SetEase(Ease.OutQuad).SetUpdate(true);
-                        }
                     });
                 }
             }
@@ -1709,17 +1626,29 @@ namespace MaouSamaTD.UI.MainMenu
             if (_sidebarContentContainer == null) return;
 
             // Clear old sidebar items
+            System.Collections.Generic.List<Transform> childrenToDestroy = new System.Collections.Generic.List<Transform>();
             foreach (Transform child in _sidebarContentContainer)
             {
-                if (Application.isPlaying)
+                childrenToDestroy.Add(child);
+            }
+            foreach (var child in childrenToDestroy)
+            {
+                if (child != null)
                 {
-                    Destroy(child.gameObject);
-                }
-                else
-                {
-                    DestroyImmediate(child.gameObject);
+                    child.gameObject.SetActive(false);
+                    child.SetParent(null);
+                    if (Application.isPlaying)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                    else
+                    {
+                        DestroyImmediate(child.gameObject);
+                    }
                 }
             }
+
+            if (!Application.isPlaying) return;
 
             if (_allLevels == null) return;
 
@@ -1765,30 +1694,17 @@ namespace MaouSamaTD.UI.MainMenu
                 if (_sidebarFilter == "UNLOCKED" && !isUnlocked) continue;
                 if (_sidebarFilter == "CLEARED" && !isCompleted) continue;
 
-                // Double-click/Single-click handling logic
-                float lastClickTime = 0f;
+                // Single-click handling logic to center map and open briefing
                 Action clickAction = () => {
-                    float currentTime = Time.unscaledTime;
-                    if (currentTime - lastClickTime < 0.3f)
+                    if (isPlaced)
                     {
-                        if (isPlaced)
+                        CenterScrollOnPosition(level.CampaignMapPosition);
+                        var mapBtn = _spawnedButtons.Find(b => b != null && b.LevelDataForCallback == level);
+                        if (mapBtn != null)
                         {
-                            CenterScrollOnPosition(level.CampaignMapPosition);
-                            var mapBtn = _spawnedButtons.Find(b => b != null && b.LevelDataForCallback == level);
-                            if (mapBtn != null)
-                            {
-                                OnLevelClicked(level);
-                            }
+                            OnLevelClicked(level);
                         }
                     }
-                    else
-                    {
-                        if (isPlaced)
-                        {
-                            CenterScrollOnPosition(level.CampaignMapPosition);
-                        }
-                    }
-                    lastClickTime = currentTime;
                 };
 
                 // Use the designer's styled prefab if assigned in the Inspector
@@ -1858,12 +1774,16 @@ namespace MaouSamaTD.UI.MainMenu
                         int starsCount = 0;
                         if (_saveManager != null && _saveManager.CurrentData != null)
                         {
-                            var starData = _saveManager.CurrentData.LevelStars.Find(s => s.LevelID == level.LevelID);
-                            if (starData.LevelID != null)
+                            if (_saveManager.CurrentData.LevelStars != null)
                             {
-                                starsCount = starData.Stars;
+                                var starData = _saveManager.CurrentData.LevelStars.Find(s => s.LevelID == level.LevelID);
+                                if (starData.LevelID != null)
+                                {
+                                    starsCount = starData.Stars;
+                                }
                             }
-                            else if (_saveManager.CurrentData.CompletedLevels.Contains(level.LevelID))
+                            
+                            if (starsCount == 0 && _saveManager.CurrentData.CompletedLevels != null && _saveManager.CurrentData.CompletedLevels.Contains(level.LevelID))
                             {
                                 starsCount = 3;
                             }
@@ -1893,15 +1813,15 @@ namespace MaouSamaTD.UI.MainMenu
                     string statusText = "";
                     if (isCompleted)
                     {
-                        statusText = "<color=#E6B800>✔</color>";
+                        statusText = "<color=#E6B800>[OK]</color>";
                     }
                     else if (!isUnlocked)
                     {
-                        statusText = "<color=#777777>🔒</color>";
+                        statusText = "<color=#777777>[L]</color>";
                     }
                     else
                     {
-                        statusText = isPlaced ? "<color=#00CCFF>📍</color>" : "<color=#888888>◌</color>";
+                        statusText = isPlaced ? "<color=#00CCFF>></color>" : "";
                     }
 
                     statusTmp.text = statusText;

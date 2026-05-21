@@ -25,22 +25,36 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 _nameText.text = $"{LevelButton.FormatLevelID(level.LevelID)} {level.LevelName}";
                 _nameText.color = isUnlocked ? Color.white : new Color(0.6f, 0.6f, 0.6f, 0.7f);
+                
+                var nameRect = _nameText.GetComponent<RectTransform>();
+                if (nameRect != null)
+                {
+                    nameRect.offsetMax = new Vector2(-65f, nameRect.offsetMax.y);
+                }
             }
 
             if (_statusText != null)
             {
+                _statusText.enableWordWrapping = false;
+                _statusText.overflowMode = TextOverflowModes.Overflow;
+                var rectTrans = _statusText.GetComponent<RectTransform>();
+                if (rectTrans != null)
+                {
+                    rectTrans.sizeDelta = new Vector2(60f, 30f);
+                }
+
                 string statusString = "";
                 if (isCompleted)
                 {
-                    statusString = "<color=#FFD700>✔</color>"; // Gold check
+                    statusString = "<color=#FFD700>Done</color>"; // Gold check representation
                 }
                 else if (!isUnlocked)
                 {
-                    statusString = "<color=#777777>🔒</color>"; // Lock
+                    statusString = "<color=#777777>[L]</color>"; // Lock representation
                 }
                 else
                 {
-                    statusString = isPlaced ? "<color=#FFD700>📍</color>" : "<color=#888888>◌</color>"; // Placed (Gold Pin) vs Unplaced (Dot)
+                    statusString = isPlaced ? "<color=#FFD700>></color>" : ""; // Placed (Gold Triangle) vs Unplaced (Dot)
                 }
                 _statusText.text = statusString;
             }
@@ -66,12 +80,16 @@ namespace MaouSamaTD.UI.MainMenu
                     var saveManager = FindObjectOfType<MaouSamaTD.Managers.SaveManager>();
                     if (saveManager != null && saveManager.CurrentData != null)
                     {
-                        var starData = saveManager.CurrentData.LevelStars.Find(s => s.LevelID == level.LevelID);
-                        if (starData.LevelID != null)
+                        if (saveManager.CurrentData.LevelStars != null)
                         {
-                            starsCount = starData.Stars;
+                            var starData = saveManager.CurrentData.LevelStars.Find(s => s.LevelID == level.LevelID);
+                            if (starData.LevelID != null)
+                            {
+                                starsCount = starData.Stars;
+                            }
                         }
-                        else if (saveManager.CurrentData.CompletedLevels.Contains(level.LevelID))
+                        
+                        if (starsCount == 0 && saveManager.CurrentData.CompletedLevels != null && saveManager.CurrentData.CompletedLevels.Contains(level.LevelID))
                         {
                             starsCount = 3;
                         }

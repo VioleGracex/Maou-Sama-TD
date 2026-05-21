@@ -16,7 +16,11 @@ namespace MaouSamaTD.UI.MainMenu
             if (layout == null)
             {
                 layout = gameObject.AddComponent<HorizontalLayoutGroup>();
-                layout.spacing = 8f; // Beautiful gap between icon and text
+            }
+            if (layout != null)
+            {
+                layout.spacing = 6f; // Beautiful tight gap between icon and text
+                layout.padding = new RectOffset(6, 6, 4, 4);
                 layout.childAlignment = TextAnchor.MiddleLeft;
                 layout.childControlWidth = false;
                 layout.childControlHeight = false;
@@ -24,18 +28,24 @@ namespace MaouSamaTD.UI.MainMenu
                 layout.childForceExpandHeight = false;
             }
 
+            // Destroy ContentSizeFitter so that parent ScrollRect/Content layouts can force custom sizes
             var fitter = GetComponent<ContentSizeFitter>();
-            if (fitter == null)
+            if (fitter != null)
             {
-                fitter = gameObject.AddComponent<ContentSizeFitter>();
-                fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+                if (Application.isPlaying) Destroy(fitter);
+                else DestroyImmediate(fitter);
             }
 
             if (_iconImage != null && icon != null)
             {
                 _iconImage.sprite = icon;
                 _iconImage.enabled = true;
+                
+                var iconRect = _iconImage.rectTransform;
+                if (iconRect != null)
+                {
+                    iconRect.sizeDelta = new Vector2(22f, 22f); // neat compact icon size
+                }
             }
             else if (_iconImage != null)
             {
@@ -45,8 +55,16 @@ namespace MaouSamaTD.UI.MainMenu
             if (_quantityText != null)
             {
                 _quantityText.text = quantity;
-                _quantityText.enableWordWrapping = false;
+                _quantityText.enableWordWrapping = true;
+                _quantityText.lineSpacing = 0.85f;
                 _quantityText.overflowMode = TextOverflowModes.Overflow;
+                _quantityText.fontSize = 11f; // compact font size
+                
+                var qtyRect = _quantityText.rectTransform;
+                if (qtyRect != null)
+                {
+                    qtyRect.sizeDelta = new Vector2(36f, 20f); // clean tight text box bounds
+                }
             }
         }
     }

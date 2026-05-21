@@ -156,6 +156,23 @@ namespace MaouSamaTD.UI.MainMenu.Editor
                 }
             }
 
+            var propBriefing = serializedObject.FindProperty("_briefingPanel");
+            if (propBriefing != null && propBriefing.objectReferenceValue == null)
+            {
+                var briefing = GameObject.FindObjectOfType<BriefingPanel>(true);
+                if (briefing == null)
+                {
+                    var t = _campaignPage.transform.parent != null ? _campaignPage.transform.parent.Find("Briefing_Panel") : null;
+                    if (t == null) t = _campaignPage.transform.Find("Briefing_Panel");
+                    if (t != null) briefing = t.GetComponent<BriefingPanel>();
+                }
+                if (briefing != null)
+                {
+                    propBriefing.objectReferenceValue = briefing;
+                    isDirty = true;
+                }
+            }
+
             if (isDirty)
             {
                 serializedObject.ApplyModifiedProperties();
@@ -174,27 +191,98 @@ namespace MaouSamaTD.UI.MainMenu.Editor
             var container = _campaignPage.LevelContainer;
             if (container == null) return;
 
-            var buttons = _campaignPage.SpawnedButtons;
-            if (buttons == null || buttons.Count == 0) return;
+            var levels = _campaignPage.AllLevels;
+            if (levels == null || levels.Count == 0) return;
 
-            foreach (var btn in buttons)
+            // 1. Draw connections first in the background
+            var levelsWithPositions = new Dictionary<LevelData, Vector2>();
+            bool hasExplicitConnections = false;
+            foreach (var level in levels)
             {
-                if (btn == null || btn.LevelDataForCallback == null) continue;
+                if (level == null) continue;
+                levelsWithPositions[level] = level.CampaignMapPosition;
+                if (level.ConnectedLevels != null && level.ConnectedLevels.Count > 0)
+                {
+                    hasExplicitConnections = true;
+                }
+            }
 
-                var rect = btn.GetComponent<RectTransform>();
-                if (rect == null) continue;
+            var drawnConnections = new HashSet<(string, string)>();
+
+            if (hasExplicitConnections)
+            {
+                foreach (var level in levels)
+                {
+                    if (level == null || level.ConnectedLevels == null) continue;
+
+                    foreach (var targetLvl in level.ConnectedLevels)
+                    {
+                        if (targetLvl == null) continue;
+                        if (!levelsWithPositions.TryGetValue(targetLvl, out var targetPos)) continue;
+
+                        string idA = level.LevelID;
+                        string idB = targetLvl.LevelID;
+                        var key = string.Compare(idA, idB, System.StringComparison.Ordinal) < 0 ? (idA, idB) : (idB, idA);
+
+                        if (!drawnConnections.Contains(key))
+                        {
+                            Color lineColor = GetEditorCategoryColor(level.Category);
+                            lineColor.a = 0.5f; // Semitransparent in editor for clarity
+                            DrawEditorSpline(level.CampaignMapPosition, targetPos, lineColor, container);
+                            drawnConnections.Add(key);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Fallback to sequential main story drawing exclusively between story stages
+                List<LevelData> storyLevels = new List<LevelData>();
+                foreach (var level in levels)
+                {
+                    if (level != null && level.Category == LevelCategory.MainStory)
+                    {
+                        storyLevels.Add(level);
+                    }
+                }
+                storyLevels.Sort((a, b) => a.LevelIndex.CompareTo(b.LevelIndex));
+
+                if (storyLevels.Count > 1)
+                {
+                    for (int i = 1; i < storyLevels.Count; i++)
+                    {
+                        var prev = storyLevels[i - 1];
+                        var curr = storyLevels[i];
+                        if (prev != null && curr != null &&
+                            levelsWithPositions.TryGetValue(prev, out var prevPos) &&
+                            levelsWithPositions.TryGetValue(curr, out var currPos))
+                        {
+                            Color lineColor = GetEditorCategoryColor(LevelCategory.MainStory);
+                            lineColor.a = 0.5f;
+                            DrawEditorSpline(prevPos, currPos, lineColor, container);
+                        }
+                    }
+                }
+            }
+
+            // 2. Draw handles for each level node
+            foreach (var level in levels)
+            {
+                if (level == null) continue;
 
                 // Current world position in scene
-                Vector3 worldPos = rect.position;
+                Vector3 worldPos = container.TransformPoint(new Vector3(level.CampaignMapPosition.x, level.CampaignMapPosition.y, 0f));
 
                 float size = HandleUtility.GetHandleSize(worldPos) * 0.12f;
 
-                // Let's draw a handle at worldPos
+                // Color-code the handle based on category
+                Handles.color = GetEditorCategoryColor(level.Category);
+
                 EditorGUI.BeginChangeCheck();
 
-                Handles.color = new Color(0f, 0.8f, 1.0f, 0.8f); // Demonic glowing cyan
+                // FreeMoveHandle allows free dragging in 3D (which maps to 2D screen/rect plane)
                 Vector3 newWorldPos = Handles.FreeMoveHandle(
-                    btn.GetInstanceID(),
+                    level.GetInstanceID(),
                     worldPos,
                     size,
                     Vector3.zero,
@@ -202,7 +290,12 @@ namespace MaouSamaTD.UI.MainMenu.Editor
                 );
 
                 // Draw label above handle
-                Handles.Label(worldPos + Vector3.up * size * 1.5f, btn.LevelDataForCallback.LevelID, EditorStyles.boldLabel);
+                string labelText = $"{level.LevelID}\n{level.LevelName}";
+                GUIStyle labelStyle = new GUIStyle(EditorStyles.boldLabel);
+                labelStyle.normal.textColor = GetEditorCategoryColor(level.Category);
+                labelStyle.alignment = TextAnchor.UpperCenter;
+                
+                Handles.Label(worldPos + Vector3.up * size * 1.5f, labelText, labelStyle);
 
                 if (EditorGUI.EndChangeCheck())
                 {
@@ -219,16 +312,51 @@ namespace MaouSamaTD.UI.MainMenu.Editor
                     anchoredPos.y = Mathf.Round(anchoredPos.y);
 
                     // Undo support
-                    Undo.RecordObject(btn.LevelDataForCallback, "Reposition Level Node");
+                    Undo.RecordObject(level, "Reposition Level Node");
                     
-                    btn.LevelDataForCallback.CampaignMapPosition = anchoredPos;
-                    rect.anchoredPosition = anchoredPos;
+                    level.CampaignMapPosition = anchoredPos;
 
-                    EditorUtility.SetDirty(btn.LevelDataForCallback);
-
-                    // Real-time spline redraw in scene
-                    _campaignPage.RedrawSplinesOnly();
+                    EditorUtility.SetDirty(level);
                 }
+            }
+        }
+
+        private void DrawEditorSpline(Vector2 startLocal, Vector2 endLocal, Color color, Transform container)
+        {
+            Vector2 dir = endLocal - startLocal;
+            Vector2 perp = new Vector2(-dir.y, dir.x).normalized;
+            float dist = dir.magnitude;
+            float arcFactor = dist * 0.12f;
+            Vector2 control = (startLocal + endLocal) * 0.5f + perp * arcFactor;
+
+            int numSegments = Mathf.Max(5, Mathf.RoundToInt(dist / 22f));
+            Vector3[] points = new Vector3[numSegments + 1];
+
+            for (int i = 0; i <= numSegments; i++)
+            {
+                float t = (float)i / numSegments;
+                Vector2 posLocal = (1f - t) * (1f - t) * startLocal + 2f * (1f - t) * t * control + t * t * endLocal;
+                points[i] = container.TransformPoint(new Vector3(posLocal.x, posLocal.y, 0f));
+            }
+
+            Handles.color = color;
+            Handles.DrawAAPolyLine(3f, points);
+        }
+
+        private Color GetEditorCategoryColor(LevelCategory category)
+        {
+            switch (category)
+            {
+                case LevelCategory.MainStory:
+                    return new Color(0.1f, 0.8f, 1.0f, 0.9f); // Premium Glowing Cyan
+                case LevelCategory.ResourceDungeon:
+                    return new Color(1.0f, 0.75f, 0.15f, 0.9f); // Premium Glowing Amber
+                case LevelCategory.RiteDungeon:
+                    return new Color(0.85f, 0.35f, 1.0f, 0.9f); // Premium Glowing Purple
+                case LevelCategory.VassalDungeon:
+                    return new Color(1.0f, 0.3f, 0.3f, 0.9f); // Premium Glowing Red
+                default:
+                    return new Color(1.0f, 1.0f, 1.0f, 0.9f);
             }
         }
     }

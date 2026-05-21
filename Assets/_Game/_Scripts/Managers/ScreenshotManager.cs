@@ -12,7 +12,7 @@ namespace MaouSamaTD.Managers
     {
         [Header("Settings")]
         [SerializeField] private string _folderName = "Screenshots";
-        [SerializeField] private KeyCode _captureKey = KeyCode.F12;
+        [SerializeField] private UnityEngine.InputSystem.Key _captureKey = UnityEngine.InputSystem.Key.F12;
         [SerializeField] private int _superSize = 1; // Increase for higher res
 
         [Header("UI Feedback")]
@@ -21,7 +21,7 @@ namespace MaouSamaTD.Managers
 
         private void Update()
         {
-            if (Input.GetKeyDown(_captureKey))
+            if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current[_captureKey].wasPressedThisFrame)
             {
                 Capture();
             }

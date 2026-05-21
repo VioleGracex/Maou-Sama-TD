@@ -60,6 +60,7 @@ namespace MaouSamaTD.UI.MainMenu
         private GenericListView<LevelDisplayData, LevelButton> _listView;
 
         private List<LevelButton> _spawnedButtons = new List<LevelButton>();
+        private Dictionary<LevelData, (LevelButton btn, GameObject glow)> _spawnedLevelNodes = new Dictionary<LevelData, (LevelButton btn, GameObject glow)>();
         private Canvas _canvas;
 
         [Header("Sidebar & Navigation UI")]
@@ -433,51 +434,95 @@ namespace MaouSamaTD.UI.MainMenu
             bool isTabSwap = _lastLoadedHash != -1 && _lastLoadedHash != activeCategoriesHash;
             _lastLoadedHash = activeCategoriesHash;
 
-            // Animate existing children out then rebuild
-            var oldChildren = new List<GameObject>();
-            for (int k = 0; k < _levelContainer.childCount; k++)
-                oldChildren.Add(_levelContainer.GetChild(k).gameObject);
+            // SMART DIFF REFRESH LOGIC
+            HashSet<LevelData> targetLevels = new HashSet<LevelData>();
+            foreach (var data in displayDataList) targetLevels.Add(data.Level);
 
-            if (isTabSwap && Application.isPlaying && oldChildren.Count > 0)
+            // Identify what needs to be removed
+            List<LevelData> toRemove = new List<LevelData>();
+            foreach (var level in _spawnedLevelNodes.Keys)
             {
-                // Fade/scale old nodes out
-                foreach (var child in oldChildren)
-                {
-                    var cg = child.GetComponent<CanvasGroup>();
-                    if (cg == null) cg = child.AddComponent<CanvasGroup>();
-                    child.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack).SetUpdate(true);
-                    cg.DOFade(0f, 0.15f).SetUpdate(true);
-                }
-                // Delay spawn until animation finishes
-                DOVirtual.DelayedCall(0.2f, () => {
-                    foreach (var child in oldChildren)
-                        if (child != null) Destroy(child);
-                    SpawnLevelNodes(displayDataList, animateIn: true);
-                }).SetUpdate(true);
+                if (!targetLevels.Contains(level)) toRemove.Add(level);
             }
-            else
+
+            // Animate out and destroy removed nodes
+            foreach (var level in toRemove)
             {
-                // Instant destroy & spawn (first load or editor)
-                for (int k = _levelContainer.childCount - 1; k >= 0; k--)
+                if (_spawnedLevelNodes.TryGetValue(level, out var tuple))
                 {
-                    var child = _levelContainer.GetChild(k).gameObject;
+                    var btn = tuple.btn;
+                    var glow = tuple.glow;
+                    _spawnedButtons.Remove(btn);
+
+                    if (btn != null)
+                    {
+                        if (isTabSwap && Application.isPlaying)
+                        {
+                            btn.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack).SetUpdate(true);
+                            var cg = btn.GetComponent<CanvasGroup>();
+                            if (cg == null) cg = btn.gameObject.AddComponent<CanvasGroup>();
+                            cg.DOFade(0f, 0.15f).SetUpdate(true);
+                            DOVirtual.DelayedCall(0.2f, () => { if (btn != null) Destroy(btn.gameObject); }).SetUpdate(true);
+                        }
+                        else
+                        {
+                            if (Application.isPlaying) Destroy(btn.gameObject);
+                            else DestroyImmediate(btn.gameObject);
+                        }
+                    }
+                    if (glow != null)
+                    {
+                        if (isTabSwap && Application.isPlaying)
+                        {
+                            glow.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack).SetUpdate(true);
+                            var cg = glow.GetComponent<CanvasGroup>();
+                            if (cg == null) cg = glow.gameObject.AddComponent<CanvasGroup>();
+                            cg.DOFade(0f, 0.15f).SetUpdate(true);
+                            DOVirtual.DelayedCall(0.2f, () => { if (glow != null) Destroy(glow); }).SetUpdate(true);
+                        }
+                        else
+                        {
+                            if (Application.isPlaying) Destroy(glow);
+                            else DestroyImmediate(glow);
+                        }
+                    }
+                }
+                _spawnedLevelNodes.Remove(level);
+            }
+
+            // Destroy all old splines
+            for (int k = _levelContainer.childCount - 1; k >= 0; k--)
+            {
+                var child = _levelContainer.GetChild(k).gameObject;
+                if (child.name == "SplineDot")
+                {
                     if (Application.isPlaying) Destroy(child);
                     else DestroyImmediate(child);
                 }
-                SpawnLevelNodes(displayDataList, animateIn: false);
             }
+
+            // Spawn newly added nodes
+            SpawnLevelNodes(displayDataList, isTabSwap && Application.isPlaying);
         }
 
         private void SpawnLevelNodes(List<LevelDisplayData> displayDataList, bool animateIn)
         {
-            _spawnedButtons.Clear();
-
             // Load glow circle sprite
             Sprite glowCircle = GetGlowCircleSprite();
+
+            int newlyAddedIndex = 0;
 
             for (int i = 0; i < displayDataList.Count; i++)
             {
                 var data = displayDataList[i];
+                
+                // If it's already spawned, skip recreation entirely!
+                if (_spawnedLevelNodes.ContainsKey(data.Level))
+                {
+                    continue;
+                }
+
+                newlyAddedIndex++;
 
                 // Add glow circle background under the node for visibility
                 var circleGo = new GameObject("NodeGlow", typeof(UnityEngine.UI.Image));
@@ -506,17 +551,21 @@ namespace MaouSamaTD.UI.MainMenu
 
                 btn.Setup(data, (o) => OnLevelClicked(data.Level));
                 _spawnedButtons.Add(btn);
+                _spawnedLevelNodes[data.Level] = (btn, circleGo);
 
                 if (animateIn && Application.isPlaying)
                 {
                     btn.transform.localScale = Vector3.zero;
                     circleGo.transform.localScale = Vector3.zero;
-                    float delay = i * 0.04f;
+                    float delay = newlyAddedIndex * 0.04f;
                     btn.transform.DOScale(Vector3.one, 0.25f).SetDelay(delay).SetEase(Ease.OutBack).SetUpdate(true);
                     circleGo.transform.DOScale(Vector3.one, 0.25f).SetDelay(delay).SetEase(Ease.OutBack).SetUpdate(true).OnComplete(() => {
                         // Start pulsing the glow circle!
-                        circleGo.transform.DOScale(1.15f, 1.2f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine).SetUpdate(true);
-                        circleImg.DOFade(0.5f, 1.2f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine).SetUpdate(true);
+                        if (circleGo != null && circleImg != null)
+                        {
+                            circleGo.transform.DOScale(1.15f, 1.2f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine).SetUpdate(true);
+                            circleImg.DOFade(0.5f, 1.2f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine).SetUpdate(true);
+                        }
                     });
                 }
                 else if (Application.isPlaying)

@@ -77,7 +77,6 @@ namespace MaouSamaTD.UI
         [SerializeField] private float _hpFillDuration = 0.4f;
 
         [Header("Loot Drop Animation Settings")]
-        [SerializeField] private System.Collections.Generic.List<ItemConfigSO> _lootItemConfigs = new System.Collections.Generic.List<ItemConfigSO>();
         [SerializeField] private Transform _lootDestinationTarget;
 
         [Header("Victory Sequence UI - XP")]
@@ -299,7 +298,7 @@ namespace MaouSamaTD.UI
 
             // Create Blur/Dark Overlay
             GameObject blurOverlay = new GameObject("VictoryBlurOverlay");
-            var canvas = FindFirstObjectByType<Canvas>();
+            var canvas = GetComponentInParent<Canvas>();
             if (canvas != null) blurOverlay.transform.SetParent(canvas.transform, false);
             blurOverlay.transform.SetAsLastSibling();
             var blurRect = blurOverlay.AddComponent<RectTransform>();
@@ -350,13 +349,22 @@ namespace MaouSamaTD.UI
             // --- STAGE 2: XP PROGRESS SEQUENCE ---
             EnsureVictorySequenceUI();
             
+            // Wait for all world drop animations to finish
+            while (FindObjectsByType<MaouSamaTD.VFX.WorldLootDropVisual>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length > 0)
+            {
+                yield return null;
+            }
+
             if (_xpSequenceVisualRoot != null)
             {
                 _xpSequenceVisualRoot.SetActive(true);
                 PopulateXPGrid();
                 
                 _victorySequenceTapped = false;
-                yield return new WaitUntil(() => _victorySequenceTapped);
+                while (!_victorySequenceTapped && !(UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame))
+                {
+                    yield return null;
+                }
                 _xpSequenceVisualRoot.SetActive(false);
             }
 
@@ -370,7 +378,10 @@ namespace MaouSamaTD.UI
                 PopulateLootAndMVP();
                 
                 _victorySequenceTapped = false;
-                yield return new WaitUntil(() => _victorySequenceTapped);
+                while (!_victorySequenceTapped && !(UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame))
+                {
+                    yield return null;
+                }
                 _lootSequenceVisualRoot.SetActive(false);
             }
 
@@ -379,8 +390,6 @@ namespace MaouSamaTD.UI
             {
                 _winPanel.SetActive(true);
                 _winPanel.transform.SetAsLastSibling();
-                _winPanel.transform.localScale = Vector3.zero;
-                _winPanel.transform.DOScale(1f, 0.5f).SetUpdate(true).SetEase(Ease.OutBack);
                 
                 // Now that the win panel is up, we can finally stop time
                 _gameManager.SetSpeed(0f);
@@ -1014,16 +1023,57 @@ namespace MaouSamaTD.UI
             var mvp = _gameManager.GetMVPUnit();
             if (mvp != null)
             {
-                if (_mvpNameText != null) _mvpNameText.text = mvp.UnitName;
+                if (_mvpNameText != null)
+                {
+                    _mvpNameText.text = mvp.UnitName;
+                    
+                    // Slide in the name text and its background
+                    Transform nameTransformToAnimate = _mvpNameText.transform;
+                    if (_mvpNameText.transform.parent != null && _mvpNameText.transform.parent.name.Contains("BG"))
+                    {
+                        nameTransformToAnimate = _mvpNameText.transform.parent;
+                    }
+
+                    var rect = nameTransformToAnimate.GetComponent<RectTransform>();
+                    if (rect != null)
+                    {
+                        float origX = rect.anchoredPosition.x;
+                        rect.anchoredPosition = new Vector2(origX - 400, rect.anchoredPosition.y);
+                        rect.DOAnchorPosX(origX, 0.6f).SetEase(Ease.OutBack).SetDelay(0.2f).SetUpdate(true);
+                    }
+                    
+                    _mvpNameText.color = new Color(_mvpNameText.color.r, _mvpNameText.color.g, _mvpNameText.color.b, 0);
+                    _mvpNameText.DOFade(1f, 0.6f).SetDelay(0.2f).SetUpdate(true);
+                    
+                    var bgImg = nameTransformToAnimate.GetComponent<Image>();
+                    if (bgImg != null)
+                    {
+                        bgImg.color = new Color(bgImg.color.r, bgImg.color.g, bgImg.color.b, 0);
+                        bgImg.DOFade(0.8f, 0.6f).SetDelay(0.2f).SetUpdate(true); // Assuming background isn't fully opaque
+                    }
+                }
+
                 if (_mvpPortrait != null)
                 {
-                    var sprite = mvp.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Avatar);
+                    var sprite = mvp.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.WaistUp);
+                    if (sprite == null) sprite = mvp.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Avatar);
                     if (sprite == null) sprite = mvp.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Chibi);
                     _mvpPortrait.sprite = sprite;
 
                     // Slide in from left animation
-                    _mvpPortrait.transform.localPosition = new Vector3(-600, 0, 0);
-                    _mvpPortrait.transform.DOLocalMoveX(0, 0.6f).SetEase(Ease.OutBack).SetUpdate(true);
+                    var rect = _mvpPortrait.GetComponent<RectTransform>();
+                    if (rect != null)
+                    {
+                        float origX = rect.anchoredPosition.x;
+                        rect.anchoredPosition = new Vector2(origX - 600, rect.anchoredPosition.y);
+                        rect.DOAnchorPosX(origX, 0.6f).SetEase(Ease.OutBack).SetUpdate(true);
+                    }
+                    else
+                    {
+                        _mvpPortrait.transform.localPosition = new Vector3(-600, 0, 0);
+                        _mvpPortrait.transform.DOLocalMoveX(0, 0.6f).SetEase(Ease.OutBack).SetUpdate(true);
+                    }
+                    
                     _mvpPortrait.color = new Color(1, 1, 1, 0);
                     _mvpPortrait.DOFade(1f, 0.6f).SetUpdate(true);
                 }
@@ -1031,6 +1081,12 @@ namespace MaouSamaTD.UI
             else
             {
                 if (_mvpPortrait != null) _mvpPortrait.color = new Color(1, 1, 1, 0);
+                if (_mvpNameText != null) _mvpNameText.color = new Color(1, 1, 1, 0);
+                if (_mvpNameText != null && _mvpNameText.transform.parent != null && _mvpNameText.transform.parent.name.Contains("BG"))
+                {
+                    var bgImg = _mvpNameText.transform.parent.GetComponent<Image>();
+                    if (bgImg != null) bgImg.color = new Color(1, 1, 1, 0);
+                }
             }
 
             if (_gameManager.SessionLoot != null && _lootSequenceGrid != null)
@@ -1047,22 +1103,33 @@ namespace MaouSamaTD.UI
                         var cardUI = cardObj.GetComponent<LootCardUI>();
                         if (cardUI != null)
                         {
-                            // Use Addressables to load actual ItemConfigSO
-                            var op = Addressables.LoadAssetAsync<MaouSamaTD.Data.ItemConfigSO>(loot.ItemID);
-                            op.Completed += (handle) =>
+                            // Use Addressables to check if key exists first
+                            var locOp = Addressables.LoadResourceLocationsAsync(loot.ItemID);
+                            locOp.Completed += (locHandle) =>
                             {
-                                if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
+                                if (locHandle.Status == AsyncOperationStatus.Succeeded && locHandle.Result.Count > 0)
                                 {
-                                    cardUI.IconImage.color = Color.white; // Reset color from placeholder
-                                    cardUI.IconImage.sprite = handle.Result.ItemIcon;
-                                    cardUI.NameText.text = handle.Result.ItemName.ToUpper();
-                                    cardUI.BackgroundImage.color = handle.Result.BackgroundColor;
-                                    cardUI.NameText.color = handle.Result.TextColor;
-                                    cardUI.QtyText.color = handle.Result.TextColor;
+                                    var op = Addressables.LoadAssetAsync<MaouSamaTD.Data.ItemConfigSO>(loot.ItemID);
+                                    op.Completed += (handle) =>
+                                    {
+                                        if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
+                                        {
+                                            cardUI.IconImage.color = Color.white; // Reset color from placeholder
+                                            cardUI.IconImage.sprite = handle.Result.ItemIcon;
+                                            cardUI.NameText.text = handle.Result.ItemName.ToUpper();
+                                            cardUI.BackgroundImage.color = handle.Result.BackgroundColor;
+                                            cardUI.NameText.color = handle.Result.TextColor;
+                                            cardUI.QtyText.color = handle.Result.TextColor;
+                                        }
+                                        else
+                                        {
+                                            cardUI.NameText.text = loot.ItemID.Replace("xp_core_", "").Replace("mat_", "").Replace("_", " ").ToUpper();
+                                        }
+                                    };
                                 }
                                 else
                                 {
-                                    // Fallback to name extraction if not found
+                                    // Fallback if Addressables key doesn't exist
                                     cardUI.NameText.text = loot.ItemID.Replace("xp_core_", "").Replace("mat_", "").Replace("_", " ").ToUpper();
                                 }
                             };
@@ -1230,26 +1297,21 @@ namespace MaouSamaTD.UI
             var iconImage = innerIconObj.AddComponent<Image>();
             iconImage.color = glowColor;
 
-            Sprite matchedSprite = null;
-            if (_lootItemConfigs != null)
-            {
-                var found = _lootItemConfigs.Find(c => c != null && c.name == itemID);
-                if (found != null && found.ItemIcon != null)
-                {
-                    matchedSprite = found.ItemIcon;
-                }
-            }
+            // Use procedural diamond shape until the sprite loads
+            innerIconObj.transform.localRotation = Quaternion.Euler(0, 0, 45);
 
-            if (matchedSprite != null)
+            UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<MaouSamaTD.Data.ItemConfigSO>(itemID).Completed += (op) =>
             {
-                iconImage.sprite = matchedSprite;
-                iconImage.color = Color.white;
-            }
-            else
-            {
-                // Procedural rotated diamond
-                innerIconObj.transform.localRotation = Quaternion.Euler(0, 0, 45);
-            }
+                if (op.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded && op.Result != null && op.Result.ItemIcon != null)
+                {
+                    if (iconImage != null)
+                    {
+                        iconImage.sprite = op.Result.ItemIcon;
+                        iconImage.color = Color.white;
+                        innerIconObj.transform.localRotation = Quaternion.identity; // Reset rotation once sprite is set
+                    }
+                }
+            };
 
             // 3. Text Label at bottom showing qty
             var textObj = new GameObject("QtyText", typeof(RectTransform));

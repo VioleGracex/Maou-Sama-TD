@@ -382,6 +382,30 @@ namespace MaouSamaTD.Units
             {
                 gameControlUI.SpawnLootFlyEffect(itemID, quantity, transform.position);
             }
+
+            // Spawn World Drop Animation
+            var settings = FindFirstObjectByType<SettingsManager>();
+            if (settings == null || !settings.DisableLootAnimation)
+            {
+                // We'll spawn the prefab so size is controlled
+                var prefab = Resources.Load<GameObject>("WorldLootDrop");
+                if (prefab != null)
+                {
+                    GameObject dropVisual = Instantiate(prefab, transform.position, Quaternion.identity);
+                    var dropComp = dropVisual.GetComponent<MaouSamaTD.VFX.WorldLootDropVisual>();
+                    if (dropComp != null)
+                    {
+                        dropComp.Initialize(itemID, transform.position);
+                    }
+                }
+                else
+                {
+                    // Fallback if prefab is missing
+                    GameObject dropVisual = new GameObject($"LootDrop_{itemID}");
+                    var dropComp = dropVisual.AddComponent<MaouSamaTD.VFX.WorldLootDropVisual>();
+                    dropComp.Initialize(itemID, transform.position);
+                }
+            }
         }
 
         private static string CategoryToMaterialID(EnemyCategory cat)

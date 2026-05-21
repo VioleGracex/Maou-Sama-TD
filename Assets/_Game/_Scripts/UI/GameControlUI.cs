@@ -80,6 +80,22 @@ namespace MaouSamaTD.UI
         [SerializeField] private System.Collections.Generic.List<ItemConfigSO> _lootItemConfigs = new System.Collections.Generic.List<ItemConfigSO>();
         [SerializeField] private Transform _lootDestinationTarget;
 
+        [Header("Victory Sequence UI - XP")]
+        [SerializeField] private GameObject _xpSequenceVisualRoot;
+        [SerializeField] private RectTransform _xpSequenceGrid;
+        [SerializeField] private Button _xpBackgroundButton;
+        [SerializeField] private TextMeshProUGUI _xpPromptText;
+        [SerializeField] private GameObject _xpCardPrefab;
+
+        [Header("Victory Sequence UI - Loot")]
+        [SerializeField] private GameObject _lootSequenceVisualRoot;
+        [SerializeField] private RectTransform _lootSequenceGrid;
+        [SerializeField] private Button _lootBackgroundButton;
+        [SerializeField] private TextMeshProUGUI _lootPromptText;
+        [SerializeField] private Image _mvpPortrait;
+        [SerializeField] private TextMeshProUGUI _mvpNameText;
+        [SerializeField] private GameObject _lootCardPrefab;
+
         private int _lastHp = -1;
 
         [Inject] private GameManager _gameManager;
@@ -122,7 +138,9 @@ namespace MaouSamaTD.UI
                 UpdateHp(_gameManager.ObjectiveHP);
             }
 
-            // Hide panels initially, dynamic find as fallback if null
+            // Hide panels initially
+            if (_lootSequenceVisualRoot != null) _lootSequenceVisualRoot.SetActive(false);
+            if (_xpSequenceVisualRoot != null) _xpSequenceVisualRoot.SetActive(false);
             if (_winPanel != null) _winPanel.SetActive(false);
             if (_losePanel != null) _losePanel.SetActive(false);
             if (_confirmationPanel != null) _confirmationPanel.SetActive(false);
@@ -279,8 +297,22 @@ namespace MaouSamaTD.UI
                 fullScreenInspector.Close();
             }
 
+            // Create Blur/Dark Overlay
+            GameObject blurOverlay = new GameObject("VictoryBlurOverlay");
+            var canvas = FindFirstObjectByType<Canvas>();
+            if (canvas != null) blurOverlay.transform.SetParent(canvas.transform, false);
+            blurOverlay.transform.SetAsLastSibling();
+            var blurRect = blurOverlay.AddComponent<RectTransform>();
+            blurRect.anchorMin = Vector2.zero;
+            blurRect.anchorMax = Vector2.one;
+            blurRect.sizeDelta = Vector2.zero;
+            var blurImg = blurOverlay.AddComponent<Image>();
+            blurImg.color = new Color(0, 0, 0, 0);
+            blurImg.DOFade(0.85f, 0.5f).SetUpdate(true);
+
             if (_stageClearBanner != null)
             {
+                _stageClearBanner.transform.SetAsLastSibling();
                 _stageClearBanner.gameObject.SetActive(true);
                 
                 // Arknights style: slightly tilted and centered
@@ -318,31 +350,35 @@ namespace MaouSamaTD.UI
             // --- STAGE 2: XP PROGRESS SEQUENCE ---
             EnsureVictorySequenceUI();
             
-            if (_xpSequencePanel != null)
+            if (_xpSequenceVisualRoot != null)
             {
-                _xpSequencePanel.SetActive(true);
+                _xpSequenceVisualRoot.SetActive(true);
                 PopulateXPGrid();
                 
                 _victorySequenceTapped = false;
                 yield return new WaitUntil(() => _victorySequenceTapped);
-                _xpSequencePanel.SetActive(false);
+                _xpSequenceVisualRoot.SetActive(false);
             }
 
-            // --- STAGE 3: LOOT AND MVP SEQUENCE ---
-            if (_lootSequencePanel != null)
+            // Optional delay between panels
+            yield return new WaitForSecondsRealtime(0.5f);
+
+            // Show Loot & MVP Panel
+            if (_lootSequenceVisualRoot != null)
             {
-                _lootSequencePanel.SetActive(true);
+                _lootSequenceVisualRoot.SetActive(true);
                 PopulateLootAndMVP();
                 
                 _victorySequenceTapped = false;
                 yield return new WaitUntil(() => _victorySequenceTapped);
-                _lootSequencePanel.SetActive(false);
+                _lootSequenceVisualRoot.SetActive(false);
             }
 
             // --- STAGE 4: FINAL VICTORY PANEL ---
             if (_winPanel != null)
             {
                 _winPanel.SetActive(true);
+                _winPanel.transform.SetAsLastSibling();
                 _winPanel.transform.localScale = Vector3.zero;
                 _winPanel.transform.DOScale(1f, 0.5f).SetUpdate(true).SetEase(Ease.OutBack);
                 
@@ -835,153 +871,37 @@ namespace MaouSamaTD.UI
 
         #region Victory Sequence Dynamic UI
         
-        private GameObject _xpSequencePanel;
-        private RectTransform _xpSequenceGrid;
-        private GameObject _lootSequencePanel;
-        private RectTransform _lootSequenceGrid;
-        private UnityEngine.UI.Image _mvpPortrait;
-        private TextMeshProUGUI _mvpNameText;
+        [Header("Victory Sequence")]
         private bool _victorySequenceTapped = false;
 
         private void EnsureVictorySequenceUI()
         {
-            if (_xpSequencePanel != null && _lootSequencePanel != null) return;
+            // Setup Background Buttons
+            if (_xpBackgroundButton != null)
+            {
+                _xpBackgroundButton.onClick.RemoveAllListeners();
+                _xpBackgroundButton.onClick.AddListener(() => _victorySequenceTapped = true);
+            }
+            if (_lootBackgroundButton != null)
+            {
+                _lootBackgroundButton.onClick.RemoveAllListeners();
+                _lootBackgroundButton.onClick.AddListener(() => _victorySequenceTapped = true);
+            }
 
-            Transform parentCanvas = _winPanel != null ? _winPanel.transform.parent : transform;
-
-            // 1. Create XP Panel
-            _xpSequencePanel = new GameObject("XPSequencePanel");
-            _xpSequencePanel.transform.SetParent(parentCanvas, false);
-            var xpRect = _xpSequencePanel.AddComponent<RectTransform>();
-            xpRect.anchorMin = Vector2.zero; xpRect.anchorMax = Vector2.one;
-            xpRect.sizeDelta = Vector2.zero;
-            
-            var xpBg = _xpSequencePanel.AddComponent<Image>();
-            xpBg.color = new Color(0.05f, 0.05f, 0.1f, 0.95f);
-
-            var xpBtn = _xpSequencePanel.AddComponent<Button>();
-            var xpBtnColors = xpBtn.colors;
-            xpBtnColors.normalColor = new Color(1, 1, 1, 0); // Transparent
-            xpBtnColors.highlightedColor = new Color(1, 1, 1, 0);
-            xpBtnColors.pressedColor = new Color(1, 1, 1, 0);
-            xpBtn.colors = xpBtnColors;
-            xpBtn.onClick.AddListener(() => _victorySequenceTapped = true);
-
-            var xpTitle = new GameObject("Title").AddComponent<TextMeshProUGUI>();
-            xpTitle.transform.SetParent(_xpSequencePanel.transform, false);
-            xpTitle.text = "COHORT EXPERIENCE";
-            xpTitle.fontSize = 60;
-            xpTitle.fontStyle = FontStyles.Bold;
-            xpTitle.alignment = TextAlignmentOptions.Center;
-            xpTitle.color = new Color(1f, 0.8f, 0.2f);
-            var xpTitleRect = xpTitle.GetComponent<RectTransform>();
-            xpTitleRect.anchorMin = new Vector2(0, 0.85f); xpTitleRect.anchorMax = new Vector2(1, 0.95f);
-            xpTitleRect.sizeDelta = Vector2.zero;
-
-            var xpGridObj = new GameObject("Grid");
-            xpGridObj.transform.SetParent(_xpSequencePanel.transform, false);
-            _xpSequenceGrid = xpGridObj.AddComponent<RectTransform>();
-            _xpSequenceGrid.anchorMin = new Vector2(0.1f, 0.15f); _xpSequenceGrid.anchorMax = new Vector2(0.9f, 0.8f);
-            _xpSequenceGrid.sizeDelta = Vector2.zero;
-            var layout = xpGridObj.AddComponent<GridLayoutGroup>();
-            layout.cellSize = new Vector2(240, 120);
-            layout.spacing = new Vector2(30, 30);
-            layout.childAlignment = TextAnchor.MiddleCenter;
-
-            var xpPrompt = new GameObject("Prompt").AddComponent<TextMeshProUGUI>();
-            xpPrompt.transform.SetParent(_xpSequencePanel.transform, false);
-            xpPrompt.text = "Tap to continue...";
-            xpPrompt.fontSize = 30;
-            xpPrompt.alignment = TextAlignmentOptions.Center;
-            xpPrompt.color = new Color(1, 1, 1, 0.5f);
-            var xpPromptRect = xpPrompt.GetComponent<RectTransform>();
-            xpPromptRect.anchorMin = new Vector2(0, 0); xpPromptRect.anchorMax = new Vector2(1, 0.1f);
-            xpPromptRect.sizeDelta = Vector2.zero;
-            xpPrompt.DOFade(1f, 1f).SetLoops(-1, LoopType.Yoyo).SetUpdate(true);
-
-            _xpSequencePanel.SetActive(false);
-
-            // 2. Create Loot Panel
-            _lootSequencePanel = new GameObject("LootSequencePanel");
-            _lootSequencePanel.transform.SetParent(parentCanvas, false);
-            var lootRect = _lootSequencePanel.AddComponent<RectTransform>();
-            lootRect.anchorMin = Vector2.zero; lootRect.anchorMax = Vector2.one;
-            lootRect.sizeDelta = Vector2.zero;
-
-            var lootBg = _lootSequencePanel.AddComponent<Image>();
-            lootBg.color = new Color(0.05f, 0.05f, 0.1f, 0.95f);
-
-            var lootBtn = _lootSequencePanel.AddComponent<Button>();
-            lootBtn.colors = xpBtnColors; // Transparent
-            lootBtn.onClick.AddListener(() => _victorySequenceTapped = true);
-
-            var mvpObj = new GameObject("MVPPortrait");
-            mvpObj.transform.SetParent(_lootSequencePanel.transform, false);
-            _mvpPortrait = mvpObj.AddComponent<Image>();
-            _mvpPortrait.preserveAspect = true;
-            var mvpRect = _mvpPortrait.GetComponent<RectTransform>();
-            mvpRect.anchorMin = new Vector2(0.05f, 0.1f); mvpRect.anchorMax = new Vector2(0.45f, 0.9f);
-            mvpRect.sizeDelta = Vector2.zero;
-
-            var mvpNameObj = new GameObject("MVPName");
-            mvpNameObj.transform.SetParent(mvpObj.transform, false);
-            _mvpNameText = mvpNameObj.AddComponent<TextMeshProUGUI>();
-            _mvpNameText.fontSize = 50;
-            _mvpNameText.fontStyle = FontStyles.Bold;
-            _mvpNameText.alignment = TextAlignmentOptions.BottomLeft;
-            _mvpNameText.color = new Color(1f, 0.8f, 0.2f);
-            var mvpNameRect = _mvpNameText.GetComponent<RectTransform>();
-            mvpNameRect.anchorMin = new Vector2(0, 0); mvpNameRect.anchorMax = new Vector2(1, 0.15f);
-            mvpNameRect.sizeDelta = Vector2.zero;
-
-            var mvpTag = new GameObject("MVPTag").AddComponent<TextMeshProUGUI>();
-            mvpTag.transform.SetParent(mvpObj.transform, false);
-            mvpTag.text = "M V P";
-            mvpTag.fontSize = 70;
-            mvpTag.fontStyle = FontStyles.Bold | FontStyles.Italic;
-            mvpTag.alignment = TextAlignmentOptions.TopLeft;
-            mvpTag.color = new Color(1f, 0.2f, 0.3f);
-            var mvpTagRect = mvpTag.GetComponent<RectTransform>();
-            mvpTagRect.anchorMin = new Vector2(0, 0.85f); mvpTagRect.anchorMax = new Vector2(1, 1);
-            mvpTagRect.sizeDelta = Vector2.zero;
-
-            var lootGridObj = new GameObject("LootGrid");
-            lootGridObj.transform.SetParent(_lootSequencePanel.transform, false);
-            _lootSequenceGrid = lootGridObj.AddComponent<RectTransform>();
-            _lootSequenceGrid.anchorMin = new Vector2(0.5f, 0.15f); _lootSequenceGrid.anchorMax = new Vector2(0.95f, 0.80f);
-            _lootSequenceGrid.sizeDelta = Vector2.zero;
-            var lootLayout = lootGridObj.AddComponent<GridLayoutGroup>();
-            lootLayout.cellSize = new Vector2(120, 160);
-            lootLayout.spacing = new Vector2(20, 20);
-            lootLayout.childAlignment = TextAnchor.UpperLeft;
-
-            var lootTitle = new GameObject("LootTitle").AddComponent<TextMeshProUGUI>();
-            lootTitle.transform.SetParent(_lootSequencePanel.transform, false);
-            lootTitle.text = "BATTLE REWARDS";
-            lootTitle.fontSize = 50;
-            lootTitle.fontStyle = FontStyles.Bold;
-            lootTitle.alignment = TextAlignmentOptions.BottomLeft;
-            lootTitle.color = Color.white;
-            var lootTitleRect = lootTitle.GetComponent<RectTransform>();
-            lootTitleRect.anchorMin = new Vector2(0.5f, 0.85f); lootTitleRect.anchorMax = new Vector2(0.95f, 0.95f);
-            lootTitleRect.sizeDelta = Vector2.zero;
-
-            var lootPrompt = new GameObject("Prompt").AddComponent<TextMeshProUGUI>();
-            lootPrompt.transform.SetParent(_lootSequencePanel.transform, false);
-            lootPrompt.text = "Tap to continue...";
-            lootPrompt.fontSize = 30;
-            lootPrompt.alignment = TextAlignmentOptions.Center;
-            lootPrompt.color = new Color(1, 1, 1, 0.5f);
-            var lootPromptRect = lootPrompt.GetComponent<RectTransform>();
-            lootPromptRect.anchorMin = new Vector2(0, 0); lootPromptRect.anchorMax = new Vector2(1, 0.1f);
-            lootPromptRect.sizeDelta = Vector2.zero;
-            lootPrompt.DOFade(1f, 1f).SetLoops(-1, LoopType.Yoyo).SetUpdate(true);
-
-            _lootSequencePanel.SetActive(false);
+            // Setup Prompts
+            if (_xpPromptText != null)
+            {
+                _xpPromptText.DOFade(1f, 1f).SetLoops(-1, LoopType.Yoyo).SetUpdate(true);
+            }
+            if (_lootPromptText != null)
+            {
+                _lootPromptText.DOFade(1f, 1f).SetLoops(-1, LoopType.Yoyo).SetUpdate(true);
+            }
         }
 
         private void PopulateXPGrid()
         {
+            if (_xpSequenceGrid == null) return;
             foreach (Transform t in _xpSequenceGrid) Destroy(t.gameObject);
 
             if (_gameManager.DeployedUnitsXPInfo == null) return;
@@ -990,153 +910,222 @@ namespace MaouSamaTD.UI
             {
                 if (info.Unit == null) continue;
 
-                var cardObj = new GameObject("XPCard");
-                cardObj.transform.SetParent(_xpSequenceGrid, false);
-                var cardBg = cardObj.AddComponent<Image>();
-                cardBg.color = new Color(0.1f, 0.1f, 0.15f, 0.8f);
-
-                var avatarObj = new GameObject("Avatar");
-                avatarObj.transform.SetParent(cardObj.transform, false);
-                var avatarImg = avatarObj.AddComponent<Image>();
-                avatarImg.sprite = info.Unit.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Chibi);
-                avatarImg.preserveAspect = true;
-                var avatarRect = avatarImg.GetComponent<RectTransform>();
-                avatarRect.anchorMin = new Vector2(0.05f, 0.1f); avatarRect.anchorMax = new Vector2(0.35f, 0.9f);
-                avatarRect.sizeDelta = Vector2.zero;
-
-                var lvlText = new GameObject("LvlText").AddComponent<TextMeshProUGUI>();
-                lvlText.transform.SetParent(cardObj.transform, false);
-                lvlText.text = $"Lv {info.OldLevel}";
-                lvlText.fontSize = 24;
-                lvlText.color = Color.white;
-                var lvlRect = lvlText.GetComponent<RectTransform>();
-                lvlRect.anchorMin = new Vector2(0.4f, 0.6f); lvlRect.anchorMax = new Vector2(0.95f, 0.9f);
-                lvlRect.sizeDelta = Vector2.zero;
-
-                var xpText = new GameObject("XPText").AddComponent<TextMeshProUGUI>();
-                xpText.transform.SetParent(cardObj.transform, false);
-                xpText.text = $"+{info.XPAwarded} XP";
-                xpText.fontSize = 20;
-                xpText.color = new Color(0.3f, 1f, 0.5f);
-                var xpRect = xpText.GetComponent<RectTransform>();
-                xpRect.anchorMin = new Vector2(0.4f, 0.4f); xpRect.anchorMax = new Vector2(0.95f, 0.6f);
-                xpRect.sizeDelta = Vector2.zero;
-
-                var sliderBgObj = new GameObject("SliderBg");
-                sliderBgObj.transform.SetParent(cardObj.transform, false);
-                var sliderBg = sliderBgObj.AddComponent<Image>();
-                sliderBg.color = new Color(0, 0, 0, 0.5f);
-                var sBgRect = sliderBg.GetComponent<RectTransform>();
-                sBgRect.anchorMin = new Vector2(0.4f, 0.2f); sBgRect.anchorMax = new Vector2(0.95f, 0.35f);
-                sBgRect.sizeDelta = Vector2.zero;
-
-                var sliderFillObj = new GameObject("SliderFill");
-                sliderFillObj.transform.SetParent(sliderBgObj.transform, false);
-                var sliderFill = sliderFillObj.AddComponent<Image>();
-                sliderFill.color = new Color(0.2f, 0.6f, 1f);
-                var sFillRect = sliderFill.GetComponent<RectTransform>();
-                sFillRect.anchorMin = new Vector2(0, 0); sFillRect.anchorMax = new Vector2(0, 1);
-                sFillRect.pivot = new Vector2(0, 0.5f);
-                sFillRect.sizeDelta = Vector2.zero;
-
-                float oldReq = MaouSamaTD.Progression.ProgressionLogic.GetRequiredXP(info.OldLevel);
-                float startRatio = info.OldXP / oldReq;
-                sFillRect.anchorMax = new Vector2(startRatio, 1);
-
-                Sequence seq = DOTween.Sequence();
-                seq.SetDelay(0.5f);
-                
-                int levelsGained = info.NewLevel - info.OldLevel;
-                if (levelsGained > 0)
+                GameObject cardObj;
+                if (_xpCardPrefab != null)
                 {
-                    seq.Append(sFillRect.DOAnchorMax(new Vector2(1f, 1f), 0.5f).SetUpdate(true).OnComplete(() => {
-                        lvlText.text = $"Lv {info.OldLevel + 1}!";
-                        lvlText.color = new Color(1f, 0.8f, 0.2f);
-                        lvlText.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f).SetUpdate(true);
-                        sFillRect.anchorMax = new Vector2(0, 1);
-                    }));
-                    
-                    float newReq = MaouSamaTD.Progression.ProgressionLogic.GetRequiredXP(info.NewLevel);
-                    float finalRatio = info.NewXP / newReq;
-                    seq.Append(sFillRect.DOAnchorMax(new Vector2(finalRatio, 1f), 0.5f).SetUpdate(true));
+                    cardObj = Instantiate(_xpCardPrefab, _xpSequenceGrid, false);
                 }
                 else
                 {
-                    float newReq = MaouSamaTD.Progression.ProgressionLogic.GetRequiredXP(info.NewLevel);
-                    float finalRatio = info.NewXP / newReq;
-                    seq.Append(sFillRect.DOAnchorMax(new Vector2(finalRatio, 1f), 0.8f).SetUpdate(true));
+                    // Fallback: create procedurally if prefab not assigned
+                    cardObj = new GameObject("XPCard");
+                    cardObj.transform.SetParent(_xpSequenceGrid, false);
+                    var fallbackBg = cardObj.AddComponent<Image>();
+                    fallbackBg.color = new Color(0.08f, 0.08f, 0.12f, 0.85f);
+                }
+
+                // Find child components by name
+                var avatarImg = FindChildImage(cardObj, "Avatar");
+                var lvlText = FindChildTMP(cardObj, "LevelText");
+                var xpText = FindChildTMP(cardObj, "XPText");
+                var sliderFillRect = FindChildRect(cardObj, "SliderFill");
+                var xpRatioText = FindChildTMP(cardObj, "XPRatioText");
+
+                // Set Avatar (use Avatar image type, fallback to Chibi)
+                if (avatarImg != null)
+                {
+                    var avatarSprite = info.Unit.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Avatar);
+                    if (avatarSprite == null) avatarSprite = info.Unit.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Chibi);
+                    avatarImg.sprite = avatarSprite;
+                }
+
+                // Set Level
+                if (lvlText != null)
+                    lvlText.text = $"Lv {info.OldLevel}";
+
+                // Set XP gained
+                if (xpText != null)
+                    xpText.text = $"+{info.XPAwarded} XP";
+
+                // Calculate XP ratios
+                float oldReq = MaouSamaTD.Progression.ProgressionLogic.GetRequiredXP(info.OldLevel);
+                float startRatio = oldReq > 0 ? info.OldXP / oldReq : 0f;
+
+                // Set initial slider fill
+                if (sliderFillRect != null)
+                {
+                    sliderFillRect.anchorMax = new Vector2(startRatio, 1);
+                }
+
+                // Set XP ratio text
+                if (xpRatioText != null)
+                    xpRatioText.text = $"{info.OldXP:0}/{oldReq:0}";
+
+                // Animate the XP bar
+                if (sliderFillRect != null)
+                {
+                    Sequence seq = DOTween.Sequence();
+                    seq.SetDelay(0.5f);
+                    seq.SetUpdate(true);
+                    
+                    int levelsGained = info.NewLevel - info.OldLevel;
+                    if (levelsGained > 0)
+                    {
+                        // Capture for closure
+                        var capturedLvl = lvlText;
+                        var capturedFill = sliderFillRect;
+                        var capturedRatio = xpRatioText;
+                        int oldLv = info.OldLevel;
+                        int newLv = info.NewLevel;
+                        float newXP = info.NewXP;
+
+                        seq.Append(capturedFill.DOAnchorMax(new Vector2(1f, 1f), 0.5f).SetUpdate(true).OnComplete(() => {
+                            if (capturedLvl != null)
+                            {
+                                capturedLvl.text = $"Lv {oldLv + 1}!";
+                                capturedLvl.color = new Color(1f, 0.8f, 0.2f);
+                                capturedLvl.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f).SetUpdate(true);
+                            }
+                            capturedFill.anchorMax = new Vector2(0, 1);
+                        }));
+                        
+                        float newReq = MaouSamaTD.Progression.ProgressionLogic.GetRequiredXP(newLv);
+                        float finalRatio = newReq > 0 ? newXP / newReq : 0f;
+                        seq.Append(capturedFill.DOAnchorMax(new Vector2(finalRatio, 1f), 0.5f).SetUpdate(true).OnComplete(() => {
+                            if (capturedRatio != null) capturedRatio.text = $"{newXP:0}/{newReq:0}";
+                        }));
+                    }
+                    else
+                    {
+                        float newReq = MaouSamaTD.Progression.ProgressionLogic.GetRequiredXP(info.NewLevel);
+                        float finalRatio = newReq > 0 ? info.NewXP / newReq : 0f;
+                        var capturedRatio = xpRatioText;
+                        float newXP = info.NewXP;
+                        seq.Append(sliderFillRect.DOAnchorMax(new Vector2(finalRatio, 1f), 0.8f).SetUpdate(true).OnComplete(() => {
+                            if (capturedRatio != null) capturedRatio.text = $"{newXP:0}/{newReq:0}";
+                        }));
+                    }
                 }
             }
         }
 
         private void PopulateLootAndMVP()
         {
-            foreach (Transform t in _lootSequenceGrid) Destroy(t.gameObject);
-
             var mvp = _gameManager.GetMVPUnit();
             if (mvp != null)
             {
-                _mvpPortrait.sprite = mvp.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.WaistUp);
-                if (_mvpPortrait.sprite == null) _mvpPortrait.sprite = mvp.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Chibi);
-                _mvpNameText.text = mvp.UnitName;
-                
-                _mvpPortrait.transform.localPosition = new Vector3(-600, 0, 0);
-                _mvpPortrait.transform.DOLocalMoveX(0, 0.6f).SetEase(Ease.OutBack).SetUpdate(true);
-                _mvpPortrait.color = new Color(1, 1, 1, 0);
-                _mvpPortrait.DOFade(1f, 0.6f).SetUpdate(true);
+                if (_mvpNameText != null) _mvpNameText.text = mvp.UnitName;
+                if (_mvpPortrait != null)
+                {
+                    var sprite = mvp.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Avatar);
+                    if (sprite == null) sprite = mvp.GetSprite(MaouSamaTD.Units.UnitData.UnitImageType.Chibi);
+                    _mvpPortrait.sprite = sprite;
+
+                    // Slide in from left animation
+                    _mvpPortrait.transform.localPosition = new Vector3(-600, 0, 0);
+                    _mvpPortrait.transform.DOLocalMoveX(0, 0.6f).SetEase(Ease.OutBack).SetUpdate(true);
+                    _mvpPortrait.color = new Color(1, 1, 1, 0);
+                    _mvpPortrait.DOFade(1f, 0.6f).SetUpdate(true);
+                }
             }
             else
             {
-                _mvpPortrait.color = new Color(1, 1, 1, 0);
-                _mvpNameText.text = "NO MVP";
+                if (_mvpPortrait != null) _mvpPortrait.color = new Color(1, 1, 1, 0);
             }
 
-            if (_gameManager.SessionLoot != null)
+            if (_gameManager.SessionLoot != null && _lootSequenceGrid != null)
             {
+                // Clear existing loot grid placeholders
+                foreach (Transform t in _lootSequenceGrid) Destroy(t.gameObject);
+
                 foreach (var loot in _gameManager.SessionLoot)
                 {
-                    var cardObj = new GameObject("LootCard");
-                    cardObj.transform.SetParent(_lootSequenceGrid, false);
-                    var cardBg = cardObj.AddComponent<Image>();
-                    cardBg.color = new Color(0.15f, 0.15f, 0.2f, 0.9f);
-                    
-                    var iconObj = new GameObject("Icon");
-                    iconObj.transform.SetParent(cardObj.transform, false);
-                    var iconImg = iconObj.AddComponent<Image>();
-                    
-                    // Simple placeholder colors/sprites based on ID
-                    iconImg.color = loot.ItemID.Contains("gold") ? Color.yellow : 
-                                    loot.ItemID.Contains("crest") ? Color.red : 
-                                    loot.ItemID.Contains("xp_core") ? new Color(0.3f, 1f, 0.5f) :
-                                    loot.ItemID.Contains("mat") ? new Color(0.7f, 0.3f, 1f) : Color.cyan;
-                                    
-                    var iconRect = iconImg.GetComponent<RectTransform>();
-                    iconRect.anchorMin = new Vector2(0.2f, 0.3f); iconRect.anchorMax = new Vector2(0.8f, 0.9f);
-                    iconRect.sizeDelta = Vector2.zero;
-                    
-                    var nameText = new GameObject("NameText").AddComponent<TextMeshProUGUI>();
-                    nameText.transform.SetParent(cardObj.transform, false);
-                    nameText.text = loot.ItemID.Replace("xp_core_", "").Replace("mat_", "").Replace("_", " ").ToUpper();
-                    nameText.fontSize = 14;
-                    nameText.alignment = TextAlignmentOptions.Center;
-                    var nameRect = nameText.GetComponent<RectTransform>();
-                    nameRect.anchorMin = new Vector2(0, 0.15f); nameRect.anchorMax = new Vector2(1, 0.3f);
-                    nameRect.sizeDelta = Vector2.zero;
-
-                    var qtyText = new GameObject("QtyText").AddComponent<TextMeshProUGUI>();
-                    qtyText.transform.SetParent(cardObj.transform, false);
-                    qtyText.text = $"x{loot.Quantity}";
-                    qtyText.fontSize = 20;
-                    qtyText.fontStyle = FontStyles.Bold;
-                    qtyText.alignment = TextAlignmentOptions.Center;
-                    var qtyRect = qtyText.GetComponent<RectTransform>();
-                    qtyRect.anchorMin = new Vector2(0, 0); qtyRect.anchorMax = new Vector2(1, 0.15f);
-                    qtyRect.sizeDelta = Vector2.zero;
+                    GameObject cardObj;
+                    if (_lootCardPrefab != null)
+                    {
+                        cardObj = Instantiate(_lootCardPrefab, _lootSequenceGrid, false);
+                        var cardUI = cardObj.GetComponent<LootCardUI>();
+                        if (cardUI != null)
+                        {
+                            // Use Addressables to load actual ItemConfigSO
+                            var op = Addressables.LoadAssetAsync<MaouSamaTD.Data.ItemConfigSO>(loot.ItemID);
+                            op.Completed += (handle) =>
+                            {
+                                if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
+                                {
+                                    cardUI.IconImage.color = Color.white; // Reset color from placeholder
+                                    cardUI.IconImage.sprite = handle.Result.ItemIcon;
+                                    cardUI.NameText.text = handle.Result.ItemName.ToUpper();
+                                    cardUI.BackgroundImage.color = handle.Result.BackgroundColor;
+                                    cardUI.NameText.color = handle.Result.TextColor;
+                                    cardUI.QtyText.color = handle.Result.TextColor;
+                                }
+                                else
+                                {
+                                    // Fallback to name extraction if not found
+                                    cardUI.NameText.text = loot.ItemID.Replace("xp_core_", "").Replace("mat_", "").Replace("_", " ").ToUpper();
+                                }
+                            };
+                            
+                            cardUI.QtyText.text = $"x{loot.Quantity}";
+                        }
+                    }
+                    else
+                    {
+                        // Fallback just in case
+                        cardObj = new GameObject("LootCard");
+                        cardObj.transform.SetParent(_lootSequenceGrid, false);
+                        var layoutElement = cardObj.AddComponent<LayoutElement>();
+                        layoutElement.preferredWidth = 110; layoutElement.preferredHeight = 140;
+                    }
 
                     cardObj.transform.localScale = Vector3.zero;
                     cardObj.transform.DOScale(1f, 0.4f).SetEase(Ease.OutBack).SetDelay(Random.Range(0f, 0.3f)).SetUpdate(true);
                 }
             }
+        }
+
+        // Helper methods to find children by name in XPCard prefab
+        private Image FindChildImage(GameObject parent, string childName)
+        {
+            var t = parent.transform.Find(childName);
+            return t != null ? t.GetComponent<Image>() : null;
+        }
+
+        private TextMeshProUGUI FindChildTMP(GameObject parent, string childName)
+        {
+            // Search direct children first
+            var t = parent.transform.Find(childName);
+            if (t != null) return t.GetComponent<TextMeshProUGUI>();
+            
+            // Search nested (e.g. RightContent/LevelText)
+            foreach (Transform child in parent.transform)
+            {
+                var nested = child.Find(childName);
+                if (nested != null) return nested.GetComponent<TextMeshProUGUI>();
+            }
+            return null;
+        }
+
+        private RectTransform FindChildRect(GameObject parent, string childName)
+        {
+            // Search direct children first
+            var t = parent.transform.Find(childName);
+            if (t != null) return t.GetComponent<RectTransform>();
+            
+            // Search nested (SliderFill is inside SliderBg which is inside RightContent)
+            foreach (Transform child in parent.transform)
+            {
+                var nested = child.Find(childName);
+                if (nested != null) return nested.GetComponent<RectTransform>();
+                // Go one more level deep
+                foreach (Transform grandchild in child)
+                {
+                    var deep = grandchild.Find(childName);
+                    if (deep != null) return deep.GetComponent<RectTransform>();
+                }
+            }
+            return null;
         }
         #endregion
 

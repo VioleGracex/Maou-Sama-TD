@@ -401,6 +401,14 @@ namespace MaouSamaTD.UI.Skills
             _tutorialManager?.HideHand();
         }
 
+        public void HideToggle()
+        {
+            if (_toggleButton != null)
+            {
+                _toggleButton.gameObject.SetActive(false);
+            }
+        }
+
         private void HandleSkillSelectedChanged(SovereignRiteData skill)
         {
             if (skill != null)

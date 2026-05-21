@@ -164,6 +164,14 @@ namespace MaouSamaTD.UI.Tutorial
             AddPanelClickListener(_miniTopPanel);
         }
 
+        private void Update()
+        {
+            if (IsShowingDialogue && UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame)
+            {
+                OnNextClicked();
+            }
+        }
+
         private void AddPanelClickListener(GameObject panel)
         {
             if (panel == null) return;

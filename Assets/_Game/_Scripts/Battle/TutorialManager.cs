@@ -191,7 +191,8 @@ namespace MaouSamaTD.Managers
                 if (skillPanel != null)
                 {
                     skillPanel.gameObject.SetActive(false);
-                    if (_showDebugLogs) Debug.Log("[tutorial] Level 1 Initialized: Forcing SkillPanelUI to SetActive(false).");
+                    skillPanel.HideToggle();
+                    if (_showDebugLogs) Debug.Log("[tutorial] Level 1 Initialized: Forcing SkillPanelUI to SetActive(false) and hiding toggle.");
                 }
             }
             
@@ -2226,13 +2227,15 @@ private RectTransform FindTargetRect(string name)
                 // Special case for UnitSelected / UnitStatsOpened
                 if (step.ActionKey == "UnitSelected" || step.ActionKey == "UnitStatsOpened")
                 {
-                    if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name))
+                    bool isPanelActive = _unitInspectorUI != null && _unitInspectorUI.IsPanelActive;
+                    bool hasInspectedUnit = _interactionManager != null && _interactionManager.InspectedUnit != null;
+
+                    if (step.TargetUI != null && !string.IsNullOrEmpty(step.TargetUI.Name) &&
+                       (step.TargetUI.Name.StartsWith("Unit_") || step.TargetUI.Name.StartsWith("Enemy_")))
                     {
-                        string unitName = step.TargetUI.Name;
-                        if (unitName.StartsWith("Unit_")) unitName = unitName.Replace("Unit_", "");
-                        if (unitName.StartsWith("Enemy_")) unitName = unitName.Replace("Enemy_", "");
+                        string unitName = step.TargetUI.Name.Replace("Unit_", "").Replace("Enemy_", "");
                         
-                        if (_interactionManager != null && _interactionManager.InspectedUnit != null)
+                        if (hasInspectedUnit)
                         {
                             var selected = _interactionManager.InspectedUnit;
                             if (selected.Data != null && 
@@ -2243,30 +2246,22 @@ private RectTransform FindTargetRect(string name)
                             }
                         }
                         
-                        if (_unitInspectorUI != null && _unitInspectorUI.IsPanelActive)
+                        if (isPanelActive && hasInspectedUnit)
                         {
-                            if (_interactionManager != null && _interactionManager.InspectedUnit != null)
+                            var selected = _interactionManager.InspectedUnit;
+                            if (selected.Data != null && 
+                                (selected.Data.UnitName.Equals(unitName, System.StringComparison.OrdinalIgnoreCase) || 
+                                 selected.name.Contains(unitName)))
                             {
-                                var selected = _interactionManager.InspectedUnit;
-                                if (selected.Data != null && 
-                                    (selected.Data.UnitName.Equals(unitName, System.StringComparison.OrdinalIgnoreCase) || 
-                                     selected.name.Contains(unitName)))
-                                {
-                                    return true;
-                                }
+                                return true;
                             }
                         }
                     }
                     else
                     {
-                        if (_interactionManager != null && _interactionManager.InspectedUnit != null)
-                        {
-                            return true;
-                        }
-                        if (_unitInspectorUI != null && _unitInspectorUI.IsPanelActive)
-                        {
-                            return true;
-                        }
+                        if (step.ActionKey == "UnitStatsOpened" && isPanelActive) return true;
+                        if (step.ActionKey == "UnitSelected" && hasInspectedUnit) return true;
+                        if (isPanelActive || hasInspectedUnit) return true;
                     }
                 }
             }

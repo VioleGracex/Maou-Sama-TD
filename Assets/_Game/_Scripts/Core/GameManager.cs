@@ -407,7 +407,14 @@ namespace MaouSamaTD.Managers
             Debug.Log($"[GameManager] Victory() called. IsGameEnded: {IsGameEnded}, HasStory: {_currentLevelData?.HasStory}, OutroStory: {_currentLevelData?.OutroStory != null}");
             if (IsGameEnded) return;
             IsGameEnded = true;
-            // Time.timeScale = 0f; // REMOVED: Allow time to run during stage clear banner
+
+            // Trigger Cinematic Kill Effects
+            if (_cameraManager != null)
+            {
+                _cameraManager.Shake(0.6f, 0.4f);
+            }
+            SetSpeed(0.2f); // Slow motion effect for final kill cinematic
+
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Game", "", "Victory Achieved!", 0);
             OnGameFinished?.Invoke();
             Debug.Log("[GameManager] Victory is being processed...");
@@ -442,6 +449,21 @@ namespace MaouSamaTD.Managers
                         new System.Collections.Generic.List<UnitData>(_deploymentUI.DeployedUnits), 
                         _currentLevelData.MissionXP
                     );
+
+                    // MVP Bonus
+                    var mvp = GetMVPUnit();
+                    if (mvp != null)
+                    {
+                        int bonusXp = Mathf.RoundToInt(_currentLevelData.MissionXP * 0.5f);
+                        MaouSamaTD.Progression.ProgressionLogic.AddXP(mvp, bonusXp);
+                        mvp.Amity += 10f; // Bonus Amity
+                        
+                        var mvpInfo = DeployedUnitsXPInfo.Find(x => x.Unit == mvp);
+                        if (mvpInfo != null)
+                        {
+                            mvpInfo.XPAwarded += bonusXp;
+                        }
+                    }
 
                     // Update New XP Values
                     for (int i = 0; i < DeployedUnitsXPInfo.Count; i++)

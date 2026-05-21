@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: ItemConfigs
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: ItemConfigs
+  m_GUID: 2c5979c241c81a74aa4fc9b1c55af238
+  m_SerializeEntries:
+  - m_GUID: 046d8987dd8049540801679154572217
+    m_Address: mat_golem_core
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26ca25449663e1043bd0be1966fae96f
+    m_Address: mat_animal_fang
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5cf9970eb14cb7c44a1b36b0a27c1c6e
+    m_Address: mat_bandit_insignia
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 75646a8d69c4ace42b26980283541a92
+    m_Address: mat_shadow_essence
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 930c1d1b28a8ca94f8abef9620429414
+    m_Address: xp_core_epic
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a286ea85ac5d53440a7ab7f79897f3d5
+    m_Address: xp_core_legendary
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa50684204c65f84ab4e333a8aa30731
+    m_Address: xp_core_common
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6de2b41d03eb6049a7fb6bab073f7b9
+    m_Address: xp_core_rare
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 19b417a427e1a474d9e81fbe4eae59a7, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4ec7bd79387f0494ab774eccf4789223, type: 2}
+    - {fileID: 11400000, guid: 6fe4484693e0af54d8c825fc8b31e5e4, type: 2}

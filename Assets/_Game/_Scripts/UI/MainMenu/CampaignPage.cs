@@ -942,7 +942,7 @@ namespace MaouSamaTD.UI.MainMenu
             scrollRect.content.anchoredPosition = targetContentPos;
         }
 
-        private bool IsLevelUnlocked(LevelData level, int index, List<LevelData> list)
+        public bool IsLevelUnlocked(LevelData level, int index, List<LevelData> list)
         {
             if (_saveManager == null) return false; // Fallback if SaveManager is missing
 

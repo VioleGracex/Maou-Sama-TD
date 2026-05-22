@@ -1079,8 +1079,7 @@ namespace MaouSamaTD.UI.MainMenu
                 if (showPrev)
                 {
                     _prevLevelBtn.onClick.AddListener(() => {
-                        int pIdx = levels.IndexOf(prevLevel);
-                        bool isUnlocked = campaignPage.IsLevelUnlocked(prevLevel, pIdx, levels);
+                        bool isUnlocked = !campaignPage.IsLevelLockedInUI(prevLevel);
                         Setup(prevLevel, isUnlocked, _onEngageClicked);
                         campaignPage.CenterScrollOnPosition(prevLevel.CampaignMapPosition);
                     });
@@ -1094,8 +1093,7 @@ namespace MaouSamaTD.UI.MainMenu
                 if (showNext)
                 {
                     _nextLevelBtn.onClick.AddListener(() => {
-                        int nIdx = levels.IndexOf(nextLevel);
-                        bool isUnlocked = campaignPage.IsLevelUnlocked(nextLevel, nIdx, levels);
+                        bool isUnlocked = !campaignPage.IsLevelLockedInUI(nextLevel);
                         Setup(nextLevel, isUnlocked, _onEngageClicked);
                         campaignPage.CenterScrollOnPosition(nextLevel.CampaignMapPosition);
                     });

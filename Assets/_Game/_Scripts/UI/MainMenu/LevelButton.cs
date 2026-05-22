@@ -33,6 +33,7 @@ namespace MaouSamaTD.UI.MainMenu
         private Action<LevelData> _onClick;
 
         public LevelData LevelDataForCallback => _displayData.Level;
+        public bool IsLocked => _displayData.IsLocked;
 
         // IListItem implementation
         public string GetContentID() => _displayData.LevelID;

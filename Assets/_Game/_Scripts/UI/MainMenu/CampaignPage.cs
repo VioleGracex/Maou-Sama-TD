@@ -963,6 +963,19 @@ namespace MaouSamaTD.UI.MainMenu
             
             return _saveManager.IsLevelCompleted(prevLevel.LevelID);
         }
+
+        public bool IsLevelLockedInUI(LevelData level)
+        {
+            if (_spawnedButtons == null) return false;
+            foreach (var btn in _spawnedButtons)
+            {
+                if (btn != null && btn.LevelDataForCallback == level)
+                {
+                    return btn.IsLocked;
+                }
+            }
+            return false;
+        }
         
         private int GetLevelStars(LevelData level)
         {

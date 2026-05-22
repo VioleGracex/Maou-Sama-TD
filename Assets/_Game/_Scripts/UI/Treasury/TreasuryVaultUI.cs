@@ -67,8 +67,13 @@ namespace MaouSamaTD.UI.Treasury
             _economyManager = economyManager;
         }
 
-        private void Start()
+        private bool _initialized = false;
+
+        public void Initialize()
         {
+            if (_initialized) return;
+            _initialized = true;
+
             if (_offeringsTabBtn == null) return; // Basic guard
 
             _tabButtons = new List<Button> { _offeringsTabBtn, _skinsTabBtn, _giftsTabBtn };

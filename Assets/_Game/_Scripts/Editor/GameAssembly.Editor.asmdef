@@ -1,0 +1,23 @@
+{
+    "name": "GameAssembly.Editor",
+    "references": [
+        "GameAssembly",
+        "Zenject",
+        "Zenject-Editor",
+        "Unity.TextMeshPro",
+        "Unity.Addressables",
+        "Unity.Addressables.Editor",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -66,6 +66,8 @@ namespace MaouSamaTD.UI.Cohorts
         #endregion
 
         #region Unity Methods
+        private bool _initialized = false;
+
         private void Awake()
         {
             if (_vassalInventoryController == null)
@@ -74,8 +76,11 @@ namespace MaouSamaTD.UI.Cohorts
             }
         }
 
-        private void Start()
+        public void Initialize()
         {
+            if (_initialized) return;
+            _initialized = true;
+
             if (_actionButton != null) _actionButton.onClick.AddListener(OnActionButtonClicked);
             if (_removeAllButton != null) _removeAllButton.onClick.AddListener(OnRemoveAllClicked);
             

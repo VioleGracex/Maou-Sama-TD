@@ -91,8 +91,12 @@ namespace MaouSamaTD.UI.MainMenu
         [Inject] private MaouSamaTD.Managers.AudioSettingsManager _audioManager;
         #endregion
 
-        private void Start()
+        private bool _initialized = false;
+
+        public void Initialize()
         {
+            if (_initialized) return;
+            _initialized = true;
             PopulateDropdowns();
 
             if (_sliderMusic != null) _sliderMusic.OnValueChanged.AddListener(OnMusicChanged);

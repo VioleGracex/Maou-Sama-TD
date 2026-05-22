@@ -52,8 +52,12 @@ namespace MaouSamaTD.UI.MainMenu
         #endregion
 
         #region Unity Methods
-        private void Start()
+        private bool _initialized = false;
+
+        public void Initialize()
         {
+            if (_initialized) return;
+            _initialized = true;
             if (_tyrantButton != null) 
             {
                 _tyrantButton.onClick.AddListener(() => OnClassSelected(MaouGender.Male, "Sovereign of Force"));

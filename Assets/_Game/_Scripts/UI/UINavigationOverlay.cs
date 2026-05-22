@@ -42,9 +42,13 @@ namespace MaouSamaTD.UI
         [SerializeField] private GameObject _indicatorChambers;
 
         private bool _isOpen = false;
+        private bool _initialized = false;
 
-        private void Start()
+        public void Initialize()
         {
+            if (_initialized) return;
+            _initialized = true;
+
             if (_menuPanel != null) 
             {
                 _menuPanel.anchoredPosition = new Vector2(_menuPanel.anchoredPosition.x, _hiddenY);

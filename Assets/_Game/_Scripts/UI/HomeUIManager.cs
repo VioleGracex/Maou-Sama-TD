@@ -70,9 +70,13 @@ namespace MaouSamaTD.UI.MainMenu
         public bool AddsToHistory => true;
         public bool RequestClose() => false;
         public void ResetState() { }
+        private bool _initialized = false;
 
-        private void Start()
+        public void Initialize()
         {
+            if (_initialized) return;
+            _initialized = true;
+
             // Hook up all navigation buttons
             if (_btnConquest != null) _btnConquest.onClick.AddListener(OnConquestClicked);
             if (_btnCohorts != null) _btnCohorts.onClick.AddListener(OnCohortsClicked);

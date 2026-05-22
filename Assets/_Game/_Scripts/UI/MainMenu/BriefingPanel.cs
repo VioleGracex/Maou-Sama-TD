@@ -64,6 +64,8 @@ namespace MaouSamaTD.UI.MainMenu
         #endregion
 
         #region Unity Methods
+        private bool _initialized = false;
+
         private void Awake()
         {
             if (_visualRoot != null)
@@ -76,8 +78,11 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
-        private void Start()
+        public void Initialize()
         {
+            if (_initialized) return;
+            _initialized = true;
+
             if (_engageButton != null)
             {
                 _engageButton.onClick.AddListener(OnEngage);

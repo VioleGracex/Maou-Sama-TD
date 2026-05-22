@@ -39,9 +39,13 @@ public class HomeUIController_UGUI : MonoBehaviour, IDragHandler, IBeginDragHand
 
     private bool _isEditMode = false;
     private Canvas _canvas;
+    private bool _initialized = false;
 
-    private void Start()
+    public void Initialize()
     {
+        if (_initialized) return;
+        _initialized = true;
+
         _canvas = GetComponentInParent<Canvas>();
         
         // Hook up buttons

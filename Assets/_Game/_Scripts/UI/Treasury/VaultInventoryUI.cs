@@ -76,8 +76,13 @@ namespace MaouSamaTD.UI.Treasury
             }
         }
 
-        private void Start()
+        private bool _initialized = false;
+
+        public void Initialize()
         {
+            if (_initialized) return;
+            _initialized = true;
+
             _tabButtons = new List<Button> { _btnAllTab, _btnCoresTab, _btnMatsTab };
 
             SetupTabListeners();

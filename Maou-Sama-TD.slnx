@@ -8,12 +8,15 @@
   <Project Path="Zenject-UnitTests-Editor.csproj" />
   <Project Path="Zenject-Editor.csproj" />
   <Project Path="Zenject-IntegrationTests.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="GameAssembly.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="NaughtyAttributes.Editor.csproj" />
   <Project Path="Assets.SimpleLocalization.Scripts.Editor.csproj" />
   <Project Path="Zenject-TestFramework.csproj" />
-  <Project Path="Assembly-CSharp-firstpass.csproj" />
+  <Project Path="DOTween.Modules.csproj" />
+  <Project Path="GameAssembly.Editor.csproj" />
   <Project Path="Assets.SimpleLocalization.Scripts.csproj" />
   <Project Path="Zenject-PoolMonitor-Editor.csproj" />
+  <Project Path="GameAssembly.Tests.csproj" />
 </Solution>

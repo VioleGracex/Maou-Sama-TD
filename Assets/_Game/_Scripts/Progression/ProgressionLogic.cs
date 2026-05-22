@@ -6,11 +6,11 @@ namespace MaouSamaTD.Progression
     public static class ProgressionLogic
     {
         /// <summary>
-        /// Formula: XP_Next = 100 * (Level ^ 1.8)
+        /// Formula: XP_Next = 200 * (Level ^ 2.0)
         /// </summary>
         public static int GetRequiredXP(int level)
         {
-            return Mathf.FloorToInt(100f * Mathf.Pow(level, 1.8f));
+            return Mathf.FloorToInt(200f * Mathf.Pow(level, 2.0f));
         }
 
         /// <summary>

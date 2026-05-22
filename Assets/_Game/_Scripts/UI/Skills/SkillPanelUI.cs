@@ -306,8 +306,12 @@ namespace MaouSamaTD.UI.Skills
         {
             if (_gameSelectionState != null && _gameSelectionState.SelectedLevel != null)
             {
-                // Level 1: No Sovereign Rites allowed/visible (Tutorial)
-                if (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1")
+                // Level 1: Hide Sovereign Rites ONLY during the tutorial — free/solo play keeps them accessible.
+                bool isLevel1 = _gameSelectionState.SelectedLevel.LevelIndex == 1 ||
+                                _gameSelectionState.SelectedLevel.LevelID == "1-1";
+                bool isTutorialActive = _tutorialManager != null && _tutorialManager.IsInTutorial;
+
+                if (isLevel1 && isTutorialActive)
                 {
                     if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
                     gameObject.SetActive(false);
@@ -319,13 +323,25 @@ namespace MaouSamaTD.UI.Skills
         {
             CheckTutorialDock();
 
-            bool isLevel1 = _gameSelectionState != null && _gameSelectionState.SelectedLevel != null && 
+            bool isLevel1 = _gameSelectionState != null && _gameSelectionState.SelectedLevel != null &&
                             (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1");
+            bool isTutorialActive = _tutorialManager != null && _tutorialManager.IsInTutorial;
 
-            if (isLevel1 || skills == null || skills.Count == 0)
+            // Hide for Level 1 ONLY when running the actual tutorial.
+            // In solo / free-play the player should always have access to their Rites.
+            if ((isLevel1 && isTutorialActive) || skills == null || skills.Count == 0)
             {
-                if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
-                gameObject.SetActive(false);
+                if (isLevel1 && isTutorialActive)
+                {
+                    if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
+                    gameObject.SetActive(false);
+                }
+                else if (skills == null || skills.Count == 0)
+                {
+                    // No skills to show — hide the whole panel
+                    if (_toggleButton != null) _toggleButton.gameObject.SetActive(false);
+                    gameObject.SetActive(false);
+                }
                 return;
             }
             else
@@ -406,6 +422,17 @@ namespace MaouSamaTD.UI.Skills
             if (_toggleButton != null)
             {
                 _toggleButton.gameObject.SetActive(false);
+            }
+        }
+
+        public void ShowToggle()
+        {
+            if (_toggleButton != null)
+            {
+                _toggleButton.gameObject.SetActive(true);
+                // Reset label to "Show" since the panel is docked by default
+                var txt = _toggleButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (txt != null) txt.text = "Show";
             }
         }
 

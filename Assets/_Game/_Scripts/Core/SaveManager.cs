@@ -307,6 +307,17 @@ namespace MaouSamaTD.Managers
             var entry = CurrentData.ItemInventory.Find(x => x.ItemID == itemID);
             return entry?.Quantity ?? 0;
         }
+
+        public int GetHighestUnitLevel()
+        {
+            if (CurrentData == null || CurrentData.UnitInventory == null || CurrentData.UnitInventory.Count == 0) return 1;
+            int maxLevel = 1;
+            foreach (var unit in CurrentData.UnitInventory)
+            {
+                if (unit.Level > maxLevel) maxLevel = unit.Level;
+            }
+            return maxLevel;
+        }
         
         public List<string> GetCohort(int index)
         {

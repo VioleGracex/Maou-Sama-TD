@@ -610,7 +610,7 @@ namespace MaouSamaTD.UI.MainMenu
                     rect.anchoredPosition = data.Level.CampaignMapPosition;
                 }
 
-                btn.Setup(data, (o) => OnLevelClicked(data.Level));
+                btn.Setup(data, (o) => OnLevelClicked(data.Level, !data.IsLocked));
                 _spawnedButtons.Add(btn);
                 _spawnedLevelNodes[data.Level] = (btn, circleGo);
 
@@ -944,13 +944,22 @@ namespace MaouSamaTD.UI.MainMenu
 
         private bool IsLevelUnlocked(LevelData level, int index, List<LevelData> list)
         {
-            if (index == 0) return true; // First level always unlocked
+            if (_saveManager == null) return false; // Fallback if SaveManager is missing
+
+            if (level != null)
+            {
+                if (level.RequiredUnitLevel > 1 && _saveManager.GetHighestUnitLevel() < level.RequiredUnitLevel)
+                    return false;
+                
+                if (level.RequiredPreviousLevel != null && !_saveManager.IsLevelCompleted(level.RequiredPreviousLevel.LevelID))
+                    return false;
+            }
+
+            if (index == 0) return true; // First level always unlocked, assuming explicit reqs pass
             
             if (list == null || index < 0 || index >= list.Count) return false;
             var prevLevel = list[index - 1];
             if (prevLevel == null) return false;
-            
-            if (_saveManager == null) return false; // Fallback if SaveManager is missing
             
             return _saveManager.IsLevelCompleted(prevLevel.LevelID);
         }
@@ -965,13 +974,13 @@ namespace MaouSamaTD.UI.MainMenu
              return 0;
         }
 
-        private void OnLevelClicked(LevelData level)
+        private void OnLevelClicked(LevelData level, bool isUnlocked)
         {
             // Open Briefing as a popup window
             if (_briefingPanel != null)
             {
                 MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_briefingPanel);
-                _briefingPanel.Setup(level, OnBriefingEngage);
+                _briefingPanel.Setup(level, isUnlocked, OnBriefingEngage);
             }
             else
             {
@@ -1702,7 +1711,7 @@ namespace MaouSamaTD.UI.MainMenu
                         var mapBtn = _spawnedButtons.Find(b => b != null && b.LevelDataForCallback == level);
                         if (mapBtn != null)
                         {
-                            OnLevelClicked(level);
+                            OnLevelClicked(level, isUnlocked);
                         }
                     }
                 };

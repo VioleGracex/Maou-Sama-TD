@@ -43,6 +43,12 @@ namespace MaouSamaTD.Levels
         [Header("Campaign Settings")]
         public string LevelID = "1-1";
 
+        [Header("Unlock Requirements")]
+        [Tooltip("Minimum level a unit must have reached to engage this level.")]
+        public int RequiredUnitLevel = 1;
+        [Tooltip("A specific previous level that must be cleared to unlock this level.")]
+        public LevelData RequiredPreviousLevel;
+
         [Tooltip("List of rewards granted upon clearing the level for the first time or repeatedly (depending on logic).")]
         public List<MaouSamaTD.Data.RewardData> WinRewards = new List<MaouSamaTD.Data.RewardData>();
 

@@ -89,8 +89,18 @@ namespace MaouSamaTD.Managers.Interaction
                 {
                     if (inspectedUnit.IsTargetInPattern(inspectedUnit.CurrentTile.Coordinate, tile.Coordinate, inspectedUnit.Data.AttackPattern, inspectedUnit.Range))
                     {
+                        bool canAttack = true;
+                        if (!inspectedUnit.IsRanged())
+                        {
+                            bool iAmHighGround = inspectedUnit.CurrentTile != null && inspectedUnit.CurrentTile.IsHighGround;
+                            if (tile.IsHighGround && !iAmHighGround)
+                            {
+                                canAttack = false;
+                            }
+                        }
+
                         shouldHighlight = true;
-                        highlightColor = RangeColor;
+                        highlightColor = canAttack ? RangeColor : InvalidColor;
                         highlightColor.a = RangeColor.a; 
                         useFullFill = UseFullFillRange;
                     }

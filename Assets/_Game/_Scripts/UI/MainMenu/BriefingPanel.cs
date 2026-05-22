@@ -119,7 +119,7 @@ namespace MaouSamaTD.UI.MainMenu
         #endregion
 
         #region Public Methods
-        public void Setup(LevelData level, Action<LevelData> onEngageCallback)
+        public void Setup(LevelData level, bool isUnlocked, Action<LevelData> onEngageCallback)
         {
             if (level == null)
             {
@@ -241,11 +241,29 @@ namespace MaouSamaTD.UI.MainMenu
 
             if (_engageButton != null)
             {
-                _engageButton.interactable = true;
+                _engageButton.interactable = isUnlocked;
                 var engageText = _engageButton.GetComponentInChildren<TextMeshProUGUI>();
                 if (engageText != null)
                 {
-                    engageText.text = isCleared ? "REPLAY" : "ENGAGE";
+                    if (!isUnlocked)
+                    {
+                        if (level.RequiredUnitLevel > 1 && (_saveManager == null || _saveManager.GetHighestUnitLevel() < level.RequiredUnitLevel))
+                        {
+                            engageText.text = $"REQUIRES LV {level.RequiredUnitLevel}";
+                        }
+                        else if (level.RequiredPreviousLevel != null && (_saveManager == null || !_saveManager.IsLevelCompleted(level.RequiredPreviousLevel.LevelID)))
+                        {
+                            engageText.text = $"CLEAR {level.RequiredPreviousLevel.LevelID} FIRST";
+                        }
+                        else
+                        {
+                            engageText.text = "LOCKED";
+                        }
+                    }
+                    else
+                    {
+                        engageText.text = isCleared ? "REPLAY" : "ENGAGE";
+                    }
                 }
             }
 

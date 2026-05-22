@@ -365,10 +365,21 @@ namespace MaouSamaTD.Units
                 
                 if (IsTargetInPattern(myPos, enemyPos, pattern, range))
                 {
+                    var tile = _gridManager.GetTileAt(enemyPos);
+                    
+                    // Disallow ground melee units from attacking high ground tiles
+                    if (!IsRanged() && tile != null && tile.IsHighGround)
+                    {
+                        bool iAmHighGround = CurrentTile != null && CurrentTile.IsHighGround;
+                        if (!iAmHighGround)
+                        {
+                            continue; // Melee on low ground cannot reach high ground
+                        }
+                    }
+
                     float score = 0;
                     
                     // Priority 1: High Ground (Flyers are usually high ground, or enemies on specific tiles)
-                    var tile = _gridManager.GetTileAt(enemyPos);
                     if (tile != null && tile.IsHighGround)
                         score += 2000f;
                         

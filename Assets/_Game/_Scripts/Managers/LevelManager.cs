@@ -127,6 +127,16 @@ namespace MaouSamaTD.Managers
                 // RESUME TIME if we are skipping (since the prompt or story might have stopped it)
                 _gameManager.SetSpeed(1);
 
+                // Show Sovereign Rite panel — tutorials may have hidden it for Level 1.
+                // In free-play / solo mode it must always be accessible.
+                var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                if (skillPanel != null)
+                {
+                    skillPanel.gameObject.SetActive(true);
+                    skillPanel.ShowToggle();
+                    Debug.Log("[LevelManager] Solo play: SkillPanelUI activated and toggle shown.");
+                }
+
                 // If we skip the tutorial, and it is Level 2 (Tomb of Lilith), we must give Lilith to the player immediately!
                 if (dataToLoad != null && (dataToLoad.LevelID == "1-2" || dataToLoad.LevelName.Contains("Level 2") || dataToLoad.LevelName.Contains("Lilith")))
                 {

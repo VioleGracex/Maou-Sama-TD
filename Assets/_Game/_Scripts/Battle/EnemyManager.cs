@@ -236,7 +236,7 @@ namespace MaouSamaTD.Managers
             foreach (var group in wave.Groups)
             {
                 if (group.InitialDelay > 0)
-                    yield return new WaitForSeconds(group.InitialDelay);
+                    yield return StartCoroutine(WaitScaled(group.InitialDelay));
 
                 for (int i = 0; i < group.Count; i++)
                 {
@@ -245,7 +245,7 @@ namespace MaouSamaTD.Managers
                     enemyCounter++;
                     
                     if (group.SpawnInterval > 0)
-                        yield return new WaitForSeconds(group.SpawnInterval);
+                        yield return StartCoroutine(WaitScaled(group.SpawnInterval));
                 }
             }
             _isSpawning = false;
@@ -365,7 +365,7 @@ namespace MaouSamaTD.Managers
             {
                 Debug.Log($"[EnemyManager] Waiting for Grace Period: {initialDelay}s");
                 if (_pathVisualizer != null) _pathVisualizer.Show(); 
-                yield return new WaitForSeconds(initialDelay);
+                yield return StartCoroutine(WaitScaled(initialDelay));
             }
 
             if (_pathVisualizer != null) _pathVisualizer.Hide(); 
@@ -437,7 +437,7 @@ namespace MaouSamaTD.Managers
                 if (wave.DelayBeforeNextWave > 0)
                 {
                     _isSpawning = false; // Not spawning during the delay
-                    yield return new WaitForSeconds(wave.DelayBeforeNextWave);
+                    yield return StartCoroutine(WaitScaled(wave.DelayBeforeNextWave));
                     _isSpawning = true;
                 }
                 
@@ -452,7 +452,7 @@ namespace MaouSamaTD.Managers
         private IEnumerator SpawnGroupRoutine(WaveGroup group, int waveCounter)
         {
             if (group.InitialDelay > 0)
-                yield return new WaitForSeconds(group.InitialDelay);
+                yield return StartCoroutine(WaitScaled(group.InitialDelay));
 
             for (int i = 0; i < group.Count; i++)
             {
@@ -462,7 +462,19 @@ namespace MaouSamaTD.Managers
                 _waveEnemyCounts[waveCounter]++;
                 
                 if (group.SpawnInterval > 0)
-                    yield return new WaitForSeconds(group.SpawnInterval);
+                    yield return StartCoroutine(WaitScaled(group.SpawnInterval));
+            }
+        }
+
+        private IEnumerator WaitScaled(float duration)
+        {
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                float speed = (_gameManager != null && _gameManager.CurrentSpeed > 0f) ? _gameManager.CurrentSpeed : 1f;
+                if (_gameManager != null && _gameManager.IsPaused) speed = 0f;
+                elapsed += Time.unscaledDeltaTime * speed;
+                yield return null;
             }
         }
         #endregion

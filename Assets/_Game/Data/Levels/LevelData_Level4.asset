@@ -25,6 +25,8 @@ MonoBehaviour:
   Description: Break through opportunistic siege camps and enter the capital.
   GracePeriod: 8
   LevelID: 1-4
+  RequiredUnitLevel: 1
+  RequiredPreviousLevel: {fileID: 0}
   WinRewards:
   - Type: 0
     Amount: 1800
@@ -50,7 +52,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fdd6f9b681771a540983b7b3131aecef, type: 2}
   MissionXP: 400
   StartingAuthoritySeals: 40
-  MaxAuthoritySeals: 90
+  MaxAuthoritySeals: 99
   AuthoritySealsPerSecond: 2
   Waves:
   - Groups:

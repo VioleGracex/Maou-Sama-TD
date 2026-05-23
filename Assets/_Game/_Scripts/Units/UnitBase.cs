@@ -509,7 +509,7 @@ namespace MaouSamaTD.Units
             if (_currentHp <= 0)
             {
                 if (attacker is PlayerUnit player) player.IncrementKillCount();
-                Die();
+                Die(attacker);
             }
         }
 
@@ -660,7 +660,17 @@ namespace MaouSamaTD.Units
             if (_isDead) return;
             _isDead = true;
 
-            BattleLogManager.Instance.LogEvent(BattleLogType.Death, attacker != null ? attacker.gameObject.name : "Unknown", gameObject.name, "Unit Died", 0);
+            string attackerLabel = "Unknown";
+            if (attacker != null)
+            {
+                attackerLabel = attacker.gameObject.name;
+                // If the attacker is a player unit, try to append the ultimate skill name for clarity
+                if (attacker is PlayerUnit pu && pu.Data != null && pu.Data.UltimateSkill != null)
+                {
+                    attackerLabel = $"{pu.Data.UnitName} ({pu.Data.UltimateSkill.SkillName})";
+                }
+            }
+            BattleLogManager.Instance.LogEvent(BattleLogType.Death, attackerLabel, gameObject.name, "Unit Died", 0);
 
             if (_showDebugLogs) Debug.Log($"[Death] {gameObject.name} has died.");
 

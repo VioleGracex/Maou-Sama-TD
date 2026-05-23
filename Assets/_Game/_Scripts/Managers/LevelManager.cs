@@ -20,7 +20,18 @@ namespace MaouSamaTD.Managers
         #region Lifecycle
         private void Start()
         {
-            Debug.Log("[LevelManager] Start triggered.");
+            InitLevelFlow();
+        }
+
+        public void LoadLevel(LevelData dataToLoad)
+        {
+            _levelData = dataToLoad;
+            InitLevelFlow();
+        }
+
+        public void InitLevelFlow()
+        {
+            Debug.Log("[LevelManager] InitLevelFlow triggered.");
             if (_gameManager == null) 
             {
                 Debug.LogError("[LevelManager] GameManager is NULL!");
@@ -41,11 +52,6 @@ namespace MaouSamaTD.Managers
                 Debug.Log($"[LevelManager] Loading LevelData: {dataToLoad.LevelName}");
                 _gameManager.LoadLevelData(dataToLoad);
                 
-                if (_currencyManager != null)
-                {
-                    _currencyManager.Init(dataToLoad);
-                }
-
                 // Story Intro Check
                 if (dataToLoad.HasStory && dataToLoad.IntroStory != null)
                 {
@@ -108,7 +114,8 @@ namespace MaouSamaTD.Managers
             {
                 float gracePeriod = dataToLoad.GracePeriod;
                 Debug.Log($"[LevelManager] Initializing Enemy Manager. Tutorial Active: {playTutorial}");
-                _enemyManager.Initialize(dataToLoad.Waves, _gridManager.EnemyContainer, gracePeriod, !playTutorial);
+                // Always pass true for startImmediately so EnemyManager controls wave flow natively
+                _enemyManager.Initialize(dataToLoad.Waves, _gridManager.EnemyContainer, gracePeriod, true);
             }
 
             if (playTutorial && dataToLoad.HasTutorial && dataToLoad.TutorialData != null)

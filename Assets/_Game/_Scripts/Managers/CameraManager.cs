@@ -352,11 +352,16 @@ namespace MaouSamaTD.Managers
                 Debug.Log($"[CameraManager] Saved current position {_testMapPosition} as test position.");
             }
         }
-        public void Shake(float duration = 0.5f, float strength = 0.2f)
+        public void Shake(float duration = 0.3f, float strength = 0.08f)
         {
-            if (_cameraAnchor != null)
+            // Shake the camera itself, NOT the anchor. Shaking the anchor shifts the Cinemachine
+            // follow target which makes the entire map appear to move. Shaking Camera.main directly
+            // creates a screen-space vibration that reads as camera shake, not world movement.
+            var cam = Camera.main;
+            if (cam != null)
             {
-                _cameraAnchor.DOShakePosition(duration, strength, 10, 90, false, true);
+                cam.transform.DOKill(false);
+                cam.transform.DOShakePosition(duration, strength, 12, 90, false, true);
             }
         }
         #endregion

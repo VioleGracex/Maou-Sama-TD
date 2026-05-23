@@ -13,6 +13,21 @@ namespace MaouSamaTD.UI.MainMenu
 {
     public class LoadingScreenPanel : MonoBehaviour
     {
+        public static LoadingScreenPanel Instance { get; private set; }
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                // Rehook the scene-specific AppEntryPoint reference to the persistent instance
+                Instance._appEntryPoint = this._appEntryPoint;
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
         [Header("References")]
         [Header("References")]
         [SerializeField] private AppEntryPoint _appEntryPoint;
@@ -255,6 +270,7 @@ namespace MaouSamaTD.UI.MainMenu
         public void LoadSceneTransition(string sceneName)
         {
             _isTransitioning = true;
+            _isLevelReady = false;
             
             // Unparent and persist
             transform.SetParent(null);
@@ -275,6 +291,11 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 canvas.sortingOrder = 999;
             }
+            
+            CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();
+            if (cg == null) cg = gameObject.AddComponent<CanvasGroup>();
+            cg.alpha = 1f;
+
             DontDestroyOnLoad(gameObject);
 
             gameObject.SetActive(true);
@@ -293,6 +314,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         private System.Collections.IEnumerator LoadSceneAsyncCoroutine(string sceneName)
         {
+            float startTime = Time.realtimeSinceStartup;
             AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
             op.allowSceneActivation = false;
 
@@ -337,12 +359,19 @@ namespace MaouSamaTD.UI.MainMenu
                 Debug.Log("[LoadingScreenPanel] BattleScene ready - auto-proceeding to fade out.");
             }
 
+            float elapsed = Time.realtimeSinceStartup - startTime;
+            if (elapsed < 2.0f)
+            {
+                yield return new WaitForSecondsRealtime(2.0f - elapsed);
+            }
+
             CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();
             if (cg == null) cg = gameObject.AddComponent<CanvasGroup>();
 
-            cg.DOFade(0f, 0.5f).SetId(this).OnComplete(() =>
+            cg.DOFade(0f, 0.5f).SetId(this).SetUpdate(true).OnComplete(() =>
             {
-                Destroy(gameObject);
+                gameObject.SetActive(false);
+                _isTransitioning = false;
             });
         }
     }

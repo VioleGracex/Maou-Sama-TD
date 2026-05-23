@@ -43,6 +43,12 @@ namespace MaouSamaTD.UI
         private HoleRaycaster overlayRaycaster;
         private bool isActive = false;
         public bool IsActive => isActive;
+
+        /// <summary>
+        /// When true, ALL clicks are blocked — including normally whitelisted buttons (SpeedButton, PauseButton).
+        /// Use this for full modal overlays like post-battle screens or loading transitions.
+        /// </summary>
+        public bool BlockAllInput = false;
         private Texture2D maskTex;
         private Color32[] _cachedPixels;
         private CanvasGroup canvasGroup;
@@ -94,8 +100,9 @@ namespace MaouSamaTD.UI
             if (canvas != null) canvas.sortingOrder = order;
         }
 
-        public void ShowBlockerWithDetailedTargets(List<UIHighlightData> uiHits, List<WorldHighlightData> worldHits)
+        public void ShowBlockerWithDetailedTargets(List<UIHighlightData> uiHits, List<WorldHighlightData> worldHits, bool blockAll = false)
         {
+            BlockAllInput = blockAll;
             uiHighlights.Clear();
             if (uiHits != null) uiHighlights.AddRange(uiHits);
 
@@ -106,8 +113,9 @@ namespace MaouSamaTD.UI
             Show();
         }
 
-        public void ShowBlockerWithWorldHighlightData(List<RectTransform> targets, List<WorldHighlightData> highlights)
+        public void ShowBlockerWithWorldHighlightData(List<RectTransform> targets, List<WorldHighlightData> highlights, bool blockAll = false)
         {
+            BlockAllInput = blockAll;
             uiHighlights.Clear();
             if (targets != null)
             {
@@ -121,15 +129,30 @@ namespace MaouSamaTD.UI
             Show();
         }
 
-        public void ShowBlockerWithTarget(RectTransform target)
+        public void ShowBlockerWithTarget(RectTransform target, bool blockAll = false)
         {
             if (target == null) return;
+            BlockAllInput = blockAll;
             // Add if not exists
             if (!uiHighlights.Exists(h => h.Target == target))
             {
                 uiHighlights.Add(new UIHighlightData { Target = target, Size = Vector2.one });
                 _isDirty = true;
             }
+            Show();
+        }
+
+        /// <summary>
+        /// Show the blocker with NO holes — blocks ALL clicks on the entire screen.
+        /// Use for loading screens and full modal transitions.
+        /// </summary>
+        public void ShowFullBlocker()
+        {
+            BlockAllInput = true;
+            uiHighlights.Clear();
+            worldHighlights.Clear();
+            isWorldHighlight = false;
+            _isDirty = true;
             Show();
         }
 
@@ -236,6 +259,7 @@ namespace MaouSamaTD.UI
         {
             if (!isActive) return;
             canvasGroup.DOKill();
+            BlockAllInput = false;
             
             if (immediate)
             {
@@ -253,6 +277,7 @@ namespace MaouSamaTD.UI
                 {
                     canvasGroup.blocksRaycasts = false;
                     isActive = false;
+                    BlockAllInput = false;
                     uiHighlights.Clear();
                     worldHighlights.Clear();
                     isWorldHighlight = false;
@@ -558,24 +583,18 @@ namespace MaouSamaTD.UI
                     }
                 }
 
+                // Get the owning UIPopupBlocker to check BlockAllInput flag
+                var blocker = GetComponentInParent<UIPopupBlocker>();
+                bool blockAll = blocker != null && blocker.BlockAllInput;
+
                 // 1. If game is paused, do not block any clicks so the player can interact with Pause menu options (Resume, Restart, Retreat)
-                if (_gameManager != null && _gameManager.IsPaused)
+                // But only if we're NOT in full-block mode (e.g. loading screen).
+                if (!blockAll && _gameManager != null && _gameManager.IsPaused)
                 {
                     return false;
                 }
 
-                // 2. Always allow clicking the Pause button and Speed button
-                if (_gameControlUI != null)
-                {
-                    if (_gameControlUI.PauseButton != null && IsRectTransformHit(_gameControlUI.PauseButton.transform as RectTransform, screenPoint))
-                    {
-                        return false;
-                    }
-                    if (_gameControlUI.SpeedButton != null && IsRectTransformHit(_gameControlUI.SpeedButton.transform as RectTransform, screenPoint))
-                    {
-                        return false;
-                    }
-                }
+                // 2. We no longer whitelist the Pause/Speed buttons here to prevent player interaction during active tutorial steps/dialogues.
 
                 foreach (var h in uiHighlights)
                 {

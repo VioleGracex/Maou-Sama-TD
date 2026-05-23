@@ -39,6 +39,7 @@ namespace MaouSamaTD.UI.Cohorts
         public Button _actionButton; // Unified Save / Start Battle
         public TMPro.TextMeshProUGUI _actionButtonText;
         [SerializeField] private Button _removeAllButton;
+        public Button _autoMakeSquadButton;
 
         [Header("Locked Mode")]
         [SerializeField] private GameObject _noEditBlocker;
@@ -83,6 +84,7 @@ namespace MaouSamaTD.UI.Cohorts
 
             if (_actionButton != null) _actionButton.onClick.AddListener(OnActionButtonClicked);
             if (_removeAllButton != null) _removeAllButton.onClick.AddListener(OnRemoveAllClicked);
+            if (_autoMakeSquadButton != null) _autoMakeSquadButton.onClick.AddListener(OnAutoMakeSquadClicked);
             
             if (_confirmLeaveButton != null) _confirmLeaveButton.onClick.AddListener(OnConfirmLeave);
             if (_cancelLeaveButton != null) _cancelLeaveButton.onClick.AddListener(OnCancelLeave);
@@ -289,6 +291,7 @@ namespace MaouSamaTD.UI.Cohorts
             }
             if (_removeAllButton != null) _removeAllButton.interactable = canEdit;
             if (_selectMultipleButton != null) _selectMultipleButton.interactable = canEdit;
+            if (_autoMakeSquadButton != null) _autoMakeSquadButton.interactable = canEdit;
         }
 
         private void OnCohortButtonClicked(int index)
@@ -548,6 +551,132 @@ namespace MaouSamaTD.UI.Cohorts
                 SaveCohort(); // Auto-save on clear
             }
             RefreshUI();
+        }
+
+        private void OnAutoMakeSquadClicked()
+        {
+            if (_isLockedMode) return;
+
+            if (_playerData == null || _playerData.UnlockedUnits == null) return;
+            
+            List<MaouSamaTD.Units.UnitData> candidates = new List<MaouSamaTD.Units.UnitData>();
+            foreach (var id in _playerData.UnlockedUnits)
+            {
+                if (string.IsNullOrEmpty(id)) continue;
+                var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(id);
+                if (unit != null)
+                {
+                    candidates.Add(unit);
+                }
+            }
+
+            // Sort by Rarity (descending) then Level (descending)
+            candidates.Sort((a, b) =>
+            {
+                int compare = b.Rarity.CompareTo(a.Rarity);
+                if (compare == 0) compare = b.Level.CompareTo(a.Level);
+                if (compare == 0) compare = (a.UniqueID ?? "").CompareTo(b.UniqueID ?? "");
+                return compare;
+            });
+
+            if (_tempUnitIDs == null) _tempUnitIDs = new List<string>();
+            while (_tempUnitIDs.Count < 12) _tempUnitIDs.Add("");
+
+            HashSet<string> lockedUnitIDs = new HashSet<string>();
+            bool[] isSlotLocked = new bool[12];
+            for (int i = 0; i < 12; i++)
+            {
+                bool isLocked = false;
+                if (i < 11)
+                {
+                    isLocked = _isLockedMode;
+                }
+                else // i == 11
+                {
+                    isLocked = _isReadinessMode && _currentLevel != null && _currentLevel.IsAssistantLocked;
+                }
+
+                isSlotLocked[i] = isLocked;
+
+                if (isLocked)
+                {
+                    string lockedID = "";
+                    if (i == 11 && _currentLevel != null && _currentLevel.IsAssistantLocked && _currentLevel.SupportAssistant != null)
+                    {
+                        lockedID = _currentLevel.SupportAssistant.UniqueID;
+                    }
+                    else if (i < _tempUnitIDs.Count)
+                    {
+                        lockedID = _tempUnitIDs[i];
+                    }
+
+                    if (!string.IsNullOrEmpty(lockedID))
+                    {
+                        lockedUnitIDs.Add(lockedID);
+                    }
+                }
+            }
+
+            List<string> availableCandidates = new List<string>();
+            foreach (var unit in candidates)
+            {
+                if (!lockedUnitIDs.Contains(unit.UniqueID))
+                {
+                    availableCandidates.Add(unit.UniqueID);
+                }
+            }
+
+            List<string> nextTempUnitIDs = new List<string>();
+            int candidateIndex = 0;
+            for (int i = 0; i < 12; i++)
+            {
+                if (isSlotLocked[i])
+                {
+                    string lockedID = "";
+                    if (i == 11 && _currentLevel != null && _currentLevel.IsAssistantLocked && _currentLevel.SupportAssistant != null)
+                    {
+                        lockedID = _currentLevel.SupportAssistant.UniqueID;
+                    }
+                    else if (i < _tempUnitIDs.Count)
+                    {
+                        lockedID = _tempUnitIDs[i];
+                    }
+                    nextTempUnitIDs.Add(lockedID);
+                }
+                else
+                {
+                    if (candidateIndex < availableCandidates.Count)
+                    {
+                        nextTempUnitIDs.Add(availableCandidates[candidateIndex]);
+                        candidateIndex++;
+                    }
+                    else
+                    {
+                        nextTempUnitIDs.Add("");
+                    }
+                }
+            }
+
+            bool hasChanged = false;
+            for (int i = 0; i < 12; i++)
+            {
+                string oldID = (i < _tempUnitIDs.Count) ? _tempUnitIDs[i] : "";
+                string newID = nextTempUnitIDs[i];
+                if (oldID != newID)
+                {
+                    hasChanged = true;
+                    break;
+                }
+            }
+
+            if (hasChanged)
+            {
+                _tempUnitIDs = nextTempUnitIDs;
+                MarkDirty();
+                SaveCohort();
+                RefreshUI();
+                Debug.Log("[CohortSquadUI] Auto Make Squad populated.");
+            }
         }
         #endregion
     }

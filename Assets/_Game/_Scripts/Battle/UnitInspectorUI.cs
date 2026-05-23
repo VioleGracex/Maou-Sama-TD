@@ -52,9 +52,25 @@ namespace MaouSamaTD.UI
 
         public void Init()
         {
-
+            // Remove any Canvas component that might be overriding the UI Blocker's sorting
+            Canvas c = GetComponent<Canvas>();
+            if (c != null)
+            {
+                c.overrideSorting = false;
+                Destroy(GetComponent<GraphicRaycaster>());
+                Destroy(c);
+            }
+            
             if (_panel != null) 
             {
+                Canvas pc = _panel.GetComponent<Canvas>();
+                if (pc != null)
+                {
+                    pc.overrideSorting = false;
+                    Destroy(_panel.GetComponent<GraphicRaycaster>());
+                    Destroy(pc);
+                }
+
                 _panel.SetActive(false);
                 _panel.transform.localScale = Vector3.zero; // Start hidden
             }

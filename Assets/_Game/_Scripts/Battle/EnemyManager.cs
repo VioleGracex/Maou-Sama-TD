@@ -92,20 +92,24 @@ namespace MaouSamaTD.Managers
 
             if (!_victoryTriggered && _allWavesFinished && !_isSpawning)
             {
-                if (EnemyUnit.ActiveEnemies.Count == 0)
+                bool allDead = true;
+                bool hasAny = false;
+                foreach (var enemy in EnemyUnit.ActiveEnemies)
                 {
-                    // Check if tutorial is still in progress (Level 2 tutorial now uses standard victory)
-                    if (_tutorialManager != null && _tutorialManager.IsInTutorial && !UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.Contains("Level2"))
+                    if (enemy != null)
                     {
-                        return;
+                        hasAny = true;
+                        if (!enemy.IsDead)
+                        {
+                            allDead = false;
+                            break;
+                        }
                     }
+                }
 
-                    _victoryTriggered = true;
-                    Debug.Log("[EnemyManager] All enemies defeated. Victory!");
-                    if (_gameManager != null)
-                    {
-                        _gameManager.Victory();
-                    }
+                if ((hasAny && allDead) || (!hasAny && EnemyUnit.ActiveEnemies.Count == 0))
+                {
+                    StartCoroutine(TriggerLevelClearSequence());
                 }
             }
         }
@@ -154,9 +158,11 @@ namespace MaouSamaTD.Managers
             {
                 _cameraManager.Shake(1.2f, 0.4f);
             }
-
             // 3. Brief slow-mo duration
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(3.0f);
+
+            // Wait for all active enemies to perish (complete death animations and get destroyed)
+            yield return new WaitUntil(() => EnemyUnit.ActiveEnemies.Count == 0);
 
             // 4. Resume Time (as requested: "after killing boss resume time")
             if (_gameManager != null)
@@ -471,8 +477,18 @@ namespace MaouSamaTD.Managers
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                float speed = (_gameManager != null && _gameManager.CurrentSpeed > 0f) ? _gameManager.CurrentSpeed : 1f;
-                if (_gameManager != null && _gameManager.IsPaused) speed = 0f;
+                float speed = 1f;
+                if (_gameManager != null)
+                {
+                    if (_gameManager.IsPaused || _gameManager.IsTutorialTimeStop || _gameManager.CurrentSpeed == 0f)
+                    {
+                        speed = 0f;
+                    }
+                    else
+                    {
+                        speed = _gameManager.CurrentSpeed;
+                    }
+                }
                 elapsed += Time.unscaledDeltaTime * speed;
                 yield return null;
             }

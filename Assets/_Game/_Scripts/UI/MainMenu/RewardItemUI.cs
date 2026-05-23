@@ -11,7 +11,11 @@ namespace MaouSamaTD.UI.MainMenu
 
         public void Setup(Sprite icon, string quantity)
         {
-            // Ensure no overlap using HorizontalLayoutGroup programmatically
+            // Only add ContentSizeFitter if parent is NOT a full-width vertical group
+            var parent = transform.parent;
+            bool isFullWidth = parent != null && parent.name == "Container_OneTimeRewards";
+
+            // Ensure no overlap using HorizontalLayoutGroup
             var layout = GetComponent<HorizontalLayoutGroup>();
             if (layout == null)
             {
@@ -19,21 +23,37 @@ namespace MaouSamaTD.UI.MainMenu
             }
             if (layout != null)
             {
-                layout.spacing = 6f; // Beautiful tight gap between icon and text
-                layout.padding = new RectOffset(6, 6, 4, 4);
+                layout.spacing = 8f; // Beautiful tight gap between icon and text
+                layout.padding = new RectOffset(12, 12, 8, 8);
                 layout.childAlignment = TextAnchor.MiddleLeft;
-                layout.childControlWidth = false;
-                layout.childControlHeight = false;
-                layout.childForceExpandWidth = false;
+                
+                // Let the layout group control child widths/heights
+                layout.childControlWidth = true;
+                layout.childControlHeight = true;
+                layout.childForceExpandWidth = isFullWidth; // Force expand for full-width cards
                 layout.childForceExpandHeight = false;
             }
 
-            // Destroy ContentSizeFitter so that parent ScrollRect/Content layouts can force custom sizes
             var fitter = GetComponent<ContentSizeFitter>();
-            if (fitter != null)
+            if (isFullWidth)
             {
-                if (Application.isPlaying) Destroy(fitter);
-                else DestroyImmediate(fitter);
+                if (fitter != null)
+                {
+                    if (Application.isPlaying) Destroy(fitter);
+                    else DestroyImmediate(fitter);
+                }
+            }
+            else
+            {
+                if (fitter == null)
+                {
+                    fitter = gameObject.AddComponent<ContentSizeFitter>();
+                }
+                if (fitter != null)
+                {
+                    fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                    fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                }
             }
 
             if (_iconImage != null && icon != null)
@@ -41,11 +61,12 @@ namespace MaouSamaTD.UI.MainMenu
                 _iconImage.sprite = icon;
                 _iconImage.enabled = true;
                 
-                var iconRect = _iconImage.rectTransform;
-                if (iconRect != null)
-                {
-                    iconRect.sizeDelta = new Vector2(22f, 22f); // neat compact icon size
-                }
+                var iconLe = _iconImage.GetComponent<LayoutElement>();
+                if (iconLe == null) iconLe = _iconImage.gameObject.AddComponent<LayoutElement>();
+                iconLe.minWidth = 20f;
+                iconLe.preferredWidth = 20f;
+                iconLe.minHeight = 20f; // Let height be controlled by parent
+                iconLe.preferredHeight = 20f;
             }
             else if (_iconImage != null)
             {
@@ -55,16 +76,14 @@ namespace MaouSamaTD.UI.MainMenu
             if (_quantityText != null)
             {
                 _quantityText.text = quantity;
-                _quantityText.enableWordWrapping = true;
-                _quantityText.lineSpacing = 0.85f;
-                _quantityText.overflowMode = TextOverflowModes.Overflow;
-                _quantityText.fontSize = 11f; // compact font size
+                _quantityText.enableWordWrapping = false; // Prevent unwanted wrapping on badges
+                _quantityText.fontSize = 14f; // compact font size
+                _quantityText.fontStyle = FontStyles.Bold;
+                _quantityText.color = Color.white;
                 
-                var qtyRect = _quantityText.rectTransform;
-                if (qtyRect != null)
-                {
-                    qtyRect.sizeDelta = new Vector2(36f, 20f); // clean tight text box bounds
-                }
+                var qtyLe = _quantityText.GetComponent<LayoutElement>();
+                if (qtyLe == null) qtyLe = _quantityText.gameObject.AddComponent<LayoutElement>();
+                qtyLe.flexibleWidth = 1f;
             }
         }
     }

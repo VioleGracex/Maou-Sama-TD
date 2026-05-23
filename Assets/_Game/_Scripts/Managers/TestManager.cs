@@ -39,20 +39,28 @@ namespace MaouSamaTD.Managers
         [Button("Start Test Level")]
         public void StartTestLevel()
         {
-            if (_gameManager == null)
-            {
-                Debug.LogError("[TestManager] GameManager not injected!");
-                return;
-            }
-
             if (_levelData == null)
             {
                 Debug.LogWarning("[TestManager] No LevelData assigned for re-init!");
                 return;
             }
 
-            _gameManager.LoadLevelData(_levelData);
-            Debug.Log($"[TestManager] Re-initialized Level: {_levelData.LevelName}");
+            var levelManager = FindFirstObjectByType<LevelManager>();
+            if (levelManager != null)
+            {
+                levelManager.LoadLevel(_levelData);
+                Debug.Log($"[TestManager] Re-initialized Level via LevelManager: {_levelData.LevelName}");
+            }
+            else
+            {
+                if (_gameManager == null)
+                {
+                    Debug.LogError("[TestManager] GameManager not injected!");
+                    return;
+                }
+                _gameManager.LoadLevelData(_levelData);
+                Debug.LogWarning($"[TestManager] LevelManager not found in scene. Fallback to GameManager.LoadLevelData: {_levelData.LevelName}");
+            }
         }
 
         [Button("Spawn Male Rites")]

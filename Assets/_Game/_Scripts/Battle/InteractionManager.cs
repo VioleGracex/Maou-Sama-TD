@@ -207,7 +207,14 @@ namespace MaouSamaTD.Managers
                     EventSystem.current.RaycastAll(ped, results);
                     
                     GameObject hoveredGO = results.Count > 0 ? results[0].gameObject : null;
-                    if (hoveredGO == null || hoveredGO.name.Contains("Skill") || hoveredGO.name.Contains("Panel"))
+                    
+                    bool hitBlocker = false;
+                    if (_tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.IsActive)
+                    {
+                        if (!_uiBlocker.IsPointerInHole(screenPos)) hitBlocker = true;
+                    }
+
+                    if (!hitBlocker && (hoveredGO == null || hoveredGO.name.Contains("Skill") || hoveredGO.name.Contains("Panel")))
                     {
                         shouldBlockInput = false;
                     }

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maou-Sama TD: Briefing Panel Mockup</title>
+    <!-- Google Fonts for premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-glass: rgba(12, 12, 16, 0.92);
+            --border-glow: rgba(255, 191, 38, 0.25);
+            --gold-primary: #FFBF26;
+            --gold-glow: #ffc400;
+            --cyan-primary: #19CCFF;
+            --red-primary: #FF4C4C;
+            --purple-primary: #D959FF;
+            --text-main: #E2E8F0;
+            --text-muted: #94A3B8;
+            --panel-width: 480px;
+            --panel-height: 800px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #020205;
+            color: var(--text-main);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, rgba(30, 20, 45, 0.4) 0%, rgba(2, 2, 5, 1) 80%);
+        }
+
+        /* Ambient background preview mimicking map view */
+        .ambient-map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.35;
+            z-index: 1;
+            filter: blur(4px);
+        }
+
+        /* Briefing Panel Container (equivalent to VisualRoot) */
+        .visual-root {
+            position: relative;
+            z-index: 10;
+            width: var(--panel-width);
+            height: var(--panel-height);
+            background: var(--bg-glass);
+            border: 2px solid var(--border-glow);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 191, 38, 0.1);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            overflow: hidden;
+            animation: panelFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes panelFadeIn {
+            from {
+                transform: scale(0.9) translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Close Button (Anchored Top-Right, Ignore Layout equivalent) */
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: rgba(20, 20, 25, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+
+        .close-button:hover {
+            border-color: var(--red-primary);
+            box-shadow: 0 0 10px rgba(255, 76, 76, 0.5);
+            transform: scale(1.08);
+        }
+
+        .close-button::before, .close-button::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 2px;
+            background: #fff;
+            transition: background-color 0.2s ease;
+        }
+        
+        .close-button:hover::before, .close-button:hover::after {
+            background: var(--red-primary);
+        }
+
+        .close-button::before { transform: rotate(45deg); }
+        .close-button::after { transform: rotate(-45deg); }
+
+        /* TextHolderTitle Component */
+        .text-holder-title {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        /* Category Badge Header Group */
+        .category-header-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-icon {
+            width: 18px;
+            height: 18px;
+            background: var(--cyan-primary);
+            mask: radial-gradient(circle, #fff 100%, transparent 100%);
+            border-radius: 4px;
+            box-shadow: 0 0 8px var(--cyan-primary);
+        }
+
+        .category-text {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--cyan-primary);
+            text-shadow: 0 0 8px rgba(25, 204, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        /* Fixed Title Text (No size scaling jumpiness) */
+        .level-title-text {
+            font-family: 'Cinzel', serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--gold-primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            word-wrap: break-word;
+            line-height: 1.3;
+        }
+
+        .recommended-level-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* Briefing Separator Divider */
+        .briefing-separator {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 191, 38, 0.4) 20%, rgba(255, 191, 38, 0.4) 80%, transparent);
+            box-shadow: 0 0 4px rgba(255, 191, 38, 0.2);
+            margin-bottom: 16px;
+        }
+
+        /* Scroll View container (flexibleHeight equivalent) */
+        .briefing-scrollview {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Scrollbar styles */
+        .briefing-scrollview::-webkit-scrollbar {
+            width: 4px;
+        }
+        .briefing-scrollview::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .briefing-scrollview::-webkit-scrollbar-thumb {
+            background: rgba(255, 191, 38, 0.35);
+            border-radius: 4px;
+        }
+        .briefing-scrollview::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-primary);
+        }
+
+        /* Content Sections */
+        .section-header {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            opacity: 0.85;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-header::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 191, 38, 0.15);
+        }
+
+        .description-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #CBD5E1;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        /* Enemies / Monster Cards Section (Vertical Stack) */
+        .container-enemies {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .monster-card {
+            background: rgba(20, 20, 26, 0.8);
+            border: 1px solid rgba(255, 191, 38, 0.12);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .monster-card:hover {
+            border-color: rgba(255, 191, 38, 0.3);
+            background: rgba(24, 24, 32, 0.95);
+        }
+
+        .chibi-frame {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, #2d261e 0%, #171512 100%);
+            border: 1px solid var(--gold-primary);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 0 8px rgba(255, 191, 38, 0.2);
+        }
+
+        .chibi-img {
+            font-size: 24px;
+        }
+
+        .monster-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .monster-header-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .monster-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .badge-rank {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .badge-rank.normal {
+            background: rgba(187, 187, 187, 0.1);
+            color: #ccc;
+            border: 1px solid rgba(187, 187, 187, 0.2);
+        }
+
+        .badge-rank.elite {
+            background: rgba(217, 89, 255, 0.15);
+            color: var(--purple-primary);
+            border: 1px solid rgba(217, 89, 255, 0.3);
+        }
+
+        .badge-move {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            background: rgba(0, 255, 204, 0.1);
+            color: #00FFCC;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .monster-stats {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .monster-stats span {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Objectives Section */
+        .container-objectives {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .objective-item {
+            background: rgba(16, 20, 25, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .objective-text {
+            font-size: 12px;
+            color: #E2E8F0;
+        }
+
+        .objective-bonus {
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-claimed {
+            color: #64748B;
+        }
+
+        .status-available {
+            color: var(--gold-primary);
+        }
+
+        /* Rewards & Loot Grids (Horizontal / Flexwrap Flow) */
+        .container-rewards-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .reward-item-card {
+            background: rgba(30, 30, 38, 0.85);
+            border: 1px solid rgba(255, 191, 38, 0.2);
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .reward-item-card:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 8px rgba(255, 191, 38, 0.35);
+        }
+
+        .reward-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .reward-qty {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Mission Conditions */
+        .container-conditions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(239, 68, 68, 0.03);
+            border: 1px solid rgba(239, 68, 68, 0.08);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .condition-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+        }
+
+        .condition-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .condition-dot.win { background: #10B981; box-shadow: 0 0 6px #10B981; }
+        .condition-dot.lose { background: #EF4444; box-shadow: 0 0 6px #EF4444; }
+
+        .condition-label {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .condition-label.win { color: #10B981; }
+        .condition-label.lose { color: #EF4444; }
+
+        .condition-text {
+            color: #E2E8F0;
+        }
+
+        /* Bottom Buttons Group (Perfect HorizontalLayoutGroup Representation) */
+        .bottom-buttons-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 18px;
+        }
+
+        /* Nav Buttons (Prev/Next) */
+        .nav-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(24, 24, 30, 0.95);
+            border: 1px solid rgba(255, 191, 38, 0.35);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--gold-primary);
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+
+        .nav-btn:hover {
+            border-color: var(--gold-primary);
+            color: #fff;
+            background: var(--gold-primary);
+            box-shadow: 0 0 12px rgba(255, 191, 38, 0.5);
+            transform: scale(1.08);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Main Engage/Replay Button */
+        .engage-btn {
+            flex: 1;
+            height: 48px;
+            max-width: 220px;
+            background: linear-gradient(135deg, #B45309 0%, #D97706 50%, #B45309 100%);
+            border: 2px solid var(--gold-primary);
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+            text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .engage-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+            background: linear-gradient(135deg, #D97706 0%, #F59E0B 50%, #D97706 100%);
+        }
+
+        .engage-btn:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dark Fantasy Map Background simulation -->
+    <img src="C:\Users\Ouikio\.gemini\antigravity-ide\brain\fb8460d6-ebf2-415e-a4ff-16148e96dda6\map_background_1779483370839.png" class="ambient-map" alt="Gehenna Strategy Map">
+
+    <!-- Briefing Panel Root -->
+    <div class="visual-root">
+        <!-- Close Button (Ignored Layout equivalent) -->
+        <div class="close-button" title="Close Panel"></div>
+
+        <!-- TextHolderTitle (No Font Size Jumpiness) -->
+        <div class="text-holder-title">
+            <div class="category-header-group">
+                <div class="category-icon"></div>
+                <div class="category-text">Main Story</div>
+            </div>
+            <div class="level-title-text">0-1 Chapter 1: The Awakening</div>
+            <div class="recommended-level-text">Recommended Lv. 1 – 5</div>
+        </div>
+
+        <!-- Separator -->
+        <div class="briefing-separator"></div>
+
+        <!-- Scroll View Container -->
+        <div class="briefing-scrollview">
+            <!-- Level Description -->
+            <div class="description-text">
+                Target sector identified. Deploy the Legion and assert absolute dominance. Do not let their holy light blind your resolve.
+            </div>
+
+            <!-- Expected Hostile Forces -->
+            <div>
+                <div class="section-header">Expected Hostile Forces</div>
+                <div class="container-enemies">
+                    <div class="monster-card">
+                        <div class="chibi-frame">
+                            <span class="chibi-img">👹</span>
+                        </div>
+                        <div class="monster-info">
+                            <div class="monster-header-row">
+                                <div class="monster-name">Gehenna Scout</div>
+                                <div class="badge-rank normal">Normal</div>
+                                <div class="badge-move">Ground</div>
+                            </div>
+                            <div class="monster-stats">
+                                HP: <span>45</span> | Speed: <span>2.2</span> | Power: <span>6.0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="monster-card">
+                        <div class="chibi-frame">
+                            <span class="chibi-img">🦅</span>
+                        </div>
+                        <div class="monster-info">
+                            <div class="monster-header-row">
+                                <div class="monster-name">Shadow Harpy</div>
+                                <div class="badge-rank elite">Elite</div>
+                                <div class="badge-move">Flying</div>
+                            </div>
+                            <div class="monster-stats">
+                                HP: <span>75</span> | Speed: <span>1.8</span> | Power: <span>10.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Star Objectives & Special Unlocks -->
+            <div>
+                <div class="section-header">Star Objectives &amp; Bonus</div>
+                <div class="container-objectives">
+                    <div class="objective-item">
+                        <div class="objective-text">⭐ Complete Level</div>
+                        <div class="objective-bonus status-claimed">🎁 +100 Gold <span style="font-weight: normal; color: #64748B;">[Claimed]</span></div>
+                    </div>
+                    <div class="objective-item">
+                        <div class="objective-text">⭐ Sovereign HP above 50%</div>
+                        <div class="objective-bonus status-available">🎁 +15 Blood Crests</div>
+                    </div>
+                    <div class="objective-item">
+                        <div class="objective-text">⭐ Finish within 180s</div>
+                        <div class="objective-bonus status-available">🎁 +5 Gems</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Replay Victory Rewards -->
+            <div>
+                <div class="section-header">Replay Victory Rewards</div>
+                <div class="container-rewards-grid">
+                    <div class="reward-item-card">
+                        <div class="reward-icon">🪙</div>
+                        <div class="reward-qty">+150 Gold</div>
+                    </div>
+                    <div class="reward-item-card">
+                        <div class="reward-icon">🩸</div>
+                        <div class="reward-qty">+30 Blood Crests</div>
+                    </div>
+                    <div class="reward-item-card">
+                        <div class="reward-icon">💎</div>
+                        <div class="reward-qty">+5 Gems</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stage Drops -->
+            <div>
+                <div class="section-header">Stage Drops</div>
+                <div class="container-rewards-grid">
+                    <div class="reward-item-card">
+                        <div class="reward-icon">🪨</div>
+                        <div class="reward-qty">Demonite Shard (75%)</div>
+                    </div>
+                    <div class="reward-item-card">
+                        <div class="reward-icon">🔮</div>
+                        <div class="reward-qty">Soul Core (25%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mission Conditions -->
+            <div>
+                <div class="section-header">Mission Conditions</div>
+                <div class="container-conditions">
+                    <div class="condition-row">
+                        <div class="condition-dot win"></div>
+                        <div class="condition-label win">Win:</div>
+                        <div class="condition-text">Defeat 3 Waves of Enemies</div>
+                    </div>
+                    <div class="condition-row">
+                        <div class="condition-dot lose"></div>
+                        <div class="condition-label lose">Lose:</div>
+                        <div class="condition-text">Your core health reaches 0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Buttons Group (Perfect HorizontalLayoutGroup alignment) -->
+        <div class="bottom-buttons-group">
+            <div class="nav-btn" title="Previous Level">◀</div>
+            <button class="engage-btn">Replay</button>
+            <div class="nav-btn" title="Next Level">▶</div>
+        </div>
+    </div>
+
+</body>
+</html>

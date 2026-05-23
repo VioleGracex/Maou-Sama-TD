@@ -15,8 +15,50 @@ MonoBehaviour:
   m_GroupName: LevelData
   m_GUID: ba7060186f858e8478f8b8cf2ea25320
   m_SerializeEntries:
+  - m_GUID: 17a11e9bc25f455428cb9e09aa3de6f5
+    m_Address: Assets/_Game/Data/Levels/LevelData_Level8.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c26ad8bf22320340a30f14f9d7bcd1c
+    m_Address: Assets/_Game/Data/Levels/LevelData_Level4.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2ce29b90d7861404da1852413f6b99e6
+    m_Address: Assets/_Game/Data/Levels/LevelData_Level10.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9baf000025722e844bfe711a33199af4
+    m_Address: Assets/_Game/Data/Levels/LevelData_Daily_Dungeon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a2c6c0a664a64034e81cbd9127cb1407
     m_Address: Assets/_Game/Data/Levels/LevelData_Level1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b747027ab1d516549a55bdb640ac79af
+    m_Address: Assets/_Game/Data/Levels/LevelData_Vassal_Unlock.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8d091b54d8cc2a438a2d31d41005ea7
+    m_Address: Assets/_Game/Data/Levels/LevelData_Level6.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca9823aecddf9814890d4d9640f357ff
+    m_Address: Assets/_Game/Data/Levels/LevelData_Level9.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - LevelData
@@ -27,8 +69,26 @@ MonoBehaviour:
     m_SerializedLabels:
     - LevelData
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec027156bd7f6994c8f1827c66e1f3d9
+    m_Address: Assets/_Game/Data/Levels/LevelData_Level7.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: efc467d660f6ff74ba303b6ac31f759b
     m_Address: Assets/_Game/Data/Levels/LevelData_Level3.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f16ee8ed16fae0641894a351fbf215cf
+    m_Address: Assets/_Game/Data/Levels/LevelData_XP_Dungeon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - LevelData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fdd6f9b681771a540983b7b3131aecef
+    m_Address: Assets/_Game/Data/Levels/LevelData_Level5.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - LevelData

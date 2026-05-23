@@ -25,6 +25,8 @@ MonoBehaviour:
   Description: The Drakmora road is dangerous. Defend the center at all costs!
   GracePeriod: 8
   LevelID: 1-3
+  RequiredUnitLevel: 1
+  RequiredPreviousLevel: {fileID: 0}
   WinRewards:
   - Type: 0
     Amount: 1200
@@ -49,8 +51,8 @@ MonoBehaviour:
   ConnectedLevels:
   - {fileID: 11400000, guid: 1c26ad8bf22320340a30f14f9d7bcd1c, type: 2}
   MissionXP: 250
-  StartingAuthoritySeals: 30
-  MaxAuthoritySeals: 60
+  StartingAuthoritySeals: 99
+  MaxAuthoritySeals: 99
   AuthoritySealsPerSecond: 2
   Waves:
   - Groups:

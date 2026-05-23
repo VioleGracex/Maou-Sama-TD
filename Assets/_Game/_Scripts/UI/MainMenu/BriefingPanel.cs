@@ -7,6 +7,7 @@ using System;
 using DG.Tweening;
 using System.Collections.Generic;
 using Zenject;
+using NaughtyAttributes;
 
 namespace MaouSamaTD.UI.MainMenu
 {
@@ -26,32 +27,40 @@ namespace MaouSamaTD.UI.MainMenu
 
         [Header("Scroll System")]
         [SerializeField] private ScrollRect _scrollRect;
-        [SerializeField] private Transform _scrollContent;
+        [SerializeField] private RectTransform _scrollContent;
         [SerializeField] private TextMeshProUGUI _scrollDescriptionText;
+
+        [Header("Mission Conditions Section")]
+        [SerializeField] private GameObject _conditionsHeader;
+        [SerializeField] private RectTransform _conditionsContainer;
+        [SerializeField] private TextMeshProUGUI _winConditionText;
+        [SerializeField] private TextMeshProUGUI _loseConditionText;
 
         [Header("Spawning Enemies Section")]
         [SerializeField] private GameObject _enemiesHeader;
-        [SerializeField] private Transform _enemiesContainer;
+        [SerializeField] private RectTransform _enemiesContainer;
 
         [Header("1-Time Rewards Section")]
         [SerializeField] private GameObject _oneTimeHeader;
-        [SerializeField] private Transform _oneTimeContainer;
+        [SerializeField] private RectTransform _oneTimeContainer;
 
         [Header("Replay Victory Rewards Section")]
         [SerializeField] private GameObject _replayHeader;
-        [SerializeField] private Transform _replayContainer;
+        [SerializeField] private RectTransform _replayContainer;
 
         [Header("Stage Drops Section")]
         [SerializeField] private GameObject _dropsHeader;
-        [SerializeField] private Transform _dropsContainer;
+        [SerializeField] private RectTransform _dropsContainer;
 
         [Header("Navigation Buttons")]
         [SerializeField] private Button _prevLevelBtn;
         [SerializeField] private Button _nextLevelBtn;
         [SerializeField] private Button _closeButton;
 
-        [Header("Rewards Grid Prefab")]
+        [Header("Prefabs")]
         [SerializeField] private RewardItemUI _rewardPrefab;
+        [SerializeField] private MonsterCardUI _monsterCardPrefab;
+        [SerializeField] private GameObject _separatorPrefab;
         
         [Header("Animation")]
         [SerializeField] private float _animDuration = 0.3f;
@@ -150,12 +159,13 @@ namespace MaouSamaTD.UI.MainMenu
             if (_titleText != null)
             {
                 _titleText.text = $"{LevelButton.FormatLevelID(level.LevelID)} {level.LevelName}";
-                _titleText.fontSize = 15f;
-                _titleText.characterSpacing = 0.3f;
-                _titleText.color = new Color(0.97f, 0.79f, 0.14f, 1f);
+                _titleText.enableAutoSizing = false;
+                _titleText.fontSize = 24f;
+                _titleText.characterSpacing = 0.5f;
+                _titleText.color = new Color(1f, 0.75f, 0.15f, 1f); // #FFBF26 Premium Gold
                 _titleText.fontStyle = FontStyles.Bold;
                 _titleText.alignment = TextAlignmentOptions.TopLeft;
-                _titleText.overflowMode = TextOverflowModes.Truncate;
+                _titleText.overflowMode = TextOverflowModes.Overflow;
                 _titleText.enableWordWrapping = true;
 
                 // -- Category badge (colour-coded by type) --
@@ -216,8 +226,23 @@ namespace MaouSamaTD.UI.MainMenu
                                 if (iconTrans != null)
                                 {
                                     var iconImg = iconTrans.GetComponent<Image>();
-                                    if (iconImg != null && catIcon != null)
-                                        iconImg.sprite = catIcon;
+                                    if (iconImg != null)
+                                    {
+                                        if (catIcon != null)
+                                        {
+                                            iconImg.sprite = catIcon;
+                                            iconImg.enabled = true;
+                                        }
+                                        else
+                                        {
+                                            iconImg.enabled = false;
+                                        }
+                                        
+                                        if (ColorUtility.TryParseHtmlString(hexColor, out var parsedColor))
+                                        {
+                                            iconImg.color = parsedColor; // Dynamically color category icon to match cyan/gold/purple/red
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -281,7 +306,7 @@ namespace MaouSamaTD.UI.MainMenu
                 _scrollDescriptionText.text = string.IsNullOrEmpty(level.Description)
                     ? "<color=#555555><i>No briefing data available for this sector.</i></color>"
                     : level.Description;
-                _scrollDescriptionText.fontSize = 12.5f;
+                _scrollDescriptionText.fontSize = 15f;
                 _scrollDescriptionText.characterSpacing = 0.4f;
                 _scrollDescriptionText.lineSpacing = 12f;
                 _scrollDescriptionText.color = new Color(0.85f, 0.85f, 0.85f, 0.95f);
@@ -289,107 +314,11 @@ namespace MaouSamaTD.UI.MainMenu
                 _scrollDescriptionText.overflowMode = TextOverflowModes.Overflow;
             }
 
-            // 2. Rewards section — data population only, layout baked in scene
-            Transform rewardTrans = _visualRoot.transform.Find("Reward");
-            if (rewardTrans != null)
+            // 2. Replay & Loot Rewards section
+            bool hasReplayRewards = false;
+            if (_replayContainer != null)
             {
-                // Hide the static legacy value text
-                Transform valueTrans = rewardTrans.Find("Briefing_Reward_Value");
-                if (valueTrans != null) valueTrans.gameObject.SetActive(false);
-
-                // Title label sizing & spacing
-                Transform labelTrans = rewardTrans.Find("Briefing_Reward_Label");
-                if (labelTrans != null)
-                {
-                    var labelTmp = labelTrans.GetComponent<TextMeshProUGUI>();
-                    if (labelTmp != null)
-                    {
-                        labelTmp.text = "REWARDS";
-                        labelTmp.fontSize = 13f;
-                        labelTmp.fontStyle = FontStyles.Bold;
-                        labelTmp.characterSpacing = 1f;
-                        labelTmp.color = new Color(0.97f, 0.79f, 0.14f, 0.9f); // Subtle Maou Gold
-                    }
-                    var labelRect = labelTrans.GetComponent<RectTransform>();
-                    if (labelRect != null)
-                    {
-                        labelRect.anchorMin = new Vector2(0f, 0.5f);
-                        labelRect.anchorMax = new Vector2(0f, 0.5f);
-                        labelRect.pivot = new Vector2(0f, 0.5f);
-                        labelRect.anchoredPosition = new Vector2(12f, 0f);
-                        labelRect.sizeDelta = new Vector2(80f, 30f);
-                    }
-                }
-
-                // Find or build the ScrollView programmatically under Reward container
-                Transform scrollTrans = rewardTrans.Find("DynamicRewardsScrollView");
-                GameObject scrollGo;
-                if (scrollTrans == null)
-                {
-                    scrollGo = new GameObject("DynamicRewardsScrollView", typeof(RectTransform), typeof(ScrollRect));
-                    scrollGo.transform.SetParent(rewardTrans, false);
-                    
-                    var scrollRect = scrollGo.GetComponent<ScrollRect>();
-                    scrollRect.horizontal = true;
-                    scrollRect.vertical = false;
-                    scrollRect.horizontalScrollbar = null;
-                    scrollRect.verticalScrollbar = null;
-
-                    var sRect = scrollGo.GetComponent<RectTransform>();
-                    sRect.anchorMin = new Vector2(0f, 0f);
-                    sRect.anchorMax = new Vector2(1f, 1f);
-                    sRect.pivot = new Vector2(0.5f, 0.5f);
-                    sRect.offsetMin = new Vector2(95f, 5f);  // Pushed right to clear the label
-                    sRect.offsetMax = new Vector2(-10f, -5f);
-
-                    // Viewport
-                    GameObject viewportGo = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(RectMask2D));
-                    viewportGo.transform.SetParent(scrollGo.transform, false);
-                    var vRect = viewportGo.GetComponent<RectTransform>();
-                    vRect.anchorMin = Vector2.zero;
-                    vRect.anchorMax = Vector2.one;
-                    vRect.sizeDelta = Vector2.zero;
-                    viewportGo.GetComponent<Image>().color = Color.clear;
-
-                    // Content Container
-                    GameObject contentGo = new GameObject("Content", typeof(RectTransform), typeof(HorizontalLayoutGroup), typeof(ContentSizeFitter));
-                    contentGo.transform.SetParent(viewportGo.transform, false);
-                    var cRect = contentGo.GetComponent<RectTransform>();
-                    cRect.anchorMin = new Vector2(0f, 0.5f);
-                    cRect.anchorMax = new Vector2(0f, 0.5f);
-                    cRect.pivot = new Vector2(0f, 0.5f);
-                    cRect.sizeDelta = new Vector2(0f, 60f);
-
-                    var hLayout = contentGo.GetComponent<HorizontalLayoutGroup>();
-                    hLayout.spacing = 8f;
-                    hLayout.childAlignment = TextAnchor.MiddleLeft;
-                    hLayout.childControlWidth = false;
-                    hLayout.childControlHeight = false;
-                    hLayout.childForceExpandWidth = false;
-                    hLayout.childForceExpandHeight = false;
-                    hLayout.padding = new RectOffset(4, 4, 4, 4);
-
-                    var csFitter = contentGo.GetComponent<ContentSizeFitter>();
-                    csFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                    csFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
-
-                    scrollRect.viewport = vRect;
-                    scrollRect.content = cRect;
-                }
-                else
-                {
-                    scrollGo = scrollTrans.gameObject;
-                }
-
-                ScrollRect rewardsScroll = scrollGo.GetComponent<ScrollRect>();
-                Transform contentTrans = rewardsScroll.content;
-
-                // Clear old reward cells
-                ClearContainer(contentTrans);
-
-                bool hasRewards = false;
-
-                // Load real/placeholder WinRewards
+                ClearContainer(_replayContainer);
                 List<MaouSamaTD.Data.RewardData> winRewardsList = level.WinRewards;
                 if ((winRewardsList == null || winRewardsList.Count == 0) && (level.LevelID == "1-1" || level.LevelID == "0-1"))
                 {
@@ -399,21 +328,18 @@ namespace MaouSamaTD.UI.MainMenu
                     winRewardsList.Add(new MaouSamaTD.Data.RewardData { Type = MaouSamaTD.Data.RewardType.Gems, Amount = 5 });
                 }
 
-                // Spawning WinRewards (repeatable Gold, Blood Crests, Gems, etc.)
                 if (winRewardsList != null)
                 {
                     foreach (var reward in winRewardsList)
                     {
                         if (reward.Amount <= 0) continue;
-                        
                         Sprite icon = GetRewardSprite(reward.Type.ToString());
                         string displayName = FormatRewardName(reward.Type.ToString());
-                        CreateRewardItem(contentTrans, icon, $"+{reward.Amount} {displayName}", Color.white, 105f);
-                        hasRewards = true;
+                        CreateRewardItem(_replayContainer, icon, $"+{reward.Amount} {displayName}", Color.white, 105f);
+                        hasReplayRewards = true;
                     }
                 }
 
-                // Spawning Sovereign Rites Unlocks
                 if (level.Category == LevelCategory.RiteDungeon)
                 {
                     var rites = new List<MaouSamaTD.Skills.SovereignRiteData>();
@@ -423,12 +349,24 @@ namespace MaouSamaTD.UI.MainMenu
                     foreach (var rite in rites)
                     {
                         if (rite == null) continue;
-                        CreateRewardItem(contentTrans, rite.Icon, $"Rite: {rite.SkillName}", new Color(0.85f, 0.35f, 1f), 130f);
-                        hasRewards = true;
+                        CreateRewardItem(_replayContainer, rite.Icon, $"Rite: {rite.SkillName}", new Color(0.85f, 0.35f, 1f), 130f);
+                        hasReplayRewards = true;
                     }
                 }
 
-                // Load real/placeholder Loot Item drops
+                if (_replayHeader != null) _replayHeader.SetActive(hasReplayRewards);
+                _replayContainer.gameObject.SetActive(hasReplayRewards);
+                
+                if (hasReplayRewards && _separatorPrefab != null)
+                {
+                    Instantiate(_separatorPrefab, _replayContainer);
+                }
+            }
+
+            bool hasDrops = false;
+            if (_dropsContainer != null)
+            {
+                ClearContainer(_dropsContainer);
                 var lootConfig = level.StageLootConfig;
                 if ((lootConfig == null || lootConfig.Count == 0) && (level.LevelID == "1-1" || level.LevelID == "0-1"))
                 {
@@ -437,20 +375,22 @@ namespace MaouSamaTD.UI.MainMenu
                     lootConfig.Add(new LevelData.LevelLootItem { ItemID = "Soul Core", DropChance = 0.25f, MinQuantity = 1, MaxQuantity = 1 });
                 }
 
-                // Spawning Stage Drops / Loot Items
                 if (lootConfig != null)
                 {
                     foreach (var loot in lootConfig)
                     {
                         Sprite icon = GetRewardSprite(loot.ItemID);
-                        CreateRewardItem(contentTrans, icon, $"{loot.ItemID} ({(loot.DropChance * 100f):0}%)", new Color(0.97f, 0.79f, 0.14f), 115f);
-                        hasRewards = true;
+                        CreateRewardItem(_dropsContainer, icon, $"{loot.ItemID} ({(loot.DropChance * 100f):0}%)", new Color(0.97f, 0.79f, 0.14f), 115f);
+                        hasDrops = true;
                     }
                 }
 
-                if (!hasRewards)
+                if (_dropsHeader != null) _dropsHeader.SetActive(hasDrops);
+                _dropsContainer.gameObject.SetActive(hasDrops);
+                
+                if (hasDrops && _separatorPrefab != null)
                 {
-                    CreateRewardItem(contentTrans, null, "No loot drops", Color.gray, 100f);
+                    Instantiate(_separatorPrefab, _dropsContainer);
                 }
             }
 
@@ -518,7 +458,10 @@ namespace MaouSamaTD.UI.MainMenu
                         {
                             Sprite rSprite = GetRewardSprite(reward.Type.ToString());
                             string status = claimed ? " <color=#778899>[Claimed]</color>" : " <color=#ffd700>[Available]</color>";
-                            oneTimeList.Add((rSprite, $"{reward.Amount} {FormatRewardName(reward.Type.ToString())}{status}"));
+                            
+                            // Rich text alignment tag to push reward to the right in a full-width card
+                            string displayString = $"⭐ {cond.Description} <align=right>🎁 +{reward.Amount} {FormatRewardName(reward.Type.ToString())}{status}</align>";
+                            oneTimeList.Add((rSprite, displayString));
                             hasOneTime = true;
                         }
                     }
@@ -532,7 +475,8 @@ namespace MaouSamaTD.UI.MainMenu
                 riteSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI_Pages/Home/cmd_node_citadel.png");
 #endif
                 string status = isCleared ? " <color=#778899>[Unlocked]</color>" : " <color=#ffd700>[Unlock on Clear]</color>";
-                oneTimeList.Add((riteSprite, $"New Rite Unlock{status}"));
+                string displayString = $"⭐ Rite Completion <align=right>New Rite{status}</align>";
+                oneTimeList.Add((riteSprite, displayString));
                 hasOneTime = true;
             }
             else if (level.Category == LevelCategory.VassalDungeon)
@@ -542,7 +486,8 @@ namespace MaouSamaTD.UI.MainMenu
                 vassalSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI_Pages/Home/cmd_node_chambers.png");
 #endif
                 string status = isCleared ? " <color=#778899>[Recruited]</color>" : " <color=#ffd700>[Recruit on Clear]</color>";
-                oneTimeList.Add((vassalSprite, $"New Vassal Unlock{status}"));
+                string displayString = $"⭐ Vassal Recruitment <align=right>New Vassal{status}</align>";
+                oneTimeList.Add((vassalSprite, displayString));
                 hasOneTime = true;
             }
 
@@ -556,11 +501,7 @@ namespace MaouSamaTD.UI.MainMenu
                     var headerTxt = _oneTimeHeader.GetComponentInChildren<TextMeshProUGUI>();
                     if (headerTxt != null)
                     {
-                        headerTxt.text = "[ STAR OBJECTIVES & BONUS ]";
-                        headerTxt.fontSize = 12f;
-                        headerTxt.fontStyle = FontStyles.Bold;
-                        headerTxt.characterSpacing = 1.5f;
-                        headerTxt.color = new Color(0.97f, 0.79f, 0.14f);
+                        headerTxt.text = "STAR OBJECTIVES & BONUS";
                     }
                 }
                 _oneTimeContainer.gameObject.SetActive(showOneTime);
@@ -569,7 +510,12 @@ namespace MaouSamaTD.UI.MainMenu
                 {
                     foreach (var itemData in oneTimeList)
                     {
-                        CreateRewardItem(_oneTimeContainer, itemData.icon, itemData.qty, Color.white, 90f);
+                        // Hiding the left icon for full-width star objective cards to match HTML reference
+                        CreateRewardItem(_oneTimeContainer, null, itemData.qty, Color.white, 90f);
+                    }
+                    if (_separatorPrefab != null)
+                    {
+                        Instantiate(_separatorPrefab, _oneTimeContainer);
                     }
                 }
             }
@@ -650,12 +596,12 @@ namespace MaouSamaTD.UI.MainMenu
                 }
                 if (vlg != null)
                 {
-                    vlg.spacing = 8f;
+                    vlg.spacing = 16f; // Spacious spacing
                     vlg.childControlWidth = true;
                     vlg.childControlHeight = false;
                     vlg.childForceExpandWidth = true;
                     vlg.childForceExpandHeight = false;
-                    vlg.padding = new RectOffset(6, 6, 6, 6);
+                    vlg.padding = new RectOffset(12, 12, 12, 12); // Spacious padding
                 }
 
                 var csf = _enemiesContainer.GetComponent<ContentSizeFitter>();
@@ -675,11 +621,7 @@ namespace MaouSamaTD.UI.MainMenu
                     var headerTxt = _enemiesHeader.GetComponentInChildren<TextMeshProUGUI>();
                     if (headerTxt != null)
                     {
-                        headerTxt.text = "[ EXPECTED HOSTILE FORCES ]";
-                        headerTxt.fontSize = 12f;
-                        headerTxt.fontStyle = FontStyles.Bold;
-                        headerTxt.characterSpacing = 1.5f;
-                        headerTxt.color = new Color(0.97f, 0.79f, 0.14f);
+                        headerTxt.text = "EXPECTED HOSTILE FORCES";
                     }
                 }
                 _enemiesContainer.gameObject.SetActive(hasEnemies);
@@ -688,138 +630,79 @@ namespace MaouSamaTD.UI.MainMenu
                 {
                     foreach (var enemy in uniqueEnemies)
                     {
-                        // Create a premium tactical MonsterCard card GameObject
-                        GameObject cardGo = new GameObject("MonsterCard", typeof(RectTransform), typeof(Image));
-                        cardGo.transform.SetParent(_enemiesContainer, false);
-                        
-                        var cardRect = cardGo.GetComponent<RectTransform>();
-                        cardRect.sizeDelta = new Vector2(0f, 75f); // Reduced height to fit descriptions cleanly
-                        
-                        var cardImg = cardGo.GetComponent<Image>();
-                        cardImg.color = new Color(0.12f, 0.12f, 0.15f, 0.95f); // Deep circular dark glassmorphism
-                        
-                        var cardOutline = cardGo.AddComponent<Outline>();
-                        cardOutline.effectColor = new Color(0.92f, 0.3f, 0.29f, 0.35f); // Crimson border accent
-                        cardOutline.effectDistance = new Vector2(1f, 1f);
-                        
-                        var cardLayout = cardGo.AddComponent<HorizontalLayoutGroup>();
-                        cardLayout.spacing = 12f;
-                        cardLayout.padding = new RectOffset(10, 10, 8, 8);
-                        cardLayout.childAlignment = TextAnchor.MiddleLeft;
-                        cardLayout.childControlWidth = false;
-                        cardLayout.childControlHeight = false;
-                        cardLayout.childForceExpandWidth = false;
-                        cardLayout.childForceExpandHeight = false;
-
-                        // Circular Chibi Image Frame
-                        GameObject chibiFrameGo = new GameObject("ChibiFrame", typeof(RectTransform), typeof(Image));
-                        chibiFrameGo.transform.SetParent(cardGo.transform, false);
-                        var fRect = chibiFrameGo.GetComponent<RectTransform>();
-                        fRect.sizeDelta = new Vector2(50f, 50f);
-                        var fImg = chibiFrameGo.GetComponent<Image>();
-                        fImg.color = new Color(0.08f, 0.08f, 0.1f, 1f); // Dark background
-                        var fOutline = chibiFrameGo.AddComponent<Outline>();
-                        fOutline.effectColor = new Color(0.97f, 0.79f, 0.14f, 0.4f); // Golden frame
-                        fOutline.effectDistance = new Vector2(1f, 1f);
-
-                        GameObject chibiGo = new GameObject("Chibi", typeof(RectTransform), typeof(Image));
-                        chibiGo.transform.SetParent(chibiFrameGo.transform, false);
-                        var chibiRect = chibiGo.GetComponent<RectTransform>();
-                        chibiRect.anchorMin = Vector2.zero;
-                        chibiRect.anchorMax = Vector2.one;
-                        chibiRect.sizeDelta = Vector2.zero;
-                        var chibiImg = chibiGo.GetComponent<Image>();
-                        chibiImg.sprite = enemy.EnemySprite ?? enemy.FullBodyArt;
-                        chibiImg.preserveAspect = true;
-                        
-                        // Text & Tactical Info Container
-                        GameObject infoGo = new GameObject("InfoContainer", typeof(RectTransform), typeof(VerticalLayoutGroup));
-                        infoGo.transform.SetParent(cardGo.transform, false);
-                        var infoRect = infoGo.GetComponent<RectTransform>();
-                        infoRect.sizeDelta = new Vector2(240f, 55f);
-                        
-                        var infoLayout = infoGo.GetComponent<VerticalLayoutGroup>();
-                        infoLayout.spacing = 2f;
-                        infoLayout.childAlignment = TextAnchor.MiddleLeft;
-                        infoLayout.childControlWidth = true;
-                        infoLayout.childControlHeight = false;
-                        infoLayout.childForceExpandWidth = true;
-                        infoLayout.childForceExpandHeight = false;
-
-                        // Title Line: Name + Badges
-                        GameObject titleLineGo = new GameObject("TitleLine", typeof(RectTransform), typeof(HorizontalLayoutGroup));
-                        titleLineGo.transform.SetParent(infoGo.transform, false);
-                        var tlRect = titleLineGo.GetComponent<RectTransform>();
-                        tlRect.sizeDelta = new Vector2(0f, 18f);
-
-                        var tlLayout = titleLineGo.GetComponent<HorizontalLayoutGroup>();
-                        tlLayout.spacing = 6f;
-                        tlLayout.childAlignment = TextAnchor.MiddleLeft;
-                        tlLayout.childControlWidth = false;
-                        tlLayout.childControlHeight = false;
-                        tlLayout.childForceExpandWidth = false;
-                        tlLayout.childForceExpandHeight = false;
-
-                        // Enemy Name
-                        GameObject nameGo = new GameObject("NameText", typeof(RectTransform), typeof(TextMeshProUGUI));
-                        nameGo.transform.SetParent(titleLineGo.transform, false);
-                        var nameTmp = nameGo.GetComponent<TextMeshProUGUI>();
-                        nameTmp.text = enemy.EnemyName;
-                        nameTmp.fontSize = 12.5f;
-                        nameTmp.fontStyle = FontStyles.Bold;
-                        nameTmp.color = Color.white;
-
-                        // Rank Badge (BOSS / ELITE / NORMAL)
-                        GameObject rankBadgeGo = new GameObject("RankBadge", typeof(RectTransform), typeof(TextMeshProUGUI));
-                        rankBadgeGo.transform.SetParent(titleLineGo.transform, false);
-                        var rankTmp = rankBadgeGo.GetComponent<TextMeshProUGUI>();
-                        if (enemy.IsBoss || enemy.Rank == MaouSamaTD.Units.EnemyRank.Boss)
+                        if (_monsterCardPrefab != null)
                         {
-                            rankTmp.text = "<color=#FF3333><size=9.5><b>[BOSS]</b></size></color>";
+                            MonsterCardUI card = Instantiate(_monsterCardPrefab, _enemiesContainer);
+                            card.Setup(enemy);
+                            var hover = card.GetComponent<UIHoverEffect>();
+                            if (hover == null) hover = card.gameObject.AddComponent<UIHoverEffect>();
+                            if (hover != null)
+                            {
+                                hover.Configure(
+                                    new Color(0.08f, 0.08f, 0.1f, 0.8f),      // Normal BG: rgba(20, 20, 26, 0.8)
+                                    new Color(0.09f, 0.09f, 0.13f, 0.95f),    // Hover BG: rgba(24, 24, 32, 0.95)
+                                    new Color(1f, 0.75f, 0.15f, 0.12f),       // Normal Outline: rgba(255, 191, 38, 0.12)
+                                    new Color(1f, 0.75f, 0.15f, 0.3f),        // Hover Outline: rgba(255, 191, 38, 0.3)
+                                    1.02f
+                                );
+                            }
                         }
-                        else if (enemy.Rank == MaouSamaTD.Units.EnemyRank.Elite)
-                        {
-                            rankTmp.text = "<color=#FF9900><size=9.5><b>[ELITE]</b></size></color>";
-                        }
-                        else
-                        {
-                            rankTmp.text = "<color=#BBBBBB><size=9.5><b>[NORMAL]</b></size></color>";
-                        }
-                        rankTmp.fontSize = 10f;
+                    }
 
-                        // Movement badge
-                        GameObject moveBadgeGo = new GameObject("MoveBadge", typeof(RectTransform), typeof(TextMeshProUGUI));
-                        moveBadgeGo.transform.SetParent(titleLineGo.transform, false);
-                        var moveTmp = moveBadgeGo.GetComponent<TextMeshProUGUI>();
-                        if (enemy.MovementType == MaouSamaTD.Units.EnemyMovementType.Flying)
-                        {
-                            moveTmp.text = "<color=#FF9933><size=9><b>[AERIAL]</b></size></color>";
-                        }
-                        else if (enemy.CollisionType == MaouSamaTD.Units.EnemyCollisionType.IgnoreUnits || enemy.EvasionType == MaouSamaTD.Units.EnemyEvasionType.BypassBlockers)
-                        {
-                            moveTmp.text = "<color=#FF3399><size=9><b>[PHASING]</b></size></color>";
-                        }
-                        else
-                        {
-                            moveTmp.text = "<color=#00FFCC><size=9><b>[GROUND]</b></size></color>";
-                        }
-                        moveTmp.fontSize = 10f;
-
-                        // Stats Line
-                        GameObject statsGo = new GameObject("StatsText", typeof(RectTransform), typeof(TextMeshProUGUI));
-                        statsGo.transform.SetParent(infoGo.transform, false);
-                        var statsTmp = statsGo.GetComponent<TextMeshProUGUI>();
-                        statsTmp.text = $"<color=#888888>HP: <color=white>{enemy.MaxHp}</color>  |  Speed: <color=white>{enemy.MoveSpeed:F1}</color>  |  Power: <color=white>{enemy.AttackPower:F1}</color></color>";
-                        statsTmp.fontSize = 11f;
+                    if (_separatorPrefab != null)
+                    {
+                        Instantiate(_separatorPrefab, _enemiesContainer);
                     }
                 }
             }
 
-            // 5. Deactivate old reward lists
-            if (_replayHeader != null) _replayHeader.SetActive(false);
-            if (_replayContainer != null) _replayContainer.gameObject.SetActive(false);
-            if (_dropsHeader != null) _dropsHeader.SetActive(false);
-            if (_dropsContainer != null) _dropsContainer.gameObject.SetActive(false);
+            // 5. Deactivate old reward lists (Removed because they are now populated above)
+
+            // 6. Mission Conditions Section
+            bool hasConditions = true;
+            if (_conditionsContainer != null)
+            {
+                _conditionsContainer.gameObject.SetActive(hasConditions);
+                if (_conditionsHeader != null) _conditionsHeader.SetActive(hasConditions);
+
+                if (_winConditionText != null)
+                {
+                    string winDesc = "";
+                    if (level.WinConditions != null && level.WinConditions.Count > 0)
+                    {
+                        var descriptions = new List<string>();
+                        foreach (var cond in level.WinConditions)
+                        {
+                            if (!string.IsNullOrEmpty(cond.Description)) descriptions.Add(cond.Description);
+                        }
+                        winDesc = string.Join(", ", descriptions);
+                    }
+                    if (string.IsNullOrEmpty(winDesc))
+                    {
+                        winDesc = "Defeat all enemy waves";
+                    }
+                    _winConditionText.text = $"<color=#10B981>● <b>WIN:</b></color> {winDesc}";
+                }
+
+                if (_loseConditionText != null)
+                {
+                    string loseDesc = "";
+                    if (level.LoseConditions != null && level.LoseConditions.Count > 0)
+                    {
+                        var descriptions = new List<string>();
+                        foreach (var cond in level.LoseConditions)
+                        {
+                            if (!string.IsNullOrEmpty(cond.Description)) descriptions.Add(cond.Description);
+                        }
+                        loseDesc = string.Join(", ", descriptions);
+                    }
+                    if (string.IsNullOrEmpty(loseDesc))
+                    {
+                        loseDesc = "Your core health reaches 0";
+                    }
+                    _loseConditionText.text = $"<color=#EF4444>● <b>LOSE:</b></color> {loseDesc}";
+                }
+            }
 
             // Update overlapping navigation buttons
             UpdateOverlappingNavigation();
@@ -833,25 +716,56 @@ namespace MaouSamaTD.UI.MainMenu
             var itemRect = item.GetComponent<RectTransform>();
             if (itemRect != null)
             {
-                itemRect.sizeDelta = new Vector2(width, 48f);
+                if (container == _oneTimeContainer)
+                {
+                    // Let the layout group control the width, enforce a clean height
+                    itemRect.sizeDelta = new Vector2(itemRect.sizeDelta.x, 38f);
+                }
+                else
+                {
+                    itemRect.sizeDelta = new Vector2(width, 48f);
+                }
             }
             
             var itemText = item.GetComponentInChildren<TextMeshProUGUI>();
             if (itemText != null)
             {
-                itemText.fontSize = 10.5f;
+                itemText.fontSize = 14f;
                 itemText.fontStyle = FontStyles.Bold;
                 itemText.color = textColor ?? Color.white;
             }
 
             var bgImg = item.GetComponent<UnityEngine.UI.Image>();
-            if (bgImg != null)
+            var outline = item.GetComponent<Outline>();
+            if (outline == null) outline = item.gameObject.AddComponent<Outline>();
+            outline.effectDistance = new Vector2(1f, 1f);
+
+            var hover = item.GetComponent<UIHoverEffect>();
+            if (hover == null) hover = item.gameObject.AddComponent<UIHoverEffect>();
+            if (hover != null)
             {
-                bgImg.color = new Color(0.12f, 0.12f, 0.15f, 0.85f); // Deep dark semi-transparent glass
-                var outline = item.GetComponent<Outline>();
-                if (outline == null) outline = item.gameObject.AddComponent<Outline>();
-                outline.effectColor = new Color(0.97f, 0.79f, 0.14f, 0.35f); // Gold outline
-                outline.effectDistance = new Vector2(1f, 1f);
+                if (container == _oneTimeContainer)
+                {
+                    // Star Objective: full-width card
+                    hover.Configure(
+                        new Color(0.06f, 0.08f, 0.1f, 0.65f),      // Normal BG: rgba(16, 20, 25, 0.65)
+                        new Color(0.08f, 0.1f, 0.12f, 0.85f),      // Hover BG: rgba(20, 24, 30, 0.85)
+                        new Color(1f, 1f, 1f, 0.05f),              // Normal Outline: rgba(255, 255, 255, 0.05)
+                        new Color(1f, 0.75f, 0.15f, 0.35f),        // Hover Outline: rgba(255, 191, 38, 0.35)
+                        1.01f
+                    );
+                }
+                else
+                {
+                    // Standard capsule/card style (Replay / Drops)
+                    hover.Configure(
+                        new Color(0.12f, 0.12f, 0.15f, 0.85f),     // Normal BG: rgba(30, 30, 38, 0.85)
+                        new Color(0.14f, 0.14f, 0.19f, 0.95f),     // Hover BG: rgba(36, 36, 48, 0.95)
+                        new Color(1f, 0.75f, 0.15f, 0.2f),         // Normal Outline: rgba(255, 191, 38, 0.2)
+                        new Color(1f, 0.75f, 0.15f, 0.6f),         // Hover Outline: rgba(255, 191, 38, 0.6)
+                        1.03f
+                    );
+                }
             }
 
             return item;
@@ -1035,47 +949,8 @@ namespace MaouSamaTD.UI.MainMenu
             bool showPrev = prevLevel != null;
             bool showNext = nextLevel != null;
 
-            if (_visualRoot != null)
-            {
-                var rootRect = _visualRoot.GetComponent<RectTransform>();
-                
-                // Keep the engage button centered on the same row at the bottom of the briefing card
-                if (_engageButton != null)
-                {
-                    var engageRect = _engageButton.GetComponent<RectTransform>();
-                    if (engageRect != null)
-                    {
-                        engageRect.SetParent(rootRect, false);
-                        engageRect.anchorMin = new Vector2(0.5f, 0f);
-                        engageRect.anchorMax = new Vector2(0.5f, 0f);
-                        engageRect.pivot = new Vector2(0.5f, 0.5f);
-                        engageRect.anchoredPosition = new Vector2(0f, 40f); // Centered 40px above bottom
-                        engageRect.sizeDelta = new Vector2(180f, 44f);
-                    }
-                }
-
-                if (_prevLevelBtn != null)
-                {
-                    var prevRect = _prevLevelBtn.GetComponent<RectTransform>();
-                    prevRect.SetParent(rootRect, false);
-                    prevRect.anchorMin = new Vector2(0.5f, 0f);
-                    prevRect.anchorMax = new Vector2(0.5f, 0f);
-                    prevRect.pivot = new Vector2(0.5f, 0.5f);
-                    prevRect.anchoredPosition = new Vector2(-120f, 40f); // Left of engage button, same row
-                    prevRect.sizeDelta = new Vector2(40f, 40f);
-                }
-
-                if (_nextLevelBtn != null)
-                {
-                    var nextRect = _nextLevelBtn.GetComponent<RectTransform>();
-                    nextRect.SetParent(rootRect, false);
-                    nextRect.anchorMin = new Vector2(0.5f, 0f);
-                    nextRect.anchorMax = new Vector2(0.5f, 0f);
-                    nextRect.pivot = new Vector2(0.5f, 0.5f);
-                    nextRect.anchoredPosition = new Vector2(120f, 40f); // Right of engage button, same row
-                    nextRect.sizeDelta = new Vector2(40f, 40f);
-                }
-            }
+            // Buttons will remain children of BottomButtonsGroup and be automatically laid out by HorizontalLayoutGroup.
+            // No runtime repositioning or SetParent needed here!
 
             if (_prevLevelBtn != null)
             {
@@ -1149,5 +1024,56 @@ namespace MaouSamaTD.UI.MainMenu
             return rawName;
         }
         #endregion
+
+#if UNITY_EDITOR
+        #region Editor Methods
+        [Button("Populate Placeholders (Editor Only)")]
+        private void PopulatePlaceholders()
+        {
+            if (!Application.isPlaying)
+            {
+                ClearContainerEditor(_enemiesContainer);
+                ClearContainerEditor(_oneTimeContainer);
+                
+                if (_monsterCardPrefab != null)
+                {
+                    UnityEditor.PrefabUtility.InstantiatePrefab(_monsterCardPrefab, _enemiesContainer);
+                    UnityEditor.PrefabUtility.InstantiatePrefab(_monsterCardPrefab, _enemiesContainer);
+                }
+                
+                if (_separatorPrefab != null && _enemiesContainer != null)
+                {
+                    UnityEditor.PrefabUtility.InstantiatePrefab(_separatorPrefab, _enemiesContainer);
+                }
+
+                if (_rewardPrefab != null)
+                {
+                    UnityEditor.PrefabUtility.InstantiatePrefab(_rewardPrefab, _oneTimeContainer);
+                    UnityEditor.PrefabUtility.InstantiatePrefab(_rewardPrefab, _oneTimeContainer);
+                    UnityEditor.PrefabUtility.InstantiatePrefab(_rewardPrefab, _oneTimeContainer);
+                }
+                
+                if (_separatorPrefab != null && _oneTimeContainer != null)
+                {
+                    UnityEditor.PrefabUtility.InstantiatePrefab(_separatorPrefab, _oneTimeContainer);
+                }
+
+                if (_winConditionText != null) _winConditionText.text = "<color=#10B981>● <b>WIN:</b></color> Defeat 3 Waves of Enemies";
+                if (_loseConditionText != null) _loseConditionText.text = "<color=#EF4444>● <b>LOSE:</b></color> Your core health reaches 0";
+
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
+        }
+
+        private void ClearContainerEditor(Transform container)
+        {
+            if (container == null) return;
+            for (int i = container.childCount - 1; i >= 0; i--)
+            {
+                DestroyImmediate(container.GetChild(i).gameObject);
+            }
+        }
+        #endregion
+#endif
     }
 }

@@ -184,7 +184,7 @@ MonoBehaviour:
     Type: 2
   SpawnPoints:
   - Coordinate: {x: 0, y: 4}
-    TargetExitIndex: 1
+    TargetExitIndex: 0
   - Coordinate: {x: 0, y: 5}
     TargetExitIndex: 1
   ExitPoints:

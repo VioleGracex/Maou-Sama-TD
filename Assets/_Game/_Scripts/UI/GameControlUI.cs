@@ -156,9 +156,10 @@ namespace MaouSamaTD.UI
             {
                 int currentWave = _enemyManager.CurrentWaveIndex + 1;
                 int totalWaves = _enemyManager.TotalWaves;
-                int remaining = _enemyManager.CurrentWaveRemainingEnemies;
+                int remaining = _enemyManager.GetTotalSpawnedInWave(_enemyManager.CurrentWaveIndex);
                 int total = _enemyManager.CurrentWaveTotalEnemies;
 
+                // For normal levels, show current wave + active enemies
                 if (_enemyCountText != null)
                 {
                     _waveText.text = $"Wave: {currentWave} / {totalWaves}";
@@ -183,9 +184,9 @@ namespace MaouSamaTD.UI
             }
 
             // Auto-hide Top-Middle HP bar if Mini-Dialogue is active (to prevent overlapping)
+            DialogueUI dialogueUI = FindFirstObjectByType<DialogueUI>();
             if (_baseHPContainer != null)
             {
-                DialogueUI dialogueUI = FindFirstObjectByType<DialogueUI>();
                 bool showBaseHP = dialogueUI == null || !dialogueUI.IsShowingMiniDialogue;
                 if (_baseHPContainer.activeSelf != showBaseHP)
                 {
@@ -193,10 +194,16 @@ namespace MaouSamaTD.UI
                 }
             }
 
-            // Allow the speed button to be interactable even during tutorial time stops.
-            // This ensures players can manually resume or change speed if they feel stuck.
+            // Disable speed and pause controls during dialogue and active tutorials only when the UI blocker is active
+            bool isDialogueActive = dialogueUI != null && (dialogueUI.IsShowingDialogue || dialogueUI.IsShowingMiniDialogue);
+            bool isTutorialActive = _tutorialManager != null && _tutorialManager.IsInTutorial && _uiBlocker != null && _uiBlocker.IsActive;
+            bool disableControls = isDialogueActive || isTutorialActive;
+
             if (_speedButton != null)
-                _speedButton.interactable = true;
+                _speedButton.interactable = !disableControls;
+
+            if (_pauseButton != null)
+                _pauseButton.interactable = !disableControls;
         }
 
         private void OnDestroy()
@@ -279,6 +286,9 @@ namespace MaouSamaTD.UI
 
         private IEnumerator StageClearSequence()
         {
+            // Block ALL input immediately — prevents clicking SpeedButton or anything through the overlay.
+            if (_uiBlocker != null) _uiBlocker.ShowFullBlocker();
+
             // Close active gameplay panels instantly to avoid post-battle overlaps
             var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
             if (skillPanel != null && skillPanel.IsVisible)
@@ -346,6 +356,12 @@ namespace MaouSamaTD.UI
                 _stageClearBanner.localRotation = Quaternion.identity;
             }
 
+            // Hide UI blocker so it doesn't double-dim and block input for XP/Loot sequences
+            if (_uiBlocker != null)
+            {
+                _uiBlocker.HideBlocker(true);
+            }
+
             // --- STAGE 2: XP PROGRESS SEQUENCE ---
             EnsureVictorySequenceUI();
             
@@ -361,7 +377,9 @@ namespace MaouSamaTD.UI
                 PopulateXPGrid();
                 
                 _victorySequenceTapped = false;
-                while (!_victorySequenceTapped && !(UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame))
+                while (!_victorySequenceTapped && 
+                       !(UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame) &&
+                       !(UnityEngine.InputSystem.Pointer.current != null && UnityEngine.InputSystem.Pointer.current.press.wasPressedThisFrame))
                 {
                     yield return null;
                 }
@@ -378,7 +396,9 @@ namespace MaouSamaTD.UI
                 PopulateLootAndMVP();
                 
                 _victorySequenceTapped = false;
-                while (!_victorySequenceTapped && !(UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame))
+                while (!_victorySequenceTapped && 
+                       !(UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame) &&
+                       !(UnityEngine.InputSystem.Pointer.current != null && UnityEngine.InputSystem.Pointer.current.press.wasPressedThisFrame))
                 {
                     yield return null;
                 }
@@ -460,6 +480,10 @@ namespace MaouSamaTD.UI
 
         private void OnNextLevelClicked()
         {
+            // Block all input immediately on click — prevents double-taps and clicking
+            // through during the Addressables load delay before the loading screen appears.
+            if (_uiBlocker != null) _uiBlocker.ShowFullBlocker();
+
             Time.timeScale = 1f;
             
             var currentLevel = _gameManager.CurrentLevelData;
@@ -471,56 +495,65 @@ namespace MaouSamaTD.UI
                 nextIndex = currentLevel.LevelIndex + 1;
             }
 
+            // PRIORITY 1: Use Memory-Based LevelDatabase Lookup
+            var levelDb = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase;
+            if (currentLevel != null && levelDb != null)
+            {
+                var nextLevel = levelDb.AllLevels.Find(l => l.LevelIndex == nextIndex);
+                if (nextLevel == null) nextLevel = levelDb.GetNextLevel(currentLevel);
+
+                if (nextLevel != null)
+                {
+                    Debug.Log($"[GameControlUI] Successfully found next level '{nextLevel.LevelName}' in LevelDatabase!");
+                    _selectionState.SetLevel(nextLevel);
+                    ReloadScene();
+                    return;
+                }
+            }
+
+            // PRIORITY 2: Fallback to Addressables if not found in DB
             string primaryKey = $"Assets/_Game/Data/Levels/LevelData_Level{nextIndex}.asset";
             string fallbackKey = $"LevelData_Level{nextIndex}";
 
             Debug.Log($"[GameControlUI] Attempting to load next level via Addressables key: '{primaryKey}'");
 
-            Addressables.LoadAssetAsync<LevelData>(primaryKey).Completed += handle =>
+            try
             {
-                if (handle.Status == AsyncOperationStatus.Succeeded)
+                Addressables.LoadAssetAsync<LevelData>(primaryKey).Completed += handle =>
                 {
-                    LevelData loadedLevel = handle.Result;
-                    Debug.Log($"[GameControlUI] Successfully loaded next level '{loadedLevel.LevelName}' via Addressables primary key!");
-                    _selectionState.SetLevel(loadedLevel);
-                    ReloadScene();
-                }
-                else
-                {
-                    Debug.LogWarning($"[GameControlUI] Failed to load next level via '{primaryKey}'. Trying fallback: '{fallbackKey}'...");
-                    Addressables.LoadAssetAsync<LevelData>(fallbackKey).Completed += fallbackHandle =>
+                    if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
                     {
-                        if (fallbackHandle.Status == AsyncOperationStatus.Succeeded)
+                        LevelData loadedLevel = handle.Result;
+                        Debug.Log($"[GameControlUI] Successfully loaded next level '{loadedLevel.LevelName}' via Addressables primary key!");
+                        _selectionState.SetLevel(loadedLevel);
+                        ReloadScene();
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[GameControlUI] Failed to load next level via '{primaryKey}'. Trying fallback: '{fallbackKey}'...");
+                        Addressables.LoadAssetAsync<LevelData>(fallbackKey).Completed += fallbackHandle =>
                         {
-                            LevelData loadedLevel = fallbackHandle.Result;
-                            Debug.Log($"[GameControlUI] Successfully loaded next level '{loadedLevel.LevelName}' via Addressables fallback key!");
-                            _selectionState.SetLevel(loadedLevel);
-                            ReloadScene();
-                        }
-                        else
-                        {
-                            Debug.LogError($"[GameControlUI] Failed to load next level via both Addressable keys. Falling back to memory-based LevelDatabase lookup.");
-                            
-                            var levelDb = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase;
-                            if (currentLevel != null && levelDb != null)
+                            if (fallbackHandle.Status == AsyncOperationStatus.Succeeded && fallbackHandle.Result != null)
                             {
-                                var nextLevel = levelDb.AllLevels.Find(l => l.LevelIndex == nextIndex);
-                                if (nextLevel == null) nextLevel = levelDb.GetNextLevel(currentLevel);
-
-                                if (nextLevel != null)
-                                {
-                                    _selectionState.SetLevel(nextLevel);
-                                    ReloadScene();
-                                    return;
-                                }
+                                LevelData loadedLevel = fallbackHandle.Result;
+                                Debug.Log($"[GameControlUI] Successfully loaded next level '{loadedLevel.LevelName}' via Addressables fallback key!");
+                                _selectionState.SetLevel(loadedLevel);
+                                ReloadScene();
                             }
-                            
-                            Debug.Log("[GameControlUI] No next level found, returning to menu.");
-                            ReturnToMenu();
-                        }
-                    };
-                }
-            };
+                            else
+                            {
+                                Debug.LogError($"[GameControlUI] Failed to load next level via both Addressable keys. Returning to menu.");
+                                ReturnToMenu();
+                            }
+                        };
+                    }
+                };
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[GameControlUI] Addressables Exception: {ex.Message}. Returning to menu.");
+                ReturnToMenu();
+            }
         }
 
         private void ShowLose()
@@ -575,8 +608,18 @@ namespace MaouSamaTD.UI
              DOTween.KillAll();
              // Clean up assets
              Resources.UnloadUnusedAssets();
-             // Load Scene 0 (Home/Menu)
-             SceneManager.LoadScene(0);
+             
+             // Try to use loading screen transition
+             var loader = FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+             if (loader != null)
+             {
+                 loader.LoadSceneTransition("Home_New");
+             }
+             else
+             {
+                 // Load Scene 0 (Home_New)
+                 SceneManager.LoadScene(0);
+             }
         }
 
         private void OnCancelRetreat()
@@ -588,7 +631,53 @@ namespace MaouSamaTD.UI
         {
             DOTween.KillAll();
             Resources.UnloadUnusedAssets();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            
+            var loader = FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+            if (loader != null)
+            {
+                loader.LoadSceneTransition(SceneManager.GetActiveScene().name);
+            }
+            else
+            {
+                string primaryKey = "Assets/_Game/Prefabs/UI/Common/LoadingScreen_Root.prefab";
+                Addressables.InstantiateAsync(primaryKey).Completed += handle =>
+                {
+                    if (handle.Status == AsyncOperationStatus.Succeeded)
+                    {
+                        var instantiatedLoader = handle.Result.GetComponent<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>();
+                        if (instantiatedLoader != null)
+                        {
+                            instantiatedLoader.LoadSceneTransition(SceneManager.GetActiveScene().name);
+                        }
+                        else
+                        {
+                            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                        }
+                    }
+                    else
+                    {
+                        Addressables.InstantiateAsync("LoadingScreen_Root").Completed += fallbackHandle =>
+                        {
+                            if (fallbackHandle.Status == AsyncOperationStatus.Succeeded)
+                            {
+                                var instantiatedLoader = fallbackHandle.Result.GetComponent<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>();
+                                if (instantiatedLoader != null)
+                                {
+                                    instantiatedLoader.LoadSceneTransition(SceneManager.GetActiveScene().name);
+                                }
+                                else
+                                {
+                                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                                }
+                            }
+                            else
+                            {
+                                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                            }
+                        };
+                    }
+                };
+            }
         }
         
 
@@ -749,8 +838,19 @@ namespace MaouSamaTD.UI
             {
                 // Display current wave (1-indexed)
                 int current = _enemyManager.CurrentWaveIndex + 1;
-                int total = _enemyManager.TotalWaves;
-                _waveText.text = $"Wave: {current}/{total}";
+                int totalWaves = _enemyManager.TotalWaves;
+                int remaining = _enemyManager.GetTotalSpawnedInWave(_enemyManager.CurrentWaveIndex);
+                int totalEnemies = _enemyManager.CurrentWaveTotalEnemies;
+                
+                if (_enemyCountText != null)
+                {
+                    _waveText.text = $"Wave: {current} / {totalWaves}";
+                    _enemyCountText.text = $"({remaining}/{totalEnemies})";
+                }
+                else
+                {
+                    _waveText.text = $"Wave: {current} / {totalWaves} ({remaining}/{totalEnemies})";
+                }
             }
 
             // Pause Overlay Logic
@@ -991,7 +1091,7 @@ namespace MaouSamaTD.UI
                         seq.Append(capturedFill.DOAnchorMax(new Vector2(1f, 1f), 0.5f).SetUpdate(true).OnComplete(() => {
                             if (capturedLvl != null)
                             {
-                                capturedLvl.text = $"Lv {oldLv + 1}!";
+                                capturedLvl.text = $"Lv {oldLv + 1}";
                                 capturedLvl.color = new Color(1f, 0.8f, 0.2f);
                                 capturedLvl.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f).SetUpdate(true);
                             }
@@ -1374,11 +1474,8 @@ namespace MaouSamaTD.UI
             // Arrived trigger burst
             lootSeq.OnComplete(() =>
             {
-                if (destination != null)
-                {
-                    destination.DOPunchScale(new Vector3(1.15f, 1.15f, 1.15f), 0.15f, 5, 0.5f);
-                }
-
+                // DOPunchScale on the destination (e.g. Base HP Container) has been removed to avoid compounding scale bugs.
+                
                 // Satisfying star scatter particles
                 for (int i = 0; i < 6; i++)
                 {

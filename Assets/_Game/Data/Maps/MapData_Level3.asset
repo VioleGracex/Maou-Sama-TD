@@ -21,7 +21,7 @@ MonoBehaviour:
   UseManualLayout: 1
   ManualLayoutData:
   - Coordinate: {x: 7, y: 7}
-    Type: 1
+    Type: 5
   - Coordinate: {x: 2, y: 7}
     Type: 1
   - Coordinate: {x: 3, y: 7}
@@ -476,10 +476,11 @@ MonoBehaviour:
   - Coordinate: {x: 0, y: 7}
     TargetExitIndex: 0
   - Coordinate: {x: 7, y: 14}
-    TargetExitIndex: -1
+    TargetExitIndex: 0
   - Coordinate: {x: 14, y: 7}
-    TargetExitIndex: -1
-  ExitPoints: []
+    TargetExitIndex: 0
+  ExitPoints:
+  - {x: 7, y: 7}
   ShowPathing: 1
   VisualOverrides: []
   WallCascadeOnHoles: 1

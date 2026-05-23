@@ -2,6 +2,7 @@ using UnityEngine;
 using MaouSamaTD.Grid;
 using MaouSamaTD.Units;
 using MaouSamaTD.Skills;
+using MaouSamaTD.Levels;
 using System.Collections.Generic;
 
 namespace MaouSamaTD.Managers.Interaction
@@ -90,18 +91,58 @@ namespace MaouSamaTD.Managers.Interaction
                     if (inspectedUnit.IsTargetInPattern(inspectedUnit.CurrentTile.Coordinate, tile.Coordinate, inspectedUnit.Data.AttackPattern, inspectedUnit.Range))
                     {
                         bool canAttack = true;
-                        if (!inspectedUnit.IsRanged())
                         {
+                            // A melee unit cannot attack tiles that no enemy can ever stand on.
+                            // This covers:
+                            //   - HighGround/DecoHighGround: only reachable by ranged classes
+                            //   - NonWalkableDecor / Wall / None: impassable scenery, never occupied
+                            var tileType = tile.Type;
+                            bool tileIsUnreachable =
+                                tileType == TileType.NonWalkableDecor ||
+                                tileType == TileType.Wall             ||
+                                tileType == TileType.None;
+
                             bool iAmHighGround = inspectedUnit.CurrentTile != null && inspectedUnit.CurrentTile.IsHighGround;
-                            if (tile.IsHighGround && !iAmHighGround)
+                            bool tileIsHighGround = tile.IsHighGround; // HighGround / DecoHighGround / SpawnPointHigh / ExitPointHigh
+
+                            if (tileIsUnreachable)
                             {
+                                // Impassable scenery — no unit can ever stand here, so it can't be attacked
                                 canAttack = false;
+                            }
+                            else if (tileIsHighGround && !iAmHighGround)
+                            {
+                                // High ground tile, and I'm on low ground.
+                                // Only Ranger / Warlock / Sage / Support are placed on high ground and can
+                                // fire across height difference. Everyone else cannot.
+                                bool isLongRangeClass = false;
+                                if (inspectedUnit is PlayerUnit pu && pu.Data != null)
+                                {
+                                    // Mirror UnitData.ViableTiles: only these classes are placed on high ground.
+                                    var cls = pu.Data.Class;
+                                    isLongRangeClass = cls == UnitClass.Ranger  ||
+                                                       cls == UnitClass.Warlock ||
+                                                       cls == UnitClass.Sage    ||
+                                                       cls == UnitClass.Support;
+                                }
+                                if (!isLongRangeClass) canAttack = false;
                             }
                         }
 
                         shouldHighlight = true;
-                        highlightColor = canAttack ? RangeColor : InvalidColor;
-                        highlightColor.a = RangeColor.a; 
+                        if (canAttack)
+                        {
+                            // Valid attack tile: use the configured range color (blue) at its configured alpha
+                            highlightColor = RangeColor;
+                        }
+                        else
+                        {
+                            // Invalid attack tile (e.g. melee can't hit high ground): faint red overlay.
+                            // We use InvalidColor RGB but clamp its alpha to match the visual weight of the
+                            // range indicator so the red reads clearly without dominating the screen.
+                            highlightColor = InvalidColor;
+                            highlightColor.a = Mathf.Max(RangeColor.a, 0.15f); // at least 15% opacity for readability
+                        }
                         useFullFill = UseFullFillRange;
                     }
                 }

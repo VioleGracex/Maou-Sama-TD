@@ -11321,6 +11321,7 @@ MonoBehaviour:
   overlayColor: {r: 0, g: 0, b: 0, a: 0.7}
   maskSize: 1024
   transitionDuration: 0.3
+  BlockAllInput: 0
 --- !u!114 &1477509891
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -58,6 +58,24 @@ namespace MaouSamaTD.Managers
         private int _currentStepMissCount = 0;
         private int _nextStepIndexOverride = -1;
         private Dictionary<string, RectTransform> _uiTargetCache = new Dictionary<string, RectTransform>();
+
+        public int CurrentLevelIndex
+        {
+            get
+            {
+                if (_gameManager != null && _gameManager.CurrentLevelData != null)
+                {
+                    return _gameManager.CurrentLevelData.LevelIndex;
+                }
+                // Fallback to name-based detection if GameManager/CurrentLevelData is not available
+                if (_activeTutorial != null)
+                {
+                    if (_activeTutorial.name.Contains("Level2")) return 2;
+                    if (_activeTutorial.name.Contains("Level1")) return 1;
+                }
+                return -1;
+            }
+        }
         #endregion
 
         #region Public API
@@ -174,7 +192,7 @@ namespace MaouSamaTD.Managers
             _nextStepIndexOverride = -1;
 
             // Level 2 Start Logic: Set initial seals to 50
-            if (_activeTutorial != null && _activeTutorial.name.Contains("Level2"))
+            if (CurrentLevelIndex == 2)
             {
                 if (_currencyManager != null)
                 {
@@ -185,7 +203,7 @@ namespace MaouSamaTD.Managers
             }
 
             // Level 1 Start Logic: Ensure Sovereign Rite Panel is strictly hidden
-            if (_activeTutorial != null && _activeTutorial.name.Contains("Level1"))
+            if (CurrentLevelIndex == 1)
             {
                 var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
                 if (skillPanel != null)
@@ -402,7 +420,7 @@ namespace MaouSamaTD.Managers
         #region Core Tutorial Loop
         private IEnumerator TutorialRoutine()
         {
-            bool isLevel1 = _activeTutorial != null && _activeTutorial.name.Contains("Level1");
+            bool isLevel1 = CurrentLevelIndex == 1;
             while (_currentStepIndex < _activeTutorial.Steps.Count)
             {
                 TutorialStep step = _activeTutorial.Steps[_currentStepIndex];
@@ -476,7 +494,7 @@ namespace MaouSamaTD.Managers
                 var currentSkillPanel = FindObjectOfType<MaouSamaTD.UI.Skills.SkillPanelUI>();
                 _isSkillPanelVisibleLastFrame = currentSkillPanel != null && currentSkillPanel.IsVisible;
                 // Special check for Level 2: Ensure player has enough seals for AOE/Boss phase
-                if (_activeTutorial != null && _activeTutorial.name.Contains("Level2") && 
+                if (CurrentLevelIndex == 2 && 
                     (step.StepName == "Mobs Swarming!" || step.StepName == "Teach AOE Rite" || step.StepName == "Cast AOE Rite" || step.StepName == "Boss Appears" || step.StepName.Contains("Rite")))
                 {
                     if (_currencyManager != null)
@@ -561,7 +579,7 @@ namespace MaouSamaTD.Managers
                             }
 
                             // Special Logic for Level 2 Boss Bypass: Lilith Refills Seals
-                            if (_activeTutorial != null && _activeTutorial.name.Contains("Level2") && step.StepName == "Boss Bypasses!")
+                            if (CurrentLevelIndex == 2 && step.StepName == "Boss Bypasses!")
                             {
                                 if (_currencyManager != null)
                                 {
@@ -713,6 +731,13 @@ namespace MaouSamaTD.Managers
                                 HandleUIHighlight(step);
                             }
 
+                            // Auto-start wave if it hasn't started yet to prevent soft-locks
+                            if (step.WaveIndex >= 0 && _enemyManager != null && !_enemyManager.HasWaveStarted(step.WaveIndex))
+                            {
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Auto-starting wave {step.WaveIndex} for action step {step.StepName}");
+                                _enemyManager.StartSpecificWave(step.WaveIndex);
+                            }
+
                             if (step.ActionKey == "SkillUsed" && _unitInspectorUI != null)
                             {
                                 _unitInspectorUI.IsLocked = true;
@@ -780,7 +805,6 @@ namespace MaouSamaTD.Managers
                             }
                             
                             yield return StartCoroutine(HandlePostActionDelay(step));
-                            
                             _handUI.Hide();
 
                             // If executing the ultimate on boss, remove death prevention
@@ -843,15 +867,6 @@ namespace MaouSamaTD.Managers
                             {
                                 yield return new WaitUntil(() => !_waitingForAction);
                                 _triggeredActionsBuffer.Remove(step.ActionKey); 
-
-                                // Special Logic for Level 2 Boss Dead: Delay 2s before next step
-                                if (step.ActionKey == "BossDead")
-                                {
-                                    if (_showDebugLogs) Debug.Log("[tutorial] Boss Dead: Resuming time and hiding blocker for 2 seconds...");
-                                    _gameManager.SetSpeed(1);
-                                    _uiBlocker.HideBlocker(isLevel1);
-                                    yield return new WaitForSecondsRealtime(2f);
-                                }
                             }
                             
                             if (_unitInspectorUI != null) _unitInspectorUI.IsLocked = false;
@@ -874,14 +889,10 @@ namespace MaouSamaTD.Managers
                         break;
 
                     case TutorialStepType.StartWave:
-                        // TRIGGER: Manually starts a specific wave index via EnemyManager.
+                        // Step is used to log/highlight, but EnemyManager handles actual spawning naturally.
                         {
                             HandleUIHighlight(step);
-                            if (_showDebugLogs) Debug.Log($"[tutorial] Starting Wave Index: {step.WaveIndex}");
-                            if (_enemyManager != null)
-                            {
-                                _enemyManager.StartSpecificWave(step.WaveIndex);
-                            }
+                            if (_showDebugLogs) Debug.Log($"[tutorial] Acknowledged Start Wave Index: {step.WaveIndex} (EnemyManager handles this natively)");
                         }
                         break;
 
@@ -892,6 +903,7 @@ namespace MaouSamaTD.Managers
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for Wave completion (Index: {step.WaveIndex})");
                             if (step.ResumeTime) _gameManager.SetSpeed(1); 
                             else _gameManager.SetSpeed(0, true); 
+
                             yield return new WaitUntil(() => _enemyManager != null && _enemyManager.IsWaveCleared(step.WaveIndex));
                             if (_showDebugLogs) Debug.Log("[tutorial] Wave cleared.");
                         }
@@ -904,7 +916,7 @@ namespace MaouSamaTD.Managers
                             if (_showDebugLogs) Debug.Log($"[tutorial] Waiting for condition: {step.ActionKey}");
                             
                             // Ensure time flows if we are waiting for a dynamic condition, UNLESS StopTime is requested!
-                                                        bool shouldStopTime = step.StopTime || step.StepName == "One-Shot Rite";
+                            bool shouldStopTime = step.StopTime || step.StepName == "One-Shot Rite";
                             
                             // Safety Override: Don't stop time for conditions that require enemy movement to progress
                             if (step.Type == TutorialStepType.WaitForAction && 
@@ -1166,15 +1178,6 @@ namespace MaouSamaTD.Managers
             if (_showDebugLogs) Debug.Log("[tutorial] Tutorial Sequence Completed.");
             _uiBlocker.HideBlocker(isLevel1);
             _handUI.Hide();
-
-            // Force victory at the end of tutorial levels if it hasn't been triggered yet
-            // Skip for Level 2 as it has its own cinematic boss death flow in EnemyManager
-            bool isLevel2 = _gameManager != null && _gameManager.CurrentLevelData != null && _gameManager.CurrentLevelData.LevelID.Contains("Level2");
-            if (_gameManager != null && !_gameManager.IsGameEnded && !isLevel2)
-            {
-                Debug.Log("[tutorial] Tutorial ended. Triggering Level Victory.");
-                _gameManager.Victory();
-            }
         }
         #endregion
 
@@ -1182,6 +1185,8 @@ namespace MaouSamaTD.Managers
         private void HandleUIHighlight(TutorialStep step)
         {
             if (step == null) return;
+
+            bool isLevel1 = CurrentLevelIndex == 1;
 
             // Do not return early if dialogue is showing; we still want to process highlights
             // even if there is a dim, to allow 'holes' through the dimming layer.
@@ -1191,7 +1196,6 @@ namespace MaouSamaTD.Managers
             bool hasDialogue = _dialogueManager != null && _dialogueManager.IsDialogueActive;
             if (!step.UseBlocker && !hasDialogue)
             {
-                bool isLevel1 = _activeTutorial != null && _activeTutorial.name.Contains("Level1");
                 _uiBlocker.HideBlocker(isLevel1);
                 if (!step.ShowHand && !step.DragShowHand) _handUI.Hide();
                 return;
@@ -1285,6 +1289,17 @@ namespace MaouSamaTD.Managers
                 else
                 {
                     RectTransform rt = FindTargetRect(ut.Name);
+
+                    // Special case: Ult_Btn is dynamically shown/hidden per-frame based on charge state.
+                    // If FindTargetRect didn't find it active, search in the UnitInspector panel's children
+                    // (including inactive) so we can still create the cutout while the panel is visible.
+                    if (rt == null && ut.Name == "Ult_Btn" && _unitInspectorUI != null && _unitInspectorUI.PanelRect != null)
+                    {
+                        rt = _unitInspectorUI.PanelRect
+                            .GetComponentsInChildren<RectTransform>(true)
+                            .FirstOrDefault(r => r.name == "Ult_Btn");
+                    }
+
                     if (rt != null) 
                     {
                         bool isSkillButton = ut.Name.Contains("SovereignRite") || ut.Name.Contains("SkillButton");
@@ -1300,7 +1315,14 @@ namespace MaouSamaTD.Managers
                             }
                         }
 
-                        if (rt.gameObject.activeInHierarchy && isMenuVisible)
+                        // For Ult_Btn: treat as visible as long as the inspector panel itself is active,
+                        // since the button's own active state is toggled per-frame by UpdateChargeVisuals().
+                        bool isUltBtnTarget = ut.Name == "Ult_Btn";
+                        bool isEffectivelyVisible = isUltBtnTarget
+                            ? (_unitInspectorUI != null && _unitInspectorUI.IsPanelActive)
+                            : (rt.gameObject.activeInHierarchy && isMenuVisible);
+
+                        if (isEffectivelyVisible)
                         {
                             uiHits.Add(new UIPopupBlocker.UIHighlightData 
                             { 
@@ -1397,7 +1419,17 @@ namespace MaouSamaTD.Managers
             if (isDialogueActive) _uiBlocker.SetSortingOrder(2999);
             else _uiBlocker.SetSortingOrder(50);
 
-            _uiBlocker.ShowBlockerWithDetailedTargets(uiHits, worldHighlights);
+            // Hide the blocker when the unit inspector panel is open on Level 1,
+            // UNLESS the step is specifically targeting the Ult_Btn ("Activate Ignis Skill" flow).
+            bool isTargetingUltBtn = step.TargetUI != null && step.TargetUI.Name == "Ult_Btn";
+            if (_unitInspectorUI != null && _unitInspectorUI.IsPanelActive && isLevel1 && !isTargetingUltBtn)
+            {
+                _uiBlocker.HideBlocker(isLevel1);
+            }
+            else
+            {
+                _uiBlocker.ShowBlockerWithDetailedTargets(uiHits, worldHighlights);
+            }
 
 
             bool ignoreOverride = isSkillStep && isSkillTargeting;
@@ -1754,15 +1786,8 @@ private RectTransform FindTargetRect(string name)
 
         public void OnActionTriggered(string key)
         {
-            if (key == "BossDead" && _activeTutorial != null && _activeTutorial.name.Contains("Level2"))
-            {
-                if (_showDebugLogs) Debug.Log("[tutorial] Boss death detected. Purging tutorial for cinematic flow.");
-                Purge();
-                return;
-            }
-
             // Handle Ignis Death in Tutorial Level 2
-            if (key == "UnitDied_Ignis" && _activeTutorial != null && _activeTutorial.name.Contains("Level2"))
+            if (key == "UnitDied_Ignis" && CurrentLevelIndex == 2)
             {
                 if (_showDebugLogs) Debug.Log("[tutorial] Ignis died. Giving 99 seals and advancing step as requested.");
                 _currencyManager?.SetSeals(99);
@@ -1771,7 +1796,7 @@ private RectTransform FindTargetRect(string name)
             }
 
             // Handle Boss Reaching Exit in Tutorial Level 2 (counts as bypass/fail but proceed)
-            if (key == "EnemyReachedExit_Abyssal Shade" && _activeTutorial != null && _activeTutorial.name.Contains("Level2"))
+            if (key == "EnemyReachedExit_Abyssal Shade" && CurrentLevelIndex == 2)
             {
                 if (_showDebugLogs) Debug.Log("[tutorial] Boss reached exit. Advancing tutorial step.");
                 _waitingForAction = false;
@@ -1798,8 +1823,7 @@ private RectTransform FindTargetRect(string name)
             
             // Special Case: Level 2 Rite Usage (e.g. AOE or Ultimate)
             // We want time to resume briefly so the player sees the result (damage, death, floating text)
-            bool isLevel2RiteUsage = _activeTutorial != null && 
-                                     _activeTutorial.name.Contains("Level2") && 
+            bool isLevel2RiteUsage = CurrentLevelIndex == 2 && 
                                      (step.ActionKey == "RiteUsed" || step.ActionKey == "SkillUsed" || step.StepName.Contains("Rite"));
 
             if (isLevel2RiteUsage)
@@ -1940,25 +1964,71 @@ private RectTransform FindTargetRect(string name)
                     if (foundCenter)
                     {
                         int count = 0;
-                        float threshold = 2.0f;
-                        if (step.TargetTiles != null && step.TargetTiles.Count > 0) threshold = step.TargetTiles[0].Size.x;
+                        float threshold = 1.5f;
+                        if (step.TargetTiles != null && step.TargetTiles.Count > 0)
+                        {
+                            threshold = step.TargetTiles[0].Size.x;
+                        }
+                        else if (step.StepName == "Wait for Cluster Proximity")
+                        {
+                            threshold = 2.8f; // Allow 1 or 2 tiles in front of Ignis
+                        }
 
+                        // Guard: require the wave to have actually started before evaluating proximity.
+                        // Without this, the check fires immediately when ActiveEnemies is empty (pre-spawn).
+                        if (step.WaveIndex >= 0 && _enemyManager != null)
+                        {
+                            bool waveHasStarted = _enemyManager.HasWaveStarted(step.WaveIndex);
+                            bool waveCleared    = _enemyManager.IsWaveCleared(step.WaveIndex);
+
+                            // Wave hasn't started at all yet — keep waiting, don't evaluate proximity
+                            if (!waveHasStarted && !waveCleared)
+                            {
+                                return false;
+                            }
+                        }
+
+                        bool exitIsLeft = (_gridManager != null && _gridManager.exitIsLeft);
                         foreach(var enemy in EnemyUnit.ActiveEnemies)
                         {
                             if (enemy == null) continue;
                             float dist = Vector3.Distance(centerPos, enemy.transform.position);
-                            if (dist <= threshold) count++;
+                            
+                            bool inRange = false;
+                            if (step.StepName == "Wait for Cluster Proximity")
+                            {
+                                // Check if enemy is in front of Ignis (within threshold) or has passed Ignis
+                                bool inFront = exitIsLeft ? (enemy.transform.position.x >= centerPos.x - 0.5f) : (enemy.transform.position.x <= centerPos.x + 0.5f);
+                                bool passed = exitIsLeft ? (enemy.transform.position.x < centerPos.x) : (enemy.transform.position.x > centerPos.x);
+                                inRange = (dist <= threshold && inFront) || passed;
+                            }
+                            else
+                            {
+                                inRange = dist <= threshold;
+                            }
+
+                            if (inRange) count++;
                         }
-                        bool met = count >= step.RequiredCount && step.RequiredCount > 0;
+
+                        int requiredCount = step.RequiredCount;
+                        if (step.StepName == "Wait for Cluster Proximity")
+                        {
+                            // Cap required count to number of remaining alive enemies
+                            requiredCount = Mathf.Min(step.RequiredCount, EnemyUnit.ActiveEnemies.Count);
+                            if (EnemyUnit.ActiveEnemies.Count == 0) return true;
+                        }
+
+                        bool met = count >= requiredCount && requiredCount > 0;
                         
-                        // Prevent soft-lock if the player somehow killed all enemies before they could swarm
+                        // Soft-lock guard: if wave cleared before enemies could swarm, advance anyway
                         if (!met && step.WaveIndex >= 0 && _enemyManager != null && _enemyManager.IsWaveCleared(step.WaveIndex))
                         {
                             return true;
                         }
-                        else if (!met && EnemyUnit.ActiveEnemies.Count == 0)
+                        // Soft-lock guard: all enemies dead and wave WAS started (not pre-spawn empty state)
+                        else if (!met && EnemyUnit.ActiveEnemies.Count == 0 
+                                 && (step.WaveIndex < 0 || (step.WaveIndex >= 0 && _enemyManager != null && _enemyManager.HasWaveStarted(step.WaveIndex))))
                         {
-                            // Fallback if not wave-specific
                             return true;
                         }
 

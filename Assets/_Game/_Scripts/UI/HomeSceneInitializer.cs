@@ -111,6 +111,12 @@ namespace MaouSamaTD.UI
             }
 
             Debug.Log("[HomeSceneInitializer] UI Boot Sequence Complete!");
+
+            // Notify LoadingScreenPanel that the home/lobby scene is ready to hide the loading screen
+            if (MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance != null)
+            {
+                MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance.NotifyLevelReady();
+            }
         }
     }
 }

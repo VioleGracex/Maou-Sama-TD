@@ -76,6 +76,16 @@ namespace MaouSamaTD.Managers
         {
             _currentLevelData = levelData;
             Debug.Log("[GameManager] Initializing Game...");
+
+            if (_loadingScreen == null)
+            {
+                _loadingScreen = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
+                if (_loadingScreen == null)
+                {
+                    _loadingScreen = FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+                }
+            }
+
             TimeTaken = 0f; // Reset level timer on start/restart
             SetSpeed(1f); // Reset TimeScale on Restart
 
@@ -141,7 +151,7 @@ namespace MaouSamaTD.Managers
 
             if (_battleCurrencyManager != null)
             {
-                _battleCurrencyManager.Init();
+                _battleCurrencyManager.Init(levelData);
                 Debug.Log("[GameManager] BattleCurrencyManager Initialized.");
             }
             else
@@ -256,19 +266,7 @@ namespace MaouSamaTD.Managers
             
             Debug.Log("[GameManager] All Systems Initialized. Level Ready.");
             
-            if (_enemyManager != null && levelData != null)
-            {
-                float gracePeriod = levelData.GracePeriod;
-                Debug.Log($"[GameManager] Starting Enemy Manager with Grace Period: {gracePeriod}s");
-                
-                // Pass the enemy container from GridManager (which might have been found dynamically or assigned)
-                _enemyManager.Initialize(levelData.Waves, _gridManager.EnemyContainer, gracePeriod);
-            }
-            else
-            {
-                if (_enemyManager == null) Debug.LogError("[GameManager] EnemyManager is NULL!");
-                if (levelData == null) Debug.LogError("[GameManager] LevelData is NULL!");
-            }
+
 
             MaxObjectiveHP = levelData != null ? levelData.SovereignMaxHp : 100;
             if (MaxObjectiveHP <= 0) MaxObjectiveHP = 100;

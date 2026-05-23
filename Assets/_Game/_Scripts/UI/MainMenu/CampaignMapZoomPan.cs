@@ -9,7 +9,7 @@ namespace MaouSamaTD.UI.MainMenu
         [Header("Zoom Settings")]
         [SerializeField] private float _minZoom = 0.5f;
         [SerializeField] private float _maxZoom = 4.0f;
-        [SerializeField] private float _zoomSensitivity = 0.08f;
+        [SerializeField] private float _zoomSensitivity = 0.25f;
         [SerializeField] private float _zoomSmoothTime = 0.08f;
 
         [Header("Pan Settings")]
@@ -200,7 +200,7 @@ namespace MaouSamaTD.UI.MainMenu
 
                 if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_parentRectTransform, zoomCenterScreen, uiCamera, out localZoomCenter))
                 {
-                    ZoomRelative(zoomDelta * _zoomSensitivity * 30f, localZoomCenter);
+                    ZoomRelative(zoomDelta * _zoomSensitivity * 120f, localZoomCenter);
                 }
             }
         }
@@ -219,13 +219,13 @@ namespace MaouSamaTD.UI.MainMenu
         public void ZoomIn()
         {
             EnsureInitialized();
-            ZoomRelative(0.25f, Vector2.zero); // Center of screen
+            ZoomRelative(0.5f, Vector2.zero); // Center of screen
         }
 
         public void ZoomOut()
         {
             EnsureInitialized();
-            ZoomRelative(-0.25f, Vector2.zero);
+            ZoomRelative(-0.5f, Vector2.zero);
         }
 
         /// <summary>Set zoom from normalized 0-1 value mapping minZoom..maxZoom.</summary>

@@ -41,7 +41,29 @@ namespace MaouSamaTD.UI
             if (_campaignPage == null) _campaignPage = FindObjectOfType<CampaignPage>(true);
             if (_homeUIManager == null) _homeUIManager = FindObjectOfType<HomeUIManager>(true);
             if (_homeUIController == null) _homeUIController = FindObjectOfType<HomeUIController_UGUI>(true);
-            if (_briefingPanel == null) _briefingPanel = FindObjectOfType<BriefingPanel>(true);
+            
+            // Auto-correct or locate correct active BriefingPanel
+            if (_briefingPanel == null || _briefingPanel.name.Contains("OLD"))
+            {
+                var allPanels = FindObjectsOfType<BriefingPanel>(true);
+                foreach (var p in allPanels)
+                {
+                    if (p != null && !p.name.Contains("OLD"))
+                    {
+                        _briefingPanel = p;
+                        break;
+                    }
+                }
+            }
+
+            // Deactivate any orphaned/dummy LoadingScreen_Root in the scene to prevent it from blocking the UI
+            var dummyLoader = GameObject.Find("Overlay_Canvas/LoadingScreen_Root");
+            if (dummyLoader == null) dummyLoader = GameObject.Find("LoadingScreen_Root");
+            if (dummyLoader != null && dummyLoader.GetComponent<MainMenu.LoadingScreenPanel>() == null)
+            {
+                dummyLoader.SetActive(false);
+                Debug.Log($"[HomeSceneInitializer] Deactivated dummy scene loading screen: {dummyLoader.name}");
+            }
         }
 
         private void Start()

@@ -94,6 +94,14 @@ namespace MaouSamaTD.UI.MainMenu
                 _button.interactable = !data.IsLocked;
                 _button.onClick.RemoveAllListeners();
                 _button.onClick.AddListener(OnClicked);
+
+                // Add hover colors for the node circle
+                var colors = _button.colors;
+                colors.normalColor = Color.white;
+                colors.highlightedColor = new Color(0.6f, 1f, 1f, 1f); // Cyan highlight on hover
+                colors.pressedColor = new Color(0.4f, 0.8f, 1f, 1f);
+                colors.selectedColor = new Color(0.5f, 0.9f, 1f, 1f);
+                _button.colors = colors;
             }
 
             // Dynamic resolving for star images if not assigned
@@ -174,7 +182,20 @@ namespace MaouSamaTD.UI.MainMenu
                     if (_starImages[i] != null)
                     {
                         _starImages[i].gameObject.SetActive(true);
-                        _starImages[i].sprite = (i < data.StarCount) ? _starFullSprite : _starEmptySprite;
+                        
+                        bool isEarned = (i < data.StarCount);
+                        
+                        // Only override the sprite if we actually found the loaded sprites
+                        if (_starFullSprite != null && _starEmptySprite != null)
+                        {
+                            _starImages[i].sprite = isEarned ? _starFullSprite : _starEmptySprite;
+                            _starImages[i].color = Color.white; // Reset color so it doesn't tint the sprite yellow
+                        }
+                        else
+                        {
+                            // If no sprites were loaded via code, keep the prefab's sprite but tint it
+                            _starImages[i].color = isEarned ? Color.white : new Color(0.3f, 0.3f, 0.3f, 0.5f);
+                        }
                     }
                 }
             }

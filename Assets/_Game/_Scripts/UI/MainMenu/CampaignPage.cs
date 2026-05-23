@@ -202,7 +202,7 @@ namespace MaouSamaTD.UI.MainMenu
                 return;
             }
 
-            Addressables.LoadAssetsAsync<LevelData>("LevelData", null).Completed += handle =>
+            Addressables.LoadAssetsAsync<LevelData>((object)"LevelData", null).Completed += handle =>
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {

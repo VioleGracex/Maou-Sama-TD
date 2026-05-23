@@ -85,6 +85,7 @@ namespace MaouSamaTD.UI.Cohorts
             if (_actionButton != null) _actionButton.onClick.AddListener(OnActionButtonClicked);
             if (_removeAllButton != null) _removeAllButton.onClick.AddListener(OnRemoveAllClicked);
             if (_autoMakeSquadButton != null) _autoMakeSquadButton.onClick.AddListener(OnAutoMakeSquadClicked);
+            if (_selectMultipleButton != null) _selectMultipleButton.onClick.AddListener(OnSelectMultipleClicked);
             
             if (_confirmLeaveButton != null) _confirmLeaveButton.onClick.AddListener(OnConfirmLeave);
             if (_cancelLeaveButton != null) _cancelLeaveButton.onClick.AddListener(OnCancelLeave);
@@ -507,7 +508,7 @@ namespace MaouSamaTD.UI.Cohorts
                 _selectionState.SetCohort(selectedUnits);
             }
 
-            var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+            var loader = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
             if (loader != null) loader.LoadSceneTransition("BattleScene");
             else UnityEngine.SceneManagement.SceneManager.LoadScene("BattleScene");
         }
@@ -557,16 +558,35 @@ namespace MaouSamaTD.UI.Cohorts
         {
             if (_isLockedMode) return;
 
-            if (_playerData == null || _playerData.UnlockedUnits == null) return;
+            if (_playerData == null) return;
             
             List<MaouSamaTD.Units.UnitData> candidates = new List<MaouSamaTD.Units.UnitData>();
-            foreach (var id in _playerData.UnlockedUnits)
+            
+            // Query from UnlockedUnits first
+            if (_playerData.UnlockedUnits != null)
             {
-                if (string.IsNullOrEmpty(id)) continue;
-                var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(id);
-                if (unit != null)
+                foreach (var id in _playerData.UnlockedUnits)
                 {
-                    candidates.Add(unit);
+                    if (string.IsNullOrEmpty(id)) continue;
+                    var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(id);
+                    if (unit != null && !candidates.Contains(unit))
+                    {
+                        candidates.Add(unit);
+                    }
+                }
+            }
+            
+            // Also query from UnitInventory to be absolutely safe and robust!
+            if (_playerData.UnitInventory != null)
+            {
+                foreach (var entry in _playerData.UnitInventory)
+                {
+                    if (entry == null || string.IsNullOrEmpty(entry.UnitID)) continue;
+                    var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase?.GetUnitByID(entry.UnitID);
+                    if (unit != null && !candidates.Contains(unit))
+                    {
+                        candidates.Add(unit);
+                    }
                 }
             }
 
@@ -677,6 +697,81 @@ namespace MaouSamaTD.UI.Cohorts
                 RefreshUI();
                 Debug.Log("[CohortSquadUI] Auto Make Squad populated.");
             }
+        }
+
+        private void OnSelectMultipleClicked()
+        {
+            if (_isLockedMode) return;
+
+            if (_vassalInventoryController != null)
+            {
+                UIFlowManager.Instance.OpenPanel(_vassalInventoryController);
+                
+                // Exclude the assistant slot (slot 11) from multi-select since it's managed separately or by level support
+                int maxLimit = (_isReadinessMode && _currentLevel != null && _currentLevel.IsAssistantLocked) ? 11 : 12;
+                
+                // Get currently selected unit IDs in slots (filter out empty strings)
+                List<string> currentSelected = new List<string>(_tempUnitIDs);
+                currentSelected.RemoveAll(string.IsNullOrEmpty);
+
+                _vassalInventoryController.OpenForMultiSelect(currentSelected, maxLimit, OnMultiSelectionComplete);
+            }
+        }
+
+        private void OnMultiSelectionComplete(List<string> selectedIDs)
+        {
+            if (selectedIDs == null) return;
+
+            // Save old assistant slot unit ID if it is locked/assistant mode is active
+            string assistantID = "";
+            bool isAssistantLocked = _isReadinessMode && _currentLevel != null && _currentLevel.IsAssistantLocked;
+            if (isAssistantLocked && _tempUnitIDs.Count > 11)
+            {
+                assistantID = _tempUnitIDs[11];
+            }
+
+            // Clear temp list
+            _tempUnitIDs.Clear();
+            
+            // Add selected units
+            foreach (var id in selectedIDs)
+            {
+                if (_tempUnitIDs.Count < 11)
+                {
+                    _tempUnitIDs.Add(id);
+                }
+            }
+
+            // Pad with empty strings up to slot 11
+            while (_tempUnitIDs.Count < 11)
+            {
+                _tempUnitIDs.Add("");
+            }
+
+            // Add the assistant slot back
+            if (isAssistantLocked)
+            {
+                _tempUnitIDs.Add(assistantID);
+            }
+            else if (selectedIDs.Count > 11)
+            {
+                _tempUnitIDs.Add(selectedIDs[11]);
+            }
+            else
+            {
+                _tempUnitIDs.Add("");
+            }
+
+            // Pad up to 12
+            while (_tempUnitIDs.Count < 12)
+            {
+                _tempUnitIDs.Add("");
+            }
+
+            MarkDirty();
+            SaveCohort();
+            RefreshUI();
+            Debug.Log("[CohortSquadUI] Multi selection applied to squad slots.");
         }
         #endregion
     }

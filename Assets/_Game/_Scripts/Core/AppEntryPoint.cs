@@ -133,6 +133,16 @@ namespace MaouSamaTD.Core
             // Debug resources now handled in boot sequence to avoid being overridden by Load()
         }
 
+        private void Awake()
+        {
+            var persistentLoader = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
+            if (persistentLoader != null && persistentLoader.gameObject != gameObject)
+            {
+                Debug.Log("[AppEntryPoint] Persistent LoadingScreenPanel already exists. Destroying duplicate AppEntryPoint GameObject.");
+                Destroy(gameObject);
+            }
+        }
+
         public void StartBootSequence(Action<float> onProgress, Action onComplete)
         {
             StartCoroutine(InitializeGameDataCoroutine(onProgress, onComplete));
@@ -179,7 +189,7 @@ namespace MaouSamaTD.Core
             }
 
             Debug.Log("[AppEntryPoint] Loading all Levels by label 'LevelData'...");
-            var levelHandle = Addressables.LoadAssetsAsync<MaouSamaTD.Levels.LevelData>("LevelData", null);
+            var levelHandle = Addressables.LoadAssetsAsync<MaouSamaTD.Levels.LevelData>((object)"LevelData", null);
             while (!levelHandle.IsDone)
             {
                 onProgress?.Invoke(0.5f + levelHandle.PercentComplete * 0.1f);
@@ -291,7 +301,7 @@ namespace MaouSamaTD.Core
                     }
                 }
 
-                var loader = UnityEngine.Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+                var loader = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
                 if (loader != null)
                 {
                     loader.LoadSceneTransition("BattleScene");

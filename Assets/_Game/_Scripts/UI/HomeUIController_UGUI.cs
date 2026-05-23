@@ -91,7 +91,19 @@ public class HomeUIController_UGUI : MonoBehaviour, IDragHandler, IBeginDragHand
         // Apply saved position
         if (_characterRect != null)
         {
+            // Enforce left anchor and pivot so the character is pinned to the left edge of the screen
+            _characterRect.anchorMin = new Vector2(0, 0.5f);
+            _characterRect.anchorMax = new Vector2(0, 0.5f);
+            _characterRect.pivot = new Vector2(0, 0.5f);
+
             _characterRect.anchoredPosition = settings.Position;
+            
+            // If the saved position is exactly 0,0, add a slight offset so it's fully visible and not clipped
+            if (settings.Position == Vector2.zero)
+            {
+                _characterRect.anchoredPosition = new Vector2(150f, -100f);
+            }
+
             _characterRect.localScale = new Vector3(settings.Scale, settings.Scale, 1);
         }
 
@@ -145,7 +157,12 @@ public class HomeUIController_UGUI : MonoBehaviour, IDragHandler, IBeginDragHand
     {
         if (_characterRect != null)
         {
-            _characterRect.anchoredPosition = Vector2.zero;
+            _characterRect.anchorMin = new Vector2(0, 0.5f);
+            _characterRect.anchorMax = new Vector2(0, 0.5f);
+            _characterRect.pivot = new Vector2(0, 0.5f);
+            
+            // Default position with an offset to be fully visible on the left edge
+            _characterRect.anchoredPosition = new Vector2(150f, -100f);
             _characterRect.localScale = Vector3.one;
         }
         SaveToPreset();

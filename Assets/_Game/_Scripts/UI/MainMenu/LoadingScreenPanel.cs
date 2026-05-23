@@ -25,6 +25,12 @@ namespace MaouSamaTD.UI.MainMenu
                 return;
             }
             Instance = this;
+            
+            // Fix: If this is a child GameObject, unparent it so that DontDestroyOnLoad succeeds!
+            if (transform.parent != null)
+            {
+                transform.SetParent(null);
+            }
             DontDestroyOnLoad(gameObject);
         }
 
@@ -96,7 +102,11 @@ namespace MaouSamaTD.UI.MainMenu
             if (_confirmNoButton != null) _confirmNoButton.onClick.AddListener(() => { if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false); });
             if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false);
 
-            if (_progressBar != null) _progressBar.value = 0f;
+            if (_progressBar != null)
+            {
+                _progressBar.interactable = false;
+                _progressBar.value = 0f;
+            }
             if (_versionText != null) _versionText.text = $"Ver: {Application.version}";
 
             if (_loreLines != null && _loreLines.Length > 0)
@@ -126,7 +136,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void LoadSplashScreens()
         {
-            Addressables.LoadAssetsAsync<Sprite>("SplashScreen", null).Completed += handle =>
+            Addressables.LoadAssetsAsync<Sprite>((object)"SplashScreen", null).Completed += handle =>
             {
                 if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
                 {
@@ -305,6 +315,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_startButton != null) _startButton.gameObject.SetActive(false);
             if (_progressBar != null)
             {
+                _progressBar.interactable = false;
                 _progressBar.gameObject.SetActive(true);
                 _progressBar.value = 0f;
             }
@@ -352,12 +363,12 @@ namespace MaouSamaTD.UI.MainMenu
 
             if (!_isLevelReady) Debug.LogWarning("[LoadingScreenPanel] Level ready signal timed out! Hiding anyway.");
 
-            if (sceneName == "BattleScene")
+            // Always deactivate the progress bar when loaded
+            if (_progressBar != null)
             {
-                if (_progressBar != null) _progressBar.gameObject.SetActive(false);
-                // No longer waiting for _startButtonClicked here, auto-proceeding once _isLevelReady is true
-                Debug.Log("[LoadingScreenPanel] BattleScene ready - auto-proceeding to fade out.");
+                _progressBar.gameObject.SetActive(false);
             }
+            Debug.Log($"[LoadingScreenPanel] Scene {sceneName} ready - auto-proceeding to fade out.");
 
             float elapsed = Time.realtimeSinceStartup - startTime;
             if (elapsed < 2.0f)
@@ -365,11 +376,32 @@ namespace MaouSamaTD.UI.MainMenu
                 yield return new WaitForSecondsRealtime(2.0f - elapsed);
             }
 
+            if (sceneName == "Home_New")
+            {
+                float lobbyTimeout = 5f;
+                bool pageIsOn = false;
+                while (!pageIsOn && lobbyTimeout > 0)
+                {
+                    lobbyTimeout -= Time.unscaledDeltaTime;
+                    var homeUI = UnityEngine.Object.FindAnyObjectByType<MaouSamaTD.UI.MainMenu.HomeUIManager>(FindObjectsInactive.Include);
+                    var gachaUI = UnityEngine.Object.FindAnyObjectByType<MaouSamaTD.UI.Gacha.GachaPanel>(FindObjectsInactive.Include);
+                    bool homeOn = homeUI != null && homeUI.VisualRoot != null && homeUI.VisualRoot.activeInHierarchy;
+                    bool gachaOn = gachaUI != null && gachaUI.VisualRoot != null && gachaUI.VisualRoot.activeInHierarchy;
+                    if (homeOn || gachaOn)
+                    {
+                        pageIsOn = true;
+                        Debug.Log($"[LoadingScreenPanel] Lobby UI Page confirmed on: HomeOn={homeOn}, GachaOn={gachaOn}");
+                    }
+                    yield return null;
+                }
+            }
+
             CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();
             if (cg == null) cg = gameObject.AddComponent<CanvasGroup>();
 
             cg.DOFade(0f, 0.5f).SetId(this).SetUpdate(true).OnComplete(() =>
             {
+                if (_visualRoot != null) _visualRoot.SetActive(false);
                 gameObject.SetActive(false);
                 _isTransitioning = false;
             });

@@ -46,7 +46,7 @@ namespace MaouSamaTD.Managers
             foreach (UnitRarity rarity in System.Enum.GetValues(typeof(UnitRarity)))
             {
                 string label = gachaPool.GetLabelByRarity(rarity);
-                var handle = Addressables.LoadAssetsAsync<UnitData>(label, null);
+                var handle = Addressables.LoadAssetsAsync<UnitData>((object)label, null);
                 _loadingHandles.Add(handle);
                 
                 handle.Completed += (op) => {

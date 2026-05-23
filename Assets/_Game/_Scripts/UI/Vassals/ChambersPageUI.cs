@@ -107,7 +107,16 @@ namespace MaouSamaTD.UI.Vassals
             
             // Setup Vigor and Bond based on progression guide
             if (bondMagnitudeText != null) bondMagnitudeText.text = "0";
-            if (bondTierText != null) bondTierText.text = "TIER 0\nSYNERGY PULSE ACTIVE";
+            if (bondTierText != null) 
+            {
+                bondTierText.text = "TIER 0\nSYNERGY PULSE ACTIVE";
+                bondTierText.enableWordWrapping = false;
+                bondTierText.overflowMode = TextOverflowModes.Overflow;
+                var rect = bondTierText.GetComponent<RectTransform>();
+                if (rect != null && rect.sizeDelta.x < 200) {
+                    rect.sizeDelta = new Vector2(250, rect.sizeDelta.y);
+                }
+            }
             if (pactStrengtheningSlider != null) pactStrengtheningSlider.fillAmount = 0;
             if (pactStrengtheningText != null) pactStrengtheningText.text = "PACT STRENGTHENING (0%)";
             if (nextRewardText != null) nextRewardText.text = "NEXT REWARD: LV.20";
@@ -152,19 +161,69 @@ namespace MaouSamaTD.UI.Vassals
                         var itemObj = Instantiate(characterListItemPrefab, characterListContent);
                         itemObj.SetActive(true);
                         
-                        // Try to get TextMeshProUGUI for name
-                        var texts = itemObj.GetComponentsInChildren<TextMeshProUGUI>();
-                        foreach (var t in texts)
+                        // Try to get TextMeshProUGUI / Text using robust matching with fallbacks
+                        var tmpTexts = itemObj.GetComponentsInChildren<TMPro.TMP_Text>(true);
+                        TMPro.TMP_Text nameTmp = null;
+                        TMPro.TMP_Text bondTmp = null;
+
+                        foreach (var t in tmpTexts)
                         {
-                            if (t.name == "Name" || t.name == "CharName") t.text = unit.UnitName;
-                            if (t.name == "BondLevel" || t.name == "Bond") t.text = "Lv." + (Mathf.FloorToInt(unit.Amity / 10f));
+                            string tName = t.gameObject.name.ToLowerInvariant();
+                            if (tName.Contains("name") || tName.Contains("title") || tName.Contains("char")) nameTmp = t;
+                            else if (tName.Contains("bond") || tName.Contains("lvl") || tName.Contains("level") || tName.Contains("desc")) bondTmp = t;
                         }
 
-                        // Try to get Image for avatar
-                        var images = itemObj.GetComponentsInChildren<Image>();
+                        // Fallback to index if no name matched
+                        if (nameTmp == null && tmpTexts.Length > 0) nameTmp = tmpTexts[0];
+                        if (bondTmp == null && tmpTexts.Length > 1) bondTmp = tmpTexts[1];
+
+                        if (nameTmp != null) nameTmp.text = unit.UnitName.ToUpper();
+                        if (bondTmp != null) bondTmp.text = "BOND LV." + (Mathf.FloorToInt(unit.Amity / 10f));
+
+                        // Same for standard UI Text
+                        var legacyTexts = itemObj.GetComponentsInChildren<UnityEngine.UI.Text>(true);
+                        UnityEngine.UI.Text nameLeg = null;
+                        UnityEngine.UI.Text bondLeg = null;
+
+                        foreach (var t in legacyTexts)
+                        {
+                            string tName = t.gameObject.name.ToLowerInvariant();
+                            if (tName.Contains("name") || tName.Contains("title") || tName.Contains("char")) nameLeg = t;
+                            else if (tName.Contains("bond") || tName.Contains("lvl") || tName.Contains("level") || tName.Contains("desc")) bondLeg = t;
+                        }
+
+                        if (nameLeg == null && legacyTexts.Length > 0) nameLeg = legacyTexts[0];
+                        if (bondLeg == null && legacyTexts.Length > 1) bondLeg = legacyTexts[1];
+
+                        if (nameLeg != null) nameLeg.text = unit.UnitName.ToUpper();
+                        if (bondLeg != null) bondLeg.text = "BOND LV." + (Mathf.FloorToInt(unit.Amity / 10f));
+
+                        // Try to get Image for avatar using robust matching
+                        var images = itemObj.GetComponentsInChildren<Image>(true);
                         foreach (var img in images)
                         {
-                            if (img.name == "Avatar" || img.name == "Icon") img.sprite = unit.GetSprite(UnitData.UnitImageType.Avatar);
+                            string iName = img.gameObject.name.ToLowerInvariant();
+                            if (iName.Contains("avatar") || iName.Contains("icon") || iName.Contains("portrait")) 
+                            {
+                                var sprite = unit.GetSprite(UnitData.UnitImageType.Avatar);
+                                if (sprite != null) 
+                                {
+                                    img.sprite = sprite;
+                                    img.color = Color.white;
+                                }
+                            }
+                            // Populate Amity/Bond slider if it's a Filled Image
+                            else if (iName.Contains("fill") && img.type == Image.Type.Filled)
+                            {
+                                img.fillAmount = (unit.Amity % 10f) / 10f;
+                            }
+                        }
+
+                        // Setup slider if it uses the Slider component
+                        var slider = itemObj.GetComponentInChildren<Slider>(true);
+                        if (slider != null)
+                        {
+                            slider.value = (unit.Amity % 10f) / 10f;
                         }
 
                         // Setup button click

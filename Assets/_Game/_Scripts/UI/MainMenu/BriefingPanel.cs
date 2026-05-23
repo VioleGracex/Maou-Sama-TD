@@ -135,6 +135,8 @@ namespace MaouSamaTD.UI.MainMenu
         #region Public Methods
         public void Setup(LevelData level, bool isUnlocked, Action<LevelData> onEngageCallback)
         {
+            Initialize(); // Ensure UI listeners and save manager are initialized!
+
             if (level == null)
             {
                 Debug.LogError("[BriefingPanel] Setup called with null LevelData!");
@@ -315,6 +317,17 @@ namespace MaouSamaTD.UI.MainMenu
             }
 
             // 2. Replay & Loot Rewards section
+            if (_scrollRect != null)
+            {
+                _scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+                if (_scrollRect.verticalScrollbar != null)
+                {
+                    _scrollRect.verticalScrollbar.gameObject.SetActive(true);
+                    var img = _scrollRect.verticalScrollbar.GetComponent<Image>();
+                    if (img != null) { img.enabled = true; img.color = new Color(1, 1, 1, 0.25f); }
+                }
+            }
+
             bool hasReplayRewards = false;
             if (_replayContainer != null)
             {
@@ -333,6 +346,13 @@ namespace MaouSamaTD.UI.MainMenu
                     foreach (var reward in winRewardsList)
                     {
                         if (reward.Amount <= 0) continue;
+
+                        // Hide one-time premium currencies if already cleared
+                        if (isCleared && (reward.Type == MaouSamaTD.Data.RewardType.BloodCrests || reward.Type == MaouSamaTD.Data.RewardType.Gems))
+                        {
+                            continue;
+                        }
+
                         Sprite icon = GetRewardSprite(reward.Type.ToString());
                         string displayName = FormatRewardName(reward.Type.ToString());
                         CreateRewardItem(_replayContainer, icon, $"+{reward.Amount} {displayName}", Color.white, 105f);
@@ -452,12 +472,14 @@ namespace MaouSamaTD.UI.MainMenu
                     var cond = starConditionsList[sIdx];
                     bool claimed = sIdx < currentStars;
 
+                    if (claimed) continue; // Hide claimed one-time star objectives!
+
                     if (cond.BonusRewards != null)
                     {
                         foreach (var reward in cond.BonusRewards)
                         {
                             Sprite rSprite = GetRewardSprite(reward.Type.ToString());
-                            string status = claimed ? " <color=#778899>[Claimed]</color>" : " <color=#ffd700>[Available]</color>";
+                            string status = " <color=#ffd700>[Available]</color>";
                             
                             // Rich text alignment tag to push reward to the right in a full-width card
                             string displayString = $"⭐ {cond.Description} <align=right>🎁 +{reward.Amount} {FormatRewardName(reward.Type.ToString())}{status}</align>";
@@ -468,24 +490,24 @@ namespace MaouSamaTD.UI.MainMenu
                 }
             }
 
-            if (level.Category == LevelCategory.RiteDungeon)
+            if (level.Category == LevelCategory.RiteDungeon && !isCleared)
             {
                 Sprite riteSprite = null;
 #if UNITY_EDITOR
                 riteSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI_Pages/Home/cmd_node_citadel.png");
 #endif
-                string status = isCleared ? " <color=#778899>[Unlocked]</color>" : " <color=#ffd700>[Unlock on Clear]</color>";
+                string status = " <color=#ffd700>[Unlock on Clear]</color>";
                 string displayString = $"⭐ Rite Completion <align=right>New Rite{status}</align>";
                 oneTimeList.Add((riteSprite, displayString));
                 hasOneTime = true;
             }
-            else if (level.Category == LevelCategory.VassalDungeon)
+            else if (level.Category == LevelCategory.VassalDungeon && !isCleared)
             {
                 Sprite vassalSprite = null;
 #if UNITY_EDITOR
                 vassalSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI_Pages/Home/cmd_node_chambers.png");
 #endif
-                string status = isCleared ? " <color=#778899>[Recruited]</color>" : " <color=#ffd700>[Recruit on Clear]</color>";
+                string status = " <color=#ffd700>[Recruit on Clear]</color>";
                 string displayString = $"⭐ Vassal Recruitment <align=right>New Vassal{status}</align>";
                 oneTimeList.Add((vassalSprite, displayString));
                 hasOneTime = true;
@@ -681,7 +703,8 @@ namespace MaouSamaTD.UI.MainMenu
                     {
                         winDesc = "Defeat all enemy waves";
                     }
-                    _winConditionText.text = $"<color=#10B981>● <b>WIN:</b></color> {winDesc}";
+                    // Adding a newline to provide extra spacing between Win and Lose conditions
+                    _winConditionText.text = $"<color=#10B981>● <b>WIN:</b></color> {winDesc}\n";
                 }
 
                 if (_loseConditionText != null)
@@ -812,7 +835,7 @@ namespace MaouSamaTD.UI.MainMenu
                 // Restore global buttons
                 if (UIFlowManager.Instance != null)
                 {
-                    UIFlowManager.Instance.UpdateNavigationFeatures(NavigationFeatures.BackButton | NavigationFeatures.CitadelButton);
+                    UIFlowManager.Instance.UpdateNavigationFeatures(UIFlowManager.Instance.GetCurrentNavFeatures());
                 }
             });
         }

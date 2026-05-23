@@ -257,7 +257,6 @@ namespace MaouSamaTD.UI.MainMenu
             var panel = Object.FindAnyObjectByType<ChambersPageUI>(FindObjectsInactive.Include);
             if (panel != null)
             {
-                UIFlowManager.Instance.ClearHistory(true, true);
                 UIFlowManager.Instance.OpenPanel(panel);
             }
             else

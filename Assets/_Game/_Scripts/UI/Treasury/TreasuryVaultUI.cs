@@ -99,7 +99,7 @@ namespace MaouSamaTD.UI.Treasury
             _skins.Clear();
             _gifts.Clear();
 
-            _loadHandle = Addressables.LoadAssetsAsync<StoreItemSO>(_shopLabel, null);
+            _loadHandle = Addressables.LoadAssetsAsync<StoreItemSO>((object)_shopLabel, null);
             _loadHandle.Completed += handle =>
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)

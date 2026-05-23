@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 4054585179349792496}
   - component: {fileID: 7546590703662774338}
   - component: {fileID: 8318979134081947994}
-  - component: {fileID: 7732710737369852402}
+  - component: {fileID: 3090510647438610305}
   m_Layer: 0
   m_Name: NodeEntryPrefab
   m_TagString: Untagged
@@ -337,7 +337,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7732710737369852402
+--- !u!114 &3090510647438610305
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -346,10 +346,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4151173554766163960}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 24ccd30ea82f3e242b593de50512403d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.NodeEntryUI
-  _txtLabel: {fileID: 4386598560906540513}
+  m_EditorClassIdentifier: GameAssembly::MaouSamaTD.UI.NodeEntryUI
+  _txtTierLabel: {fileID: 0}
+  _txtNodeName: {fileID: 4386598560906540513}
+  _txtDescription: {fileID: 0}
+  _txtStatus: {fileID: 0}
   _nodeIcon: {fileID: 2957443535682466248}
   _btnUnlock: {fileID: 5997635634309840753}
   _colorLocked: {r: 0.4, g: 0.4, b: 0.4, a: 1}

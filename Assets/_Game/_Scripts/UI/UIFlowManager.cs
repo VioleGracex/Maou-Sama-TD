@@ -287,6 +287,12 @@ namespace MaouSamaTD.UI
                 navigationHolder.SetActive(showBack || showCitadel);
             }
         }
+        public NavigationFeatures GetCurrentNavFeatures()
+        {
+            if (_panelStack.Count == 0) return NavigationFeatures.None;
+            return _panelStack.Peek().ConfiguredNavFeatures;
+        }
+
         private bool IsChildOf(IUIController child, IUIController parent)
         {
             if (child == null || parent == null) return false;

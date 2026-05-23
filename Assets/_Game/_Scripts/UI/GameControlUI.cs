@@ -609,8 +609,13 @@ namespace MaouSamaTD.UI
              // Clean up assets
              Resources.UnloadUnusedAssets();
              
+             // Get exited level telemetry
+             string levelID = _gameManager != null && _gameManager.CurrentLevelData != null ? _gameManager.CurrentLevelData.LevelID : "Unknown";
+             string levelName = _gameManager != null && _gameManager.CurrentLevelData != null ? _gameManager.CurrentLevelData.LevelName : "Unknown";
+             Debug.Log($"[GameControlUI] Exiting level: '{levelID}' ({levelName}) and returning to Home_New scene.");
+
              // Try to use loading screen transition
-             var loader = FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+             var loader = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
              if (loader != null)
              {
                  loader.LoadSceneTransition("Home_New");
@@ -632,7 +637,7 @@ namespace MaouSamaTD.UI
             DOTween.KillAll();
             Resources.UnloadUnusedAssets();
             
-            var loader = FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+            var loader = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
             if (loader != null)
             {
                 loader.LoadSceneTransition(SceneManager.GetActiveScene().name);

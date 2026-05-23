@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maou-Sama TD: Overlord Citadel</title>
+    <!-- Google Fonts for premium medieval-cyber fantasy aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #020205;
+            --bg-glass-dark: rgba(4, 4, 8, 0.85);
+            --bg-glass-light: rgba(255, 255, 255, 0.03);
+            --border-gold: rgba(255, 191, 38, 0.3);
+            --border-gold-glow: rgba(255, 191, 38, 0.65);
+            --border-cyan: rgba(25, 204, 255, 0.35);
+            --border-cyan-glow: rgba(25, 204, 255, 0.8);
+            
+            --gold-primary: #FFBF26;
+            --gold-secondary: #D97706;
+            --cyan-primary: #19CCFF;
+            --cyan-secondary: #0088CC;
+            --red-primary: #FF4C4C;
+            --red-glow: rgba(255, 76, 76, 0.6);
+            --yellow-accent: #EAB308;
+            
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --font-display: 'Cinzel', serif;
+            --font-sans: 'Outfit', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* Ambient Parallax Map Background */
+        .background-container {
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            z-index: 1;
+            transition: transform 0.2s cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        .map-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.45;
+            filter: contrast(1.1) brightness(0.65) saturate(0.9);
+        }
+
+        /* Floating Ember Particles */
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            opacity: 0.7;
+        }
+
+        /* Ambient Vignette & Fog */
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            background: radial-gradient(circle, transparent 20%, rgba(2, 2, 5, 0.85) 90%),
+                        linear-gradient(to top, rgba(2, 2, 5, 0.9) 0%, transparent 40%);
+        }
+
+        /* Canvas-scale game overlay structure (Standard 16:9 Aspect Ratio Container) */
+        .game-canvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1920px;
+            max-height: 1080px;
+            z-index: 5;
+            display: flex;
+            flex-direction: row;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        /* --- CHARACTER SYSTEM --- */
+        .character-viewport {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .character-container {
+            position: absolute;
+            bottom: -50px;
+            left: 5%;
+            width: 650px;
+            height: 950px;
+            pointer-events: auto;
+            cursor: grab;
+            z-index: 4;
+            transform-origin: bottom center;
+            transition: transform 0.05s ease, filter 0.3s ease;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));
+        }
+
+        .character-container:active {
+            cursor: grabbing;
+        }
+
+        .character-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            user-select: none;
+            -webkit-user-drag: none;
+            animation: characterBreathing 6s ease-in-out infinite;
+        }
+
+        @keyframes characterBreathing {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-12px) scale(1.008); }
+        }
+
+        .character-glow-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            opacity: 0.15;
+            animation: characterGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes characterGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2) contrast(1.1); }
+        }
+
+        /* --- TOP HEADER ROW --- */
+        .top-header {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            right: 40px;
+            height: 70px;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .top-left-panel {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            pointer-events: auto;
+        }
+
+        /* Styled Circle Buttons for Header */
+        .header-circle-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(20, 20, 28, 0.85);
+            border: 1px solid var(--border-gold);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 0 10px rgba(255, 191, 38, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .header-circle-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: #94A3B8;
+            transition: fill 0.25s ease, transform 0.25s ease;
+        }
+
+        .header-circle-btn:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 15px rgba(255, 191, 38, 0.4), inset 0 0 8px rgba(255, 191, 38, 0.1);
+            transform: scale(1.06);
+        }
+
+        .header-circle-btn:hover svg {
+            fill: #fff;
+            transform: rotate(30deg);
+        }
+
+        .header-circle-btn.crest-btn {
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.8) 0%, rgba(20, 10, 10, 0.9) 100%);
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+        }
+
+        .header-circle-btn.crest-btn:hover {
+            border-color: #EF4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+
+        .header-circle-btn.crest-btn svg {
+            fill: #EF4444;
+        }
+
+        .header-circle-btn.crest-btn:hover svg {
+            fill: #FCA5A5;
+            transform: scale(1.1) rotate(0deg);
+        }
+
+        /* Top-Right Currency Pills */
+        .top-right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .currency-pill {
+            background: linear-gradient(90deg, rgba(15, 15, 22, 0.9) 0%, rgba(10, 10, 15, 0.7) 100%);
+            border: 1px solid var(--border-gold);
+            border-radius: 20px;
+            padding: 4px 16px 4px 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 170px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .currency-pill:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 12px rgba(255, 191, 38, 0.25);
+        }
+
+        .currency-pill.crest-pill {
+            border-color: var(--border-cyan);
+        }
+
+        .currency-pill.crest-pill:hover {
+            border-color: var(--cyan-primary);
+            box-shadow: 0 0 12px rgba(25, 204, 255, 0.25);
+        }
+
+        .currency-icon-container {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .currency-icon-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .currency-value {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 14.5px;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        /* --- LEFT SIDEBAR PANEL --- */
+        .left-sidebar {
+            position: absolute;
+            left: 40px;
+            bottom: 60px;
+            width: 190px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            z-index: 10;
+            pointer-events: auto;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Sidebar Angled Metal Panels */
+        .sidebar-btn {
+            position: relative;
+            background: linear-gradient(135deg, rgba(20, 20, 28, 0.92) 0%, rgba(12, 12, 18, 0.98) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 4px solid var(--text-muted);
+            border-radius: 4px;
+            padding: 12px 20px;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            transform: skewX(-12deg);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .sidebar-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .sidebar-btn:hover {
+            border-left-color: var(--gold-primary);
+            background: linear-gradient(135deg, rgba(30, 28, 38, 0.95) 0%, rgba(18, 16, 24, 0.98) 100%);
+            box-shadow: 0 6px 15px rgba(255, 191, 38, 0.15), 0 0 1px rgba(255, 191, 38, 0.3);
+            transform: skewX(-12deg) translateX(6px);
+        }
+
+        .sidebar-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .sidebar-btn-content {
+            transform: skewX(12deg); /* Unskew text to keep it upright */
+            font-family: var(--font-sans);
+            font-weight: 900;
+            font-size: 17px;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+        }
+
+        .sidebar-btn:active {
+            transform: skewX(-12deg) translateX(2px);
+        }
+
+        /* --- UTILITY BUTTON PANEL (Stack underneath Sidebar buttons) --- */
+        .utility-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            padding-left: 4px;
+        }
+
+        .utility-circle-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(16, 16, 24, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 0 8px rgba(255,255,255,0.02);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .utility-circle-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-muted);
+            transition: fill 0.25s ease, transform 0.25s ease;
+        }
+
+        .utility-circle-btn:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 12px rgba(255, 191, 38, 0.35);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .utility-circle-btn:hover svg {
+            fill: #fff;
+        }
+
+        .utility-circle-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        /* Exit Button - Styled Premium Red Icon */
+        .utility-circle-btn.exit-btn {
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+
+        .utility-circle-btn.exit-btn svg {
+            fill: #F87171;
+        }
+
+        .utility-circle-btn.exit-btn:hover {
+            border-color: #EF4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+        }
+
+        .utility-circle-btn.exit-btn:hover svg {
+            fill: #EF4444;
+            transform: scale(1.08);
+        }
+
+        /* --- RIGHT CONTROL MAIN PANEL --- */
+        .right-menu-panel {
+            position: absolute;
+            right: 40px;
+            bottom: 60px;
+            width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+            pointer-events: auto;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Common grid panel button properties */
+        .grid-panel-btn {
+            background: rgba(10, 10, 16, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.02);
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Top Large Conquest Button */
+        .btn-conquest {
+            height: 145px;
+            background: linear-gradient(135deg, rgba(80, 10, 10, 0.8) 0%, rgba(20, 10, 10, 0.95) 100%);
+            border: 2px solid rgba(239, 68, 68, 0.25);
+            border-right: 4px solid rgba(239, 68, 68, 0.6);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 0 15px rgba(239, 68, 68, 0.05);
+        }
+
+        .btn-conquest::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.4), transparent);
+        }
+
+        .btn-conquest:hover {
+            border-color: rgba(239, 68, 68, 0.7);
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.35), inset 0 0 15px rgba(239, 68, 68, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .btn-conquest-title {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 32px;
+            letter-spacing: 5px;
+            color: #fff;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.8), 0 0 10px rgba(239, 68, 68, 0.4);
+            font-style: italic;
+        }
+
+        /* Horizontal Layout Row 2 (Cohorts & Vassals) */
+        .horizontal-split-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            height: 90px;
+        }
+
+        .btn-cohorts {
+            border-left: 4px solid var(--yellow-accent);
+        }
+
+        .btn-cohorts:hover {
+            border-color: var(--yellow-accent);
+            box-shadow: 0 8px 20px rgba(234, 179, 8, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .btn-vassals {
+            border-left: 4px solid var(--cyan-primary);
+        }
+
+        .btn-vassals:hover {
+            border-color: var(--cyan-primary);
+            box-shadow: 0 8px 20px rgba(25, 204, 255, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .btn-grid-title {
+            font-family: var(--font-sans);
+            font-weight: 900;
+            font-size: 15px;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            font-style: italic;
+        }
+
+        /* 3-Column Complex Row 3 (Mandates, Manifest Vassals, Narrow Stack) */
+        .three-col-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 45px;
+            gap: 15px;
+            height: 160px;
+        }
+
+        /* Angled Style Mandates */
+        .btn-mandates {
+            background: rgba(40, 40, 45, 0.7);
+            border: 1px solid rgba(255,255,255,0.08);
+            transform: skewY(-4deg);
+        }
+
+        .btn-mandates:hover {
+            background: rgba(55, 55, 62, 0.85);
+            border-color: rgba(255,255,255,0.15);
+            transform: skewY(-4deg) translateY(-3px);
+        }
+
+        .btn-mandates .btn-grid-title {
+            transform: skewY(4deg);
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: #CBD5E1;
+            font-style: normal;
+        }
+
+        /* Giant Yellow Angled Manifest Vassals */
+        .btn-manifest {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.7) 0%, rgba(180, 83, 9, 0.85) 100%);
+            border: 2px solid var(--yellow-accent);
+            transform: skewY(-4deg);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(254, 240, 138, 0.1);
+        }
+
+        .btn-manifest:hover {
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.8) 0%, rgba(217, 119, 6, 0.9) 100%);
+            border-color: #FEF08A;
+            box-shadow: 0 10px 25px rgba(234, 179, 8, 0.45);
+            transform: skewY(-4deg) translateY(-4px);
+        }
+
+        .btn-manifest .btn-grid-title {
+            transform: skewY(4deg);
+            font-size: 14px;
+            letter-spacing: 1.5px;
+            color: #fff;
+            text-shadow: 0 2px 5px rgba(120, 53, 4, 0.9);
+            font-style: normal;
+        }
+
+        /* Narrow Column Stack (Throne & Vault) */
+        .narrow-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-narrow {
+            flex: 1;
+            background: rgba(10, 10, 16, 0.95);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-right: 2px solid var(--yellow-accent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-narrow.vault {
+            border-right-color: var(--cyan-primary);
+        }
+
+        .btn-narrow:hover {
+            transform: scale(1.05);
+            background: rgba(20, 20, 30, 0.98);
+        }
+
+        .btn-narrow.throne:hover {
+            border-right-color: #FACC15;
+            box-shadow: 0 4px 10px rgba(234, 179, 8, 0.2);
+        }
+
+        .btn-narrow.vault:hover {
+            border-right-color: #38BDF8;
+            box-shadow: 0 4px 10px rgba(25, 204, 255, 0.2);
+        }
+
+        .btn-narrow-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-family: var(--font-sans);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .btn-narrow:hover .btn-narrow-text {
+            color: #fff;
+        }
+
+        /* Row 4: Treasury Angled Cyan Button */
+        .row-treasury {
+            height: 60px;
+            display: flex;
+            justify-content: flex-start;
+            width: 170px;
+        }
+
+        .btn-treasury {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.7) 0%, rgba(6, 95, 115, 0.85) 100%);
+            border: 1px solid var(--cyan-primary);
+            transform: skewX(-12deg);
+        }
+
+        .btn-treasury:hover {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.8) 0%, rgba(21, 94, 117, 0.9) 100%);
+            border-color: #38BDF8;
+            box-shadow: 0 6px 15px rgba(25, 204, 255, 0.35);
+            transform: skewX(-12deg) translateY(-2px);
+        }
+
+        .btn-treasury .btn-grid-title {
+            transform: skewX(12deg);
+            font-size: 12px;
+            color: #fff;
+            letter-spacing: 2px;
+            font-style: normal;
+        }
+
+        /* --- PREVENT DRAG FADE COVERS --- */
+        .show-ui-floating-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .show-ui-floating-btn.visible {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        /* --- CUSTOM DRAG & EDIT TOOLBAR OVERLAY --- */
+        .edit-mode-panel {
+            position: absolute;
+            top: 120px;
+            left: 40px;
+            background: var(--bg-glass-dark);
+            border: 1px solid var(--border-gold);
+            border-radius: 8px;
+            padding: 20px;
+            width: 320px;
+            z-index: 50;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(255, 191, 38, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .edit-mode-panel.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .edit-panel-header {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--gold-primary);
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,191,38,0.2);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .edit-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .edit-label span {
+            color: var(--gold-primary);
+        }
+
+        .edit-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 5px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+        }
+
+        .edit-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--gold-primary);
+            border: 2px solid #000;
+            cursor: pointer;
+            box-shadow: 0 0 5px var(--gold-primary);
+            transition: background-color 0.15s;
+        }
+
+        .edit-slider::-webkit-slider-thumb:hover {
+            background: #fff;
+        }
+
+        .edit-btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .edit-action-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .edit-action-btn:hover {
+            background: rgba(255, 191, 38, 0.15);
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+        }
+
+        .edit-action-btn.confirm {
+            background: linear-gradient(135deg, var(--gold-secondary) 0%, var(--gold-primary) 100%);
+            border-color: var(--gold-primary);
+            color: #000;
+        }
+
+        .edit-action-btn.confirm:hover {
+            background: #fff;
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .edit-tutorial-hint {
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            font-style: italic;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 8px;
+        }
+
+        /* --- FADE UI STATE TRANSITIONS --- */
+        .ui-hidden .top-header,
+        .ui-hidden .left-sidebar,
+        .ui-hidden .right-menu-panel,
+        .ui-hidden .edit-mode-panel {
+            opacity: 0 !important;
+            transform: translateY(-20px) !important;
+            pointer-events: none !important;
+        }
+
+        .ui-hidden .right-menu-panel {
+            transform: translateY(20px) !important;
+        }
+
+        /* --- DIALOG MODALS --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 2, 5, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: var(--bg-glass-dark);
+            border: 2px solid var(--border-gold);
+            border-radius: 12px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 191, 38, 0.15);
+            width: 480px;
+            padding: 35px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.visible .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--gold-primary);
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .modal-text {
+            font-size: 14.5px;
+            color: #CBD5E1;
+            line-height: 1.6;
+        }
+
+        .modal-btn-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .modal-btn {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            padding: 12px 35px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #7F1D1D 0%, #B91C1C 100%);
+            border: 1px solid #EF4444;
+            color: #fff;
+        }
+
+        .modal-btn.confirm:hover {
+            background: linear-gradient(135deg, #991B1B 0%, #DC2626 100%);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .modal-btn.cancel {
+            background: rgba(20, 20, 28, 0.9);
+            border: 1px solid var(--border-gold);
+            color: var(--gold-primary);
+        }
+
+        .modal-btn.cancel:hover {
+            background: rgba(30, 30, 40, 0.95);
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 15px rgba(255, 191, 38, 0.35);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .modal-btn:active {
+            transform: translateY(0);
+        }
+
+        /* --- SHUTDOWN ANIMATION COVER --- */
+        .shutdown-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s ease;
+        }
+
+        .shutdown-cover.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .shutdown-text {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 5px;
+            color: #EF4444;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 1s ease 0.4s;
+        }
+
+        .shutdown-cover.active .shutdown-text {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Strategy Map -->
+    <div class="background-container" id="bg-container">
+        <img src="file:///d:/OuikiDev/Maou-Sama-TD/Assets/_Game/Art/Gehenna.png" class="map-bg" alt="Lobby Ambient Map">
+    </div>
+
+    <!-- Floating Spark Particles -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Overlay Vignette & Contrast Shaders -->
+    <div class="vignette"></div>
+
+    <!-- Central Game UI Framework -->
+    <div class="game-canvas" id="canvas-root">
+
+        <!-- --- CHARACTER VIEWPORT LAYER --- -->
+        <div class="character-viewport">
+            <div class="character-container" id="maou-character" style="transform: translate(0px, 0px) scale(1);">
+                <img src="file:///d:/OuikiDev/Maou-Sama-TD/Assets/_Game/Art/Maou/Maou-Female-Unmasked.png" class="character-img" alt="Maou-Sama (Female)">
+                <div class="character-glow-overlay"></div>
+            </div>
+        </div>
+
+        <!-- --- TOP BAR NAVIGATION --- -->
+        <div class="top-header">
+            <div class="top-left-panel">
+                <!-- Cog Icon (Settings) -->
+                <div class="header-circle-btn" id="btn-settings" title="Overlord Settings">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                    </svg>
+                </div>
+                <!-- Red Emblem button -->
+                <div class="header-circle-btn crest-btn" id="btn-emblem" title="Demon Crest">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="top-right-panel">
+                <!-- Gold Pill -->
+                <div class="currency-pill" title="Treasury Gold">
+                    <div class="currency-icon-container">
+                        <img src="file:///d:/OuikiDev/Maou-Sama-TD/Assets/_Game/Art/Currencies/Gold_Icon.png" class="currency-icon-img" alt="Gold">
+                    </div>
+                    <div class="currency-value">3200</div>
+                </div>
+                <!-- Blood Crest Pill -->
+                <div class="currency-pill crest-pill" title="Blood Crests">
+                    <div class="currency-icon-container">
+                        <img src="file:///d:/OuikiDev/Maou-Sama-TD/Assets/_Game/Art/Currencies/BloodCrest_Icon.png" class="currency-icon-img" alt="Blood Crest">
+                    </div>
+                    <div class="currency-value">3200</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- LEFT SIDEBAR (Angled metal panels) --- -->
+        <div class="left-sidebar">
+            <div class="sidebar-btn" id="btn-ranks">
+                <div class="sidebar-btn-content">Ranks</div>
+            </div>
+            <div class="sidebar-btn" id="btn-daily">
+                <div class="sidebar-btn-content">Daily</div>
+            </div>
+            <div class="sidebar-btn" id="btn-grimoire">
+                <div class="sidebar-btn-content">Grimoire</div>
+            </div>
+
+            <!-- Bottom utility buttons: replaced old duplicate cogs with dedicated custom icons -->
+            <div class="utility-row">
+                <!-- Cog 1 replaced with: HIDE UI (Eye icon) -->
+                <div class="utility-circle-btn" id="btn-hide-ui" title="Hide UI Screen">
+                    <svg viewBox="0 0 24 24" id="eye-icon">
+                        <!-- Eye SVG path -->
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                </div>
+                <!-- Cog 2 replaced with: EDIT MODE (Wrench/Adjust icon) -->
+                <div class="utility-circle-btn" id="btn-edit-mode" title="Adjust Character (Drag & Scale)">
+                    <svg viewBox="0 0 24 24">
+                        <!-- Wrench / Tool SVG path -->
+                        <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.3C.5 6.7.9 9.8 2.9 11.8c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.6z"/>
+                    </svg>
+                </div>
+                <!-- Brand New Red EXIT Button -->
+                <div class="utility-circle-btn exit-btn" id="btn-exit" title="Exit to Abyss">
+                    <svg viewBox="0 0 24 24">
+                        <!-- Door exit / Power off icon -->
+                        <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- RIGHT CONTROLS PANEL --- -->
+        <div class="right-menu-panel">
+            <!-- Large Conquest Button -->
+            <div class="grid-panel-btn btn-conquest" id="btn-conquest">
+                <div class="btn-conquest-title">CONQUEST</div>
+            </div>
+
+            <!-- Row 2: Cohorts & Vassals -->
+            <div class="horizontal-split-row">
+                <div class="grid-panel-btn btn-cohorts" id="btn-cohorts">
+                    <div class="btn-grid-title">COHORTS</div>
+                </div>
+                <div class="grid-panel-btn btn-vassals" id="btn-vassals">
+                    <div class="btn-grid-title">VASSALS</div>
+                </div>
+            </div>
+
+            <!-- Row 3: Mandates, Manifest Vassals, Vertical stack -->
+            <div class="three-col-row">
+                <!-- Mandates angled left -->
+                <div class="grid-panel-btn btn-mandates" id="btn-mandates">
+                    <div class="btn-grid-title">MANDATES</div>
+                </div>
+                <!-- Giant Yellow Manifest Vassals -->
+                <div class="grid-panel-btn btn-manifest" id="btn-manifest">
+                    <div class="btn-grid-title">MANIFEST VASSALS</div>
+                </div>
+                <!-- Narrow stack (Throne, Vault) -->
+                <div class="narrow-stack">
+                    <div class="btn-narrow throne" id="btn-throne" title="Overlord Throne">
+                        <span class="btn-narrow-text">THRONE</span>
+                    </div>
+                    <div class="btn-narrow vault" id="btn-vault" title="Treasury Vault">
+                        <span class="btn-narrow-text">VAULT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Treasury -->
+            <div class="row-treasury">
+                <div class="grid-panel-btn btn-treasury" id="btn-treasury">
+                    <div class="btn-grid-title">TREASURY</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- EDIT MODE PANEL OVERLAY --- -->
+        <div class="edit-mode-panel" id="edit-panel">
+            <div class="edit-panel-header">
+                <span>Citadel Customization</span>
+                <span style="font-size: 10px; color: var(--text-muted)">Preset 1/3</span>
+            </div>
+            
+            <!-- Scale Control -->
+            <div class="edit-row">
+                <div class="edit-label">
+                    <span>Character Scale</span>
+                    <span id="scale-val">1.0x</span>
+                </div>
+                <input type="range" class="edit-slider" id="scale-slider" min="0.4" max="2.2" step="0.05" value="1.0">
+            </div>
+
+            <!-- Preset control buttons -->
+            <div class="edit-row">
+                <div class="edit-label">Position Presets</div>
+                <div class="edit-btn-group">
+                    <button class="edit-action-btn" id="btn-prev-preset">Prev</button>
+                    <button class="edit-action-btn" id="btn-next-preset">Next</button>
+                </div>
+            </div>
+
+            <div class="edit-btn-group" style="margin-top: 4px;">
+                <button class="edit-action-btn" id="btn-reset-pos">Reset</button>
+                <button class="edit-action-btn confirm" id="btn-save-preset">Confirm</button>
+            </div>
+
+            <div class="edit-tutorial-hint">
+                💡 Drag Maou-Sama directly with your mouse to reposition her within the Citadel.
+            </div>
+        </div>
+
+        <!-- --- FLOATING UNHIDE BUTTON --- -->
+        <div class="utility-circle-btn show-ui-floating-btn" id="btn-show-ui" title="Restore User Interface">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm8.25-3c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25zm1.5 0c0-5.38-4.37-9.75-9.75-9.75S2.25 6.62 2.25 12s4.37 9.75 9.75 9.75 9.75-4.37 9.75-9.75z"/>
+            </svg>
+        </div>
+
+    </div>
+
+    <!-- --- EXIT CONFIRMATION DIALOG MODAL --- -->
+    <div class="modal-overlay" id="exit-modal">
+        <div class="modal-box">
+            <div class="modal-title">Return to Abyss</div>
+            <div class="modal-text">Are you sure you wish to return to the abyssal void, Overlord? The Drakmora Legion will await your command.</div>
+            <div class="modal-btn-row">
+                <button class="modal-btn confirm" id="modal-btn-confirm">Abandon</button>
+                <button class="modal-btn cancel" id="modal-btn-cancel">Stay</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- --- SHUTDOWN ANIMATION SCENE --- -->
+    <div class="shutdown-cover" id="shutdown-cover">
+        <div class="shutdown-text" id="shutdown-text">Connection terminated. Fading to Abyss...</div>
+    </div>
+
+    <!-- Scripting for high-fidelity audio synthesis, drag-and-drop, scale, and visual effects -->
+    <script>
+        // Web Audio API Synthesizer (Metallic Fantasy Sound System)
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+        }
+
+        // Play Synthesized Hover Sound (Soft metal sliding frequency)
+        function playHoverSound() {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(320, audioCtx.currentTime + 0.15);
+                
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch (e) {
+                // Audio block fallback
+            }
+        }
+
+        // Play Synthesized Click Sound (Heavy metal locking click)
+        function playClickSound(isHeavy = false) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                
+                let osc = audioCtx.createOscillator();
+                let noise = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(isHeavy ? 90 : 250, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(isHeavy ? 40 : 120, audioCtx.currentTime + 0.3);
+                
+                noise.type = 'sawtooth';
+                noise.frequency.setValueAtTime(800, audioCtx.currentTime);
+                noise.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.05);
+
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.30);
+                
+                osc.connect(gain);
+                noise.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                noise.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+                noise.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {
+                // Audio block fallback
+            }
+        }
+
+        // Bind hover sound to all buttons
+        document.querySelectorAll('.sidebar-btn, .grid-panel-btn, .btn-narrow, .utility-circle-btn, .header-circle-btn, .edit-action-btn, .modal-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                playHoverSound();
+            });
+        });
+
+        // Ambient Parallax Map Background
+        const bgContainer = document.getElementById('bg-container');
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.clientX) / 45;
+            const y = (window.innerHeight / 2 - e.clientY) / 45;
+            bgContainer.style.transform = `translate(${x}px, ${y}px) scale(1.03)`;
+        });
+
+        // --- HIDE / SHOW USER INTERFACE ---
+        const btnHideUI = document.getElementById('btn-hide-ui');
+        const btnShowUI = document.getElementById('btn-show-ui');
+        const canvasRoot = document.getElementById('canvas-root');
+
+        btnHideUI.addEventListener('click', () => {
+            playClickSound(true);
+            canvasRoot.classList.add('ui-hidden');
+            setTimeout(() => {
+                btnShowUI.classList.add('visible');
+            }, 300);
+        });
+
+        btnShowUI.addEventListener('click', () => {
+            playClickSound(false);
+            btnShowUI.classList.remove('visible');
+            canvasRoot.classList.remove('ui-hidden');
+        });
+
+        // --- INTERACTIVE CHARACTER DRAG & SCALE (EDIT MODE) ---
+        const btnEditMode = document.getElementById('btn-edit-mode');
+        const editPanel = document.getElementById('edit-panel');
+        const maouChar = document.getElementById('maou-character');
+        const scaleSlider = document.getElementById('scale-slider');
+        const scaleVal = document.getElementById('scale-val');
+        const btnResetPos = document.getElementById('btn-reset-pos');
+        const btnSavePreset = document.getElementById('btn-save-preset');
+        
+        let isEditMode = false;
+        let isDragging = false;
+        let charX = 0;
+        let charY = 0;
+        let startX = 0;
+        let startY = 0;
+        let charScale = 1.0;
+
+        btnEditMode.addEventListener('click', () => {
+            playClickSound(false);
+            isEditMode = !isEditMode;
+            if (isEditMode) {
+                editPanel.classList.add('visible');
+                maouChar.style.filter = 'drop-shadow(0 0 15px rgba(255, 191, 38, 0.45))';
+            } else {
+                editPanel.classList.remove('visible');
+                maouChar.style.filter = 'drop-shadow(0 20px 40px rgba(0,0,0,0.8))';
+            }
+        });
+
+        // Drag functionality
+        maouChar.addEventListener('mousedown', (e) => {
+            if (!isEditMode) return;
+            isDragging = true;
+            startX = e.clientX - charX;
+            startY = e.clientY - charY;
+            maouChar.style.transition = 'none'; // Disable transition during drag
+            document.body.style.cursor = 'grabbing';
+            playClickSound(false);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            charX = e.clientX - startX;
+            charY = e.clientY - startY;
+            updateCharacterTransform();
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            maouChar.style.transition = 'transform 0.05s ease';
+            document.body.style.cursor = 'default';
+        });
+
+        // Scale functionality
+        scaleSlider.addEventListener('input', (e) => {
+            charScale = parseFloat(e.target.value);
+            scaleVal.innerText = charScale.toFixed(1) + 'x';
+            updateCharacterTransform();
+        });
+
+        function updateCharacterTransform() {
+            maouChar.style.transform = `translate(${charX}px, ${charY}px) scale(${charScale})`;
+        }
+
+        // Reset Position & Scale
+        btnResetPos.addEventListener('click', () => {
+            playClickSound(true);
+            charX = 0;
+            charY = 0;
+            charScale = 1.0;
+            scaleSlider.value = 1.0;
+            scaleVal.innerText = '1.0x';
+            maouChar.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            updateCharacterTransform();
+        });
+
+        // Save / Confirm
+        btnSavePreset.addEventListener('click', () => {
+            playClickSound(true);
+            isEditMode = false;
+            editPanel.classList.remove('visible');
+            maouChar.style.filter = 'drop-shadow(0 20px 40px rgba(0,0,0,0.8))';
+            maouChar.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        });
+
+        // --- PRESET CYCLING SIMULATION ---
+        const presets = [
+            { name: "Default View", x: 0, y: 0, s: 1.0 },
+            { name: "Overlord Close-up", x: -60, y: 220, s: 1.35 },
+            { name: "Citadel Vista", x: 120, y: -40, s: 0.8 }
+        ];
+        let currentPresetIndex = 0;
+
+        function applyPreset(index) {
+            currentPresetIndex = index;
+            const p = presets[currentPresetIndex];
+            charX = p.x;
+            charY = p.y;
+            charScale = p.s;
+            scaleSlider.value = p.s;
+            scaleVal.innerText = p.s.toFixed(1) + 'x';
+            
+            // Apply text update
+            document.querySelector('.edit-panel-header span:last-child').innerText = `Preset ${currentPresetIndex + 1}/${presets.length}`;
+            
+            maouChar.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            updateCharacterTransform();
+        }
+
+        document.getElementById('btn-next-preset').addEventListener('click', () => {
+            playClickSound(false);
+            const nextIdx = (currentPresetIndex + 1) % presets.length;
+            applyPreset(nextIdx);
+        });
+
+        document.getElementById('btn-prev-preset').addEventListener('click', () => {
+            playClickSound(false);
+            const prevIdx = (currentPresetIndex - 1 + presets.length) % presets.length;
+            applyPreset(prevIdx);
+        });
+
+        // --- EXIT SYSTEM DIALOG ---
+        const btnExit = document.getElementById('btn-exit');
+        const exitModal = document.getElementById('exit-modal');
+        const modalConfirm = document.getElementById('modal-btn-confirm');
+        const modalCancel = document.getElementById('modal-btn-cancel');
+        const shutdownCover = document.getElementById('shutdown-cover');
+
+        btnExit.addEventListener('click', () => {
+            playClickSound(true);
+            exitModal.classList.add('visible');
+        });
+
+        modalCancel.addEventListener('click', () => {
+            playClickSound(false);
+            exitModal.classList.remove('visible');
+        });
+
+        modalConfirm.addEventListener('click', () => {
+            playClickSound(true);
+            exitModal.classList.remove('visible');
+            shutdownCover.classList.add('active');
+            
+            // Synth deep pitch fade sound
+            try {
+                if (audioCtx) {
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 1.2);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 1.2);
+                }
+            } catch (e) {}
+
+            setTimeout(() => {
+                window.close(); // Close browser tab mockup
+            }, 2500);
+        });
+
+        // Placeholder clicks for other buttons to feel dynamic
+        document.querySelectorAll('.sidebar-btn, .grid-panel-btn, .btn-narrow, .header-circle-btn').forEach(btn => {
+            if (btn.id !== 'btn-exit' && btn.id !== 'btn-edit-mode') {
+                btn.addEventListener('click', () => {
+                    playClickSound(btn.id === 'btn-conquest' || btn.id === 'btn-manifest');
+                    // Spark glow reaction
+                    btn.style.transform = 'scale(0.97)';
+                    setTimeout(() => {
+                        btn.style.transform = '';
+                    }, 100);
+                });
+            }
+        });
+
+        // --- AMBIENT DRIVER PARTICLES ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Spark {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 50;
+                this.size = Math.random() * 2.5 + 0.5;
+                this.speedY = -(Math.random() * 1.5 + 0.5);
+                this.speedX = Math.random() * 0.8 - 0.4;
+                this.alpha = Math.random() * 0.5 + 0.3;
+                this.decay = Math.random() * 0.003 + 0.001;
+                // Red/Gold color shades
+                const colors = ['#FF4C4C', '#FFBF26', '#EAB308', '#EF4444'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.alpha -= this.decay;
+                if (this.alpha <= 0 || this.y < -10) {
+                    this.y = canvas.height + Math.random() * 20;
+                    this.x = Math.random() * canvas.width;
+                    this.alpha = Math.random() * 0.5 + 0.3;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = this.color;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const sparks = [];
+        for (let i = 0; i < 55; i++) {
+            sparks.push(new Spark());
+        }
+
+        function animateSparks() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            sparks.forEach(s => {
+                s.update();
+                s.draw();
+            });
+            requestAnimationFrame(animateSparks);
+        }
+        animateSparks();
+    </script>
+</body>
+</html>

@@ -97,7 +97,9 @@ namespace MaouSamaTD.UI.Gacha
 
         public void PlayRitual(List<UnitInventoryEntry> results)
         {
-            _pendingResults = results;
+            // Sort results by rarity (lowest to highest)
+            _pendingResults = results.OrderBy(r => _unitDatabase.GetUnitByID(r.UnitID)?.Rarity ?? UnitRarity.Common).ToList();
+            
             _currentIndex = 0;
             _isSkippingAll = false;
             _isSkippingCurrent = false;
@@ -243,7 +245,7 @@ namespace MaouSamaTD.UI.Gacha
         private IEnumerator RevealSingleUnit(UnitInventoryEntry result)
         {
             if (_revealRoot != null) _revealRoot.SetActive(true);
-            
+
             // Compensation UI Reset
             if (_duplicateBadge != null) _duplicateBadge.SetActive(result.IsDuplicate);
 

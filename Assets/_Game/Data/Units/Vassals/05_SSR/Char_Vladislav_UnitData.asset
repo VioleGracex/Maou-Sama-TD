@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 6d9870be-2312-4430-975f-7f17f635ad55
   CalculatedStats:
-    MaxHp: 224
+  MaxHp: 224
     Attack: 28
-    Defense: 6
+  Defense: 6
     ClassIcon: {fileID: 21300000, guid: ef81af5d0aa54b94b997151c0cebf567, type: 3}
     ClassName: Assassin
   UnitName: Vladislav
@@ -59,11 +59,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 112
-  AttackPower: 14
+  MaxHp: 224
+  AttackPower: 28
   AttackInterval: 0.8
-  Defense: 3
-  RespawnTime: 25
+  Defense: 6
+  RespawnTime: 25.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

@@ -478,7 +478,7 @@ namespace MaouSamaTD.Editor
                 
                 GUIStyle nameStyle = new GUIStyle(isSelected ? EditorStyles.whiteBoldLabel : EditorStyles.boldLabel);
                 nameStyle.fontSize = (int)(12 * _listZoom);
-                EditorGUILayout.LabelField(unit.UnitName, nameStyle);
+                EditorGUILayout.LabelField($"{unit.UnitName} [{unit.Class}]", nameStyle);
                 
                 if (_showTitles && !string.IsNullOrEmpty(unit.UnitTitle))
                 {
@@ -541,6 +541,14 @@ namespace MaouSamaTD.Editor
                             nameStyle.alignment = TextAnchor.MiddleCenter;
                             
                             EditorGUILayout.LabelField(unit.UnitName, nameStyle, GUILayout.Width(cellWidth - 10));
+                            
+                            // Draw the Class Name in a subtle blue badge
+                            GUIStyle classStyle = new GUIStyle(EditorStyles.miniLabel);
+                            classStyle.fontSize = (int)(9 * _listZoom);
+                            classStyle.alignment = TextAnchor.MiddleCenter;
+                            classStyle.fontStyle = FontStyle.Bold;
+                            classStyle.normal.textColor = new Color(0.3f, 0.7f, 1f);
+                            EditorGUILayout.LabelField($"[{unit.Class}]", classStyle, GUILayout.Width(cellWidth - 10));
                             
                             if (_showTitles && !string.IsNullOrEmpty(unit.UnitTitle))
                             {
@@ -627,6 +635,7 @@ namespace MaouSamaTD.Editor
                 DrawUnitHeader();
                 _detailScrollPos = EditorGUILayout.BeginScrollView(_detailScrollPos);
                 
+                DrawStats();
                 DrawVisuals();
                 DrawLore();
                 
@@ -657,6 +666,14 @@ namespace MaouSamaTD.Editor
 
             // Unit Title
             _selectedUnit.UnitTitle = EditorGUILayout.TextField("Unit Title", _selectedUnit.UnitTitle, new GUIStyle(EditorStyles.label) { fontStyle = FontStyle.Italic });
+
+            // Show Class Classification clearly in header
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Class Class:", EditorStyles.miniBoldLabel, GUILayout.Width(75));
+            GUIStyle headerClassStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 11 };
+            headerClassStyle.normal.textColor = new Color(0.2f, 0.7f, 1f);
+            EditorGUILayout.LabelField(_selectedUnit.Class.ToString().ToUpper(), headerClassStyle);
+            EditorGUILayout.EndHorizontal();
             
             if (EditorGUI.EndChangeCheck())
             {
@@ -677,6 +694,182 @@ namespace MaouSamaTD.Editor
                     Debug.LogWarning("No image currently loaded to ping.");
             }
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(10);
+        }
+
+        private void DrawStats()
+        {
+            EditorGUILayout.LabelField("Unit Stats & Attributes", EditorStyles.boldLabel);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+            // Save original label width
+            float originalLabelWidth = EditorGUIUtility.labelWidth;
+
+            // Row 1: Tactical Details
+            EditorGUILayout.BeginHorizontal();
+            EditorGUIUtility.labelWidth = 55f;
+            EditorGUILayout.LabelField("Rarity:", EditorStyles.miniBoldLabel, GUILayout.Width(50));
+            EditorGUILayout.LabelField(_selectedUnit.Rarity.ToString(), GUILayout.Width(70));
+            
+            EditorGUILayout.LabelField("Class:", EditorStyles.miniBoldLabel, GUILayout.Width(50));
+            EditorGUILayout.LabelField(_selectedUnit.Class.ToString(), GUILayout.Width(90));
+            
+            EditorGUILayout.LabelField("Deploy Cost:", EditorStyles.miniBoldLabel, GUILayout.Width(80));
+            EditorGUI.BeginChangeCheck();
+            int newCost = EditorGUILayout.IntField(_selectedUnit.DeploymentCost, GUILayout.Width(45));
+            if (EditorGUI.EndChangeCheck())
+            {
+                _selectedUnit.DeploymentCost = newCost;
+                EditorUtility.SetDirty(_selectedUnit);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(4);
+
+            // Row 2: Combat properties
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Range:", EditorStyles.miniBoldLabel, GUILayout.Width(50));
+            EditorGUI.BeginChangeCheck();
+            float newRange = EditorGUILayout.FloatField(_selectedUnit.Range, GUILayout.Width(45));
+            if (EditorGUI.EndChangeCheck())
+            {
+                _selectedUnit.Range = newRange;
+                EditorUtility.SetDirty(_selectedUnit);
+            }
+            GUILayout.Space(25);
+            EditorGUILayout.LabelField("Block Count:", EditorStyles.miniBoldLabel, GUILayout.Width(80));
+            EditorGUI.BeginChangeCheck();
+            int newBlock = EditorGUILayout.IntField(_selectedUnit.BlockCount, GUILayout.Width(45));
+            if (EditorGUI.EndChangeCheck())
+            {
+                _selectedUnit.BlockCount = newBlock;
+                EditorUtility.SetDirty(_selectedUnit);
+            }
+            GUILayout.Space(25);
+            EditorGUILayout.LabelField("Atk Interval:", EditorStyles.miniBoldLabel, GUILayout.Width(80));
+            EditorGUI.BeginChangeCheck();
+            float newInt = EditorGUILayout.FloatField(_selectedUnit.AttackInterval, GUILayout.Width(45));
+            if (EditorGUI.EndChangeCheck())
+            {
+                _selectedUnit.AttackInterval = newInt;
+                EditorUtility.SetDirty(_selectedUnit);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(4);
+
+            // Row 3: Flying & Redeploy
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Hit Flying:", EditorStyles.miniBoldLabel, GUILayout.Width(70));
+            EditorGUI.BeginChangeCheck();
+            bool newFly = EditorGUILayout.Toggle(_selectedUnit.CanAttackFlying, GUILayout.Width(30));
+            if (EditorGUI.EndChangeCheck())
+            {
+                _selectedUnit.CanAttackFlying = newFly;
+                EditorUtility.SetDirty(_selectedUnit);
+            }
+            GUILayout.Space(40);
+            EditorGUILayout.LabelField("Redeploy Time:", EditorStyles.miniBoldLabel, GUILayout.Width(95));
+            EditorGUI.BeginChangeCheck();
+            float newResp = EditorGUILayout.FloatField(_selectedUnit.RespawnTime, GUILayout.Width(45));
+            if (EditorGUI.EndChangeCheck())
+            {
+                _selectedUnit.RespawnTime = newResp;
+                EditorUtility.SetDirty(_selectedUnit);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(8);
+            
+            // Draw a separator line
+            Rect rect = GUILayoutUtility.GetRect(10, 1, GUILayout.ExpandWidth(true));
+            EditorGUI.DrawRect(rect, new Color(0.3f, 0.3f, 0.3f, 0.5f));
+            EditorGUILayout.Space(8);
+
+            // Calculate exact column widths based on right pane size
+            float availableWidth = position.width - _browserWidth - 50;
+            if (availableWidth < 300) availableWidth = 350; // fallback safety
+            float colWidth = availableWidth * 0.46f;
+
+            // Double Column layout: Base Stats vs Calculated/Final Stats
+            EditorGUILayout.BeginHorizontal();
+            
+            // Left column: Base Stats (Editable)
+            EditorGUILayout.BeginVertical(GUILayout.Width(colWidth));
+            EditorGUILayout.LabelField("Base Attributes", EditorStyles.miniBoldLabel);
+            
+            EditorGUIUtility.labelWidth = 95f;
+            EditorGUI.BeginChangeCheck();
+            float baseHp = EditorGUILayout.FloatField("Base Max HP", _selectedUnit.MaxHp);
+            float baseAtk = EditorGUILayout.FloatField("Base Attack", _selectedUnit.AttackPower);
+            float baseDef = EditorGUILayout.FloatField("Base Defense", _selectedUnit.Defense);
+            if (EditorGUI.EndChangeCheck())
+            {
+                _selectedUnit.MaxHp = baseHp;
+                _selectedUnit.AttackPower = baseAtk;
+                _selectedUnit.Defense = baseDef;
+                EditorUtility.SetDirty(_selectedUnit);
+                
+                // Recalculate if possible
+                var scaling = MaouSamaTD.Core.AppEntryPoint.LoadedScalingData;
+                if (scaling == null)
+                {
+                    string[] guids = AssetDatabase.FindAssets("t:ClassScalingData");
+                    if (guids.Length > 0)
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                        scaling = AssetDatabase.LoadAssetAtPath<ClassScalingData>(path);
+                    }
+                }
+                if (scaling != null)
+                {
+                    _selectedUnit.RefreshStats(scaling);
+                }
+            }
+            EditorGUILayout.EndVertical();
+
+            GUILayout.Space(15);
+
+            // Right column: Calculated Stats (Read-Only)
+            EditorGUILayout.BeginVertical(GUILayout.Width(colWidth));
+            EditorGUILayout.LabelField("Final Calculated Stats", EditorStyles.miniBoldLabel);
+            
+            EditorGUIUtility.labelWidth = 95f;
+            using (new EditorGUI.DisabledScope(true))
+            {
+                EditorGUILayout.FloatField("Final Max HP", _selectedUnit.CalculatedStats.MaxHp);
+                EditorGUILayout.FloatField("Final Attack", _selectedUnit.CalculatedStats.Attack);
+                EditorGUILayout.FloatField("Final Defense", _selectedUnit.CalculatedStats.Defense);
+            }
+            
+            EditorGUILayout.EndVertical();
+            
+            EditorGUILayout.EndHorizontal();
+
+            // Restore label width
+            EditorGUIUtility.labelWidth = originalLabelWidth;
+
+            EditorGUILayout.Space(8);
+            if (GUILayout.Button("Recalculate Stats", EditorStyles.miniButton))
+            {
+                var scaling = MaouSamaTD.Core.AppEntryPoint.LoadedScalingData;
+                if (scaling == null)
+                {
+                    string[] guids = AssetDatabase.FindAssets("t:ClassScalingData");
+                    if (guids.Length > 0)
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                        scaling = AssetDatabase.LoadAssetAtPath<ClassScalingData>(path);
+                    }
+                }
+                if (scaling != null)
+                {
+                    _selectedUnit.RefreshStats(scaling);
+                    EditorUtility.SetDirty(_selectedUnit);
+                }
+            }
+
+            EditorGUILayout.EndVertical();
             EditorGUILayout.Space(10);
         }
 

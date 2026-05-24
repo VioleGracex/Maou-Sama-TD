@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 7e9b5bb9-d57c-40a7-9f31-fc90a134e34e
   CalculatedStats:
-    MaxHp: 168
+  MaxHp: 168
     Attack: 10
-    Defense: 4
+  Defense: 5
     ClassIcon: {fileID: 21300000, guid: 872d1038e22e6fa489265971409ff0a9, type: 3}
     ClassName: Architect
   UnitName: Pyrrhus
@@ -57,11 +57,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 84
-  AttackPower: 5
-  AttackInterval: 1
-  Defense: 2
-  RespawnTime: 20
+  MaxHp: 168
+  AttackPower: 10
+  AttackInterval: 1.0
+  Defense: 5
+  RespawnTime: 20.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

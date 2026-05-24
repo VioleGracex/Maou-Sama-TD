@@ -31,7 +31,7 @@ namespace MaouSamaTD.UI
         [Header("Animation")]
         [SerializeField] private RectTransform _panelRect; 
         [SerializeField] private Button _toggleButton;
-        [SerializeField] private float _hideOffset = 200f; 
+        [SerializeField] private float _hideOffset = 400f; 
         [SerializeField] private bool _enableButtonEntranceAnimation = true;
         [SerializeField] private float _staggerDelay = 0.08f;
         [SerializeField] private float _entranceDuration = 0.35f;
@@ -66,6 +66,11 @@ namespace MaouSamaTD.UI
 
         private void Update()
         {
+            if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.hKey.wasPressedThisFrame)
+            {
+                ToggleVisibility();
+            }
+
             // 0. Update live HP ratios for all deployed active instances
             foreach (var kvp in _activeInstances)
             {
@@ -415,6 +420,11 @@ namespace MaouSamaTD.UI
                 float ratio = unit.CurrentHp / unit.MaxHp;
                 _vassalHpRatios[unit.Data] = ratio;
                 _isManuallyRetreated[unit.Data] = true; // Manual Retreat -> Fast healing (10%/s)
+                if (_currencyManager != null)
+                {
+                    int refund = Mathf.FloorToInt(unit.Data.DeploymentCost * 0.5f);
+                    _currencyManager.AddSeals(refund);
+                }
             }
             
             unit.Retreat();
@@ -428,6 +438,11 @@ namespace MaouSamaTD.UI
                 float ratio = instance.CurrentHp / instance.MaxHp;
                 _vassalHpRatios[unitData] = ratio;
                 _isManuallyRetreated[unitData] = true; // Manual Retreat -> Fast healing (10%/s)
+                if (_currencyManager != null)
+                {
+                    int refund = Mathf.FloorToInt(unitData.DeploymentCost * 0.5f);
+                    _currencyManager.AddSeals(refund);
+                }
 
                 instance.Retreat();
             }
@@ -443,6 +458,16 @@ namespace MaouSamaTD.UI
             Vector2 targetPos = _isVisible ? _visiblePos : _visiblePos + new Vector2(0, -_hideOffset);
             
             _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
+            
+            // Try to find a text component on the toggle button to update it
+            if (_toggleButton != null)
+            {
+                var textObj = _toggleButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (textObj != null)
+                {
+                    textObj.text = _isVisible ? "Hide" : "Show";
+                }
+            }
         }
 
         public void SetUnitButtonVisibility(string unitName, bool visible)

@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 65f4cf11-c14f-4e6e-b2ff-40b020735db6
   CalculatedStats:
-    MaxHp: 168
+  MaxHp: 168
     Attack: 26
-    Defense: 2
+  Defense: 3
     ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
     ClassName: Warlock
   UnitName: Kaelthas Blood Drinker
@@ -60,11 +60,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 84
-  AttackPower: 13
+  MaxHp: 168
+  AttackPower: 25
   AttackInterval: 1.5
-  Defense: 1
-  RespawnTime: 25
+  Defense: 3
+  RespawnTime: 25.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

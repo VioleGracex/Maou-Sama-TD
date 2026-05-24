@@ -185,10 +185,12 @@ namespace MaouSamaTD.Units
 
         private Vector3 FindBestUltimateDirection()
         {
-            // Align with Grid Axes: Right (+X), Left (-X)
+            // Align with Grid Axes: Right (+X), Left (-X), Up (+Z), Down (-Z)
             Vector3[] directions = { 
                 Vector3.right,  
-                Vector3.left    
+                Vector3.left,
+                Vector3.forward,
+                Vector3.back
             };
 
             Vector3 bestDir = directions[0];

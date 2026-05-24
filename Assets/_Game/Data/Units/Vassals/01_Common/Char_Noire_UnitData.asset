@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 7ba6c5e1-c120-4c46-9eef-69af0952d188
   CalculatedStats:
-    MaxHp: 120
+  MaxHp: 120
     Attack: 16
-    Defense: 2
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: a22c2788fc8b0464b806d60f527fe3b2, type: 3}
     ClassName: Gunner
   UnitName: Noire
@@ -59,11 +59,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 60
-  AttackPower: 8
-  AttackInterval: 1
-  Defense: 1
-  RespawnTime: 15
+  MaxHp: 120
+  AttackPower: 16
+  AttackInterval: 1.0
+  Defense: 2
+  RespawnTime: 15.0
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

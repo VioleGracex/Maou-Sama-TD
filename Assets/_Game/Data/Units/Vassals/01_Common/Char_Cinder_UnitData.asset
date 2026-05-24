@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: dcb7a622-3cda-4e2c-85b9-67ba4eaeae72
   CalculatedStats:
-    MaxHp: 140
+  MaxHp: 140
     Attack: 8
-    Defense: 4
+  Defense: 4
     ClassIcon: {fileID: 21300000, guid: 388393a245da00049a44d7c48a196e4c, type: 3}
     ClassName: Support
   UnitName: Cinder
@@ -54,11 +54,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 70
-  AttackPower: 4
-  AttackInterval: 1
-  Defense: 2
-  RespawnTime: 15
+  MaxHp: 140
+  AttackPower: 8
+  AttackInterval: 1.0
+  Defense: 4
+  RespawnTime: 15.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

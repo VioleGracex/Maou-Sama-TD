@@ -15,7 +15,7 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: f1a2b3c4-d5e6-4f7a-8b9c-d0e1f2a3b4c5
   EnemyName: Shadow Wings
-  EnemySprite: {fileID: 21300000, guid: aea4462737bffe84fa0f896acf2ad035, type: 3}
+  EnemySprite: {fileID: 21300000, guid: 8d3d1a9dd5cb838459e675f2a5d4a9e8, type: 3}
   FullBodyArt: {fileID: 21300000, guid: 38ab77ec4ef118a4895e8a8233d5c25f, type: 3}
   FullSplashArt: {fileID: 21300000, guid: 38ab77ec4ef118a4895e8a8233d5c25f, type: 3}
   IsBoss: 0
@@ -27,7 +27,9 @@ MonoBehaviour:
   AttackRange: 0.5
   DamageType: 0
   ExitDamage: 1
+  ExitDamageType: 0
   AttackPattern: 4
+  CustomPatternOffsets: []
   MovementType: 1
   CollisionType: 0
   EvasionType: 0
@@ -38,6 +40,8 @@ MonoBehaviour:
   Immunities: 
   Abilities: []
   CurrencyReward: 10
+  Category: 0
+  Rank: 0
   Tint: {r: 1, g: 1, b: 1, a: 1}
   VisualYOffset: 0
   BaseVisualHeight: 1

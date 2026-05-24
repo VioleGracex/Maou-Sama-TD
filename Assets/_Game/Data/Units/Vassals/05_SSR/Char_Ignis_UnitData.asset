@@ -15,13 +15,14 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: a5d4dfe9-7b7b-488d-a2d9-f38a9b279d56
   CalculatedStats:
-    MaxHp: 700
+  MaxHp: 700
     Attack: 8
-    Defense: 22
+  Defense: 22
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Ignis
   UnitTitle: The Crimson Bastion
+  IsRomanceable: 0
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: A loyal combatant in the Maou's forces holding the rank of R.
   LoreEntries:
@@ -101,18 +102,18 @@ MonoBehaviour:
   UnlockedResonanceCount: 0
   Rarity: 4
   Class: 0
-  AttackPattern: 3
+  AttackPattern: 4
   AttackType: 0
   DamageType: 0
   DeploymentCost: 26
   BlockCount: 3
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 350
-  AttackPower: 4
+  MaxHp: 700
+  AttackPower: 8
   AttackInterval: 1.2
-  Defense: 11
-  RespawnTime: 25
+  Defense: 22
+  RespawnTime: 25.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 1

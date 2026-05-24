@@ -39,9 +39,9 @@ namespace MaouSamaTD.UI
         
         // Helper to access skill icon if it's on the button
         private Image _skillIcon;
-        private PlayerUnit _selectedUnit;
+        private UnitBase _selectedUnit;
         public event System.Action OnPanelHidden;
-        public event System.Action<PlayerUnit> OnPanelShown;
+        public event System.Action<UnitBase> OnPanelShown;
         public bool IsLocked { get; set; } = false;
 
         public bool IsPanelActive => _panel != null && _panel.activeInHierarchy;
@@ -90,13 +90,14 @@ namespace MaouSamaTD.UI
             if (_closeButton) _closeButton.onClick.RemoveListener(Hide);
         }
 
-        public void Show(PlayerUnit unit)
+        public void Show(UnitBase unit)
         {
             if (_selectedUnit != null) _selectedUnit.SetHighlight(false, Color.white); // Clear old
 
             _selectedUnit = unit;
             if (_selectedUnit != null)
             {
+                if (_retreatButton != null) _retreatButton.gameObject.SetActive(_selectedUnit is PlayerUnit);
                 _selectedUnit.SetHighlight(true, Color.yellow); // Highlight new
                 UpdateVisuals();
                 OnPanelShown?.Invoke(_selectedUnit);
@@ -155,32 +156,41 @@ namespace MaouSamaTD.UI
         {
             if (_selectedUnit == null || _selectedUnit.Data == null) return;
             
-            float current = _selectedUnit.CurrentCharge;
-            float max = _selectedUnit.MaxCharge;
-            bool isFull = current >= max;
-            
-            // Toggle Button vs Charge Display
-            if (_ultButton)
+            if (_selectedUnit is PlayerUnit playerUnit)
             {
-                _ultButton.gameObject.SetActive(isFull);
-            }
-            
-            if (_ultChargeParent)
-            {
-                _ultChargeParent.gameObject.SetActive(!isFull);
-                if (!isFull && max > 0)
+                float current = playerUnit.CurrentCharge;
+                float max = playerUnit.MaxCharge;
+                bool isFull = current >= max;
+                
+                // Toggle Button vs Charge Display
+                if (_ultButton)
                 {
-                    _ultChargeFill.fillAmount = current / max;
+                    _ultButton.gameObject.SetActive(isFull);
+                }
+                
+                if (_ultChargeParent)
+                {
+                    _ultChargeParent.gameObject.SetActive(!isFull);
+                    if (!isFull && max > 0)
+                    {
+                        _ultChargeFill.fillAmount = current / max;
+                    }
+                }
+                
+                if (_ultChargeLabel)
+                {
+                    _ultChargeLabel.gameObject.SetActive(!isFull);
+                    if (!isFull && max > 0)
+                    {
+                        _ultChargeLabel.text = $"{(current/max):P0} Charging Skill";
+                    }
                 }
             }
-            
-            if (_ultChargeLabel)
+            else
             {
-                _ultChargeLabel.gameObject.SetActive(!isFull);
-                if (!isFull && max > 0)
-                {
-                    _ultChargeLabel.text = $"{(current/max):P0} Charging Skill";
-                }
+                if (_ultButton) _ultButton.gameObject.SetActive(false);
+                if (_ultChargeParent) _ultChargeParent.gameObject.SetActive(false);
+                if (_ultChargeLabel) _ultChargeLabel.gameObject.SetActive(false);
             }
         }
 
@@ -207,7 +217,7 @@ namespace MaouSamaTD.UI
             if (_vassalStatsText != null)
             {
                  // Keep summary if needed, or clear it if specialized texts handle it
-                 _vassalStatsText.text = "Stats Summary";
+                 _vassalStatsText.text = $"Stats Summary - {data.CalculatedStats.ClassName}";
             }
             
             if (_dmgText != null) _dmgText.text = $"ATK: {_selectedUnit.AttackPower}";
@@ -231,7 +241,7 @@ namespace MaouSamaTD.UI
 
         private void OnRetreatClicked()
         {
-            if (_selectedUnit != null)
+            if (_selectedUnit is PlayerUnit playerUnit)
             {
                 Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
                 if (tm != null && tm.IsInTutorial)
@@ -240,7 +250,7 @@ namespace MaouSamaTD.UI
                     return;
                 }
 
-                _selectedUnit.Retreat();
+                playerUnit.Retreat();
                 IsLocked = false;
                 Hide();
             }
@@ -248,9 +258,9 @@ namespace MaouSamaTD.UI
 
         private void OnSkillClicked()
         {
-            if (_selectedUnit != null)
+            if (_selectedUnit is PlayerUnit playerUnit)
             {
-                _selectedUnit.UseSkill();
+                playerUnit.UseSkill();
                 // Add Cooldown/Feedback later
             }
         }

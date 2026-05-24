@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: d03e1742-e5be-40ef-bdbd-4db8e6f903e2
   CalculatedStats:
-    MaxHp: 196
+  MaxHp: 196
     Attack: 12
-    Defense: 6
+  Defense: 6
     ClassIcon: {fileID: 21300000, guid: 388393a245da00049a44d7c48a196e4c, type: 3}
     ClassName: Support
   UnitName: Valerius
@@ -51,7 +51,7 @@ MonoBehaviour:
   AcquisitionDate: 0
   UnlockedResonanceCount: 0
   Rarity: 4
-  Class: 8
+  Class: 1
   AttackPattern: 4
   AttackType: 0
   DamageType: 0
@@ -59,11 +59,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 98
-  AttackPower: 6
-  AttackInterval: 1
-  Defense: 3
-  RespawnTime: 25
+  MaxHp: 196
+  AttackPower: 11
+  AttackInterval: 1.0
+  Defense: 6
+  RespawnTime: 25.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

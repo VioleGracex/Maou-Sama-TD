@@ -145,9 +145,6 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void StartGachaTutorialPull()
         {
-            // Hide the home blocker
-            if (_tutorialBlocker != null) _tutorialBlocker.HideBlocker();
-
             // Re-wire the Manifest button back to normal
             if (_btnManifest != null)
             {
@@ -162,11 +159,14 @@ namespace MaouSamaTD.UI.MainMenu
                 return;
             }
 
+            // Ensure the GameObject itself is active before opening
+            gachaPanel.gameObject.SetActive(true);
+
             // Open through flow manager first so history is correct
             UIFlowManager.Instance.OpenPanel(gachaPanel);
 
             // Then switch it into tutorial mode (this re-uses the already-opened panel)
-            gachaPanel.OpenInTutorialMode(() =>
+            gachaPanel.OpenInTutorialMode(_tutorialBlocker, () =>
             {
                 Debug.Log("[HomeUIManager] Gacha tutorial complete – welcome to Manifest Vassals!");
             });

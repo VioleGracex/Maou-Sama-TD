@@ -15,14 +15,14 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 0ed7b53a-bbfb-488b-8cc8-578d09a05f7a
   EnemyName: Bandit Boss
-  EnemySprite: {fileID: 21300000, guid: b17fd2b41f4846f45836740f6c775f16, type: 3}
-  FullBodyArt: {fileID: 21300000, guid: f88325c97d4eac5419a01d7b3e5dd9f9, type: 3}
-  FullSplashArt: {fileID: 21300000, guid: f88325c97d4eac5419a01d7b3e5dd9f9, type: 3}
+  EnemySprite: {fileID: 21300000, guid: eb511351498850348a57d99f5ca87410, type: 3}
+  FullBodyArt: {fileID: 21300000, guid: b247ea10a8a015b4a9d35e52647d320e, type: 3}
+  FullSplashArt: {fileID: 21300000, guid: b247ea10a8a015b4a9d35e52647d320e, type: 3}
   IsBoss: 1
   AnimatorController: {fileID: 0}
-  MaxHp: 1500
+  MaxHp: 600
   MoveSpeed: 0.7
-  AttackPower: 60
+  AttackPower: 25
   AttackInterval: 2
   AttackRange: 0.8
   DamageType: 0
@@ -40,6 +40,8 @@ MonoBehaviour:
   Immunities: 
   Abilities: []
   CurrencyReward: 100
+  Category: 0
+  Rank: 0
   Tint: {r: 0.7, g: 0.1, b: 0.1, a: 1}
   VisualYOffset: 0
   BaseVisualHeight: 1

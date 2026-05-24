@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 02b3010b-50ac-4ab2-a280-14a344d379db
   CalculatedStats:
-    MaxHp: 500
+  MaxHp: 500
     Attack: 6
-    Defense: 16
+  Defense: 16
     ClassIcon: {fileID: 21300000, guid: 5b777e4a752f5c24995a7be2a61a2c32, type: 3}
     ClassName: Bastion
   UnitName: Gloo
@@ -54,11 +54,11 @@ MonoBehaviour:
   BlockCount: 3
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 250
-  AttackPower: 3
+  MaxHp: 500
+  AttackPower: 6
   AttackInterval: 1.2
-  Defense: 8
-  RespawnTime: 15
+  Defense: 16
+  RespawnTime: 15.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

@@ -19,7 +19,7 @@ MonoBehaviour:
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: c6a3c3b0d52a2d44d826a79c4ac3f6e9, type: 3}
+    Background: {fileID: 0}
     Focus: 1
     BackgroundOverlay: 2
     EventID: 
@@ -29,7 +29,7 @@ MonoBehaviour:
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: c6a3c3b0d52a2d44d826a79c4ac3f6e9, type: 3}
+    Background: {fileID: 0}
     Focus: 3
     BackgroundOverlay: 2
     EventID: 

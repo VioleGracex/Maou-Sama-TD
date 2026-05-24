@@ -350,6 +350,12 @@ namespace MaouSamaTD.UI.MainMenu
             Caching.ClearCache();
 
             if (_wipeConfirmationPopup != null) _wipeConfirmationPopup.SetActive(false);
+
+            // Clear static entrypoint databases so Addressables reload on boot
+            MaouSamaTD.Core.AppEntryPoint.ResetStaticData();
+            
+            // Reset loading screen first boot flag
+            LoadingScreenPanel.ResetFirstBootState();
             
             // 3. Reload the game from the initial boot scene (index 0)
             // This will trigger AppEntryPoint to show the loading screen and re-initialize everything.

@@ -68,7 +68,7 @@ namespace MaouSamaTD.UI.Gacha
         /// initialised. Hides the single-pull button and locks tab-switching
         /// until the player confirms their first 10-pull result.
         /// </summary>
-        public void OpenInTutorialMode(System.Action onConfirmed)
+        public void OpenInTutorialMode(UIPopupBlocker blocker, System.Action onConfirmed)
         {
             _isTutorialMode = true;
             _onTutorialConfirmed = onConfirmed;
@@ -86,6 +86,17 @@ namespace MaouSamaTD.UI.Gacha
                     if (tab.Button != null) tab.Button.interactable = false;
                 }
             }
+
+            if (blocker != null && _btnMulti != null)
+            {
+                StartCoroutine(ShowTutorialBlockerRoutine(blocker, _btnMulti.GetComponent<RectTransform>()));
+            }
+        }
+
+        private System.Collections.IEnumerator ShowTutorialBlockerRoutine(UIPopupBlocker blocker, RectTransform target)
+        {
+            yield return new WaitForEndOfFrame();
+            blocker.ShowBlockerWithTarget(target);
         }
 
         private void OpenInternal()
@@ -177,6 +188,19 @@ namespace MaouSamaTD.UI.Gacha
         {
             if (_gachaManager != null && _gachaManager.CanSummon(_currentBanner, isMulti))
             {
+                if (_isTutorialMode)
+                {
+                    var blocker = Object.FindFirstObjectByType<UIPopupBlocker>(FindObjectsInactive.Include);
+                    if (blocker != null) blocker.HideBlocker();
+
+                    if (_saveManager != null && _saveManager.CurrentData != null)
+                    {
+                        _saveManager.CurrentData.GachaTutorialShown = true;
+                        _saveManager.Save();
+                        Debug.Log("[GachaPanel] Gacha tutorial marked as complete immediately upon summon.");
+                    }
+                }
+
                 _gachaManager.Summon(_currentBanner, isMulti);
             }
         }
@@ -203,20 +227,13 @@ namespace MaouSamaTD.UI.Gacha
                 UIFlowManager.Instance.UpdateNavigationFeatures(ConfiguredNavFeatures);
             }
 
-            // If this was the tutorial, mark it done and fire the callback
+            // If this was the tutorial, fire the callback
             if (_isTutorialMode)
             {
                 _isTutorialMode = false;
 
                 // Re-show the single pull button for future normal session use
                 if (_btnSingle != null) _btnSingle.gameObject.SetActive(true);
-
-                if (_saveManager != null && _saveManager.CurrentData != null)
-                {
-                    _saveManager.CurrentData.GachaTutorialShown = true;
-                    _saveManager.Save();
-                    Debug.Log("[GachaPanel] Gacha tutorial marked as complete.");
-                }
 
                 _onTutorialConfirmed?.Invoke();
                 _onTutorialConfirmed = null;

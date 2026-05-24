@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 2f2cbee0-8c00-4c94-a4eb-78567fb73532
   CalculatedStats:
-    MaxHp: 300
+  MaxHp: 300
     Attack: 12
-    Defense: 6
+  Defense: 6
     ClassIcon: {fileID: 21300000, guid: 33b39977cf7fa404194b18d31210c071, type: 3}
     ClassName: Vanguard
   UnitName: Kaldor
@@ -61,11 +61,11 @@ MonoBehaviour:
   BlockCount: 2
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 150
-  AttackPower: 6
-  AttackInterval: 1
-  Defense: 3
-  RespawnTime: 15
+  MaxHp: 300
+  AttackPower: 12
+  AttackInterval: 1.0
+  Defense: 6
+  RespawnTime: 15.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

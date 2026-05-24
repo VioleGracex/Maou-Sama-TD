@@ -99,51 +99,38 @@ namespace MaouSamaTD.UI.Treasury
             _skins.Clear();
             _gifts.Clear();
 
-            bool keyExists = false;
-            foreach (var locator in Addressables.ResourceLocators)
+            Addressables.InitializeAsync().Completed += initHandle =>
             {
-                if (locator.Locate((object)_shopLabel, typeof(object), out var locations) && locations.Count > 0)
+                _loadHandle = Addressables.LoadAssetsAsync<StoreItemSO>((object)_shopLabel, null);
+                _loadHandle.Completed += handle =>
                 {
-                    keyExists = true;
-                    break;
-                }
-            }
-
-            if (!keyExists)
-            {
-                Debug.LogWarning($"[TreasuryVaultUI] Label '{_shopLabel}' not found in Addressables catalogs. Shop items will be empty.");
-                SetupAllGrids();
-                return;
-            }
-
-            _loadHandle = Addressables.LoadAssetsAsync<StoreItemSO>((object)_shopLabel, null);
-            _loadHandle.Completed += handle =>
-            {
-                if (handle.Status == AsyncOperationStatus.Succeeded)
-                {
-                    foreach (var item in handle.Result)
+                    if (handle.Status == AsyncOperationStatus.Succeeded)
                     {
-                        switch (item.Type)
+                        foreach (var item in handle.Result)
                         {
-                            case StoreItemType.Currency:
-                                _offerings.Add(item);
-                                break;
-                            case StoreItemType.Skin:
-                                _skins.Add(item);
-                                break;
-                            case StoreItemType.Gift:
-                                _gifts.Add(item);
-                                break;
+                            switch (item.Type)
+                            {
+                                case StoreItemType.Currency:
+                                    _offerings.Add(item);
+                                    break;
+                                case StoreItemType.Skin:
+                                    _skins.Add(item);
+                                    break;
+                                case StoreItemType.Gift:
+                                    _gifts.Add(item);
+                                    break;
+                            }
                         }
-                    }
 
-                    Debug.Log($"[TreasuryVaultUI] Successfully loaded {handle.Result.Count} items from Addressables label '{_shopLabel}'.");
-                    SetupAllGrids();
-                }
-                else
-                {
-                    Debug.LogError($"[TreasuryVaultUI] Failed to load shop items from label '{_shopLabel}'.");
-                }
+                        Debug.Log($"[TreasuryVaultUI] Successfully loaded {handle.Result.Count} items from Addressables label '{_shopLabel}'.");
+                        SetupAllGrids();
+                    }
+                    else
+                    {
+                        Debug.LogError($"[TreasuryVaultUI] Failed to load shop items from label '{_shopLabel}'.");
+                        SetupAllGrids();
+                    }
+                };
             };
         }
 
@@ -230,24 +217,13 @@ namespace MaouSamaTD.UI.Treasury
             if (_visualRoot != null) _visualRoot.SetActive(true);
             if (_canvasGroup != null)
             {
-                _canvasGroup.alpha = 0;
-                _canvasGroup.DOFade(1, 0.3f).SetUpdate(true);
+                _canvasGroup.alpha = 1f;
             }
         }
 
         public void Close()
         {
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.DOFade(0, 0.3f).SetUpdate(true).OnComplete(() => 
-                {
-                    if (_visualRoot != null) _visualRoot.SetActive(false);
-                });
-            }
-            else
-            {
-                if (_visualRoot != null) _visualRoot.SetActive(false);
-            }
+            if (_visualRoot != null) _visualRoot.SetActive(false);
         }
 
         public void ResetState() { }

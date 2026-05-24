@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 3854612a-88cf-4717-86f1-275e1b90c984
   CalculatedStats:
-    MaxHp: 168
+  MaxHp: 168
     Attack: 22
-    Defense: 2
+  Defense: 3
     ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
     ClassName: Ranger
   UnitName: Vaelin
@@ -54,11 +54,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 84
-  AttackPower: 11
-  AttackInterval: 1
-  Defense: 1
-  RespawnTime: 25
+  MaxHp: 168
+  AttackPower: 22
+  AttackInterval: 1.0
+  Defense: 3
+  RespawnTime: 25.0
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

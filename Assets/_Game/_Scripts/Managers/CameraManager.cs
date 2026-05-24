@@ -129,6 +129,19 @@ namespace MaouSamaTD.Managers
                 RotateCamera(mouseX);
             }
 
+            // Mouse Panning (Middle Click)
+            if (!IsLocked && Mouse.current.middleButton.isPressed)
+            {
+                Vector2 delta = Mouse.current.delta.ReadValue() * 0.02f;
+                Vector3 move = new Vector3(-delta.x, 0, -delta.y);
+                float yaw = 0f;
+                if (_cmOrbital != null) yaw = _cmOrbital.HorizontalAxis.Value;
+                else if (Camera.main != null) yaw = Camera.main.transform.eulerAngles.y;
+                Quaternion q = Quaternion.Euler(0, yaw, 0);
+                move = q * move;
+                _cameraAnchor.position += move * _moveSpeed * Time.deltaTime;
+            }
+
             if (UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
             if (_interactionManager != null && _interactionManager.IsDragging) return;
 
@@ -183,6 +196,7 @@ namespace MaouSamaTD.Managers
         public void ToggleLock()
         {
             IsLocked = !IsLocked;
+            CenterOnMap = IsLocked;
             if (IsLocked)
             {
                 ResetToCenter();

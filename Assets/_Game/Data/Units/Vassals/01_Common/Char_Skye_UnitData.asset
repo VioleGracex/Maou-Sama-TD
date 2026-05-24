@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 66a59297-0123-4fff-b333-e9d423a1eddf
   CalculatedStats:
-    MaxHp: 120
+  MaxHp: 120
     Attack: 16
-    Defense: 2
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
     ClassName: Ranger
   UnitName: Skye
@@ -54,11 +54,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 60
-  AttackPower: 8
-  AttackInterval: 1
-  Defense: 1
-  RespawnTime: 15
+  MaxHp: 120
+  AttackPower: 16
+  AttackInterval: 1.0
+  Defense: 2
+  RespawnTime: 15.0
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

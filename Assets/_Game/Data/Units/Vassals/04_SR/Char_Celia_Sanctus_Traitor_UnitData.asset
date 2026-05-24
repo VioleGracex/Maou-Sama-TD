@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: a4a215a5-efbd-4bd0-95d0-eaca382333c1
   CalculatedStats:
-    MaxHp: 156
+  MaxHp: 156
     Attack: 24
-    Defense: 2
+  Defense: 3
     ClassIcon: {fileID: 21300000, guid: 714b3cedddc0e4a4d8bdefd2c718ac5a, type: 3}
     ClassName: Sage
   UnitName: Celia
@@ -56,11 +56,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 78
-  AttackPower: 12
+  MaxHp: 156
+  AttackPower: 23
   AttackInterval: 1.5
-  Defense: 1
-  RespawnTime: 22
+  Defense: 3
+  RespawnTime: 22.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

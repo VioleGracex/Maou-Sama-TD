@@ -850,7 +850,18 @@ namespace MaouSamaTD.UI.Cohorts
         private void SwitchTab(bool showVassals)
         {
             if (_vassalsPanel != null) _vassalsPanel.SetActive(showVassals);
-            if (_ritesPanel != null) _ritesPanel.SetActive(!showVassals);
+            if (_ritesPanel != null) 
+            {
+                _ritesPanel.SetActive(!showVassals);
+                if (!showVassals && _availableRitesContainer != null)
+                {
+                    // Force layout to stretch properly when re-enabled
+                    _availableRitesContainer.offsetMin = Vector2.zero;
+                    _availableRitesContainer.offsetMax = Vector2.zero;
+                    _availableRitesContainer.localScale = Vector3.one;
+                    UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(_availableRitesContainer);
+                }
+            }
 
             if (_vassalsTabButton != null)
             {
@@ -983,7 +994,8 @@ namespace MaouSamaTD.UI.Cohorts
                             var itemUI = itemObj.GetComponent<CohortRiteItemUI>();
                             if (itemUI != null)
                             {
-                                itemUI.Setup(rite, _isRitesLocked);
+                                bool isEquipped = activeRiteIDs.Contains(rite.name);
+                                itemUI.Setup(rite, _isRitesLocked, isEquipped);
                             }
                         }
                     }

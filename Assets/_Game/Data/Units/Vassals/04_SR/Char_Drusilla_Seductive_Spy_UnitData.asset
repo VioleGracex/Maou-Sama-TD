@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: cc723946-8526-4493-9999-3a815848d869
   CalculatedStats:
-    MaxHp: 208
+  MaxHp: 208
     Attack: 26
-    Defense: 6
+  Defense: 5
     ClassIcon: {fileID: 21300000, guid: ef81af5d0aa54b94b997151c0cebf567, type: 3}
     ClassName: Assassin
   UnitName: Drusilla
@@ -56,11 +56,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 104
-  AttackPower: 13
+  MaxHp: 208
+  AttackPower: 26
   AttackInterval: 0.8
-  Defense: 3
-  RespawnTime: 22
+  Defense: 5
+  RespawnTime: 22.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

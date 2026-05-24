@@ -156,7 +156,7 @@ namespace MaouSamaTD.UI
             }
         }
 
-        private void OnInspectorShown(PlayerUnit unit)
+        private void OnInspectorShown(UnitBase unit)
         {
             // If we are currently expanded, remember that and minimize/hide
             _wasExpandedBeforeInspector = _isExpanded;

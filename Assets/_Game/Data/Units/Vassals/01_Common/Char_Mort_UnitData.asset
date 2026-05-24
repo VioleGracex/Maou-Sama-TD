@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 2dbe1729-df19-4e56-984b-1ba76c2b6cf0
   CalculatedStats:
-    MaxHp: 120
+  MaxHp: 120
     Attack: 18
-    Defense: 2
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: eb6b1878a1c9b1841ba09c17fa760644, type: 3}
     ClassName: Necromancer
   UnitName: Mort
@@ -54,11 +54,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 60
-  AttackPower: 9
+  MaxHp: 120
+  AttackPower: 18
   AttackInterval: 1.5
-  Defense: 1
-  RespawnTime: 15
+  Defense: 2
+  RespawnTime: 15.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

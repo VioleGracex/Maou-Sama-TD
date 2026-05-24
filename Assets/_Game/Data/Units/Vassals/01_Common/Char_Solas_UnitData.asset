@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: a85c7f2b-4104-45dd-9c3a-2e0ba01b5eea
   CalculatedStats:
-    MaxHp: 120
+  MaxHp: 120
     Attack: 18
-    Defense: 2
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
     ClassName: Warlock
   UnitName: Solas
@@ -54,11 +54,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 60
-  AttackPower: 9
+  MaxHp: 120
+  AttackPower: 18
   AttackInterval: 1.5
-  Defense: 1
-  RespawnTime: 15
+  Defense: 2
+  RespawnTime: 15.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

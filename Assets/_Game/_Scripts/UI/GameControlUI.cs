@@ -72,7 +72,7 @@ namespace MaouSamaTD.UI
         [Header("HP Feedback Settings")]
         [SerializeField] private float _damageSlowMoDuration = 0.5f;
         [SerializeField] private float _damageSlowMoScale = 0.5f;
-        [SerializeField] private float _cameraShakeIntensity = 0.15f;
+        [SerializeField] private float _cameraShakeIntensity = 0.35f;
         [SerializeField] private float _cameraShakeDuration = 0.25f;
         [SerializeField] private float _hpFillDuration = 0.4f;
 
@@ -249,6 +249,11 @@ namespace MaouSamaTD.UI
 
                 var levelDb = MaouSamaTD.Core.AppEntryPoint.LoadedLevelDatabase;
                 var nextLevel = (levelDb != null && currentLevel != null) ? levelDb.AllLevels.Find(l => l.LevelIndex == currentLevel.LevelIndex + 1) : null;
+
+                if (_levelTitleText != null && currentLevel != null)
+                {
+                    _levelTitleText.text = currentLevel.LevelName;
+                }
                 
                 // If we don't find it by index+1, try the helper method in Database
                 if (nextLevel == null && levelDb != null && currentLevel != null)
@@ -845,10 +850,15 @@ namespace MaouSamaTD.UI
             // Speed toggle is allowed during tutorial to prevent soft-locks/frustration.
             // SetSpeed(newSpeed) will clear the IsTutorialTimeStop state in GameManager.
             
-            // Cycle: 1x -> 2x -> 0x -> 1x
+            // Prevent changing speed during victory cinematic (speed is 0.2) or damage hit-stop (Time.timeScale is 0.5)
+            if (_gameManager.CurrentSpeed > 0f && _gameManager.CurrentSpeed < 1f) return;
+            if (!Mathf.Approximately(Time.timeScale, _gameManager.CurrentSpeed) && Time.timeScale != 0f) return;
+
+            // Cycle: 1x -> 2x -> 4x -> 0x -> 1x
             float newSpeed = 1f;
-            if (_gameManager.CurrentSpeed >= 1f && _gameManager.CurrentSpeed < 2f) newSpeed = 2f;
-            else if (_gameManager.CurrentSpeed >= 2f) newSpeed = 0f;
+            if (Mathf.Approximately(_gameManager.CurrentSpeed, 1f)) newSpeed = 2f;
+            else if (Mathf.Approximately(_gameManager.CurrentSpeed, 2f)) newSpeed = 4f;
+            else if (Mathf.Approximately(_gameManager.CurrentSpeed, 4f)) newSpeed = 0f;
             else newSpeed = 1f;
 
             _gameManager.SetSpeed(newSpeed);

@@ -27,16 +27,34 @@ namespace MaouSamaTD.UI.Cohorts
         public SovereignRiteData RiteData { get; private set; }
         private CanvasGroup _canvasGroup;
         private Canvas _parentCanvas;
-        private GameObject _draggedVisual;
+        public GameObject DraggedVisual { get; private set; }
         private bool _isLocked = false;
         private bool _isExpanded = false;
         private bool _isAccordion = false;
         private Coroutine _animateCoroutine = null;
 
-        public void Setup(SovereignRiteData data, bool isLocked)
+        public void Setup(SovereignRiteData data, bool isLocked, bool isEquipped = false)
         {
             RiteData = data;
             _isLocked = isLocked;
+
+            _canvasGroup = GetComponent<CanvasGroup>();
+            if (_canvasGroup == null)
+                _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+            if (isEquipped)
+            {
+                _canvasGroup.alpha = 0.4f;
+                _canvasGroup.interactable = false;
+                _canvasGroup.blocksRaycasts = false;
+                _isLocked = true; // prevent dragging if already equipped
+            }
+            else
+            {
+                _canvasGroup.alpha = 1f;
+                _canvasGroup.interactable = true;
+                _canvasGroup.blocksRaycasts = true;
+            }
 
             if (_iconImage != null && data != null && data.Icon != null)
                 _iconImage.sprite = data.Icon;
@@ -144,10 +162,6 @@ namespace MaouSamaTD.UI.Cohorts
                 SetHeightImmediate(140f);
             }
 
-            _canvasGroup = GetComponent<CanvasGroup>();
-            if (_canvasGroup == null)
-                _canvasGroup = gameObject.AddComponent<CanvasGroup>();
-
             _parentCanvas = GetComponentInParent<Canvas>();
         }
 
@@ -156,16 +170,28 @@ namespace MaouSamaTD.UI.Cohorts
             if (_isLocked || RiteData == null) return;
 
             // Instantiate visual helper for dragging
-            _draggedVisual = Instantiate(gameObject, _parentCanvas.transform);
+            DraggedVisual = Instantiate(gameObject, _parentCanvas.transform);
             
             // Remove scripts on the copy to avoid double drags/drops
-            var duplicateComponent = _draggedVisual.GetComponent<CohortRiteItemUI>();
+            var duplicateComponent = DraggedVisual.GetComponent<CohortRiteItemUI>();
             if (duplicateComponent != null) Destroy(duplicateComponent);
             
+            // Fix size of visual copy so it doesn't stretch to the whole canvas
+            RectTransform originalRect = GetComponent<RectTransform>();
+            RectTransform dragRect = DraggedVisual.GetComponent<RectTransform>();
+            dragRect.anchorMin = new Vector2(0.5f, 0.5f);
+            dragRect.anchorMax = new Vector2(0.5f, 0.5f);
+            dragRect.sizeDelta = originalRect.rect.size;
+            dragRect.pivot = originalRect.pivot;
+            
+            // Remove any Layout Element on the dragged copy to avoid layout conflicts
+            var layoutElement = DraggedVisual.GetComponent<LayoutElement>();
+            if (layoutElement != null) Destroy(layoutElement);
+
             // Set opacity of visual copy
-            var cg = _draggedVisual.GetComponent<CanvasGroup>();
-            if (cg == null) cg = _draggedVisual.AddComponent<CanvasGroup>();
-            cg.alpha = 0.6f;
+            var cg = DraggedVisual.GetComponent<CanvasGroup>();
+            if (cg == null) cg = DraggedVisual.AddComponent<CanvasGroup>();
+            cg.alpha = 0.8f;
             cg.blocksRaycasts = false;
 
             // Dim original
@@ -177,16 +203,16 @@ namespace MaouSamaTD.UI.Cohorts
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (_isLocked || _draggedVisual == null) return;
+            if (_isLocked || DraggedVisual == null) return;
             UpdateDragPosition(eventData);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if (_draggedVisual != null)
+            if (DraggedVisual != null)
             {
-                Destroy(_draggedVisual);
-                _draggedVisual = null;
+                Destroy(DraggedVisual);
+                DraggedVisual = null;
             }
 
             if (_canvasGroup != null)
@@ -301,9 +327,9 @@ namespace MaouSamaTD.UI.Cohorts
 
         private void UpdateDragPosition(PointerEventData eventData)
         {
-            if (_draggedVisual == null || _parentCanvas == null) return;
+            if (DraggedVisual == null || _parentCanvas == null) return;
 
-            RectTransform rect = _draggedVisual.GetComponent<RectTransform>();
+            RectTransform rect = DraggedVisual.GetComponent<RectTransform>();
             Vector3 globalMousePos;
             if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
                 _parentCanvas.transform as RectTransform,

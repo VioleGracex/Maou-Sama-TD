@@ -66,6 +66,9 @@ namespace MaouSamaTD.UI.MainMenu
             _isTransitioning = false;
             _isLevelReady = false;
             _hasFinishedFirstBoot = false;
+
+            CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();
+            if (cg != null) cg.alpha = 1f;
             
             // Show visual root and reset components
             if (_visualRoot != null) _visualRoot.SetActive(true);
@@ -152,6 +155,12 @@ namespace MaouSamaTD.UI.MainMenu
         private static bool _hasFinishedFirstBoot = false;
         private bool _isTransitioning = false;
         private bool _isLevelReady = false;
+
+        public static void ResetFirstBootState()
+        {
+            _hasFinishedFirstBoot = false;
+            Debug.Log("[LoadingScreenPanel] Static first boot state reset.");
+        }
 
         public void NotifyLevelReady()
         {
@@ -365,6 +374,9 @@ namespace MaouSamaTD.UI.MainMenu
             Caching.ClearCache();
 
             _hasFinishedFirstBoot = false;
+            
+            // Clear static entrypoint databases so Addressables reload on boot
+            MaouSamaTD.Core.AppEntryPoint.ResetStaticData();
 
             // 3. Restart
             if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false);

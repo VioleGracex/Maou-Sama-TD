@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: fcfd7312-fe1d-457f-ba87-1dfb5f3655ea
   CalculatedStats:
-    MaxHp: 132
+  MaxHp: 132
     Attack: 20
-    Defense: 2
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: 714b3cedddc0e4a4d8bdefd2c718ac5a, type: 3}
     ClassName: Sage
   UnitName: Elowen
@@ -55,11 +55,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 66
-  AttackPower: 10
+  MaxHp: 132
+  AttackPower: 20
   AttackInterval: 1.5
-  Defense: 1
-  RespawnTime: 18
+  Defense: 2
+  RespawnTime: 18.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

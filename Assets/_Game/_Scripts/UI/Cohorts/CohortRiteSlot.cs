@@ -7,7 +7,7 @@ using MaouSamaTD.Skills;
 
 namespace MaouSamaTD.UI.Cohorts
 {
-    public class CohortRiteSlot : MonoBehaviour, IDropHandler, IPointerClickHandler
+    public class CohortRiteSlot : MonoBehaviour, IDropHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         public static CohortRiteSlot SelectedSlot { get; private set; }
 
@@ -98,6 +98,8 @@ namespace MaouSamaTD.UI.Cohorts
         {
             if (_isLocked) return;
 
+            _previewData = null; // Clear preview
+
             GameObject droppedObj = eventData.pointerDrag;
             if (droppedObj == null) return;
 
@@ -112,6 +114,13 @@ namespace MaouSamaTD.UI.Cohorts
         public void OnPointerClick(PointerEventData eventData)
         {
             if (_isLocked) return;
+
+            // Clear on right click
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                ClearSlot();
+                return;
+            }
 
             if (SelectedSlot == this)
             {
@@ -143,6 +152,75 @@ namespace MaouSamaTD.UI.Cohorts
             if (_isLocked) return;
             SetRite(data);
             OnRiteDropped?.Invoke(SlotIndex, data);
+        }
+
+        private SovereignRiteData _previewData = null;
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (_isLocked) return;
+
+            GameObject draggedObj = eventData.pointerDrag;
+            if (draggedObj != null)
+            {
+                CohortRiteItemUI riteItem = draggedObj.GetComponent<CohortRiteItemUI>();
+                if (riteItem != null && riteItem.RiteData != null)
+                {
+                    _previewData = riteItem.RiteData;
+                    SetPreviewRite(_previewData);
+
+                    // Hide the dragged visual representation
+                    if (riteItem.DraggedVisual != null)
+                        riteItem.DraggedVisual.SetActive(false);
+                }
+            }
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (_previewData != null)
+            {
+                _previewData = null;
+                SetRite(RiteData); // Restore actual data
+
+                GameObject draggedObj = eventData.pointerDrag;
+                if (draggedObj != null)
+                {
+                    CohortRiteItemUI riteItem = draggedObj.GetComponent<CohortRiteItemUI>();
+                    if (riteItem != null && riteItem.DraggedVisual != null)
+                    {
+                        riteItem.DraggedVisual.SetActive(true);
+                    }
+                }
+            }
+        }
+
+        private void SetPreviewRite(SovereignRiteData data)
+        {
+            if (data == null) return;
+
+            if (_emptyContainer != null) _emptyContainer.SetActive(false);
+            if (_filledContainer != null) _filledContainer.SetActive(true);
+
+            if (_iconImage != null)
+            {
+                if (data.Icon != null)
+                {
+                    _iconImage.sprite = data.Icon;
+                    _iconImage.enabled = true;
+                }
+                else
+                {
+                    _iconImage.enabled = false;
+                }
+            }
+            if (_nameText != null) _nameText.text = data.SkillName;
+            if (_descriptionText != null) _descriptionText.text = data.GetFormattedDescription();
+            if (_costText != null) _costText.text = $"{data.SealCost} Seals";
+            if (_cooldownText != null) _cooldownText.text = $"{data.Cooldown:F0}s CD";
+            
+            // Note: We don't want the clear button showing on a preview
+            if (_clearButton != null) _clearButton.gameObject.SetActive(false);
         }
     }
 }

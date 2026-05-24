@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 5fbba7b0-45f0-4a88-9d82-1cb8af3bcf84
   CalculatedStats:
-    MaxHp: 182
+  MaxHp: 182
     Attack: 10
-    Defense: 6
+  Defense: 5
     ClassIcon: {fileID: 21300000, guid: 872d1038e22e6fa489265971409ff0a9, type: 3}
     ClassName: Architect
   UnitName: Vesper
@@ -59,11 +59,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 91
-  AttackPower: 5
-  AttackInterval: 1
-  Defense: 3
-  RespawnTime: 22
+  MaxHp: 182
+  AttackPower: 10
+  AttackInterval: 1.0
+  Defense: 5
+  RespawnTime: 22.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

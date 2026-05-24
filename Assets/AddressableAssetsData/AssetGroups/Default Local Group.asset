@@ -31,10 +31,52 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3817ce386089508439be3a7dba9ee2d8
+    m_Address: Bloodcrest_Small_v2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shop
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c522c23ecaa2a741827b460098cd7c5
+    m_Address: PoolParty_GiftPack_v2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shop
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6a374755fa0ea984891c45a2a76a7271
     m_Address: LevelDatabase
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 706492bd4c7fb744698109e1b7333f79
+    m_Address: Bloodcrest_Medium_v2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shop
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a1155aa67ea0044798b7e08300fa12c
+    m_Address: PoolParty_SkinPack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shop
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5a820d16030f43449e71ef86ec33e76
+    m_Address: Bloodcrest_Large_v2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shop
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c30b39c25c9bc3349949199f05b0ac0c
+    m_Address: BloodCrestPack_Example
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shop
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eea7c31e2f7cad4459c4b770461f2314
+    m_Address: PoolPartyPack_Example
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shop
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 19b417a427e1a474d9e81fbe4eae59a7, type: 2}

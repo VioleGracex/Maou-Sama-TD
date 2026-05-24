@@ -15,13 +15,14 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 2138acb0-86fa-41e3-8fcf-0c4553c196cb
   CalculatedStats:
-    MaxHp: 192
-    Attack: 24
-    Defense: 4
+    MaxHp: 384
+    Attack: 48
+    Defense: 10
     ClassIcon: {fileID: 21300000, guid: b2eefbfa594336941be1d0a2f90217c8, type: 3}
     ClassName: Executioner
   UnitName: Anubis
   UnitTitle: Tomb Guardian
+  IsRomanceable: 0
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: 
   LoreEntries: []
@@ -39,8 +40,10 @@ MonoBehaviour:
   ButtonImageType: 1
   Level: 1
   Experience: 0
-  StarRating: 1
+  StarRating: 3
   Amity: 0
+  Gender: 1
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
@@ -54,10 +57,10 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 96
-  AttackPower: 12
+  MaxHp: 192
+  AttackPower: 24
   AttackInterval: 0.8
-  Defense: 2
+  Defense: 5
   RespawnTime: 20
   Range: 1
   MaxCharge: 100

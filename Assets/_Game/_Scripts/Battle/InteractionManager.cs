@@ -497,8 +497,7 @@ namespace MaouSamaTD.Managers
                     {
                         _inspectedPlayerUnit = null;
                         _inspectedEnemyUnit = enemyTarget;
-                        // For now, we don't have an EnemyInspectorUI, but we want to show range
-                        // _unitInspectorUI.Show(enemyTarget); 
+                        _unitInspectorUI.Show(enemyTarget); 
                         UpdateTileVisuals();
                     }
                     else

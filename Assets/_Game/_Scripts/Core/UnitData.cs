@@ -379,20 +379,9 @@ namespace MaouSamaTD.Units
                 if (!string.IsNullOrEmpty(classMults.OverrideClassName))
                     CalculatedStats.ClassName = classMults.OverrideClassName;
 
-                // Multipliers do not affect level 1, but level 2+
-                float baseHp, baseAtk, baseDef;
-                if (Level <= 1)
-                {
-                    baseHp = MaxHp;
-                    baseAtk = AttackPower;
-                    baseDef = Defense;
-                }
-                else
-                {
-                    baseHp = MaxHp * classMults.BaseHpMultiplier;
-                    baseAtk = AttackPower * classMults.BaseAtkMultiplier;
-                    baseDef = Defense * classMults.BaseDefMultiplier;
-                }
+                float baseHp = MaxHp;
+                float baseAtk = AttackPower;
+                float baseDef = Defense;
 
                 // Growth
                 float hpGrowth = 0, atkGrowth = 0, defGrowth = 0;

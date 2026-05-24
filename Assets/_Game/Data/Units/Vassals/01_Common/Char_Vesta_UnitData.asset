@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: d47ebcf5-9ba3-4eb7-8da6-c1696d910da2
   CalculatedStats:
-    MaxHp: 120
+  MaxHp: 120
     Attack: 18
-    Defense: 2
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: 714b3cedddc0e4a4d8bdefd2c718ac5a, type: 3}
     ClassName: Sage
   UnitName: Vesta
@@ -59,11 +59,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 60
-  AttackPower: 9
+  MaxHp: 120
+  AttackPower: 18
   AttackInterval: 1.5
-  Defense: 1
-  RespawnTime: 15
+  Defense: 2
+  RespawnTime: 15.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

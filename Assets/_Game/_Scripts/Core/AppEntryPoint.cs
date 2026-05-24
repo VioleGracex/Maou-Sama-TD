@@ -366,13 +366,18 @@ namespace MaouSamaTD.Core
                 {
                     MaouSamaTD.UI.UIFlowManager.Instance.OpenPanel(_homeUIManager);
                 }
-                else
-                {
-                    _homeUIManager.Open();
-                }
             }
         }
-}
+
+        public static void ResetStaticData()
+        {
+            _loadedUnitDatabase = null;
+            _loadedLevelDatabase = null;
+            _loadedScalingData = null;
+            _loadedSovereignRiteDatabase = null;
+            Debug.Log("[AppEntryPoint] Static database references cleared for restart.");
+        }
+    }
 }
 // Refresh telemetry
 

@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 18788262-1faf-4afb-9d0c-ca4c0dfa0ac2
   CalculatedStats:
-    MaxHp: 600
+  MaxHp: 600
     Attack: 36
-    Defense: 16
+  Defense: 15
     ClassIcon: {fileID: 21300000, guid: 791ddb5597a8af845b23b7e6a246d380, type: 3}
     ClassName: EnemyMelee
   UnitName: Belphegor
@@ -58,12 +58,12 @@ MonoBehaviour:
   BlockCount: 3
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 300
-  AttackPower: 18
-  AttackInterval: 1
-  Defense: 8
-  RespawnTime: 30
-  Range: 1
+  MaxHp: 600
+  AttackPower: 36
+  AttackInterval: 1.0
+  Defense: 15
+  RespawnTime: 30.0
+  Range: 3
   MaxCharge: 100
   ChargePerSecond: 5
   ChargePerAttack: 10

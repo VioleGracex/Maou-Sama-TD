@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 62caa3fa-beb1-4700-a407-b3c83fbcf3f8
   CalculatedStats:
-    MaxHp: 132
+  MaxHp: 132
     Attack: 20
-    Defense: 2
+  Defense: 2
     ClassIcon: {fileID: 21300000, guid: f46ea5efc8875d34a96c2a2ebe8ac29a, type: 3}
     ClassName: Warlock
   UnitName: Xylia
@@ -55,11 +55,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 1
   CustomPatternOffsets: []
-  MaxHp: 66
-  AttackPower: 10
+  MaxHp: 132
+  AttackPower: 20
   AttackInterval: 1.5
-  Defense: 1
-  RespawnTime: 18
+  Defense: 2
+  RespawnTime: 18.0
   Range: 2
   MaxCharge: 100
   ChargePerSecond: 5

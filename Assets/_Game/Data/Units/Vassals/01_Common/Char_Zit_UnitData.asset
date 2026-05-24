@@ -15,9 +15,9 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 535fccf7-a89b-4840-a9c1-819b49d4328d
   CalculatedStats:
-    MaxHp: 160
+  MaxHp: 160
     Attack: 20
-    Defense: 4
+  Defense: 4
     ClassIcon: {fileID: 21300000, guid: ef81af5d0aa54b94b997151c0cebf567, type: 3}
     ClassName: Assassin
   UnitName: Zit
@@ -54,11 +54,11 @@ MonoBehaviour:
   BlockCount: 1
   CanAttackFlying: 0
   CustomPatternOffsets: []
-  MaxHp: 80
-  AttackPower: 10
+  MaxHp: 160
+  AttackPower: 20
   AttackInterval: 0.8
-  Defense: 2
-  RespawnTime: 15
+  Defense: 4
+  RespawnTime: 15.0
   Range: 1
   MaxCharge: 100
   ChargePerSecond: 5

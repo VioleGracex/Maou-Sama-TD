@@ -177,7 +177,8 @@ namespace MaouSamaTD.UI.Vassals
                         if (nameTmp == null && tmpTexts.Length > 0) nameTmp = tmpTexts[0];
                         if (bondTmp == null && tmpTexts.Length > 1) bondTmp = tmpTexts[1];
 
-                        if (nameTmp != null) nameTmp.text = unit.UnitName.ToUpper();
+                        string displayName = string.IsNullOrEmpty(unit.UnitTitle) ? unit.UnitName.ToUpper() : $"{unit.UnitTitle.ToUpper()} {unit.UnitName.ToUpper()}";
+                        if (nameTmp != null) nameTmp.text = displayName;
                         if (bondTmp != null) bondTmp.text = "BOND LV." + (Mathf.FloorToInt(unit.Amity / 10f));
 
                         // Same for standard UI Text
@@ -195,7 +196,7 @@ namespace MaouSamaTD.UI.Vassals
                         if (nameLeg == null && legacyTexts.Length > 0) nameLeg = legacyTexts[0];
                         if (bondLeg == null && legacyTexts.Length > 1) bondLeg = legacyTexts[1];
 
-                        if (nameLeg != null) nameLeg.text = unit.UnitName.ToUpper();
+                        if (nameLeg != null) nameLeg.text = displayName;
                         if (bondLeg != null) bondLeg.text = "BOND LV." + (Mathf.FloorToInt(unit.Amity / 10f));
 
                         // Try to get Image for avatar using robust matching
@@ -219,11 +220,14 @@ namespace MaouSamaTD.UI.Vassals
                             }
                         }
 
-                        // Setup slider if it uses the Slider component
-                        var slider = itemObj.GetComponentInChildren<Slider>(true);
-                        if (slider != null)
+                        // Setup all sliders inside the item
+                        var sliders = itemObj.GetComponentsInChildren<Slider>(true);
+                        foreach (var slider in sliders)
                         {
-                            slider.value = (unit.Amity % 10f) / 10f;
+                            if (slider != null)
+                            {
+                                slider.value = (unit.Amity % 10f) / 10f;
+                            }
                         }
 
                         // Setup button click

@@ -19,10 +19,10 @@ namespace MaouSamaTD.Core
         [Inject] private SaveManager _saveManager;
         [Inject] private GameSelectionState _gameSelectionState;
         
-        // This is a static reference we can use universally since it will be loaded from Addressables
         private static UnitDatabase _loadedUnitDatabase;
         private static MaouSamaTD.Data.LevelDatabase _loadedLevelDatabase;
         private static MaouSamaTD.Units.ClassScalingData _loadedScalingData;
+        private static SovereignRiteDatabase _loadedSovereignRiteDatabase;
 
         public static UnitDatabase LoadedUnitDatabase 
         {
@@ -125,6 +125,37 @@ namespace MaouSamaTD.Core
             private set => _loadedScalingData = value;
         }
 
+        public static SovereignRiteDatabase LoadedSovereignRiteDatabase 
+        {
+            get
+            {
+                if (_loadedSovereignRiteDatabase == null)
+                {
+                    // 1. Editor Fallback
+                    #if UNITY_EDITOR
+                    _loadedSovereignRiteDatabase = UnityEditor.AssetDatabase.LoadAssetAtPath<SovereignRiteDatabase>("Assets/_Game/Data/Skills/SovereignRiteDatabase.asset");
+                    if (_loadedSovereignRiteDatabase != null) return _loadedSovereignRiteDatabase;
+                    #endif
+
+                    // 2. Runtime
+                    try 
+                    {
+                        var handle = Addressables.LoadAssetAsync<SovereignRiteDatabase>("SovereignRiteDatabase");
+                        if (handle.IsValid())
+                        {
+                            _loadedSovereignRiteDatabase = handle.WaitForCompletion();
+                        }
+                    } 
+                    catch (System.Exception e) 
+                    {
+                        Debug.LogWarning($"[AppEntryPoint] Failed to load SovereignRiteDatabase: {e.Message}");
+                    }
+                }
+                return _loadedSovereignRiteDatabase;
+            }
+            private set => _loadedSovereignRiteDatabase = value;
+        }
+
         [Header("Debug")]
         [SerializeField] private bool _grantDebugResources;
 
@@ -151,7 +182,7 @@ namespace MaouSamaTD.Core
         private IEnumerator InitializeGameDataCoroutine(Action<float> onProgress, Action onComplete)
         {
             // If already initialized, we can skip the slow and potentially crash-prone Addressables loading entirely!
-            if (LoadedUnitDatabase != null && LoadedLevelDatabase != null && LoadedScalingData != null)
+            if (LoadedUnitDatabase != null && LoadedLevelDatabase != null && LoadedScalingData != null && LoadedSovereignRiteDatabase != null)
             {
                 Debug.Log("[AppEntryPoint] Game data already initialized. Skipping Addressables reload.");
                 onProgress?.Invoke(1.0f);
@@ -178,7 +209,7 @@ namespace MaouSamaTD.Core
             var dbHandle = Addressables.LoadAssetAsync<UnitDatabase>("UnitDatabase");
             while (!dbHandle.IsDone)
             {
-                onProgress?.Invoke(0.1f + dbHandle.PercentComplete * 0.4f);
+                onProgress?.Invoke(0.1f + dbHandle.PercentComplete * 0.3f);
                 yield return null;
             }
 
@@ -186,6 +217,25 @@ namespace MaouSamaTD.Core
             {
                 LoadedUnitDatabase = dbHandle.Result;
                 Debug.Log($"[AppEntryPoint] Successfully loaded UnitDatabase. Units found: {LoadedUnitDatabase.AllUnits.Count}");
+            }
+
+            Debug.Log("[AppEntryPoint] Loading SovereignRiteDatabase from Addressables...");
+            var riteDbHandle = Addressables.LoadAssetAsync<SovereignRiteDatabase>("SovereignRiteDatabase");
+            while (!riteDbHandle.IsDone)
+            {
+                onProgress?.Invoke(0.4f + riteDbHandle.PercentComplete * 0.1f);
+                yield return null;
+            }
+
+            if (riteDbHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                LoadedSovereignRiteDatabase = riteDbHandle.Result;
+                Debug.Log($"[AppEntryPoint] Successfully loaded SovereignRiteDatabase. Rites found: {LoadedSovereignRiteDatabase.AllRites.Count}");
+            }
+            else
+            {
+                Debug.LogWarning("[AppEntryPoint] Failed to load SovereignRiteDatabase via Addressables. Creating fallback database.");
+                LoadedSovereignRiteDatabase = ScriptableObject.CreateInstance<SovereignRiteDatabase>();
             }
 
             Debug.Log("[AppEntryPoint] Loading all Levels by label 'LevelData'...");

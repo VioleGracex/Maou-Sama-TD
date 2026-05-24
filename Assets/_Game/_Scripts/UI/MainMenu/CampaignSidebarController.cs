@@ -261,15 +261,11 @@ namespace MaouSamaTD.UI.MainMenu
 
                 if (_arrowLeftSprite == null)
                 {
-#if UNITY_EDITOR
-                    _arrowLeftSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI_Pages/256x256/ic_arrow_left.png");
-#endif
+                    Debug.LogWarning("[CampaignSidebarController] Arrow Left Sprite is not assigned!");
                 }
                 if (_arrowRightSprite == null)
                 {
-#if UNITY_EDITOR
-                    _arrowRightSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI_Pages/256x256/ic_arrow_right.png");
-#endif
+                    Debug.LogWarning("[CampaignSidebarController] Arrow Right Sprite is not assigned!");
                 }
 
                 if (toggleBtn != null)
@@ -458,7 +454,7 @@ namespace MaouSamaTD.UI.MainMenu
                         var mapBtn = _page.SpawnedButtons.Find(b => b != null && b.LevelDataForCallback == level);
                         if (mapBtn != null)
                         {
-                            _page.OnLevelClickedPublic(level, isUnlocked);
+                            _page.OnLevelClickedPublic(mapBtn, level, isUnlocked);
                         }
                     }
                 };
@@ -549,11 +545,8 @@ namespace MaouSamaTD.UI.MainMenu
                             var sRect = starGo.GetComponent<RectTransform>();
                             sRect.sizeDelta = new Vector2(10f, 10f);
 
-#if UNITY_EDITOR
-                            var fullSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI/Icons/UI_Icon_Star_Full.png");
-                            var emptySprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI/Icons/UI_Icon_Star_Empty.png");
-                            img.sprite = (sIndex < starsCount) ? fullSprite : emptySprite;
-#endif
+                            // Sprites are assumed to be handled by the SidebarLevelItem prefab. 
+                            // This procedural fallback does not dynamically load sprites.
                         }
                     }
 

@@ -308,12 +308,6 @@ namespace MaouSamaTD.UI.MainMenu
                 _scrollDescriptionText.text = string.IsNullOrEmpty(level.Description)
                     ? "<color=#555555><i>No briefing data available for this sector.</i></color>"
                     : level.Description;
-                _scrollDescriptionText.fontSize = 15f;
-                _scrollDescriptionText.characterSpacing = 0.4f;
-                _scrollDescriptionText.lineSpacing = 12f;
-                _scrollDescriptionText.color = new Color(0.85f, 0.85f, 0.85f, 0.95f);
-                _scrollDescriptionText.alignment = TextAlignmentOptions.TopLeft;
-                _scrollDescriptionText.overflowMode = TextOverflowModes.Overflow;
             }
 
             // 2. Replay & Loot Rewards section
@@ -697,14 +691,15 @@ namespace MaouSamaTD.UI.MainMenu
                         {
                             if (!string.IsNullOrEmpty(cond.Description)) descriptions.Add(cond.Description);
                         }
-                        winDesc = string.Join(", ", descriptions);
+                        // Support multiple conditions on new lines
+                        winDesc = string.Join("\n<color=#10B981>● <b>WIN:</b></color> ", descriptions);
                     }
                     if (string.IsNullOrEmpty(winDesc))
                     {
                         winDesc = "Defeat all enemy waves";
                     }
-                    // Adding a newline to provide extra spacing between Win and Lose conditions
-                    _winConditionText.text = $"<color=#10B981>● <b>WIN:</b></color> {winDesc}\n";
+                    
+                    _winConditionText.text = $"<color=#10B981>● <b>WIN:</b></color> {winDesc}";
                 }
 
                 if (_loseConditionText != null)
@@ -717,7 +712,8 @@ namespace MaouSamaTD.UI.MainMenu
                         {
                             if (!string.IsNullOrEmpty(cond.Description)) descriptions.Add(cond.Description);
                         }
-                        loseDesc = string.Join(", ", descriptions);
+                        // Support multiple conditions on new lines
+                        loseDesc = string.Join("\n<color=#EF4444>● <b>LOSE:</b></color> ", descriptions);
                     }
                     if (string.IsNullOrEmpty(loseDesc))
                     {
@@ -896,7 +892,10 @@ namespace MaouSamaTD.UI.MainMenu
                 {
                     if (lvl != null && lvl.Category == LevelCategory.MainStory)
                     {
-                        storyLevels.Add(lvl);
+                        if (!campaignPage.IsLevelLockedInUI(lvl))
+                        {
+                            storyLevels.Add(lvl);
+                        }
                     }
                 }
                 storyLevels.Sort((a, b) => a.LevelIndex.CompareTo(b.LevelIndex));
@@ -919,7 +918,10 @@ namespace MaouSamaTD.UI.MainMenu
                 {
                     if (btn != null && btn.LevelDataForCallback != null && btn.LevelDataForCallback.Category == _currentLevel.Category && btn.LevelDataForCallback != _currentLevel)
                     {
-                        activeSiblings.Add(btn.LevelDataForCallback);
+                        if (!btn.IsLocked)
+                        {
+                            activeSiblings.Add(btn.LevelDataForCallback);
+                        }
                     }
                 }
 
@@ -983,8 +985,10 @@ namespace MaouSamaTD.UI.MainMenu
                 {
                     _prevLevelBtn.onClick.AddListener(() => {
                         bool isUnlocked = !campaignPage.IsLevelLockedInUI(prevLevel);
-                        Setup(prevLevel, isUnlocked, _onEngageClicked);
                         campaignPage.CenterScrollOnPosition(prevLevel.CampaignMapPosition);
+                        
+                        var mapBtn = campaignPage.SpawnedButtons.Find(b => b != null && b.LevelDataForCallback == prevLevel);
+                        campaignPage.OnLevelClickedPublic(mapBtn, prevLevel, isUnlocked);
                     });
                 }
             }
@@ -997,8 +1001,10 @@ namespace MaouSamaTD.UI.MainMenu
                 {
                     _nextLevelBtn.onClick.AddListener(() => {
                         bool isUnlocked = !campaignPage.IsLevelLockedInUI(nextLevel);
-                        Setup(nextLevel, isUnlocked, _onEngageClicked);
                         campaignPage.CenterScrollOnPosition(nextLevel.CampaignMapPosition);
+                        
+                        var mapBtn = campaignPage.SpawnedButtons.Find(b => b != null && b.LevelDataForCallback == nextLevel);
+                        campaignPage.OnLevelClickedPublic(mapBtn, nextLevel, isUnlocked);
                     });
                 }
             }

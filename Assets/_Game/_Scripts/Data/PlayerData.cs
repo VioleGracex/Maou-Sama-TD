@@ -95,13 +95,19 @@ namespace MaouSamaTD.Data
         public string CohortName;
         // 12 slots for unit IDs (matching UnitData.UnitID or name)
         public List<string> UnitIDs;
+        // 3 slots for selected Sovereign Rite IDs (filenames/names)
+        public List<string> SelectedRiteIDs;
 
-        public CohortData() { }
+        public CohortData() 
+        {
+            SelectedRiteIDs = new List<string>(new string[3] { "", "", "" });
+        }
 
         public CohortData(string name)
         {
             CohortName = name;
             UnitIDs = new List<string>(new string[12]);
+            SelectedRiteIDs = new List<string>(new string[3] { "", "", "" });
         }
     }
 

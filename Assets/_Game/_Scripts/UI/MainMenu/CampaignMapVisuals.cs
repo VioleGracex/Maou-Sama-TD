@@ -141,13 +141,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (containerImage != null)
             {
                 if (_mapSprite != null) containerImage.sprite = _mapSprite;
-                else
-                {
-#if UNITY_EDITOR
-                    _mapSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Gehenna.png");
-                    if (_mapSprite != null) containerImage.sprite = _mapSprite;
-#endif
-                }
+               
                 containerImage.color = Color.white;
             }
 
@@ -260,7 +254,9 @@ namespace MaouSamaTD.UI.MainMenu
                     rect.anchoredPosition = data.Level.CampaignMapPosition;
                 }
 
-                btn.Setup(data, (o) => _page.OnLevelClickedPublic(data.Level, !data.IsLocked));
+                btn.Setup(data, (o) => _page.OnLevelClickedPublic(btn, data.Level, !data.IsLocked));
+                btn.SetGlow(circleImg, new Color(nodeColor.r, nodeColor.g, nodeColor.b, 0.75f));
+                
                 _spawnedButtons.Add(btn);
                 _spawnedLevelNodes[data.Level] = (btn, circleGo);
 

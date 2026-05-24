@@ -117,9 +117,10 @@ namespace MaouSamaTD.UI.Skills
                 // Only set inactive if Level 1, to prevent it from hiding the toggle entirely if it's part of the same hierarchy or breaking the softlock
                 bool isLevel1 = _gameSelectionState != null && _gameSelectionState.SelectedLevel != null && 
                                 (_gameSelectionState.SelectedLevel.LevelIndex == 1 || _gameSelectionState.SelectedLevel.LevelID == "1-1");
+                bool isTutorialActive = _tutorialManager != null && _tutorialManager.IsInTutorial;
                 
-                // Ensure it is explicitly activated in Level 2+
-                _panelRect.gameObject.SetActive(!isLevel1);
+                // Ensure it is explicitly activated unless it's Level 1 AND in tutorial
+                _panelRect.gameObject.SetActive(!(isLevel1 && isTutorialActive));
 
                 // Dynamically find and setup containers and sub-elements
                 SetupUiReferences();

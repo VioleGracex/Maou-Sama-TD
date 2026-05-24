@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using MaouSamaTD.Levels;
 using System;
+using UnityEngine.EventSystems;
 
 namespace MaouSamaTD.UI.MainMenu
 {
@@ -18,7 +19,7 @@ namespace MaouSamaTD.UI.MainMenu
         public int Version => (IsLocked ? 1 : 0) ^ StarCount;
     }
 
-    public class LevelButton : MonoBehaviour, MaouSamaTD.UI.Common.IListItem<LevelDisplayData>
+    public class LevelButton : MonoBehaviour, MaouSamaTD.UI.Common.IListItem<LevelDisplayData>, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private TextMeshProUGUI _levelNameText;
         [SerializeField] private TextMeshProUGUI _levelNumberText; // e.g. "01"
@@ -31,6 +32,11 @@ namespace MaouSamaTD.UI.MainMenu
         
         private LevelDisplayData _displayData;
         private Action<LevelData> _onClick;
+
+        private Image _nodeGlow;
+        private Color _baseGlowColor;
+        private bool _isSelected;
+        private bool _isHovered;
 
         public LevelData LevelDataForCallback => _displayData.Level;
         public bool IsLocked => _displayData.IsLocked;
@@ -133,20 +139,6 @@ namespace MaouSamaTD.UI.MainMenu
                 }
             }
 
-            // Load star sprites dynamically if not assigned
-            if (_starFullSprite == null)
-            {
-#if UNITY_EDITOR
-                _starFullSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI/Icons/UI_Icon_Star_Full.png");
-#endif
-            }
-            if (_starEmptySprite == null)
-            {
-#if UNITY_EDITOR
-                _starEmptySprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/UI/Icons/UI_Icon_Star_Empty.png");
-#endif
-            }
-
             // 1. If _starImages is empty but _stars is not, populate _starImages from _stars!
             if ((_starImages == null || _starImages.Length == 0) && _stars != null && _stars.Length > 0)
             {
@@ -206,6 +198,54 @@ namespace MaouSamaTD.UI.MainMenu
         {
             _onClick = onClick;
             Setup(new LevelDisplayData { Level = data, Index = index, IsLocked = isLocked, StarCount = starCount });
+        }
+
+        public void SetGlow(Image glowImg, Color baseColor)
+        {
+            _nodeGlow = glowImg;
+            _baseGlowColor = baseColor;
+            UpdateGlowColor();
+        }
+
+        public void SetSelected(bool selected)
+        {
+            _isSelected = selected;
+            UpdateGlowColor();
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (_button != null && !_button.interactable) return;
+            _isHovered = true;
+            UpdateGlowColor();
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (_button != null && !_button.interactable) return;
+            _isHovered = false;
+            UpdateGlowColor();
+        }
+
+        private void UpdateGlowColor()
+        {
+            if (_nodeGlow == null) return;
+            
+            if (_isSelected)
+            {
+                // Inspect / Selected color: Bright Gold/Yellow
+                _nodeGlow.color = new Color(1f, 0.8f, 0.1f, 1f);
+            }
+            else if (_isHovered)
+            {
+                // Hover color: Bright Cyan/White
+                _nodeGlow.color = new Color(0.8f, 1f, 1f, 0.9f);
+            }
+            else
+            {
+                // Default category color
+                _nodeGlow.color = _baseGlowColor;
+            }
         }
 
         private void OnClicked()

@@ -339,11 +339,7 @@ namespace MaouSamaTD.Managers
              if (CurrentData == null) return;
              GetCohort(index); 
              
-             CurrentData.Cohorts[index] = new CohortData
-             {
-                 CohortName = CurrentData.Cohorts[index].CohortName,
-                 UnitIDs = unitIDs
-             };
+             CurrentData.Cohorts[index].UnitIDs = unitIDs;
              Save();
         }
         #endregion

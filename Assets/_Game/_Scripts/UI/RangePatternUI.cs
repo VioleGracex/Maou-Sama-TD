@@ -88,5 +88,63 @@ namespace MaouSamaTD.UI
                 }
             }
         }
+        public void SetAoePattern(MaouSamaTD.Skills.AoeShape shape, float radius)
+        {
+            if (_tileImages == null || _tileImages.Length < 25) return;
+
+            // Reset all
+            for (int i = 0; i < _tileImages.Length; i++)
+            {
+                _tileImages[i].color = _emptyColor;
+            }
+
+            // Set Center (Unit)
+            _tileImages[CenterIndex].color = _unitColor;
+
+            if (radius <= 0) return;
+
+            int intRadius = Mathf.CeilToInt(radius);
+            Vector2Int center = new Vector2Int(0, 0);
+
+            // Calculate active tiles
+            for (int x = -intRadius; x <= intRadius; x++)
+            {
+                for (int y = -intRadius; y <= intRadius; y++)
+                {
+                    if (x == 0 && y == 0) continue;
+                    
+                    Vector2Int target = new Vector2Int(x, y);
+                    if (IsInShape(shape, radius, center, target))
+                    {
+                        SetTile(x, y, _rangeColor);
+                    }
+                }
+            }
+        }
+
+        private bool IsInShape(MaouSamaTD.Skills.AoeShape shape, float radius, Vector2Int origin, Vector2Int target)
+        {
+            Vector2Int offset = target - origin;
+            float dx = offset.x;
+            float dy = offset.y;
+            float dist = offset.magnitude;
+
+            switch (shape)
+            {
+                case MaouSamaTD.Skills.AoeShape.Circle:
+                    return dist <= radius + 0.1f;
+                case MaouSamaTD.Skills.AoeShape.Square:
+                    return Mathf.Abs(dx) <= radius && Mathf.Abs(dy) <= radius;
+                case MaouSamaTD.Skills.AoeShape.Cross:
+                    return (dx == 0 && Mathf.Abs(dy) <= radius) || (dy == 0 && Mathf.Abs(dx) <= radius);
+                case MaouSamaTD.Skills.AoeShape.DiagonalX:
+                    return Mathf.Abs(dx) == Mathf.Abs(dy) && Mathf.Abs(dx) <= radius;
+                case MaouSamaTD.Skills.AoeShape.Star:
+                    return ((dx == 0 || dy == 0) || Mathf.Abs(dx) == Mathf.Abs(dy)) && Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy)) <= radius;
+                // Custom shape logic usually handled differently, ignoring here as we don't have custom offsets in this context
+                default:
+                    return dist <= radius + 0.1f;
+            }
+        }
     }
 }

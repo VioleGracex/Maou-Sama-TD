@@ -32,6 +32,11 @@ namespace MaouSamaTD.Managers
             SelectedCohort = new List<UnitData>(cohort);
         }
 
+        public void SetSelectedRites(List<MaouSamaTD.Skills.SovereignRiteData> rites)
+        {
+            SelectedRites = new List<MaouSamaTD.Skills.SovereignRiteData>(rites);
+        }
+
         public void Clear()
         {
             SelectedLevel = null;

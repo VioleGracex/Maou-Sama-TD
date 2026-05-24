@@ -29,6 +29,14 @@ namespace MaouSamaTD.UI
             Instance = this;
         }
 
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+        }
+
         private void Start()
         {
             if (_backBtnRoot != null)
@@ -106,7 +114,17 @@ namespace MaouSamaTD.UI
             {
                 if (_debug) Debug.Log("[UIFlow] GoBack called on root or empty stack. Clearing history.");
                 _isProcessing = false; // Must reset before calling ClearHistory which also uses it
+                var originalTopPanel = _panelStack.Count > 0 ? _panelStack.Peek() : null;
                 ClearHistory(true, force);
+
+                if (_panelStack.Count == 0 && originalTopPanel != null && !(originalTopPanel is HomeUIManager))
+                {
+                    var home = Object.FindAnyObjectByType<HomeUIManager>(FindObjectsInactive.Include);
+                    if (home != null)
+                    {
+                        OpenPanel(home);
+                    }
+                }
                 UpdateGlobalButtons();
                 return;
             }

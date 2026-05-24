@@ -231,7 +231,8 @@ namespace UIPresetManager
             GUILayout.Label($"Presets  ({filtered.Count})", EditorStyles.boldLabel);
             GUILayout.FlexibleSpace();
             GUILayout.Label("Scene",  EditorStyles.miniLabel, GUILayout.Width(90));
-            GUILayout.Label("Apply",  EditorStyles.miniLabel, GUILayout.Width(48));
+            GUILayout.Label("Apply",  EditorStyles.miniLabel, GUILayout.Width(45));
+            GUILayout.Label("Save",   EditorStyles.miniLabel, GUILayout.Width(26));
             GUILayout.Label("Del",    EditorStyles.miniLabel, GUILayout.Width(28));
             EditorGUILayout.EndHorizontal();
 
@@ -392,7 +393,7 @@ namespace UIPresetManager
                     GUI.FocusControl("RenameField");
 
                 bool confirm = (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return) ||
-                               GUI.Button(new Rect(rowRect.xMax - 90, y + 6, 40, 20), "✓ OK", EditorStyles.miniButton);
+                               GUI.Button(new Rect(rowRect.xMax - 116, y + 6, 45, 20), "✓ OK", EditorStyles.miniButton);
                 bool cancel  = Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape;
 
                 if (confirm) { CommitRename(preset, scenePath, _renameBuffer); _renamingIndex = -1; Event.current.Use(); }
@@ -416,16 +417,26 @@ namespace UIPresetManager
             GUI.backgroundColor = applyReady ? (isCurrentScene ? ColApplyBtn : ColBadgeOther) : ColBusy;
             GUI.enabled = applyReady;
 
-            if (GUI.Button(new Rect(rowRect.xMax - 90, y + 6, 50, 20), "Apply", EditorStyles.miniButton))
+            if (GUI.Button(new Rect(rowRect.xMax - 116, y + 6, 45, 20), "Apply", EditorStyles.miniButton))
             {
                 OnApplyClicked(preset, scenePath, isCurrentScene);
             }
 
             GUI.enabled = true;
 
+            // ── Overwrite Button ──────────────────────────────────────────────
+            GUI.backgroundColor = applyReady && isCurrentScene ? new Color(0.2f, 0.45f, 0.75f) : ColBusy;
+            GUI.enabled = applyReady && isCurrentScene;
+            if (GUI.Button(new Rect(rowRect.xMax - 68, y + 6, 26, 20), "💾", EditorStyles.miniButton))
+            {
+                OnOverwriteClicked(preset, scenePath);
+            }
+
+            GUI.enabled = true;
+
             // ── Delete Button ─────────────────────────────────────────────────
             GUI.backgroundColor = ColDeleteBtn;
-            if (GUI.Button(new Rect(rowRect.xMax - 36, y + 6, 28, 20), "✕", EditorStyles.miniButton))
+            if (GUI.Button(new Rect(rowRect.xMax - 38, y + 6, 28, 20), "✕", EditorStyles.miniButton))
             {
                 OnDeleteClicked(preset, scenePath);
             }
@@ -512,10 +523,9 @@ namespace UIPresetManager
             }
         }
 
-        private void OnDropPresetsToGroup(string targetGroupName)
+        private void MovePresetsToGroup(List<int> presetIds, string targetGroupName)
         {
-            var draggedIds = DragAndDrop.GetGenericData("UIPresets") as List<int>;
-            if (draggedIds == null || draggedIds.Count == 0) return;
+            if (presetIds == null || presetIds.Count == 0) return;
 
             string finalGroup = targetGroupName == "Ungrouped" ? "" : targetGroupName;
             int movedCount = 0;
@@ -527,7 +537,7 @@ namespace UIPresetManager
             foreach (var (scenePath, preset) in _allPresets)
             {
                 int hash = GetStableIndex(preset, scenePath);
-                if (draggedIds.Contains(hash))
+                if (presetIds.Contains(hash))
                 {
                     if (preset.group == finalGroup) continue; // no change
 
@@ -555,6 +565,12 @@ namespace UIPresetManager
                 string targetDisplay = string.IsNullOrEmpty(finalGroup) ? "Ungrouped" : $"'{finalGroup}'";
                 ShowFeedback($"Moved {movedCount} preset(s) to {targetDisplay}.", MessageType.Info);
             }
+        }
+
+        private void OnDropPresetsToGroup(string targetGroupName)
+        {
+            var draggedIds = DragAndDrop.GetGenericData("UIPresets") as List<int>;
+            MovePresetsToGroup(draggedIds, targetGroupName);
         }
 
         // ─── BOTTOM PANEL (Save + Screenshot) ────────────────────────────────
@@ -731,6 +747,49 @@ namespace UIPresetManager
             }
         }
 
+        private void OnOverwriteClicked(UIPreset preset, string scenePath)
+        {
+            if (_isBusy) return;
+            if (!UIPresetCapture.IsEditorSafe()) return;
+
+            Scene activeScene = SceneManager.GetActiveScene();
+            if (activeScene.path != scenePath)
+            {
+                ShowFeedback($"Cannot overwrite preset for a different scene.", MessageType.Warning);
+                return;
+            }
+
+            bool overwrite = EditorUtility.DisplayDialog("Overwrite Preset", $"Overwrite preset '{preset.name}' with the current scene layout?", "Overwrite", "Cancel");
+            if (!overwrite) return;
+
+            _isBusy = true;
+            try
+            {
+                var lib = UIPresetStorage.Load(scenePath);
+                
+                UIPreset captured = UIPresetCapture.CaptureCurrentScene(preset.name);
+                captured.group = preset.group;
+                
+                int index = lib.presets.FindIndex(p => string.Equals(p.name, preset.name, StringComparison.OrdinalIgnoreCase));
+                if (index >= 0)
+                {
+                    lib.presets[index] = captured;
+                }
+                else
+                {
+                    lib.presets.Add(captured);
+                }
+                
+                UIPresetStorage.Save(lib, scenePath);
+                RefreshAllPresets();
+                ShowFeedback($"✔ Overwrote '{preset.name}'.", MessageType.Info);
+            }
+            finally
+            {
+                _isBusy = false;
+            }
+        }
+
         private void OnDeleteClicked(UIPreset preset, string scenePath)
         {
             if (_isBusy) return;
@@ -837,7 +896,7 @@ namespace UIPresetManager
         {
             TextInputWindow.Show("New Group Name", "Group Name:", "", (newName) =>
             {
-                if (!string.IsNullOrWhiteSpace(newName)) OnDropPresetsToGroup(newName.Trim());
+                if (!string.IsNullOrWhiteSpace(newName)) MovePresetsToGroup(_selectedIndices.ToList(), newName.Trim());
             });
         }
 

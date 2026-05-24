@@ -136,7 +136,7 @@ namespace MaouSamaTD.Managers
 
                 // Show Sovereign Rite panel — tutorials may have hidden it for Level 1.
                 // In free-play / solo mode it must always be accessible.
-                var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>(FindObjectsInactive.Include);
                 if (skillPanel != null)
                 {
                     skillPanel.gameObject.SetActive(true);

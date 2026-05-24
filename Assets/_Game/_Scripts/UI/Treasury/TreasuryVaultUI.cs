@@ -99,6 +99,23 @@ namespace MaouSamaTD.UI.Treasury
             _skins.Clear();
             _gifts.Clear();
 
+            bool keyExists = false;
+            foreach (var locator in Addressables.ResourceLocators)
+            {
+                if (locator.Locate((object)_shopLabel, typeof(object), out var locations) && locations.Count > 0)
+                {
+                    keyExists = true;
+                    break;
+                }
+            }
+
+            if (!keyExists)
+            {
+                Debug.LogWarning($"[TreasuryVaultUI] Label '{_shopLabel}' not found in Addressables catalogs. Shop items will be empty.");
+                SetupAllGrids();
+                return;
+            }
+
             _loadHandle = Addressables.LoadAssetsAsync<StoreItemSO>((object)_shopLabel, null);
             _loadHandle.Completed += handle =>
             {

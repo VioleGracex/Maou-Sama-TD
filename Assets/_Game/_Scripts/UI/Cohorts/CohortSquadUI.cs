@@ -3,12 +3,14 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using MaouSamaTD.Data;
+using MaouSamaTD.Skills;
 using MaouSamaTD.UI.MainMenu;
 using Assets.SimpleLocalization.Scripts;
 using Zenject;
 using MaouSamaTD.UI.Cohorts;
 using MaouSamaTD.UI;
 using MaouSamaTD.UI.Vassals;
+using MaouSamaTD.Core;
 
 namespace MaouSamaTD.UI.Cohorts
 {
@@ -50,6 +52,24 @@ namespace MaouSamaTD.UI.Cohorts
         [SerializeField] private Button _confirmLeaveButton;
         [SerializeField] private Button _cancelLeaveButton;
 
+        [Header("Sovereign Rites Tab")]
+        [SerializeField] private Button _vassalsTabButton;
+        [SerializeField] private Button _ritesTabButton;
+        [SerializeField] private GameObject _vassalsPanel;
+        [SerializeField] private GameObject _ritesPanel;
+        [SerializeField] private GameObject _ritesTabBlocker; // View-only lock overlay on the rites tab
+        [SerializeField] private List<CohortRiteSlot> _riteSlots = new List<CohortRiteSlot>();
+        [SerializeField] private RectTransform _availableRitesContainer;
+        [SerializeField] private GameObject _riteItemPrefab;
+        
+        [Header("Rites Filtering")]
+        [SerializeField] private TMPro.TMP_InputField _searchField;
+        [SerializeField] private TMPro.TMP_Dropdown _sortDropdown;
+        [SerializeField] private UnityEngine.UI.Button[] _filterButtons;
+
+        private string _activeRiteFilter = "All";
+        private bool _isRitesLocked = false;
+
         [Header("Button Colors")]
         [SerializeField] private Color _highlightColor = new Color(1f, 0.82f, 0.12f); // Gold/Yellow
         [SerializeField] private Color _normalColor = Color.white;
@@ -90,6 +110,19 @@ namespace MaouSamaTD.UI.Cohorts
             if (_confirmLeaveButton != null) _confirmLeaveButton.onClick.AddListener(OnConfirmLeave);
             if (_cancelLeaveButton != null) _cancelLeaveButton.onClick.AddListener(OnCancelLeave);
 
+            if (_vassalsTabButton != null) _vassalsTabButton.onClick.AddListener(() => SwitchTab(true));
+            if (_ritesTabButton != null) _ritesTabButton.onClick.AddListener(() => SwitchTab(false));
+
+            for (int i = 0; i < _riteSlots.Count; i++)
+            {
+                int index = i;
+                if (_riteSlots[i] != null)
+                {
+                    _riteSlots[i].OnRiteDropped += (slotIdx, data) => OnRiteDroppedInSlot(slotIdx, data);
+                    _riteSlots[i].OnRiteCleared += (slotIdx) => OnRiteClearedFromSlot(slotIdx);
+                }
+            }
+
             InitializeData();
             SetupSlots();
             SetupCohortButtons();
@@ -102,6 +135,10 @@ namespace MaouSamaTD.UI.Cohorts
             if (_visualRoot == null) return;
             _visualRoot.SetActive(true);
             
+            _isRitesLocked = false;
+            if (_ritesTabBlocker != null) _ritesTabBlocker.SetActive(false);
+            SwitchTab(true); // Default to Vassals tab
+
             if (_titleText != null && !_isReadinessMode) 
                 _titleText.text = LocalizationManager.Localize("Cohort.Title.Default");
 
@@ -133,6 +170,13 @@ namespace MaouSamaTD.UI.Cohorts
             InitializeData();
 
             _isLockedMode = level != null && level.IsCohortLocked;
+            _isRitesLocked = level != null && level.IsRitesLocked;
+            
+            if (_ritesTabBlocker != null)
+                _ritesTabBlocker.SetActive(_isRitesLocked);
+
+            SwitchTab(true); // Default to Vassals tab
+
             bool hasPremade = level != null && level.PremadeCohort != null && level.PremadeCohort.Count > 0;
 
             if (hasPremade)
@@ -174,10 +218,13 @@ namespace MaouSamaTD.UI.Cohorts
             _isDirty = false;
             _isReadinessMode = false;
             _isLockedMode = false;
+            _isRitesLocked = false;
             if (_noEditBlocker != null) _noEditBlocker.SetActive(false);
+            if (_ritesTabBlocker != null) _ritesTabBlocker.SetActive(false);
             
             InitializeData();
             LoadCohortToTemp(_playerData.CurrentCohortIndex);
+            SwitchTab(true); // Reset to Vassals tab
         }
 
         public bool RequestClose()
@@ -406,6 +453,7 @@ namespace MaouSamaTD.UI.Cohorts
 
             UpdateCohortButtonVisuals();
             UpdateSaveButtonState();
+            RefreshRitesUI();
         }
 
         private void UpdateCohortButtonVisuals()
@@ -506,6 +554,31 @@ namespace MaouSamaTD.UI.Cohorts
             {
                 _selectionState.SetLevel(_currentLevel);
                 _selectionState.SetCohort(selectedUnits);
+
+                List<MaouSamaTD.Skills.SovereignRiteData> finalRites = new List<MaouSamaTD.Skills.SovereignRiteData>();
+                if (_isRitesLocked && _currentLevel != null)
+                {
+                    var defaultList = _playerData.Gender == MaouSamaTD.Data.MaouGender.Male 
+                        ? _currentLevel.MaleSovereignRites 
+                        : _currentLevel.FemaleSovereignRites;
+                    if (defaultList != null) finalRites.AddRange(defaultList);
+                }
+                else if (_viewingCohortIndex >= 0 && _viewingCohortIndex < _playerData.Cohorts.Count)
+                {
+                    var cohort = _playerData.Cohorts[_viewingCohortIndex];
+                    if (cohort.SelectedRiteIDs != null)
+                    {
+                        foreach (var id in cohort.SelectedRiteIDs)
+                        {
+                            if (!string.IsNullOrEmpty(id))
+                            {
+                                var rite = MaouSamaTD.Core.AppEntryPoint.LoadedSovereignRiteDatabase?.GetRiteByID(id);
+                                if (rite != null) finalRites.Add(rite);
+                            }
+                        }
+                    }
+                }
+                _selectionState.SetSelectedRites(finalRites);
             }
 
             var loader = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
@@ -773,6 +846,263 @@ namespace MaouSamaTD.UI.Cohorts
             RefreshUI();
             Debug.Log("[CohortSquadUI] Multi selection applied to squad slots.");
         }
+
+        private void SwitchTab(bool showVassals)
+        {
+            if (_vassalsPanel != null) _vassalsPanel.SetActive(showVassals);
+            if (_ritesPanel != null) _ritesPanel.SetActive(!showVassals);
+
+            if (_vassalsTabButton != null)
+            {
+                var cb = _vassalsTabButton.colors;
+                cb.normalColor = showVassals ? _highlightColor : _normalColor;
+                cb.selectedColor = showVassals ? _highlightColor : _normalColor;
+                _vassalsTabButton.colors = cb;
+            }
+
+            if (_ritesTabButton != null)
+            {
+                var cb = _ritesTabButton.colors;
+                cb.normalColor = !showVassals ? _highlightColor : _normalColor;
+                cb.selectedColor = !showVassals ? _highlightColor : _normalColor;
+                _ritesTabButton.colors = cb;
+            }
+        }
+
+        private void RefreshRitesUI()
+        {
+            if (_playerData == null) return;
+
+            // 1. Refresh active slots
+            List<string> activeRiteIDs = new List<string>(new string[3] { "", "", "" });
+            
+            if (_isRitesLocked && _currentLevel != null)
+            {
+                var defaults = _playerData.Gender == MaouSamaTD.Data.MaouGender.Male 
+                    ? _currentLevel.MaleSovereignRites 
+                    : _currentLevel.FemaleSovereignRites;
+
+                if (defaults != null)
+                {
+                    for (int i = 0; i < Mathf.Min(3, defaults.Count); i++)
+                    {
+                        if (defaults[i] != null) activeRiteIDs[i] = defaults[i].name;
+                    }
+                }
+            }
+            else if (_viewingCohortIndex >= 0 && _viewingCohortIndex < _playerData.Cohorts.Count)
+            {
+                var cohort = _playerData.Cohorts[_viewingCohortIndex];
+                if (cohort.SelectedRiteIDs == null)
+                {
+                    cohort.SelectedRiteIDs = new List<string>(new string[3] { "", "", "" });
+                }
+                while (cohort.SelectedRiteIDs.Count < 3) cohort.SelectedRiteIDs.Add("");
+                activeRiteIDs = cohort.SelectedRiteIDs;
+            }
+
+            for (int i = 0; i < _riteSlots.Count; i++)
+            {
+                if (i >= 3) break;
+                var slot = _riteSlots[i];
+                if (slot == null) continue;
+
+                slot.Initialize(i, _isRitesLocked);
+
+                string id = activeRiteIDs[i];
+                if (string.IsNullOrEmpty(id))
+                {
+                    slot.SetRite(null);
+                }
+                else
+                {
+                    var rite = AppEntryPoint.LoadedSovereignRiteDatabase?.GetRiteByID(id);
+                    slot.SetRite(rite);
+                }
+            }
+
+            // 2. Refresh available rites pool
+            if (_availableRitesContainer != null)
+            {
+                // Safely destroy existing placeholders/items immediately to prevent layout glitches
+                for (int i = _availableRitesContainer.childCount - 1; i >= 0; i--)
+                {
+                    Transform child = _availableRitesContainer.GetChild(i);
+                    child.SetParent(null); // Detach immediately so layout system ignores it this frame
+                    Destroy(child.gameObject);
+                }
+
+                if (!_isRitesLocked && AppEntryPoint.LoadedSovereignRiteDatabase != null && _riteItemPrefab != null)
+                {
+                    var allRites = AppEntryPoint.LoadedSovereignRiteDatabase.AllRites;
+                    if (allRites != null)
+                    {
+                        List<MaouSamaTD.Skills.SovereignRiteData> filteredRites = new List<MaouSamaTD.Skills.SovereignRiteData>();
+                        string searchText = _searchField != null ? _searchField.text.ToLower() : "";
+                        
+                        foreach (var rite in allRites)
+                        {
+                            if (rite != null && rite.Archetype == _playerData.Gender)
+                            {
+                                bool passSearch = string.IsNullOrEmpty(searchText) || 
+                                                  (!string.IsNullOrEmpty(rite.SkillName) && rite.SkillName.ToLower().Contains(searchText));
+                                
+                                bool passFilter = true;
+                                if (_activeRiteFilter != "All")
+                                {
+                                    passFilter = rite.EffectType.ToString().Equals(_activeRiteFilter, System.StringComparison.OrdinalIgnoreCase);
+                                }
+
+                                if (passSearch && passFilter)
+                                {
+                                    filteredRites.Add(rite);
+                                }
+                            }
+                        }
+
+                        if (_sortDropdown != null)
+                        {
+                            switch (_sortDropdown.value)
+                            {
+                                case 1: // Name (A-Z)
+                                    filteredRites.Sort((a, b) => string.Compare(a.SkillName, b.SkillName));
+                                    break;
+                                case 2: // Cost (Low-High)
+                                    filteredRites.Sort((a, b) => a.SealCost.CompareTo(b.SealCost));
+                                    break;
+                                case 3: // Cost (High-Low)
+                                    filteredRites.Sort((a, b) => b.SealCost.CompareTo(a.SealCost));
+                                    break;
+                            }
+                        }
+
+                        foreach (var rite in filteredRites)
+                        {
+                            GameObject itemObj = Instantiate(_riteItemPrefab, _availableRitesContainer);
+                            itemObj.SetActive(true);
+                            var itemUI = itemObj.GetComponent<CohortRiteItemUI>();
+                            if (itemUI != null)
+                            {
+                                itemUI.Setup(rite, _isRitesLocked);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            UpdateFilterButtonVisuals();
+        }
+
+        private void UpdateFilterButtonVisuals()
+        {
+            if (_filterButtons == null) return;
+            foreach (var btn in _filterButtons)
+            {
+                if (btn != null)
+                {
+                    var txt = btn.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    bool isActive = false;
+                    if (txt != null)
+                    {
+                        isActive = txt.text.Equals(_activeRiteFilter, System.StringComparison.OrdinalIgnoreCase);
+                    }
+                    
+                    var outline = btn.GetComponent<UnityEngine.UI.Outline>();
+                    if (outline != null)
+                    {
+                        outline.enabled = isActive;
+                    }
+                    else
+                    {
+                        var cb = btn.colors;
+                        cb.normalColor = isActive ? _highlightColor : _normalColor;
+                        cb.selectedColor = isActive ? _highlightColor : _normalColor;
+                        btn.colors = cb;
+                    }
+                }
+            }
+        }
+        
+        private void OnRiteDroppedInSlot(int slotIndex, SovereignRiteData riteData)
+        {
+            if (_isLockedMode || _isRitesLocked || _viewingCohortIndex < 0 || _viewingCohortIndex >= _playerData.Cohorts.Count) return;
+
+            var cohort = _playerData.Cohorts[_viewingCohortIndex];
+            if (cohort.SelectedRiteIDs == null)
+            {
+                cohort.SelectedRiteIDs = new List<string>(new string[3] { "", "", "" });
+            }
+            while (cohort.SelectedRiteIDs.Count < 3) cohort.SelectedRiteIDs.Add("");
+
+            string riteID = riteData.name;
+            int existingSlot = cohort.SelectedRiteIDs.IndexOf(riteID);
+            if (existingSlot != -1 && existingSlot != slotIndex)
+            {
+                cohort.SelectedRiteIDs[existingSlot] = "";
+                if (existingSlot < _riteSlots.Count && _riteSlots[existingSlot] != null)
+                {
+                    _riteSlots[existingSlot].SetRite(null);
+                }
+            }
+
+            cohort.SelectedRiteIDs[slotIndex] = riteID;
+            MarkDirty();
+            SaveCohort();
+            RefreshRitesUI();
+        }
+
+        private void OnRiteClearedFromSlot(int slotIndex)
+        {
+            if (_isLockedMode || _isRitesLocked || _viewingCohortIndex < 0 || _viewingCohortIndex >= _playerData.Cohorts.Count) return;
+
+            var cohort = _playerData.Cohorts[_viewingCohortIndex];
+            if (cohort.SelectedRiteIDs != null && slotIndex < cohort.SelectedRiteIDs.Count)
+            {
+                cohort.SelectedRiteIDs[slotIndex] = "";
+                MarkDirty();
+                SaveCohort();
+                RefreshRitesUI();
+            }
+        }
         #endregion
+        private void InitializeFilters()
+        {
+            if (_searchField == null)
+            {
+                var sfGo = GameObject.Find("SearchInput");
+                if (sfGo != null) _searchField = sfGo.GetComponent<TMPro.TMP_InputField>();
+            }
+            if (_sortDropdown == null)
+            {
+                var ddGo = GameObject.Find("SortDropdown");
+                if (ddGo != null) _sortDropdown = ddGo.GetComponent<TMPro.TMP_Dropdown>();
+            }
+            if (_filterButtons == null || _filterButtons.Length == 0)
+            {
+                var tgGo = GameObject.Find("FilterToggles");
+                if (tgGo != null) _filterButtons = tgGo.GetComponentsInChildren<UnityEngine.UI.Button>();
+            }
+
+            if (_searchField != null) _searchField.onValueChanged.AddListener((val) => RefreshRitesUI());
+            if (_sortDropdown != null) _sortDropdown.onValueChanged.AddListener((val) => RefreshRitesUI());
+            if (_filterButtons != null)
+            {
+                foreach (var btn in _filterButtons)
+                {
+                    if (btn != null)
+                    {
+                        var txt = btn.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                        if (txt != null)
+                        {
+                            string filterName = txt.text;
+                            btn.onClick.AddListener(() => {
+                                _activeRiteFilter = filterName;
+                                RefreshRitesUI();
+                            });
+                        }
+                    }
+                }
+            }
+        }
     }
 }

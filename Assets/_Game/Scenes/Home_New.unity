@@ -41112,8 +41112,8 @@ MonoBehaviour:
   _goldDisplay: {fileID: 0}
   _bloodCrestDisplay: {fileID: 0}
   _navOverlay: {fileID: 61298627}
-  _tutorialBlocker: {fileID: 0}
-  _manifestButtonRect: {fileID: 0}
+  _tutorialBlocker: {fileID: 1200641513}
+  _manifestButtonRect: {fileID: 4506779761931265723}
   _debug: 1
 --- !u!1 &1186220722
 GameObject:

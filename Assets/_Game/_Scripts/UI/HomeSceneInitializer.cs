@@ -59,10 +59,19 @@ namespace MaouSamaTD.UI
             // Deactivate any orphaned/dummy LoadingScreen_Root in the scene to prevent it from blocking the UI
             var dummyLoader = GameObject.Find("Overlay_Canvas/LoadingScreen_Root");
             if (dummyLoader == null) dummyLoader = GameObject.Find("LoadingScreen_Root");
-            if (dummyLoader != null && dummyLoader.GetComponent<MainMenu.LoadingScreenPanel>() == null)
+            if (dummyLoader != null)
             {
-                dummyLoader.SetActive(false);
-                Debug.Log($"[HomeSceneInitializer] Deactivated dummy scene loading screen: {dummyLoader.name}");
+                // Fix: Do not deactivate if there is a LoadingScreenPanel in the scene (active or inactive)
+                var panel = Object.FindAnyObjectByType<MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+                if (panel != null)
+                {
+                    // Do nothing - this is the active loading screen visual root
+                }
+                else
+                {
+                    dummyLoader.SetActive(false);
+                    Debug.Log($"[HomeSceneInitializer] Deactivated dummy scene loading screen: {dummyLoader.name}");
+                }
             }
         }
 

@@ -21,6 +21,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - ClassScaleData
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1abd2888284186149af23c6a843f353e
+    m_Address: SovereignRiteDatabase
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 30760c1cf17c6a84ea8f3d9493c5ca88
     m_Address: UnitDatabase
     m_ReadOnly: 0

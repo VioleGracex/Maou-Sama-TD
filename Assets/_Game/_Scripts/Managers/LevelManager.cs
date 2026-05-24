@@ -140,8 +140,8 @@ namespace MaouSamaTD.Managers
                 if (skillPanel != null)
                 {
                     skillPanel.gameObject.SetActive(true);
-                    skillPanel.ShowToggle();
-                    Debug.Log("[LevelManager] Solo play: SkillPanelUI activated and toggle shown.");
+                    skillPanel.OpenPanel();
+                    Debug.Log("[LevelManager] Solo play: SkillPanelUI activated and explicitly opened.");
                 }
 
                 // If we skip the tutorial, and it is Level 2 (Tomb of Lilith), we must give Lilith to the player immediately!

@@ -21,10 +21,14 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 // Rehook the scene-specific AppEntryPoint reference to the persistent instance
                 Instance._appEntryPoint = this._appEntryPoint;
+                Instance.ResetAndBoot();
                 Destroy(gameObject);
                 return;
             }
             Instance = this;
+            
+            // Reset static state on a fresh boot/awake so play mode starts correctly even with domain reload disabled
+            _hasFinishedFirstBoot = false;
             
             // Fix: If this is a child GameObject, unparent it so that DontDestroyOnLoad succeeds!
             if (transform.parent != null)
@@ -33,6 +37,48 @@ namespace MaouSamaTD.UI.MainMenu
             }
             DontDestroyOnLoad(gameObject);
         }
+
+        public void ResetAndBoot()
+        {
+            Debug.Log("[LoadingScreenPanel] Resetting and starting Boot Sequence on reload.");
+            _isTransitioning = false;
+            _isLevelReady = false;
+            _hasFinishedFirstBoot = false;
+            
+            // Show visual root and reset components
+            if (_visualRoot != null) _visualRoot.SetActive(true);
+            gameObject.SetActive(true);
+            
+            if (_progressBar != null)
+            {
+                _progressBar.gameObject.SetActive(true);
+                _progressBar.value = 0f;
+            }
+            if (_startButton != null)
+            {
+                _startButton.gameObject.SetActive(false);
+            }
+            if (_confirmWindowRoot != null)
+            {
+                _confirmWindowRoot.SetActive(false);
+            }
+            if (_clearCacheButton != null)
+            {
+                _clearCacheButton.gameObject.SetActive(_appEntryPoint != null);
+            }
+
+            // Start Boot Sequence
+            if (_appEntryPoint != null)
+            {
+                _appEntryPoint.StartBootSequence(UpdateProgress, OnLoadComplete);
+            }
+            else
+            {
+                Debug.LogError("[LoadingScreenPanel] AppEntryPoint reference is missing in ResetAndBoot!");
+            }
+        }
+
+        public GameObject VisualRoot => _visualRoot;
 
         [Header("References")]
         [Header("References")]
@@ -255,7 +301,7 @@ namespace MaouSamaTD.UI.MainMenu
             }
         }
 
-        private void ExecuteClearCache()
+        public void ExecuteClearCache()
         {
             Debug.Log("[LoadingScreenPanel] Clearing Cache...");
             
@@ -265,16 +311,21 @@ namespace MaouSamaTD.UI.MainMenu
                 _saveManager.DeleteSaveData();
             }
             
-            // 2. Clear Addressables Cache
-            Caching.ClearCache();
-            
-            // 3. Clear PlayerPrefs
+            // 2. Clear System Data
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
+            Caching.ClearCache();
 
-            Debug.Log("[LoadingScreenPanel] Cache cleared. Restarting Scene...");
-            // Reload the active scene
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            _hasFinishedFirstBoot = false;
+
+            // 3. Restart
+            if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false);
+            
+            // Unload all dynamic assets and force garbage collection
+            Resources.UnloadUnusedAssets();
+            System.GC.Collect();
+            
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
 
         public void LoadSceneTransition(string sceneName)

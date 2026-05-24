@@ -437,6 +437,22 @@ namespace MaouSamaTD.UI.Skills
             }
         }
 
+        public void OpenPanel()
+        {
+            if (_panelRect == null) return;
+            
+            _isVisible = true;
+            _panelRect.gameObject.SetActive(true);
+            _panelRect.anchoredPosition = _visiblePos;
+            
+            if (_toggleButton != null)
+            {
+                _toggleButton.gameObject.SetActive(true);
+                var txt = _toggleButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (txt != null) txt.text = "Hide";
+            }
+        }
+
         private void HandleSkillSelectedChanged(SovereignRiteData skill)
         {
             if (skill != null)

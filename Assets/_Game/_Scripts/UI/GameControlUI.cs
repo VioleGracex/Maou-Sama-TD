@@ -383,17 +383,45 @@ namespace MaouSamaTD.UI
                 {
                     yield return null;
                 }
-                _xpSequenceVisualRoot.SetActive(false);
             }
 
-            // Optional delay between panels
-            yield return new WaitForSecondsRealtime(0.5f);
-
-            // Show Loot & MVP Panel
+            // --- STAGE 3: LOOT & MVP PANEL (WITH SEAMLESS CROSS-FADE TRANSITION) ---
             if (_lootSequenceVisualRoot != null)
             {
-                _lootSequenceVisualRoot.SetActive(true);
-                PopulateLootAndMVP();
+                if (_xpSequenceVisualRoot != null)
+                {
+                    // Get or add CanvasGroup on both panels for a smooth cross-fade transition
+                    CanvasGroup xpCg = _xpSequenceVisualRoot.GetComponent<CanvasGroup>();
+                    if (xpCg == null) xpCg = _xpSequenceVisualRoot.AddComponent<CanvasGroup>();
+                    
+                    CanvasGroup lootCg = _lootSequenceVisualRoot.GetComponent<CanvasGroup>();
+                    if (lootCg == null) lootCg = _lootSequenceVisualRoot.AddComponent<CanvasGroup>();
+                    
+                    xpCg.alpha = 1f;
+                    lootCg.alpha = 0f;
+                    xpCg.blocksRaycasts = false; // Prevent clicks on fading XP elements
+                    lootCg.blocksRaycasts = false; // Prevent clicks on Loot elements during fade-in
+                    
+                    _lootSequenceVisualRoot.SetActive(true);
+                    PopulateLootAndMVP();
+                    
+                    // Cross-fade animation
+                    float crossFadeDuration = 0.4f;
+                    xpCg.DOFade(0f, crossFadeDuration).SetUpdate(true);
+                    lootCg.DOFade(1f, crossFadeDuration).SetUpdate(true);
+                    
+                    yield return new WaitForSecondsRealtime(crossFadeDuration);
+                    
+                    _xpSequenceVisualRoot.SetActive(false);
+                    xpCg.alpha = 1f; // Reset for future plays
+                    lootCg.blocksRaycasts = true; // Allow input once fully faded in
+                }
+                else
+                {
+                    // Fallback if no XP panel is present
+                    _lootSequenceVisualRoot.SetActive(true);
+                    PopulateLootAndMVP();
+                }
                 
                 _victorySequenceTapped = false;
                 while (!_victorySequenceTapped && 
@@ -402,7 +430,25 @@ namespace MaouSamaTD.UI
                 {
                     yield return null;
                 }
+                
+                // Seamlessly fade out Loot Panel before showing final victory screen
+                CanvasGroup lootCgComponent = _lootSequenceVisualRoot.GetComponent<CanvasGroup>();
+                if (lootCgComponent != null)
+                {
+                    lootCgComponent.blocksRaycasts = false;
+                    lootCgComponent.DOFade(0f, 0.3f).SetUpdate(true);
+                    yield return new WaitForSecondsRealtime(0.3f);
+                }
                 _lootSequenceVisualRoot.SetActive(false);
+                if (lootCgComponent != null) lootCgComponent.alpha = 1f; // Reset for future plays
+            }
+            else
+            {
+                // Fallback: Turn off XP panel if no loot panel is assigned
+                if (_xpSequenceVisualRoot != null)
+                {
+                    _xpSequenceVisualRoot.SetActive(false);
+                }
             }
 
             // --- STAGE 4: FINAL VICTORY PANEL ---

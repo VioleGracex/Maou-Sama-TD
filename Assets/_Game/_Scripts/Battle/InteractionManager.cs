@@ -23,6 +23,9 @@ namespace MaouSamaTD.Managers
         [SerializeField] private SelectionHandler.SelectionMode _selectionMode = SelectionHandler.SelectionMode.ClickTile;
         [SerializeField] private float _selectionRange = 1.0f;
 
+        [Header("UI References")]
+        [SerializeField] private UI.EnemyInspectorUI _enemyInspectorUI;
+
         [Header("Visual Settings")]
         [SerializeField] private Color _validGlowColor = Color.green;
         [SerializeField] private Color _invalidGlowColor = Color.red;
@@ -94,6 +97,16 @@ namespace MaouSamaTD.Managers
                     UpdateTileVisuals();
                 };
             }
+            if (_enemyInspectorUI != null)
+            {
+                _enemyInspectorUI.Init();
+                
+                _enemyInspectorUI.OnPanelHidden += () =>
+                {
+                    _inspectedEnemyUnit = null;
+                    UpdateTileVisuals();
+                };
+            }
             if (_currencyManager != null)
             {
                 _currencyManager.OnSealsChanged -= HandleSealsChanged;
@@ -131,6 +144,13 @@ namespace MaouSamaTD.Managers
 
         private void Update()
         {
+            if (_isSelectionLocked) return;
+            
+            if (_inspectedEnemyUnit != null)
+            {
+                UpdateTileVisuals();
+            }
+
             if (_inputHandler == null) return;
 
             if (_inputHandler.GetPointerState(out Vector2 screenPos, out bool isPressDown, out bool isReleased, out bool isRightClick))
@@ -488,7 +508,7 @@ namespace MaouSamaTD.Managers
                     {
                         enemyTarget = eUnit;
                     }
-                    else if (Physics.Raycast(ray, out RaycastHit unitHit, 100f, LayerMask.GetMask("Units", "Default")))
+                    else if (Physics.Raycast(ray, out RaycastHit unitHit, 100f, LayerMask.GetMask("Units", "Enemy", "Default")))
                     {
                         enemyTarget = unitHit.collider.GetComponent<EnemyUnit>() ?? unitHit.collider.GetComponentInParent<EnemyUnit>();
                     }
@@ -497,14 +517,15 @@ namespace MaouSamaTD.Managers
                     {
                         _inspectedPlayerUnit = null;
                         _inspectedEnemyUnit = enemyTarget;
-                        _unitInspectorUI.Show(enemyTarget); 
+                        if (_enemyInspectorUI != null) _enemyInspectorUI.Show(enemyTarget); 
                         UpdateTileVisuals();
                     }
                     else
                     {
                         _inspectedPlayerUnit = null;
                         _inspectedEnemyUnit = null;
-                        _unitInspectorUI.Hide();
+                        if (_unitInspectorUI != null) _unitInspectorUI.Hide();
+                        if (_enemyInspectorUI != null) _enemyInspectorUI.Hide();
                         OnTileClicked?.Invoke(hitTile);
                     }
                 }

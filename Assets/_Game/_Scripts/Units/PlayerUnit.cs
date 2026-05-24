@@ -203,6 +203,8 @@ namespace MaouSamaTD.Units
                 {
                     if (enemy == null) continue;
                     Vector3 toEnemy = enemy.transform.position - transform.position;
+                    toEnemy.y = 0; // Flatten the vector to ignore elevation differences
+                    
                     float projection = Vector3.Dot(toEnemy, dir);
                     float perpendicularDist = Vector3.Cross(toEnemy, dir).magnitude;
 

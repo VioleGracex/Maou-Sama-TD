@@ -448,24 +448,23 @@ namespace MaouSamaTD.UI
             }
         }
 
-        public void ToggleVisibility()
+        private void ToggleVisibility()
         {
             if (_panelRect == null) return;
-
+            
             _isVisible = !_isVisible;
+            // Assuming docked on the left, so hide offset should move it left (negative X)
+            float targetX = _isVisible ? _visiblePos.x : _visiblePos.x - _hideOffset;
             
-            // Move Down on Hide (Standard Bottom Dock)
-            Vector2 targetPos = _isVisible ? _visiblePos : _visiblePos + new Vector2(0, -_hideOffset);
+            _panelRect.DOAnchorPosX(targetX, _entranceDuration).SetEase(Ease.OutQuint);
             
-            _panelRect.DOAnchorPos(targetPos, 0.3f).SetEase(Ease.OutBack).SetUpdate(true);
-            
-            // Try to find a text component on the toggle button to update it
+            // Optional: Flip an arrow icon on the button (Horizontal flip)
             if (_toggleButton != null)
             {
-                var textObj = _toggleButton.GetComponentInChildren<TextMeshProUGUI>();
-                if (textObj != null)
+                var rect = _toggleButton.GetComponent<RectTransform>();
+                if (rect != null)
                 {
-                    textObj.text = _isVisible ? "Hide" : "Show";
+                    rect.DOScaleX(_isVisible ? 1f : -1f, _entranceDuration);
                 }
             }
         }

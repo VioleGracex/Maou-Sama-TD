@@ -15,13 +15,14 @@ MonoBehaviour:
   useDefaultInspector: 0
   UniqueID: 60be5deb-b38c-4d77-86f4-b916eaafc543
   CalculatedStats:
-  MaxHp: 168
-    Attack: 22
-  Defense: 3
+    MaxHp: 336
+    Attack: 44
+    Defense: 6
     ClassIcon: {fileID: 21300000, guid: e89b8402aaa53e34fa540cbb4d6e0c10, type: 3}
     ClassName: Ranger
   UnitName: Aquila
   UnitTitle: The Harpy Queen
+  IsRomanceable: 0
   SummonQuote: Sovereign, it is an honor to serve you.
   BriefDescription: Ruler of the highest peaks, commands the storms with a flap of
     her wings.
@@ -42,26 +43,68 @@ MonoBehaviour:
   ButtonImageType: 0
   Level: 1
   Experience: 0
-  StarRating: 1
+  StarRating: 5
   Amity: 0
+  Gender: 1
+  Vigor: 100
   SkillLevel: 1
   BaseStatMultiplier: 1
   AcquisitionDate: 0
   UnlockedResonanceCount: 0
   Rarity: 4
   Class: 3
-  AttackPattern: 1
+  AttackPattern: 5
   AttackType: 0
   DamageType: 0
   DeploymentCost: 22
   BlockCount: 1
   CanAttackFlying: 1
-  CustomPatternOffsets: []
+  CustomPatternOffsets:
+  - {x: 0, y: 2}
+  - {x: 0, y: 3}
+  - {x: 2, y: 0}
+  - {x: 0, y: -2}
+  - {x: 0, y: -3}
+  - {x: 3, y: 0}
+  - {x: -3, y: 0}
+  - {x: -2, y: 0}
+  - {x: 3, y: 3}
+  - {x: -3, y: 3}
+  - {x: 3, y: -3}
+  - {x: -3, y: -3}
+  - {x: 3, y: 2}
+  - {x: 3, y: 1}
+  - {x: 3, y: -1}
+  - {x: 3, y: -2}
+  - {x: -3, y: -2}
+  - {x: -3, y: -1}
+  - {x: -3, y: 1}
+  - {x: -3, y: 2}
+  - {x: -2, y: 2}
+  - {x: -1, y: 2}
+  - {x: 1, y: 2}
+  - {x: 2, y: 2}
+  - {x: 2, y: -1}
+  - {x: 2, y: -2}
+  - {x: 2, y: -3}
+  - {x: -2, y: -3}
+  - {x: -2, y: -2}
+  - {x: -2, y: -1}
+  - {x: -2, y: 1}
+  - {x: 2, y: 1}
+  - {x: -1, y: -2}
+  - {x: -1, y: -3}
+  - {x: 1, y: -3}
+  - {x: 1, y: -2}
+  - {x: 2, y: 3}
+  - {x: 1, y: 3}
+  - {x: -1, y: 3}
+  - {x: -2, y: 3}
   MaxHp: 168
   AttackPower: 22
-  AttackInterval: 1.0
+  AttackInterval: 1
   Defense: 3
-  RespawnTime: 25.0
+  RespawnTime: 25
   Range: 3
   MaxCharge: 100
   ChargePerSecond: 5

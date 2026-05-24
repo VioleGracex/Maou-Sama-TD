@@ -44,6 +44,9 @@ namespace MaouSamaTD.Managers
         [Header("Controls")]
         [SerializeField] private float _moveSpeed = 20f;
         [SerializeField] private float _rotateSpeed = 100f; 
+        [SerializeField] private float _zoomSpeed = 2f;
+        [SerializeField] private float _minRadius = 10f;
+        [SerializeField] private float _maxRadius = 60f;
         
         [Header("Testing")]
         [SerializeField] private Vector3 _testMapPosition;
@@ -125,14 +128,18 @@ namespace MaouSamaTD.Managers
             // Mouse Rotation (Right Click)
             if (!IsLocked && Mouse.current.rightButton.isPressed)
             {
-                float mouseX = Mouse.current.delta.x.ReadValue() * 0.1f;
-                RotateCamera(mouseX);
+                // float mouseX = Mouse.current.delta.x.ReadValue() * 0.1f;
+                // RotateCamera(mouseX);
             }
 
-            // Mouse Panning (Middle Click)
-            if (!IsLocked && Mouse.current.middleButton.isPressed)
+            // Mouse Panning (Middle Click or Right Click)
+            if (!IsLocked && (Mouse.current.middleButton.isPressed || Mouse.current.rightButton.isPressed || (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)))
             {
-                Vector2 delta = Mouse.current.delta.ReadValue() * 0.02f;
+                Vector2 delta = Vector2.zero;
+                if (Mouse.current != null) delta = Mouse.current.delta.ReadValue();
+                else if (Touchscreen.current != null) delta = Touchscreen.current.primaryTouch.delta.ReadValue();
+                
+                delta *= 0.02f;
                 Vector3 move = new Vector3(-delta.x, 0, -delta.y);
                 float yaw = 0f;
                 if (_cmOrbital != null) yaw = _cmOrbital.HorizontalAxis.Value;
@@ -144,6 +151,13 @@ namespace MaouSamaTD.Managers
 
             if (UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
             if (_interactionManager != null && _interactionManager.IsDragging) return;
+
+            // Zoom (Scroll Wheel)
+            if (!IsLocked && Mouse.current.scroll.ReadValue().y != 0)
+            {
+                float scroll = Mouse.current.scroll.ReadValue().y * 0.01f;
+                ZoomCamera(-scroll);
+            }
 
              HandleMovement();
         }
@@ -189,6 +203,18 @@ namespace MaouSamaTD.Managers
             if (_viewSequence != null && _viewSequence.IsActive()) _viewSequence.Kill();
             
             _cmOrbital.HorizontalAxis.Value += delta * _rotateSpeed * Time.deltaTime;
+        }
+
+        private void ZoomCamera(float delta)
+        {
+            if (_cmOrbital == null) return;
+            if (_viewSequence != null && _viewSequence.IsActive()) _viewSequence.Kill();
+            
+            float newRadius = Mathf.Clamp(_cmOrbital.Radius + delta * _zoomSpeed, _minRadius, _maxRadius);
+            _cmOrbital.Radius = newRadius;
+            
+            if (CurrentMode == ViewMode.Isometric) _isoRadius = newRadius;
+            else _topDownRadius = newRadius;
         }
         #endregion
 

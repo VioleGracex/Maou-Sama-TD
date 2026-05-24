@@ -26,6 +26,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2a051160c538a7c458b7fb3f4b1a0075
+    m_Address: Assets/_Game/Prefabs/UI/Common/LoadingScreen_Root.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 30760c1cf17c6a84ea8f3d9493c5ca88
     m_Address: UnitDatabase
     m_ReadOnly: 0

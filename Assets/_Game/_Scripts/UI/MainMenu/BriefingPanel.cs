@@ -828,6 +828,12 @@ namespace MaouSamaTD.UI.MainMenu
             _visualRoot.transform.DOScale(Vector3.zero, _animDuration / 2f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() => {
                 _visualRoot.SetActive(false);
 
+                var campaignPage = FindObjectOfType<CampaignPage>();
+                if (campaignPage != null)
+                {
+                    campaignPage.DeselectCurrentNode();
+                }
+
                 // Restore global buttons
                 if (UIFlowManager.Instance != null)
                 {

@@ -284,7 +284,7 @@ namespace MaouSamaTD.UI.MainMenu
             if (_ariseButton != null) _ariseButton.interactable = false;
 
             // Launch BattleScene through the loading screen
-            var loader = Object.FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+            var loader = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
             if (loader != null)
             {
                 loader.LoadSceneTransition("BattleScene");

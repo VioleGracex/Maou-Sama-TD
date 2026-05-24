@@ -1,0 +1,75 @@
+<linker>
+  <assembly fullname="GameAssembly, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="MaouSamaTD.Data.ItemConfigSO" preserve="all" />
+    <type fullname="MaouSamaTD.Data.LevelDatabase" preserve="all" />
+    <type fullname="MaouSamaTD.Data.MandateData" preserve="all" />
+    <type fullname="MaouSamaTD.Data.SovereignRiteDatabase" preserve="all" />
+    <type fullname="MaouSamaTD.Data.UnitDatabase" preserve="all" />
+    <type fullname="MaouSamaTD.Levels.LevelData" preserve="all" />
+    <type fullname="MaouSamaTD.Levels.MapData" preserve="all" />
+    <type fullname="MaouSamaTD.Skills.PhoenixProjectile" preserve="all" />
+    <type fullname="MaouSamaTD.Skills.SovereignRiteData" preserve="all" />
+    <type fullname="MaouSamaTD.Skills.UnitSkillData" preserve="all" />
+    <type fullname="MaouSamaTD.Story.StoryDataSO" preserve="all" />
+    <type fullname="MaouSamaTD.Tutorial.DialogueData" preserve="all" />
+    <type fullname="MaouSamaTD.Tutorial.TutorialDataSO" preserve="all" />
+    <type fullname="MaouSamaTD.Units.BossPhaseAbility" preserve="all" />
+    <type fullname="MaouSamaTD.Units.ClassScalingData" preserve="all" />
+    <type fullname="MaouSamaTD.Units.EnemyData" preserve="all" />
+    <type fullname="MaouSamaTD.Units.UnitData" preserve="all" />
+    <type fullname="MaouSamaTD.Data.MaouGender" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Skills.SkillVisuals" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Units.UnitAscensionNode" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Units.UnitData/RuntimeStats" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Units.UnitData/SkinData" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Units.UnitData/SkinFields" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Units.UnitData/UnitLoreEntry" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Skills.StatModifier" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Units.ClassStatMultipliers" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Units.RarityStatGrowth" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Data.RewardData" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.LevelCondition" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.SideVisualOverride" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.SpawnPointData" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.StarCondition" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.TileLayoutData" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.TileVisualOverride" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.WallSettings" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.WallVisualSettings" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.WaveData" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Levels.WaveGroup" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Story.StoryLine" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Tutorial.DialogueLine" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Tutorial.TutorialStep" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Tutorial.UITarget" preserve="nothing" serialized="true" />
+    <type fullname="MaouSamaTD.Tutorial.WorldTarget" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.AnimationClip" preserve="all" />
+    <type fullname="UnityEngine.Animator" preserve="all" />
+    <type fullname="UnityEngine.RuntimeAnimatorController" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.AudioClip" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.ComputeShader" preserve="all" />
+    <type fullname="UnityEngine.GameObject" preserve="all" />
+    <type fullname="UnityEngine.Material" preserve="all" />
+    <type fullname="UnityEngine.Object" preserve="all" />
+    <type fullname="UnityEngine.Shader" preserve="all" />
+    <type fullname="UnityEngine.Sprite" preserve="all" />
+    <type fullname="UnityEngine.SpriteRenderer" preserve="all" />
+    <type fullname="UnityEngine.Texture2D" preserve="all" />
+    <type fullname="UnityEngine.Transform" preserve="all" />
+  </assembly>
+</linker>

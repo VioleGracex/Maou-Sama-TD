@@ -26,15 +26,9 @@ MonoBehaviour:
   - Name: shop
     Id: 24742259
     TextAsset: {fileID: 4900000, guid: 7821a2e6cefe81a4286669d2dc572af7, type: 3}
-  - Name: fakeChat
-    Id: 1123146441
-    TextAsset: {fileID: 4900000, guid: 4d0c8d5bd2a3c684f9ded260d8b04e60, type: 3}
   - Name: enemies
     Id: 1147746341
     TextAsset: {fileID: 4900000, guid: 1161b08452a7379448680f9afb313ddc, type: 3}
-  - Name: predictions
-    Id: 719932313
-    TextAsset: {fileID: 4900000, guid: e0033ecdc8af6294699bde1f5b009b48, type: 3}
   - Name: push
     Id: 242302440
     TextAsset: {fileID: 4900000, guid: a7932bea9b1fe8240ab54fcff0b54186, type: 3}

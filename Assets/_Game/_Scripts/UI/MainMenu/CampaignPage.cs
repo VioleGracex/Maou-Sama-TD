@@ -519,6 +519,15 @@ namespace MaouSamaTD.UI.MainMenu
 
         private LevelButton _selectedLevelButton;
 
+        public void DeselectCurrentNode()
+        {
+            if (_selectedLevelButton != null)
+            {
+                _selectedLevelButton.SetSelected(false);
+                _selectedLevelButton = null;
+            }
+        }
+
         public void OnLevelClickedPublic(LevelButton btn, LevelData level, bool isUnlocked)
         {
             if (_selectedLevelButton != null)

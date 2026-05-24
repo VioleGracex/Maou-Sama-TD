@@ -22,7 +22,7 @@ namespace MaouSamaTD.UI.MainMenu
                 // Rehook the scene-specific AppEntryPoint reference to the persistent instance
                 Instance._appEntryPoint = this._appEntryPoint;
                 Instance.ResetAndBoot();
-                Destroy(gameObject);
+                Destroy(gameObject); // Destroy the duplicate GameObject completely so it doesn't block the screen
                 return;
             }
             Instance = this;
@@ -35,6 +35,28 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 transform.SetParent(null);
             }
+            
+            // Ensure it has its own Canvas so it renders correctly after being unparented from Overlay_Canvas
+            Canvas canvas = gameObject.GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                canvas = gameObject.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            }
+            canvas.sortingOrder = 999;
+            
+            if (gameObject.GetComponent<UnityEngine.UI.CanvasScaler>() == null)
+            {
+                UnityEngine.UI.CanvasScaler scaler = gameObject.AddComponent<UnityEngine.UI.CanvasScaler>();
+                scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920, 1080);
+            }
+            
+            if (gameObject.GetComponent<UnityEngine.UI.GraphicRaycaster>() == null)
+            {
+                gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            }
+
             DontDestroyOnLoad(gameObject);
         }
 
@@ -68,6 +90,11 @@ namespace MaouSamaTD.UI.MainMenu
             }
 
             // Start Boot Sequence
+            if (_appEntryPoint == null)
+            {
+                _appEntryPoint = Object.FindAnyObjectByType<AppEntryPoint>(FindObjectsInactive.Include);
+            }
+
             if (_appEntryPoint != null)
             {
                 _appEntryPoint.StartBootSequence(UpdateProgress, OnLoadComplete);
@@ -119,6 +146,7 @@ namespace MaouSamaTD.UI.MainMenu
         private float _loreTimer;
         private int _currentLoreIndex;
 
+        private UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<IList<Sprite>> _splashHandle;
         private IList<Sprite> _splashScreens;
         private int _currentSplashIndex = -1;
         private static bool _hasFinishedFirstBoot = false;
@@ -133,6 +161,11 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void Start()
         {
+            if (Instance != null && Instance != this)
+            {
+                return;
+            }
+
             if (_clearCacheButton != null) 
             {
                 _clearCacheButton.onClick.AddListener(OnClearCacheClicked);
@@ -182,7 +215,8 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void LoadSplashScreens()
         {
-            Addressables.LoadAssetsAsync<Sprite>((object)"SplashScreen", null).Completed += handle =>
+            _splashHandle = Addressables.LoadAssetsAsync<Sprite>((object)"SplashScreen", null);
+            _splashHandle.Completed += handle =>
             {
                 if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
                 {
@@ -194,7 +228,7 @@ namespace MaouSamaTD.UI.MainMenu
                         _backgroundImage.sprite = _splashScreens[_currentSplashIndex];
                         _backgroundImage.color = Color.white;
                         
-                        DOVirtual.DelayedCall(_splashChangeInterval, CycleSplashScreen).SetId(this);
+                        DOVirtual.DelayedCall(_splashChangeInterval, CycleSplashScreen).SetId("SplashCycle");
                     }
                 }
             };
@@ -204,8 +238,17 @@ namespace MaouSamaTD.UI.MainMenu
         {
             if (gameObject == null || !gameObject.activeSelf || _splashScreens == null || _splashScreens.Count == 0 || _backgroundImage == null) return;
 
-            _currentSplashIndex = (_currentSplashIndex + 1) % _splashScreens.Count;
+            // Skip nulls if any got destroyed
+            int attempts = 0;
+            do
+            {
+                _currentSplashIndex = (_currentSplashIndex + 1) % _splashScreens.Count;
+                attempts++;
+            }
+            while (_splashScreens[_currentSplashIndex] == null && attempts < _splashScreens.Count);
+
             Sprite nextSprite = _splashScreens[_currentSplashIndex];
+            if (nextSprite == null) return;
 
             // Darken and switch
             _backgroundImage.DOColor(Color.black, _fadeDuration / 2f).OnComplete(() =>
@@ -214,14 +257,19 @@ namespace MaouSamaTD.UI.MainMenu
                 _backgroundImage.sprite = nextSprite;
                 _backgroundImage.DOColor(Color.white, _fadeDuration / 2f).OnComplete(() =>
                 {
-                    DOVirtual.DelayedCall(_splashChangeInterval, CycleSplashScreen).SetId(this);
+                    DOVirtual.DelayedCall(_splashChangeInterval, CycleSplashScreen).SetId("SplashCycle");
                 });
-            }).SetId(this);
+            }).SetId("SplashCycle");
         }
 
         private void OnDestroy()
         {
+            if (_splashHandle.IsValid())
+            {
+                Addressables.Release(_splashHandle);
+            }
             DOTween.Kill(this);
+            DOTween.Kill("SplashCycle");
         }
 
         private void Update()
@@ -371,6 +419,12 @@ namespace MaouSamaTD.UI.MainMenu
                 _progressBar.value = 0f;
             }
 
+            if (_splashScreens != null && _splashScreens.Count > 0)
+            {
+                DOTween.Kill("SplashCycle");
+                DOVirtual.DelayedCall(_splashChangeInterval, CycleSplashScreen).SetId("SplashCycle");
+            }
+
             StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
         }
 
@@ -452,8 +506,14 @@ namespace MaouSamaTD.UI.MainMenu
 
             cg.DOFade(0f, 0.5f).SetId(this).SetUpdate(true).OnComplete(() =>
             {
-                if (_visualRoot != null) _visualRoot.SetActive(false);
-                gameObject.SetActive(false);
+                if (_visualRoot != null) 
+                {
+                    _visualRoot.SetActive(false);
+                }
+                else 
+                {
+                    gameObject.SetActive(false);
+                }
                 _isTransitioning = false;
             });
         }

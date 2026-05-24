@@ -166,12 +166,7 @@ namespace MaouSamaTD.Core
 
         private void Awake()
         {
-            var persistentLoader = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
-            if (persistentLoader != null && persistentLoader.gameObject != gameObject)
-            {
-                Debug.Log("[AppEntryPoint] Persistent LoadingScreenPanel already exists. Destroying duplicate AppEntryPoint GameObject.");
-                Destroy(gameObject);
-            }
+            // Do not destroy this GameObject as we need the scene-specific AppEntryPoint to remain alive and handle routing!
         }
 
         public void StartBootSequence(Action<float> onProgress, Action onComplete)

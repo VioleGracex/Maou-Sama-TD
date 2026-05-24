@@ -230,20 +230,6 @@ namespace MaouSamaTD.UI.MainMenu
 
                 newlyAddedIndex++;
 
-                var circleGo = new GameObject("NodeGlow", typeof(UnityEngine.UI.Image));
-                circleGo.transform.SetParent(_levelContainer, false);
-                var circleImg = circleGo.GetComponent<UnityEngine.UI.Image>();
-                if (glowCircle != null) circleImg.sprite = glowCircle;
-                Color nodeColor = _page.GetCategoryColorPublic(data.Level.Category);
-                circleImg.color = new Color(nodeColor.r, nodeColor.g, nodeColor.b, 0.75f);
-                var circleRect = circleGo.GetComponent<RectTransform>();
-                circleRect.anchorMin = Vector2.zero;
-                circleRect.anchorMax = Vector2.zero;
-                circleRect.pivot = new Vector2(0.5f, 0.5f);
-                circleRect.anchoredPosition = data.Level.CampaignMapPosition;
-                circleRect.sizeDelta = new Vector2(110f, 110f);
-                circleGo.transform.SetAsFirstSibling();
-
                 var btn = UnityEngine.Object.Instantiate(_levelButtonPrefab, _levelContainer);
                 var rect = btn.GetComponent<RectTransform>();
                 if (rect != null)
@@ -253,6 +239,20 @@ namespace MaouSamaTD.UI.MainMenu
                     rect.pivot = new Vector2(0.5f, 0.5f);
                     rect.anchoredPosition = data.Level.CampaignMapPosition;
                 }
+
+                var circleGo = new GameObject("NodeGlow", typeof(UnityEngine.UI.Image));
+                circleGo.transform.SetParent(btn.transform, false);
+                var circleImg = circleGo.GetComponent<UnityEngine.UI.Image>();
+                if (glowCircle != null) circleImg.sprite = glowCircle;
+                Color nodeColor = _page.GetCategoryColorPublic(data.Level.Category);
+                circleImg.color = new Color(nodeColor.r, nodeColor.g, nodeColor.b, 0.75f);
+                var circleRect = circleGo.GetComponent<RectTransform>();
+                circleRect.anchorMin = new Vector2(0.5f, 0.5f);
+                circleRect.anchorMax = new Vector2(0.5f, 0.5f);
+                circleRect.pivot = new Vector2(0.5f, 0.5f);
+                circleRect.anchoredPosition = Vector2.zero;
+                circleRect.sizeDelta = new Vector2(110f, 110f);
+                circleGo.transform.SetAsFirstSibling();
 
                 btn.Setup(data, (o) => _page.OnLevelClickedPublic(btn, data.Level, !data.IsLocked));
                 btn.SetGlow(circleImg, new Color(nodeColor.r, nodeColor.g, nodeColor.b, 0.75f));

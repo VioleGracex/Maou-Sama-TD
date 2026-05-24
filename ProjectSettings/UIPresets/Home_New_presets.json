@@ -75379,9 +75379,114 @@
             "name": "Default",
             "scenePath": "Assets/_Game/Scenes/Home_New.unity",
             "sceneName": "Home_New",
-            "createdAt": "2026-05-24 17:28:06",
+            "createdAt": "2026-05-24 19:09:02",
             "group": "Default",
             "entries": [
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1779430202889118452-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7797481876891603090-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/StartButton",
+                    "isActive": false
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6049162322655958462-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/StartButton/Text",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5709661273057549178-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ProgressBar_Slider",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5033185526036633857-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ProgressBar_Slider/Fill Area",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1684327016353638532-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ProgressBar_Slider/Fill Area/Fill",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7241211661043768221-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ConfirmPopup_Root",
+                    "isActive": false
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-8917437358676808811-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ConfirmPopup_Root/ConfirmText",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1684419504612642742-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ConfirmPopup_Root/YesButton",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5988418591568061646-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ConfirmPopup_Root/YesButton/Text",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6572816640754020946-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ConfirmPopup_Root/NoButton",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1338003042900433891-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/ConfirmPopup_Root/NoButton/Text",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7900726850733903232-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-2538947816420562030-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot/Background_Splash",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5454547919085232368-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot/ProgressBar_Slider",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-4585126218240812027-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot/ProgressBar_Slider/Fill Area",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-8874472139375430849-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot/ProgressBar_Slider/Fill Area/Fill",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5739083435654671218-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot/LoreText",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-2573555628252648201-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot/VersionText",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7752244339872983041-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot/ClearCacheButton",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7309524418851740346-1783496443",
+                    "hierarchyPath": "LoadingScreen_Root/VisualRoot/ClearCacheButton/Text",
+                    "isActive": true
+                },
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-694147443-0",
                     "hierarchyPath": "Overlay_Canvas",
@@ -76360,106 +76465,6 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-8388641533847913545-727933388",
                     "hierarchyPath": "Overlay_Canvas/AscensionPanel/InputRoot/AriseButton/Arise_Text",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1779430202889118452-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-2538947816420562030-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/Background_Splash",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5454547919085232368-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ProgressBar_Slider",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-4585126218240812027-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ProgressBar_Slider/Fill Area",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-8874472139375430849-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ProgressBar_Slider/Fill Area/Fill",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5739083435654671218-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/LoreText",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-2573555628252648201-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/VersionText",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7797481876891603090-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/StartButton",
-                    "isActive": false
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6049162322655958462-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/StartButton/Text",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5709661273057549178-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ProgressBar_Slider",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5033185526036633857-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ProgressBar_Slider/Fill Area",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1684327016353638532-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ProgressBar_Slider/Fill Area/Fill",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7752244339872983041-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ClearCacheButton",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7309524418851740346-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ClearCacheButton/Text",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7241211661043768221-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ConfirmPopup_Root",
-                    "isActive": false
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-8917437358676808811-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ConfirmPopup_Root/ConfirmText",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1684419504612642742-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ConfirmPopup_Root/YesButton",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5988418591568061646-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ConfirmPopup_Root/YesButton/Text",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6572816640754020946-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ConfirmPopup_Root/NoButton",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1338003042900433891-1783496443",
-                    "hierarchyPath": "Overlay_Canvas/LoadingScreen_Root/ConfirmPopup_Root/NoButton/Text",
                     "isActive": true
                 },
                 {
@@ -77933,8 +77938,13 @@
                     "isActive": true
                 },
                 {
+                    "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6555347731439258965-45128254",
+                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Campaign_Page/BriefingPanel/VisualRoot/BriefingScrollView/Viewport/Content/Container_Description",
+                    "isActive": true
+                },
+                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-8216215159773819397-45128254",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Campaign_Page/BriefingPanel/VisualRoot/BriefingScrollView/Viewport/Content/DescriptionText",
+                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Campaign_Page/BriefingPanel/VisualRoot/BriefingScrollView/Viewport/Content/Container_Description/DescriptionText",
                     "isActive": true
                 },
                 {
@@ -78820,11 +78830,6 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6804439590484694758-0",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Header/Cohort_Page_Title",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Header/Cohort_Page_Title/TMP SubMeshUI [Rajdhani-Bold SDF Material + LiberationSans SDF Atlas]",
                     "isActive": true
                 },
                 {
@@ -80663,11 +80668,6 @@
                     "isActive": true
                 },
                 {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText/TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]",
-                    "isActive": true
-                },
-                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7095671939501824544-950463201",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/DetailsPanel",
                     "isActive": true
@@ -80885,11 +80885,6 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-3976462424498896321-1093315432",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText/TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]",
                     "isActive": true
                 },
                 {
@@ -81113,11 +81108,6 @@
                     "isActive": true
                 },
                 {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText/TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]",
-                    "isActive": true
-                },
-                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7095671939501824544-1887867166",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/DetailsPanel",
                     "isActive": true
@@ -81335,11 +81325,6 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-3976462424498896321-1516712065",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText/TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]",
                     "isActive": true
                 },
                 {
@@ -81563,11 +81548,6 @@
                     "isActive": true
                 },
                 {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText/TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]",
-                    "isActive": true
-                },
-                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7095671939501824544-1880173696",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/DetailsPanel",
                     "isActive": true
@@ -81785,11 +81765,6 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-3976462424498896321-731070943",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText/TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]",
                     "isActive": true
                 },
                 {
@@ -82013,11 +81988,6 @@
                     "isActive": true
                 },
                 {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText/TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]",
-                    "isActive": true
-                },
-                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7095671939501824544-432431522",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/DetailsPanel",
                     "isActive": true
@@ -82238,11 +82208,6 @@
                     "isActive": true
                 },
                 {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/TopRow/ExpandArrowText/TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]",
-                    "isActive": true
-                },
-                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7095671939501824544-2146084557",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Center_Rites/AvailableRitesSection/OwnedRitesScrollView/Viewport/OwnedRitesContainer/RiteItem_Prefab/DetailsPanel",
                     "isActive": true
@@ -82283,11 +82248,6 @@
                     "isActive": true
                 },
                 {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Footer/Cohort_Btn_1/Text (TMP)/TMP SubMeshUI [Rajdhani-Bold SDF Material + LiberationSans SDF Atlas]",
-                    "isActive": true
-                },
-                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-2198641692378104509-0",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Footer/Cohort_Btn_2",
                     "isActive": true
@@ -82295,11 +82255,6 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-1599215197278026655-0",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Footer/Cohort_Btn_2/Text (TMP)",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Footer/Cohort_Btn_2/Text (TMP)/TMP SubMeshUI [Rajdhani-Bold SDF Material + LiberationSans SDF Atlas]",
                     "isActive": true
                 },
                 {
@@ -82313,11 +82268,6 @@
                     "isActive": true
                 },
                 {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Footer/Cohort_Btn_3/Text (TMP)/TMP SubMeshUI [Rajdhani-Bold SDF Material + LiberationSans SDF Atlas]",
-                    "isActive": true
-                },
-                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6950858445941013604-0",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Footer/Cohort_Btn_4",
                     "isActive": true
@@ -82325,11 +82275,6 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6812982715422523032-0",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Footer/Cohort_Btn_4/Text (TMP)",
-                    "isActive": true
-                },
-                {
-                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
-                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Cohort_Page_UI/Footer/Cohort_Btn_4/Text (TMP)/TMP SubMeshUI [Rajdhani-Bold SDF Material + LiberationSans SDF Atlas]",
                     "isActive": true
                 },
                 {

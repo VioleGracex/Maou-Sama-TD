@@ -435,6 +435,7 @@ namespace MaouSamaTD.UI.MainMenu
                 dotGo.transform.SetAsFirstSibling();
 
                 var img = dotGo.GetComponent<UnityEngine.UI.Image>();
+                img.raycastTarget = false; // Prevent blocking map drag/hover events
                 if (circleSprite != null) img.sprite = circleSprite;
                 img.color = color;
 

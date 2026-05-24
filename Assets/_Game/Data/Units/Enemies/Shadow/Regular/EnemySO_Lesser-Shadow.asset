@@ -20,7 +20,7 @@ MonoBehaviour:
   FullSplashArt: {fileID: 21300000, guid: 4545951fbb11b204397aa8cf19ce01c8, type: 3}
   IsBoss: 0
   AnimatorController: {fileID: 0}
-  MaxHp: 80
+  MaxHp: 30
   MoveSpeed: 1
   AttackPower: 15
   AttackInterval: 1.5

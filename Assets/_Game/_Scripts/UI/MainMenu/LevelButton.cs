@@ -4,6 +4,7 @@ using TMPro;
 using MaouSamaTD.Levels;
 using System;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 namespace MaouSamaTD.UI.MainMenu
 {
@@ -218,6 +219,8 @@ namespace MaouSamaTD.UI.MainMenu
             if (_button != null && !_button.interactable) return;
             _isHovered = true;
             UpdateGlowColor();
+            transform.DOKill();
+            transform.DOScale(1.1f, 0.2f).SetUpdate(true).SetEase(Ease.OutQuad);
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -225,6 +228,8 @@ namespace MaouSamaTD.UI.MainMenu
             if (_button != null && !_button.interactable) return;
             _isHovered = false;
             UpdateGlowColor();
+            transform.DOKill();
+            transform.DOScale(1.0f, 0.2f).SetUpdate(true).SetEase(Ease.OutQuad);
         }
 
         private void UpdateGlowColor()

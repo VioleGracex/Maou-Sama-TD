@@ -189,7 +189,7 @@ namespace MaouSamaTD.UI
             if (_selectedUnit == null) return;
             UnitData data = _selectedUnit.Data;
 
-            if (_unitNameText != null) _unitNameText.text = data.UnitName;
+            if (_unitNameText != null) _unitNameText.text = $"{data.UnitName} (LV.{data.Level})";
 
             if (_statsPanel != null)
             {

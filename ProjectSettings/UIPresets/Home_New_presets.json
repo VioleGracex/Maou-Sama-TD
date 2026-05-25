@@ -75379,7 +75379,7 @@
             "name": "Default",
             "scenePath": "Assets/_Game/Scenes/Home_New.unity",
             "sceneName": "Home_New",
-            "createdAt": "2026-05-25 18:21:05",
+            "createdAt": "2026-05-25 19:00:14",
             "group": "Default",
             "entries": [
                 {
@@ -79390,7 +79390,7 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-6935253550781711640-1965483984",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Vassals_Page_UI/UnitInspector_FullScreen_UI/Main_Content",
-                    "isActive": false
+                    "isActive": true
                 },
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-8366946619508442962-1965483984",
@@ -79658,8 +79658,18 @@
                     "isActive": true
                 },
                 {
+                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
+                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Vassals_Page_UI/UnitInspector_FullScreen_UI/Main_Content/Details_LeftSide/Name_Holder/Name_HP_Cost_Row/CharName_Inspector/TMP SubMeshUI [Rajdhani-Bold SDF Material + LiberationSans SDF Atlas]",
+                    "isActive": true
+                },
+                {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-5719208752118397390-1965483984",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Vassals_Page_UI/UnitInspector_FullScreen_UI/Main_Content/Details_LeftSide/Name_Holder/Name_HP_Cost_Row/Cost_Text_Header",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
+                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Vassals_Page_UI/UnitInspector_FullScreen_UI/Main_Content/Details_LeftSide/Name_Holder/Name_HP_Cost_Row/Cost_Text_Header/TMP SubMeshUI [Rajdhani-Bold SDF Material + LiberationSans SDF Atlas]",
                     "isActive": true
                 },
                 {
@@ -79895,6 +79905,11 @@
                 {
                     "guid": "GlobalObjectId_V1-2-3f8fcd6bddd568646b5dbaaa2e51410f-7674255104367794091-1965483984",
                     "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Vassals_Page_UI/UnitInspector_FullScreen_UI/Main_Content/Details_RightSide/Content_XP/LevelXP_Holder/Level_Display/Level_Circle/CurrentLevel_Inspector",
+                    "isActive": true
+                },
+                {
+                    "guid": "GlobalObjectId_V1-0-00000000000000000000000000000000-0-0",
+                    "hierarchyPath": "MainCanvas/MainUIContainer/Page_Content_Area/Vassals_Page_UI/UnitInspector_FullScreen_UI/Main_Content/Details_RightSide/Content_XP/LevelXP_Holder/Level_Display/Level_Circle/CurrentLevel_Inspector/TMP SubMeshUI [Rajdhani-Bold SDF Material + LiberationSans SDF Atlas]",
                     "isActive": true
                 },
                 {

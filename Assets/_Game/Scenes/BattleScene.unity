@@ -5500,26 +5500,32 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6162818d651115e4faee004c8f90f2ea, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.CameraManager
+  m_EditorClassIdentifier: GameAssembly::MaouSamaTD.Managers.CameraManager
   IsLocked: 1
   CenterOnMap: 1
   CurrentMode: 0
   _battleCamera: {fileID: 1033155242}
-  _isoRadius: 25
-  _isoVerticalAngle: 115
+  _isoRadius: 5
+  _isoVerticalAngle: 70
   _forceIsoHeading: 1
   _isoHeading: 0
-  _topDownRadius: 30
+  _topDownRadius: 15
   _topDownVerticalAngle: 180
   _forceTopDownHeading: 0
   _topDownHeading: 0
-  _transitionDuration: 1
+  _isoOrthoSize: 4
+  _topDownOrthoSize: 4
+  _minOrthoSize: 1
+  _maxOrthoSize: 5
+  _transitionDuration: 0.5
   _moveSpeed: 20
   _rotateSpeed: 100
   _zoomSpeed: 2
-  _minRadius: 10
-  _maxRadius: 60
+  _defaultZoom: 3.9
+  _minRadius: 5
+  _maxRadius: 10
   _testMapPosition: {x: 0, y: 0, z: 0}
+  _screenRelativeMovement: 1
 --- !u!1 &655614392
 GameObject:
   m_ObjectHideFlags: 0

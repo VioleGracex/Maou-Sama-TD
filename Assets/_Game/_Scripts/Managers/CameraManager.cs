@@ -38,6 +38,12 @@ namespace MaouSamaTD.Managers
         [SerializeField] private bool _forceTopDownHeading = false;
         [SerializeField] private float _topDownHeading = 0f; 
 
+        [Header("View Settings - Orthographic (2D)")]
+        [SerializeField] private float _isoOrthoSize = 4.15f;
+        [SerializeField] private float _topDownOrthoSize = 6f;
+        [SerializeField] private float _minOrthoSize = 2f;
+        [SerializeField] private float _maxOrthoSize = 8f;
+
         [Header("Transition")]
         [SerializeField] private float _transitionDuration = 0.5f;
 
@@ -45,6 +51,7 @@ namespace MaouSamaTD.Managers
         [SerializeField] private float _moveSpeed = 20f;
         [SerializeField] private float _rotateSpeed = 100f; 
         [SerializeField] private float _zoomSpeed = 2f;
+        [SerializeField] private float _defaultZoom = 4.15f;
         [SerializeField] private float _minRadius = 10f;
         [SerializeField] private float _maxRadius = 60f;
         
@@ -57,6 +64,7 @@ namespace MaouSamaTD.Managers
         private Transform _cameraAnchor;
         private CinemachineOrbitalFollow _cmOrbital;
         private Sequence _viewSequence;
+        private Vector3 _isometricRotation;
         #endregion
 
         #region Lifecycle
@@ -87,12 +95,15 @@ namespace MaouSamaTD.Managers
             if (_cameraAnchor != null)
             {
                 _battleCamera.Follow = _cameraAnchor;
-                _battleCamera.LookAt = _cameraAnchor;
+                _battleCamera.LookAt = null; // UNHOOKED to absolutely prevent wobble and grid rotation
             }
             else
             {
                 Debug.LogError("[CameraManager] CameraAnchor is still null after EnsureCameraAnchor call!");
             }
+
+            // Store the initial rotation (which is your perfect Isometric angle from the inspector)
+            _isometricRotation = _battleCamera.transform.eulerAngles;
 
             // Initial State
             SetView(CurrentMode, true);
@@ -113,50 +124,74 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Internal Logic
+        [Header("Movement Settings")]
+        [Tooltip("If true, W/A/S/D and panning moves relative to the screen. If false, it moves along the World X/Z axes.")]
+        [SerializeField] private bool _screenRelativeMovement = true;
+
         private void HandleInput()
         {
-            if (Keyboard.current.spaceKey.wasPressedThisFrame)
+            if (Keyboard.current != null)
             {
-                ToggleLock();
-            }
-
-            if (Keyboard.current.tabKey.wasPressedThisFrame)
-            {
-                ToggleView();
+                if (Keyboard.current.spaceKey.wasPressedThisFrame) ToggleLock();
+                if (Keyboard.current.tabKey.wasPressedThisFrame) ToggleView();
             }
             
-            // Mouse Rotation (Right Click)
-            if (!IsLocked && Mouse.current.rightButton.isPressed)
-            {
-                // float mouseX = Mouse.current.delta.x.ReadValue() * 0.1f;
-                // RotateCamera(mouseX);
-            }
-
-            // Mouse Panning (Middle Click or Right Click)
-            if (!IsLocked && (Mouse.current.middleButton.isPressed || Mouse.current.rightButton.isPressed || (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)))
-            {
-                Vector2 delta = Vector2.zero;
-                if (Mouse.current != null) delta = Mouse.current.delta.ReadValue();
-                else if (Touchscreen.current != null) delta = Touchscreen.current.primaryTouch.delta.ReadValue();
-                
-                delta *= 0.02f;
-                Vector3 move = new Vector3(-delta.x, 0, -delta.y);
-                float yaw = 0f;
-                if (_cmOrbital != null) yaw = _cmOrbital.HorizontalAxis.Value;
-                else if (Camera.main != null) yaw = Camera.main.transform.eulerAngles.y;
-                Quaternion q = Quaternion.Euler(0, yaw, 0);
-                move = q * move;
-                _cameraAnchor.position += move * _moveSpeed * Time.deltaTime;
-            }
-
             if (UnityEngine.EventSystems.EventSystem.current != null && UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
             if (_interactionManager != null && _interactionManager.IsDragging) return;
 
-            // Zoom (Scroll Wheel)
-            if (!IsLocked && Mouse.current.scroll.ReadValue().y != 0)
+            bool isPinching = false;
+
+            // Touch Pinch Zoom
+            if (!IsLocked && Touchscreen.current != null && Touchscreen.current.touches.Count >= 2)
             {
-                float scroll = Mouse.current.scroll.ReadValue().y * 0.01f;
-                ZoomCamera(-scroll);
+                var touch0 = Touchscreen.current.touches[0];
+                var touch1 = Touchscreen.current.touches[1];
+
+                if (touch0.press.isPressed && touch1.press.isPressed)
+                {
+                    isPinching = true;
+                    Vector2 touch0PrevPos = touch0.position.ReadValue() - touch0.delta.ReadValue();
+                    Vector2 touch1PrevPos = touch1.position.ReadValue() - touch1.delta.ReadValue();
+
+                    float prevMagnitude = (touch0PrevPos - touch1PrevPos).magnitude;
+                    float currentMagnitude = (touch0.position.ReadValue() - touch1.position.ReadValue()).magnitude;
+
+                    float difference = currentMagnitude - prevMagnitude;
+                    
+                    // Adjust the multiplier for touch zoom sensitivity
+                    ZoomCamera(-difference * 0.02f); 
+                }
+            }
+
+            // Mouse Panning (Middle/Right Click) or Touch Panning
+            bool mousePan = Mouse.current != null && (Mouse.current.middleButton.isPressed || Mouse.current.rightButton.isPressed);
+            bool touchPan = !isPinching && Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed;
+
+            if (!IsLocked && (mousePan || touchPan))
+            {
+                Vector2 delta = Vector2.zero;
+                if (mousePan) delta = Mouse.current.delta.ReadValue();
+                else if (touchPan) delta = Touchscreen.current.primaryTouch.delta.ReadValue();
+                
+                delta *= 0.02f;
+                Vector3 move = new Vector3(-delta.x, 0, -delta.y);
+                
+                if (_screenRelativeMovement)
+                {
+                    float yaw = Camera.main != null ? Camera.main.transform.eulerAngles.y : 0f;
+                    Quaternion q = Quaternion.Euler(0, yaw, 0);
+                    move = q * move;
+                }
+                
+                _cameraAnchor.position += move * _moveSpeed * Time.unscaledDeltaTime;
+            }
+
+            // Zoom (Scroll Wheel)
+            if (!IsLocked && Mouse.current != null && Mouse.current.scroll.ReadValue().y != 0)
+            {
+                // Use Sign to ensure consistent zoom steps regardless of mouse wheel hardware
+                float scrollStep = Mathf.Sign(Mouse.current.scroll.ReadValue().y);
+                ZoomCamera(-scrollStep);
             }
 
              HandleMovement();
@@ -166,6 +201,7 @@ namespace MaouSamaTD.Managers
         {
             if (IsLocked || CenterOnMap) return;
             if (_cameraAnchor == null) return;
+            if (Keyboard.current == null) return;
 
             Vector2 input = Vector2.zero;
             // Use W/S/A/D or Arrows
@@ -176,22 +212,18 @@ namespace MaouSamaTD.Managers
 
             if (input.sqrMagnitude > 0.01f)
             {
-                // Move relative to the camera's orbital rotation
-                float yaw = 0f;
-                if (_cmOrbital != null)
-                {
-                    yaw = _cmOrbital.HorizontalAxis.Value;
-                }
-                else if (Camera.main != null)
-                {
-                     yaw = Camera.main.transform.eulerAngles.y;
-                }
-                
-                Quaternion q = Quaternion.Euler(0, yaw, 0);
-                Vector3 move = q * new Vector3(input.x, 0, input.y);
+                Vector3 move = new Vector3(input.x, 0, input.y);
                 move.Normalize(); 
+
+                if (_screenRelativeMovement)
+                {
+                    // Move relative to the camera's actual rotation
+                    float yaw = Camera.main != null ? Camera.main.transform.eulerAngles.y : 0f;
+                    Quaternion q = Quaternion.Euler(0, yaw, 0);
+                    move = q * move;
+                }
                 
-                _cameraAnchor.position += move * _moveSpeed * Time.deltaTime;
+                _cameraAnchor.position += move * _moveSpeed * Time.unscaledDeltaTime;
             }
         }
         
@@ -202,19 +234,36 @@ namespace MaouSamaTD.Managers
             // Kill any active tween if we take manual control
             if (_viewSequence != null && _viewSequence.IsActive()) _viewSequence.Kill();
             
-            _cmOrbital.HorizontalAxis.Value += delta * _rotateSpeed * Time.deltaTime;
+            var hAxis = _cmOrbital.HorizontalAxis;
+            hAxis.Value += delta * _rotateSpeed * Time.unscaledDeltaTime;
+            _cmOrbital.HorizontalAxis = hAxis;
         }
 
         private void ZoomCamera(float delta)
         {
-            if (_cmOrbital == null) return;
+            if (IsLocked || _cmOrbital == null || _battleCamera == null) return;
             if (_viewSequence != null && _viewSequence.IsActive()) _viewSequence.Kill();
             
+            // For Perspective
             float newRadius = Mathf.Clamp(_cmOrbital.Radius + delta * _zoomSpeed, _minRadius, _maxRadius);
             _cmOrbital.Radius = newRadius;
+
+            // For Orthographic
+            var lens = _battleCamera.Lens;
+            float newOrthoSize = Mathf.Clamp(lens.OrthographicSize + delta * _zoomSpeed, _minOrthoSize, _maxOrthoSize);
+            lens.OrthographicSize = newOrthoSize;
+            _battleCamera.Lens = lens;
             
-            if (CurrentMode == ViewMode.Isometric) _isoRadius = newRadius;
-            else _topDownRadius = newRadius;
+            if (CurrentMode == ViewMode.Isometric) 
+            {
+                _isoRadius = newRadius;
+                _isoOrthoSize = newOrthoSize;
+            }
+            else 
+            {
+                _topDownRadius = newRadius;
+                _topDownOrthoSize = newOrthoSize;
+            }
         }
         #endregion
 
@@ -225,7 +274,7 @@ namespace MaouSamaTD.Managers
             CenterOnMap = IsLocked;
             if (IsLocked)
             {
-                ResetToCenter();
+                ResetToCenter(false);
             }
         }
 
@@ -242,17 +291,38 @@ namespace MaouSamaTD.Managers
 
             float targetRadius = (mode == ViewMode.Isometric) ? _isoRadius : _topDownRadius;
             float targetVertical = (mode == ViewMode.Isometric) ? _isoVerticalAngle : _topDownVerticalAngle;
+            float targetOrthoSize = (mode == ViewMode.Isometric) ? _isoOrthoSize : _topDownOrthoSize;
             
             bool forceHeading = (mode == ViewMode.Isometric) ? _forceIsoHeading : _forceTopDownHeading;
             float targetHeading = (mode == ViewMode.Isometric) ? _isoHeading : _topDownHeading;
+            
+            // Rotate the camera to look straight down (90 degrees) for Top Down mode
+            Vector3 targetRotation = (mode == ViewMode.Isometric) 
+                ? _isometricRotation 
+                : new Vector3(90f, _isometricRotation.y, _isometricRotation.z);
 
             if (_viewSequence != null && _viewSequence.IsActive()) _viewSequence.Kill();
 
             if (immediate)
             {
                 _cmOrbital.Radius = targetRadius;
-                _cmOrbital.VerticalAxis.Value = targetVertical;
-                if (forceHeading) _cmOrbital.HorizontalAxis.Value = targetHeading;
+                
+                var lens = _battleCamera.Lens;
+                lens.OrthographicSize = targetOrthoSize;
+                _battleCamera.Lens = lens;
+                
+                var vAxis = _cmOrbital.VerticalAxis;
+                vAxis.Value = targetVertical;
+                _cmOrbital.VerticalAxis = vAxis;
+
+                if (forceHeading) 
+                {
+                    var hAxis = _cmOrbital.HorizontalAxis;
+                    hAxis.Value = targetHeading;
+                    _cmOrbital.HorizontalAxis = hAxis;
+                }
+                
+                _battleCamera.transform.eulerAngles = targetRotation;
                 
                 if (_battleCamera != null) _battleCamera.PreviousStateIsValid = false;
             }
@@ -261,7 +331,22 @@ namespace MaouSamaTD.Managers
                 _viewSequence = DOTween.Sequence().SetUpdate(true);
                 
                 _viewSequence.Join(DOTween.To(() => _cmOrbital.Radius, x => _cmOrbital.Radius = x, targetRadius, _transitionDuration));
-                _viewSequence.Join(DOTween.To(() => _cmOrbital.VerticalAxis.Value, x => _cmOrbital.VerticalAxis.Value = x, targetVertical, _transitionDuration));
+                
+                _viewSequence.Join(DOTween.To(() => _battleCamera.Lens.OrthographicSize, x => 
+                {
+                    var lens = _battleCamera.Lens;
+                    lens.OrthographicSize = x;
+                    _battleCamera.Lens = lens;
+                }, targetOrthoSize, _transitionDuration));
+                
+                _viewSequence.Join(_battleCamera.transform.DORotate(targetRotation, _transitionDuration));
+                
+                _viewSequence.Join(DOTween.To(() => _cmOrbital.VerticalAxis.Value, x => 
+                {
+                    var vAxis = _cmOrbital.VerticalAxis;
+                    vAxis.Value = x;
+                    _cmOrbital.VerticalAxis = vAxis;
+                }, targetVertical, _transitionDuration));
                 
                 if (forceHeading)
                 {
@@ -270,46 +355,100 @@ namespace MaouSamaTD.Managers
                     float delta = Mathf.DeltaAngle(currentHeading, targetHeading);
                     float shortestTarget = currentHeading + delta;
                     
-                    _viewSequence.Join(DOTween.To(() => _cmOrbital.HorizontalAxis.Value, x => _cmOrbital.HorizontalAxis.Value = x, shortestTarget, _transitionDuration));
+                    _viewSequence.Join(DOTween.To(() => _cmOrbital.HorizontalAxis.Value, x => 
+                    {
+                        var hAxis = _cmOrbital.HorizontalAxis;
+                        hAxis.Value = x;
+                        _cmOrbital.HorizontalAxis = hAxis;
+                    }, shortestTarget, _transitionDuration));
                 }
+                
+                _viewSequence.Join(_battleCamera.transform.DORotate(targetRotation, _transitionDuration));
             }
         }
         
-        public void FrameGrid(float centerX, float centerZ)
+        public void FrameGrid(float centerX, float centerZ, bool instant = false)
         {
-             if (_cameraAnchor != null)
+             Vector3 newPos = new Vector3(centerX, 0, centerZ);
+             if (instant)
              {
-                 Vector3 oldPos = _cameraAnchor.position;
-                 Vector3 newPos = new Vector3(centerX, 0, centerZ);
                  _cameraAnchor.position = newPos;
                  IsLocked = true;
                  CenterOnMap = true;
                  
-                 if (_battleCamera != null)
+                 var lens = _battleCamera.Lens;
+                 lens.OrthographicSize = _defaultZoom;
+                 _battleCamera.Lens = lens;
+                 
+                 if (CurrentMode == ViewMode.Isometric) _isoOrthoSize = _defaultZoom;
+                 else _topDownOrthoSize = _defaultZoom;
+             }
+             else
+             {
+                 IsLocked = true;
+                 CenterOnMap = true;
+                 
+                 // Smoothly move anchor using DOTween
+                 _cameraAnchor.DOMove(newPos, _transitionDuration).SetEase(Ease.OutQuad).SetUpdate(true);
+                 
+                 // Smoothly reset zoom
+                 DOTween.To(() => _battleCamera.Lens.OrthographicSize, x => 
                  {
-                     _battleCamera.OnTargetObjectWarped(_cameraAnchor, newPos - oldPos);
-                     _battleCamera.PreviousStateIsValid = false;
-                 }
+                     var lens = _battleCamera.Lens;
+                     lens.OrthographicSize = x;
+                     _battleCamera.Lens = lens;
+                 }, _defaultZoom, _transitionDuration).SetEase(Ease.OutQuad).SetUpdate(true).OnComplete(() => 
+                 {
+                     if (CurrentMode == ViewMode.Isometric) _isoOrthoSize = _defaultZoom;
+                     else _topDownOrthoSize = _defaultZoom;
+                 });
              }
         }
 
         public void CenterCameraOnMap(bool immediate = true)
         {
-            ResetToCenter();
+            ResetToCenter(immediate);
         }
 
-        public void ResetToCenter()
+        public void ResetToCenter(bool immediate = false)
         {
             if (_gridManager != null && _cameraAnchor != null)
             {
-                Vector3 oldPos = _cameraAnchor.position;
                 Vector3 newPos = _gridManager.GetGridCenter();
-                _cameraAnchor.position = newPos;
                 
-                if (_battleCamera != null)
+                if (immediate)
                 {
-                    _battleCamera.OnTargetObjectWarped(_cameraAnchor, newPos - oldPos);
-                    _battleCamera.PreviousStateIsValid = false;
+                    Vector3 oldPos = _cameraAnchor.position;
+                    _cameraAnchor.position = newPos;
+                    if (_battleCamera != null)
+                    {
+                        _battleCamera.OnTargetObjectWarped(_cameraAnchor, newPos - oldPos);
+                        _battleCamera.PreviousStateIsValid = false;
+                    }
+                    
+                    var lens = _battleCamera.Lens;
+                    lens.OrthographicSize = _defaultZoom;
+                    _battleCamera.Lens = lens;
+                 
+                    if (CurrentMode == ViewMode.Isometric) _isoOrthoSize = _defaultZoom;
+                    else _topDownOrthoSize = _defaultZoom;
+                }
+                else
+                {
+                    // Smoothly move anchor using DOTween
+                    _cameraAnchor.DOMove(newPos, _transitionDuration).SetEase(Ease.OutQuad).SetUpdate(true);
+                    
+                    // Smoothly reset zoom
+                    DOTween.To(() => _battleCamera.Lens.OrthographicSize, x => 
+                    {
+                        var lens = _battleCamera.Lens;
+                        lens.OrthographicSize = x;
+                        _battleCamera.Lens = lens;
+                    }, _defaultZoom, _transitionDuration).SetEase(Ease.OutQuad).SetUpdate(true).OnComplete(() => 
+                    {
+                        if (CurrentMode == ViewMode.Isometric) _isoOrthoSize = _defaultZoom;
+                        else _topDownOrthoSize = _defaultZoom;
+                    });
                 }
             }
         }

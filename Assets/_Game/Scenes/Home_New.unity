@@ -17825,7 +17825,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1336843440426197512, guid: baf2832e4b518d345bad138959ec5d31, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 110.254555
+      value: 110.25455
       objectReference: {fileID: 0}
     - target: {fileID: 1336843440426197512, guid: baf2832e4b518d345bad138959ec5d31, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -27217,7 +27217,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1336843440426197512, guid: baf2832e4b518d345bad138959ec5d31, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 103.97184
+      value: 103.97183
       objectReference: {fileID: 0}
     - target: {fileID: 1336843440426197512, guid: baf2832e4b518d345bad138959ec5d31, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -39457,7 +39457,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1336843440426197512, guid: baf2832e4b518d345bad138959ec5d31, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 113.03831
+      value: 113.0383
       objectReference: {fileID: 0}
     - target: {fileID: 1336843440426197512, guid: baf2832e4b518d345bad138959ec5d31, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -46859,11 +46859,11 @@ RectTransform:
   - {fileID: 3589063349478670321}
   - {fileID: 2950505410039501350}
   - {fileID: 114387061718643455}
+  - {fileID: 139865262}
   - {fileID: 149729969}
   - {fileID: 1157098507}
   - {fileID: 219301325}
   - {fileID: 2124611405}
-  - {fileID: 139865262}
   m_Father: {fileID: 1162970705}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -48727,6 +48727,10 @@ PrefabInstance:
     - target: {fileID: 686012210632466975, guid: 63ce6fe910c747a4389ea8dcc3a78c22, type: 3}
       propertyPath: m_Color.r
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 789630948777742964, guid: 63ce6fe910c747a4389ea8dcc3a78c22, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1226149279814227644, guid: 63ce6fe910c747a4389ea8dcc3a78c22, type: 3}
       propertyPath: m_TextStyleHashCode

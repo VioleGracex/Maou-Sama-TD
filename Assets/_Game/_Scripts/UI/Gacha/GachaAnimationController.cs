@@ -93,6 +93,13 @@ namespace MaouSamaTD.UI.Gacha
                 var btn = _btnSkipAll.GetComponent<UnityEngine.UI.Button>();
                 if (btn != null) { btn.onClick.RemoveAllListeners(); btn.onClick.AddListener(SkipAll); }
             }
+            if (_characterFullBody != null)
+            {
+                var btn = _characterFullBody.GetComponent<UnityEngine.UI.Button>();
+                if (btn == null) btn = _characterFullBody.gameObject.AddComponent<UnityEngine.UI.Button>();
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(SkipOne);
+            }
         }
 
         public void PlayRitual(List<UnitInventoryEntry> results)

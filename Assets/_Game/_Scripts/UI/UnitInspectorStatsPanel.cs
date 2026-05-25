@@ -16,7 +16,7 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _aspdText;
         [SerializeField] private TextMeshProUGUI _rangeText;
 
-        [SerializeField] private Slider _amitySlider;
+        [SerializeField] private Image _amityFillImage;
         [SerializeField] private TextMeshProUGUI _amityLevelText;
 
         [Header("Unit Detail Icons")]
@@ -32,6 +32,75 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _ultimateDescText;
         [SerializeField] private Image _ultimateIcon;
         [SerializeField] private RangePatternUI _ultimateRangeGrid;
+
+        private void Awake()
+        {
+            AutoBind();
+        }
+
+        private void AutoBind()
+        {
+            var rootUI = GetComponentInParent<UnitInspectorFullScreenUI>();
+            Transform searchRoot = rootUI != null ? rootUI.transform : this.transform.root;
+
+            var texts = searchRoot.GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (var t in texts)
+            {
+                string n = t.name.ToLower();
+                if (_atkText == null && n.Contains("atk")) _atkText = t;
+                else if (_defText == null && n.Contains("def")) _defText = t;
+                else if (_aspdText == null && n.Contains("aspd")) _aspdText = t;
+                else if (_rangeText == null && n.Contains("range") && !n.Contains("tag") && !n.Contains("ulti")) _rangeText = t;
+                else if (_amityLevelText == null && n.Contains("amity")) _amityLevelText = t;
+                else if (_rarityTextLabel == null && n.Contains("rarity")) _rarityTextLabel = t;
+                else if (_tagRangeText == null && n.Contains("range") && n.Contains("tag")) _tagRangeText = t;
+                else if (_tagRoleText == null && n.Contains("role") && n.Contains("tag")) _tagRoleText = t;
+                else if (_ultimateNameText == null && n.Contains("ulti") && n.Contains("name")) _ultimateNameText = t;
+                else if (_ultimateDescText == null && n.Contains("ulti") && n.Contains("desc")) _ultimateDescText = t;
+            }
+
+            var images = searchRoot.GetComponentsInChildren<Image>(true);
+            foreach (var img in images)
+            {
+                string n = img.name.ToLower();
+                if (_classIcon == null && n.Contains("class")) _classIcon = img;
+                else if (_ultimateIcon == null && n.Contains("ulti") && n.Contains("icon")) _ultimateIcon = img;
+                else if (_amityFillImage == null && n.Contains("amity") && (n.Contains("fill") || n.Contains("bar"))) _amityFillImage = img;
+            }
+
+            if (_amityFillImage == null)
+            {
+                // Fallback to finding a child named "Fill" under something with "Amity"
+                foreach (var img in images)
+                {
+                    if (img.name == "Fill" && img.transform.parent != null && img.transform.parent.name.Contains("Amity"))
+                    {
+                        _amityFillImage = img;
+                        break;
+                    }
+                }
+            }
+            
+            var grids = searchRoot.GetComponentsInChildren<RangePatternUI>(true);
+            foreach (var g in grids)
+            {
+                string n = g.name.ToLower();
+                if (_ultimateRangeGrid == null && n.Contains("ulti")) _ultimateRangeGrid = g;
+                else if (_rangeGridIcon == null && !n.Contains("ulti")) _rangeGridIcon = g;
+            }
+
+            if (_ultimateSection == null)
+            {
+                foreach (Transform t in searchRoot.GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.name.ToLower().Contains("ultimate") && t != this.transform && t.GetComponent<TextMeshProUGUI>() == null)
+                    {
+                        _ultimateSection = t.gameObject;
+                        break;
+                    }
+                }
+            }
+        }
 
         public void Refresh(UnitData u)
         {
@@ -53,7 +122,7 @@ namespace MaouSamaTD.UI
             // if (_hpText) _hpText.text = displayHp.ToString("F0");
             
             // Amity Slider Logic
-            if (_amitySlider != null)
+            if (_amityFillImage != null)
             {
                 // Assuming 5 levels of Amity, each 20%
                 float levelStep = 0.2f;
@@ -67,7 +136,7 @@ namespace MaouSamaTD.UI
                     progressInLevel = 1.0f;
                 }
 
-                _amitySlider.value = progressInLevel;
+                _amityFillImage.fillAmount = progressInLevel;
                 
                 if (_amityLevelText)
                 {

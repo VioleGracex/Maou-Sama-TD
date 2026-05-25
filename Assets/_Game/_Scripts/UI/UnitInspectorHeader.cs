@@ -22,6 +22,50 @@ namespace MaouSamaTD.UI
         [SerializeField] private TextMeshProUGUI _hpText;
         [SerializeField] private TextMeshProUGUI _costText;
 
+        private void Awake()
+        {
+            AutoBind();
+        }
+
+        private void AutoBind()
+        {
+            var rootUI = GetComponentInParent<UnitInspectorFullScreenUI>();
+            Transform searchRoot = rootUI != null ? rootUI.transform : this.transform.root;
+
+            var texts = searchRoot.GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (var t in texts)
+            {
+                string n = t.name.ToLower();
+                if (_nameText == null && n.Contains("name")) _nameText = t;
+                else if (_levelMaxText == null && n.Contains("max")) _levelMaxText = t;
+                else if (_levelText == null && n.Contains("level") && !n.Contains("amity")) _levelText = t;
+                else if (_rarityText == null && n.Contains("rarity")) _rarityText = t;
+                else if (_expText == null && n.Contains("exp")) _expText = t;
+                else if (_hpText == null && n.Contains("hp")) _hpText = t;
+                else if (_costText == null && n.Contains("cost")) _costText = t;
+            }
+
+            var images = searchRoot.GetComponentsInChildren<Image>(true);
+            foreach (var img in images)
+            {
+                string n = img.name.ToLower();
+                if (_portraitImage == null && n.Contains("portrait")) _portraitImage = img;
+                else if (_levelFillImage == null && (n.Contains("fill") || n.Contains("bar"))) _levelFillImage = img;
+            }
+
+            if (_starsRoot == null)
+            {
+                foreach (Transform t in searchRoot.GetComponentsInChildren<Transform>(true))
+                {
+                    if (t.name.ToLower().Contains("star") && t.childCount > 0)
+                    {
+                        _starsRoot = t;
+                        break;
+                    }
+                }
+            }
+        }
+
         public void Refresh(UnitData u)
         {
             if (u == null) return;

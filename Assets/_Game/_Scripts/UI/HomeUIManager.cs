@@ -318,7 +318,7 @@ namespace MaouSamaTD.UI.MainMenu
 
             if (panel != null)
             {
-                UIFlowManager.Instance.OpenPanel(panel);
+                panel.Open();
             }
         }
 

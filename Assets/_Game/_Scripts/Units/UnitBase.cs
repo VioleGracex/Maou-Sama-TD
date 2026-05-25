@@ -313,6 +313,12 @@ namespace MaouSamaTD.Units
 
         protected virtual void LateUpdate()
         {
+            // Update sorting order based on Y position to fix isometric depth issues
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y * 100);
+            }
+
             // 1. Distance compensation to keep world space health bar a constant screen size
             if (_hpBarRoot != null && Camera.main != null)
             {

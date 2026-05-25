@@ -13,6 +13,28 @@ namespace MaouSamaTD.UI
         [Header("Skill Slots")]
         [SerializeField] private Image[] _skillSlots;
 
+        private void Awake()
+        {
+            // Auto-bind skill slots if unassigned
+            if (_skillSlots == null || _skillSlots.Length == 0)
+            {
+                var rootUI = GetComponentInParent<UnitInspectorFullScreenUI>();
+                Transform searchRoot = rootUI != null ? rootUI.transform : this.transform.root;
+
+                System.Collections.Generic.List<Image> slots = new System.Collections.Generic.List<Image>();
+                var images = searchRoot.GetComponentsInChildren<Image>(true);
+                foreach (var img in images)
+                {
+                    string n = img.name.ToLower();
+                    if (n.Contains("skill") || n.Contains("slot") || n.Contains("passive") || n.Contains("active"))
+                    {
+                        slots.Add(img);
+                    }
+                }
+                if (slots.Count > 0) _skillSlots = slots.ToArray();
+            }
+        }
+
         public void Refresh(UnitData u)
         {
             if (u == null) return;
@@ -24,7 +46,7 @@ namespace MaouSamaTD.UI
 
         private void RefreshSkillSlot(int index, MaouSamaTD.Skills.UnitSkillData data)
         {
-            if (_skillSlots == null || index < 0 || index >= _skillSlots.Length) return;
+            if (_skillSlots == null || index < 0 || index >= _skillSlots.Length || _skillSlots[index] == null) return;
             
             bool hasSkill = data != null;
             _skillSlots[index].gameObject.SetActive(true); // Keep slot on, just toggle icon

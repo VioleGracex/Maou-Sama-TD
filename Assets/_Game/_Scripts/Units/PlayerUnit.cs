@@ -263,32 +263,62 @@ namespace MaouSamaTD.Units
             // Base handles Sprite and Animator (including destruction if missing)
             // No need for separate UpdateVisuals call here
             
-            // Face nearest spawn point automatically upon deployment
-            if (_gridManager == null) _gridManager = FindFirstObjectByType<Grid.GridManager>();
-            if (_gridManager != null && _gridManager.SpawnPoints != null && _gridManager.SpawnPoints.Count > 0)
-            {
-                var closestSpawnCoord = _gridManager.SpawnPoints[0].Coordinate;
-                var unitCoord = CurrentTile != null ? CurrentTile.Coordinate : _gridManager.WorldToGridCoordinates(transform.position);
-                float minDist = Vector2.Distance(unitCoord, closestSpawnCoord);
+            // Face nearest enemy upon deployment. If no enemies exist, fallback to nearest spawn point.
+            bool isTargetRight = false;
+            bool targetFound = false;
 
-                for (int i = 1; i < _gridManager.SpawnPoints.Count; i++)
+            // 1. Try finding the nearest active enemy
+            if (EnemyUnit.ActiveEnemies != null && EnemyUnit.ActiveEnemies.Count > 0)
+            {
+                EnemyUnit nearestEnemy = null;
+                float minEnemyDist = float.MaxValue;
+                foreach (var enemy in EnemyUnit.ActiveEnemies)
                 {
-                    float dist = Vector2.Distance(unitCoord, _gridManager.SpawnPoints[i].Coordinate);
-                    if (dist < minDist)
+                    if (enemy == null || enemy.IsDead) continue;
+                    float dist = Vector3.Distance(transform.position, enemy.transform.position);
+                    if (dist < minEnemyDist)
                     {
-                        minDist = dist;
-                        closestSpawnCoord = _gridManager.SpawnPoints[i].Coordinate;
+                        minEnemyDist = dist;
+                        nearestEnemy = enemy;
                     }
                 }
-                
-                bool isTargetRight = closestSpawnCoord.x > unitCoord.x;
-                if (_spriteRenderer != null)
+
+                if (nearestEnemy != null)
                 {
-                    Vector3 spriteScale = _originalSpriteScale;
-                    // Default facing is Left (+1). To face Right, use -1.
-                    spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? -1f : 1f);
-                    _spriteRenderer.transform.localScale = spriteScale;
+                    isTargetRight = nearestEnemy.transform.position.x > transform.position.x;
+                    targetFound = true;
                 }
+            }
+
+            // 2. Fallback to nearest spawn point
+            if (!targetFound)
+            {
+                if (_gridManager == null) _gridManager = FindFirstObjectByType<Grid.GridManager>();
+                if (_gridManager != null && _gridManager.SpawnPoints != null && _gridManager.SpawnPoints.Count > 0)
+                {
+                    var closestSpawnCoord = _gridManager.SpawnPoints[0].Coordinate;
+                    var unitCoord = CurrentTile != null ? CurrentTile.Coordinate : _gridManager.WorldToGridCoordinates(transform.position);
+                    float minDist = Vector2.Distance(unitCoord, closestSpawnCoord);
+
+                    for (int i = 1; i < _gridManager.SpawnPoints.Count; i++)
+                    {
+                        float dist = Vector2.Distance(unitCoord, _gridManager.SpawnPoints[i].Coordinate);
+                        if (dist < minDist)
+                        {
+                            minDist = dist;
+                            closestSpawnCoord = _gridManager.SpawnPoints[i].Coordinate;
+                        }
+                    }
+                    isTargetRight = closestSpawnCoord.x > unitCoord.x;
+                }
+            }
+
+            if (_spriteRenderer != null)
+            {
+                Vector3 spriteScale = _originalSpriteScale;
+                // Default facing is Right (+1). To face Left, use -1.
+                spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? 1f : -1f);
+                _spriteRenderer.transform.localScale = spriteScale;
             }
         }
         
@@ -452,8 +482,8 @@ namespace MaouSamaTD.Units
              if (_spriteRenderer != null)
              {
                  Vector3 spriteScale = _originalSpriteScale;
-                 // Default facing is Left (+1). To face Right, use -1.
-                 spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? -1f : 1f);
+                 // Default facing is Right (+1). To face Left, use -1.
+                 spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? 1f : -1f);
                  _spriteRenderer.transform.localScale = spriteScale;
              }
         }

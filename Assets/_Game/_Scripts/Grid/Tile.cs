@@ -350,6 +350,7 @@ namespace MaouSamaTD.Grid
                     var spriteRenderer = obj.GetComponentInChildren<SpriteRenderer>();
                     if (spriteRenderer != null)
                     {
+                        spriteRenderer.sortingOrder = Mathf.RoundToInt(-obj.transform.position.y * 100);
                         var glow = obj.AddComponent<SelectionGlowController>();
                         _decorationGlows.Add(glow);
                     }

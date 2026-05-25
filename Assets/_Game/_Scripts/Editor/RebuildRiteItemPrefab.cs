@@ -12,6 +12,8 @@ namespace MaouSamaTD.Editor
         [MenuItem("Maou-TD/UI/Rebuild RiteItem Prefab Complete")]
         public static void Rebuild()
         {
+            // COMMENTED OUT TO PREVENT BREAKING PREFAB
+            /*
             string prefabPath = "Assets/_Game/Prefabs/UI/RiteItem_Prefab.prefab";
             GameObject prefabAsset = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             if (prefabAsset == null)
@@ -145,6 +147,7 @@ namespace MaouSamaTD.Editor
             PrefabUtility.SaveAsPrefabAsset(prefab, prefabPath);
             Object.DestroyImmediate(prefab);
             Debug.Log("RiteItem_Prefab has been successfully rebuilt with Tags and RangeGrid!");
+            */
         }
     }
 }

@@ -97,6 +97,10 @@ namespace MaouSamaTD.UI.Gacha
 
         public void PlayRitual(List<UnitInventoryEntry> results)
         {
+            // Ensure gameObject and parent are active to prevent StartCoroutine failure
+            gameObject.SetActive(true);
+            if (transform.parent != null) transform.parent.gameObject.SetActive(true);
+
             // Sort results by rarity (lowest to highest)
             _pendingResults = results.OrderBy(r => _unitDatabase.GetUnitByID(r.UnitID)?.Rarity ?? UnitRarity.Common).ToList();
             

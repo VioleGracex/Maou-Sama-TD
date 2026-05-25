@@ -235,7 +235,8 @@ namespace MaouSamaTD.Editor
                 csf.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             }
 
-            // 5. Redesign RiteItem_Prefab card
+            // 5. Redesign RiteItem_Prefab card (COMMENTED OUT TO PREVENT BREAKING PREFAB)
+            /*
             Undo.RecordObject(riteItemPrefab, "Rebuild RiteItem Prefab");
             var itemRt = riteItemPrefab.GetComponent<RectTransform>();
             itemRt.sizeDelta = new Vector2(1000f, 120f);
@@ -458,6 +459,7 @@ namespace MaouSamaTD.Editor
 
             // Make details panel active by default
             detailsPanelGo.SetActive(true);
+            */
 
             // Bind values on CohortSquadUI
             vassalsPanelField.SetValue(cohortUI, centerSlotsGo);
@@ -474,16 +476,7 @@ namespace MaouSamaTD.Editor
             Debug.Log("Sovereign Rites UI Rebuild Complete!");
         }
 
-        [InitializeOnLoadMethod]
-        public static void RunOnCompile()
-        {
-            if (EditorApplication.isPlaying) return;
-            
-            if (SessionState.GetBool("RitesLayoutRebuilt4", false)) return;
-            SessionState.SetBool("RitesLayoutRebuilt4", true);
-            
-            Rebuild();
-        }
+
     }
 }
 #endif

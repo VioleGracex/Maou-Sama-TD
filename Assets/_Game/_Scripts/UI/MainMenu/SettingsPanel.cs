@@ -418,14 +418,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnBackClicked()
         {
-            if (UIFlowManager.Instance != null)
-            {
-                UIFlowManager.Instance.GoBack();
-            }
-            else
-            {
-                Close();
-            }
+            Close();
         }
 
         private enum SettingsTab

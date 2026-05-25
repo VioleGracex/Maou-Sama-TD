@@ -43,7 +43,7 @@ namespace MaouSamaTD.UI.MainMenu
                 canvas = gameObject.AddComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             }
-            canvas.sortingOrder = 999;
+            canvas.sortingOrder = 30000; // Increased to ensure it's above Dialogue (typically 1000+)
             
             if (gameObject.GetComponent<UnityEngine.UI.CanvasScaler>() == null)
             {
@@ -425,7 +425,7 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 canvas = gameObject.AddComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvas.sortingOrder = 999;
+                canvas.sortingOrder = 30000;
                 
                 UnityEngine.UI.CanvasScaler scaler = gameObject.AddComponent<UnityEngine.UI.CanvasScaler>();
                 scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -435,7 +435,7 @@ namespace MaouSamaTD.UI.MainMenu
             }
             else
             {
-                canvas.sortingOrder = 999;
+                canvas.sortingOrder = 30000;
             }
             
             CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();

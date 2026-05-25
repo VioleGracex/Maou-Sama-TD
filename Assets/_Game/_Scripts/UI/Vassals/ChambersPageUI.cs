@@ -53,8 +53,10 @@ namespace MaouSamaTD.UI.Vassals
         public Button btnAudienceClose;
 
         private UnitData _currentUnit;
-
-
+        
+        private enum SortMode { Rarity, Level }
+        private SortMode _currentSortMode = SortMode.Rarity;
+        private bool _isGridMode = false;
 
         private void Awake()
         {
@@ -66,6 +68,10 @@ namespace MaouSamaTD.UI.Vassals
             {
                 btnAudienceClose.onClick.AddListener(CloseAudiencePanel);
             }
+            
+            if (btnSortLevel != null) btnSortLevel.onClick.AddListener(() => { _currentSortMode = SortMode.Level; RefreshList(); });
+            if (btnSortRarity != null) btnSortRarity.onClick.AddListener(() => { _currentSortMode = SortMode.Rarity; RefreshList(); });
+            if (btnToggleViewMode != null) btnToggleViewMode.onClick.AddListener(() => { _isGridMode = !_isGridMode; RefreshList(); });
         }
         
         private void OpenAudiencePanel()
@@ -124,9 +130,11 @@ namespace MaouSamaTD.UI.Vassals
             if (restoreVigorCostText != null) restoreVigorCostText.text = "100 TRIBUTE";
             
             // Set waist up image
-            if (waistUpImage != null && unit.GetCurrentVisualArt() != null)
+            if (waistUpImage != null)
             {
-                waistUpImage.sprite = unit.GetCurrentVisualArt();
+                var sprite = unit.GetCurrentVisualArt();
+                waistUpImage.sprite = sprite;
+                waistUpImage.color = sprite != null ? Color.white : new Color(1, 1, 1, 0f);
             }
 
             if (privateAudienceBtn != null)
@@ -150,18 +158,50 @@ namespace MaouSamaTD.UI.Vassals
                 return;
             }
 
-            int count = 0;
+            // Handle Grid/List View Toggles
+            if (characterListContent != null)
+            {
+                var vLayout = characterListContent.GetComponent<VerticalLayoutGroup>();
+                var gLayout = characterListContent.GetComponent<GridLayoutGroup>();
+                
+                if (vLayout != null) vLayout.enabled = !_isGridMode;
+                if (gLayout != null) gLayout.enabled = _isGridMode;
+            }
+
+            List<UnitData> unlockedUnits = new List<UnitData>();
             foreach (var id in _saveManager.CurrentData.UnlockedUnits)
             {
                 var unit = MaouSamaTD.Core.AppEntryPoint.LoadedUnitDatabase.GetUnitByID(id);
-                if (unit != null)
+                if (unit != null) unlockedUnits.Add(unit);
+            }
+            
+            // Sort
+            if (_currentSortMode == SortMode.Rarity)
+            {
+                unlockedUnits.Sort((a, b) => b.Rarity.CompareTo(a.Rarity)); // Descending rarity
+            }
+            else if (_currentSortMode == SortMode.Level)
+            {
+                unlockedUnits.Sort((a, b) => b.Amity.CompareTo(a.Amity)); // Using Amity as fallback for Level sorting
+            }
+
+            int count = 0;
+            foreach (var unit in unlockedUnits)
+            {
+                if (characterListItemPrefab != null && characterListContent != null)
                 {
-                    if (characterListItemPrefab != null && characterListContent != null)
+                    var itemObj = Instantiate(characterListItemPrefab, characterListContent);
+                    itemObj.SetActive(true);
+                    
+                    // Fix the scaling bug that breaks layout spacing in play mode
+                    var rect = itemObj.GetComponent<RectTransform>();
+                    if (rect != null)
                     {
-                        var itemObj = Instantiate(characterListItemPrefab, characterListContent);
-                        itemObj.SetActive(true);
-                        
-                        // Try to get TextMeshProUGUI / Text using robust matching with fallbacks
+                        rect.localScale = Vector3.one;
+                        rect.anchoredPosition3D = new Vector3(rect.anchoredPosition.x, rect.anchoredPosition.y, 0);
+                    }
+                    
+                    // Try to get TextMeshProUGUI / Text using robust matching with fallbacks
                         var tmpTexts = itemObj.GetComponentsInChildren<TMPro.TMP_Text>(true);
                         TMPro.TMP_Text nameTmp = null;
                         TMPro.TMP_Text bondTmp = null;
@@ -239,7 +279,6 @@ namespace MaouSamaTD.UI.Vassals
                         count++;
                     }
                 }
-            }
 
             Debug.Log($"[chambers] spawned for count unit lists: {count}");
         }

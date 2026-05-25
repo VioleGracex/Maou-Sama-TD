@@ -91,7 +91,48 @@ namespace MaouSamaTD.UI.MainMenu
         [Inject] private MaouSamaTD.Managers.AudioSettingsManager _audioManager;
         #endregion
 
+        public static SettingsPanel Instance { get; private set; }
         private bool _initialized = false;
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+
+            // Unparent so DontDestroyOnLoad works
+            if (transform.parent != null)
+            {
+                transform.SetParent(null);
+            }
+
+            // Ensure it has a Canvas to render on its own
+            Canvas canvas = gameObject.GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                canvas = gameObject.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            }
+            // Set sorting order very high (above LoadingScreenPanel's 999)
+            canvas.sortingOrder = 1000;
+
+            if (gameObject.GetComponent<UnityEngine.UI.CanvasScaler>() == null)
+            {
+                UnityEngine.UI.CanvasScaler scaler = gameObject.AddComponent<UnityEngine.UI.CanvasScaler>();
+                scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920, 1080);
+            }
+
+            if (gameObject.GetComponent<UnityEngine.UI.GraphicRaycaster>() == null)
+            {
+                gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            }
+
+            DontDestroyOnLoad(gameObject);
+        }
 
         public void Initialize()
         {

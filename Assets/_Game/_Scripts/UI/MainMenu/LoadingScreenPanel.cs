@@ -126,6 +126,8 @@ namespace MaouSamaTD.UI.MainMenu
         [SerializeField] private Button _clearCacheButton;
         [SerializeField] private Button _startButton;
         [SerializeField] private GameObject _visualRoot;
+        [SerializeField] private Button _settingsButton;
+        [SerializeField] private SettingsPanel _settingsPanel;
 
         [Header("Cache Confirmation")]
         [SerializeField] private GameObject _confirmWindowRoot;
@@ -184,6 +186,11 @@ namespace MaouSamaTD.UI.MainMenu
             {
                 _startButton.onClick.AddListener(OnStartClicked);
                 _startButton.gameObject.SetActive(false);
+            }
+            
+            if (_settingsButton != null)
+            {
+                _settingsButton.onClick.AddListener(OnSettingsClicked);
             }
 
             if (_confirmYesButton != null) _confirmYesButton.onClick.AddListener(ExecuteClearCache);
@@ -343,6 +350,24 @@ namespace MaouSamaTD.UI.MainMenu
                 {
                     _appEntryPoint.ProceedToGame();
                 }
+            }
+        }
+
+        private void OnSettingsClicked()
+        {
+            if (_settingsPanel == null)
+            {
+                _settingsPanel = SettingsPanel.Instance;
+            }
+
+            if (_settingsPanel != null)
+            {
+                _settingsPanel.Initialize();
+                _settingsPanel.Open();
+            }
+            else
+            {
+                Debug.LogWarning("[LoadingScreenPanel] SettingsPanel instance not found!");
             }
         }
 

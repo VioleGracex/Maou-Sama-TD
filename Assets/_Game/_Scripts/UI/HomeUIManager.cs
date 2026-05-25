@@ -310,7 +310,12 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnSettingsClicked()
         {
-            var panel = Object.FindFirstObjectByType<SettingsPanel>(FindObjectsInactive.Include);
+            var panel = SettingsPanel.Instance;
+            if (panel == null)
+            {
+                panel = Object.FindFirstObjectByType<SettingsPanel>(FindObjectsInactive.Include);
+            }
+
             if (panel != null)
             {
                 UIFlowManager.Instance.OpenPanel(panel);

@@ -189,6 +189,19 @@ namespace MaouSamaTD.Grid
             _propBlock = new MaterialPropertyBlock();
         }
 
+        private void EnsureInitialized()
+        {
+            if (_renderer == null)
+            {
+                _renderer = GetComponent<Renderer>();
+                if (_renderer == null) _renderer = GetComponentInChildren<Renderer>();
+            }
+            if (_propBlock == null)
+            {
+                _propBlock = new MaterialPropertyBlock();
+            }
+        }
+
         [Header("Materials")]
         [SerializeField] private Material _defaultMaterial;
         [SerializeField] private Material _glowMaterial;
@@ -307,8 +320,19 @@ namespace MaouSamaTD.Grid
         private Texture2D _overriddenTexture;
         private List<DecorationData> _overriddenDecorations;
 
+        public void SetMaterial(Material mat)
+        {
+            EnsureInitialized();
+            if (mat != null && _renderer != null)
+            {
+                _renderer.sharedMaterial = mat;
+            }
+        }
+
         public void ApplyVisualOverride(Texture2D texture, List<DecorationData> decorations)
         {
+            EnsureInitialized();
+            
             _overriddenTexture = texture;
             _overriddenDecorations = decorations;
 
@@ -374,6 +398,8 @@ namespace MaouSamaTD.Grid
 
         private void UpdateTypeVisuals()
         {
+            EnsureInitialized();
+            
             // 1. Reset Base Renderer (if we modified it previously, let's reset to white/default)
             if (_renderer != null)
             {

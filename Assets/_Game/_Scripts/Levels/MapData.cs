@@ -57,6 +57,8 @@ namespace MaouSamaTD.Levels
 
         [Header("Visuals")]
         public bool ShowPathing = false;
+        public Material DefaultTileMaterial;
+        public Texture2D DefaultTileTexture;
         public List<TileVisualOverride> VisualOverrides = new List<TileVisualOverride>();
 
         [Header("Global Wall Settings")]

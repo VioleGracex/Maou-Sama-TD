@@ -257,7 +257,7 @@ namespace MaouSamaTD.Grid
             tile.Initialize(coord, type);
             _grid[coord] = tile;
             
-            if (type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor || type == TileType.Wall || type == TileType.SpawnPointHigh || type == TileType.ExitPointHigh)
+            if (type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.Wall || type == TileType.SpawnPointHigh || type == TileType.ExitPointHigh)
                 tile.transform.position += Vector3.up * 0.5f;
             else if (type == TileType.LowTile)
                 tile.transform.position += Vector3.down * 0.2f;
@@ -388,7 +388,7 @@ namespace MaouSamaTD.Grid
             {
                 tile.Initialize(coord, type);
                 
-                bool isHigh = type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.NonWalkableDecor || type == TileType.Wall || type == TileType.SpawnPointHigh || type == TileType.ExitPointHigh;
+                bool isHigh = type == TileType.HighGround || type == TileType.DecoHighGround || type == TileType.Wall || type == TileType.SpawnPointHigh || type == TileType.ExitPointHigh;
                 float yOffset = isHigh ? 0.5f : 0f;
                 
                 // Low Tile special case: move it down slightly

@@ -47,6 +47,7 @@ namespace MaouSamaTD.Grid
             }
         }
         public float CellSize => _cellSize;
+        public Transform GridContainer => _gridContainer;
         public Transform WallContainer => _wallContainer;
         public Transform CameraAnchor => _cameraAnchor;
         public Transform EnemyContainer => _enemyContainer;

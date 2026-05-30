@@ -30,31 +30,38 @@ namespace MaouSamaTD.EditorTools
                     float u = (float)x / size;
                     float v = (float)y / size;
 
-                    float GetNoise(float px, float py, float scale, float seedOffset)
+                    float SampleToroidalWavy(float px, float py, float scaleX, float scaleY, float seedOffset, float waveFreq, float waveAmp)
                     {
-                        float x1 = (px / size) * scale + seedOffset;
-                        float y1 = (py / size) * scale + seedOffset;
-                        return Mathf.PerlinNoise(x1, y1);
-                    }
+                        // Add a seamless wave distortion based on Y coordinate (py / size)
+                        float wave = Mathf.Sin((py / size) * 2f * Mathf.PI * waveFreq) * waveAmp;
+                        
+                        // Distort the X coordinate using the wave
+                        float distortedPx = px + wave * size;
 
-                    float SampleToroidal(float px, float py, float scale, float seedOffset)
-                    {
-                        float n00 = GetNoise(px, py, scale, seedOffset);
-                        float n10 = GetNoise(px - size, py, scale, seedOffset);
-                        float n01 = GetNoise(px, py - size, scale, seedOffset);
-                        float n11 = GetNoise(px - size, py - size, scale, seedOffset);
+                        float GetNoise(float xVal, float yVal)
+                        {
+                            float x1 = (xVal / size) * scaleX + seedOffset;
+                            float y1 = (yVal / size) * scaleY + seedOffset;
+                            return Mathf.PerlinNoise(x1, y1);
+                        }
+
+                        float n00 = GetNoise(distortedPx, py);
+                        float n10 = GetNoise(distortedPx - size, py);
+                        float n01 = GetNoise(distortedPx, py - size);
+                        float n11 = GetNoise(distortedPx - size, py - size);
 
                         float n0 = Mathf.Lerp(n00, n10, u);
                         float n1 = Mathf.Lerp(n01, n11, u);
                         return Mathf.Lerp(n0, n1, v);
                     }
 
-                    // Sample three independent, seamless noise layers
-                    float rNoise = SampleToroidal(x, y, 3f, 0f);
-                    float gNoise = SampleToroidal(x, y, 5f, 120f);
-                    float bNoise = SampleToroidal(x, y, 7f, 240f);
+                    // Sample three independent, seamless noise layers with beautiful wavy patterns.
+                    // Elongating vertically (smaller scaleY than scaleX) creates vertical/diagonal wavefronts.
+                    float rNoise = SampleToroidalWavy(x, y, 4.0f, 1.5f, 0f, 2f, 0.08f);
+                    float gNoise = SampleToroidalWavy(x, y, 6.0f, 2.0f, 120f, 3f, 0.06f);
+                    float bNoise = SampleToroidalWavy(x, y, 8.0f, 2.5f, 240f, 4f, 0.04f);
 
-                    float finalAlpha = (rNoise * 0.6f + gNoise * 0.4f);
+                    float finalAlpha = Mathf.Clamp01(rNoise * 0.52f + gNoise * 0.33f + bNoise * 0.15f);
 
                     noisePixels[y * size + x] = new Color(rNoise, gNoise, bNoise, finalAlpha);
                 }
@@ -161,8 +168,18 @@ namespace MaouSamaTD.EditorTools
             }
 
             // Tile/Shader Fog Material
-            Material fogMaterial = new Material(customShader);
-            fogMaterial.name = "TileFogMaterial";
+            string tileFogMatPath = $"{folderPath}/TileFogMaterial.mat";
+            Material fogMaterial = AssetDatabase.LoadAssetAtPath<Material>(tileFogMatPath);
+            if (fogMaterial == null)
+            {
+                fogMaterial = new Material(customShader);
+                fogMaterial.name = "TileFogMaterial";
+                AssetDatabase.CreateAsset(fogMaterial, tileFogMatPath);
+            }
+            else
+            {
+                fogMaterial.shader = customShader;
+            }
             
             if (isCustomShader)
             {
@@ -170,16 +187,16 @@ namespace MaouSamaTD.EditorTools
                 fogMaterial.SetColor("_BaseColor", new Color(0.35f, 0.15f, 0.55f, 1.0f)); 
                 fogMaterial.SetColor("_CloudColor2", new Color(0.15f, 0.05f, 0.25f, 1.0f)); 
                 fogMaterial.SetFloat("_GlobalScale", 0.02f); // Large sweeping noise patterns
-                fogMaterial.SetVector("_ScrollSpeed1", new Vector4(0.012f, 0.006f, 0f, 0f));
-                fogMaterial.SetVector("_ScrollSpeed2", new Vector4(-0.008f, 0.01f, 0f, 0f));
-                fogMaterial.SetVector("_DistortionSpeed", new Vector4(0.005f, -0.005f, 0f, 0f));
-                fogMaterial.SetFloat("_DistortionStrength", 0.15f);
+                fogMaterial.SetVector("_ScrollSpeed1", new Vector4(-0.03f, -0.005f, 0f, 0f));
+                fogMaterial.SetVector("_ScrollSpeed2", new Vector4(-0.02f, 0.005f, 0f, 0f));
+                fogMaterial.SetVector("_DistortionSpeed", new Vector4(-0.015f, 0.01f, 0f, 0f));
+                fogMaterial.SetFloat("_DistortionStrength", 0.18f);
                 fogMaterial.SetFloat("_ParallaxStrength", 0.25f);
                 fogMaterial.SetFloat("_LayerHeight2", 0.12f);
                 fogMaterial.SetFloat("_LayerHeight3", 0.25f);
-                fogMaterial.SetFloat("_Thickness", 0.15f); // Low cutoff for wispy edges
-                fogMaterial.SetFloat("_Softness", 0.45f); // High softness for silky transitions
-                fogMaterial.SetFloat("_MaxAlpha", 0.5f); // Prevent blocking grid vision!
+                fogMaterial.SetFloat("_Thickness", 0.1f); // Low cutoff for thicker clouds
+                fogMaterial.SetFloat("_Softness", 0.4f); // Silky transitions
+                fogMaterial.SetFloat("_MaxAlpha", 0.85f); // Richer violet fog presence!
                 if (savedNoiseTex != null) fogMaterial.SetTexture("_BaseMap", savedNoiseTex);
             }
             else
@@ -191,10 +208,10 @@ namespace MaouSamaTD.EditorTools
                 fogMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 fogMaterial.SetInt("_ZWrite", 0);
                 fogMaterial.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-                fogMaterial.SetColor("_BaseColor", new Color(0.35f, 0.15f, 0.55f, 0.4f));
+                fogMaterial.SetColor("_BaseColor", new Color(0.35f, 0.15f, 0.55f, 0.85f));
                 if (savedNoiseTex != null) fogMaterial.SetTexture("_BaseMap", savedNoiseTex);
             }
-            AssetDatabase.CreateAsset(fogMaterial, $"{folderPath}/TileFogMaterial.mat");
+            EditorUtility.SetDirty(fogMaterial);
 
             // Particle Material Setup (URP Particles Unlit)
             Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
@@ -207,8 +224,19 @@ namespace MaouSamaTD.EditorTools
                 particleShader = customShader;
             }
             
-            Material partMat = new Material(particleShader);
-            partMat.name = "VoidParticleMaterial";
+            string partMatPath = $"{folderPath}/VoidParticleMaterial.mat";
+            Material partMat = AssetDatabase.LoadAssetAtPath<Material>(partMatPath);
+            if (partMat == null)
+            {
+                partMat = new Material(particleShader);
+                partMat.name = "VoidParticleMaterial";
+                AssetDatabase.CreateAsset(partMat, partMatPath);
+            }
+            else
+            {
+                partMat.shader = particleShader;
+            }
+            
             partMat.color = new Color(1f, 1f, 1f, 1f); 
             
             partMat.SetFloat("_Surface", 1f); // Transparent
@@ -229,30 +257,86 @@ namespace MaouSamaTD.EditorTools
                     partMat.SetTexture("_BaseMap", savedPuffTex);
                 }
             }
-            AssetDatabase.CreateAsset(partMat, $"{folderPath}/VoidParticleMaterial.mat");
+            EditorUtility.SetDirty(partMat);
 
             AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
 
-            Material loadedTileFogMat = AssetDatabase.LoadAssetAtPath<Material>($"{folderPath}/TileFogMaterial.mat");
-            Material loadedPartMat = AssetDatabase.LoadAssetAtPath<Material>($"{folderPath}/VoidParticleMaterial.mat");
+            Material loadedTileFogMat = AssetDatabase.LoadAssetAtPath<Material>(tileFogMatPath);
+            Material loadedPartMat = AssetDatabase.LoadAssetAtPath<Material>(partMatPath);
 
 
-            // --- 4. Tile Fog Prefab (Flat Horizontal Quad for None coordinates) ---
-            GameObject tileFogGo = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            tileFogGo.name = "TileFogPrefab";
-            tileFogGo.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            // --- 4. Tile Fog Prefab (Particle System for None coordinates) ---
+            GameObject tileFogGo = new GameObject("TileFogPrefab");
+            tileFogGo.hideFlags = HideFlags.HideInHierarchy;
+            ParticleSystem tilePs = tileFogGo.AddComponent<ParticleSystem>();
+            
+            var tileMain = tilePs.main;
+            tileMain.duration = 10f;
+            tileMain.loop = true;
+            tileMain.prewarm = true;
+            tileMain.startLifetime = new ParticleSystem.MinMaxCurve(8f, 12f);
+            tileMain.startSpeed = new ParticleSystem.MinMaxCurve(0.01f, 0.04f); // Slow and peaceful
+            tileMain.startSize = new ParticleSystem.MinMaxCurve(2.0f, 3.5f); // Larger size for premium overlapping clouds
+            tileMain.startColor = new ParticleSystem.MinMaxGradient(new Color(0.35f, 0.15f, 0.55f, 0.22f), new Color(0.35f, 0.15f, 0.55f, 0.38f)); // Rich yet soft alpha variance
+            tileMain.startRotation = new ParticleSystem.MinMaxCurve(0f, 2f * Mathf.PI);
+            tileMain.maxParticles = 16; // Increased to ensure a lush volume of fog
+            tileMain.simulationSpace = ParticleSystemSimulationSpace.World;
 
-            Collider col = tileFogGo.GetComponent<Collider>();
-            if (col != null) Object.DestroyImmediate(col);
+            var tileEmission = tilePs.emission;
+            tileEmission.rateOverTime = 1.2f; // Increased emission for consistent cloud cover
 
-            MeshRenderer mr = tileFogGo.GetComponent<MeshRenderer>();
-            if (mr != null)
-            {
-                mr.sharedMaterial = loadedTileFogMat;
-                mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                mr.receiveShadows = false;
-            }
+            var tileShape = tilePs.shape;
+            tileShape.shapeType = ParticleSystemShapeType.Box;
+            tileShape.scale = new Vector3(1.2f, 0f, 1.2f); // Slightly wider spawn area for natural scattering and overlap
+
+            var tileVelocity = tilePs.velocityOverLifetime;
+            tileVelocity.enabled = true;
+            tileVelocity.x = new ParticleSystem.MinMaxCurve(-0.09f, -0.04f); // Slow drifting right-to-left
+            tileVelocity.z = new ParticleSystem.MinMaxCurve(-0.02f, 0.02f);
+            tileVelocity.y = new ParticleSystem.MinMaxCurve(0f, 0.01f);
+
+            var tileSizeOverLifetime = tilePs.sizeOverLifetime;
+            tileSizeOverLifetime.enabled = true;
+            AnimationCurve tileSizeCurve = new AnimationCurve();
+            tileSizeCurve.AddKey(0f, 0.6f);
+            tileSizeCurve.AddKey(0.2f, 1.0f);
+            tileSizeCurve.AddKey(0.8f, 1.0f);
+            tileSizeCurve.AddKey(1.0f, 0.6f);
+            tileSizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1.0f, tileSizeCurve);
+
+            var tileRotation = tilePs.rotationOverLifetime;
+            tileRotation.enabled = true;
+            tileRotation.z = new ParticleSystem.MinMaxCurve(-0.05f, 0.05f);
+
+            var tileNoise = tilePs.noise;
+            tileNoise.enabled = true;
+            tileNoise.strength = new ParticleSystem.MinMaxCurve(0.15f, 0.35f); // Richer drifting waves
+            tileNoise.frequency = 0.2f;
+            tileNoise.scrollSpeed = 0.03f;
+            tileNoise.quality = ParticleSystemNoiseQuality.High;
+
+            var tileColorOverLifetime = tilePs.colorOverLifetime;
+            tileColorOverLifetime.enabled = true;
+            Gradient tileGrad = new Gradient();
+            tileGrad.SetKeys(
+                new GradientColorKey[] { 
+                    new GradientColorKey(new Color(0.35f, 0.15f, 0.55f), 0.0f), 
+                    new GradientColorKey(new Color(0.40f, 0.18f, 0.60f), 1.0f) 
+                },
+                new GradientAlphaKey[] { 
+                    new GradientAlphaKey(0.0f, 0.0f), 
+                    new GradientAlphaKey(1.0f, 0.20f), 
+                    new GradientAlphaKey(1.0f, 0.80f), 
+                    new GradientAlphaKey(0.0f, 1.0f) 
+                }
+            );
+            tileColorOverLifetime.color = new ParticleSystem.MinMaxGradient(tileGrad);
+
+            ParticleSystemRenderer tilePsr = tileFogGo.GetComponent<ParticleSystemRenderer>();
+            tilePsr.renderMode = ParticleSystemRenderMode.HorizontalBillboard; // Lie flat on XZ plane
+            tilePsr.sharedMaterial = loadedPartMat != null ? loadedPartMat : partMat;
+            tilePsr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            tilePsr.receiveShadows = false;
 
             string tileFogPrefabPath = $"{folderPath}/TileFogPrefab.prefab";
             PrefabUtility.SaveAsPrefabAsset(tileFogGo, tileFogPrefabPath);
@@ -261,6 +345,7 @@ namespace MaouSamaTD.EditorTools
 
             // --- 5. Global Background Prefab - SHADER VERSION ---
             GameObject globalBgShaderGo = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            globalBgShaderGo.hideFlags = HideFlags.HideInHierarchy;
             globalBgShaderGo.name = "GlobalBackgroundPrefab_Shader";
             globalBgShaderGo.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
             globalBgShaderGo.transform.localScale = new Vector3(180f, 180f, 1f); // Huge XZ quad coverage
@@ -271,7 +356,7 @@ namespace MaouSamaTD.EditorTools
             MeshRenderer shaderMr = globalBgShaderGo.GetComponent<MeshRenderer>();
             if (shaderMr != null)
             {
-                shaderMr.sharedMaterial = loadedTileFogMat;
+                shaderMr.sharedMaterial = loadedTileFogMat != null ? loadedTileFogMat : fogMaterial;
                 shaderMr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 shaderMr.receiveShadows = false;
             }
@@ -283,6 +368,7 @@ namespace MaouSamaTD.EditorTools
 
             // --- 6. Global Background Prefab - PARTICLE VERSION ---
             GameObject globalBgPartGo = new GameObject("GlobalBackgroundPrefab_Particle");
+            globalBgPartGo.hideFlags = HideFlags.HideInHierarchy;
             ParticleSystem ps = globalBgPartGo.AddComponent<ParticleSystem>();
             
             var main = ps.main;
@@ -292,7 +378,7 @@ namespace MaouSamaTD.EditorTools
             main.startLifetime = new ParticleSystem.MinMaxCurve(10f, 15f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.05f, 0.15f); // Drifts slowly
             main.startSize = new ParticleSystem.MinMaxCurve(30f, 50f); // Massive soft overlapping cloud sizes
-            main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.35f, 0.15f, 0.55f, 0.22f)); // Soft violet cloud
+            main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.35f, 0.15f, 0.55f, 0.35f)); // Richer violet cloud
             main.startRotation = new ParticleSystem.MinMaxCurve(0f, 2f * Mathf.PI); // Random initial rotations
             main.maxParticles = 200;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
@@ -306,8 +392,8 @@ namespace MaouSamaTD.EditorTools
 
             var velocity = ps.velocityOverLifetime;
             velocity.enabled = true;
-            velocity.x = new ParticleSystem.MinMaxCurve(-0.1f, 0.1f);
-            velocity.z = new ParticleSystem.MinMaxCurve(-0.1f, 0.1f);
+            velocity.x = new ParticleSystem.MinMaxCurve(-0.6f, -0.2f); // Drift consistently right-to-left
+  velocity.z = new ParticleSystem.MinMaxCurve(-0.1f, 0.1f);
             velocity.y = new ParticleSystem.MinMaxCurve(0f, 0.02f);
 
             var sizeOverLifetime = ps.sizeOverLifetime;
@@ -349,7 +435,7 @@ namespace MaouSamaTD.EditorTools
 
             ParticleSystemRenderer psr = globalBgPartGo.GetComponent<ParticleSystemRenderer>();
             psr.renderMode = ParticleSystemRenderMode.HorizontalBillboard; // LIE FLAT on XZ Plane! No "paper card" visual.
-            psr.sharedMaterial = loadedPartMat;
+            psr.sharedMaterial = loadedPartMat != null ? loadedPartMat : partMat;
             psr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             psr.receiveShadows = false;
 

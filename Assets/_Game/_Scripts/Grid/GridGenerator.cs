@@ -619,7 +619,8 @@ namespace MaouSamaTD.Grid
                         {
                             Vector3 pos = new Vector3(x * cellSize, env.TileFogHeightOffset, y * cellSize);
                             // Preserve the prefab's flat rotation (90 degrees around X)
-                            GameObject fogObj = Instantiate(env.TileFogPrefab, pos, env.TileFogPrefab.transform.rotation, _gridManager.transform);
+                            Transform parentT = _gridManager.GridContainer != null ? _gridManager.GridContainer : _gridManager.transform;
+                            GameObject fogObj = Instantiate(env.TileFogPrefab, pos, env.TileFogPrefab.transform.rotation, parentT);
                             fogObj.name = $"TileFog_{x}_{y}";
                             fogObj.transform.localScale = new Vector3(cellSize, cellSize, cellSize);
                             _generatedEnvironmentObjects.Add(fogObj);

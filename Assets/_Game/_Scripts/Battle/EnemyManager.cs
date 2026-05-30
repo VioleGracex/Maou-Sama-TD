@@ -34,6 +34,7 @@ namespace MaouSamaTD.Managers
         private bool _isInitialized = false;
         
         private List<WaveData> _waves;
+        private int _preShownWaveIndex = -1;
 
         public bool IsSpawning => _isSpawning;
         public bool AllWavesFinished => _allWavesFinished;
@@ -237,6 +238,13 @@ namespace MaouSamaTD.Managers
             {
                 Debug.Log($"[EnemyManager] Tutorial Wave: {wave.WaveMessage}");
             }
+
+            // Show Paths for this wave immediately
+            if (_pathVisualizer != null)
+            {
+                _pathVisualizer.ShowPathsForWave(wave);
+                _preShownWaveIndex = waveIndex;
+            }
             
             int enemyCounter = 0;
             foreach (var group in wave.Groups)
@@ -367,14 +375,40 @@ namespace MaouSamaTD.Managers
 
         private IEnumerator SpawnRoutine(float initialDelay)
         {
+            _preShownWaveIndex = -1;
+
             if (initialDelay > 0)
             {
                 Debug.Log($"[EnemyManager] Waiting for Grace Period: {initialDelay}s");
-                if (_pathVisualizer != null) _pathVisualizer.Show(); 
-                yield return StartCoroutine(WaitScaled(initialDelay));
+                if (initialDelay > 2.0f)
+                {
+                    yield return StartCoroutine(WaitScaled(initialDelay - 2.0f));
+                    if (_waves != null && _waves.Count > 0 && _pathVisualizer != null)
+                    {
+                        _pathVisualizer.ShowPathsForWave(_waves[0]);
+                        _preShownWaveIndex = 0;
+                    }
+                    yield return StartCoroutine(WaitScaled(2.0f));
+                }
+                else
+                {
+                    if (_waves != null && _waves.Count > 0 && _pathVisualizer != null)
+                    {
+                        _pathVisualizer.ShowPathsForWave(_waves[0]);
+                        _preShownWaveIndex = 0;
+                    }
+                    yield return StartCoroutine(WaitScaled(initialDelay));
+                }
+            }
+            else
+            {
+                if (_waves != null && _waves.Count > 0 && _pathVisualizer != null)
+                {
+                    _pathVisualizer.ShowPathsForWave(_waves[0]);
+                    _preShownWaveIndex = 0;
+                }
             }
 
-            if (_pathVisualizer != null) _pathVisualizer.Hide(); 
             _isSpawning = true;
             
             if (_waves == null) yield break;
@@ -391,8 +425,12 @@ namespace MaouSamaTD.Managers
                     Debug.Log($"[EnemyManager] Starting Wave: {wave.WaveMessage}");
                 }
                 
-                // Show Paths for this wave
-                _pathVisualizer?.ShowPathsForWave(wave);
+                // Show Paths for this wave only if they weren't already pre-shown early
+                if (_preShownWaveIndex != waveCounter && _pathVisualizer != null)
+                {
+                    _pathVisualizer.ShowPathsForWave(wave);
+                    _preShownWaveIndex = waveCounter;
+                }
 
                 List<Coroutine> groupRoutines = new List<Coroutine>();
                 _wavesThatStartedSpawning.Add(waveCounter);
@@ -443,7 +481,27 @@ namespace MaouSamaTD.Managers
                 if (wave.DelayBeforeNextWave > 0)
                 {
                     _isSpawning = false; // Not spawning during the delay
-                    yield return StartCoroutine(WaitScaled(wave.DelayBeforeNextWave));
+                    
+                    float delay = wave.DelayBeforeNextWave;
+                    if (delay > 2.0f)
+                    {
+                        yield return StartCoroutine(WaitScaled(delay - 2.0f));
+                        
+                        // Predict and pre-show the paths for the NEXT wave 2 seconds early!
+                        int nextWaveIndex = waveCounter + 1;
+                        if (nextWaveIndex < _waves.Count && _pathVisualizer != null)
+                        {
+                            _pathVisualizer.ShowPathsForWave(_waves[nextWaveIndex]);
+                            _preShownWaveIndex = nextWaveIndex;
+                        }
+                        
+                        yield return StartCoroutine(WaitScaled(2.0f));
+                    }
+                    else
+                    {
+                        yield return StartCoroutine(WaitScaled(delay));
+                    }
+                    
                     _isSpawning = true;
                 }
                 

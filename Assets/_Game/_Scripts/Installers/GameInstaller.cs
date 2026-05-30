@@ -77,7 +77,16 @@ namespace MaouSamaTD.Installers
             else Container.Bind<StoryManager>().FromComponentInHierarchy().AsSingle();
 
             Container.Bind<GridGenerator>().FromComponentInHierarchy().AsSingle();
-            Container.Bind<MaouSamaTD.Utils.PathVisualizer>().FromNewComponentOnNewGameObject().AsSingle();
+            
+            var pathVisualizer = FindObjectOfType<MaouSamaTD.Utils.PathVisualizer>();
+            if (pathVisualizer != null)
+            {
+                Container.Bind<MaouSamaTD.Utils.PathVisualizer>().FromInstance(pathVisualizer).AsSingle();
+            }
+            else
+            {
+                Container.Bind<MaouSamaTD.Utils.PathVisualizer>().FromNewComponentOnNewGameObject().AsSingle();
+            }
         }
     }
 }

@@ -482,6 +482,8 @@ MonoBehaviour:
   ExitPoints:
   - {x: 7, y: 7}
   ShowPathing: 1
+  DefaultTileMaterial: {fileID: 0}
+  DefaultTileTexture: {fileID: 0}
   VisualOverrides: []
   WallCascadeOnHoles: 1
   Walls:
@@ -501,3 +503,17 @@ MonoBehaviour:
     SeamlessCorners: 1
   WallOverrides: []
   SideVisualOverrides: []
+  Environment:
+    UseGlobalBackground: 0
+    GlobalBackgroundPrefab: {fileID: 0}
+    GlobalBackgroundHeightOffset: -1
+    FillVoidWithFog: 1
+    TileFogPrefab: {fileID: 8868440218785152674, guid: 6c6e858834563f64e98f50787da555b2, type: 3}
+    TileFogHeightOffset: -0.5
+    CameraBackground: 0
+    CameraBackgroundColor: {r: 0.05, g: 0.05, b: 0.05, a: 1}
+    SkyboxMaterial: {fileID: 0}
+  Lighting:
+    OverrideLighting: 0
+    AmbientColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+    DirectionalLightPrefab: {fileID: 0}

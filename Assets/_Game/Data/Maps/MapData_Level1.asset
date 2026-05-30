@@ -895,7 +895,327 @@ MonoBehaviour:
     WallScale: {x: 0.5, y: 3, z: 1}
     WallOffset: {x: 0, y: 0, z: 0}
     SeamlessCorners: 1
-  WallOverrides: []
+  WallOverrides:
+  - Side: 0
+    Index: 0
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 1
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 2
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 3
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 4
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 5
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 6
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 7
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 8
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 9
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 10
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 11
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 12
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 13
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 0
+    Index: 14
+    TextureOverride: {fileID: 2800000, guid: 2410bf09c823b974689c9f5e79327ff0, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 0
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 1
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 2
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 3
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 4
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 5
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 6
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 7
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 8
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 9
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 10
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 11
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 12
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 13
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 1
+    Index: 14
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 6
+    Index: 0
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 0
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 1
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 2
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 3
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 4
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 5
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 6
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 7
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
+  - Side: 3
+    Index: 8
+    TextureOverride: {fileID: 2800000, guid: 29ff32d92a79e2747944be2f4ac5a85d, type: 3}
+    OverrideScale: 0
+    Scale: {x: 1, y: 1, z: 1}
+    OverrideOffset: 0
+    Offset: {x: 0, y: 0, z: 0}
+    Decorations: []
   SideVisualOverrides:
   - Side: 0
     TextureOverride: {fileID: 0}
@@ -946,14 +1266,14 @@ MonoBehaviour:
     OverrideOffset: 0
     Offset: {x: 0, y: 0, z: 0}
   Environment:
-    UseGlobalBackground: 1
-    GlobalBackgroundPrefab: {fileID: 0}
+    UseGlobalBackground: 0
+    GlobalBackgroundPrefab: {fileID: 6824516494718749637, guid: 4b5c5d8d9a96ecd479f8e27258371c27, type: 3}
     GlobalBackgroundHeightOffset: -1
     FillVoidWithFog: 1
-    TileFogPrefab: {fileID: 8868440218785152674, guid: 4ba53fe6d62e77447850cbbdd6e19c42, type: 3}
-    TileFogHeightOffset: -0.5
+    TileFogPrefab: {fileID: 8868440218785152674, guid: 6c6e858834563f64e98f50787da555b2, type: 3}
+    TileFogHeightOffset: -3
     CameraBackground: 1
-    CameraBackgroundColor: {r: 0.26226163, g: 0, b: 0.2924528, a: 1}
+    CameraBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
     SkyboxMaterial: {fileID: 0}
   Lighting:
     OverrideLighting: 0

@@ -8,13 +8,11 @@ using MaouSamaTD.Levels;
 
 namespace MaouSamaTD.Utils
 {
-    [RequireComponent(typeof(LineRenderer))]
     public class PathVisualizer : MonoBehaviour
     {
         [Inject] private GridManager _gridManager;
 
         [SerializeField] private Material _sourceMaterial;
-        [SerializeField] private LineRenderer _lineRendererPrefab;
 
         private List<LineRenderer> _activeLines = new List<LineRenderer>();
         private List<LineRenderer> _linePool = new List<LineRenderer>();
@@ -22,11 +20,72 @@ namespace MaouSamaTD.Utils
         private Coroutine _fadeRoutine;
         private float _currentAlpha = 0f;
 
+        private void Awake()
+        {
+            // Disable the redundant LineRenderer component on ourselves if it exists
+            LineRenderer selfLr = GetComponent<LineRenderer>();
+            if (selfLr != null)
+            {
+                selfLr.enabled = false;
+            }
+        }
+
+        #if UNITY_EDITOR
+        private void OnValidate()
+        {
+            // Disable the redundant LineRenderer component in the editor to avoid GUI errors
+            LineRenderer selfLr = GetComponent<LineRenderer>();
+            if (selfLr != null)
+            {
+                selfLr.enabled = false;
+            }
+        }
+        #endif
+
         public void Init(Material overrideMaterial = null)
         {
+            enabled = true; // Auto-enable script component in case it was checked off
+
             if (overrideMaterial != null) _sourceMaterial = overrideMaterial;
             ConfigureMaterial(); 
             SetAlpha(0f);
+
+            // Collect all pre-placed child LineRenderer components in the scene hierarchy
+            _linePool.Clear();
+            _activeLines.Clear();
+            foreach (Transform child in transform)
+            {
+                LineRenderer lr = child.GetComponent<LineRenderer>();
+                if (lr != null)
+                {
+                    lr.enabled = false; // Hide initially
+                    lr.material = _materialInstance; // Assign the repeat arrow material
+                    _linePool.Add(lr);
+                }
+            }
+        }
+
+        private LineRenderer GetLineRenderer()
+        {
+            if (_linePool.Count > 0)
+            {
+                LineRenderer lr = _linePool[0];
+                _linePool.RemoveAt(0);
+                lr.enabled = true;
+                return lr;
+            }
+
+            // Fallback: If more paths are needed than pre-placed child renderers in the scene, create one dynamically
+            GameObject go = new GameObject("PathLine_Dynamic");
+            go.transform.SetParent(transform);
+            LineRenderer dynamicLr = go.AddComponent<LineRenderer>();
+            dynamicLr.startWidth = 0.5f;
+            dynamicLr.endWidth = 0.5f;
+            dynamicLr.useWorldSpace = true;
+            dynamicLr.textureMode = LineTextureMode.RepeatPerSegment;
+            dynamicLr.material = _materialInstance;
+            dynamicLr.enabled = true;
+            return dynamicLr;
         }
 
         private void ConfigureMaterial()
@@ -152,35 +211,6 @@ namespace MaouSamaTD.Utils
 
             lr.enabled = true;
             _activeLines.Add(lr);
-        }
-
-        private LineRenderer GetLineRenderer()
-        {
-            LineRenderer lr;
-            if (_linePool.Count > 0)
-            {
-                lr = _linePool[0];
-                _linePool.RemoveAt(0);
-            }
-            else
-            {
-                if (_lineRendererPrefab != null)
-                {
-                    lr = Instantiate(_lineRendererPrefab, transform);
-                }
-                else
-                {
-                    GameObject go = new GameObject("PathLine");
-                    go.transform.SetParent(transform);
-                    lr = go.AddComponent<LineRenderer>();
-                    lr.startWidth = 0.5f;
-                    lr.endWidth = 0.5f;
-                    lr.useWorldSpace = true;
-                    lr.textureMode = LineTextureMode.RepeatPerSegment;
-                }
-            }
-            lr.material = _materialInstance;
-            return lr;
         }
 
         private float _shownTime;

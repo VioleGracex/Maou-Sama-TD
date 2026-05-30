@@ -6,20 +6,20 @@ Shader "Custom/SeamlessFog"
         [HDR] _BaseColor ("Dense Cloud Color", Color) = (0.35, 0.15, 0.55, 1.0)
         [HDR] _CloudColor2 ("Wispy Edge Color", Color) = (0.15, 0.05, 0.25, 1.0)
         _GlobalScale ("Global Cloud Size Scale", Float) = 0.02
-        _ScrollSpeed1 ("Layer 1 Scroll Speed (X, Y)", Vector) = (0.012, 0.006, 0, 0)
-        _ScrollSpeed2 ("Layer 2 Scroll Speed (X, Y)", Vector) = (-0.008, 0.01, 0, 0)
-        _DistortionSpeed ("Turbulence Speed (X, Y)", Vector) = (0.005, -0.005, 0, 0)
-        _DistortionStrength ("Turbulence Wave Strength", Float) = 0.15
+        _ScrollSpeed1 ("Layer 1 Scroll Speed (X, Y)", Vector) = (-0.03, -0.005, 0, 0)
+        _ScrollSpeed2 ("Layer 2 Scroll Speed (X, Y)", Vector) = (-0.02, 0.005, 0, 0)
+        _DistortionSpeed ("Turbulence Speed (X, Y)", Vector) = (-0.015, 0.01, 0, 0)
+        _DistortionStrength ("Turbulence Wave Strength", Float) = 0.18
         
-        [Header("3D Volumetric Parallax")]
+        [Header(Volumetric Parallax)]
         _ParallaxStrength ("3D Depth Shift Strength", Range(0, 1)) = 0.25
         _LayerHeight2 ("Layer 2 Parallax Height", Float) = 0.12
         _LayerHeight3 ("Layer 3 Parallax Height", Float) = 0.25
         
-        [Header("Density and Alpha Controls")]
-        _Thickness ("Cloud Threshold Cutoff", Range(0, 0.9)) = 0.15
-        _Softness ("Cloud Edge Softness", Range(0.01, 1.0)) = 0.45
-        _MaxAlpha ("Master Opacity Limit", Range(0, 1)) = 0.5
+        [Header(Density and Alpha Controls)]
+        _Thickness ("Cloud Threshold Cutoff", Range(0, 0.9)) = 0.1
+        _Softness ("Cloud Edge Softness", Range(0.01, 1.0)) = 0.4
+        _MaxAlpha ("Master Opacity Limit", Range(0, 1)) = 0.85
     }
     SubShader
     {
@@ -111,7 +111,7 @@ Shader "Custom/SeamlessFog"
                 float2 uv2 = baseUV * 1.45 + _ScrollSpeed2.xy * _Time.y - (waveOffset * 1.3) + (parallaxOffset * _LayerHeight2);
                 
                 // Layer 3: High wispy detail layer, shifted by a large parallax factor
-                float2 uv3 = baseUV * 2.1 + _ScrollSpeed1.yx * _Time.y * 1.4 + (waveOffset * 0.7) + (parallaxOffset * _LayerHeight3);
+                float2 uv3 = baseUV * 2.1 + float2(_ScrollSpeed1.x * 1.3, _ScrollSpeed2.y * 1.2) * _Time.y + (waveOffset * 0.7) + (parallaxOffset * _LayerHeight3);
 
                 // Sample the individual noise channels
                 half noiseL1 = _BaseMap.Sample(sampler_BaseMap, uv1).r;

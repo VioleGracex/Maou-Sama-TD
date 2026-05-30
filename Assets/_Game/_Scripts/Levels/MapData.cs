@@ -67,6 +67,76 @@ namespace MaouSamaTD.Levels
         public WallVisualSettings WallVisuals = WallVisualSettings.Default;
         public List<WallVisualOverride> WallOverrides = new List<WallVisualOverride>();
         public List<SideVisualOverride> SideVisualOverrides = new List<SideVisualOverride>();
+
+        [Header("Environment & Void")]
+        public EnvironmentSettings Environment = EnvironmentSettings.Default;
+
+        [Header("Lighting")]
+        public LightingSettings Lighting = LightingSettings.Default;
+    }
+
+    public enum CameraBackgroundMode
+    {
+        Skybox,
+        SolidColor
+    }
+
+    [System.Serializable]
+    public struct EnvironmentSettings
+    {
+        [Tooltip("If true, spawns the GlobalBackgroundPrefab below the grid")]
+        public bool UseGlobalBackground;
+
+        [Tooltip("Full background spawned below the grid (e.g. giant void quad or particle system)")]
+        public GameObject GlobalBackgroundPrefab;
+
+        [Tooltip("Height offset for the global background relative to the grid center.")]
+        public float GlobalBackgroundHeightOffset;
+
+        [Tooltip("If true, spawns TileFogPrefab in every grid coordinate that has TileType == None")]
+        public bool FillVoidWithFog;
+
+        [Tooltip("Prefab spawned on individual empty tiles")]
+        public GameObject TileFogPrefab;
+
+        [Tooltip("Height offset for the tile fog relative to the grid center.")]
+        public float TileFogHeightOffset;
+
+        [Header("Camera Background")]
+        [Tooltip("Configure if the camera background is a Skybox or a Solid Color")]
+        public CameraBackgroundMode CameraBackground;
+
+        [Tooltip("The solid color used when CameraBackground is set to SolidColor")]
+        public Color CameraBackgroundColor;
+
+        [Tooltip("The skybox material used when CameraBackground is set to Skybox")]
+        public Material SkyboxMaterial;
+
+        public static EnvironmentSettings Default => new EnvironmentSettings
+        {
+            UseGlobalBackground = false,
+            GlobalBackgroundHeightOffset = -1f,
+            FillVoidWithFog = false,
+            TileFogHeightOffset = -0.5f,
+            CameraBackground = CameraBackgroundMode.Skybox,
+            CameraBackgroundColor = new Color(0.05f, 0.05f, 0.05f),
+            SkyboxMaterial = null
+        };
+    }
+
+    [System.Serializable]
+    public struct LightingSettings
+    {
+        public bool OverrideLighting;
+        public Color AmbientColor;
+        [Tooltip("Optional directional light prefab to spawn for this map (contains shadows/angle)")]
+        public Light DirectionalLightPrefab;
+
+        public static LightingSettings Default => new LightingSettings
+        {
+            OverrideLighting = false,
+            AmbientColor = new Color(0.2f, 0.2f, 0.2f)
+        };
     }
 
     public enum WallSide { North, South, East, West, NorthWest, NorthEast, SouthWest, SouthEast }

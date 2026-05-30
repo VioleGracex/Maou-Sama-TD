@@ -15,7 +15,7 @@ namespace MaouSamaTD.Editor
         private const float LabelSpace = 20f;
 
         private int _selectedTab = 0;
-        private string[] _tabNames = { "Layout", "Visuals" };
+        private string[] _tabNames = { "Layout", "Visuals", "Environment" };
         private Vector2 _scrollPosition;
         private EnemyData _pathingSimulationEnemy;
 
@@ -27,10 +27,13 @@ namespace MaouSamaTD.Editor
         private static bool _showPathing = true;
         private static bool _showGeneration = true;
         private static bool _showGlobalVisuals = true;
+        private static bool _showEnvironmentLighting = true;
         private static bool _showSideOverridesHeader = true;
         private static bool _showBulkActions = true;
         
         private static Texture2D s_TextureClipboard;
+        private static DecorationData s_DecorationClipboard;
+        private static bool s_HasDecorationClipboard = false;
         
         [System.Serializable]
         private struct SelectionItem
@@ -87,9 +90,13 @@ namespace MaouSamaTD.Editor
             {
                 DrawLayoutTab(data);
             }
-            else
+            else if (_selectedTab == 1)
             {
                 DrawVisualsTab(data);
+            }
+            else
+            {
+                DrawEnvironmentTab(data);
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -326,6 +333,77 @@ namespace MaouSamaTD.Editor
             }
         }
 
+        private void DrawEnvironmentTab(MapData data)
+        {
+            if (DrawSectionHeader("Environment & Void Settings", ref _showEnvironmentLighting))
+            {
+                SerializedProperty envProp = serializedObject.FindProperty("Environment");
+                if (envProp != null)
+                {
+                    SerializedProperty useGlobalBg = envProp.FindPropertyRelative("UseGlobalBackground");
+                    SerializedProperty globalBgPrefab = envProp.FindPropertyRelative("GlobalBackgroundPrefab");
+                    SerializedProperty globalBgHeight = envProp.FindPropertyRelative("GlobalBackgroundHeightOffset");
+                    SerializedProperty fillVoidFog = envProp.FindPropertyRelative("FillVoidWithFog");
+                    SerializedProperty tileFogPrefab = envProp.FindPropertyRelative("TileFogPrefab");
+                    SerializedProperty tileFogHeight = envProp.FindPropertyRelative("TileFogHeightOffset");
+                    SerializedProperty cameraBg = envProp.FindPropertyRelative("CameraBackground");
+                    SerializedProperty cameraBgColor = envProp.FindPropertyRelative("CameraBackgroundColor");
+                    SerializedProperty skyboxMaterial = envProp.FindPropertyRelative("SkyboxMaterial");
+
+                    EditorGUILayout.LabelField("Environment Elements", EditorStyles.boldLabel);
+                    EditorGUI.indentLevel++;
+
+                    // Global Background
+                    EditorGUILayout.PropertyField(useGlobalBg);
+                    if (useGlobalBg.boolValue)
+                    {
+                        EditorGUI.indentLevel++;
+                        EditorGUILayout.PropertyField(globalBgPrefab);
+                        EditorGUILayout.PropertyField(globalBgHeight);
+                        EditorGUI.indentLevel--;
+                    }
+
+                    EditorGUILayout.Space();
+
+                    // Void Fog
+                    EditorGUILayout.PropertyField(fillVoidFog);
+                    if (fillVoidFog.boolValue)
+                    {
+                        EditorGUI.indentLevel++;
+                        EditorGUILayout.PropertyField(tileFogPrefab);
+                        EditorGUILayout.PropertyField(tileFogHeight);
+                        EditorGUI.indentLevel--;
+                    }
+
+                    EditorGUI.indentLevel--;
+                    EditorGUILayout.Space();
+
+                    // Camera Background
+                    EditorGUILayout.LabelField("Camera Background Settings", EditorStyles.boldLabel);
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(cameraBg);
+
+                    if (cameraBg.enumValueIndex == (int)CameraBackgroundMode.SolidColor)
+                    {
+                        EditorGUILayout.PropertyField(cameraBgColor);
+                    }
+                    else if (cameraBg.enumValueIndex == (int)CameraBackgroundMode.Skybox)
+                    {
+                        EditorGUILayout.PropertyField(skyboxMaterial);
+                    }
+                    EditorGUI.indentLevel--;
+                }
+                else
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("Environment"));
+                }
+
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("Lighting"));
+            }
+            EndSection(_showEnvironmentLighting);
+        }
+
         private bool _showSidesOverrides = false;
         private bool _showEdgesOverrides = false;
 
@@ -440,7 +518,18 @@ namespace MaouSamaTD.Editor
 
             EditorGUI.showMixedValue = multipleValues;
             EditorGUI.BeginChangeCheck();
-            Texture2D newBatchTexture = (Texture2D)EditorGUILayout.ObjectField("Apply Texture to All", commonTexture, typeof(Texture2D), false);
+            
+            EditorGUILayout.BeginHorizontal();
+            Texture2D newBatchTexture = (Texture2D)EditorGUILayout.ObjectField("Apply Texture to All", commonTexture, typeof(Texture2D), false, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            if (s_TextureClipboard != null)
+            {
+                if (GUILayout.Button("Paste", GUILayout.Width(50)))
+                {
+                    newBatchTexture = s_TextureClipboard;
+                    GUI.changed = true;
+                }
+            }
+            EditorGUILayout.EndHorizontal();
             
             EditorGUILayout.BeginHorizontal();
             bool overS = EditorGUILayout.ToggleLeft("Scale", false, GUILayout.Width(60));
@@ -469,6 +558,7 @@ namespace MaouSamaTD.Editor
             EditorGUI.showMixedValue = false;
 
             EditorGUILayout.Space(5);
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("+ Add Decoration to All Selected", GUILayout.Height(30)))
             {
                 Undo.RecordObject(data, "Batch Add Decoration");
@@ -480,9 +570,47 @@ namespace MaouSamaTD.Editor
                 EditorUtility.SetDirty(data);
             }
 
-            if (GUILayout.Button("Clear Overrides for All Selected", GUILayout.Height(25)))
+            if (s_HasDecorationClipboard)
             {
-                if (EditorUtility.DisplayDialog("Clear All Selected", $"Are you sure you want to clear overrides for all {_selection.Count} selected items?", "Yes", "No"))
+                string clipboardName = s_DecorationClipboard.Prefab != null ? s_DecorationClipboard.Prefab.name : "None";
+                if (GUILayout.Button($"+ Paste Decoration ({clipboardName}) to All", GUILayout.Height(30)))
+                {
+                    Undo.RecordObject(data, "Batch Paste Decoration");
+                    foreach (var sel in _selection)
+                    {
+                        if (sel.Type == SelectionType.Tile) PasteTileDecoration(data, sel.TileCoord, s_DecorationClipboard);
+                        else PasteWallDecoration(data, sel.WallSide, sel.WallIndex, s_DecorationClipboard);
+                    }
+                    EditorUtility.SetDirty(data);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Clear Decorations for All Selected", GUILayout.Height(25)))
+            {
+                if (EditorUtility.DisplayDialog("Clear Decorations", $"Are you sure you want to clear decorations for all {_selection.Count} selected items? (Textures will be kept)", "Yes", "No"))
+                {
+                    Undo.RecordObject(data, "Batch Clear Decorations");
+                    foreach (var sel in _selection)
+                    {
+                        if (sel.Type == SelectionType.Tile) 
+                        {
+                            var idx = data.VisualOverrides.FindIndex(o => o.Coordinate == sel.TileCoord);
+                            if (idx != -1) data.VisualOverrides[idx].Decorations?.Clear();
+                        }
+                        else 
+                        {
+                            var idx = data.WallOverrides.FindIndex(o => o.Side == sel.WallSide && o.Index == sel.WallIndex);
+                            if (idx != -1) data.WallOverrides[idx].Decorations?.Clear();
+                        }
+                    }
+                    EditorUtility.SetDirty(data);
+                }
+            }
+
+            if (GUILayout.Button("Clear All Overrides for All Selected", GUILayout.Height(25)))
+            {
+                if (EditorUtility.DisplayDialog("Clear All Selected", $"Are you sure you want to clear EVERYTHING for all {_selection.Count} selected items?", "Yes", "No"))
                 {
                     Undo.RecordObject(data, "Batch Clear Overrides");
                     foreach (var sel in _selection)
@@ -585,6 +713,36 @@ namespace MaouSamaTD.Editor
                 data.WallOverrides[idx].Decorations.Add(DecorationData.Default);
             }
             else data.WallOverrides.Add(new WallVisualOverride { Side = side, Index = index, Decorations = new List<DecorationData> { DecorationData.Default } });
+        }
+
+        private void PasteTileDecoration(MapData data, Vector2Int coord, DecorationData clipboardDeco)
+        {
+            int idx = data.VisualOverrides.FindIndex(o => o.Coordinate == coord);
+            if (idx != -1)
+            {
+                if (data.VisualOverrides[idx].Decorations == null) {
+                    var o = data.VisualOverrides[idx];
+                    o.Decorations = new List<DecorationData>();
+                    data.VisualOverrides[idx] = o;
+                }
+                data.VisualOverrides[idx].Decorations.Add(clipboardDeco);
+            }
+            else data.VisualOverrides.Add(new TileVisualOverride { Coordinate = coord, Decorations = new List<DecorationData> { clipboardDeco } });
+        }
+
+        private void PasteWallDecoration(MapData data, WallSide side, int index, DecorationData clipboardDeco)
+        {
+            int idx = data.WallOverrides.FindIndex(o => o.Side == side && o.Index == index);
+            if (idx != -1)
+            {
+                if (data.WallOverrides[idx].Decorations == null) {
+                    var o = data.WallOverrides[idx];
+                    o.Decorations = new List<DecorationData>();
+                    data.WallOverrides[idx] = o;
+                }
+                data.WallOverrides[idx].Decorations.Add(clipboardDeco);
+            }
+            else data.WallOverrides.Add(new WallVisualOverride { Side = side, Index = index, Decorations = new List<DecorationData> { clipboardDeco } });
         }
 
         private void DrawWallCustomizer(MapData data, WallSide side, int index)
@@ -722,7 +880,7 @@ namespace MaouSamaTD.Editor
             if (overrideProp != null)
             {
                 EditorGUILayout.PropertyField(overrideProp.FindPropertyRelative("Texture"), new GUIContent("Base Texture"));
-                DrawDecorationsList(data, overrideProp.FindPropertyRelative("Decorations"), $"tile_{coord.x}_{coord.y}");
+                DrawDecorationsList(data, overrideProp.FindPropertyRelative("Decorations"), $"tile_{coord.x}_{coord.y}", coord);
             }
             else
             {
@@ -761,9 +919,10 @@ namespace MaouSamaTD.Editor
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawDecorationsList(MapData data, SerializedProperty decosProp, string idPrefix)
+        private void DrawDecorationsList(MapData data, SerializedProperty decosProp, string idPrefix, Vector2Int? sourceCoord = null)
         {
             EditorGUILayout.LabelField("Decorations", EditorStyles.miniBoldLabel);
+            bool moved = false;
             for (int i = 0; i < decosProp.arraySize; i++)
             {
                 SerializedProperty decoProp = decosProp.GetArrayElementAtIndex(i);
@@ -776,8 +935,33 @@ namespace MaouSamaTD.Editor
                 EditorGUILayout.BeginHorizontal();
                 string label = prefabProp.objectReferenceValue != null ? prefabProp.objectReferenceValue.name : $"Decoration {i}";
                 _decoFoldouts[foldoutKey] = EditorGUILayout.Foldout(_decoFoldouts[foldoutKey], label, true, EditorStyles.foldoutHeader);
+                
+                if (sourceCoord.HasValue)
+                {
+                    EditorGUILayout.LabelField("Move:", GUILayout.Width(40));
+                    if (GUILayout.Button("W", GUILayout.Width(25))) { MoveDecoration(data, sourceCoord.Value, i, Vector2Int.left); moved = true; }
+                    if (GUILayout.Button("N", GUILayout.Width(25))) { MoveDecoration(data, sourceCoord.Value, i, Vector2Int.up); moved = true; }
+                    if (GUILayout.Button("S", GUILayout.Width(25))) { MoveDecoration(data, sourceCoord.Value, i, Vector2Int.down); moved = true; }
+                    if (GUILayout.Button("E", GUILayout.Width(25))) { MoveDecoration(data, sourceCoord.Value, i, Vector2Int.right); moved = true; }
+                }
+
+                if (GUILayout.Button("Copy", GUILayout.Width(50)))
+                {
+                    s_DecorationClipboard = new DecorationData
+                    {
+                        Prefab = prefabProp.objectReferenceValue as GameObject,
+                        Offset = decoProp.FindPropertyRelative("Offset").vector3Value,
+                        Rotation = decoProp.FindPropertyRelative("Rotation").vector3Value,
+                        Scale = decoProp.FindPropertyRelative("Scale").vector3Value
+                    };
+                    s_HasDecorationClipboard = true;
+                    Debug.Log($"[MapDataEditor] Copied decoration: {(s_DecorationClipboard.Prefab != null ? s_DecorationClipboard.Prefab.name : "None")}");
+                }
+
                 if (GUILayout.Button("Remove", GUILayout.Width(60))) { decosProp.DeleteArrayElementAtIndex(i); break; }
                 EditorGUILayout.EndHorizontal();
+
+                if (moved) break;
 
                 if (_decoFoldouts[foldoutKey])
                 {
@@ -790,6 +974,14 @@ namespace MaouSamaTD.Editor
                 }
                 EditorGUILayout.EndVertical();
             }
+
+            if (moved)
+            {
+                serializedObject.Update();
+                return;
+            }
+
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("+ Add New Decoration")) { 
                 decosProp.arraySize++; 
                 SerializedProperty newDeco = decosProp.GetArrayElementAtIndex(decosProp.arraySize - 1);
@@ -798,6 +990,55 @@ namespace MaouSamaTD.Editor
                 newDeco.FindPropertyRelative("Rotation").vector3Value = Vector3.zero;
                 newDeco.FindPropertyRelative("Prefab").objectReferenceValue = null;
             }
+
+            if (s_HasDecorationClipboard)
+            {
+                string clipboardName = s_DecorationClipboard.Prefab != null ? s_DecorationClipboard.Prefab.name : "None";
+                if (GUILayout.Button($"+ Paste Decoration ({clipboardName})"))
+                {
+                    decosProp.arraySize++;
+                    SerializedProperty newDeco = decosProp.GetArrayElementAtIndex(decosProp.arraySize - 1);
+                    newDeco.FindPropertyRelative("Prefab").objectReferenceValue = s_DecorationClipboard.Prefab;
+                    newDeco.FindPropertyRelative("Offset").vector3Value = s_DecorationClipboard.Offset;
+                    newDeco.FindPropertyRelative("Rotation").vector3Value = s_DecorationClipboard.Rotation;
+                    newDeco.FindPropertyRelative("Scale").vector3Value = s_DecorationClipboard.Scale;
+                    GUI.FocusControl(null);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void MoveDecoration(MapData data, Vector2Int fromCoord, int decoIndex, Vector2Int dir)
+        {
+            Vector2Int toCoord = fromCoord + dir;
+            if (toCoord.x < 0 || toCoord.x >= data.Width || toCoord.y < 0 || toCoord.y >= data.Height) return; // OOB
+
+            Undo.RecordObject(data, "Move Decoration");
+
+            int fromIdx = data.VisualOverrides.FindIndex(o => o.Coordinate == fromCoord);
+            if (fromIdx == -1) return;
+            var fromOv = data.VisualOverrides[fromIdx];
+            if (fromOv.Decorations == null || decoIndex >= fromOv.Decorations.Count) return;
+            
+            var deco = fromOv.Decorations[decoIndex];
+            fromOv.Decorations.RemoveAt(decoIndex);
+            if (fromOv.Texture == null && fromOv.Decorations.Count == 0) data.VisualOverrides.RemoveAt(fromIdx);
+            else data.VisualOverrides[fromIdx] = fromOv;
+            
+            int toIdx = data.VisualOverrides.FindIndex(o => o.Coordinate == toCoord);
+            if (toIdx == -1) {
+                data.VisualOverrides.Add(new TileVisualOverride { Coordinate = toCoord, Decorations = new List<DecorationData> { deco } });
+            } else {
+                var toOv = data.VisualOverrides[toIdx];
+                if (toOv.Decorations == null) toOv.Decorations = new List<DecorationData>();
+                toOv.Decorations.Add(deco);
+                data.VisualOverrides[toIdx] = toOv;
+            }
+
+            _selection.Clear();
+            _selection.Add(new SelectionItem { Type = SelectionType.Tile, TileCoord = toCoord });
+            EditorUtility.SetDirty(data);
+            Repaint();
         }
 
         private void DrawMapPreview(MapData data, bool isVisualMode)
@@ -946,6 +1187,8 @@ namespace MaouSamaTD.Editor
                             _lastSelectedItem = thisItem;
                         }
                     }
+                    GUI.FocusControl(null);
+                    Repaint();
                     e.Use();
                 }
             }
@@ -1014,12 +1257,17 @@ namespace MaouSamaTD.Editor
                 {
                     Vector2Int coord = new Vector2Int(x, y);
                     int ovIdx = data.VisualOverrides.FindIndex(o => o.Coordinate == coord);
-                    bool hasOverride = false;
+                    string mark = "";
                     if (ovIdx != -1) {
                         var o = data.VisualOverrides[ovIdx];
-                        hasOverride = o.Texture != null || (o.Decorations != null && o.Decorations.Count > 0);
+                        bool hasTex = o.Texture != null;
+                        bool hasDeco = o.Decorations != null && o.Decorations.Count > 0;
+                        
+                        if (hasTex && hasDeco) mark = "*+D";
+                        else if (hasTex) mark = "*";
+                        else if (hasDeco) mark = "D";
                     }
-                    DrawItem(x, y, GetTileColor(data, coord), hasOverride ? "*" : "", SelectionType.Tile);
+                    DrawItem(x, y, GetTileColor(data, coord), mark, SelectionType.Tile);
                 }
             }
 

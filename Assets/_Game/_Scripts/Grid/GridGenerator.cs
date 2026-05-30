@@ -83,6 +83,7 @@ namespace MaouSamaTD.Grid
         [SerializeField] private Vector3 _wallScale = Vector3.one;
 
         private List<GameObject> _generatedWalls = new List<GameObject>();
+        private List<GameObject> _generatedEnvironmentObjects = new List<GameObject>();
         #endregion
 
         #region Lifecycle
@@ -120,6 +121,7 @@ namespace MaouSamaTD.Grid
 
             _gridManager.ClearGrid();
             ClearWalls();
+            ClearEnvironment();
 
             // Sync Dimensions from MapData if available
             if (_mapData != null)
@@ -219,6 +221,9 @@ namespace MaouSamaTD.Grid
             {
                 GenerateWalls();
             }
+
+            GenerateEnvironment();
+            GenerateLighting();
         }
 
         [ShowIf("_showMapDataSettings")]
@@ -578,6 +583,114 @@ namespace MaouSamaTD.Grid
             }
             _generatedWalls.Clear();
         }
+
+        private void GenerateEnvironment()
+        {
+            if (_mapData == null) return;
+            
+            var env = _mapData.Environment;
+            
+            // 1. Global Background
+            if (env.UseGlobalBackground && env.GlobalBackgroundPrefab != null)
+            {
+                Vector3 center = _gridManager.GetGridCenter();
+                center.y += env.GlobalBackgroundHeightOffset; // Dynamic height offset
+                GameObject bg = Instantiate(env.GlobalBackgroundPrefab, center, env.GlobalBackgroundPrefab.transform.rotation, _gridManager.transform);
+                bg.name = "GlobalBackground_Fog";
+                _generatedEnvironmentObjects.Add(bg);
+            }
+
+            // 2. Tile Fog for Voids (Spawns flat horizontal quads on each TileType.None coordinate)
+            if (env.FillVoidWithFog && env.TileFogPrefab != null)
+            {
+                float cellSize = _gridManager.CellSize;
+                int width = _gridManager.Width;
+                int height = _gridManager.Height;
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        Vector2Int coord = new Vector2Int(x, y);
+                        // A coordinate is empty/void if there is no tile component instantiated on it
+                        bool isNone = (_gridManager.GetTileAt(coord) == null);
+
+                        if (isNone)
+                        {
+                            Vector3 pos = new Vector3(x * cellSize, env.TileFogHeightOffset, y * cellSize);
+                            // Preserve the prefab's flat rotation (90 degrees around X)
+                            GameObject fogObj = Instantiate(env.TileFogPrefab, pos, env.TileFogPrefab.transform.rotation, _gridManager.transform);
+                            fogObj.name = $"TileFog_{x}_{y}";
+                            fogObj.transform.localScale = new Vector3(cellSize, cellSize, cellSize);
+                            _generatedEnvironmentObjects.Add(fogObj);
+                        }
+                    }
+                }
+            }
+
+            // 3. Camera Background Settings
+            ApplyCameraSettings(env);
+        }
+
+        private void ApplyCameraSettings(EnvironmentSettings env)
+        {
+#if UNITY_2023_1_OR_NEWER
+            Camera[] cameras = FindObjectsByType<Camera>(FindObjectsSortMode.None);
+#else
+            Camera[] cameras = FindObjectsOfType<Camera>();
+#endif
+            if (env.CameraBackground == CameraBackgroundMode.Skybox)
+            {
+                RenderSettings.skybox = env.SkyboxMaterial;
+            }
+
+            foreach (var cam in cameras)
+            {
+                if (cam.cameraType == CameraType.Game)
+                {
+                    if (env.CameraBackground == CameraBackgroundMode.SolidColor)
+                    {
+                        cam.clearFlags = CameraClearFlags.SolidColor;
+                        cam.backgroundColor = env.CameraBackgroundColor;
+                    }
+                    else
+                    {
+                        cam.clearFlags = CameraClearFlags.Skybox;
+                    }
+                }
+            }
+        }
+
+        private void GenerateLighting()
+        {
+            if (_mapData == null) return;
+
+            var lighting = _mapData.Lighting;
+            if (lighting.OverrideLighting)
+            {
+                RenderSettings.ambientLight = lighting.AmbientColor;
+            }
+
+            if (lighting.DirectionalLightPrefab != null)
+            {
+                GameObject lightObj = Instantiate(lighting.DirectionalLightPrefab.gameObject, Vector3.zero, Quaternion.identity, _gridManager.transform);
+                lightObj.name = "Level_DirectionalLight";
+                _generatedEnvironmentObjects.Add(lightObj); // Tracked same as environment for cleanup
+            }
+        }
+
+        private void ClearEnvironment()
+        {
+            foreach (var obj in _generatedEnvironmentObjects)
+            {
+                if (obj != null)
+                {
+                    if (Application.isPlaying) Destroy(obj);
+                    else DestroyImmediate(obj);
+                }
+            }
+            _generatedEnvironmentObjects.Clear();
+        }
         #endregion
 
         #region Lanes & Pathing
@@ -672,6 +785,8 @@ namespace MaouSamaTD.Grid
          public void ClearMap()
          {
              if (_gridManager != null) _gridManager.ClearGrid();
+             ClearWalls();
+             ClearEnvironment();
          }
 
         public void AddSpawnPoint(Vector2Int coord)

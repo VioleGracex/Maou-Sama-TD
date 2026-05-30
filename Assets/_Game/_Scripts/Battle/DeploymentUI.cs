@@ -337,32 +337,6 @@ namespace MaouSamaTD.UI
 
             PlayerUnit newUnit = Instantiate(_unitPrefab, tile.transform.position, Quaternion.identity);
             
-            // Facing Logic
-            Grid.GridManager gm = FindFirstObjectByType<Grid.GridManager>();
-            if (gm != null && gm.SpawnPoints != null && gm.SpawnPoints.Count > 0)
-            {
-                // Find closest spawn point
-                Vector2Int closestSpawn = gm.SpawnPoints[0].Coordinate;
-                float minDist = Vector2.Distance(tile.Coordinate, closestSpawn);
-                
-                for (int i = 1; i < gm.SpawnPoints.Count; i++)
-                {
-                    float dist = Vector2.Distance(tile.Coordinate, gm.SpawnPoints[i].Coordinate);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        closestSpawn = gm.SpawnPoints[i].Coordinate;
-                    }
-                }
-
-                // If spawn is to the left (-Z), flip. Default sprite faces Right (+Z/Right).
-                // Grid Y is World Z.
-                var sr = newUnit.GetComponentInChildren<SpriteRenderer>();
-                if (sr != null)
-                {
-                    sr.flipX = closestSpawn.y < tile.Coordinate.y;
-                }
-            }
             
             newUnit.Initialize(unitData);
             float initialRatio = _vassalHpRatios.ContainsKey(unitData) ? _vassalHpRatios[unitData] : 1.0f;

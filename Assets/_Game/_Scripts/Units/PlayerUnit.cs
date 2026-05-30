@@ -315,9 +315,10 @@ namespace MaouSamaTD.Units
 
             if (_spriteRenderer != null)
             {
+                _spriteRenderer.flipX = false; // Reset flipX to prevent double-flipping conflicts
                 Vector3 spriteScale = _originalSpriteScale;
-                // Default facing is Right (+1). To face Left, use -1.
-                spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? 1f : -1f);
+                // Default chibi sprite faces Left (+1 scale). To face Right (monsters are on the right/+X), use -1.
+                spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? -1f : 1f);
                 _spriteRenderer.transform.localScale = spriteScale;
             }
         }
@@ -481,9 +482,10 @@ namespace MaouSamaTD.Units
              bool isTargetRight = targetPos.x > transform.position.x;
              if (_spriteRenderer != null)
              {
+                 _spriteRenderer.flipX = false; // Reset flipX to prevent double-flipping conflicts
                  Vector3 spriteScale = _originalSpriteScale;
-                 // Default facing is Right (+1). To face Left, use -1.
-                 spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? 1f : -1f);
+                 // Default chibi sprite faces Left (+1 scale). To face Right (monsters are on the right/+X), use -1.
+                 spriteScale.x = Mathf.Abs(_originalSpriteScale.x) * (isTargetRight ? -1f : 1f);
                  _spriteRenderer.transform.localScale = spriteScale;
              }
         }

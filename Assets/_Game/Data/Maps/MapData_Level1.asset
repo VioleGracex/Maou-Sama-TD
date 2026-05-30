@@ -409,13 +409,21 @@ MonoBehaviour:
     Decorations: []
   - Coordinate: {x: 7, y: 3}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
-    Decorations: []
+    Decorations:
+    - Prefab: {fileID: 4724960936012535112, guid: 8ea777a63635e8841bfc3b95ab74cbcf, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Scale: {x: 0.5, y: 0.5, z: 0.5}
   - Coordinate: {x: 7, y: 4}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 7, y: 5}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
-    Decorations: []
+    Decorations:
+    - Prefab: {fileID: 4724960936012535112, guid: 8ea777a63635e8841bfc3b95ab74cbcf, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Scale: {x: 0.5, y: 0.5, z: 0.5}
   - Coordinate: {x: 7, y: 6}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
@@ -451,7 +459,11 @@ MonoBehaviour:
     Decorations: []
   - Coordinate: {x: 8, y: 2}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
-    Decorations: []
+    Decorations:
+    - Prefab: {fileID: 1225075413983748360, guid: 0ab7abb5fe8454e49affe81bca1bd747, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 180, z: 0}
+      Scale: {x: 0.5, y: 0.5, z: 0.5}
   - Coordinate: {x: 8, y: 3}
     Texture: {fileID: 2800000, guid: c1a9cc6d9f97fff49bb6f7dfafdb35b4, type: 3}
     Decorations: []
@@ -494,20 +506,14 @@ MonoBehaviour:
   - Coordinate: {x: 0, y: 1}
     Texture: {fileID: 0}
     Decorations: []
-  - Coordinate: {x: 0, y: 2}
-    Texture: {fileID: 0}
-    Decorations: []
-  - Coordinate: {x: 0, y: 3}
-    Texture: {fileID: 0}
-    Decorations: []
   - Coordinate: {x: 0, y: 4}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 0, y: 5}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 0, y: 6}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 0, y: 7}
     Texture: {fileID: 0}
@@ -542,15 +548,16 @@ MonoBehaviour:
   - Coordinate: {x: 1, y: 2}
     Texture: {fileID: 0}
     Decorations: []
-  - Coordinate: {x: 1, y: 3}
-    Texture: {fileID: 0}
-    Decorations: []
   - Coordinate: {x: 1, y: 4}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 1, y: 5}
-    Texture: {fileID: 0}
-    Decorations: []
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
+    Decorations:
+    - Prefab: {fileID: 4724960936012535112, guid: 8ea777a63635e8841bfc3b95ab74cbcf, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Scale: {x: 0.5, y: 0.5, z: 0.5}
   - Coordinate: {x: 1, y: 6}
     Texture: {fileID: 0}
     Decorations: []
@@ -727,7 +734,11 @@ MonoBehaviour:
     Decorations: []
   - Coordinate: {x: 13, y: 5}
     Texture: {fileID: 2800000, guid: e33e6a0c67eb7314a8e48234d84f4300, type: 3}
-    Decorations: []
+    Decorations:
+    - Prefab: {fileID: 4724960936012535112, guid: 8ea777a63635e8841bfc3b95ab74cbcf, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Scale: {x: 0.5, y: 0.5, z: 0.5}
   - Coordinate: {x: 13, y: 6}
     Texture: {fileID: 0}
     Decorations: []
@@ -817,7 +828,11 @@ MonoBehaviour:
     Decorations: []
   - Coordinate: {x: 13, y: 3}
     Texture: {fileID: 2800000, guid: e33e6a0c67eb7314a8e48234d84f4300, type: 3}
-    Decorations: []
+    Decorations:
+    - Prefab: {fileID: 4724960936012535112, guid: 8ea777a63635e8841bfc3b95ab74cbcf, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Scale: {x: 0.5, y: 0.5, z: 0.5}
   - Coordinate: {x: 14, y: 0}
     Texture: {fileID: 0}
     Decorations: []
@@ -851,6 +866,19 @@ MonoBehaviour:
   - Coordinate: {x: 14, y: 4}
     Texture: {fileID: 0}
     Decorations: []
+  - Coordinate: {x: 0, y: 3}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
+    Decorations: []
+  - Coordinate: {x: 0, y: 2}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
+    Decorations: []
+  - Coordinate: {x: 1, y: 3}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
+    Decorations:
+    - Prefab: {fileID: 4724960936012535112, guid: 8ea777a63635e8841bfc3b95ab74cbcf, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Scale: {x: 0.5, y: 0.5, z: 0.5}
   WallCascadeOnHoles: 1
   Walls:
     North: 1
@@ -917,3 +945,17 @@ MonoBehaviour:
     Scale: {x: 0, y: 0, z: 0}
     OverrideOffset: 0
     Offset: {x: 0, y: 0, z: 0}
+  Environment:
+    UseGlobalBackground: 1
+    GlobalBackgroundPrefab: {fileID: 0}
+    GlobalBackgroundHeightOffset: -1
+    FillVoidWithFog: 1
+    TileFogPrefab: {fileID: 8868440218785152674, guid: 4ba53fe6d62e77447850cbbdd6e19c42, type: 3}
+    TileFogHeightOffset: -0.5
+    CameraBackground: 1
+    CameraBackgroundColor: {r: 0.26226163, g: 0, b: 0.2924528, a: 1}
+    SkyboxMaterial: {fileID: 0}
+  Lighting:
+    OverrideLighting: 0
+    AmbientColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+    DirectionalLightPrefab: {fileID: 0}

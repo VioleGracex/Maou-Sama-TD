@@ -17,14 +17,14 @@ MonoBehaviour:
   Lines:
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 1
+    PortraitOnLeft: 0
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Mmm... such a powerful, cold grip. Is that you, my delicious Sovereign?
-      You've certainly taken your time.
+    Text: "Mmm... such a powerful, cold grip. Is that you, my delicious Sovereign? You've certainly taken your time."
     Background: 1
+    BackgroundImage: {fileID: 0}
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
@@ -33,18 +33,40 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Control your tongue, creature. The Sovereign requires your strength, not
-      your insolence.
+    Text: "Control your tongue, creature. But wait... look at the central seal!"
     Background: 1
+    BackgroundImage: {fileID: 0}
     EventID: 
   - SpeakerName: Lilith
     SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 1
+    PortraitOnLeft: 0
     LeftPortrait: {fileID: 0}
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: "Jealous as ever, Tina? Don't worry, there\u2019s enough of our Master
-      to go around. Now, Sovereign... let us deal with these uninvited guests first."
+    Text: "Oh? The central seal is breaking! Ah, it seems unsealing us has also unsealed that nasty ancient thing... the Abyssal Shade is awake!"
     Background: 1
+    BackgroundImage: {fileID: 0}
+    EventID: 
+  - SpeakerName: Tina
+    SpeakerPortrait: {fileID: 0}
+    PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: "Oh no! The unsealing has released the abyssal shadow! The exit to the tomb has shifted far deeper into the depths! The shadows are trying to escape!"
+    Background: 1
+    BackgroundImage: {fileID: 0}
+    EventID: 
+  - SpeakerName: Lilith
+    SpeakerPortrait: {fileID: 0}
+    PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: "Fufu, well, let's not let them run away. Sovereign, place me on the high path to cut off their escape!"
+    Background: 1
+    BackgroundImage: {fileID: 0}
     EventID: 

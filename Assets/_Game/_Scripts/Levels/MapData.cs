@@ -47,6 +47,13 @@ namespace MaouSamaTD.Levels
         [Range(0f, 1f)]
         public float HighGroundChance = 0.3f;
 
+        [Header("Camera Settings")]
+        [Tooltip("If true, automatically calculates the camera's default zoom size based on grid dimensions.")]
+        public bool AutoCalculateDefaultZoom = true;
+
+        [Tooltip("Custom default zoom size used if AutoCalculateDefaultZoom is false.")]
+        public float CustomDefaultZoom = 4.15f;
+
         [Header("Manual Layout")]
         public bool UseManualLayout;
         public List<TileLayoutData> ManualLayoutData = new List<TileLayoutData>();

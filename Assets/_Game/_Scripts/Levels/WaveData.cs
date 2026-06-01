@@ -22,5 +22,43 @@ namespace MaouSamaTD.Levels
         
         [Tooltip("Story to play AFTER the wave is cleared (all enemies dead)")]
         public MaouSamaTD.Story.StoryDataSO PostWaveStory;
+
+        [Header("Grid Alterations")]
+        [Tooltip("List of tile alterations (spawns/exits addition, subtraction, or override) applied AFTER this wave is cleared")]
+        public List<WaveTileAlteration> TileAlterations = new List<WaveTileAlteration>();
+    }
+
+    public enum TileAlterationAction
+    {
+        Add,
+        Subtract,
+        Override
+    }
+
+    public enum TilePointType
+    {
+        SpawnGround,
+        SpawnHigh,
+        ExitGround,
+        ExitHigh,
+        Walkable,
+        HighGround
+    }
+
+    [Serializable]
+    public struct WaveTileAlteration
+    {
+        [Tooltip("Add, Subtract or Override existing active list of this point type")]
+        public TileAlterationAction Action;
+
+        [Tooltip("The point type: Spawn Ground, Spawn High Ground, Exit Ground, Exit High Ground")]
+        public TilePointType PointType;
+
+        [Tooltip("The coordinate of the tile to alter")]
+        public Vector2Int Coordinate;
+
+        [Tooltip("For Spawn types, the index of the exit in the active ExitPoints list. Set to -1 for Any/First.")]
+        public int TargetExitIndex;
     }
 }
+

@@ -22,6 +22,7 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: A powerful one is coming... the final one.
+    Text: "A powerful presence approaches... the Abyssal Shade has fully unsealed!"
     Background: 1
+    BackgroundImage: {fileID: 0}
     EventID: 

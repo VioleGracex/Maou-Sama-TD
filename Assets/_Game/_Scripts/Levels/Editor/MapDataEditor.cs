@@ -30,6 +30,7 @@ namespace MaouSamaTD.Editor
         private static bool _showEnvironmentLighting = true;
         private static bool _showSideOverridesHeader = true;
         private static bool _showBulkActions = true;
+        private static bool _showCameraSettings = true;
         
         private static Texture2D s_TextureClipboard;
         private static DecorationData s_DecorationClipboard;
@@ -137,6 +138,18 @@ namespace MaouSamaTD.Editor
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("UseManualLayout"));
             }
             EndSection(_showDimensions);
+
+            if (DrawSectionHeader("Camera Zoom Settings", ref _showCameraSettings))
+            {
+                SerializedProperty autoZoomProp = serializedObject.FindProperty("AutoCalculateDefaultZoom");
+                EditorGUILayout.PropertyField(autoZoomProp);
+                
+                if (!autoZoomProp.boolValue)
+                {
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("CustomDefaultZoom"));
+                }
+            }
+            EndSection(_showCameraSettings);
             
             if (DrawSectionHeader("Wall Configuration", ref _showWalls))
             {
@@ -1799,7 +1812,25 @@ namespace MaouSamaTD.Editor
             }
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField($"Selection: {_selection.Count} Tiles", EditorStyles.miniBoldLabel);
+            string selectionText = $"Selection: {_selection.Count} Tiles";
+            if (_selection.Count == 1)
+            {
+                selectionText += $" ({_selection[0].TileCoord.x}, {_selection[0].TileCoord.y})";
+            }
+            else if (_selection.Count > 1)
+            {
+                List<string> coords = new List<string>();
+                for (int i = 0; i < Mathf.Min(_selection.Count, 5); i++)
+                {
+                    coords.Add($"({_selection[i].TileCoord.x}, {_selection[i].TileCoord.y})");
+                }
+                selectionText += $" {string.Join(", ", coords)}";
+                if (_selection.Count > 5)
+                {
+                    selectionText += ", ...";
+                }
+            }
+            EditorGUILayout.LabelField(selectionText, EditorStyles.miniBoldLabel);
             
             TileType[] paletteOrder = new TileType[] {
                 TileType.None, TileType.Walkable, TileType.HighGround,

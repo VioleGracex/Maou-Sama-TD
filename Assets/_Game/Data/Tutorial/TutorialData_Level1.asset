@@ -304,7 +304,7 @@ MonoBehaviour:
     TargetUI:
       Name: Unit_Ignis
       Size: {x: 1.2, y: 1.2}
-      SizeOffset: {x: 0, y: 0}
+      SizeOffset: {x: 0, y: 0.8}
     AdditionalTargetUI: []
     TargetTiles: []
     DelayBefore: 0

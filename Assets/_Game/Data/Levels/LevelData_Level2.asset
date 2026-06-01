@@ -16,6 +16,8 @@ MonoBehaviour:
   UniqueID: b448e225-ae5c-4f11-9eac-591e3ff27ec9
   Category: 0
   LevelIcon: {fileID: 0}
+  MinMonsterLevel: 1
+  MaxMonsterLevel: 5
   LevelIndex: 2
   LevelName: Tomb of Lilith
   SovereignHpNameKey: Tina
@@ -23,6 +25,8 @@ MonoBehaviour:
   Description: Reclaim the First Succubus and restore your authority.
   GracePeriod: 10
   LevelID: 1-2
+  RequiredUnitLevel: 1
+  RequiredPreviousLevel: {fileID: 0}
   WinRewards:
   - Type: 0
     Amount: 800
@@ -62,6 +66,15 @@ MonoBehaviour:
     WaveMessage: The Shadow March Begins
     PreWaveStory: {fileID: 0}
     PostWaveStory: {fileID: 0}
+    TileAlterations:
+    - Action: 2
+      PointType: 4
+      Coordinate: {x: 7, y: 5}
+      TargetExitIndex: 0
+    - Action: 2
+      PointType: 2
+      Coordinate: {x: 14, y: 5}
+      TargetExitIndex: 0
   - Groups:
     - EnemyType: {fileID: 11400000, guid: e0794d572780145479dfb13267b7c045, type: 2}
       Count: 8
@@ -72,6 +85,7 @@ MonoBehaviour:
     WaveMessage: Shadows From the Sky
     PreWaveStory: {fileID: 0}
     PostWaveStory: {fileID: 0}
+    TileAlterations: []
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
       Count: 20
@@ -87,6 +101,7 @@ MonoBehaviour:
     WaveMessage: Triple Front Assault
     PreWaveStory: {fileID: 0}
     PostWaveStory: {fileID: 0}
+    TileAlterations: []
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 479fb6620cf11e341b226f03c87e44b0, type: 2}
       Count: 1
@@ -97,6 +112,7 @@ MonoBehaviour:
     WaveMessage: Final Stand - The Abyssal Shade Leads
     PreWaveStory: {fileID: 0}
     PostWaveStory: {fileID: 0}
+    TileAlterations: []
   HasTutorial: 1
   TutorialData: {fileID: 11400000, guid: f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5, type: 2}
   HasStory: 1

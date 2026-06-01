@@ -144,7 +144,31 @@ namespace MaouSamaTD.Managers
 
         private void Update()
         {
-            if (_isSelectionLocked) return;
+            // Bypass selection lock if active placement (double-click selection/drag), active skill targeting is in progress,
+            // or if the tutorial is currently waiting for selection input (UnitSelected or UnitStatsOpened).
+            bool selectionAllowed = _tutorialManager == null || !_tutorialManager.IsInTutorial;
+            if (!selectionAllowed)
+            {
+                string currentAction = _tutorialManager.GetCurrentStepActionKey();
+                selectionAllowed = currentAction == "UnitSelected" || 
+                                   currentAction == "UnitStatsOpened";
+            }
+
+            bool isSelectionBlocked = _isSelectionLocked && !IsDragging && _activeUnitData == null && !_isSkillTargeting && !selectionAllowed;
+            if (isSelectionBlocked)
+            {
+                if (_currentHoverUnit != null)
+                {
+                    _currentHoverUnit.SetHighlight(false, Color.white);
+                    _currentHoverUnit = null;
+                }
+                if (_currentHoverTile != null)
+                {
+                    _currentHoverTile = null;
+                    UpdateTileVisuals();
+                }
+                return;
+            }
             
             if (_inspectedEnemyUnit != null)
             {

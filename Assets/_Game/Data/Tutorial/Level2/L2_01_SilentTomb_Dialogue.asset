@@ -22,20 +22,7 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: We have reached the heart of the lower sanctum. The air here is... sickeningly
-      sweet. Her presence still lingers.
-    Background: 1
-    BackgroundImage: {fileID: 0}
-    EventID: 
-  - SpeakerName: Tina
-    SpeakerPortrait: {fileID: 0}
-    PortraitOnLeft: 0
-    LeftPortrait: {fileID: 0}
-    RightPortrait: {fileID: 0}
-    CenterPortrait: {fileID: 0}
-    Focus: 0
-    Text: Steel yourself, My Sovereign. To reclaim your Crests, we must endure her...
-      antics.
+    Text: "We have reached the lower sanctum where Lilith is sealed. I will begin the unsealing rite now. Sovereign, please protect me while I perform the ritual."
     Background: 1
     BackgroundImage: {fileID: 0}
     EventID: 
@@ -46,7 +33,7 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: There She is Sovereign.
+    Text: "Sovereign, shadows are approaching from the tomb's entrance! I will block the ground path to keep them from interrupting the ritual."
     Background: 1
-    BackgroundImage: {fileID: 21300000, guid: 727040039e044b14ebd3ae20b995c711, type: 3}
+    BackgroundImage: {fileID: 0}
     EventID: 

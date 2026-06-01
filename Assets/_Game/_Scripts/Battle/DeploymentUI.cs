@@ -404,6 +404,45 @@ namespace MaouSamaTD.UI
             unit.Retreat();
         }
 
+        public void RetreatUnitFree(PlayerUnit unit, bool force = true)
+        {
+            if (unit == null) return;
+            
+            if (unit.Data != null)
+            {
+                UnitData unitData = unit.Data;
+                
+                // 1. Set HP ratio and manual status
+                _vassalHpRatios[unitData] = unit.CurrentHp / unit.MaxHp;
+                _isManuallyRetreated[unitData] = true; // Manual Retreat -> Fast healing (10%/s)
+                
+                // 2. Full refund (100% of deployment cost)
+                if (_currencyManager != null)
+                {
+                    _currencyManager.AddSeals(unitData.DeploymentCost);
+                }
+                
+                // 3. Remove from deployed list and active instances to bypass cooldown in OnUnitRetreated
+                if (_deployedUnits.Contains(unitData))
+                {
+                    _deployedUnits.Remove(unitData);
+                    
+                    if (_activeInstances.ContainsKey(unitData))
+                    {
+                        _activeInstances.Remove(unitData);
+                    }
+                    
+                    RefreshButtonsState();
+                }
+                
+                unit.Retreat(force);
+            }
+            else
+            {
+                unit.Retreat(force);
+            }
+        }
+
         public void RetreatUnitByData(UnitData unitData)
         {
             if (unitData == null) return;

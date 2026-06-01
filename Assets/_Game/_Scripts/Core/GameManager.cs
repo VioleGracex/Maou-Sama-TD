@@ -112,7 +112,7 @@ namespace MaouSamaTD.Managers
 
             if (_cameraManager != null)
             {
-                 _cameraManager.Init();
+                 _cameraManager.Init(levelData.MapData);
                  
                  if (_gridManager != null && levelData.MapData != null)
                  {

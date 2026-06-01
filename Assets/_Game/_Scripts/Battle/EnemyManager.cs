@@ -20,6 +20,7 @@ namespace MaouSamaTD.Managers
         [Inject(Optional = true)] private TutorialManager _tutorialManager;
         [Inject] private StoryManager _storyManager;
         [Inject] private CameraManager _cameraManager;
+        [Inject(Optional = true)] private MaouSamaTD.UI.DeploymentUI _deploymentUI;
 
         [SerializeField] private float _outroDelay = 2.0f;
         [Header("Debug")]
@@ -470,6 +471,9 @@ namespace MaouSamaTD.Managers
                 // WAIT: Wait for the entire wave to be cleared (all enemies defeated/escaped) before proceeding to next wave delay
                 yield return new WaitUntil(() => IsWaveCleared(waveCounter));
 
+                // Apply alterations of this wave
+                ApplyWaveTileAlterations(wave);
+
                 // Post-Wave Story
                 if (wave.PostWaveStory != null && _storyManager != null)
                 {
@@ -528,6 +532,158 @@ namespace MaouSamaTD.Managers
                 if (group.SpawnInterval > 0)
                     yield return StartCoroutine(WaitScaled(group.SpawnInterval));
             }
+        }
+
+        private void ApplyWaveTileAlterations(WaveData wave)
+        {
+            if (wave == null || wave.TileAlterations == null || wave.TileAlterations.Count == 0) return;
+
+            if (_gridManager == null)
+            {
+                Debug.LogError("[EnemyManager] Cannot apply wave alterations because GridManager is null!");
+                return;
+            }
+
+            if (_showDebugLogs) Debug.Log($"[EnemyManager] Applying {wave.TileAlterations.Count} tile alterations after wave {_currentWaveIndex + 1}.");
+
+            foreach (var alt in wave.TileAlterations)
+            {
+                bool isSpawn = alt.PointType == TilePointType.SpawnGround || alt.PointType == TilePointType.SpawnHigh;
+                bool isExit = alt.PointType == TilePointType.ExitGround || alt.PointType == TilePointType.ExitHigh;
+                bool isHigh = alt.PointType == TilePointType.SpawnHigh || alt.PointType == TilePointType.ExitHigh || alt.PointType == TilePointType.HighGround;
+
+                // Retreat occupied vassal for free with no cooldown if the tile is becoming a spawn or exit point
+                if (alt.Action == TileAlterationAction.Add || alt.Action == TileAlterationAction.Override)
+                {
+                    if (isSpawn || isExit)
+                    {
+                        Tile tile = _gridManager.GetTileAt(alt.Coordinate);
+                        if (tile != null && tile.IsOccupied && tile.Occupant is PlayerUnit playerUnit)
+                        {
+                            if (_showDebugLogs) Debug.Log($"[EnemyManager] Coordinate {alt.Coordinate} is becoming a spawn/exit. Free retreating vassal: {playerUnit.gameObject.name}");
+                            if (_deploymentUI != null)
+                            {
+                                _deploymentUI.RetreatUnitFree(playerUnit, true);
+                            }
+                            else
+                            {
+                                playerUnit.Retreat(true);
+                            }
+                        }
+                    }
+                }
+                
+                // Determine the tile type to set on the grid
+                TileType resolvedType;
+                if (alt.Action == TileAlterationAction.Subtract)
+                {
+                    resolvedType = isHigh ? TileType.HighGround : TileType.Walkable;
+                }
+                else
+                {
+                    if (alt.PointType == TilePointType.SpawnGround) resolvedType = TileType.SpawnPoint;
+                    else if (alt.PointType == TilePointType.SpawnHigh) resolvedType = TileType.SpawnPointHigh;
+                    else if (alt.PointType == TilePointType.ExitGround) resolvedType = TileType.ExitPoint;
+                    else if (alt.PointType == TilePointType.ExitHigh) resolvedType = TileType.ExitPointHigh;
+                    else if (alt.PointType == TilePointType.Walkable) resolvedType = TileType.Walkable;
+                    else resolvedType = TileType.HighGround;
+                }
+
+                if (alt.Action == TileAlterationAction.Override)
+                {
+                    if (isSpawn)
+                    {
+                        // Revert old spawns back to walkable / highground
+                        foreach (var spawn in new List<SpawnPointData>(_gridManager.SpawnPoints))
+                        {
+                            Tile t = _gridManager.GetTileAt(spawn.Coordinate);
+                            if (t != null)
+                            {
+                                bool wasHigh = t.Type == TileType.SpawnPointHigh || t.Type == TileType.HighGround || t.Type == TileType.DecoHighGround;
+                                _gridManager.SetTileType(spawn.Coordinate, wasHigh ? TileType.HighGround : TileType.Walkable);
+                            }
+                        }
+                        _gridManager.SpawnPoints.Clear();
+                        
+                        // Set new spawn
+                        _gridManager.SetTileType(alt.Coordinate, resolvedType);
+                        _gridManager.SpawnPoints.Add(new SpawnPointData { Coordinate = alt.Coordinate, TargetExitIndex = alt.TargetExitIndex });
+                    }
+                    else if (isExit)
+                    {
+                        // Revert old exits back to walkable / highground
+                        foreach (var exit in new List<Vector2Int>(_gridManager.ExitPoints))
+                        {
+                            Tile t = _gridManager.GetTileAt(exit);
+                            if (t != null)
+                            {
+                                bool wasHigh = t.Type == TileType.ExitPointHigh || t.Type == TileType.HighGround || t.Type == TileType.DecoHighGround;
+                                _gridManager.SetTileType(exit, wasHigh ? TileType.HighGround : TileType.Walkable);
+                            }
+                        }
+                        _gridManager.ExitPoints.Clear();
+                        
+                        // Set new exit
+                        _gridManager.SetTileType(alt.Coordinate, resolvedType);
+                        _gridManager.ExitPoints.Add(alt.Coordinate);
+                    }
+                    else
+                    {
+                        // Walkable or HighGround: just override this coordinate
+                        _gridManager.SetTileType(alt.Coordinate, resolvedType);
+                        _gridManager.SpawnPoints.RemoveAll(s => s.Coordinate == alt.Coordinate);
+                        _gridManager.ExitPoints.Remove(alt.Coordinate);
+                    }
+                }
+                else if (alt.Action == TileAlterationAction.Add)
+                {
+                    _gridManager.SetTileType(alt.Coordinate, resolvedType);
+                    
+                    if (isSpawn)
+                    {
+                        _gridManager.SpawnPoints.RemoveAll(s => s.Coordinate == alt.Coordinate);
+                        _gridManager.SpawnPoints.Add(new SpawnPointData { Coordinate = alt.Coordinate, TargetExitIndex = alt.TargetExitIndex });
+                    }
+                    else if (isExit)
+                    {
+                        if (!_gridManager.ExitPoints.Contains(alt.Coordinate))
+                        {
+                            _gridManager.ExitPoints.Add(alt.Coordinate);
+                        }
+                    }
+                    else
+                    {
+                        // Remove from spawns and exits since it's now Walkable or HighGround
+                        _gridManager.SpawnPoints.RemoveAll(s => s.Coordinate == alt.Coordinate);
+                        _gridManager.ExitPoints.Remove(alt.Coordinate);
+                    }
+                }
+                else if (alt.Action == TileAlterationAction.Subtract)
+                {
+                    _gridManager.SetTileType(alt.Coordinate, resolvedType);
+                    
+                    if (isSpawn)
+                    {
+                        _gridManager.SpawnPoints.RemoveAll(s => s.Coordinate == alt.Coordinate);
+                    }
+                    else if (isExit)
+                    {
+                        _gridManager.ExitPoints.Remove(alt.Coordinate);
+                    }
+                    else
+                    {
+                        // Subtracting Walkable/HighGround does not make logical sense but we can support it by removing it from spawns/exits
+                        _gridManager.SpawnPoints.RemoveAll(s => s.Coordinate == alt.Coordinate);
+                        _gridManager.ExitPoints.Remove(alt.Coordinate);
+                    }
+                }
+            }
+
+            // Sync default properties SpawnPoint and ExitPoint
+            _gridManager.UpdateSpawnAndExitProperties();
+            
+            // Notify grid state changed so paths recalculate
+            _gridManager.NotifyGridStateChanged();
         }
 
         private IEnumerator WaitScaled(float duration)

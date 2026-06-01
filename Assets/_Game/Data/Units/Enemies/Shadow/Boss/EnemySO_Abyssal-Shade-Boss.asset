@@ -45,7 +45,9 @@ MonoBehaviour:
   Abilities:
   - {fileID: 11400000, guid: e6034a0e964fb4543a9f84e84f6c1170, type: 2}
   CurrencyReward: 200
-  Tint: {r: 0.2, g: 0, b: 0.2, a: 1}
+  Category: 0
+  Rank: 0
+  Tint: {r: 1, g: 1, b: 1, a: 1}
   VisualYOffset: 0
   BaseVisualHeight: 1
   HpBarYOffset: 1

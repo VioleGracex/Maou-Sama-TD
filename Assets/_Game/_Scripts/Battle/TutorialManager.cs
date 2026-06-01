@@ -41,6 +41,10 @@ namespace MaouSamaTD.Managers
 
         [Header("Debug")]
         [SerializeField] private bool _showDebugLogs = true;
+
+        [Header("Level 2 Lilith Sealed Settings")]
+        [SerializeField] private Sprite _lilithSealedSprite;
+        [SerializeField] private Vector2Int _lilithSealedCoordinate = new Vector2Int(9, 11);
         #endregion
         
         #region State
@@ -58,6 +62,7 @@ namespace MaouSamaTD.Managers
         private int _currentStepMissCount = 0;
         private int _nextStepIndexOverride = -1;
         private Dictionary<string, RectTransform> _uiTargetCache = new Dictionary<string, RectTransform>();
+        private GameObject _lilithSealedInstance;
 
         public int CurrentLevelIndex
         {
@@ -200,6 +205,7 @@ namespace MaouSamaTD.Managers
                     _currencyManager.SetSeals(50);
                     if (_showDebugLogs) Debug.Log("[tutorial] Level 2 Initialized: Seals set to 50.");
                 }
+                SpawnLilithSealedVisual();
             }
 
             // Level 1 Start Logic: Ensure Sovereign Rite Panel is strictly hidden
@@ -524,12 +530,24 @@ namespace MaouSamaTD.Managers
                 }
 
                 // 1. Handle StopTime for all step types at the start
-                if (step.StopTime)
+                bool shouldStop = step.StopTime;
+                if (step.ActionKey == "BossPassedUnit" || step.ActionKey == "BossReachedIgnis" || step.ActionKey == "BossBypass")
                 {
-                    if (step.DelayBeforeStopTime > 0f && !isLevel1)
+                    shouldStop = false;
+                }
+
+                if (shouldStop)
+                {
+                    float delay = step.DelayBeforeStopTime;
+                    if (step.StepName == "Boss Bypasses!" || step.StepName == "Boss Bypasses ignis" || step.StepName == "Boss is Bypassing Defenses!")
                     {
-                        if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime with delay of {step.DelayBeforeStopTime}s.");
-                        StartCoroutine(DelayedTimeStop(step.DelayBeforeStopTime, step.StepName));
+                        delay = 0.5f;
+                    }
+
+                    if (delay > 0f && !isLevel1)
+                    {
+                        if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime with delay of {delay}s.");
+                        StartCoroutine(DelayedTimeStop(delay, step.StepName));
                     }
                     else
                     {
@@ -566,10 +584,16 @@ namespace MaouSamaTD.Managers
                             // Apply StopTime AFTER the condition wait, so the game pauses for the actual dialogue
                             if (step.StopTime)
                             {
-                                if (step.DelayBeforeStopTime > 0f && !isLevel1)
+                                float delay = step.DelayBeforeStopTime;
+                                if (step.StepName == "Boss Bypasses!" || step.StepName == "Boss Bypasses ignis" || step.StepName == "Boss is Bypassing Defenses!")
                                 {
-                                    if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime with delay of {step.DelayBeforeStopTime}s (after condition).");
-                                    StartCoroutine(DelayedTimeStop(step.DelayBeforeStopTime, step.StepName));
+                                    delay = 0.5f;
+                                }
+
+                                if (delay > 0f && !isLevel1)
+                                {
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] Step {step.StepName} requested StopTime with delay of {delay}s (after condition).");
+                                    StartCoroutine(DelayedTimeStop(delay, step.StepName));
                                 }
                                 else
                                 {
@@ -919,8 +943,7 @@ namespace MaouSamaTD.Managers
                             bool shouldStopTime = step.StopTime || step.StepName == "One-Shot Rite";
                             
                             // Safety Override: Don't stop time for conditions that require enemy movement to progress
-                            if (step.Type == TutorialStepType.WaitForAction && 
-                                (step.ActionKey == "BossPassedUnit" || step.ActionKey == "BossReachedIgnis"))
+                            if (step.ActionKey == "BossPassedUnit" || step.ActionKey == "BossReachedIgnis" || step.ActionKey == "BossBypass")
                             {
                                 shouldStopTime = false;
                                 if (_showDebugLogs && _gameManager.CurrentSpeed < 0.1f) 
@@ -940,6 +963,13 @@ namespace MaouSamaTD.Managers
                             }
 
                             yield return new WaitUntil(() => CheckCondition(step));
+
+                            // Post-condition delay for boss bypass so the player can see him teleport
+                            if (step.ActionKey == "BossPassedUnit")
+                            {
+                                if (_showDebugLogs) Debug.Log("[tutorial] BossPassedUnit condition met. Delaying 0.75s so player can see the boss on the next tile.");
+                                yield return new WaitForSecondsRealtime(0.75f);
+                            }
                         }
                         break;
 
@@ -1007,6 +1037,11 @@ namespace MaouSamaTD.Managers
                             }
                             else if (step.ActionKey == "AwakenLilith")
                             {
+                                if (_lilithSealedInstance != null)
+                                {
+                                    _lilithSealedInstance.SetActive(false);
+                                    if (_showDebugLogs) Debug.Log("[tutorial] Lilith unsealed: Hiding sealed visual.");
+                                }
                                 if (_saveManager != null)
                                 {
                                     _saveManager.AwakenLilith();
@@ -1070,6 +1105,20 @@ namespace MaouSamaTD.Managers
                                 else
                                 {
                                     if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand SetUnitButtonActive: DeploymentUI is NULL!");
+                                }
+                            }
+                            else if (step.ActionKey == "SetSpawnMapping")
+                            {
+                                if (_gridManager != null)
+                                {
+                                    Vector2Int spawnCoord = step.HandTargetTileOverride;
+                                    int exitIndex = step.RequiredCount;
+                                    _gridManager.SetSpawnMapping(spawnCoord, exitIndex);
+                                    if (_showDebugLogs) Debug.Log($"[tutorial] CustomCommand SetSpawnMapping: Spawn {spawnCoord} now maps to Exit index {exitIndex}");
+                                }
+                                else
+                                {
+                                    if (_showDebugLogs) Debug.LogWarning("[tutorial] CustomCommand SetSpawnMapping: GridManager is NULL!");
                                 }
                             }
                             else if (step.ActionKey == "SpawnEnemyClump")
@@ -2083,6 +2132,7 @@ private RectTransform FindTargetRect(string name)
                         if (step.RequiredCount == 0)
                         {
                             boss.PreventDeathForTutorial = false; // Lift immortality so the skill can kill it
+                            boss.Immunities.Clear(); // Clear immunities so it can take damage from the one-shot rite
                             return boss.IsDead;
                         }
 
@@ -2144,25 +2194,38 @@ private RectTransform FindTargetRect(string name)
                         {
                             bool exitIsLeft = (_gridManager != null && _gridManager.exitIsLeft);
                             bool passed = false;
-                            
-                            if (exitIsLeft)
+
+                            if (_gridManager != null)
                             {
-                                // Path is Right to Left (X decreases)
-                                passed = boss.transform.position.x < (targetUnit.transform.position.x - 0.25f);
+                                Vector2Int bossCoord = _gridManager.WorldToGridCoordinates(boss.transform.position);
+                                Vector2Int targetCoord = _gridManager.WorldToGridCoordinates(targetUnit.transform.position);
+
+                                var pathFromBoss = _gridManager.GetPath(bossCoord, _gridManager.ExitPoint, boss.EnemyData.MovementType, true);
+                                var pathFromTarget = _gridManager.GetPath(targetCoord, _gridManager.ExitPoint, boss.EnemyData.MovementType, true);
+
+                                if (pathFromBoss != null && pathFromTarget != null)
+                                {
+                                    // Boss is passed if it is closer to the exit along the path (fewer remaining path tiles)
+                                    passed = pathFromBoss.Count < pathFromTarget.Count;
+                                }
+                                else
+                                {
+                                    // Fallback: check X axis
+                                    passed = exitIsLeft ? (boss.transform.position.x < (targetUnit.transform.position.x - 0.25f)) : (boss.transform.position.x > (targetUnit.transform.position.x + 0.25f));
+                                }
                             }
                             else
                             {
-                                // Path is Left to Right (X increases)
-                                passed = boss.transform.position.x > (targetUnit.transform.position.x + 0.25f);
+                                passed = exitIsLeft ? (boss.transform.position.x < (targetUnit.transform.position.x - 0.25f)) : (boss.transform.position.x > (targetUnit.transform.position.x + 0.25f));
                             }
 
                             // Throttled position log so we can see the boss moving
                             if (_showDebugLogs && Time.frameCount % 60 == 0)
-                                Debug.Log($"[tutorial] BossPassedUnit check: Boss.x={boss.transform.position.x:F2}, Ignis.x={targetUnit.transform.position.x:F2}, exitIsLeft={exitIsLeft}, passed={passed}");
+                                Debug.Log($"[tutorial] BossPassedUnit check: Boss={boss.transform.position}, Ignis={targetUnit.transform.position}, passed={passed}");
 
                             if (passed)
                             {
-                                if (_showDebugLogs) Debug.Log($"[tutorial] Boss {bossName} passed {targetName}! (ExitIsLeft: {exitIsLeft})");
+                                if (_showDebugLogs) Debug.Log($"[tutorial] Boss {bossName} passed {targetName}!");
                                 return true;
                             }
                         }
@@ -2465,6 +2528,39 @@ private RectTransform FindTargetRect(string name)
             if (cleanedName.Equals("Lilith", System.StringComparison.OrdinalIgnoreCase)) return 10;
 
             return 0;
+        }
+
+        private void SpawnLilithSealedVisual()
+        {
+            if (_lilithSealedSprite == null)
+            {
+                if (_showDebugLogs) Debug.LogWarning("[tutorial] _lilithSealedSprite is null! Lilith sealed visual will not be spawned.");
+                return;
+            }
+
+            if (_gridManager == null)
+            {
+                Debug.LogError("[tutorial] Cannot spawn Lilith sealed visual because GridManager is missing.");
+                return;
+            }
+
+            MaouSamaTD.Grid.Tile tile = _gridManager.GetTileAt(_lilithSealedCoordinate);
+            if (tile == null)
+            {
+                Debug.LogError($"[tutorial] Cannot spawn Lilith sealed visual: Tile at coordinate {_lilithSealedCoordinate} is null.");
+                return;
+            }
+
+            if (_showDebugLogs) Debug.Log($"[tutorial] Spawning Lilith sealed visual at {_lilithSealedCoordinate}");
+
+            _lilithSealedInstance = new GameObject("Lilith_Sealed_Visual");
+            _lilithSealedInstance.transform.position = tile.transform.position + new Vector3(0, 0.5f, 0);
+
+            SpriteRenderer sr = _lilithSealedInstance.AddComponent<SpriteRenderer>();
+            sr.sprite = _lilithSealedSprite;
+            sr.sortingOrder = 100;
+
+            _lilithSealedInstance.AddComponent<MaouSamaTD.Utils.Billboard>();
         }
     }
 }

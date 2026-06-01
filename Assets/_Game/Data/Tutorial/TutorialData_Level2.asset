@@ -33,7 +33,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -68,7 +68,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 50
@@ -103,7 +103,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -138,7 +138,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -163,10 +163,10 @@ MonoBehaviour:
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles:
-    - Coordinate: {x: 2, y: 4}
+    - Coordinate: {x: 7, y: 4}
       Size: {x: 1.1, y: 1.1}
       Offset: {x: 0, y: 1, z: 0}
-      Height: 1
+      Height: 0
     DelayBefore: 0
     Duration: 2
     ActionKey: UnitPlaced
@@ -177,7 +177,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 7, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -215,7 +215,7 @@ MonoBehaviour:
       Name: SovereignRiteToggle
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 7, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -243,7 +243,7 @@ MonoBehaviour:
       Size: {x: 1.2, y: 1.2}
       SizeOffset: {x: 0, y: 0}
     TargetTiles:
-    - Coordinate: {x: 2, y: 4}
+    - Coordinate: {x: 7, y: 4}
       Size: {x: 1, y: 1}
       Offset: {x: 0, y: 1, z: 0}
       Height: 0
@@ -257,7 +257,7 @@ MonoBehaviour:
       Name: SkillButton_Empower_Male
       Size: {x: 1, y: 1}
       SizeOffset: {x: -0.2, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 7, y: 6}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -292,7 +292,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 0
     RequiredCount: 1
@@ -327,7 +327,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -362,7 +362,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -378,6 +378,41 @@ MonoBehaviour:
     OnCompleteJumpToStepName: 
     ConsecutiveMissDialogues: []
     Comment: 
+  - StepName: Shift Exit to Far
+    Type: 5
+    Dialogue: {fileID: 0}
+    TargetUI:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    AdditionalTargetUI: []
+    TargetTiles: []
+    DelayBefore: 0
+    Duration: 1
+    ActionKey: SetSpawnMapping
+    ShowHand: 0
+    HandScale: 1
+    DragShowHand: 0
+    HandTargetUIOverride:
+      Name: 
+      Size: {x: 1, y: 1}
+      SizeOffset: {x: 0, y: 0}
+    HandTargetTileOverride: {x: 0, y: 4}
+    HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
+    WaveIndex: -1
+    RequiredCount: 1
+    UseBlocker: 0
+    FullBlocker: 0
+    ResetBlocker: 0
+    StopTime: 0
+    ResumeTime: 0
+    DelayBeforeStopTime: 0
+    EnableMissInterception: 0
+    MissTargetBossName: Abyssal Shade
+    OnFailJumpToStepName: 
+    OnCompleteJumpToStepName: 
+    ConsecutiveMissDialogues: []
+    Comment: Custom command to shift spawn mapping for (0,4) to exit index 1
   - StepName: Place Lilith
     Type: 3
     Dialogue: {fileID: 11400000, guid: 4a9f99aba8e0d954c91df435e187f5e8, type: 2}
@@ -387,7 +422,7 @@ MonoBehaviour:
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles:
-    - Coordinate: {x: 2, y: 5}
+    - Coordinate: {x: 7, y: 6}
       Size: {x: 1, y: 1}
       Offset: {x: 0, y: 1, z: 0}
       Height: 0
@@ -401,7 +436,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 5}
+    HandTargetTileOverride: {x: 7, y: 6}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -436,7 +471,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: 2
     RequiredCount: 20
@@ -471,7 +506,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -491,7 +526,7 @@ MonoBehaviour:
     Type: 3
     Dialogue: {fileID: 11400000, guid: acae4862676c7bb4ca51c7bd01b29ed1, type: 2}
     TargetUI:
-      Name: 
+      Name: SovereignRiteToggle
       Size: {x: 0, y: 0}
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
@@ -506,7 +541,7 @@ MonoBehaviour:
       Name: SovereignRiteToggle
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -531,9 +566,9 @@ MonoBehaviour:
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles:
-    - Coordinate: {x: 1, y: 4}
-      Size: {x: 3, y: 2}
-      Offset: {x: 0, y: 2, z: 0}
+    - Coordinate: {x: 3, y: 2}
+      Size: {x: 5, y: 2}
+      Offset: {x: 0, y: 0, z: 0}
       Height: 0
     DelayBefore: 0
     Duration: 2
@@ -545,7 +580,7 @@ MonoBehaviour:
       Name: SkillButton_AOE_Rite
       Size: {x: 1, y: 1}
       SizeOffset: {x: -0.2, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -650,7 +685,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -685,7 +720,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 99
@@ -720,7 +755,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 99
@@ -755,7 +790,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 1, y: 1}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 1
@@ -764,7 +799,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 0
-    DelayBeforeStopTime: 0
+    DelayBeforeStopTime: 2
     EnableMissInterception: 0
     MissTargetBossName: Abyssal Shade
     OnFailJumpToStepName: 
@@ -783,11 +818,11 @@ MonoBehaviour:
       Size: {x: 1.2, y: 1.2}
       SizeOffset: {x: 0, y: 0}
     TargetTiles:
-    - Coordinate: {x: 3, y: 5}
+    - Coordinate: {x: 7, y: 10}
       Size: {x: 1, y: 1}
       Offset: {x: 0, y: 1, z: 0}
       Height: 0
-    DelayBefore: 0
+    DelayBefore: 2
     Duration: 2
     ActionKey: BossHealth
     ShowHand: 1
@@ -797,7 +832,7 @@ MonoBehaviour:
       Name: SkillButton_AbyssalGuillotine_Male
       Size: {x: 1, y: 1}
       SizeOffset: {x: -0.2, y: 0}
-    HandTargetTileOverride: {x: 2, y: 4}
+    HandTargetTileOverride: {x: 3, y: 4}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0
@@ -806,7 +841,7 @@ MonoBehaviour:
     ResetBlocker: 0
     StopTime: 1
     ResumeTime: 1
-    DelayBeforeStopTime: 0
+    DelayBeforeStopTime: 1
     EnableMissInterception: 1
     MissTargetBossName: Abyssal Shade
     OnFailJumpToStepName: 

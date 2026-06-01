@@ -4,6 +4,7 @@ using Zenject;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 using NaughtyAttributes;
+using MaouSamaTD.Levels;
 
 namespace MaouSamaTD.Managers
 {
@@ -68,7 +69,7 @@ namespace MaouSamaTD.Managers
         #endregion
 
         #region Lifecycle
-        public void Init()
+        public void Init(MaouSamaTD.Levels.MapData mapData = null)
         {  
             if (_gridManager != null)
             {
@@ -89,6 +90,22 @@ namespace MaouSamaTD.Managers
                 var vAxis = _cmOrbital.VerticalAxis;
                 vAxis.Range = new Vector2(-180, 180);
                 _cmOrbital.VerticalAxis = vAxis;
+            }
+
+            // Apply custom map zoom settings if available
+            if (mapData != null)
+            {
+                if (mapData.AutoCalculateDefaultZoom)
+                {
+                    _defaultZoom = Mathf.Clamp(Mathf.Max(mapData.Width, mapData.Height) * 0.35f + 1.0f, 4.15f, 12f);
+                }
+                else
+                {
+                    _defaultZoom = mapData.CustomDefaultZoom;
+                }
+                _isoOrthoSize = _defaultZoom;
+                _topDownOrthoSize = _defaultZoom;
+                _maxOrthoSize = Mathf.Max(_maxOrthoSize, _defaultZoom * 1.5f);
             }
 
             // Assign Targets
@@ -127,6 +144,12 @@ namespace MaouSamaTD.Managers
         [Header("Movement Settings")]
         [Tooltip("If true, W/A/S/D and panning moves relative to the screen. If false, it moves along the World X/Z axes.")]
         [SerializeField] private bool _screenRelativeMovement = true;
+
+        [Header("Movement Limits")]
+        [Tooltip("If true, limits the camera movement to stay near the map grid bounds.")]
+        [SerializeField] private bool _limitMovementToMap = true;
+        [Tooltip("Padding in world units added to the map boundaries.")]
+        [SerializeField] private float _movementPadding = 5f;
 
         private void HandleInput()
         {
@@ -184,6 +207,7 @@ namespace MaouSamaTD.Managers
                 }
                 
                 _cameraAnchor.position += move * _moveSpeed * Time.unscaledDeltaTime;
+                ClampAnchorPosition();
             }
 
             // Zoom (Scroll Wheel)
@@ -224,7 +248,28 @@ namespace MaouSamaTD.Managers
                 }
                 
                 _cameraAnchor.position += move * _moveSpeed * Time.unscaledDeltaTime;
+                ClampAnchorPosition();
             }
+        }
+
+        private void ClampAnchorPosition()
+        {
+            if (!_limitMovementToMap || _cameraAnchor == null || _gridManager == null) return;
+
+            float width = _gridManager.Width;
+            float height = _gridManager.Height;
+            float cellSize = _gridManager.CellSize;
+
+            float padding = Mathf.Max(_movementPadding, Mathf.Max(width, height) * 0.2f);
+            float minX = -padding;
+            float maxX = (width - 1) * cellSize + padding;
+            float minZ = -padding;
+            float maxZ = (height - 1) * cellSize + padding;
+
+            Vector3 pos = _cameraAnchor.position;
+            pos.x = Mathf.Clamp(pos.x, minX, maxX);
+            pos.z = Mathf.Clamp(pos.z, minZ, maxZ);
+            _cameraAnchor.position = pos;
         }
         
         private void RotateCamera(float delta)

@@ -22,9 +22,9 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: My Sovereign, the unsealing process is delicate. We must buy time for the
-      ritual to complete.
+    Text: "My Sovereign, the unsealing process is delicate. We must buy time for the ritual to complete."
     Background: 1
+    BackgroundImage: {fileID: 0}
     EventID: 
   - SpeakerName: Tina
     SpeakerPortrait: {fileID: 0}
@@ -33,7 +33,18 @@ MonoBehaviour:
     RightPortrait: {fileID: 0}
     CenterPortrait: {fileID: 0}
     Focus: 0
-    Text: Ignis, hold the southern corridor. Do not let those shades interrupt the
-      flow of mana.
+    Text: "Ignis, hold the corridor. Do not let those shades interrupt the flow of mana."
     Background: 1
+    BackgroundImage: {fileID: 0}
+    EventID: 
+  - SpeakerName: Ignis
+    SpeakerPortrait: {fileID: 0}
+    PortraitOnLeft: 0
+    LeftPortrait: {fileID: 0}
+    RightPortrait: {fileID: 0}
+    CenterPortrait: {fileID: 0}
+    Focus: 0
+    Text: "By the Crimson Flame... they shall not pass!"
+    Background: 1
+    BackgroundImage: {fileID: 0}
     EventID: 

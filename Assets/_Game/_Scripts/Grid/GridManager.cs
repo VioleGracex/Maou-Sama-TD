@@ -124,6 +124,12 @@ namespace MaouSamaTD.Grid
                 SpawnPoints.Add(new SpawnPointData { Coordinate = spawnCoord, TargetExitIndex = exitIndex });
             }
         }
+
+        public void UpdateSpawnAndExitProperties()
+        {
+            if (SpawnPoints.Count > 0) SpawnPoint = SpawnPoints[0].Coordinate;
+            if (ExitPoints.Count > 0) ExitPoint = ExitPoints[0];
+        }
         #endregion
 
         #region Initialization

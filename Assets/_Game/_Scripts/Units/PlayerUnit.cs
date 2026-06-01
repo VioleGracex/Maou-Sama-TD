@@ -492,14 +492,17 @@ namespace MaouSamaTD.Units
 
 
 
-        public void Retreat()
+        public void Retreat(bool force = false)
         {
-            // Disallow retreat during tutorial
-            Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
-            if (tm != null && tm.IsInTutorial)
+            // Disallow retreat during tutorial, unless forced
+            if (!force)
             {
-                if (_showDebugLogs) Debug.Log("[Retreat] Retreat is disabled during tutorial.");
-                return;
+                Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+                if (tm != null && tm.IsInTutorial)
+                {
+                    if (_showDebugLogs) Debug.Log("[Retreat] Retreat is disabled during tutorial.");
+                    return;
+                }
             }
 
             _currentHp = 0;

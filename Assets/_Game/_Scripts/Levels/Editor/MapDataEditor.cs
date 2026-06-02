@@ -35,6 +35,11 @@ namespace MaouSamaTD.Editor
         private static Texture2D s_TextureClipboard;
         private static DecorationData s_DecorationClipboard;
         private static bool s_HasDecorationClipboard = false;
+
+        private static GameObject s_BatchDecoPrefab;
+        private static Vector3 s_BatchDecoOffset = new Vector3(0f, 0.5f, 0f);
+        private static Vector3 s_BatchDecoRotation = Vector3.zero;
+        private static Vector3 s_BatchDecoScale = Vector3.one;
         
         [System.Serializable]
         private struct SelectionItem
@@ -598,6 +603,40 @@ namespace MaouSamaTD.Editor
                 }
             }
             EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(5);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Batch Apply Specific Decoration", EditorStyles.boldLabel);
+            s_BatchDecoPrefab = (GameObject)EditorGUILayout.ObjectField("Decoration Prefab", s_BatchDecoPrefab, typeof(GameObject), false);
+            s_BatchDecoOffset = EditorGUILayout.Vector3Field("Offset", s_BatchDecoOffset);
+            s_BatchDecoRotation = EditorGUILayout.Vector3Field("Rotation", s_BatchDecoRotation);
+            s_BatchDecoScale = EditorGUILayout.Vector3Field("Scale", s_BatchDecoScale);
+
+            if (GUILayout.Button("Apply Decoration to All Selected", GUILayout.Height(30)))
+            {
+                if (s_BatchDecoPrefab == null)
+                {
+                    EditorUtility.DisplayDialog("Apply Decoration", "Please assign a Decoration Prefab first.", "OK");
+                }
+                else
+                {
+                    Undo.RecordObject(data, "Batch Apply Decoration");
+                    foreach (var sel in _selection)
+                    {
+                        if (sel.Type == SelectionType.Tile)
+                        {
+                            ApplyTileDecorationBatch(data, sel.TileCoord, s_BatchDecoPrefab, s_BatchDecoOffset, s_BatchDecoRotation, s_BatchDecoScale);
+                        }
+                        else
+                        {
+                            ApplyWallDecorationBatch(data, sel.WallSide, sel.WallIndex, s_BatchDecoPrefab, s_BatchDecoOffset, s_BatchDecoRotation, s_BatchDecoScale);
+                        }
+                    }
+                    EditorUtility.SetDirty(data);
+                }
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(5);
 
             if (GUILayout.Button("Clear Decorations for All Selected", GUILayout.Height(25)))
             {
@@ -2367,6 +2406,79 @@ namespace MaouSamaTD.Editor
             foldout = EditorGUILayout.Foldout(foldout, label, true, headerStyle);
             if (foldout) EditorGUILayout.Space(2);
             return foldout;
+        }
+
+        private void ApplyTileDecorationBatch(MapData data, Vector2Int coord, GameObject prefab, Vector3 offset, Vector3 rotation, Vector3 scale)
+        {
+            int idx = data.VisualOverrides.FindIndex(o => o.Coordinate == coord);
+            TileVisualOverride to;
+            if (idx != -1)
+            {
+                to = data.VisualOverrides[idx];
+            }
+            else
+            {
+                to = new TileVisualOverride
+                {
+                    Coordinate = coord,
+                    Texture = null,
+                    Decorations = new List<DecorationData>()
+                };
+                data.VisualOverrides.Add(to);
+                idx = data.VisualOverrides.Count - 1;
+            }
+
+            if (to.Decorations == null)
+            {
+                to.Decorations = new List<DecorationData>();
+            }
+
+            DecorationData newDeco = new DecorationData
+            {
+                Prefab = prefab,
+                Offset = offset,
+                Rotation = rotation,
+                Scale = scale
+            };
+            to.Decorations.Add(newDeco);
+            data.VisualOverrides[idx] = to;
+        }
+
+        private void ApplyWallDecorationBatch(MapData data, WallSide side, int index, GameObject prefab, Vector3 offset, Vector3 rotation, Vector3 scale)
+        {
+            int idx = data.WallOverrides.FindIndex(o => o.Side == side && o.Index == index);
+            WallVisualOverride wo;
+            if (idx != -1)
+            {
+                wo = data.WallOverrides[idx];
+            }
+            else
+            {
+                wo = new WallVisualOverride
+                {
+                    Side = side,
+                    Index = index,
+                    TextureOverride = null,
+                    Decorations = new List<DecorationData>()
+                };
+                data.WallOverrides.Add(wo);
+                idx = data.WallOverrides.Count - 1;
+            }
+
+            if (wo.Decorations == null)
+            {
+                wo.Decorations = new List<DecorationData>();
+            }
+
+            DecorationData newDeco = new DecorationData
+            {
+                Prefab = prefab,
+                Offset = offset,
+                Rotation = rotation,
+                Scale = scale
+            };
+            wo.Decorations.Add(newDeco);
+            data.WallOverrides[idx] = wo;
         }
 
         private void EndSection(bool foldout)

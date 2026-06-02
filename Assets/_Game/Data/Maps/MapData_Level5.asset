@@ -18,6 +18,8 @@ MonoBehaviour:
   Width: 15
   Height: 15
   HighGroundChance: 0.3
+  AutoCalculateDefaultZoom: 0
+  CustomDefaultZoom: 4.15
   UseManualLayout: 1
   ManualLayoutData:
   - Coordinate: {x: 0, y: 0}

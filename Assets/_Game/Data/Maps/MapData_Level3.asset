@@ -18,6 +18,8 @@ MonoBehaviour:
   Width: 15
   Height: 15
   HighGroundChance: 0.2
+  AutoCalculateDefaultZoom: 1
+  CustomDefaultZoom: 4.15
   UseManualLayout: 1
   ManualLayoutData:
   - Coordinate: {x: 7, y: 7}
@@ -484,17 +486,1156 @@ MonoBehaviour:
   ShowPathing: 1
   DefaultTileMaterial: {fileID: 0}
   DefaultTileTexture: {fileID: 0}
-  VisualOverrides: []
+  VisualOverrides:
+  - Coordinate: {x: 7, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 2, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 3, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 4, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 5, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 10, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 11, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 12, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 2}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 3}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 4}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 5}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 6}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 8}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 9}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 10}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 11}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 12}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 4, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 217, z: 0}
+      Scale: {x: 0.69, y: 0.69, z: 0.69}
+  - Coordinate: {x: 4, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 209, z: 0}
+      Scale: {x: 0.81, y: 0.81, z: 0.81}
+  - Coordinate: {x: 10, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 284, z: 0}
+      Scale: {x: 0.77, y: 0.77, z: 0.77}
+  - Coordinate: {x: 10, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 11}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 9}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 10}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 12, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 11, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 10, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 12, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 10, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 11, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 3}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 4}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 5}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 3}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 4}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 5}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 3, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 4, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 5, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 11}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 9}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 10}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 3, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 4, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 5, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 12, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 130, z: 0}
+      Scale: {x: 0.71, y: 0.71, z: 0.71}
+  - Coordinate: {x: 12, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 250, z: 0}
+      Scale: {x: 0.56, y: 0.56, z: 0.56}
+  - Coordinate: {x: 12, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 12, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 20, z: 0}
+      Scale: {x: 0.63, y: 0.63, z: 0.63}
+  - Coordinate: {x: 8, y: 12}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 246, z: 0}
+      Scale: {x: 0.77, y: 0.77, z: 0.77}
+  - Coordinate: {x: 9, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 121, z: 0}
+      Scale: {x: 0.8, y: 0.8, z: 0.8}
+  - Coordinate: {x: 9, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 255, z: 0}
+      Scale: {x: 0.78, y: 0.78, z: 0.78}
+  - Coordinate: {x: 10, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 292, z: 0}
+      Scale: {x: 0.77, y: 0.77, z: 0.77}
+  - Coordinate: {x: 10, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 330, z: 0}
+      Scale: {x: 0.81, y: 0.81, z: 0.81}
+  - Coordinate: {x: 10, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 228, z: 0}
+      Scale: {x: 0.6, y: 0.6, z: 0.6}
+  - Coordinate: {x: 11, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 161, z: 0}
+      Scale: {x: 0.68, y: 0.68, z: 0.68}
+  - Coordinate: {x: 11, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 77, z: 0}
+      Scale: {x: 0.67, y: 0.67, z: 0.67}
+  - Coordinate: {x: 11, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 11, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 12}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 2, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 125, z: 0}
+      Scale: {x: 0.81, y: 0.81, z: 0.81}
+  - Coordinate: {x: 3, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 342, z: 0}
+      Scale: {x: 0.75, y: 0.75, z: 0.75}
+  - Coordinate: {x: 4, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 353, z: 0}
+      Scale: {x: 0.85, y: 0.85, z: 0.85}
+  - Coordinate: {x: 5, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 28, z: 0}
+      Scale: {x: 0.75, y: 0.75, z: 0.75}
+  - Coordinate: {x: 2, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 236, z: 0}
+      Scale: {x: 0.84, y: 0.84, z: 0.84}
+  - Coordinate: {x: 2, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 35, z: 0}
+      Scale: {x: 0.62, y: 0.62, z: 0.62}
+  - Coordinate: {x: 2, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 219, z: 0}
+      Scale: {x: 0.81, y: 0.81, z: 0.81}
+  - Coordinate: {x: 3, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 212, z: 0}
+      Scale: {x: 0.78, y: 0.78, z: 0.78}
+  - Coordinate: {x: 3, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 3, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 4, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 302, z: 0}
+      Scale: {x: 0.67, y: 0.67, z: 0.67}
+  - Coordinate: {x: 4, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 5, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 5, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 36, z: 0}
+      Scale: {x: 0.56, y: 0.56, z: 0.56}
+  - Coordinate: {x: 5, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 136, z: 0}
+      Scale: {x: 0.67, y: 0.67, z: 0.67}
+  - Coordinate: {x: 2, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 2, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 2, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 234, z: 0}
+      Scale: {x: 0.69, y: 0.69, z: 0.69}
+  - Coordinate: {x: 2, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 205, z: 0}
+      Scale: {x: 0.78, y: 0.78, z: 0.78}
+  - Coordinate: {x: 2, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 193, z: 0}
+      Scale: {x: 0.84, y: 0.84, z: 0.84}
+  - Coordinate: {x: 2, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 198, z: 0}
+      Scale: {x: 0.79, y: 0.79, z: 0.79}
+  - Coordinate: {x: 3, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 18, z: 0}
+      Scale: {x: 0.7, y: 0.7, z: 0.7}
+  - Coordinate: {x: 3, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 58, z: 0}
+      Scale: {x: 0.59, y: 0.59, z: 0.59}
+  - Coordinate: {x: 3, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 263, z: 0}
+      Scale: {x: 0.82, y: 0.82, z: 0.82}
+  - Coordinate: {x: 3, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 220, z: 0}
+      Scale: {x: 0.71, y: 0.71, z: 0.71}
+  - Coordinate: {x: 4, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 294, z: 0}
+      Scale: {x: 0.7, y: 0.7, z: 0.7}
+  - Coordinate: {x: 4, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 18, z: 0}
+      Scale: {x: 0.7, y: 0.7, z: 0.7}
+  - Coordinate: {x: 4, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 81, z: 0}
+      Scale: {x: 0.64, y: 0.64, z: 0.64}
+  - Coordinate: {x: 5, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 5, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 113, z: 0}
+      Scale: {x: 0.64, y: 0.64, z: 0.64}
+  - Coordinate: {x: 5, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 5, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 19, z: 0}
+      Scale: {x: 0.83, y: 0.83, z: 0.83}
+  - Coordinate: {x: 6, y: 2}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 2}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 347, z: 0}
+      Scale: {x: 0.67, y: 0.67, z: 0.67}
+  - Coordinate: {x: 9, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 268, z: 0}
+      Scale: {x: 0.71, y: 0.71, z: 0.71}
+  - Coordinate: {x: 9, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 118, z: 0}
+      Scale: {x: 0.81, y: 0.81, z: 0.81}
+  - Coordinate: {x: 10, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 8, z: 0}
+      Scale: {x: 0.62, y: 0.62, z: 0.62}
+  - Coordinate: {x: 10, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 314, z: 0}
+      Scale: {x: 0.62, y: 0.62, z: 0.62}
+  - Coordinate: {x: 10, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 97, z: 0}
+      Scale: {x: 0.85, y: 0.85, z: 0.85}
+  - Coordinate: {x: 11, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 148, z: 0}
+      Scale: {x: 0.72, y: 0.72, z: 0.72}
+  - Coordinate: {x: 11, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 224, z: 0}
+      Scale: {x: 0.76, y: 0.76, z: 0.76}
+  - Coordinate: {x: 11, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 101, z: 0}
+      Scale: {x: 0.85, y: 0.85, z: 0.85}
+  - Coordinate: {x: 11, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 177, z: 0}
+      Scale: {x: 0.8, y: 0.8, z: 0.8}
+  - Coordinate: {x: 12, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 182, z: 0}
+      Scale: {x: 0.67, y: 0.67, z: 0.67}
+  - Coordinate: {x: 12, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 187, z: 0}
+      Scale: {x: 0.67, y: 0.67, z: 0.67}
+  - Coordinate: {x: 12, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 12, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 72, z: 0}
+      Scale: {x: 0.68, y: 0.68, z: 0.68}
+  - Coordinate: {x: 13, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 1, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 0}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 0, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 1}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 13}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 7, y: 14}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 14, y: 7}
+    Texture: {fileID: 2800000, guid: e0f2f3f4c5b6a7889988776655443322, type: 3}
+    Decorations: []
+  - Coordinate: {x: 13, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 1, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 13}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 13, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 0, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 1, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 0, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 267, z: 0}
+      Scale: {x: 0.67, y: 0.67, z: 0.67}
+  - Coordinate: {x: 0, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 0, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 210, z: 0}
+      Scale: {x: 0.73, y: 0.73, z: 0.73}
+  - Coordinate: {x: 0, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 64, z: 0}
+      Scale: {x: 0.61, y: 0.61, z: 0.61}
+  - Coordinate: {x: 0, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 324, z: 0}
+      Scale: {x: 0.85, y: 0.85, z: 0.85}
+  - Coordinate: {x: 0, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 178, z: 0}
+      Scale: {x: 0.64, y: 0.64, z: 0.64}
+  - Coordinate: {x: 1, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 126, z: 0}
+      Scale: {x: 0.71, y: 0.71, z: 0.71}
+  - Coordinate: {x: 1, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 82, z: 0}
+      Scale: {x: 0.71, y: 0.71, z: 0.71}
+  - Coordinate: {x: 1, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 189, z: 0}
+      Scale: {x: 0.6, y: 0.6, z: 0.6}
+  - Coordinate: {x: 1, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 97, z: 0}
+      Scale: {x: 0.69, y: 0.69, z: 0.69}
+  - Coordinate: {x: 1, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 1, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 72, z: 0}
+      Scale: {x: 0.55, y: 0.55, z: 0.55}
+  - Coordinate: {x: 0, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 343, z: 0}
+      Scale: {x: 0.75, y: 0.75, z: 0.75}
+  - Coordinate: {x: 0, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 111, z: 0}
+      Scale: {x: 0.74, y: 0.74, z: 0.74}
+  - Coordinate: {x: 0, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 201, z: 0}
+      Scale: {x: 0.68, y: 0.68, z: 0.68}
+  - Coordinate: {x: 0, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 252, z: 0}
+      Scale: {x: 0.84, y: 0.84, z: 0.84}
+  - Coordinate: {x: 0, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 188, z: 0}
+      Scale: {x: 0.76, y: 0.76, z: 0.76}
+  - Coordinate: {x: 0, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 168, z: 0}
+      Scale: {x: 0.58, y: 0.58, z: 0.58}
+  - Coordinate: {x: 1, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 116, z: 0}
+      Scale: {x: 0.73, y: 0.73, z: 0.73}
+  - Coordinate: {x: 1, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 1, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 99, z: 0}
+      Scale: {x: 0.68, y: 0.68, z: 0.68}
+  - Coordinate: {x: 1, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 324, z: 0}
+      Scale: {x: 0.71, y: 0.71, z: 0.71}
+  - Coordinate: {x: 1, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 293, z: 0}
+      Scale: {x: 0.65, y: 0.65, z: 0.65}
+  - Coordinate: {x: 1, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 2, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 287, z: 0}
+      Scale: {x: 0.82, y: 0.82, z: 0.82}
+  - Coordinate: {x: 2, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 3, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 61, z: 0}
+      Scale: {x: 0.74, y: 0.74, z: 0.74}
+  - Coordinate: {x: 3, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 348, z: 0}
+      Scale: {x: 0.74, y: 0.74, z: 0.74}
+  - Coordinate: {x: 4, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 42, z: 0}
+      Scale: {x: 0.68, y: 0.68, z: 0.68}
+  - Coordinate: {x: 4, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 36, z: 0}
+      Scale: {x: 0.68, y: 0.68, z: 0.68}
+  - Coordinate: {x: 5, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 42, z: 0}
+      Scale: {x: 0.63, y: 0.63, z: 0.63}
+  - Coordinate: {x: 5, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 301, z: 0}
+      Scale: {x: 0.64, y: 0.64, z: 0.64}
+  - Coordinate: {x: 6, y: 1}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 1}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 0}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 0, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 14, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 352, z: 0}
+      Scale: {x: 0.57, y: 0.57, z: 0.57}
+  - Coordinate: {x: 9, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 247, z: 0}
+      Scale: {x: 0.78, y: 0.78, z: 0.78}
+  - Coordinate: {x: 10, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 10, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 10, z: 0}
+      Scale: {x: 0.84, y: 0.84, z: 0.84}
+  - Coordinate: {x: 11, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 55, z: 0}
+      Scale: {x: 0.73, y: 0.73, z: 0.73}
+  - Coordinate: {x: 11, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 12, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 313, z: 0}
+      Scale: {x: 0.79, y: 0.79, z: 0.79}
+  - Coordinate: {x: 12, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 189, z: 0}
+      Scale: {x: 0.65, y: 0.65, z: 0.65}
+  - Coordinate: {x: 13, y: 0}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 151, z: 0}
+      Scale: {x: 0.76, y: 0.76, z: 0.76}
+  - Coordinate: {x: 13, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 335, z: 0}
+      Scale: {x: 0.61, y: 0.61, z: 0.61}
+  - Coordinate: {x: 13, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 123, z: 0}
+      Scale: {x: 0.7, y: 0.7, z: 0.7}
+  - Coordinate: {x: 13, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 13, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 331, z: 0}
+      Scale: {x: 0.72, y: 0.72, z: 0.72}
+  - Coordinate: {x: 13, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 182, z: 0}
+      Scale: {x: 0.84, y: 0.84, z: 0.84}
+  - Coordinate: {x: 14, y: 1}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 14, y: 2}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 342, z: 0}
+      Scale: {x: 0.77, y: 0.77, z: 0.77}
+  - Coordinate: {x: 14, y: 3}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 11, z: 0}
+      Scale: {x: 0.72, y: 0.72, z: 0.72}
+  - Coordinate: {x: 14, y: 4}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 136, z: 0}
+      Scale: {x: 0.75, y: 0.75, z: 0.75}
+  - Coordinate: {x: 14, y: 5}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 95, z: 0}
+      Scale: {x: 0.66, y: 0.66, z: 0.66}
+  - Coordinate: {x: 8, y: 0}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 14, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 208, z: 0}
+      Scale: {x: 0.71, y: 0.71, z: 0.71}
+  - Coordinate: {x: 9, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 9, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 323, z: 0}
+      Scale: {x: 0.79, y: 0.79, z: 0.79}
+  - Coordinate: {x: 10, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 11, z: 0}
+      Scale: {x: 0.7, y: 0.7, z: 0.7}
+  - Coordinate: {x: 10, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 148, z: 0}
+      Scale: {x: 0.6, y: 0.6, z: 0.6}
+  - Coordinate: {x: 11, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 49, z: 0}
+      Scale: {x: 0.67, y: 0.67, z: 0.67}
+  - Coordinate: {x: 11, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 31, z: 0}
+      Scale: {x: 0.69, y: 0.69, z: 0.69}
+  - Coordinate: {x: 12, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 193, z: 0}
+      Scale: {x: 0.82, y: 0.82, z: 0.82}
+  - Coordinate: {x: 12, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 89, z: 0}
+      Scale: {x: 0.73, y: 0.73, z: 0.73}
+  - Coordinate: {x: 13, y: 9}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 328, z: 0}
+      Scale: {x: 0.64, y: 0.64, z: 0.64}
+  - Coordinate: {x: 13, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 13, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 13, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 102, z: 0}
+      Scale: {x: 0.77, y: 0.77, z: 0.77}
+  - Coordinate: {x: 13, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 13, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 23, z: 0}
+      Scale: {x: 0.78, y: 0.78, z: 0.78}
+  - Coordinate: {x: 14, y: 10}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 86, z: 0}
+      Scale: {x: 0.81, y: 0.81, z: 0.81}
+  - Coordinate: {x: 14, y: 11}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 5, z: 0}
+      Scale: {x: 0.68, y: 0.68, z: 0.68}
+  - Coordinate: {x: 14, y: 12}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 241, z: 0}
+      Scale: {x: 0.79, y: 0.79, z: 0.79}
+  - Coordinate: {x: 14, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 293, z: 0}
+      Scale: {x: 0.66, y: 0.66, z: 0.66}
+  - Coordinate: {x: 14, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 72, z: 0}
+      Scale: {x: 0.66, y: 0.66, z: 0.66}
+  - Coordinate: {x: 2, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 27, z: 0}
+      Scale: {x: 0.78, y: 0.78, z: 0.78}
+  - Coordinate: {x: 2, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1317306537682800, guid: 345df17e0bc3cbd4886f72ceee3edd40, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 43, z: 0}
+      Scale: {x: 0.74, y: 0.74, z: 0.74}
+  - Coordinate: {x: 3, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1056644026371062, guid: c504ce9d0f0cdc141b6e68acc3035174, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 141, z: 0}
+      Scale: {x: 0.8, y: 0.8, z: 0.8}
+  - Coordinate: {x: 3, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 101, z: 0}
+      Scale: {x: 0.57, y: 0.57, z: 0.57}
+  - Coordinate: {x: 4, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1411989406561526, guid: 3a53b182641aaae4ead9b2247f03e544, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 43, z: 0}
+      Scale: {x: 0.71, y: 0.71, z: 0.71}
+  - Coordinate: {x: 4, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 193, z: 0}
+      Scale: {x: 0.81, y: 0.81, z: 0.81}
+  - Coordinate: {x: 5, y: 13}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations: []
+  - Coordinate: {x: 5, y: 14}
+    Texture: {fileID: 2800000, guid: 96d9b88fd0d8bc643b228f503faaf5b8, type: 3}
+    Decorations:
+    - Prefab: {fileID: 1618289638489088, guid: 6f710324e7d0f684cacb3a80c44d5736, type: 3}
+      Offset: {x: 0, y: 0.5, z: 0}
+      Rotation: {x: 0, y: 234, z: 0}
+      Scale: {x: 0.65, y: 0.65, z: 0.65}
+  - Coordinate: {x: 6, y: 14}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 6, y: 13}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 8, y: 14}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 14, y: 8}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
+  - Coordinate: {x: 14, y: 6}
+    Texture: {fileID: 2800000, guid: d56ff83f2601f2e439a85c3fe69a19cc, type: 3}
+    Decorations: []
   WallCascadeOnHoles: 1
   Walls:
-    North: 1
-    South: 1
-    East: 1
-    West: 1
-    NW: 1
-    NE: 1
-    SW: 1
-    SE: 1
+    North: 0
+    South: 0
+    East: 0
+    West: 0
+    NW: 0
+    NE: 0
+    SW: 0
+    SE: 0
   WallVisuals:
     WallPrefab: {fileID: 0}
     WallMaterial: {fileID: 0}

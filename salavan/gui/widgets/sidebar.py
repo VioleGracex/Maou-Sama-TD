@@ -253,12 +253,38 @@ def create_sidebar(app, parent):
     # Sync selection callback
     def select_scenario_by_index(index):
         if hasattr(app, 'scenario_listbox') and app.scenario_listbox:
-            app.scenario_listbox.selection_clear(0, tk.END)
-            app.scenario_listbox.selection_set(index)
+            sel = app.scenario_listbox.curselection()
+            current_selected = sel[0] if sel else -1
+            if index == current_selected:
+                app.collapsed_sidebar = not getattr(app, 'collapsed_sidebar', False)
+            else:
+                app.collapsed_sidebar = False
+                app.scenario_listbox.selection_clear(0, tk.END)
+                app.scenario_listbox.selection_set(index)
+            if hasattr(app, 'refresh_locations_view'):
+                app.refresh_locations_view()
             update_custom_sidebar()
             
     # Accordion style custom sidebar update function
     def update_custom_sidebar():
+        if not hasattr(app, 'step_status_overrides'):
+            app.step_status_overrides = {}
+            
+        def show_step_context_menu(event, scenario_name, step_name, step_idx):
+            menu = tk.Menu(app.root, tearoff=0, bg="#111114", fg=app.fg_light, activebackground=app.accent_glow, activeforeground="#101012", font=("Segoe UI", 9, "bold"))
+            menu.add_command(label="▶ Start Test From Here", command=lambda: app.start_test_flow_to_step(scenario_name, step_idx))
+            menu.add_separator()
+            def mark_status(status):
+                if status is None:
+                    app.step_status_overrides.pop((scenario_name, step_name), None)
+                else:
+                    app.step_status_overrides[(scenario_name, step_name)] = status
+                update_custom_sidebar()
+            menu.add_command(label="✔ Mark as Success", command=lambda: mark_status("SUCCESS"))
+            menu.add_command(label="❌ Mark as Failed", command=lambda: mark_status("FAILED"))
+            menu.add_command(label="⏳ Mark as Pending", command=lambda: mark_status(None))
+            menu.post(event.x_root, event.y_root)
+
         selected_scenario = None
         def toggle_step_skip(s_name, st_name):
             app.skipped_steps[(s_name, st_name)] = not app.skipped_steps.get((s_name, st_name), False)
@@ -284,7 +310,7 @@ def create_sidebar(app, parent):
         if "system status:" in active_stage_lower:
             active_stage_lower = active_stage_lower.split("system status:")[1].strip()
             
-        current_state = (files, selected_idx, active_stage_lower)
+        current_state = (files, selected_idx, active_stage_lower, getattr(app, 'collapsed_sidebar', False))
         if hasattr(app, '_last_sidebar_state') and app._last_sidebar_state == current_state:
             return
             
@@ -295,7 +321,7 @@ def create_sidebar(app, parent):
             
         for idx, f in enumerate(files):
             name = os.path.splitext(f)[0]
-            is_selected = (idx == selected_idx)
+            is_selected = (idx == selected_idx) and not getattr(app, 'collapsed_sidebar', False)
             
             border_color = app.accent_glow if is_selected else app.accent_dim
             card_border = tk.Frame(app.custom_scenarios_container, bg=border_color, bd=1)
@@ -366,7 +392,7 @@ def create_sidebar(app, parent):
                         active_idx = s_idx
                         break
                 
-                if "completed" in active_stage_lower or "aborted" in active_stage_lower:
+                if "completed" in active_stage_lower:
                     active_idx = len(steps)
                     
                 for s_idx, step_name in enumerate(steps):
@@ -385,12 +411,23 @@ def create_sidebar(app, parent):
                     cb_lbl.bind("<Button-1>", make_toggle_cb())
                     
                     is_done = (s_idx <= active_idx)
+                    override = app.step_status_overrides.get((selected_scenario, step_name))
                     
                     if is_step_skipped:
                         status_text = "SKIP"
                         status_color = "#4b5563"
                         step_fg = "#4b5563"
                         step_font = ("Segoe UI", 8, "italic")
+                    elif override:
+                        status_text = override
+                        if override == "SUCCESS":
+                            status_color = app.success_glow
+                        elif override == "FAILED":
+                            status_color = app.fail_glow
+                        else:
+                            status_color = "#6b7280"
+                        step_fg = status_color
+                        step_font = ("Segoe UI", 8, "bold")
                     else:
                         status_text = "DONE" if is_done else "PENDING"
                         status_color = app.success_glow if is_done else "#6b7280"
@@ -402,6 +439,13 @@ def create_sidebar(app, parent):
                     
                     status_lbl = tk.Label(row, text=status_text, fg=status_color, bg="#131317", font=("Segoe UI", 8, "bold"))
                     status_lbl.pack(side="right")
+                    
+                    # Right-click menu bindings
+                    def make_right_click(s_name=selected_scenario, st_name=step_name, s_idx=s_idx):
+                        return lambda event: show_step_context_menu(event, s_name, st_name, s_idx)
+                    row.bind("<Button-3>", make_right_click())
+                    step_lbl.bind("<Button-3>", make_right_click())
+                    status_lbl.bind("<Button-3>", make_right_click())
             
             # Collect all non-interactive widgets in this card for drag binding
             drag_widgets = [card_border, card, title_frame, bullet_lbl, title_lbl, desc_lbl]

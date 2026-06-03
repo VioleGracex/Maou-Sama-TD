@@ -1187,6 +1187,6 @@ MonoBehaviour:
     CameraBackgroundColor: {r: 0.05, g: 0.05, b: 0.05, a: 1}
     SkyboxMaterial: {fileID: 0}
   Lighting:
-    OverrideLighting: 0
-    AmbientColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
-    DirectionalLightPrefab: {fileID: 0}
+    OverrideLighting: 1
+    AmbientColor: {r: 0.25, g: 0.25, b: 0.28, a: 1}
+    DirectionalLightPrefab: {fileID: 4809913698286690004, guid: 8ba420ecf9b704741af5399cf0f0f365, type: 3}

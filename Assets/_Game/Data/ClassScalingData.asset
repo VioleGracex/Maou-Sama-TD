@@ -150,9 +150,7 @@ MonoBehaviour:
     BaseHpMultiplier: 0.6
     BaseAtkMultiplier: 0.9
     BaseDefMultiplier: 0.2
-    RequiredMaterials:
-    - ItemID: 
-      BaseAmount: 0
+    RequiredMaterials: []
     RarityGrowths:
     - Rarity: 0
       HpGrowthPerLevel: 10

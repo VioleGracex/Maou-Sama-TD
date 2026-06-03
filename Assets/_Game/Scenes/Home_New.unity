@@ -14049,7 +14049,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f7775f4ddfb82c42ba72d5338bb80b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.UI.Gacha.GachaAnimationController
-  _visualRoot: {fileID: 386655632}
+  _visualRoot: {fileID: 7817939443849729360}
   _ritualBackground: {fileID: 308003543}
   _resultPanel: {fileID: 386655636}
   _pillarRing: {fileID: 308003541}

@@ -73,7 +73,7 @@ namespace MaouSamaTD.UI.Gacha
             if (_compensationPopGroup != null) _compensationPopGroup.alpha = 0;
 
             // We only deactivate the UI roots, NOT the manager object itself
-            if (_visualRoot != null) _visualRoot.SetActive(false);
+            if (_visualRoot != null && _visualRoot != gameObject) _visualRoot.SetActive(false);
             if (_revealRoot != null) _revealRoot.SetActive(false);
             
             if (_revealRoot != null)
@@ -325,7 +325,11 @@ namespace MaouSamaTD.UI.Gacha
 
         private void ShowResults()
         {
-            if (_visualRoot != null) _visualRoot.SetActive(false);
+            if (_visualRoot != null && _visualRoot != gameObject) _visualRoot.SetActive(false);
+            else
+            {
+                if (_pillarRing != null) _pillarRing.SetActive(false);
+            }
             if (_revealRoot != null) _revealRoot.SetActive(false);
             
             if (_resultPanel != null)

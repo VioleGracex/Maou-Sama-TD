@@ -669,6 +669,7 @@ namespace MaouSamaTD.Grid
             var lighting = _mapData.Lighting;
             if (lighting.OverrideLighting)
             {
+                RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
                 RenderSettings.ambientLight = lighting.AmbientColor;
             }
 

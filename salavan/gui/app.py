@@ -40,6 +40,14 @@ class GameSalavanApp:
         self.web_log_buffer = []
         self.latest_screenshot = None
         
+        # Force registration of the app in Windows Taskbar
+        try:
+            import ctypes
+            myappid = 'Ouiki.Dev.Salavan.Tester.2.9' # arbitrary string
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        except Exception:
+            pass
+            
         # Frameless window configuration
         # Instead of overrideredirect(True) which breaks Alt-Tab and Windows Taskbar integration,
         # we will use native Win32 window styles via SetWindowLongW in show_in_taskbar.
@@ -200,6 +208,13 @@ class GameSalavanApp:
         self.min_btn = tk.Button(self.title_bar, text="—", command=self.minimize_window, bg="#18181c", fg=self.fg_light, activebackground=self.accent_dim, activeforeground=self.fg_light, bd=0, width=4, font=("Segoe UI", 10, "bold"))
         self.min_btn.pack(side="right", fill="y")
         
+        self.help_btn = tk.Button(
+            self.title_bar, text="❓", command=self.show_shortcuts_help,
+            bg="#18181c", fg=self.fg_light, activebackground=self.accent_dim,
+            activeforeground=self.fg_light, bd=0, width=4, font=("Segoe UI", 10, "bold")
+        )
+        self.help_btn.pack(side="right", fill="y")
+        
         # Title bar hover bindings
         def on_enter_close(e):
             self.close_btn.config(bg="#ff3b30", fg="#ffffff")
@@ -222,10 +237,18 @@ class GameSalavanApp:
         self.min_btn.bind("<Enter>", on_enter_min)
         self.min_btn.bind("<Leave>", on_leave_min)
 
+        def on_enter_help(e):
+            self.help_btn.config(bg="#2c2c35")
+        def on_leave_help(e):
+            self.help_btn.config(bg="#18181c")
+        self.help_btn.bind("<Enter>", on_enter_help)
+        self.help_btn.bind("<Leave>", on_leave_help)
+
         # Attach tooltips to title bar buttons
         self.add_tooltip(self.close_btn, "Close Application")
         self.add_tooltip(self.max_btn, "Maximize / Restore Window")
         self.add_tooltip(self.min_btn, "Minimize Window")
+        self.add_tooltip(self.help_btn, "Keyboard Shortcuts Help")
         
         # Dragging logic bindings
         self.title_bar.bind("<ButtonPress-1>", self.start_drag)
@@ -574,6 +597,46 @@ class GameSalavanApp:
 
     def show_about_dialog(self):
         messagebox.showinfo("About Sylvan Salavan", "Sylvan-HUD Game Salavan Panel v2.9.0\n\nA professional automated game-testing platform styled after modern hardware controls, supporting Lua scenarios, OpenCV image classification, dynamic JUnit reporting, and OBS-style viewport capture.")
+
+    def show_shortcuts_help(self):
+        doc_win = tk.Toplevel(self.root)
+        doc_win.title("Keyboard Shortcuts Help")
+        doc_win.geometry("380x280")
+        doc_win.configure(bg=self.bg_dark)
+        doc_win.transient(self.root)
+        doc_win.grab_set()
+        doc_win.attributes("-topmost", True)
+        
+        # Center the window relative to root
+        rx = self.root.winfo_x()
+        ry = self.root.winfo_y()
+        rw = self.root.winfo_width()
+        rh = self.root.winfo_height()
+        doc_win.geometry(f"+{rx + (rw - 380)//2}+{ry + (rh - 280)//2}")
+        
+        lbl = tk.Label(doc_win, text="// KEYBOARD SHORTCUTS REFERENCE", bg=self.bg_dark, fg=self.accent_glow, font=("Consolas", 11, "bold"))
+        lbl.pack(anchor="w", padx=20, pady=(15, 10))
+        
+        frame = tk.Frame(doc_win, bg=self.bg_panel, bd=1, highlightbackground=self.accent_dim, highlightthickness=1)
+        frame.pack(fill="both", expand=True, padx=20, pady=(0, 20))
+        
+        shortcuts = [
+            ("Ctrl + P", "Pause / Resume Test Flow"),
+            ("Ctrl + Q", "Abort Running Test"),
+            ("Ctrl + O", "Toggle Float HUD Overlay"),
+            ("Ctrl + Left Arrow", "Previous Step (⏮ PREV)"),
+            ("Ctrl + Down Arrow", "Repeat Step (🔁 REPEAT)"),
+            ("Ctrl + Right Arrow", "Next Step (⏭ NEXT)")
+        ]
+        
+        for keys, desc in shortcuts:
+            row = tk.Frame(frame, bg=self.bg_panel, pady=4)
+            row.pack(fill="x", padx=15)
+            tk.Label(row, text=keys, fg=self.accent_glow, bg=self.bg_panel, font=("Consolas", 9, "bold")).pack(side="left")
+            tk.Label(row, text=f" - {desc}", fg=self.fg_light, bg=self.bg_panel, font=("Segoe UI", 9)).pack(side="left")
+            
+        btn = ttk.Button(doc_win, text="CLOSE", command=doc_win.destroy)
+        btn.pack(pady=(0, 15))
 
     def bind_log_actions(self):
         self.tree.bind("<Button-3>", self.show_log_context_menu)
@@ -962,7 +1025,7 @@ class GameSalavanApp:
                     
                 if p_name_lower == process_name:
                     exact_process_matches.append(w)
-                elif p_name_lower == "unity.exe" and window_title.lower() in w.title.lower():
+                elif self.config.hook_unity_editor and p_name_lower == "unity.exe" and window_title.lower() in w.title.lower():
                     editor_matches.append(w)
                 continue
                 
@@ -1383,7 +1446,7 @@ class GameSalavanApp:
 
 
     def bind_hotkeys(self):
-        for key in ["pause", "abort", "toggle_mode"]:
+        for key in ["pause", "abort", "toggle_mode", "next", "prev", "repeat"]:
             try:
                 self.root.unbind_all(self.config.hotkeys.get(key))
             except Exception:
@@ -1392,11 +1455,24 @@ class GameSalavanApp:
             self.root.bind_all(self.config.hotkeys.get("pause"), lambda event: self.toggle_pause())
             self.root.bind_all(self.config.hotkeys.get("abort"), lambda event: self.stop_test_flow())
             self.root.bind_all(self.config.hotkeys.get("toggle_mode"), lambda event: self.toggle_hud_mode())
+            self.root.bind_all(self.config.hotkeys.get("next"), lambda event: self.next_step())
+            self.root.bind_all(self.config.hotkeys.get("prev"), lambda event: self.prev_step())
+            self.root.bind_all(self.config.hotkeys.get("repeat"), lambda event: self.repeat_step())
         except Exception as e:
             self.log_message("SYSTEM", "FAIL", f"Shortcut bind failed: {str(e)}")
 
     def log_message(self, step, result, message):
         self.root.after(0, self._add_log_to_tree, step, result, message)
+        if result == "FAIL":
+            self.pause_event.clear()
+            self.root.after(0, self._set_ui_paused_on_fail)
+
+    def _set_ui_paused_on_fail(self):
+        if hasattr(self, 'btn_pause') and self.btn_pause:
+            self.btn_pause.config(text="RESUME")
+            self.set_control_states("normal", "normal", "normal", "RESUME")
+        if hasattr(self, 'btn_overlay_pause') and self.btn_overlay_pause:
+            self.btn_overlay_pause.config(text="RESUME")
         
     def _add_log_to_tree(self, step, result, message):
         timestamp = time.strftime("%H:%M:%S")
@@ -1675,6 +1751,16 @@ class GameSalavanApp:
         if hasattr(self, 'btn_overlay_stop') and self.btn_overlay_stop:
             try: self.btn_overlay_stop.config(state=stop_state)
             except Exception: pass
+            
+        if hasattr(self, 'btn_overlay_prev') and self.btn_overlay_prev:
+            try: self.btn_overlay_prev.config(state=debug_state)
+            except Exception: pass
+        if hasattr(self, 'btn_overlay_repeat') and self.btn_overlay_repeat:
+            try: self.btn_overlay_repeat.config(state=debug_state)
+            except Exception: pass
+        if hasattr(self, 'btn_overlay_next') and self.btn_overlay_next:
+            try: self.btn_overlay_next.config(state=debug_state)
+            except Exception: pass
 
     def toggle_navigation_sidebar(self):
         if not hasattr(self, 'nav_collapsed'):
@@ -1737,73 +1823,90 @@ class GameSalavanApp:
                 WS_EX_TOOLWINDOW = 0x00000080
                 
                 hwnd = self.root.winfo_id()
+                hwnds = [hwnd]
+                
                 parent_hwnd = ctypes.windll.user32.GetParent(hwnd)
                 if parent_hwnd:
-                    hwnd = parent_hwnd
+                    hwnds.append(parent_hwnd)
                     
-                # Apply native borderless/frameless style to the window
-                style = ctypes.windll.user32.GetWindowLongW(hwnd, GWL_STYLE)
-                style = style & ~WS_CAPTION
-                # Keep WS_THICKFRAME to allow resizing window by edges
-                style = style | WS_POPUP | WS_SYSMENU | WS_THICKFRAME
-                ctypes.windll.user32.SetWindowLongW(hwnd, GWL_STYLE, style)
-                
-                # Apply styles to make it registered in the Taskbar & Alt-Tab
-                ex_style = ctypes.windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
-                ex_style = ex_style & ~WS_EX_TOOLWINDOW
-                ex_style = ex_style | WS_EX_APPWINDOW
-                ctypes.windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, ex_style)
-                
-                # Enable Immersive Dark Mode and set custom border color to blend top line
-                try:
-                    # DWMWA_USE_IMMERSIVE_DARK_MODE = 20 (Windows 10 20H1+) or 19 (Windows 10 pre-20H1)
-                    DWMWA_USE_IMMERSIVE_DARK_MODE = 20
-                    ctypes.windll.dwmapi.DwmSetWindowAttribute(
-                        hwnd,
-                        DWMWA_USE_IMMERSIVE_DARK_MODE,
-                        ctypes.byref(ctypes.c_int(1)),
-                        ctypes.sizeof(ctypes.c_int)
-                    )
-                except Exception:
+                for h in hwnds:
+                    # Apply native borderless/frameless style to the window
+                    style = ctypes.windll.user32.GetWindowLongW(h, GWL_STYLE)
+                    style = style & ~WS_CAPTION
+                    # Keep WS_THICKFRAME to allow resizing window by edges
+                    style = style | WS_POPUP | WS_SYSMENU | WS_THICKFRAME
+                    ctypes.windll.user32.SetWindowLongW(h, GWL_STYLE, style)
+                    
+                    # Apply styles to make it registered in the Taskbar & Alt-Tab
+                    ex_style = ctypes.windll.user32.GetWindowLongW(h, GWL_EXSTYLE)
+                    ex_style = ex_style & ~WS_EX_TOOLWINDOW
+                    ex_style = ex_style | WS_EX_APPWINDOW
+                    ctypes.windll.user32.SetWindowLongW(h, GWL_EXSTYLE, ex_style)
+                    
+                    # Enable Immersive Dark Mode and set custom border color to blend top line
                     try:
-                        DWMWA_USE_IMMERSIVE_DARK_MODE_OLD = 19
+                        # DWMWA_USE_IMMERSIVE_DARK_MODE = 20 (Windows 10 20H1+) or 19 (Windows 10 pre-20H1)
+                        DWMWA_USE_IMMERSIVE_DARK_MODE = 20
                         ctypes.windll.dwmapi.DwmSetWindowAttribute(
-                            hwnd,
-                            DWMWA_USE_IMMERSIVE_DARK_MODE_OLD,
+                            h,
+                            DWMWA_USE_IMMERSIVE_DARK_MODE,
                             ctypes.byref(ctypes.c_int(1)),
+                            ctypes.sizeof(ctypes.c_int)
+                        )
+                    except Exception:
+                        try:
+                            DWMWA_USE_IMMERSIVE_DARK_MODE_OLD = 19
+                            ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                                h,
+                                DWMWA_USE_IMMERSIVE_DARK_MODE_OLD,
+                                ctypes.byref(ctypes.c_int(1)),
+                                ctypes.sizeof(ctypes.c_int)
+                            )
+                        except Exception:
+                            pass
+
+                    try:
+                        # DWMWA_BORDER_COLOR = 34 (Windows 11 build 22000+)
+                        DWMWA_BORDER_COLOR = 34
+                        # Color #18181c (BGR representation: 0x001c1818)
+                        border_color = 0x001c1818
+                        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                            h,
+                            DWMWA_BORDER_COLOR,
+                            ctypes.byref(ctypes.c_int(border_color)),
                             ctypes.sizeof(ctypes.c_int)
                         )
                     except Exception:
                         pass
 
-                try:
-                    # DWMWA_BORDER_COLOR = 34 (Windows 11 build 22000+)
-                    DWMWA_BORDER_COLOR = 34
-                    # Color #18181c (BGR representation: 0x001c1818)
-                    border_color = 0x001c1818
-                    ctypes.windll.dwmapi.DwmSetWindowAttribute(
-                        hwnd,
-                        DWMWA_BORDER_COLOR,
-                        ctypes.byref(ctypes.c_int(border_color)),
-                        ctypes.sizeof(ctypes.c_int)
+                    # Force Windows shell to refresh the window properties and icon
+                    SWP_NOMOVE = 0x0002
+                    SWP_NOSIZE = 0x0001
+                    SWP_NOZORDER = 0x0004
+                    SWP_NOACTIVATE = 0x0010
+                    SWP_FRAMECHANGED = 0x0020
+                    ctypes.windll.user32.SetWindowPos(
+                        h, 0, 0, 0, 0, 0,
+                        SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
                     )
-                except Exception:
-                    pass
-
-                # Force Windows shell to refresh the window properties and icon
-                SWP_NOMOVE = 0x0002
-                SWP_NOSIZE = 0x0001
-                SWP_NOZORDER = 0x0004
-                SWP_NOACTIVATE = 0x0010
-                SWP_FRAMECHANGED = 0x0020
-                ctypes.windll.user32.SetWindowPos(
-                    hwnd, 0, 0, 0, 0, 0,
-                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
-                )
-                
-                ctypes.windll.user32.ShowWindow(hwnd, 5)
+                    
+                    ctypes.windll.user32.ShowWindow(h, 5)
             except Exception:
                 pass
+
+    def show_shortcuts_help(self):
+        from tkinter import messagebox
+        help_msg = (
+            "Sylvan-HUD Keyboard Shortcuts:\n\n"
+            "• [Ctrl + P] : Pause / Resume scenario execution\n"
+            "• [Ctrl + Q] : Abort active test runner sequence\n"
+            "• [Ctrl + O] : Toggle between full ANALYZE mode and float OVERLAY HUD\n"
+            "• [Ctrl + Left Arrow] : ⏮ PREV step (Rewind one step)\n"
+            "• [Ctrl + Down Arrow] : 🔁 REPEAT step (Restart active step)\n"
+            "• [Ctrl + Right Arrow] : ⏭ NEXT step (Skip current step)\n\n"
+            "Note: Global hotkeys are active even when the window is focused in the background."
+        )
+        messagebox.showinfo("Salavan Shortcuts Help", help_msg)
 
     def animate_left_sidebar(self, target_width):
         current_width = self.global_sidebar.winfo_width()
@@ -2020,8 +2123,8 @@ class GameSalavanApp:
             self.title_bar.pack_forget()
             self.main_layout.pack_forget()
             
-            # Set float overlay geometry (420x380 window size, centered on screen)
-            self.root.geometry("420x380")
+            # Set float overlay geometry (380x600 size, positioned at top-left +0+0)
+            self.root.geometry("380x600+0+0")
             
             # Keep topmost focus but keep normal opacity (or slight transparent look like 0.95)
             self.root.attributes("-alpha", 0.95)
@@ -2032,6 +2135,7 @@ class GameSalavanApp:
             self.create_overlay_hud()
             
             self.log_message("SYSTEM", "INFO", "Switched to Float Overlay Mode.")
+            self.refresh_overlay_steps()
         else:
             self.hud_mode = "ANALYZE"
             
@@ -2039,6 +2143,7 @@ class GameSalavanApp:
                 self.overlay_hud.pack_forget()
                 self.overlay_hud.destroy()
                 self.overlay_hud = None
+                self.overlay_steps_tree = None
                 
             # Restore normal window properties
             self.root.attributes("-alpha", 1.0)
@@ -2092,6 +2197,26 @@ class GameSalavanApp:
         lbl_game = tk.Label(body, text=f"GAME: {game_title.upper()}", fg=self.fg_light, bg=self.bg_panel, font=("Segoe UI", 9, "bold"))
         lbl_game.pack(anchor="w", pady=(0, 2))
         
+        # Prominent Active Step banner
+        self.overlay_active_step_lbl = tk.Label(body, text="ACTIVE STEP: IDLE", fg=self.alert_yellow, bg=self.bg_panel, font=("Segoe UI", 10, "bold"), anchor="w")
+        self.overlay_active_step_lbl.pack(fill="x", pady=(2, 5))
+        
+        # Steps checklist frame & Treeview
+        steps_frame = tk.Frame(body, bg=self.bg_panel)
+        steps_frame.pack(fill="both", expand=True, pady=5)
+        
+        steps_scroll = ttk.Scrollbar(steps_frame)
+        steps_scroll.pack(side="right", fill="y")
+        
+        self.overlay_steps_tree = ttk.Treeview(
+            steps_frame, columns=("Status",), show="tree", 
+            yscrollcommand=steps_scroll.set, height=6
+        )
+        self.overlay_steps_tree.column("#0", width=250)
+        self.overlay_steps_tree.column("Status", width=60, anchor="center")
+        self.overlay_steps_tree.pack(side="left", fill="both", expand=True)
+        steps_scroll.config(command=self.overlay_steps_tree.yview)
+        
         # Control Buttons Grid
         btn_frame = tk.Frame(body, bg=self.bg_panel)
         btn_frame.pack(fill="x", pady=5)
@@ -2103,13 +2228,22 @@ class GameSalavanApp:
         pause_txt = "RESUME" if not self.pause_event.is_set() else "PAUSE"
         
         self.btn_overlay_run = ttk.Button(btn_frame, text="RUN TEST", command=self.start_test_flow, state=run_state)
-        self.btn_overlay_run.grid(row=0, column=0, padx=3, sticky="ew")
+        self.btn_overlay_run.grid(row=0, column=0, padx=2, pady=2, sticky="ew")
         
         self.btn_overlay_pause = ttk.Button(btn_frame, text=pause_txt, command=self.toggle_pause, state=pause_state)
-        self.btn_overlay_pause.grid(row=0, column=1, padx=3, sticky="ew")
+        self.btn_overlay_pause.grid(row=0, column=1, padx=2, pady=2, sticky="ew")
         
         self.btn_overlay_stop = ttk.Button(btn_frame, text="ABORT", command=self.stop_test_flow, state=stop_state)
-        self.btn_overlay_stop.grid(row=0, column=2, padx=3, sticky="ew")
+        self.btn_overlay_stop.grid(row=0, column=2, padx=2, pady=2, sticky="ew")
+        
+        self.btn_overlay_prev = ttk.Button(btn_frame, text="⏮ PREV", command=self.prev_step, state=pause_state)
+        self.btn_overlay_prev.grid(row=1, column=0, padx=2, pady=2, sticky="ew")
+        
+        self.btn_overlay_repeat = ttk.Button(btn_frame, text="🔁 REPEAT", command=self.repeat_step, state=pause_state)
+        self.btn_overlay_repeat.grid(row=1, column=1, padx=2, pady=2, sticky="ew")
+        
+        self.btn_overlay_next = ttk.Button(btn_frame, text="⏭ NEXT", command=self.next_step, state=pause_state)
+        self.btn_overlay_next.grid(row=1, column=2, padx=2, pady=2, sticky="ew")
         
         btn_frame.columnconfigure(0, weight=1)
         btn_frame.columnconfigure(1, weight=1)
@@ -2120,9 +2254,9 @@ class GameSalavanApp:
         console_lbl.pack(anchor="w", pady=(5, 2))
         
         console_border = tk.Frame(body, bg=self.accent_dim, bd=1)
-        console_border.pack(fill="both", expand=True)
+        console_border.pack(fill="both", expand=False)
         
-        self.overlay_console_text = tk.Text(console_border, bg="#050508", bd=0, height=8, wrap="word", font=("Consolas", 9, "bold"))
+        self.overlay_console_text = tk.Text(console_border, bg="#050508", bd=0, height=4, wrap="word", font=("Consolas", 9, "bold"))
         self.overlay_console_text.pack(fill="both", expand=True)
         self.overlay_console_text.tag_config("pass", foreground=self.success_glow)
         self.overlay_console_text.tag_config("fail", foreground=self.fail_glow)
@@ -2142,6 +2276,81 @@ class GameSalavanApp:
         # Exit Overlay mode button
         btn_exit = tk.Button(body, text="[ RETURN TO ANALYZE MODE ]", command=self.toggle_hud_mode, bg="#2c2c35", fg=self.fg_light, activebackground=self.accent_glow, activeforeground="#101012", bd=0, pady=5, font=("Segoe UI", 9, "bold"))
         btn_exit.pack(fill="x", pady=(10, 0))
+
+    def refresh_overlay_steps(self):
+        if not hasattr(self, 'overlay_steps_tree') or not self.overlay_steps_tree:
+            return
+        
+        self.overlay_steps_tree.delete(*self.overlay_steps_tree.get_children())
+        
+        selected_indices = self.scenario_listbox.curselection()
+        if not selected_indices:
+            return
+        selected_scenario = self.scenario_listbox.get(selected_indices[0])
+        script_path = os.path.join(self.scenarios_dir, f"{selected_scenario}.lua")
+        
+        if not hasattr(self, '_scenario_steps_cache'):
+            self._scenario_steps_cache = {}
+        parsed_steps = []
+        steps_names = self._scenario_steps_cache.get(script_path)
+        if steps_names:
+            for s in steps_names:
+                parsed_steps.append({"name": s})
+        else:
+            if os.path.exists(script_path):
+                try:
+                    with open(script_path, "r", encoding="utf-8") as f_in:
+                        content = f_in.read()
+                    matches = re.findall(r'set_stage\([\'"]([^\'"]+)[\'"]\)', content)
+                    for m in matches:
+                        parsed_steps.append({"name": m})
+                except Exception:
+                    pass
+        
+        active_stage = self.stage_lbl["text"] if hasattr(self, 'stage_lbl') else "Idle"
+        active_stage_lower = active_stage.lower()
+        if " [scene:" in active_stage_lower:
+            active_stage_lower = active_stage_lower.split(" [scene:")[0]
+        if "status:" in active_stage_lower:
+            active_stage_lower = active_stage_lower.split("status:")[1].strip()
+        if "system status:" in active_stage_lower:
+            active_stage_lower = active_stage_lower.split("system status:")[1].strip()
+            
+        active_idx = -1
+        for s_idx, step in enumerate(parsed_steps):
+            step_name = step["name"]
+            s_clean = re.sub(r'^\d+\.\s*', '', step_name).lower().strip()
+            if s_clean in active_stage_lower or active_stage_lower in s_clean:
+                active_idx = s_idx
+                break
+                
+        if "completed" in active_stage_lower:
+            active_idx = len(parsed_steps)
+            
+        if 0 <= active_idx < len(parsed_steps):
+            self.overlay_active_step_lbl.config(text=f"ACTIVE STEP: {parsed_steps[active_idx]['name']}", fg=self.alert_yellow)
+        elif active_idx >= len(parsed_steps):
+            self.overlay_active_step_lbl.config(text="ACTIVE STEP: COMPLETED", fg=self.success_glow)
+        else:
+            self.overlay_active_step_lbl.config(text="ACTIVE STEP: IDLE / WAIT", fg=self.fg_light)
+            
+        for s_idx, step in enumerate(parsed_steps):
+            step_name = step["name"]
+            is_skipped = self.skipped_steps.get((selected_scenario, step_name), False)
+            is_done = (s_idx <= active_idx)
+            
+            if is_skipped:
+                status_text = "SKIP"
+            else:
+                status_text = "✓" if is_done else "·"
+                
+            display_name = step_name
+            if is_skipped:
+                display_name += " (SKIP)"
+            elif s_idx == active_idx:
+                display_name += " ◀"
+                
+            self.overlay_steps_tree.insert("", "end", text=display_name, values=(status_text,))
 
     # ── APIs for Lua Engine ──
     def sleep_wait(self, seconds):
@@ -3020,16 +3229,25 @@ run_tests()
         if game_state:
             buttons_dict = game_state.get("buttons", {})
             
+        rect = self.get_game_rect() if self.show_screen_coords_var.get() else None
+        
         if hasattr(self, 'live_buttons_tree'):
             selected_items = self.live_buttons_tree.selection()
             selected_name = self.live_buttons_tree.item(selected_items[0])["values"][0] if selected_items else None
             self.live_buttons_tree.delete(*self.live_buttons_tree.get_children())
             for name, coords in sorted(buttons_dict.items()):
                 text_val = coords.get("text", "")
-                x_val = f"{coords.get('x', 0.0):.1f}"
-                y_val = f"{coords.get('y', 0.0):.1f}"
-                w_val = f"{coords.get('w', 0.0):.1f}"
-                h_val = f"{coords.get('h', 0.0):.1f}"
+                if rect:
+                    cx, cy, gw_w, gw_h = rect
+                    x_val = f"{cx + int(coords.get('x', 0.0) * gw_w / 1280):.1f}"
+                    y_val = f"{cy + int(coords.get('y', 0.0) * gw_h / 720):.1f}"
+                    w_val = f"{int(coords.get('w', 0.0) * gw_w / 1280):.1f}"
+                    h_val = f"{int(coords.get('h', 0.0) * gw_h / 720):.1f}"
+                else:
+                    x_val = f"{coords.get('x', 0.0):.1f}"
+                    y_val = f"{coords.get('y', 0.0):.1f}"
+                    w_val = f"{coords.get('w', 0.0):.1f}"
+                    h_val = f"{coords.get('h', 0.0):.1f}"
                 item_id = self.live_buttons_tree.insert(
                     "", "end", 
                     values=(name, text_val, x_val, y_val, w_val, h_val)
@@ -3093,24 +3311,42 @@ run_tests()
                         action_target = action["target"]
                         btn_pos = self.find_button_in_state(action_target, buttons_dict)
                         if btn_pos:
-                            action_coords = f"({btn_pos['x']:.1f}, {btn_pos['y']:.1f}) [Unity Live]"
+                            if rect:
+                                cx, cy, gw_w, gw_h = rect
+                                abs_x = cx + int(btn_pos['x'] * gw_w / 1280)
+                                abs_y = cy + int(btn_pos['y'] * gw_h / 720)
+                                action_coords = f"({abs_x:.1f}, {abs_y:.1f}) [Screen Live]"
+                            else:
+                                action_coords = f"({btn_pos['x']:.1f}, {btn_pos['y']:.1f}) [Unity Live]"
                             action_text_size = f"'{btn_pos.get('text', '')}' | {btn_pos.get('w', 0.0):.1f}x{btn_pos.get('h', 0.0):.1f}"
                         else:
                             action_coords = "Pending / CV Match"
                             action_text_size = ""
                     elif action_type == "click":
-                        cx = action["x"]
-                        cy = action["y"]
-                        action_target = f"({cx}, {cy})"
-                        btn_pos = self.try_resolve_variable_button(cx, cy, step["actions"], buttons_dict)
+                        cx_val = action["x"]
+                        cy_val = action["y"]
+                        action_target = f"({cx_val}, {cy_val})"
+                        btn_pos = self.try_resolve_variable_button(cx_val, cy_val, step["actions"], buttons_dict)
                         if btn_pos:
-                            action_coords = f"({btn_pos['x']:.1f}, {btn_pos['y']:.1f}) [Resolved]"
+                            if rect:
+                                cx, cy, gw_w, gw_h = rect
+                                abs_x = cx + int(btn_pos['x'] * gw_w / 1280)
+                                abs_y = cy + int(btn_pos['y'] * gw_h / 720)
+                                action_coords = f"({abs_x:.1f}, {abs_y:.1f}) [Resolved Screen]"
+                            else:
+                                action_coords = f"({btn_pos['x']:.1f}, {btn_pos['y']:.1f}) [Resolved]"
                             action_text_size = f"'{btn_pos.get('text', '')}' | {btn_pos.get('w', 0.0):.1f}x{btn_pos.get('h', 0.0):.1f}"
                         else:
                             try:
-                                rx = float(cx)
-                                ry = float(cy)
-                                action_coords = f"({rx:.1f}, {ry:.1f})"
+                                rx = float(cx_val)
+                                ry = float(cy_val)
+                                if rect:
+                                    cx, cy, gw_w, gw_h = rect
+                                    abs_x = cx + int(rx * gw_w / 1280)
+                                    abs_y = cy + int(ry * gw_h / 720)
+                                    action_coords = f"({abs_x:.1f}, {abs_y:.1f}) [Screen]"
+                                else:
+                                    action_coords = f"({rx:.1f}, {ry:.1f})"
                             except ValueError:
                                 action_coords = "Unknown Variable"
                             action_text_size = ""
@@ -3124,11 +3360,30 @@ run_tests()
                         r2 = (btn2["x"], btn2["y"]) if btn2 else None
                         
                         if r1 or r2:
-                            c1_str = f"({r1[0]:.1f}, {r1[1]:.1f})" if r1 else f"({cx1}, {cy1})"
-                            c2_str = f"({r2[0]:.1f}, {r2[1]:.1f})" if r2 else f"({cx2}, {cy2})"
-                            action_coords = f"{c1_str} -> {c2_str} [Resolved]"
+                            if rect:
+                                cx, cy, gw_w, gw_h = rect
+                                c1_str = f"({cx + int(r1[0] * gw_w / 1280):.1f}, {cy + int(r1[1] * gw_h / 720):.1f})" if r1 else f"({cx1}, {cy1})"
+                                c2_str = f"({cx + int(r2[0] * gw_w / 1280):.1f}, {cy + int(r2[1] * gw_h / 720):.1f})" if r2 else f"({cx2}, {cy2})"
+                                action_coords = f"{c1_str} -> {c2_str} [Resolved Screen]"
+                            else:
+                                c1_str = f"({r1[0]:.1f}, {r1[1]:.1f})" if r1 else f"({cx1}, {cy1})"
+                                c2_str = f"({r2[0]:.1f}, {r2[1]:.1f})" if r2 else f"({cx2}, {cy2})"
+                                action_coords = f"{c1_str} -> {c2_str} [Resolved]"
                         else:
-                            action_coords = f"({cx1},{cy1}) -> ({cx2},{cy2})"
+                            try:
+                                rx1 = float(cx1)
+                                ry1 = float(cy1)
+                                rx2 = float(cx2)
+                                ry2 = float(cy2)
+                                if rect:
+                                    cx, cy, gw_w, gw_h = rect
+                                    c1_str = f"({cx + int(rx1 * gw_w / 1280):.1f}, {cy + int(ry1 * gw_h / 720):.1f})"
+                                    c2_str = f"({cx + int(rx2 * gw_w / 1280):.1f}, {cy + int(ry2 * gw_h / 720):.1f})"
+                                    action_coords = f"{c1_str} -> {c2_str} [Screen]"
+                                else:
+                                    action_coords = f"({rx1:.1f},{ry1:.1f}) -> ({rx2:.1f},{ry2:.1f})"
+                            except ValueError:
+                                action_coords = f"({cx1},{cy1}) -> ({cx2},{cy2})"
                             
                         parts = []
                         if btn1:

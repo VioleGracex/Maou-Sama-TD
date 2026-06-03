@@ -52,9 +52,20 @@ namespace MaouSamaTD.Units
 
         public PromotionMaterialRequirement[] GetRequiredMaterials(UnitClass classType)
         {
-            if (TryGetMultipliers(classType, out var result) && result.RequiredMaterials != null && result.RequiredMaterials.Length > 0)
+            if (TryGetMultipliers(classType, out var result) && result.RequiredMaterials != null)
             {
-                return result.RequiredMaterials;
+                var validMats = new System.Collections.Generic.List<PromotionMaterialRequirement>();
+                foreach (var req in result.RequiredMaterials)
+                {
+                    if (!string.IsNullOrEmpty(req.ItemID))
+                    {
+                        validMats.Add(req);
+                    }
+                }
+                if (validMats.Count > 0)
+                {
+                    return validMats.ToArray();
+                }
             }
             // Fallback based on class
             string defaultItem = classType switch

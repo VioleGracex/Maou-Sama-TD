@@ -45,6 +45,22 @@ To ensure smooth progression, Vassal power is tuned to overwhelm Lesser Shadows:
 - **Kill Step**: `PreventDeathForTutorial` is cleared when `Execute One-Shot Rite` step begins (RequiredCount = 0). Tutorial waits for `boss.IsDead = true`.
 - **Time Freezing**: ALL boss phase steps have `ResumeTime: 0` — time stays paused from `BossPassedUnit` trigger until `Final Victory Dialogue` completes.
 
+### 6. Prefabs and UI Elements Used
+| UI Context | Prefab Source | Target UI Component / GameObject Name | Action Required | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **Unit Placement** | `UnitBar` / `UnitButton.prefab` | `UnitButton` (Text: "Lilith") | Drag | Drag Lilith onto the high ground tile **(7, 11)**. |
+| **Sovereign Rite UI** | N/A (HUD Panel) | `SovereignRiteToggle` | Click | Opens the Sovereign Rites selection menu. |
+| **Skill Targeting** | `SovereignRitePanel.prefab` | `Cataclysmic Grand Cross` / `Abyssal Guillotine` | Click + Target | Selects the rite skill and casts it on the targeted grid position. |
+| **Dialogue Sequence** | `DialoguePanel.prefab` | `SkipButton` / `NextButton` / `FullSkipButton` | Click | Handles dialogue skipping and sequencing. |
+| **Victory Screen** | `VictoryScreen.prefab` | `ReturnButton_Victory` / `NextLevelButton_victory` | Click | Finishes the level and returns or proceeds. |
+
+### 7. Resolution Scaling & Canvas Setup
+- **Reference Resolution**: `1280x720` (top-left origin `0,0`).
+- **Canvas Scaler Mode**: `Scale With Screen Size` (Reference Resolution: `1920x1080` with a Match width/height of `0.5`).
+- **Coordinate Conversion Formula**:
+  - $\text{click\_x} = X_{\text{win}} + \left(\frac{x_{\text{ref}}}{1280}\right) \times W_{\text{actual}}$
+  - $\text{click\_y} = Y_{\text{win}} + \left(\frac{y_{\text{ref}}}{720}\right) \times H_{\text{actual}}$
+
 ---
 
 ## Dialogue & Sequence Flow

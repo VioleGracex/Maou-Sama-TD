@@ -58,7 +58,7 @@ MonoBehaviour:
       SizeOffset: {x: 0, y: 0}
     AdditionalTargetUI: []
     TargetTiles:
-    - Coordinate: {x: 7, y: 4}
+    - Coordinate: {x: 7, y: 3}
       Size: {x: 1, y: 1}
       Offset: {x: 0, y: 1, z: 0}
       Height: 0.4
@@ -72,7 +72,7 @@ MonoBehaviour:
       Name: 
       Size: {x: 0.5, y: 0.5}
       SizeOffset: {x: 0, y: 0}
-    HandTargetTileOverride: {x: 7, y: 4}
+    HandTargetTileOverride: {x: 7, y: 3}
     HandTargetTileOffsetOverride: {x: 0, y: 0, z: 0}
     WaveIndex: -1
     RequiredCount: 0

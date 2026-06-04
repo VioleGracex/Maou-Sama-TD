@@ -9,7 +9,7 @@ def create_center_panel(app, parent):
     header_frame = tk.Frame(center_panel, bg=app.bg_panel, pady=0)
     header_frame.pack(fill="x", pady=(0, 5))
     
-    title_lbl = tk.Label(header_frame, text="// SYLVAN TEST RUNNER HUD", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 12, "bold"))
+    title_lbl = tk.Label(header_frame, text="// SALAVAN TEST RUNNER HUD", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 12, "bold"))
     title_lbl.pack(anchor="w")
     
     status_box = tk.Frame(header_frame, bg=app.bg_panel)
@@ -34,8 +34,8 @@ def create_center_panel(app, parent):
     
     app.tab_buttons = {}
     tab_ids = [
-        ("live", "📺 LIVE VIEW"),
         ("setup", "⚙️ SETUP"),
+        ("live", "📺 LIVE VIEW"),
         ("scenario", "📋 SCENARIO"),
         ("ui", "📍 UI COORDS"),
         ("logs", "📄 LOGS"),
@@ -57,7 +57,7 @@ def create_center_panel(app, parent):
     app.tab_media = tk.Frame(app.tab_content_container, bg=app.bg_panel)
     app.tab_mappings = tk.Frame(app.tab_content_container, bg=app.bg_panel)
     
-    app.active_mid_tab = "live"
+    app.active_mid_tab = "setup"
     
     def switch_tab(tab_id):
         app.active_mid_tab = tab_id
@@ -110,7 +110,9 @@ def create_center_panel(app, parent):
             activeforeground=app.accent_glow, bd=0, relief="flat",
             font=("Segoe UI", 9, "bold"), pady=8
         )
-        btn.grid(row=0, column=idx, sticky="ew", padx=1)
+        row = idx // 4
+        col = idx % 4
+        btn.grid(row=row, column=col, sticky="ew", padx=1, pady=1)
         app.tab_buttons[tab_id] = btn
         
         # Hover effect
@@ -129,6 +131,10 @@ def create_center_panel(app, parent):
     ctrl_frame = tk.Frame(ctrl_border, bg=app.bg_panel, padx=8, pady=8)
     ctrl_frame.pack(fill="both")
     
+    # Initialize with default tab
+    switch_tab("setup")
+
+    # Action Buttons
     app.btn_clear_save = ttk.Button(ctrl_frame, text="PURGE SAVE", command=app.manual_clear_save)
     app.btn_clear_save.grid(row=0, column=0, padx=2, pady=3, sticky="ew")
     app.add_tooltip(app.btn_clear_save, "Purge local cache and game save directory database")
@@ -137,9 +143,9 @@ def create_center_panel(app, parent):
     app.btn_launch.grid(row=0, column=1, padx=2, pady=3, sticky="ew")
     app.add_tooltip(app.btn_launch, "Boot configured game build executable")
     
-    app.btn_capture = ttk.Button(ctrl_frame, text="CROP UI", command=app.manual_capture_template)
+    app.btn_capture = ttk.Button(ctrl_frame, text="COORDS TOOL", command=app.manual_capture_template)
     app.btn_capture.grid(row=0, column=2, padx=2, pady=3, sticky="ew")
-    app.add_tooltip(app.btn_capture, "Capture UI target screenshot for CV templates matching")
+    app.add_tooltip(app.btn_capture, "Configure coordinates and size parameters for a UI element mapping")
     
     ctrl_frame.columnconfigure(0, weight=1)
     ctrl_frame.columnconfigure(1, weight=1)
@@ -475,6 +481,8 @@ def create_center_panel(app, parent):
     from tkinter import filedialog
     
     app.ui_mappings = []
+    app.mappings_has_entries_wrapper = True
+    app.mappings_search_var = tk.StringVar()
 
     def load_mappings(path=None):
         if not path:
@@ -482,12 +490,14 @@ def create_center_panel(app, parent):
             
         if path:
             try:
-                with open(path, "r") as f:
+                with open(path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     if "entries" in data:
                         app.ui_mappings = data["entries"]
+                        app.mappings_has_entries_wrapper = True
                     else:
                         app.ui_mappings = data
+                        app.mappings_has_entries_wrapper = False
                         
                 # Save path to config
                 active_game = app.config.get_active_game()
@@ -503,10 +513,18 @@ def create_center_panel(app, parent):
         path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON Files", "*.json")])
         if path:
             try:
-                with open(path, "w") as f:
-                    json.dump({"entries": app.ui_mappings}, f, indent=4)
+                with open(path, "w", encoding="utf-8") as f:
+                    if getattr(app, "mappings_has_entries_wrapper", True):
+                        json.dump({"entries": app.ui_mappings}, f, indent=4)
+                    else:
+                        json.dump(app.ui_mappings, f, indent=4)
             except Exception as e:
                 print(f"Error saving mappings: {e}")
+
+    # Search Widget
+    tk.Label(mappings_header, text="  🔍 Search:", fg=app.fg_light, bg=app.bg_panel, font=("Segoe UI", 9)).pack(side="left")
+    entry_search = tk.Entry(mappings_header, textvariable=app.mappings_search_var, bg="#2c2c35", fg=app.fg_light, insertbackground=app.fg_light, bd=1, relief="flat", font=("Segoe UI", 9), width=30)
+    entry_search.pack(side="left", padx=5, ipady=1)
 
     btn_import = ttk.Button(mappings_header, text="IMPORT JSON", command=load_mappings)
     btn_import.pack(side="right", padx=2)
@@ -533,14 +551,77 @@ def create_center_panel(app, parent):
     app.mappings_tree.pack(fill="both", expand=True)
     map_scroll_y.config(command=app.mappings_tree.yview)
 
-    def refresh_mappings_tree():
+    def refresh_mappings_tree(*args):
+        query = app.mappings_search_var.get().lower().strip() if hasattr(app, "mappings_search_var") else ""
         for row in app.mappings_tree.get_children():
             app.mappings_tree.delete(row)
         for entry in app.ui_mappings:
+            path = entry.get("Path", "")
+            comp_type = entry.get("Type", "")
             coords = entry.get("Coordinates", {})
             x = coords.get("x", 0)
             y = coords.get("y", 0)
-            app.mappings_tree.insert("", "end", values=(entry.get("Path", ""), entry.get("Type", ""), x, y))
+            if not query or query in path.lower() or query in comp_type.lower():
+                app.mappings_tree.insert("", "end", values=(path, comp_type, x, y))
+
+    app.mappings_search_var.trace_add("write", refresh_mappings_tree)
+
+    def on_mapping_double_click(event):
+        selected_item = app.mappings_tree.selection()
+        if not selected_item:
+            return
+        item_values = app.mappings_tree.item(selected_item[0], "values")
+        if not item_values:
+            return
+        path, comp_type, x_val, y_val = item_values
+        
+        target_entry = None
+        for entry in app.ui_mappings:
+            if entry.get("Path") == path:
+                target_entry = entry
+                break
+                
+        if not target_entry:
+            return
+            
+        coords = target_entry.get("Coordinates", {})
+        x = coords.get("x", 0)
+        y = coords.get("y", 0)
+        
+        initial_coords = {
+            "x": int(float(x)),
+            "y": int(float(y)),
+            "width": 100,
+            "height": 50,
+            "resolution": f"{app.config.game_width}x{app.config.game_height}" if app.config.game_width > 0 and app.config.game_height > 0 else "1280x720"
+        }
+        
+        def on_save(new_x, new_y, new_w, new_h, resolution):
+            target_entry["Coordinates"] = {
+                "x": float(new_x),
+                "y": float(new_y)
+            }
+            refresh_mappings_tree()
+            
+            active_game = app.config.get_active_game()
+            if active_game and active_game.get("ui_mapping_path"):
+                mapping_path = active_game["ui_mapping_path"]
+                try:
+                    import os
+                    os.makedirs(os.path.dirname(mapping_path), exist_ok=True)
+                    with open(mapping_path, "w", encoding="utf-8") as f:
+                        if getattr(app, "mappings_has_entries_wrapper", True):
+                            json.dump({"entries": app.ui_mappings}, f, indent=4)
+                        else:
+                            json.dump(app.ui_mappings, f, indent=4)
+                    app.log_message("MAPPINGS", "INFO", f"Auto-saved coordinates for '{path}' to mappings file.")
+                except Exception as e:
+                    print(f"Failed to auto-save mappings: {e}")
+                    
+        import threading
+        app.show_coordinate_dialog(path, threading.Event(), on_save_callback=on_save, initial_coords=initial_coords)
+
+    app.mappings_tree.bind("<Double-1>", on_mapping_double_click)
 
     # Auto-load project mappings on startup
     active_game = app.config.get_active_game()

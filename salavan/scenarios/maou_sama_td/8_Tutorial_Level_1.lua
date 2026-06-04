@@ -1,6 +1,6 @@
--- Scenario 1B: Fresh Start & Skip Tutorial
--- Full flow: boot → loading screen Clear Data → confirm deletion → Start Game →
--- ascension → skip tutorial → skip dialogue → Level 2 start.
+-- Scenario 8: Tutorial Level 1 Alone
+-- Flow: boot → loading screen Clear Cache → confirm deletion → Start Game →
+-- ascension → intro dialogue → choose Play Tutorial → play Level 1 Tutorial → Level 1 victory → stop at Level 2 loading.
 
 local function run_tests()
 
@@ -9,7 +9,7 @@ local function run_tests()
     -- ============================================================
     set_stage("1. Boot Game")
     log_test("Launch Game", "STARTING", "Starting Maou-Sama-TD.exe in windowed mode (960x540)...")
-    if launch_game() then
+    if launch_game(true) then
         log_test("Launch Game", "PASS", "Game process started and window positioned at (0, 0).")
     else
         log_test("Launch Game", "FAIL", "Failed to launch game executable. Aborting.")
@@ -20,42 +20,40 @@ local function run_tests()
     wait(5)
 
     -- ============================================================
-    -- STAGE 2: Loading Screen — Clear Data → Confirm → Start Game
+    -- STAGE 2: Loading Screen — Clear Cache → Confirm → Start Game
     -- ============================================================
-    set_stage("2. Loading Screen — Clear Data")
-    log_test("Clear Data", "STARTING", "Waiting for loading screen to appear...")
+    set_stage("2. Loading Screen — Clear Cache")
+    log_test("Clear Cache", "STARTING", "Waiting for loading screen to appear...")
 
-    -- Wait for the loading screen Clear Data button
-    -- Unity GameObject name: ClearCacheButton  →  template key: "ClearCacheButton"
+    -- Wait for the loading screen Clear Data/Cache button
     local clear_data_btn = wait_template("ClearCacheButton", 20)
     if clear_data_btn then
         click(clear_data_btn.x, clear_data_btn.y)
-        log_test("Clear Data", "INFO", "Clear Data button clicked — waiting for confirmation dialog...")
+        log_test("Clear Cache", "INFO", "Clear Cache button clicked — waiting for confirmation dialog...")
         wait(1.5)
 
-        -- Confirm deletion: Unity GameObject name: YesButton (inside ConfirmPopup_Root)
+        -- Confirm deletion
         local confirm_btn = wait_template("YesButton", 10)
         if confirm_btn then
             click(confirm_btn.x, confirm_btn.y)
-            log_test("Clear Data", "PASS", "Save data cleared via in-game confirmation dialog.")
+            log_test("Clear Cache", "PASS", "Save data cleared via in-game confirmation dialog.")
         else
-            -- Fallback: NoButton sibling is also inside ConfirmPopup_Root, try "yes" label match
             local ok_btn = wait_template("yes", 6)
             if ok_btn then
                 click(ok_btn.x, ok_btn.y)
-                log_test("Clear Data", "PASS", "Save data cleared via OK button (fallback template).")
+                log_test("Clear Cache", "PASS", "Save data cleared via OK button (fallback template).")
             else
-                log_test("Clear Data", "FAIL", "Confirmation dialog not found — save data may not have been cleared.")
+                log_test("Clear Cache", "FAIL", "Confirmation dialog not found — save data may not have been cleared.")
                 return
             end
         end
         wait(2)
     else
-        log_test("Clear Data", "FAIL", "Clear Data button not found on loading screen. Aborting.")
+        log_test("Clear Cache", "FAIL", "Clear Cache button not found on loading screen. Aborting.")
         return
     end
 
-    -- Now click Start Game: Unity GameObject name: StartButton
+    -- Click Start Game
     log_test("Loading Screen", "STARTING", "Clicking 'StartButton' on the loading screen...")
     local start_game_btn = wait_template("StartButton", 15)
     if start_game_btn then
@@ -72,15 +70,12 @@ local function run_tests()
     set_stage("3. Character Ascension")
     log_test("Ascension Panel", "STARTING", "Waiting for Ascension Panel to appear...")
 
-    -- Roll a character name with the dice button
-    -- Unity GO: DiceButton (AscensionPanel.prefab)
     local dice_pos = wait_template("DiceButton", 25)
     if dice_pos then
         click(dice_pos.x, dice_pos.y)
         wait(1.5)
         log_test("Ascension Panel", "INFO", "Dice rolled — character name generated.")
 
-        -- Confirm / Arise  — Unity GO: AriseButton (AscensionPanel.prefab)
         local arise_pos = wait_template("AriseButton", 10)
         if arise_pos then
             click(arise_pos.x, arise_pos.y)
@@ -98,13 +93,11 @@ local function run_tests()
     wait(7)
 
     -- ============================================================
-    -- STAGE 5: Intro Dialogue — Advance or Skip
+    -- STAGE 4: Intro Dialogue
     -- ============================================================
-    set_stage("5. Intro Dialogue")
+    set_stage("4. Intro Dialogue")
     log_test("Intro Dialogue", "STARTING", "Attempting to skip or advance tutorial intro dialogues...")
 
-    -- Try FullSkipButton first (dialogue skip), then SkipButton (mini skip)
-    -- Unity GOs: FullSkipButton, SkipButton (BattleScene)
     local skip_btn = wait_template("FullSkipButton", 6)
     if not skip_btn then
         skip_btn = wait_template("SkipButton", 3)
@@ -114,41 +107,108 @@ local function run_tests()
         wait(2)
         log_test("Intro Dialogue", "PASS", "Dialogue skipped via Skip button.")
     else
-        -- No skip available — advance manually (3 dialogue panels with 2s gaps)
         log_test("Intro Dialogue", "INFO", "No Skip button found — advancing dialogues manually.")
         for i = 1, 3 do
-            click(850, 490)   -- bottom-right dialogue advance area (960x540 coords)
+            click(850, 490)
             wait(2.0)
         end
         log_test("Intro Dialogue", "PASS", "Intro dialogues advanced manually.")
     end
 
     -- ============================================================
-    -- STAGE 6: Tutorial Choice — Skip Tutorial
+    -- STAGE 5: Choose Tutorial
     -- ============================================================
-    set_stage("6. Tutorial Choice")
-    log_test("Skip Tutorial", "STARTING", "Waiting for tutorial choice prompt...")
+    set_stage("5. Choose Tutorial")
+    log_test("Choose Tutorial", "STARTING", "Selecting Play Tutorial mode...")
 
-    -- Unity GO: SkipTutorial_Btn (inside tutorial choice popup) or NoButton fallback
-    local skip_tut_btn = wait_template("SkipTutorial_Btn", 25)
-    if not skip_tut_btn then
-        skip_tut_btn = wait_template("NoButton", 5)
+    local play_tut_btn = wait_template("PlayTutorial_Btn", 25)
+    if not play_tut_btn then
+        play_tut_btn = wait_template("YesButton", 5)
     end
-    if skip_tut_btn then
-        click(skip_tut_btn.x, skip_tut_btn.y)
-        log_test("Skip Tutorial", "PASS", "'Skip Tutorial' clicked. Proceeding to main menu or Level 2.")
+    if play_tut_btn then
+        click(play_tut_btn.x, play_tut_btn.y)
+        log_test("Choose Tutorial", "PASS", "Play Tutorial mode selected.")
     else
-        log_test("Skip Tutorial", "FAIL", "'Skip Tutorial' button did not appear.")
+        log_test("Choose Tutorial", "FAIL", "Tutorial choice button not found.")
         return
     end
 
-    wait(5)
+    wait(2.5)
+
+    -- ============================================================
+    -- STAGE 6: Play Tutorial Level 1
+    -- ============================================================
+    set_stage("6. Tutorial Level 1")
+    log_test("Tutorial Level 1", "STARTING", "Deploying Ignis on grid...")
+
+    local ignis_card = wait_template("ignis_card", 12)
+    if ignis_card then
+        drag(ignis_card.x, ignis_card.y, 555, 240, 1.0)
+        wait(2.5)
+        log_test("Tutorial Level 1", "PASS", "Ignis deployed to grid.")
+    else
+        log_test("Tutorial Level 1", "FAIL", "Ignis card not found.")
+        return
+    end
+
+    -- Dialogue advance post placement
+    click(850, 490)
+    wait(1.5)
+
+    -- Speed up
+    local spd_btn = wait_template("SpeedButton", 4)
+    if spd_btn then
+        click(spd_btn.x, spd_btn.y) wait(0.5)
+        click(spd_btn.x, spd_btn.y) wait(0.5)
+    end
+
+    log_test("Tutorial Level 1", "INFO", "Waiting for ultimate charge tutorial pause...")
+    wait(12)
+
+    -- Dismiss ultimate dialogue
+    local ult_dialogue = wait_template("ult_tutorial_dialogue", 15)
+    if ult_dialogue then
+        click(ult_dialogue.x, ult_dialogue.y)
+        wait(1.5)
+    else
+        click(850, 490)
+        wait(1.5)
+    end
+
+    -- Trigger Ultimate
+    click(555, 240)
+    wait(2.0)
+    local ult_btn = wait_template("Ult_Btn", 8)
+    if ult_btn then
+        click(ult_btn.x, ult_btn.y)
+        log_test("Tutorial Level 1", "PASS", "Ignis ultimate activated.")
+    else
+        click(870, 450)
+        log_test("Tutorial Level 1", "INFO", "Activated ultimate (fallback coordinate).")
+    end
+
+    wait(2)
+
+    -- Wait for victory screen
+    local next_lvl_btn = wait_template("NextLevelButton", 60)
+    if not next_lvl_btn then
+        next_lvl_btn = wait_template("victory_next_level", 5)
+    end
+    if next_lvl_btn then
+        click(next_lvl_btn.x, next_lvl_btn.y)
+        log_test("Tutorial Level 1", "PASS", "Level 1 victory clicked. Loading Level 2...")
+    else
+        log_test("Tutorial Level 1", "FAIL", "Victory screen not found.")
+        return
+    end
+
+    wait(6)
 
     -- ============================================================
     -- DONE
     -- ============================================================
     set_stage("Completed")
-    log_test("Test Suite", "PASS", "Scenario 1B — Fresh Start & Skip Tutorial completed successfully!")
+    log_test("Test Suite", "PASS", "Scenario 8 — Tutorial Level 1 Completed!")
 end
 
 run_tests()

@@ -820,7 +820,7 @@ namespace MaouSamaTD.Units
                     GameObject prefab = Resources.Load<GameObject>(prefabName);
                     if (prefab != null)
                     {
-                        GameObject projObj = Instantiate(prefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
+                        GameObject projObj = Instantiate(prefab, transform.position + Vector3.up * 0.8f, Quaternion.identity);
                         
                         // Enable billboarding on projectile
                         var billboard = projObj.GetComponent<Billboard>();
@@ -829,6 +829,13 @@ namespace MaouSamaTD.Units
                             billboard = projObj.AddComponent<Billboard>();
                         }
                         billboard.LockZ = true; // Lock Z so the projectile rotates towards its target in screen-space
+
+                        var sr = projObj.GetComponentInChildren<SpriteRenderer>();
+                        if (sr != null)
+                        {
+                            sr.sortingLayerName = "UI";
+                            sr.sortingOrder = 50;
+                        }
 
                         var projComp = projObj.GetComponent<MaouSamaTD.VFX.BasicProjectile>();
                         if (projComp != null)
@@ -853,7 +860,7 @@ namespace MaouSamaTD.Units
                     GameObject slashPrefab = Resources.Load<GameObject>("VFX/Melee_Slash_VFX");
                     if (slashPrefab != null)
                     {
-                        Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-0.15f, 0.15f), UnityEngine.Random.Range(-0.15f, 0.15f) + 0.5f, 0f);
+                        Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-0.15f, 0.15f), UnityEngine.Random.Range(-0.15f, 0.15f) + 0.8f, 0f);
                         GameObject slashObj = Instantiate(slashPrefab, target.transform.position + randomOffset, Quaternion.identity);
                         
                         // Enable billboarding on slash
@@ -864,6 +871,13 @@ namespace MaouSamaTD.Units
                         
                         // Make slashes bigger
                         slashObj.transform.localScale = Vector3.one * 1.8f;
+
+                        var sr = slashObj.GetComponentInChildren<SpriteRenderer>();
+                        if (sr != null)
+                        {
+                            sr.sortingLayerName = "UI";
+                            sr.sortingOrder = 50;
+                        }
                     }
                 }
 

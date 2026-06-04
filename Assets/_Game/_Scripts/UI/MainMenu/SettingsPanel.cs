@@ -116,8 +116,8 @@ namespace MaouSamaTD.UI.MainMenu
                 canvas = gameObject.AddComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             }
-            // Set sorting order very high (above LoadingScreenPanel's 999)
-            canvas.sortingOrder = 1000;
+            // Set sorting order very high (above LoadingScreenPanel's 30000)
+            canvas.sortingOrder = 31000;
 
             if (gameObject.GetComponent<UnityEngine.UI.CanvasScaler>() == null)
             {

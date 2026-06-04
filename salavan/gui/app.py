@@ -277,21 +277,7 @@ class GameSalavanApp:
         self.global_sidebar_div = tk.Frame(self.main_layout, bg=self.accent_dim, width=1)
         self.global_sidebar_div.pack(side="left", fill="y")
 
-        # Left docking tab handle
-        self.btn_left_handle = tk.Button(
-            self.main_layout, text="◀", command=self.toggle_left_panel,
-            bg="#131317", fg=self.accent_glow, activebackground=self.accent_glow,
-            activeforeground="#131317", bd=0, relief="flat",
-            font=("Segoe UI", 7, "bold"), width=1, padx=2, cursor="hand2"
-        )
-        self.btn_left_handle.pack(side="left", fill="y")
-        
-        # Hover binding for left handle
-        def make_l_hover(b):
-            b.bind("<Enter>", lambda e: b.config(bg=self.accent_glow, fg="#131317"))
-            b.bind("<Leave>", lambda e: b.config(bg="#131317", fg=self.accent_glow))
-        make_l_hover(self.btn_left_handle)
-        self.add_tooltip(self.btn_left_handle, "Toggle Scenarios Sidebar")
+        # Left handle button removed per user request
 
         # Right docking tab handle (will be created and packed by DetailsPage dynamically)
         self.btn_right_handle = None
@@ -1790,20 +1776,19 @@ class GameSalavanApp:
             
         if self.left_collapsed:
             self.left_collapsed = False
+            self.global_sidebar.config(width=260)
             self.repack_main_layout()
-            self.animate_left_sidebar(260)
-            self.btn_left_handle.config(text="◀")
         else:
-            self.animate_left_sidebar(0)
             self.left_collapsed = True
-            self.btn_left_handle.config(text="▶")
+            self.global_sidebar.pack_forget()
+            self.global_sidebar_div.pack_forget()
+            self.repack_left_buttons()
 
     def repack_main_layout(self):
         self.navigation_sidebar.pack_forget()
         self.navigation_sidebar_div.pack_forget()
         self.global_sidebar.pack_forget()
         self.global_sidebar_div.pack_forget()
-        self.btn_left_handle.pack_forget()
         self.container.pack_forget()
         
         if not getattr(self, 'nav_collapsed', False):
@@ -1814,9 +1799,6 @@ class GameSalavanApp:
             if not getattr(self, 'left_collapsed', False):
                 self.global_sidebar.pack(side="left", fill="y")
                 self.global_sidebar_div.pack(side="left", fill="y")
-                
-        if self.hud_mode != "OVERLAY":
-            self.btn_left_handle.pack(side="left", fill="y")
             
         self.container.pack(side="left", fill="both", expand=True)
 
@@ -1921,32 +1903,14 @@ class GameSalavanApp:
         messagebox.showinfo("Salavan Shortcuts Help", help_msg)
 
     def animate_left_sidebar(self, target_width):
-        current_width = self.global_sidebar.winfo_width()
-        if current_width <= 1:
-            current_width = 260 if self.left_collapsed else 0
-            
-        if current_width == target_width:
-            if target_width == 0:
-                self.repack_left_buttons()
-                self.global_sidebar.pack_forget()
-                self.global_sidebar_div.pack_forget()
-            return
-            
-        step = 65
-        if current_width < target_width:
-            new_width = min(current_width + step, target_width)
-        else:
-            new_width = max(current_width - step, target_width)
-            
-        self.global_sidebar.config(width=new_width)
-        
-        if new_width != target_width:
-            self.root.after(10, lambda: self.animate_left_sidebar(target_width))
-        else:
+        # Instant show/hide — no animation to avoid redraw artifacts
+        if target_width == 0:
             self.repack_left_buttons()
-            if target_width == 0:
-                self.global_sidebar.pack_forget()
-                self.global_sidebar_div.pack_forget()
+            self.global_sidebar.pack_forget()
+            self.global_sidebar_div.pack_forget()
+        else:
+            self.global_sidebar.config(width=target_width)
+            self.repack_left_buttons()
 
     def toggle_builds_panel(self):
         if self.hud_mode == "OVERLAY":
@@ -1959,53 +1923,39 @@ class GameSalavanApp:
             self.builds_collapsed = True
             
         if self.builds_collapsed:
-            self.animate_builds_sidebar(260)
             self.builds_collapsed = False
             self.btn_right_handle.config(text="▶")
+            pane = self.details_page.right_sidebar_pane
+            div = self.details_page.right_sidebar_div
+            handle = self.btn_right_handle
+            pane.config(width=260)
+            if not pane.winfo_viewable():
+                pane.pack(side="right", fill="y", before=handle)
+                div.pack(side="right", fill="y", before=handle)
+            self.repack_right_buttons()
         else:
-            self.animate_builds_sidebar(0)
             self.builds_collapsed = True
             self.btn_right_handle.config(text="◀")
+            self.details_page.right_sidebar_pane.pack_forget()
+            self.details_page.right_sidebar_div.pack_forget()
+            self.repack_right_buttons()
 
     def animate_builds_sidebar(self, target_width):
+        # Instant show/hide — no animation to avoid redraw artifacts
         if not hasattr(self, 'details_page') or not self.details_page.winfo_exists():
             return
-            
         pane = self.details_page.right_sidebar_pane
         div = self.details_page.right_sidebar_div
         handle = self.btn_right_handle
-        
-        current_width = pane.winfo_width()
-        if current_width <= 1:
-            current_width = 260 if self.builds_collapsed else 0
-            
-        if current_width == target_width:
-            if target_width == 0:
-                pane.pack_forget()
-                div.pack_forget()
-            self.repack_right_buttons()
-            return
-            
-        # If we are expanding and it is not packed yet, pack it before the handle
-        if target_width > 0 and not pane.winfo_viewable():
-            pane.pack(side="right", fill="y", before=handle)
-            div.pack(side="right", fill="y", before=handle)
-            
-        step = 65
-        if current_width < target_width:
-            new_width = min(current_width + step, target_width)
+        if target_width == 0:
+            pane.pack_forget()
+            div.pack_forget()
         else:
-            new_width = max(current_width - step, target_width)
-            
-        pane.config(width=new_width)
-        
-        if new_width != target_width:
-            self.root.after(10, lambda: self.animate_builds_sidebar(target_width))
-        else:
-            if target_width == 0:
-                pane.pack_forget()
-                div.pack_forget()
-            self.repack_right_buttons()
+            pane.config(width=target_width)
+            if not pane.winfo_viewable():
+                pane.pack(side="right", fill="y", before=handle)
+                div.pack(side="right", fill="y", before=handle)
+        self.repack_right_buttons()
 
     def toggle_right_panel(self):
         if self.hud_mode == "OVERLAY":
@@ -2021,54 +1971,22 @@ class GameSalavanApp:
             self.right_collapsed = True
 
     def animate_right_logs(self, target_height):
+        # Instant resize — no animation to avoid redraw artifacts
         if not hasattr(self, 'details_page') or not self.details_page.winfo_exists():
             return
-            
         pw = self.details_page.paned_window
         pane = self.details_page.right_pane
-        
         is_managed = pane in pw.panes() or str(pane) in [str(p) for p in pw.panes()]
-        
-        if is_managed:
-            conf_val = pw.paneconfigure(pane, "height")[4]
-            if conf_val != "" and conf_val is not None:
-                current_height = int(conf_val)
-            else:
-                current_height = pane.winfo_height()
-                if current_height <= 1:
-                    current_height = 220
-        else:
-            current_height = 0
-            
-        if current_height == target_height:
-            if target_height == 0 and is_managed:
+        if target_height == 0:
+            if is_managed:
                 pw.forget(pane)
-            if hasattr(self, 'btn_toggle_right') and self.btn_toggle_right:
-                t = "[ ⬆ EXPAND LOGS ]" if self.right_collapsed else "[ ⬇ COLLAPSE ]"
-                self.btn_toggle_right.config(text=t)
-            return
-            
-        if target_height > 0 and not is_managed:
-            pw.add(pane, minsize=0, height=0, stretch="never")
-            current_height = 0
-            
-        step = 55
-        if current_height < target_height:
-            new_height = min(current_height + step, target_height)
         else:
-            new_height = max(current_height - step, target_height)
-            
-        pw.paneconfigure(pane, minsize=new_height, height=new_height)
-        
-        if new_height != target_height:
-            self.root.after(10, lambda: self.animate_right_logs(target_height))
-        else:
-            if target_height == 0:
-                pw.forget(pane)
-            if hasattr(self, 'btn_toggle_right') and self.btn_toggle_right:
-                t = "[ ⬆ EXPAND LOGS ]" if self.right_collapsed else "[ ⬇ COLLAPSE ]"
-                self.btn_toggle_right.config(text=t)
-
+            if not is_managed:
+                pw.add(pane, minsize=0, height=target_height, stretch="never")
+            pw.paneconfigure(pane, minsize=target_height, height=target_height)
+        if hasattr(self, 'btn_toggle_right') and self.btn_toggle_right:
+            t = "[ ⬆ EXPAND LOGS ]" if self.right_collapsed else "[ ⬇ COLLAPSE ]"
+            self.btn_toggle_right.config(text=t)
     def repack_left_buttons(self):
         if not hasattr(self, 'details_page') or not self.details_page.winfo_exists():
             return
@@ -2924,146 +2842,10 @@ class GameSalavanApp:
             self.log_message("Recorder", "INFO", f"Manual recording started: {os.path.basename(rec_path)} (Codec={codec_str}, FPS={fps})")
 
     def ensure_default_scenarios(self):
+        # Only ensure the scenarios directory exists — no default files are generated.
+        # All scenarios are maintained as hand-crafted .lua files in the scenarios folder.
         os.makedirs(self.scenarios_dir, exist_ok=True)
-        # 1_Fresh_Start.lua
-        p1 = os.path.join(self.scenarios_dir, "1_Fresh_Start.lua")
-        if not os.path.exists(p1):
-            with open(p1, "w") as f:
-                f.write("""-- Scenario 1: Fresh Start & Level 1 Tutorial
-local function run_tests()
-    set_stage("1. Clear Save Data")
-    log_test("Clear Save Data", "STARTING", "Deleting save files...")
-    if clear_save_data() then log_test("Clear Save Data", "PASS", "Save data cleared successfully.")
-    else log_test("Clear Save Data", "FAIL", "Failed to clear save data.") return end
-    set_stage("2. Launching Game")
-    if launch_game(true) then log_test("Launch Game", "PASS", "Game booted and positioned.")
-    else log_test("Launch Game", "FAIL", "Failed to launch game.") return end
-    wait(6)
-    local start_btn = wait_template("start_button", 15)
-    if start_btn then click(start_btn.x, start_btn.y) wait(2) end
-    set_stage("3. Character Ascension")
-    local dice_pos = wait_template("dice_button", 25)
-    if dice_pos then
-        click(dice_pos.x, dice_pos.y) wait(1.5)
-        local arise_pos = wait_template("arise_button", 8)
-        if arise_pos then click(arise_pos.x, arise_pos.y) log_test("Character Ascension", "PASS", "Arisen.")
-        else log_test("Character Ascension", "FAIL", "Arise button missing.") return end
-    else log_test("Character Ascension", "FAIL", "Dice button did not load.") return end
-    wait(6)
-    set_stage("4. Level 1 - Start Tutorial")
-    local play_tut_pos = wait_template("play_tutorial_btn", 25)
-    if play_tut_pos then click(play_tut_pos.x, play_tut_pos.y) log_test("Level 1 Start", "PASS", "Tutorial started.")
-    else log_test("Level 1 Start", "FAIL", "Tutorial prompt did not appear.") return end
-    wait(2.5)
-    log_test("Tutorial Step 1", "STARTING", "Advancing dialogues...")
-    for i=1,3 do click(1100, 650) wait(2.0) end
-    log_test("Tutorial Step 1", "PASS", "Dialogues advanced.")
-    local ignis_btn = wait_template("ignis_card", 8)
-    if ignis_btn then drag(ignis_btn.x, ignis_btn.y, 740, 320, 1.0) wait(2.5) log_test("Tutorial Step 2", "PASS", "Ignis deployed.")
-    else log_test("Tutorial Step 2", "FAIL", "Ignis card missing.") return end
-    click(1100, 650) wait(2.5)
-    log_test("Tutorial Wave 1", "STARTING", "Waiting for ultimate skill...") wait(18)
-    click(1100, 650) wait(2.0)
-    click(740, 320) wait(2.0)
-    local ult_btn = wait_template("ignis_ult_btn", 8)
-    if ult_btn then click(ult_btn.x, ult_btn.y) wait(2.0)
-    else click(1150, 580) wait(2.0) end
-    log_test("Tutorial Step 5", "PASS", "Ultimate activated.")
-    local next_lvl_btn = wait_template("victory_next_level", 45)
-    if next_lvl_btn then click(next_lvl_btn.x, next_lvl_btn.y) log_test("Tutorial Level 1 Victory", "PASS", "Level 1 Cleared.")
-    else log_test("Tutorial Level 1 Victory", "FAIL", "Victory screen did not show.") return end
-    wait(6)
-    set_stage("5. Level 2 Start")
-    local start_battle = wait_template("start_battle_btn", 25)
-    if start_battle then click(start_battle.x, start_battle.y) log_test("Level 2 Start", "PASS", "Level 2 started.")
-    else log_test("Level 2 Start", "FAIL", "Level 2 battle button missing.") return end
-    set_stage("Completed")
-end
-run_tests()
-""")
-        # 2_Level_2.lua
-        p2 = os.path.join(self.scenarios_dir, "2_Level_2.lua")
-        if not os.path.exists(p2):
-            with open(p2, "w") as f:
-                f.write("""-- Scenario 2: Level 2 Progression
-local function run_tests()
-    if launch_game(false) then log_test("Connect Game", "PASS", "Connected.")
-    else log_test("Connect Game", "FAIL", "Failed.") return end
-    wait(2)
-    local conquest_btn = wait_template("conquest_nav_btn", 10)
-    if conquest_btn then click(conquest_btn.x, conquest_btn.y)
-    else click(1100, 600) end
-    wait(3)
-    local node2 = wait_template("node_level_2", 15)
-    if node2 then click(node2.x, node2.y)
-    else click(450, 360) end
-    wait(1.5)
-    local engage_btn = wait_template("engage_btn", 8)
-    if engage_btn then click(engage_btn.x, engage_btn.y)
-    else click(1050, 580) end
-    wait(2)
-    local start_mission = wait_template("start_mission_btn", 8)
-    if start_mission then click(start_mission.x, start_mission.y)
-    else click(950, 550) end
-    wait(5)
-    log_test("Combat", "PASS", "Level 2 loaded.")
-    set_stage("Completed")
-end
-run_tests()
-""")
-        # 3_Level_3_Plus.lua
-        p3 = os.path.join(self.scenarios_dir, "3_Level_3_Plus.lua")
-        if not os.path.exists(p3):
-            with open(p3, "w") as f:
-                f.write("""-- Scenario 3: Level 3+ Cohort & Rite Setup
-local function run_tests()
-    if launch_game(false) then log_test("Connect Game", "PASS", "Connected.")
-    else log_test("Connect Game", "FAIL", "Failed.") return end
-    wait(2)
-    local conquest_btn = wait_template("conquest_nav_btn", 10)
-    if conquest_btn then click(conquest_btn.x, conquest_btn.y)
-    else click(1100, 600) end
-    wait(3)
-    local node3 = wait_template("node_level_3", 15)
-    if node3 then click(node3.x, node3.y)
-    else click(600, 420) end
-    wait(1.5)
-    local engage_btn = wait_template("engage_btn", 8)
-    if engage_btn then click(engage_btn.x, engage_btn.y)
-    else click(1050, 580) end
-    wait(2.5)
-    local empty_unit = wait_template("empty_unit_slot", 8)
-    if empty_unit then
-        click(empty_unit.x, empty_unit.y) wait(1.5)
-        local ignis_card = wait_template("ignis_roster_card", 8)
-        if ignis_card then click(ignis_card.x, ignis_card.y) end
-    end
-    wait(1.5)
-    local empty_rite = wait_template("empty_rite_slot", 8)
-    if empty_rite then
-        click(empty_rite.x, empty_rite.y) wait(1.5)
-        local rite_card = wait_template("rite_roster_card", 8)
-        if rite_card then click(rite_card.x, rite_card.y) end
-    end
-    wait(1.5)
-    local start_mission = wait_template("start_mission_btn", 8)
-    if start_mission then click(start_mission.x, start_mission.y)
-    else click(950, 550) end
-    wait(5)
-    local placed_unit_card = wait_template("placed_unit_card", 10)
-    if placed_unit_card then drag(placed_unit_card.x, placed_unit_card.y, 650, 320, 1.0) wait(2.5) end
-    local start_battle = wait_template("start_battle_btn", 8)
-    if start_battle then click(start_battle.x, start_battle.y)
-    else click(1150, 620) end
-    set_stage("Completed")
-    log_test("Test Suite", "PASS", "Scenario 3 Complete.")
-end
-run_tests()
-""")
 
-
-
-    # ── APIs for Debug Step Navigation & Locations ──
     def next_step(self):
         if not (self.test_thread and self.test_thread.is_alive()):
             return

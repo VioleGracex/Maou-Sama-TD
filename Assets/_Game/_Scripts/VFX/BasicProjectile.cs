@@ -33,6 +33,17 @@ namespace MaouSamaTD.VFX
             }
         }
 
+        private void Start()
+        {
+            // Set sorting layer and order for the projectile sprite
+            var sr = GetComponentInChildren<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sortingLayerName = "UI";
+                sr.sortingOrder = 50;
+            }
+        }
+
         private void Update()
         {
             if (_hasHit) return;
@@ -45,7 +56,7 @@ namespace MaouSamaTD.VFX
                 return;
             }
 
-            Vector3 targetPos = _target.transform.position + Vector3.up * 0.5f; // Aim for center
+            Vector3 targetPos = _target.transform.position + Vector3.up * 0.8f; // Aim for center (raised to 0.8f)
             Vector3 dir = (targetPos - transform.position).normalized;
             
             transform.position += dir * _speed * Time.deltaTime;
@@ -64,7 +75,7 @@ namespace MaouSamaTD.VFX
         private void UpdateRotation()
         {
             if (_target == null) return;
-            Vector3 dir = (_target.transform.position + Vector3.up * 0.5f - transform.position).normalized;
+            Vector3 dir = (_target.transform.position + Vector3.up * 0.8f - transform.position).normalized; // Aim for center (raised to 0.8f)
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
@@ -81,7 +92,13 @@ namespace MaouSamaTD.VFX
 
             if (_hitVFXPrefab != null)
             {
-                Instantiate(_hitVFXPrefab, transform.position, Quaternion.identity);
+                GameObject hitObj = Instantiate(_hitVFXPrefab, transform.position, Quaternion.identity);
+                var sr = hitObj.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.sortingLayerName = "UI";
+                    sr.sortingOrder = 55; // Slightly on top of projectile layer
+                }
             }
 
             Destroy(gameObject);

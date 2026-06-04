@@ -138,7 +138,7 @@ class TestSequenceRunner(threading.Thread):
             
             self.app.log_message("HUD", "INFO", f"Reading scenario: {self.scenario_name}...")
             
-            with open(self.script_path, "r") as f:
+            with open(self.script_path, "r", encoding="utf-8") as f:
                 lua_code = f.read()
                 
             # Execute Lua Code (defines functions and runs top level scripts)
@@ -179,7 +179,7 @@ class TestSequenceRunner(threading.Thread):
                         
                 if found_build:
                     self.app.config.save()
-                    self.app.root.after(0, self.app.refresh_builds_tree)
+                    self.app.safe_gui_call(self.app.refresh_builds_tree)
 
             # Run Teardown Hook if defined in Lua script
             if teardown_fn is not None:
@@ -225,5 +225,5 @@ class TestSequenceRunner(threading.Thread):
                     except Exception:
                         pass
                         
-            self.app.root.after(0, self.app._reset_controls_post_run)
+            self.app.safe_gui_call(self.app._reset_controls_post_run)
 

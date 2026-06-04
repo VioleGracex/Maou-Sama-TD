@@ -38,23 +38,10 @@ class DetailsPage(tk.Frame):
         self.right_sidebar_div = tk.Frame(self.top_content_container, bg=self.app.accent_dim, width=1)
         self.right_sidebar_div.pack(side="right", fill="y")
         
-        # Right Handle Button
-        self.btn_right_handle = tk.Button(
-            self.top_content_container, text="▶", command=self.app.toggle_builds_panel,
-            bg="#131317", fg=self.app.accent_glow, activebackground=self.app.accent_glow,
-            activeforeground="#131317", bd=0, relief="flat",
-            font=("Segoe UI", 7, "bold"), width=1, padx=2, cursor="hand2"
-        )
-        self.btn_right_handle.pack(side="right", fill="y")
-        self.app.btn_right_handle = self.btn_right_handle
         
-        # Hover binding for right handle
-        def make_r_hover(b):
-            b.bind("<Enter>", lambda e: b.config(bg=self.app.accent_glow, fg="#131317"))
-            b.bind("<Leave>", lambda e: b.config(bg="#131317", fg=self.app.accent_glow))
-        make_r_hover(self.btn_right_handle)
-        self.app.add_tooltip(self.btn_right_handle, "Toggle Builds & Reports Sidebar")
-        
+        # Right Handle Button removed (caused buggy navigation to game page)
+        self.app.btn_right_handle = None
+
         from gui.widgets.builds_sidebar import create_builds_sidebar
         create_builds_sidebar(self.app, self.right_sidebar_pane)
 
@@ -73,13 +60,6 @@ class DetailsPage(tk.Frame):
         center_bar.pack(fill="x", pady=(0, 10))
         self.app.center_bar = center_bar
         
-        self.btn_back_lib = tk.Button(
-            center_bar, text="[ 🏠 GAMES LIBRARY ]", command=self.app.show_library_page, 
-            bg="#2c2c35", fg=self.app.fg_light, activebackground=self.app.accent_glow, 
-            activeforeground="#101012", bd=0, padx=10, font=("Segoe UI", 9, "bold")
-        )
-        self.btn_back_lib.pack(side="left", padx=5)
- 
         self.app.btn_toggle_mode = tk.Button(
             center_bar, text="[ 🖥 OVERLAY MODE ]", command=self.app.toggle_hud_mode, 
             bg="#2c2c35", fg=self.app.fg_light, activebackground=self.app.accent_glow, 
@@ -98,12 +78,10 @@ class DetailsPage(tk.Frame):
         def bind_hover(btn):
             btn.bind("<Enter>", lambda e: btn.config(bg=self.app.accent_glow, fg="#101012"))
             btn.bind("<Leave>", lambda e: btn.config(bg="#2c2c35", fg=self.app.fg_light))
-        bind_hover(self.btn_back_lib)
         bind_hover(self.app.btn_toggle_mode)
         bind_hover(self.app.btn_dock_main)
 
         # Attach tooltips to details header buttons
-        self.app.add_tooltip(self.btn_back_lib, "Return to Games Library Catalog")
         self.app.add_tooltip(self.app.btn_toggle_mode, "Toggle Fullscreen Low-Opacity Overlay HUD")
         self.app.add_tooltip(self.app.btn_dock_main, "Dock Diagnostic Logs back into operations dashboard")
         

@@ -3,7 +3,128 @@ from tkinter import ttk
 import os
 import re
 
+def extract_step_details(script_path, step_name):
+    if not os.path.exists(script_path):
+        return "Scenario script file not found."
+    try:
+        with open(script_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except Exception as e:
+        return f"Error reading file: {str(e)}"
+
+    start_idx = -1
+    pattern = re.compile(rf'set_stage\([\'"]{re.escape(step_name)}[\'"]\)')
+    for idx, line in enumerate(lines):
+        if pattern.search(line):
+            start_idx = idx
+            break
+
+    if start_idx == -1:
+        clean_step = re.sub(r'^\d+\.\s*', '', step_name).strip().lower()
+        for idx, line in enumerate(lines):
+            if "set_stage" in line and clean_step in line.lower():
+                start_idx = idx
+                break
+
+    if start_idx == -1:
+        return f"Step '{step_name}' could not be located in script."
+
+    extracted_lines = []
+    for idx in range(start_idx, len(lines)):
+        line = lines[idx]
+        if idx > start_idx and ("set_stage(" in line or "set_stage(" in line.replace(" ", "")):
+            break
+        if idx > start_idx and line.strip() == "end" and idx >= len(lines) - 2:
+            break
+        extracted_lines.append(line)
+
+    if not extracted_lines:
+        return "No actions found for this step."
+        
+    min_indent = 999
+    for line in extracted_lines[1:]:
+        stripped = line.lstrip()
+        if stripped:
+            indent = len(line) - len(stripped)
+            if indent < min_indent:
+                min_indent = indent
+    if min_indent == 999:
+        min_indent = 0
+
+    cleaned_lines = []
+    cleaned_lines.append(extracted_lines[0].strip())
+    
+    for line in extracted_lines[1:]:
+        if len(line) > min_indent:
+            cleaned_lines.append(line[min_indent:].rstrip())
+        else:
+            cleaned_lines.append(line.strip())
+
+    return "\n".join(cleaned_lines)
+
+
+def show_step_details_popup(app, scenario_name, step_name):
+    script_path = os.path.join(app.scenarios_dir, f"{scenario_name}.lua")
+    details = extract_step_details(script_path, step_name)
+
+    popup = tk.Toplevel(app.root)
+    popup.title(f"Step Details: {step_name}")
+    popup.geometry("600x450")
+    popup.configure(bg=app.bg_dark)
+    popup.transient(app.root)
+    popup.grab_set()
+
+    try:
+        parent_x = app.root.winfo_rootx()
+        parent_y = app.root.winfo_rooty()
+        parent_w = app.root.winfo_width()
+        parent_h = app.root.winfo_height()
+        popup.geometry(f"+{parent_x + (parent_w - 600) // 2}+{parent_y + (parent_h - 450) // 2}")
+    except Exception:
+        pass
+
+    border_frame = tk.Frame(popup, bg=app.accent_glow, bd=1)
+    border_frame.pack(fill="both", expand=True, padx=10, pady=10)
+    
+    inner_frame = tk.Frame(border_frame, bg=app.bg_panel, padx=15, pady=15)
+    inner_frame.pack(fill="both", expand=True)
+
+    hdr_lbl = tk.Label(inner_frame, text=f"// DETAILS FOR STEP: {step_name.upper()}", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 10, "bold"))
+    hdr_lbl.pack(anchor="w", pady=(0, 10))
+
+    text_container = tk.Frame(inner_frame, bg="#050508", bd=1, relief="flat", highlightbackground=app.accent_dim, highlightthickness=1)
+    text_container.pack(fill="both", expand=True, pady=(0, 15))
+
+    scrollbar = ttk.Scrollbar(text_container, orient="vertical")
+    scrollbar.pack(side="right", fill="y")
+
+    text_box = tk.Text(text_container, bg="#050508", fg=app.fg_light, insertbackground=app.accent_glow, selectbackground=app.accent_dim, selectforeground=app.fg_light, font=("Consolas", 10), bd=0, yscrollcommand=scrollbar.set, wrap="word")
+    text_box.pack(side="left", fill="both", expand=True, padx=5, pady=5)
+    scrollbar.config(command=text_box.yview)
+
+    text_box.insert("1.0", details)
+    text_box.config(state="disabled")
+
+    btn_close = tk.Button(
+        inner_frame, text="CLOSE", command=popup.destroy,
+        bg="#2c2c35", fg=app.fg_light, activebackground=app.accent_glow,
+        activeforeground="#101012", bd=0, pady=6, width=12, font=("Segoe UI", 9, "bold")
+    )
+    btn_close.pack(anchor="e")
+
+    def on_hover(e):
+        btn_close.config(bg=app.accent_glow, fg="#101012")
+    def on_leave(e):
+        btn_close.config(bg="#2c2c35", fg=app.fg_light)
+    btn_close.bind("<Enter>", on_hover)
+    btn_close.bind("<Leave>", on_leave)
+
+
 def create_sidebar(app, parent):
+    # Clear cache since we are recreating the sidebar widgets
+    if hasattr(app, '_last_sidebar_state'):
+        del app._last_sidebar_state
+        
     # Left Border Frame (Sidebar: Scenarios)
     app.left_border = tk.Frame(parent, bg=app.accent_dim, bd=1)
     app.left_border.pack(fill="both", expand=True, padx=(15, 5), pady=15)
@@ -15,8 +136,8 @@ def create_sidebar(app, parent):
     sidebar_header = tk.Frame(left_frame, bg=app.bg_panel)
     sidebar_header.pack(fill="x", pady=(0, 10))
     
-    sidebar_title = tk.Label(sidebar_header, text="📂 SCENARIOS DATABASE", fg=app.alert_yellow, bg=app.bg_panel, font=("Segoe UI", 10, "bold"))
-    sidebar_title.pack(side="left")
+    app.sidebar_title = tk.Label(sidebar_header, text="📂 SCENARIOS DATABASE", fg=app.alert_yellow, bg=app.bg_panel, font=("Segoe UI", 10, "bold"))
+    app.sidebar_title.pack(side="left")
     
     btn_refresh = tk.Button(
         sidebar_header, text="🔄", command=app.load_scenarios,
@@ -270,16 +391,52 @@ def create_sidebar(app, parent):
         if not hasattr(app, 'step_status_overrides'):
             app.step_status_overrides = {}
             
-        def show_step_context_menu(event, scenario_name, step_name, step_idx):
+        def show_step_context_menu(event, scenario_name, step_name, step_idx, row_frame):
+            # Reset highlight on all step rows across all cards first
+            for sibling_border in app.custom_scenarios_container.winfo_children():
+                for card_child in sibling_border.winfo_children():
+                    for row_child in card_child.winfo_children():
+                        if isinstance(row_child, tk.Frame) and getattr(row_child, 'step_row_marker', False):
+                            try:
+                                row_child.config(highlightthickness=0, bg="#131317")
+                                for c in row_child.winfo_children():
+                                    c.config(bg="#131317")
+                            except Exception:
+                                pass
+
+            # Highlight selected row frame to look like a cell box
+            row_frame.config(highlightbackground=app.accent_glow, highlightthickness=1, bg="#24123a")
+            for child in row_frame.winfo_children():
+                try:
+                    child.config(bg="#24123a")
+                except Exception:
+                    pass
+
+            def reset_highlight(e=None):
+                try:
+                    if row_frame.winfo_exists():
+                        row_frame.config(highlightthickness=0, bg="#131317")
+                        for child in row_frame.winfo_children():
+                            if child.winfo_exists():
+                                child.config(bg="#131317")
+                except Exception:
+                    pass
+
             menu = tk.Menu(app.root, tearoff=0, bg="#111114", fg=app.fg_light, activebackground=app.accent_glow, activeforeground="#101012", font=("Segoe UI", 9, "bold"))
-            menu.add_command(label="▶ Start Test From Here", command=lambda: app.start_test_flow_to_step(scenario_name, step_idx))
+            menu.bind("<Unmap>", reset_highlight)
+
+            menu.add_command(label="📄 Read Step Details", command=lambda: show_step_details_popup(app, scenario_name, step_name))
             menu.add_separator()
+
             def mark_status(status):
                 if status is None:
                     app.step_status_overrides.pop((scenario_name, step_name), None)
                 else:
                     app.step_status_overrides[(scenario_name, step_name)] = status
+                if hasattr(app, '_last_sidebar_state'):
+                    app._last_sidebar_state = None
                 update_custom_sidebar()
+
             menu.add_command(label="✔ Mark as Success", command=lambda: mark_status("SUCCESS"))
             menu.add_command(label="❌ Mark as Failed", command=lambda: mark_status("FAILED"))
             menu.add_command(label="⏳ Mark as Pending", command=lambda: mark_status(None))
@@ -288,12 +445,17 @@ def create_sidebar(app, parent):
         selected_scenario = None
         def toggle_step_skip(s_name, st_name):
             app.skipped_steps[(s_name, st_name)] = not app.skipped_steps.get((s_name, st_name), False)
+            if hasattr(app, '_last_sidebar_state'):
+                app._last_sidebar_state = None
             update_custom_sidebar()
             
         files = []
         if hasattr(app, 'scenarios_dir') and os.path.exists(app.scenarios_dir):
             files = [f for f in os.listdir(app.scenarios_dir) if f.endswith(".lua")]
             files.sort()
+            
+        if hasattr(app, 'sidebar_title') and app.sidebar_title:
+            app.sidebar_title.config(text=f"📂 SCENARIOS DATABASE ({len(files)})")
             
         selected_idx = 0
         if hasattr(app, 'scenario_listbox'):
@@ -310,7 +472,10 @@ def create_sidebar(app, parent):
         if "system status:" in active_stage_lower:
             active_stage_lower = active_stage_lower.split("system status:")[1].strip()
             
-        current_state = (files, selected_idx, active_stage_lower, getattr(app, 'collapsed_sidebar', False))
+        skipped_tuple = tuple(sorted((k, v) for k, v in getattr(app, 'skipped_steps', {}).items()))
+        overrides_tuple = tuple(sorted((k, v) for k, v in getattr(app, 'step_status_overrides', {}).items()))
+        
+        current_state = (files, selected_idx, active_stage_lower, getattr(app, 'collapsed_sidebar', False), skipped_tuple, overrides_tuple)
         if hasattr(app, '_last_sidebar_state') and app._last_sidebar_state == current_state:
             return
             
@@ -395,20 +560,27 @@ def create_sidebar(app, parent):
                 if "completed" in active_stage_lower:
                     active_idx = len(steps)
                     
+                # Headers for steps
+                if steps:
+                    hdr_row = tk.Frame(card, bg="#131317")
+                    hdr_row.pack(fill="x", pady=(8, 2))
+                    tk.Label(hdr_row, text="[ STEP NAME ]", fg="#6b7280", bg="#131317", font=("Segoe UI", 7, "bold")).pack(side="left", padx=25)
+                    tk.Label(hdr_row, text="[ STATUS ]", fg="#6b7280", bg="#131317", font=("Segoe UI", 7, "bold")).pack(side="right")
+                    tk.Frame(card, bg="#202024", height=1).pack(fill="x", pady=2)
+                    
                 for s_idx, step_name in enumerate(steps):
                     row = tk.Frame(card, bg="#131317")
                     row.pack(fill="x", pady=2)
+                    row.step_row_marker = True
                     
                     is_step_skipped = app.skipped_steps.get((selected_scenario, step_name), False)
-                    cb_text = "■"
+                    cb_text = "☐" if is_step_skipped else "☑"
                     cb_fg = "#4b5563" if is_step_skipped else app.accent_glow
                     
                     cb_lbl = tk.Label(row, text=cb_text, fg=cb_fg, bg="#131317", font=("Segoe UI", 10, "bold"), cursor="hand2")
                     cb_lbl.pack(side="left", padx=(0, 5))
                     
-                    def make_toggle_cb(s_name=selected_scenario, st_name=step_name):
-                        return lambda e: toggle_step_skip(s_name, st_name)
-                    cb_lbl.bind("<Button-1>", make_toggle_cb())
+                    cb_lbl.bind("<Button-1>", lambda e, s=selected_scenario, st=step_name: toggle_step_skip(s, st))
                     
                     is_done = (s_idx < active_idx)
                     is_current = (s_idx == active_idx)
@@ -452,24 +624,57 @@ def create_sidebar(app, parent):
                     status_lbl = tk.Label(row, text=status_text, fg=status_color, bg="#131317", font=("Segoe UI", 8, "bold"))
                     status_lbl.pack(side="right")
                     
+                    # Hover effects
+                    def make_hover_handlers(r_frame):
+                        def on_enter(e):
+                            if r_frame.winfo_exists() and r_frame.cget("highlightthickness") == 0:
+                                r_frame.config(bg="#1c1c24")
+                                for child in r_frame.winfo_children():
+                                    try: child.config(bg="#1c1c24")
+                                    except Exception: pass
+                        def on_leave(e):
+                            if r_frame.winfo_exists() and r_frame.cget("highlightthickness") == 0:
+                                r_frame.config(bg="#131317")
+                                for child in r_frame.winfo_children():
+                                    try: child.config(bg="#131317")
+                                    except Exception: pass
+                        return on_enter, on_leave
+
+                    on_enter, on_leave = make_hover_handlers(row)
+                    row.bind("<Enter>", on_enter)
+                    row.bind("<Leave>", on_leave)
+                    step_lbl.bind("<Enter>", on_enter)
+                    step_lbl.bind("<Leave>", on_leave)
+                    status_lbl.bind("<Enter>", on_enter)
+                    status_lbl.bind("<Leave>", on_leave)
+                    cb_lbl.bind("<Enter>", on_enter)
+                    cb_lbl.bind("<Leave>", on_leave)
+                    
                     # Right-click menu bindings
-                    def make_right_click(s_name=selected_scenario, st_name=step_name, s_idx=s_idx):
-                        return lambda event: show_step_context_menu(event, s_name, st_name, s_idx)
+                    def make_right_click(s_name=selected_scenario, st_name=step_name, s_idx=s_idx, r_frame=row):
+                        return lambda event: show_step_context_menu(event, s_name, st_name, s_idx, r_frame)
                     row.bind("<Button-3>", make_right_click())
                     step_lbl.bind("<Button-3>", make_right_click())
                     status_lbl.bind("<Button-3>", make_right_click())
+                    cb_lbl.bind("<Button-3>", make_right_click())
             
-            # Collect all non-interactive widgets in this card for drag binding
-            drag_widgets = [card_border, card, title_frame, bullet_lbl, title_lbl, desc_lbl]
+            # Collect all non-interactive widgets in this card for selection binding
+            select_widgets = [card_border, card, title_frame, bullet_lbl, title_lbl, desc_lbl]
+            drag_widgets = [title_frame, bullet_lbl, title_lbl]
 
             def make_select(index):
                 return lambda e, idx=index: select_scenario_by_index(idx)
 
-            for w in drag_widgets:
+            for w in select_widgets:
                 w.bind("<Button-1>", make_select(idx), add="+")
+                # Reset cursor for card itself so steps can be clicked normally
+                if w in [card_border, card]:
+                    w.config(cursor="arrow")
+                    
+            for w in drag_widgets:
                 w.config(cursor="fleur")
 
-            # Attach drag-and-drop handlers (add="+" keeps the select binding)
+            # Attach drag-and-drop handlers ONLY to the title bar elements to avoid conflict with steps
             _make_drag_handlers(drag_widgets, idx, name)
 
     app.update_custom_sidebar = update_custom_sidebar

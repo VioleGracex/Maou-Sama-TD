@@ -42,7 +42,7 @@ MonoBehaviour:
   CurrencyReward: 25
   Category: 0
   Rank: 0
-  Tint: {r: 0.5, g: 0.5, b: 0.6, a: 1}
+  Tint: {r: 1, g: 1, b: 1, a: 1}
   VisualYOffset: 0
   BaseVisualHeight: 1
   HpBarYOffset: 2

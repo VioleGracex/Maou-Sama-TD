@@ -505,7 +505,12 @@ namespace MaouSamaTD.Grid
             else DestroyImmediate(edge.GetComponent<Collider>());
             
             var mr = edge.GetComponent<Renderer>();
-            if (mr != null) mr.sharedMaterial = mat;
+            if (mr != null)
+            {
+                mr.sharedMaterial = mat;
+                mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                mr.receiveShadows = false;
+            }
         }
 
         [Button("Set as Spawn Point")]

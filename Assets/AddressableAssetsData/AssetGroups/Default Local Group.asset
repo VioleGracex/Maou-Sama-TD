@@ -77,6 +77,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - Shop
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5ce199bd46c65b4e9449c8ec07eb68b
+    m_Address: WallTileMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: eea7c31e2f7cad4459c4b770461f2314
     m_Address: PoolPartyPack_Example
     m_ReadOnly: 0

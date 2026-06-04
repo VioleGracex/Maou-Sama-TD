@@ -1,7 +1,7 @@
--- Scenario 4: Play Myself (Free Play: Level 1 & Level 2)
+-- Scenario 7: Tutorial to Gacha Pull (Full Progression)
 -- Full flow: boot → loading screen Clear Cache → confirm deletion → Start Game →
--- ascension → intro dialogue → choose Play Myself → deploy Ignis → speed up x2 →
--- wait for Level 1 victory → load Level 2 → Start Level 2 → speed up x2 → wait for Level 2 victory.
+-- ascension → intro dialogue → choose Play Tutorial → play Level 1 Tutorial →
+-- victory → next level → play Level 2 Tutorial → victory → lobby summon → perform gacha pull.
 
 local function run_tests()
 
@@ -94,9 +94,9 @@ local function run_tests()
     wait(7)
 
     -- ============================================================
-    -- STAGE 5: Intro Dialogue — Advance or Skip
+    -- STAGE 4: Intro Dialogue
     -- ============================================================
-    set_stage("5. Intro Dialogue")
+    set_stage("4. Intro Dialogue")
     log_test("Intro Dialogue", "STARTING", "Attempting to skip or advance tutorial intro dialogues...")
 
     local skip_btn = wait_template("FullSkipButton", 6)
@@ -117,139 +117,194 @@ local function run_tests()
     end
 
     -- ============================================================
-    -- STAGE 6: Tutorial Choice — Play Myself
+    -- STAGE 5: Choose Tutorial
     -- ============================================================
-    set_stage("6. Tutorial Choice")
-    log_test("Play Myself", "STARTING", "Waiting for 'Play Myself' prompt...")
+    set_stage("5. Choose Tutorial")
+    log_test("Choose Tutorial", "STARTING", "Selecting Play Tutorial mode...")
 
-    local play_myself_btn = wait_template("PlayMyself_Btn", 25)
-    if not play_myself_btn then
-        play_myself_btn = wait_template("NoButton", 5)
+    local play_tut_btn = wait_template("PlayTutorial_Btn", 25)
+    if not play_tut_btn then
+        play_tut_btn = wait_template("YesButton", 5)
     end
-    if play_myself_btn then
-        click(play_myself_btn.x, play_myself_btn.y)
-        log_test("Play Myself", "PASS", "'Play Myself' clicked. Custom game starting.")
+    if play_tut_btn then
+        click(play_tut_btn.x, play_tut_btn.y)
+        log_test("Choose Tutorial", "PASS", "Play Tutorial mode selected.")
     else
-        log_test("Play Myself", "FAIL", "'Play Myself' button did not appear.")
+        log_test("Choose Tutorial", "FAIL", "Tutorial choice button not found.")
         return
     end
 
     wait(2.5)
 
     -- ============================================================
-    -- STAGE 8: Drag-Drop Ignis onto the Grid
+    -- STAGE 6: Play Tutorial Level 1
     -- ============================================================
-    set_stage("8. Deploy Ignis")
-    log_test("Deploy Ignis", "STARTING", "Locating Ignis unit card in hand area...")
+    set_stage("6. Tutorial Level 1")
+    log_test("Tutorial Level 1", "STARTING", "Deploying Ignis on grid...")
 
     local ignis_card = wait_template("ignis_card", 12)
     if ignis_card then
         drag(ignis_card.x, ignis_card.y, 555, 240, 1.0)
         wait(2.5)
-        log_test("Deploy Ignis", "PASS", "Ignis dragged and deployed to grid.")
+        log_test("Tutorial Level 1", "PASS", "Ignis deployed to grid.")
     else
-        log_test("Deploy Ignis", "FAIL", "Ignis card not found in hand. Aborting.")
+        log_test("Tutorial Level 1", "FAIL", "Ignis card not found.")
         return
     end
 
-    -- Post-placement dialogue skip / click
-    wait(1.0)
+    -- Dialogue advance post placement
     click(850, 490)
     wait(1.5)
 
-    -- ============================================================
-    -- STAGE 9: Speed Up Game (× 2 presses)
-    -- ============================================================
-    set_stage("9. Speed Up Game")
-    log_test("Speed Up", "STARTING", "Pressing speed-up button twice to increase game speed...")
-
-    local spd_btn = wait_template("SpeedButton", 5)
+    -- Speed up
+    local spd_btn = wait_template("SpeedButton", 4)
     if spd_btn then
-        click(spd_btn.x, spd_btn.y)
-        wait(0.8)
-        click(spd_btn.x, spd_btn.y)
-        wait(0.5)
-        log_test("Speed Up", "PASS", "Speed-up button pressed twice (template match).")
-    else
-        click(910, 30)
-        wait(0.8)
-        click(910, 30)
-        wait(0.5)
-        log_test("Speed Up", "PASS", "Speed-up button pressed twice (fallback coordinate).")
+        click(spd_btn.x, spd_btn.y) wait(0.5)
+        click(spd_btn.x, spd_btn.y) wait(0.5)
     end
 
-    -- ============================================================
-    -- STAGE 10: Wave 1 — Combat (wait for victory)
-    -- ============================================================
-    set_stage("10. Wave 1 — Combat")
-    log_test("Wave 1", "STARTING", "Running wave combat at 2x speed — waiting for Level 1 victory...")
+    log_test("Tutorial Level 1", "INFO", "Waiting for ultimate charge tutorial pause...")
+    wait(12)
 
-    -- ============================================================
-    -- STAGE 13: Victory Screen
-    -- ============================================================
-    set_stage("13. Level 1 Victory")
-    log_test("Victory", "STARTING", "Waiting for Level 1 victory screen...")
+    -- Dismiss ultimate dialogue
+    local ult_dialogue = wait_template("ult_tutorial_dialogue", 15)
+    if ult_dialogue then
+        click(ult_dialogue.x, ult_dialogue.y)
+        wait(1.5)
+    else
+        click(850, 490)
+        wait(1.5)
+    end
 
+    -- Trigger Ultimate
+    click(555, 240)
+    wait(2.0)
+    local ult_btn = wait_template("Ult_Btn", 8)
+    if ult_btn then
+        click(ult_btn.x, ult_btn.y)
+        log_test("Tutorial Level 1", "PASS", "Ignis ultimate activated.")
+    else
+        click(870, 450)
+        log_test("Tutorial Level 1", "INFO", "Activated ultimate (fallback coordinate).")
+    end
+
+    wait(2)
+
+    -- Wait for victory screen
     local next_lvl_btn = wait_template("NextLevelButton", 60)
     if not next_lvl_btn then
-        next_lvl_btn = wait_template("victory_next_level", 10)
+        next_lvl_btn = wait_template("victory_next_level", 5)
     end
     if next_lvl_btn then
         click(next_lvl_btn.x, next_lvl_btn.y)
-        log_test("Victory", "PASS", "Level 1 cleared! 'Next Level' clicked.")
+        log_test("Tutorial Level 1", "PASS", "Level 1 victory clicked. Loading Level 2...")
     else
-        log_test("Victory", "FAIL", "Victory / Next Level button not found within timeout.")
+        log_test("Tutorial Level 1", "FAIL", "Victory screen not found.")
         return
     end
 
     wait(7)
 
     -- ============================================================
-    -- STAGE 14: Level 2 — Start Battle
+    -- STAGE 7: Play Tutorial Level 2
     -- ============================================================
-    set_stage("14. Level 2 Start")
-    log_test("Level 2 Start", "STARTING", "Waiting for Level 2 battle start screen...")
+    set_stage("7. Tutorial Level 2")
+    log_test("Tutorial Level 2", "STARTING", "Starting Level 2 combat wave...")
 
     local start_battle = wait_template("start_battle_btn", 25)
     if start_battle then
         click(start_battle.x, start_battle.y)
-        log_test("Level 2 Start", "PASS", "Level 2 battle started successfully.")
+        log_test("Tutorial Level 2", "PASS", "Level 2 battle waves started.")
     else
-        log_test("Level 2 Start", "FAIL", "Level 2 Start Battle button not found.")
+        log_test("Tutorial Level 2", "FAIL", "Start battle button not found.")
         return
     end
 
-    -- ============================================================
-    -- STAGE 15: Level 2 Combat (wait for victory)
-    -- ============================================================
-    set_stage("15. Level 2 Combat")
-    log_test("Level 2 Combat", "STARTING", "Running Level 2 combat at 2x speed — waiting for victory...")
+    wait(15)
 
-    -- ============================================================
-    -- STAGE 16: Level 2 Victory Screen
-    -- ============================================================
-    set_stage("16. Level 2 Victory")
-    log_test("Level 2 Victory", "STARTING", "Waiting for Level 2 victory screen...")
+    -- Activate Ultimate
+    click(555, 240)
+    wait(1.5)
+    local ult_btn2 = wait_template("Ult_Btn", 8)
+    if ult_btn2 then
+        click(ult_btn2.x, ult_btn2.y)
+    else
+        click(870, 450)
+    end
 
+    -- Wait for victory screen
     local next_lvl_btn2 = wait_template("NextLevelButton", 60)
     if not next_lvl_btn2 then
-        next_lvl_btn2 = wait_template("victory_next_level", 10)
+        next_lvl_btn2 = wait_template("victory_next_level", 5)
     end
     if next_lvl_btn2 then
         click(next_lvl_btn2.x, next_lvl_btn2.y)
-        log_test("Level 2 Victory", "PASS", "Level 2 cleared! Next Level/Confirm clicked.")
+        log_test("Tutorial Level 2", "PASS", "Level 2 cleared. Loading Gacha summon tutorial...")
     else
-        log_test("Level 2 Victory", "FAIL", "Level 2 victory screen not found within timeout.")
+        log_test("Tutorial Level 2", "FAIL", "Victory screen not found.")
         return
     end
 
-    wait(5)
+    wait(6)
+
+    -- ============================================================
+    -- STAGE 8: Gacha Tutorial Pull
+    -- ============================================================
+    set_stage("8. Gacha Tutorial")
+    log_test("Gacha Tutorial", "STARTING", "Locating Summon button in Lobby...")
+
+    -- Wait for lobby summon tab button
+    local summon_btn = wait_template("Summon_Btn", 20)
+    if not summon_btn then
+        summon_btn = wait_template("Gacha_Btn", 5)
+    end
+    if summon_btn then
+        click(summon_btn.x, summon_btn.y)
+        log_test("Gacha Tutorial", "PASS", "Summon tab opened.")
+    else
+        click(480, 500) -- Fallback summon tab click
+        log_test("Gacha Tutorial", "INFO", "Clicked summon tab area (fallback coordinate).")
+    end
+
+    wait(3)
+
+    -- Click Single Pull button
+    local pull_one_btn = wait_template("PullOne_Btn", 10)
+    if not pull_one_btn then
+        pull_one_btn = wait_template("SummonOne_Btn", 5)
+    end
+    if pull_one_btn then
+        click(pull_one_btn.x, pull_one_btn.y)
+        log_test("Gacha Tutorial", "PASS", "Performed single gacha pull.")
+    else
+        click(480, 400) -- Fallback pull area
+        log_test("Gacha Tutorial", "INFO", "Clicked pull area (fallback coordinate).")
+    end
+
+    wait(5) -- Wait for summon reveal animation
+
+    -- Click anywhere to dismiss reveal
+    click(480, 270)
+    wait(2)
+
+    -- Close/Confirm pull
+    local confirm_gacha = wait_template("ConfirmButton", 10)
+    if not confirm_gacha then
+        confirm_gacha = wait_template("YesButton", 5)
+    end
+    if confirm_gacha then
+        click(confirm_gacha.x, confirm_gacha.y)
+    else
+        click(480, 480)
+    end
+
+    wait(2)
 
     -- ============================================================
     -- DONE
     -- ============================================================
     set_stage("Completed")
-    log_test("Test Suite", "PASS", "Scenario 4 — Play Myself (Level 1 & 2) completed successfully!")
+    log_test("Test Suite", "PASS", "Scenario 7 — Gacha Pull Tutorial completed successfully!")
 end
 
 run_tests()

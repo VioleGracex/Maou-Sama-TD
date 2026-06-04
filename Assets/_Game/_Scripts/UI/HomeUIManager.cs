@@ -122,25 +122,16 @@ namespace MaouSamaTD.UI.MainMenu
             if (_saveManager.CurrentData.GachaTutorialShown) yield break;
             if (!_saveManager.IsLevelCompleted("1-2")) yield break;
 
-            Debug.Log("[HomeUIManager] Level 2 cleared – starting Gacha tutorial flow.");
+            Debug.Log("[HomeUIManager] Level 2 cleared – starting Gacha tutorial flow directly.");
 
-            if (_manifestButtonRect != null && _tutorialBlocker != null)
+            // Hide the navigation overlay so the user cannot navigate away
+            if (_navOverlay != null)
             {
-                // Step 1: Show blocker with a hole over the Manifest button
-                _tutorialBlocker.ShowBlockerWithTarget(_manifestButtonRect);
+                _navOverlay.gameObject.SetActive(false);
+            }
 
-                // Step 2: Wire a one-shot click on the Manifest button to open tutorial gacha
-                if (_btnManifest != null)
-                {
-                    _btnManifest.onClick.RemoveAllListeners();
-                    _btnManifest.onClick.AddListener(StartGachaTutorialPull);
-                }
-            }
-            else
-            {
-                // No blocker configured – jump straight into tutorial mode
-                StartGachaTutorialPull();
-            }
+            // Transition directly to Gacha Panel in tutorial mode
+            StartGachaTutorialPull();
         }
 
         private void StartGachaTutorialPull()
@@ -169,6 +160,11 @@ namespace MaouSamaTD.UI.MainMenu
             gachaPanel.OpenInTutorialMode(_tutorialBlocker, () =>
             {
                 Debug.Log("[HomeUIManager] Gacha tutorial complete – welcome to Manifest Vassals!");
+                // Restore the navigation overlay after tutorial completes
+                if (_navOverlay != null)
+                {
+                    _navOverlay.gameObject.SetActive(true);
+                }
             });
         }
 
@@ -335,14 +331,14 @@ namespace MaouSamaTD.UI.MainMenu
         {
             if (_saveManager == null || _saveManager.CurrentData == null) return;
 
-            // Logic: All buttons except Conquest are disabled until Level 1 ("1-1") is completed.
-            // Level 1-1 completed -> Progression to Level 2.
-            bool level1Cleared = _saveManager.IsLevelCompleted("1-1");
+            // Logic: All buttons except Conquest are disabled until Level 2 ("1-2") is completed.
+            // Level 1-2 completed -> Progression to Level 3.
+            bool level2Cleared = _saveManager.IsLevelCompleted("1-2");
             
-            // If Level 1 is not cleared, we restrict access
-            if (!level1Cleared)
+            // If Level 2 is not cleared, we restrict access
+            if (!level2Cleared)
             {
-                Debug.Log("[HomeUIManager] Level 1-1 not completed. Locking non-essential buttons.");
+                Debug.Log("[HomeUIManager] Level 1-2 not completed. Locking non-essential buttons.");
                 
                 if (_btnCohorts != null) _btnCohorts.interactable = false;
                 if (_btnVassals != null) _btnVassals.interactable = false;
@@ -360,17 +356,30 @@ namespace MaouSamaTD.UI.MainMenu
                 if (_navOverlay != null)
                 {
                     _navOverlay.gameObject.SetActive(false);
-                    Debug.Log("[HomeUIManager] Navigation Overlay disabled until Level 1-1 completion.");
+                    Debug.Log("[HomeUIManager] Navigation Overlay disabled until Level 1-2 completion.");
                 }
             }
             else
             {
-                Debug.Log("[HomeUIManager] Level 1-1 completed. All systems active.");
-                // Ensure they are interactable (default)
+                Debug.Log("[HomeUIManager] Level 1-2 completed. All systems active.");
                 if (_btnCohorts != null) _btnCohorts.interactable = true;
-                // ... and so on, but usually they start interactable in prefab.
+                if (_btnVassals != null) _btnVassals.interactable = true;
+                if (_btnChambers != null) _btnChambers.interactable = true;
+                if (_btnMandates != null) _btnMandates.interactable = true;
+                if (_btnThrone != null) _btnThrone.interactable = true;
+                if (_btnTreasury != null) _btnTreasury.interactable = true;
+                if (_btnVault != null) _btnVault.interactable = true;
+                if (_btnRanks != null) _btnRanks.interactable = true;
+                if (_btnDaily != null) _btnDaily.interactable = true;
+                if (_btnGrimoire != null) _btnGrimoire.interactable = true;
+                if (_btnManifest != null) _btnManifest.interactable = true;
                 
-                if (_navOverlay != null) _navOverlay.gameObject.SetActive(true);
+                // If the Gacha Tutorial is pending/active, keep the overlay hidden
+                bool isGachaTutorialPending = !_saveManager.CurrentData.GachaTutorialShown && _saveManager.IsLevelCompleted("1-2");
+                if (_navOverlay != null && !isGachaTutorialPending)
+                {
+                    _navOverlay.gameObject.SetActive(true);
+                }
             }
         }
 

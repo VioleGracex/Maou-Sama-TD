@@ -25,6 +25,8 @@ class ConfigManager:
         self.load()
 
     def get_default_games(self):
+        base_dir = os.path.dirname(self.config_path)
+        default_mapping = os.path.normpath(os.path.join(base_dir, "mappings", "maou_sama_td_mappings.json"))
         return [
             {
                 "id": "maou_sama_td",
@@ -37,7 +39,8 @@ class ConfigManager:
                     "%USERPROFILE%/AppData/LocalLow/Ouiki.Dev/Maou-Sama-TD/player_save.json"
                 ],
                 "log_path": "%USERPROFILE%/AppData/LocalLow/Ouiki.Dev/Maou-Sama-TD/Player.log",
-                "active_exe_path": ""
+                "active_exe_path": "",
+                "ui_mapping_path": default_mapping
             }
         ]
 
@@ -62,7 +65,7 @@ class ConfigManager:
     def load(self):
         if os.path.exists(self.config_path):
             try:
-                with open(self.config_path, "r") as f:
+                with open(self.config_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     self.game_exe_path = data.get("game_exe_path", "")
                     self.record_test = data.get("record_test", True)
@@ -85,6 +88,15 @@ class ConfigManager:
         # Ensure default games are loaded if empty
         if not self.games:
             self.games = self.get_default_games()
+        else:
+            # Sync missing keys from defaults
+            defaults = self.get_default_games()
+            for g in self.games:
+                for dg in defaults:
+                    if g.get("id") == dg.get("id"):
+                        for k, v in dg.items():
+                            if k not in g:
+                                g[k] = v
             
         # Synced compatibility for game_exe_path
         active_game = self.get_active_game()
@@ -100,7 +112,7 @@ class ConfigManager:
             if active_game:
                 active_game["active_exe_path"] = self.game_exe_path
                 
-            with open(self.config_path, "w") as f:
+            with open(self.config_path, "w", encoding="utf-8") as f:
                 json.dump({
                     "game_exe_path": self.game_exe_path,
                     "record_test": self.record_test,

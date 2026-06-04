@@ -21,15 +21,16 @@ namespace MaouSamaTD.VFX
         public void Initialize(string itemID, Vector3 startPosition)
         {
             _itemID = itemID;
-            transform.position = startPosition;
+            // Float the loot visual above the ground/tiles to prevent clipping
+            transform.position = startPosition + Vector3.up * 0.6f;
 
             _spriteRenderer = GetComponent<SpriteRenderer>();
             if (_spriteRenderer == null)
             {
                 _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-                _spriteRenderer.sortingLayerName = "UI";
-                _spriteRenderer.sortingOrder = 100;
             }
+            _spriteRenderer.sortingLayerName = "UI";
+            _spriteRenderer.sortingOrder = 100;
             _spriteRenderer.color = Color.white;
 
             _mainCam = Camera.main;
@@ -70,7 +71,8 @@ namespace MaouSamaTD.VFX
                             // Make it pop up and scale
                             float jumpPower = Random.Range(1.5f, 2.5f);
                             float duration = 0.5f;
-                            Vector3 targetPos = transform.position + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+                            // Jump on the horizontal XZ plane instead of vertical XY plane to prevent clipping underground
+                            Vector3 targetPos = transform.position + new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
                             
                             Sequence seq = DOTween.Sequence();
                             seq.SetUpdate(true); // Run in unscaled time

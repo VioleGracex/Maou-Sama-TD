@@ -19,8 +19,8 @@ class AboutPage(tk.Frame):
         spec_text = (
             "SYSTEM DIAGNOSTIC SIGNATURE:\n"
             "----------------------------\n"
-            "Application   : Sylvan-HUD Game Salavan Panel\n"
-            "Version       : v2.9.0 (Production Release Candidate)\n"
+            "Application   : Salavan-HUD Game Salavan Panel\n"
+            "Version       : v3.0.0 (Production Release Candidate)\n"
             "Design Style  : Ultra-Dark Charcoal Gaming Dashboard\n\n"
             "PLATFORM CAPABILITIES:\n"
             "---------------------\n"

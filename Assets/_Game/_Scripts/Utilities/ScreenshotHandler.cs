@@ -28,7 +28,8 @@ namespace MaouSamaTD.Utilities
 
         public void TriggerCapture()
         {
-            string folderPath = Path.Combine(Application.dataPath, "..", _folderName);
+            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+            string folderPath = Path.Combine(documentsPath, "Maou-Sama-TD", "salavan", "Screenshots");
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);

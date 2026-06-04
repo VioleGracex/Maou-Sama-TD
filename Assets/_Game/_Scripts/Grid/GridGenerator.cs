@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using MaouSamaTD.Levels;
 
 
@@ -167,6 +169,23 @@ namespace MaouSamaTD.Grid
                         {
                             Material wallMat = _mapData.TileWallVisuals.WallMaterial;
                             if (wallMat == null) wallMat = _mapData.WallVisuals.WallMaterial;
+                            if (wallMat == null)
+                            {
+#if UNITY_EDITOR
+                                if (!Application.isPlaying)
+                                {
+                                    wallMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Visuals/Map/Materials/WallTileMat.mat");
+                                }
+                                else
+#endif
+                                {
+                                    var handle = Addressables.LoadAssetAsync<Material>("WallTileMat");
+                                    if (handle.IsValid())
+                                    {
+                                        wallMat = handle.WaitForCompletion();
+                                    }
+                                }
+                            }
                             if (wallMat != null) tile.SetMaterial(wallMat);
 
                             tile.transform.localScale = Vector3.Scale(tile.transform.localScale, _mapData.TileWallVisuals.WallScale);
@@ -287,6 +306,24 @@ namespace MaouSamaTD.Grid
                 _wallSE = _mapData.Walls.SE;
             }
 
+            if (wallMaterial == null)
+            {
+#if UNITY_EDITOR
+                if (!Application.isPlaying)
+                {
+                    wallMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Visuals/Map/Materials/WallTileMat.mat");
+                }
+                else
+#endif
+                {
+                    var handle = Addressables.LoadAssetAsync<Material>("WallTileMat");
+                    if (handle.IsValid())
+                    {
+                        wallMaterial = handle.WaitForCompletion();
+                    }
+                }
+            }
+
             bool cascadeHoles = _mapData != null ? _mapData.WallCascadeOnHoles : true;
 
             float wallRealHeight = cellSize * globalWallScale.y;
@@ -349,11 +386,21 @@ namespace MaouSamaTD.Grid
                     var renderer = wall.GetComponentInChildren<Renderer>();
                     if (renderer != null)
                     {
-                        renderer.material = wallMaterial;
-                        // Fix Texture Stretching
+                        Material instanceMat = new Material(wallMaterial);
+                        renderer.sharedMaterial = instanceMat;
+
                         Vector3 worldScale = wall.transform.lossyScale;
-                        float horizontalTiling = (scaleMultiplier.x > scaleMultiplier.z) ? worldScale.x : worldScale.z;
-                        renderer.material.mainTextureScale = new Vector2(horizontalTiling, worldScale.y);
+                        float horizontalTiling = (scaleMultiplier.x > scaleMultiplier.z) ? worldScale.x : scaleMultiplier.z;
+                        Vector2 tiling = new Vector2(horizontalTiling, worldScale.y);
+
+                        if (instanceMat.HasProperty("_BaseMap"))
+                        {
+                            instanceMat.SetTextureScale("_BaseMap", tiling);
+                        }
+                        else if (instanceMat.HasProperty("_MainTex"))
+                        {
+                            instanceMat.SetTextureScale("_MainTex", tiling);
+                        }
                     }
                 }
 
@@ -361,38 +408,64 @@ namespace MaouSamaTD.Grid
                 if (_mapData != null)
                 {
                     int wallOvIdx = _mapData.WallOverrides.FindIndex(o => o.Side == side && o.Index == index);
-                    if (wallOvIdx != -1)
+                    var renderer = wall.GetComponentInChildren<Renderer>();
+                    if (renderer != null)
                     {
-                        var wallOverride = _mapData.WallOverrides[wallOvIdx];
-                        // Texture Override
-                        if (wallOverride.TextureOverride != null)
+                        Texture2D texToApply = null;
+
+                        if (wallOvIdx != -1)
                         {
-                            var renderer = wall.GetComponentInChildren<Renderer>();
-                            if (renderer != null) renderer.material.mainTexture = wallOverride.TextureOverride;
+                            var wallOverride = _mapData.WallOverrides[wallOvIdx];
+                            if (wallOverride.TextureOverride != null)
+                            {
+                                texToApply = wallOverride.TextureOverride;
+                            }
+                            else if (sideTexture != null)
+                            {
+                                texToApply = sideTexture;
+                            }
+
+                            // Decoration Overrides
+                            if (wallOverride.Decorations != null)
+                            {
+                                foreach (var deco in wallOverride.Decorations)
+                                {
+                                    if (deco.Prefab == null) continue;
+                                    GameObject d = Instantiate(deco.Prefab, wall.transform);
+                                    d.transform.localPosition = deco.Offset;
+                                    d.transform.localRotation = Quaternion.Euler(deco.Rotation);
+                                    d.transform.localScale = deco.Scale;
+                                }
+                            }
                         }
                         else if (sideTexture != null)
                         {
-                            var renderer = wall.GetComponentInChildren<Renderer>();
-                            if (renderer != null) renderer.material.mainTexture = sideTexture;
+                            texToApply = sideTexture;
                         }
 
-                        // Decoration Overrides
-                        if (wallOverride.Decorations != null)
+                        if (texToApply != null)
                         {
-                            foreach (var deco in wallOverride.Decorations)
+                            Material instanceMat;
+                            if (renderer.sharedMaterial == null || !renderer.sharedMaterial.name.Contains("(Instance)"))
                             {
-                                if (deco.Prefab == null) continue;
-                                GameObject d = Instantiate(deco.Prefab, wall.transform);
-                                d.transform.localPosition = deco.Offset;
-                                d.transform.localRotation = Quaternion.Euler(deco.Rotation);
-                                d.transform.localScale = deco.Scale;
+                                Material baseMat = renderer.sharedMaterial != null ? renderer.sharedMaterial : wallMaterial;
+                                instanceMat = new Material(baseMat != null ? baseMat : new Material(Shader.Find("Standard")));
+                                renderer.sharedMaterial = instanceMat;
+                            }
+                            else
+                            {
+                                instanceMat = renderer.sharedMaterial;
+                            }
+
+                            if (instanceMat.HasProperty("_BaseMap"))
+                            {
+                                instanceMat.SetTexture("_BaseMap", texToApply);
+                            }
+                            else if (instanceMat.HasProperty("_MainTex"))
+                            {
+                                instanceMat.SetTexture("_MainTex", texToApply);
                             }
                         }
-                    }
-                    else if (sideTexture != null)
-                    {
-                        var renderer = wall.GetComponentInChildren<Renderer>();
-                        if (renderer != null) renderer.material.mainTexture = sideTexture;
                     }
                 }
 
@@ -597,6 +670,19 @@ namespace MaouSamaTD.Grid
             {
                 if (wall != null)
                 {
+                    if (!Application.isPlaying)
+                    {
+                        var renderer = wall.GetComponentInChildren<Renderer>();
+                        if (renderer != null)
+                        {
+                            Material mat = renderer.sharedMaterial;
+                            if (mat != null && mat.name.Contains("(Instance)"))
+                            {
+                                DestroyImmediate(mat);
+                            }
+                        }
+                    }
+
                     if (Application.isPlaying) Destroy(wall);
                     else DestroyImmediate(wall);
                 }

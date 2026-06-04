@@ -62,6 +62,7 @@ namespace AutomatedTesting.Editor
         private void OnEnable()
         {
             EditorApplication.update += OnEditorUpdate;
+            exportPath = $"Assets/UIConfig_V{PlayerSettings.bundleVersion}.json";
         }
 
         private void OnDisable()
@@ -95,7 +96,8 @@ namespace AutomatedTesting.Editor
             exportPath = EditorGUILayout.TextField("Export Path", exportPath);
             if (GUILayout.Button("Browse", GUILayout.Width(70)))
             {
-                string path = EditorUtility.SaveFilePanel("Save Export File", "Assets", "UIConfig", "json");
+                string defaultName = $"UIConfig_V{PlayerSettings.bundleVersion}";
+                string path = EditorUtility.SaveFilePanel("Save Export File", "Assets", defaultName, "json");
                 if (!string.IsNullOrEmpty(path))
                 {
                     // Make it relative to project folder if possible
@@ -550,14 +552,37 @@ namespace AutomatedTesting.Editor
 
         private void ExportData()
         {
-            UIConfigWrapper wrapper = new UIConfigWrapper();
-            wrapper.entries = capturedElements;
-            string json = JsonUtility.ToJson(wrapper, true);
+            if (string.IsNullOrEmpty(exportPath))
+            {
+                EditorUtility.DisplayDialog("Export Failed", "Export path cannot be empty.", "OK");
+                return;
+            }
 
-            File.WriteAllText(exportPath, json);
-            AssetDatabase.Refresh();
-            
-            Debug.Log($"Successfully exported {capturedElements.Count} UI coordinates to {exportPath}");
+            if (File.Exists(exportPath))
+            {
+                if (!EditorUtility.DisplayDialog("File Already Exists", $"The file '{exportPath}' already exists. Do you want to overwrite it?", "Yes", "No"))
+                {
+                    return;
+                }
+            }
+
+            try
+            {
+                UIConfigWrapper wrapper = new UIConfigWrapper();
+                wrapper.entries = capturedElements;
+                string json = JsonUtility.ToJson(wrapper, true);
+
+                File.WriteAllText(exportPath, json);
+                AssetDatabase.Refresh();
+
+                EditorUtility.DisplayDialog("Export Successful", $"Successfully exported {capturedElements.Count} UI coordinates to {exportPath}", "OK");
+                Debug.Log($"Successfully exported {capturedElements.Count} UI coordinates to {exportPath}");
+            }
+            catch (System.Exception e)
+            {
+                EditorUtility.DisplayDialog("Export Failed", $"Failed to export UI coordinates: {e.Message}", "OK");
+                Debug.LogError($"Failed to export UI coordinates: {e}");
+            }
         }
     }
 }

@@ -112,22 +112,40 @@ class LibraryPage(tk.Frame):
 
     def on_canvas_resize(self, event):
         self.canvas.itemconfig(self.canvas_window, width=event.width)
-        self.populate_library()
+        self.populate_library(force_rebuild=False)
 
     def on_mousewheel(self, event):
         bbox = self.canvas.bbox("all")
         if bbox and (bbox[3] - bbox[1]) > self.canvas.winfo_height():
             self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
-    def populate_library(self):
+    def populate_library(self, force_rebuild=True):
+        # Responsive columns count
+        width = self.canvas.winfo_width()
+        cols = max(1, width // 260) # Adapt to card width 230 + padx
+
+        if self.cards and not force_rebuild:
+            # Re-grid existing cards without destroying/recreating them
+            visible_index = 0
+            query = self.search_var.get().strip().lower()
+            for card in self.cards:
+                if query in card.title.lower():
+                    r = visible_index // cols
+                    c = visible_index % cols
+                    card.grid(row=r, column=c, padx=12, pady=12, sticky="nsew")
+                    visible_index += 1
+                else:
+                    card.grid_remove()
+            # Configure weights
+            for i in range(cols):
+                self.cards_frame.columnconfigure(i, weight=1)
+            return
+
         # Clear previous cards
         for c in self.cards:
             c.destroy()
         self.cards.clear()
 
-        # Responsive columns count
-        width = self.canvas.winfo_width()
-        cols = max(1, width // 260) # Adapt to card width 230 + padx
         games = self.app.config.games
         
         for index, g in enumerate(games):
@@ -202,6 +220,19 @@ class LibraryPage(tk.Frame):
         )
         proc_lbl.pack(anchor="w", pady=(2, 0))
 
+        # Count scenarios
+        scenarios_dir = os.path.join(self.app.base_dir, "scenarios", game_id)
+        scenarios_count = 0
+        if os.path.exists(scenarios_dir):
+            scenarios_count = len([f for f in os.listdir(scenarios_dir) if f.endswith(".lua")])
+            
+        scenarios_lbl = tk.Label(
+            meta_frame, text=f"Scenarios Registered: {scenarios_count}", 
+            fg=self.app.accent_glow, bg="#131317", 
+            font=("Segoe UI", 8, "bold")
+        )
+        scenarios_lbl.pack(anchor="w", pady=(2, 0))
+
         # Button Frame packed at bottom right
         btn_frame = tk.Frame(meta_frame, bg="#131317")
         btn_frame.pack(fill="x", side="bottom", pady=(0, 2))
@@ -235,7 +266,7 @@ class LibraryPage(tk.Frame):
             self.app.show_details_page(game_id)
 
         # Bind hover and scroll to components
-        for w in (card, thumb_canvas, meta_frame, title_lbl, proc_lbl, btn_frame):
+        for w in (card, thumb_canvas, meta_frame, title_lbl, proc_lbl, scenarios_lbl, btn_frame):
             w.bind("<Enter>", on_enter_card)
             w.bind("<Leave>", on_leave_card)
             w.bind("<Button-1>", on_click)

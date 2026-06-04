@@ -29,7 +29,8 @@ namespace MaouSamaTD.Managers
 
         public void Capture()
         {
-            string directory = Path.Combine(Application.persistentDataPath, _folderName);
+            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+            string directory = Path.Combine(documentsPath, "Maou-Sama-TD", "salavan", "Screenshots");
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);

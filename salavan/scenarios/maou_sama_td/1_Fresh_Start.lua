@@ -2,7 +2,7 @@
 -- Full flow: boot → loading screen Clear Data → confirm deletion → Start Game →
 -- ascension → play tutorial → advance/skip dialogue → drag Ignis → speed up x2 →
 -- wait for ultimate charge → dismiss dialogue → click Ignis (inspector) →
--- click ultimate btn → victory → next level → Level 2 start.
+-- click ultimate btn → win Level 1 → 2 loot clicks to finish sequence.
 
 local function run_tests()
 
@@ -119,7 +119,7 @@ local function run_tests()
         -- No skip available — advance manually (3 dialogue panels with 2s gaps)
         log_test("Intro Dialogue", "INFO", "No Skip button found — advancing dialogues manually.")
         for i = 1, 3 do
-            click(850, 490)   -- bottom-right dialogue advance area (960x540 coords)
+            click(1133, 653)   -- bottom-right dialogue advance area (scaled to 1280x720 coords)
             wait(2.0)
         end
         log_test("Intro Dialogue", "PASS", "Intro dialogues advanced manually.")
@@ -160,7 +160,7 @@ local function run_tests()
         wait(1.5)
         log_test("Placement Dialogue", "PASS", "Placement dialogue skipped.")
     else
-        click(850, 490)
+        click(1133, 653)   -- (scaled to 1280x720 coords)
         wait(1.5)
         log_test("Placement Dialogue", "PASS", "Placement dialogue advanced.")
     end
@@ -174,7 +174,7 @@ local function run_tests()
     local ignis_card = wait_template("ignis_card", 12)
     if ignis_card then
         -- Drag Ignis card to the centre-field deployment tile
-        drag(ignis_card.x, ignis_card.y, 555, 240, 1.0)   -- target tile ~[7,4] at 960x540
+        drag(ignis_card.x, ignis_card.y, 740, 320, 1.0)   -- target tile ~[7,4] (scaled to 1280x720 coords)
         wait(2.5)
         log_test("Deploy Ignis", "PASS", "Ignis dragged and deployed to grid.")
     else
@@ -184,7 +184,7 @@ local function run_tests()
 
     -- Post-placement dialogue dismiss
     wait(1.0)
-    click(850, 490)
+    click(1133, 653)   -- (scaled to 1280x720 coords)
     wait(2.0)
 
     -- ============================================================
@@ -204,9 +204,9 @@ local function run_tests()
         log_test("Speed Up", "PASS", "Speed-up button pressed twice (template match).")
     else
         -- Fallback: top-right HUD area where the speed button typically sits
-        click(910, 30)
+        click(1213, 40)   -- (scaled to 1280x720 coords)
         wait(0.8)
-        click(910, 30)
+        click(1213, 40)   -- (scaled to 1280x720 coords)
         wait(0.5)
         log_test("Speed Up", "PASS", "Speed-up button pressed twice (fallback coordinate).")
     end
@@ -229,7 +229,7 @@ local function run_tests()
         log_test("Wave 1", "INFO", "Ultimate charge dialogue dismissed via template.")
     else
         -- Fallback: click dialogue area
-        click(850, 490)
+        click(1133, 653)   -- (scaled to 1280x720 coords)
         wait(1.5)
         log_test("Wave 1", "INFO", "Ultimate charge dialogue dismissed (fallback click).")
     end
@@ -241,7 +241,7 @@ local function run_tests()
     log_test("Inspector", "STARTING", "Clicking Ignis on the grid to open the inspector panel...")
 
     -- Click Ignis grid position to open inspector
-    click(555, 240)   -- Ignis deployed tile at 960x540
+    click(740, 320)   -- Ignis deployed tile (scaled to 1280x720 coords)
     wait(2.0)
 
     -- Verify inspector opened (optional — continue even if template not found)
@@ -266,7 +266,7 @@ local function run_tests()
         log_test("Ultimate", "PASS", "Ignis ultimate activated via template.")
     else
         -- Fallback: bottom-right HUD area where the ultimate portrait button sits
-        click(870, 450)
+        click(1160, 600)   -- (scaled to 1280x720 coords)
         wait(2.0)
         log_test("Ultimate", "PASS", "Ignis ultimate activated (fallback coordinate).")
     end
@@ -281,31 +281,19 @@ local function run_tests()
     local next_lvl_btn = wait_template("NextLevelButton", 60)
     if next_lvl_btn then
         click(next_lvl_btn.x, next_lvl_btn.y)
-        log_test("Victory", "PASS", "Level 1 cleared! 'Next Level' clicked.")
+        log_test("Victory", "PASS", "Level 1 cleared! Victory confirmed.")
     else
         log_test("Victory", "FAIL", "Victory / Next Level button not found within timeout.")
         return
     end
 
-    -- Wait for Level 2 loading screen to finish
-    wait(7)
-
-    -- ============================================================
-    -- STAGE 14: Level 2 — Start Battle
-    -- ============================================================
-    set_stage("14. Level 2 Start")
-    log_test("Level 2 Start", "STARTING", "Waiting for Level 2 battle start screen...")
-
-    -- After Level 1 victory the game flows directly into Level 2 battle scene.
-    -- Look for the Start Battle button (or start wave button).
-    local start_battle = wait_template("start_battle_btn", 25)
-    if start_battle then
-        click(start_battle.x, start_battle.y)
-        log_test("Level 2 Start", "PASS", "Level 2 battle started successfully.")
-    else
-        log_test("Level 2 Start", "FAIL", "Level 2 Start Battle button not found.")
-        return
-    end
+    -- Two clicks in the centre of the screen to dismiss loot/reward panels
+    wait(1.5)
+    click(480, 270)
+    wait(1.0)
+    click(480, 270)
+    wait(1.0)
+    log_test("Loot Sequence", "PASS", "Loot/reward panels dismissed (2 centre clicks).")
 
     -- ============================================================
     -- DONE

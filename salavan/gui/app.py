@@ -1027,6 +1027,8 @@ class GameSalavanApp:
                     exact_process_matches.append(w)
                 elif self.config.hook_unity_editor and p_name_lower == "unity.exe" and window_title.lower() in w.title.lower():
                     editor_matches.append(w)
+                elif p_name_lower == "unity.exe":
+                    continue
                 continue
                 
             # Fallback title match (only if process name could not be resolved)
@@ -1495,15 +1497,25 @@ class GameSalavanApp:
             threading.Thread(target=self.capture_error_screenshot, args=(step,), daemon=True).start()
 
     def write_to_compact_console(self, step, result, message):
+        symbol = "+" if result == "PASS" else "-" if result == "FAIL" else ">"
+        color_tag = "pass" if result == "PASS" else "fail" if result == "FAIL" else "info"
+        log_str = f"[{symbol}] {step}: {message}\n"
+        
         if hasattr(self, 'console_text'):
             try:
                 self.console_text.config(state="normal")
-                symbol = "+" if result == "PASS" else "-" if result == "FAIL" else ">"
-                color_tag = "pass" if result == "PASS" else "fail" if result == "FAIL" else "info"
-                log_str = f"[{symbol}] {step}: {message}\n"
                 self.console_text.insert(tk.END, log_str, color_tag)
                 self.console_text.see(tk.END)
                 self.console_text.config(state="disabled")
+            except Exception:
+                pass
+                
+        if hasattr(self, 'full_logs_text'):
+            try:
+                self.full_logs_text.config(state="normal")
+                self.full_logs_text.insert(tk.END, log_str, color_tag)
+                self.full_logs_text.see(tk.END)
+                self.full_logs_text.config(state="disabled")
             except Exception:
                 pass
 
@@ -2419,17 +2431,21 @@ class GameSalavanApp:
                     pass
                 width = self.config.game_width
                 height = self.config.game_height
-                w.moveTo(0, 0)
-                w.resizeTo(width, height)
-                try:
-                    screen_width = self.root.winfo_screenwidth()
-                    target_x = width + 5
-                    if target_x + 1160 > screen_width:
-                        target_x = max(0, screen_width - 1160)
-                    self.root.geometry(f"1160x820+{target_x}+0")
-                    self.normal_geometry = f"1160x820+{target_x}+0"
-                except Exception:
-                    pass
+                if width > 0 and height > 0:
+                    w.moveTo(0, 0)
+                    w.resizeTo(width, height)
+                    try:
+                        screen_width = self.root.winfo_screenwidth()
+                        target_x = width + 5
+                        if target_x + 1160 > screen_width:
+                            target_x = max(0, screen_width - 1160)
+                        self.root.geometry(f"1160x820+{target_x}+0")
+                        self.normal_geometry = f"1160x820+{target_x}+0"
+                    except Exception:
+                        pass
+                else:
+                    try: w.maximize()
+                    except Exception: pass
                 return True
                 
         self.kill_game_process()
@@ -2440,7 +2456,11 @@ class GameSalavanApp:
         try:
             width = self.config.game_width
             height = self.config.game_height
-            cmd = f'"{self.config.game_exe_path}" -screen-width {width} -screen-height {height} -screen-fullscreen 0'
+            if width > 0 and height > 0:
+                cmd = f'"{self.config.game_exe_path}" -screen-width {width} -screen-height {height} -screen-fullscreen 0'
+            else:
+                cmd = f'"{self.config.game_exe_path}" -screen-fullscreen 1'
+                
             self.game_process = subprocess.Popen(cmd, shell=True)
             self.log_message("BOOT GAME", "INFO", "Process spawned. Aligning interface...")
             
@@ -2454,17 +2474,21 @@ class GameSalavanApp:
                     w = win[0]
                     w.restore()
                     w.activate()
-                    w.moveTo(0, 0)
-                    w.resizeTo(width, height)
-                    try:
-                        screen_width = self.root.winfo_screenwidth()
-                        target_x = width + 5
-                        if target_x + 1160 > screen_width:
-                            target_x = max(0, screen_width - 1160)
-                        self.root.geometry(f"1160x820+{target_x}+0")
-                        self.normal_geometry = f"1160x820+{target_x}+0"
-                    except Exception:
-                        pass
+                    if width > 0 and height > 0:
+                        w.moveTo(0, 0)
+                        w.resizeTo(width, height)
+                        try:
+                            screen_width = self.root.winfo_screenwidth()
+                            target_x = width + 5
+                            if target_x + 1160 > screen_width:
+                                target_x = max(0, screen_width - 1160)
+                            self.root.geometry(f"1160x820+{target_x}+0")
+                            self.normal_geometry = f"1160x820+{target_x}+0"
+                        except Exception:
+                            pass
+                    else:
+                        try: w.maximize()
+                        except Exception: pass
                     positioned = True
                     break
                 time.sleep(0.5)

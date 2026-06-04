@@ -66,6 +66,8 @@ namespace MaouSamaTD.Levels
         public bool ShowPathing = false;
         public Material DefaultTileMaterial;
         public Texture2D DefaultTileTexture;
+        [Header("Tile Wall Configuration (TileType.Wall)")]
+        public WallVisualSettings TileWallVisuals = WallVisualSettings.Default;
         public List<TileVisualOverride> VisualOverrides = new List<TileVisualOverride>();
 
         [Header("Global Wall Settings")]
@@ -139,10 +141,36 @@ namespace MaouSamaTD.Levels
         [Tooltip("Optional directional light prefab to spawn for this map (contains shadows/angle)")]
         public Light DirectionalLightPrefab;
 
+        [Header("Directional Lights")]
+        public bool EnableTopLight;
+        public float TopLightIntensity;
+
+        public bool EnableNorthIsometric;
+        public float NorthIsometricIntensity;
+
+        public bool EnableSouthIsometric;
+        public float SouthIsometricIntensity;
+
+        public bool EnableEastIsometric;
+        public float EastIsometricIntensity;
+
+        public bool EnableWestIsometric;
+        public float WestIsometricIntensity;
+
         public static LightingSettings Default => new LightingSettings
         {
             OverrideLighting = false,
-            AmbientColor = new Color(0.2f, 0.2f, 0.2f)
+            AmbientColor = new Color(0.2f, 0.2f, 0.2f),
+            EnableTopLight = false,
+            TopLightIntensity = 1.0f,
+            EnableNorthIsometric = false,
+            NorthIsometricIntensity = 1.0f,
+            EnableSouthIsometric = false,
+            SouthIsometricIntensity = 1.0f,
+            EnableEastIsometric = false,
+            EastIsometricIntensity = 1.0f,
+            EnableWestIsometric = false,
+            WestIsometricIntensity = 1.0f
         };
     }
 

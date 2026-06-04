@@ -78,6 +78,8 @@ class TestSequenceRunner(threading.Thread):
         
         teardown_fn = None
         
+        test_status = "Tested"
+        
         try:
             # Setup report directories in user's Documents folder dynamically
             timestamp = time.strftime("%Y%m%d_%H%M%S")
@@ -155,28 +157,30 @@ class TestSequenceRunner(threading.Thread):
                 
             self.app.log_message("SYSTEM", "INFO", "Sequence execution successfully concluded.")
             
-            # Update build status in DB
-            found_build = False
-            for b in self.app.config.builds:
-                # Associate with current active game profile
-                b_game_id = b.get("game_id", "maou_sama_td")
-                if b_game_id == game_id and os.path.normpath(b.get("path")) == os.path.normpath(self.app.config.game_exe_path):
-                    b["status"] = "Tested"
-                    b["last_tested"] = time.strftime("%Y-%m-%d %H:%M:%S")
-                    b["report_ref"] = os.path.basename(self.app.current_report_dir)
-                    found_build = True
-                    break
-                    
-            if found_build:
-                self.app.config.save()
-                self.app.root.after(0, self.app.refresh_builds_tree)
-            
         except InterruptedError:
             self.app.log_message("SYSTEM", "INFO", "Sequence aborted.")
+            test_status = "Aborted"
         except Exception as e:
             self.app.log_message("SYSTEM", "FAIL", f"Sequence crashed: {str(e)}")
+            test_status = "Failed"
             
         finally:
+            # Update build status in DB
+            if test_status != "Aborted":
+                found_build = False
+                for b in self.app.config.builds:
+                    b_game_id = b.get("game_id", "maou_sama_td")
+                    if b_game_id == game_id and os.path.normpath(b.get("path")) == os.path.normpath(self.app.config.game_exe_path):
+                        b["status"] = test_status
+                        b["last_tested"] = time.strftime("%Y-%m-%d %H:%M:%S")
+                        b["report_ref"] = os.path.basename(self.app.current_report_dir)
+                        found_build = True
+                        break
+                        
+                if found_build:
+                    self.app.config.save()
+                    self.app.root.after(0, self.app.refresh_builds_tree)
+
             # Run Teardown Hook if defined in Lua script
             if teardown_fn is not None:
                 try:

@@ -273,6 +273,8 @@ namespace MaouSamaTD.Editor
             EndSection(_showGeneration);
         }
 
+        private bool _showTileWallVisuals = false;
+
         private void DrawVisualsTab(MapData data)
         {
             if (DrawSectionHeader("Global Wall Visuals", ref _showGlobalVisuals))
@@ -285,6 +287,16 @@ namespace MaouSamaTD.Editor
                 EditorGUILayout.PropertyField(wallVisualsProp.FindPropertyRelative("SeamlessCorners"), new GUIContent("Seamless Wall Corners (Fix Gaps)"));
             }
             EndSection(_showGlobalVisuals);
+
+            if (DrawSectionHeader("Tile Wall Visuals (TileType.Wall)", ref _showTileWallVisuals))
+            {
+                SerializedProperty tileWallVisualsProp = serializedObject.FindProperty("TileWallVisuals");
+                EditorGUILayout.PropertyField(tileWallVisualsProp.FindPropertyRelative("WallPrefab"));
+                EditorGUILayout.PropertyField(tileWallVisualsProp.FindPropertyRelative("WallMaterial"));
+                EditorGUILayout.PropertyField(tileWallVisualsProp.FindPropertyRelative("WallScale"), new GUIContent("Wall Scale (Y=Height)"));
+                EditorGUILayout.PropertyField(tileWallVisualsProp.FindPropertyRelative("WallOffset"), new GUIContent("Wall Global Offset"));
+            }
+            EndSection(_showTileWallVisuals);
 
             if (DrawSectionHeader("Side & Edge Overrides", ref _showSideOverridesHeader))
             {

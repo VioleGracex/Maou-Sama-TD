@@ -400,8 +400,8 @@ def create_sidebar(app, parent):
                     row.pack(fill="x", pady=2)
                     
                     is_step_skipped = app.skipped_steps.get((selected_scenario, step_name), False)
-                    cb_text = "☐" if is_step_skipped else "☑"
-                    cb_fg = "#6b7280" if is_step_skipped else app.success_glow
+                    cb_text = "■"
+                    cb_fg = "#4b5563" if is_step_skipped else app.accent_glow
                     
                     cb_lbl = tk.Label(row, text=cb_text, fg=cb_fg, bg="#131317", font=("Segoe UI", 10, "bold"), cursor="hand2")
                     cb_lbl.pack(side="left", padx=(0, 5))
@@ -410,7 +410,8 @@ def create_sidebar(app, parent):
                         return lambda e: toggle_step_skip(s_name, st_name)
                     cb_lbl.bind("<Button-1>", make_toggle_cb())
                     
-                    is_done = (s_idx <= active_idx)
+                    is_done = (s_idx < active_idx)
+                    is_current = (s_idx == active_idx)
                     override = app.step_status_overrides.get((selected_scenario, step_name))
                     
                     if is_step_skipped:
@@ -429,10 +430,21 @@ def create_sidebar(app, parent):
                         step_fg = status_color
                         step_font = ("Segoe UI", 8, "bold")
                     else:
-                        status_text = "DONE" if is_done else "PENDING"
-                        status_color = app.success_glow if is_done else "#6b7280"
-                        step_fg = status_color if is_done else "#f3f4f6"
-                        step_font = ("Segoe UI", 8, "bold" if is_done else "normal")
+                        if is_done:
+                            status_text = "DONE"
+                            status_color = app.success_glow
+                            step_fg = app.success_glow
+                            step_font = ("Segoe UI", 8, "bold")
+                        elif is_current:
+                            status_text = "RUNNING"
+                            status_color = app.alert_yellow
+                            step_fg = app.alert_yellow
+                            step_font = ("Segoe UI", 8, "bold")
+                        else:
+                            status_text = "-"
+                            status_color = "#6b7280"
+                            step_fg = "#f3f4f6"
+                            step_font = ("Segoe UI", 8, "normal")
                     
                     step_lbl = tk.Label(row, text=step_name, fg=step_fg, bg="#131317", font=step_font)
                     step_lbl.pack(side="left")

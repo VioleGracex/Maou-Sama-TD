@@ -482,6 +482,12 @@ MonoBehaviour:
   ShowPathing: 0
   DefaultTileMaterial: {fileID: 0}
   DefaultTileTexture: {fileID: 0}
+  TileWallVisuals:
+    WallPrefab: {fileID: 0}
+    WallMaterial: {fileID: 0}
+    WallScale: {x: 1, y: 1, z: 1}
+    WallOffset: {x: 0, y: 0, z: 0}
+    SeamlessCorners: 1
   VisualOverrides: []
   WallCascadeOnHoles: 0
   Walls:
@@ -495,7 +501,7 @@ MonoBehaviour:
     SE: 1
   WallVisuals:
     WallPrefab: {fileID: 0}
-    WallMaterial: {fileID: 0}
+    WallMaterial: {fileID: 2100000, guid: c5ce199bd46c65b4e9449c8ec07eb68b, type: 2}
     WallScale: {x: 1, y: 1, z: 1}
     WallOffset: {x: 0, y: 0, z: 0}
     SeamlessCorners: 1
@@ -515,3 +521,13 @@ MonoBehaviour:
     OverrideLighting: 1
     AmbientColor: {r: 0.25, g: 0.25, b: 0.28, a: 1}
     DirectionalLightPrefab: {fileID: 4809913698286690004, guid: 8ba420ecf9b704741af5399cf0f0f365, type: 3}
+    EnableTopLight: 0
+    TopLightIntensity: 1
+    EnableNorthIsometric: 0
+    NorthIsometricIntensity: 1
+    EnableSouthIsometric: 0
+    SouthIsometricIntensity: 1
+    EnableEastIsometric: 0
+    EastIsometricIntensity: 1
+    EnableWestIsometric: 0
+    WestIsometricIntensity: 1

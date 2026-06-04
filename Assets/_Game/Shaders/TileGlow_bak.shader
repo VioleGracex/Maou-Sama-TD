@@ -31,7 +31,6 @@ Shader "Custom/TileGlow"
             #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile_fragment _ _SHADOWS_SOFT
             #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
-            #pragma multi_compile _ _FORWARD_PLUS
             #pragma multi_compile_fog
 
             // Core URP Includes
@@ -88,24 +87,16 @@ Shader "Custom/TileGlow"
                 
                 Light mainLight = GetMainLight(shadowCoord);
                 
-                // Diffuse Lighting (Main) using Half-Lambert wrapped lighting.
-                // Standard NdotL causes perfectly perpendicular faces to go 100% black.
-                // Wrapped lighting shifts the curve so perpendicular faces stay ~50% lit,
-                // creating a much softer and easier to balance gradient between the top and sides.
-                float NdotL = dot(normalWS, mainLight.direction);
-                float wrappedNdotL = saturate((NdotL * 0.5) + 0.5);
+                // Diffuse Lighting (Main)
+                float NdotL = saturate(dot(normalWS, mainLight.direction));
+                float3 lighting = mainLight.color * (NdotL * mainLight.shadowAttenuation);
                 
-                // Shadows only attenuate the direct light
-                float directLight = wrappedNdotL * mainLight.shadowAttenuation;
-                float3 lighting = mainLight.color * directLight;
-                
-                // Additional Lights (Point Lights)
-                #if defined(_ADDITIONAL_LIGHTS) || defined(_FORWARD_PLUS)
+                // Additional Lights
+                #if defined(_ADDITIONAL_LIGHTS)
                 uint pixelLightCount = GetAdditionalLightsCount();
                 for (uint i = 0u; i < pixelLightCount; ++i)
                 {
-                    // Pass 1.0 for shadowMask to avoid breaking point light attenuation with the main light's shadowCoord
-                    Light light = GetAdditionalLight(i, input.positionWS, half4(1,1,1,1));
+                    Light light = GetAdditionalLight(i, input.positionWS, shadowCoord);
                     lighting += light.color * (saturate(dot(normalWS, light.direction)) * light.distanceAttenuation * light.shadowAttenuation);
                 }
                 #endif
@@ -113,9 +104,7 @@ Shader "Custom/TileGlow"
                 // Ambient lighting (SH)
                 float3 ambient = SampleSH(normalWS);
 
-                // Combine direct and ambient lighting
-                float3 finalLighting = lighting + ambient;
-                float3 finalRGB = texColor.rgb * finalLighting;
+                float3 finalRGB = texColor.rgb * (lighting + ambient);
 
                 // --- Top Face Outline Glow Logic ---
                 // Only apply glow to faces pointing upwards

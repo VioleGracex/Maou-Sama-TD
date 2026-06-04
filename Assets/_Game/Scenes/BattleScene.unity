@@ -5437,7 +5437,7 @@ Camera:
   m_GameObject: {fileID: 644362009}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -12862,24 +12862,18 @@ MonoBehaviour:
   _showMapDataSettings: 1
   _showProceduralSettings: 0
   _gridManager: {fileID: 1567414775}
-  _mapData: {fileID: 11400000, guid: d92f88ece5bd3c44e847a460f6169a1a, type: 2}
+  _mapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
   _extractPath: Assets/_Game/ScriptableObjects/Maps/
   _extractFileName: NewMapData
   _useSeed: 1
-  _seed: 54321
-  _highGroundChance: 0.2
+  _seed: 1
+  _highGroundChance: 0.1
   _lanesPerConnection: 1
   _spawnPoints:
-  - Coordinate: {x: 7, y: 0}
-    TargetExitIndex: 0
-  - Coordinate: {x: 0, y: 7}
-    TargetExitIndex: 0
-  - Coordinate: {x: 7, y: 14}
-    TargetExitIndex: 0
-  - Coordinate: {x: 14, y: 7}
+  - Coordinate: {x: 13, y: 4}
     TargetExitIndex: 0
   _exitPoints:
-  - {x: 7, y: 7}
+  - {x: 1, y: 4}
   _startPrefab: {fileID: 0}
   _endPrefab: {fileID: 0}
   _wallPrefab: {fileID: 0}
@@ -12894,7 +12888,7 @@ MonoBehaviour:
   _wallNE: 0
   _wallSW: 0
   _wallSE: 0
-  _wallScale: {x: 1, y: 1, z: 1}
+  _wallScale: {x: 0.5, y: 3, z: 1}
 --- !u!114 &1567414775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12908,7 +12902,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Grid.GridManager
   _width: 15
-  _height: 15
+  _height: 6
   _cellSize: 1
   _tilePrefab: {fileID: 961863415363111276, guid: 361ae00729f0efc479b1baad89574779, type: 3}
   _gridContainer: {fileID: 212953964}
@@ -12959,7 +12953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0becde9f03fa53d40ba8df82dd8ac1d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.LevelManager
-  _levelData: {fileID: 11400000, guid: efc467d660f6ff74ba303b6ac31f759b, type: 2}
+  _levelData: {fileID: 11400000, guid: a2c6c0a664a64034e81cbd9127cb1407, type: 2}
 --- !u!1 &1634765511
 GameObject:
   m_ObjectHideFlags: 0

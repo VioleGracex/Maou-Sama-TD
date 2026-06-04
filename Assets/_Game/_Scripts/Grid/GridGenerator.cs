@@ -163,8 +163,25 @@ namespace MaouSamaTD.Grid
                     // Apply Defaults First
                     if (_mapData != null)
                     {
-                        if (_mapData.DefaultTileMaterial != null) tile.SetMaterial(_mapData.DefaultTileMaterial);
-                        if (_mapData.DefaultTileTexture != null) tile.ApplyVisualOverride(_mapData.DefaultTileTexture, null);
+                        if (type == TileType.Wall)
+                        {
+                            Material wallMat = _mapData.TileWallVisuals.WallMaterial;
+                            if (wallMat == null) wallMat = _mapData.WallVisuals.WallMaterial;
+                            if (wallMat != null) tile.SetMaterial(wallMat);
+
+                            tile.transform.localScale = Vector3.Scale(tile.transform.localScale, _mapData.TileWallVisuals.WallScale);
+                            tile.transform.localPosition += _mapData.TileWallVisuals.WallOffset;
+                            if (_mapData.TileWallVisuals.WallPrefab != null)
+                            {
+                                GameObject customWall = Instantiate(_mapData.TileWallVisuals.WallPrefab, tile.transform);
+                                customWall.transform.localPosition = Vector3.zero;
+                            }
+                        }
+                        else
+                        {
+                            if (_mapData.DefaultTileMaterial != null) tile.SetMaterial(_mapData.DefaultTileMaterial);
+                            if (_mapData.DefaultTileTexture != null) tile.ApplyVisualOverride(_mapData.DefaultTileTexture, null);
+                        }
                     }
 
                     // If manually setting types, ensure they are in the lists if they are spawn/exit
@@ -224,6 +241,7 @@ namespace MaouSamaTD.Grid
 
             GenerateEnvironment();
             GenerateLighting();
+            Shader.SetGlobalVector("_GlobalMapCenter", _gridManager.GetGridCenter());
         }
 
         [ShowIf("_showMapDataSettings")]
@@ -255,8 +273,10 @@ namespace MaouSamaTD.Grid
                 globalWallScale = _mapData.WallVisuals.WallScale;
                 globalWallOffset = _mapData.WallVisuals.WallOffset;
                 seamlessCorners = _mapData.WallVisuals.SeamlessCorners;
-                wallPrefab = _mapData.WallVisuals.WallPrefab;
-                wallMaterial = _mapData.WallVisuals.WallMaterial;
+                if (_mapData.WallVisuals.WallPrefab != null)
+                    wallPrefab = _mapData.WallVisuals.WallPrefab;
+                if (_mapData.WallVisuals.WallMaterial != null)
+                    wallMaterial = _mapData.WallVisuals.WallMaterial;
                 wallNorth = _mapData.Walls.North;
                 wallSouth = _mapData.Walls.South;
                 wallEast = _mapData.Walls.East;
@@ -675,9 +695,26 @@ namespace MaouSamaTD.Grid
 
             if (lighting.DirectionalLightPrefab != null)
             {
-                GameObject lightObj = Instantiate(lighting.DirectionalLightPrefab.gameObject, Vector3.zero, Quaternion.identity, _gridManager.transform);
-                lightObj.name = "Level_DirectionalLight";
-                _generatedEnvironmentObjects.Add(lightObj); // Tracked same as environment for cleanup
+                bool anyLightEnabled = lighting.EnableTopLight || lighting.EnableNorthIsometric || lighting.EnableSouthIsometric || lighting.EnableEastIsometric || lighting.EnableWestIsometric;
+                if (!anyLightEnabled) return;
+
+                GameObject lightHolder = new GameObject("Level_Lighting_Holder");
+                _generatedEnvironmentObjects.Add(lightHolder);
+
+                // Helper to spawn a light with a specific rotation
+                void SpawnLight(Quaternion rotation, string suffix, float intensity)
+                {
+                    GameObject lightObj = Instantiate(lighting.DirectionalLightPrefab.gameObject, Vector3.zero, rotation, lightHolder.transform);
+                    lightObj.name = "Level_DirectionalLight_" + suffix;
+                    Light l = lightObj.GetComponent<Light>();
+                    if (l != null) l.intensity = intensity;
+                }
+
+                if (lighting.EnableTopLight) SpawnLight(Quaternion.Euler(90, 0, 0), "Top", lighting.TopLightIntensity);
+                if (lighting.EnableNorthIsometric) SpawnLight(Quaternion.Euler(50, 180, 0), "North", lighting.NorthIsometricIntensity);
+                if (lighting.EnableSouthIsometric) SpawnLight(Quaternion.Euler(50, 0, 0), "South", lighting.SouthIsometricIntensity);
+                if (lighting.EnableEastIsometric) SpawnLight(Quaternion.Euler(50, -90, 0), "East", lighting.EastIsometricIntensity);
+                if (lighting.EnableWestIsometric) SpawnLight(Quaternion.Euler(50, 90, 0), "West", lighting.WestIsometricIntensity);
             }
         }
 

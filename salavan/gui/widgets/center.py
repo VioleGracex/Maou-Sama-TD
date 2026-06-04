@@ -36,9 +36,12 @@ def create_center_panel(app, parent):
     tab_ids = [
         ("live", "📺 LIVE VIEW"),
         ("setup", "⚙️ SETUP"),
+        ("scenario", "📋 SCENARIO"),
+        ("ui", "📍 UI COORDS"),
+        ("logs", "📄 LOGS"),
         ("specs", "📟 SPECS"),
-        ("media", "🎥 RECORDINGS"),
-        ("locations", "📍 LOCATIONS")
+        ("media", "🎥 MEDIA"),
+        ("mappings", "🗺️ MAPPINGS")
     ]
     
     # Tab content container
@@ -47,9 +50,12 @@ def create_center_panel(app, parent):
     
     app.tab_live = tk.Frame(app.tab_content_container, bg=app.bg_panel)
     app.tab_setup = tk.Frame(app.tab_content_container, bg=app.bg_panel)
+    app.tab_scenario = tk.Frame(app.tab_content_container, bg=app.bg_panel)
+    app.tab_ui = tk.Frame(app.tab_content_container, bg=app.bg_panel)
+    app.tab_logs = tk.Frame(app.tab_content_container, bg=app.bg_panel)
     app.tab_specs = tk.Frame(app.tab_content_container, bg=app.bg_panel)
     app.tab_media = tk.Frame(app.tab_content_container, bg=app.bg_panel)
-    app.tab_locations = tk.Frame(app.tab_content_container, bg=app.bg_panel)
+    app.tab_mappings = tk.Frame(app.tab_content_container, bg=app.bg_panel)
     
     app.active_mid_tab = "live"
     
@@ -59,22 +65,34 @@ def create_center_panel(app, parent):
         # Hide all tab frames
         app.tab_live.pack_forget()
         app.tab_setup.pack_forget()
+        app.tab_scenario.pack_forget()
+        app.tab_ui.pack_forget()
+        app.tab_logs.pack_forget()
         app.tab_specs.pack_forget()
         app.tab_media.pack_forget()
-        app.tab_locations.pack_forget()
+        app.tab_mappings.pack_forget()
         
         # Show active tab frame
         if tab_id == "live":
             app.tab_live.pack(fill="both", expand=True)
         elif tab_id == "setup":
             app.tab_setup.pack(fill="both", expand=True)
+        elif tab_id == "scenario":
+            app.tab_scenario.pack(fill="both", expand=True)
+            if hasattr(app, 'refresh_locations_view'):
+                app.refresh_locations_view()
+        elif tab_id == "ui":
+            app.tab_ui.pack(fill="both", expand=True)
+            if hasattr(app, 'refresh_locations_view'):
+                app.refresh_locations_view()
+        elif tab_id == "logs":
+            app.tab_logs.pack(fill="both", expand=True)
         elif tab_id == "specs":
             app.tab_specs.pack(fill="both", expand=True)
         elif tab_id == "media":
             app.tab_media.pack(fill="both", expand=True)
-        elif tab_id == "locations":
-            app.tab_locations.pack(fill="both", expand=True)
-            app.loop_refresh_locations()
+        elif tab_id == "mappings":
+            app.tab_mappings.pack(fill="both", expand=True)
             
         # Update tab buttons selection styling
         for tid, btn in app.tab_buttons.items():
@@ -238,19 +256,22 @@ def create_center_panel(app, parent):
     f_res.pack(fill="x", pady=10)
     tk.Label(f_res, text="TEST WINDOW RESOLUTION:", bg=app.bg_panel, fg=app.fg_light, font=("Segoe UI", 9, "bold")).pack(side="left")
     
-    app.resolution_var = tk.StringVar(value=f"{app.config.game_width}x{app.config.game_height}")
+    app.resolution_var = tk.StringVar(value=f"{app.config.game_width}x{app.config.game_height}" if app.config.game_width > 0 else "Fullscreen")
     def on_resolution_change(e):
         res_str = app.resolution_var.get()
         if "x" in res_str:
             w_s, h_s = res_str.split("x")
             app.config.game_width = int(w_s)
             app.config.game_height = int(h_s)
-            app.config.save()
+        elif res_str == "Fullscreen":
+            app.config.game_width = -1
+            app.config.game_height = -1
+        app.config.save()
         if hasattr(app, 'settings_page') and hasattr(app.settings_page, 'pref_resolution'):
             app.settings_page.pref_resolution.set(res_str)
             
     resolution_combo = ttk.Combobox(
-        f_res, textvariable=app.resolution_var, values=["960x540", "1024x576", "1280x720", "1366x768", "1600x900"],
+        f_res, textvariable=app.resolution_var, values=["960x540", "1024x576", "1280x720", "1366x768", "1600x900", "Fullscreen"],
         state="readonly", width=12, font=("Segoe UI", 9, "bold")
     )
     resolution_combo.pack(side="right")
@@ -338,33 +359,9 @@ def create_center_panel(app, parent):
     make_btn_hover(app.btn_trigger_record)
 
     # ==========================================
-    # TAB 5: LOCATIONS & COORDINATES
+    # TAB 5: SCENARIO STEPS & ACTIONS
     # ==========================================
-    loc_toolbar = tk.Frame(app.tab_locations, bg=app.bg_panel)
-    loc_toolbar.pack(fill="x", padx=10, pady=(5, 0))
-    
-    app.show_screen_coords_var = tk.BooleanVar(value=False)
-    def on_coords_toggle():
-        app.refresh_locations_view()
-        
-    coords_chk = tk.Checkbutton(
-        loc_toolbar, text="SHOW ABSOLUTE MONITOR SCREEN COORDINATES", 
-        variable=app.show_screen_coords_var, command=on_coords_toggle, 
-        bg=app.bg_panel, fg=app.fg_light, selectcolor=app.bg_dark, 
-        activebackground=app.bg_panel, activeforeground=app.fg_light, 
-        font=("Segoe UI", 8, "bold")
-    )
-    coords_chk.pack(side="left")
-    app.add_tooltip(coords_chk, "Toggle displaying coordinates as absolute screen pixels rather than game-relative coordinates (1280x720 reference)")
-
-    locations_paned = ttk.PanedWindow(app.tab_locations, orient="horizontal")
-    locations_paned.pack(fill="both", expand=True, padx=5, pady=5)
-    
-    # Left Pane: Scenario Actions Treeview
-    left_loc_border = tk.Frame(locations_paned, bg=app.accent_dim, bd=1)
-    locations_paned.add(left_loc_border, weight=1)
-    
-    left_loc_frame = tk.Frame(left_loc_border, bg=app.bg_panel, padx=10, pady=10)
+    left_loc_frame = tk.Frame(app.tab_scenario, bg=app.bg_panel, padx=10, pady=10)
     left_loc_frame.pack(fill="both", expand=True)
     
     tk.Label(left_loc_frame, text="📋 ACTIVE SCENARIO STEPS & ACTIONS", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(0, 5))
@@ -394,11 +391,27 @@ def create_center_panel(app, parent):
     loc_scroll_y.config(command=app.scenario_steps_tree.yview)
     loc_scroll_x.config(command=app.scenario_steps_tree.xview)
     
-    # Right Pane: Unity UI Buttons Coordinates Treeview
-    right_loc_border = tk.Frame(locations_paned, bg=app.accent_dim, bd=1)
-    locations_paned.add(right_loc_border, weight=1)
+    # ==========================================
+    # TAB 6: UI BUTTON COORDINATES
+    # ==========================================
+    loc_toolbar = tk.Frame(app.tab_ui, bg=app.bg_panel)
+    loc_toolbar.pack(fill="x", padx=10, pady=(5, 0))
     
-    right_loc_frame = tk.Frame(right_loc_border, bg=app.bg_panel, padx=10, pady=10)
+    app.show_screen_coords_var = tk.BooleanVar(value=False)
+    def on_coords_toggle():
+        app.refresh_locations_view()
+        
+    coords_chk = tk.Checkbutton(
+        loc_toolbar, text="SHOW ABSOLUTE MONITOR SCREEN COORDINATES", 
+        variable=app.show_screen_coords_var, command=on_coords_toggle, 
+        bg=app.bg_panel, fg=app.fg_light, selectcolor=app.bg_dark, 
+        activebackground=app.bg_panel, activeforeground=app.fg_light, 
+        font=("Segoe UI", 8, "bold")
+    )
+    coords_chk.pack(side="left")
+    app.add_tooltip(coords_chk, "Toggle displaying coordinates as absolute screen pixels rather than game-relative coordinates (1280x720 reference)")
+
+    right_loc_frame = tk.Frame(app.tab_ui, bg=app.bg_panel, padx=10, pady=10)
     right_loc_frame.pack(fill="both", expand=True)
     
     tk.Label(right_loc_frame, text="📍 LIVE UNITY UI BUTTON COORDINATES", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(0, 5))
@@ -426,6 +439,115 @@ def create_center_panel(app, parent):
     
     app.live_buttons_tree.pack(fill="both", expand=True)
     live_scroll_y.config(command=app.live_buttons_tree.yview)
+
+    # ==========================================
+    # TAB 7: FULL LOG READER
+    # ==========================================
+    logs_frame = tk.Frame(app.tab_logs, bg=app.bg_panel, padx=10, pady=10)
+    logs_frame.pack(fill="both", expand=True)
+    
+    tk.Label(logs_frame, text="📄 DIAGNOSTIC LOGS READER", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(0, 5))
+    
+    log_scroll_y = ttk.Scrollbar(logs_frame, orient="vertical")
+    log_scroll_y.pack(side="right", fill="y")
+    
+    app.full_logs_text = tk.Text(logs_frame, bg="#050508", bd=0, wrap="word", font=("Consolas", 10, "bold"), yscrollcommand=log_scroll_y.set)
+    app.full_logs_text.pack(fill="both", expand=True)
+    app.full_logs_text.tag_config("pass", foreground=app.success_glow)
+    app.full_logs_text.tag_config("fail", foreground=app.fail_glow)
+    app.full_logs_text.tag_config("info", foreground="#00b4d8")
+    app.full_logs_text.config(state="disabled")
+    
+    log_scroll_y.config(command=app.full_logs_text.yview)
+
+    # ==========================================
+    # TAB 8: MAPPINGS EDITOR
+    # ==========================================
+    mappings_frame = tk.Frame(app.tab_mappings, bg=app.bg_panel, padx=10, pady=10)
+    mappings_frame.pack(fill="both", expand=True)
+
+    mappings_header = tk.Frame(mappings_frame, bg=app.bg_panel)
+    mappings_header.pack(fill="x", pady=(0, 5))
+    
+    tk.Label(mappings_header, text="🗺️ JSON UI COORDINATES MAPPING", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 9, "bold")).pack(side="left")
+
+    import json
+    from tkinter import filedialog
+    
+    app.ui_mappings = []
+
+    def load_mappings(path=None):
+        if not path:
+            path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
+            
+        if path:
+            try:
+                with open(path, "r") as f:
+                    data = json.load(f)
+                    if "entries" in data:
+                        app.ui_mappings = data["entries"]
+                    else:
+                        app.ui_mappings = data
+                        
+                # Save path to config
+                active_game = app.config.get_active_game()
+                if active_game:
+                    active_game["ui_mapping_path"] = path
+                    app.config.save()
+                    
+                refresh_mappings_tree()
+            except Exception as e:
+                print(f"Error loading mappings: {e}")
+
+    def save_mappings():
+        path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON Files", "*.json")])
+        if path:
+            try:
+                with open(path, "w") as f:
+                    json.dump({"entries": app.ui_mappings}, f, indent=4)
+            except Exception as e:
+                print(f"Error saving mappings: {e}")
+
+    btn_import = ttk.Button(mappings_header, text="IMPORT JSON", command=load_mappings)
+    btn_import.pack(side="right", padx=2)
+    btn_export = ttk.Button(mappings_header, text="EXPORT JSON", command=save_mappings)
+    btn_export.pack(side="right", padx=2)
+
+    map_scroll_y = ttk.Scrollbar(mappings_frame, orient="vertical")
+    map_scroll_y.pack(side="right", fill="y")
+
+    app.mappings_tree = ttk.Treeview(
+        mappings_frame, columns=("Path", "Type", "X", "Y"),
+        show="headings", yscrollcommand=map_scroll_y.set
+    )
+    app.mappings_tree.heading("Path", text="Object Path", anchor="w")
+    app.mappings_tree.heading("Type", text="Component Type", anchor="w")
+    app.mappings_tree.heading("X", text="X Coord", anchor="w")
+    app.mappings_tree.heading("Y", text="Y Coord", anchor="w")
+
+    app.mappings_tree.column("Path", width=250, stretch=True)
+    app.mappings_tree.column("Type", width=100, stretch=True)
+    app.mappings_tree.column("X", width=60, stretch=True)
+    app.mappings_tree.column("Y", width=60, stretch=True)
+
+    app.mappings_tree.pack(fill="both", expand=True)
+    map_scroll_y.config(command=app.mappings_tree.yview)
+
+    def refresh_mappings_tree():
+        for row in app.mappings_tree.get_children():
+            app.mappings_tree.delete(row)
+        for entry in app.ui_mappings:
+            coords = entry.get("Coordinates", {})
+            x = coords.get("x", 0)
+            y = coords.get("y", 0)
+            app.mappings_tree.insert("", "end", values=(entry.get("Path", ""), entry.get("Type", ""), x, y))
+
+    # Auto-load project mappings on startup
+    active_game = app.config.get_active_game()
+    if active_game and active_game.get("ui_mapping_path"):
+        import os
+        if os.path.exists(active_game["ui_mapping_path"]):
+            load_mappings(active_game["ui_mapping_path"])
 
     # Initialize tab showing
     switch_tab("live")

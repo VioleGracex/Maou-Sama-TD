@@ -18,7 +18,7 @@ MonoBehaviour:
   Width: 15
   Height: 9
   HighGroundChance: 0.1
-  AutoCalculateDefaultZoom: 1
+  AutoCalculateDefaultZoom: 0
   CustomDefaultZoom: 4.15
   UseManualLayout: 1
   ManualLayoutData:
@@ -109,25 +109,25 @@ MonoBehaviour:
   - Coordinate: {x: 5, y: 8}
     Type: 0
   - Coordinate: {x: 14, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 13, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 12, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 11, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 10, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 9, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 8, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 7, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 6, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 5, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 14, y: 8}
     Type: 0
   - Coordinate: {x: 13, y: 8}
@@ -147,7 +147,7 @@ MonoBehaviour:
   - Coordinate: {x: 6, y: 8}
     Type: 0
   - Coordinate: {x: 5, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 14, y: 0}
     Type: 0
   - Coordinate: {x: 13, y: 0}
@@ -169,23 +169,23 @@ MonoBehaviour:
   - Coordinate: {x: 5, y: 0}
     Type: 0
   - Coordinate: {x: 14, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 13, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 12, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 11, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 10, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 9, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 8, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 7, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 6, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 3, y: 4}
     Type: 1
   - Coordinate: {x: 12, y: 4}
@@ -207,15 +207,15 @@ MonoBehaviour:
   - Coordinate: {x: 0, y: 0}
     Type: 0
   - Coordinate: {x: 4, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 3, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 2, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 1, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 0, y: 1}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 4, y: 2}
     Type: 0
   - Coordinate: {x: 3, y: 2}
@@ -257,15 +257,15 @@ MonoBehaviour:
   - Coordinate: {x: 0, y: 6}
     Type: 7
   - Coordinate: {x: 4, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 3, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 2, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 1, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 0, y: 7}
-    Type: 0
+    Type: 8
   - Coordinate: {x: 4, y: 8}
     Type: 0
   - Coordinate: {x: 3, y: 8}
@@ -300,6 +300,12 @@ MonoBehaviour:
   ShowPathing: 1
   DefaultTileMaterial: {fileID: 0}
   DefaultTileTexture: {fileID: 0}
+  TileWallVisuals:
+    WallPrefab: {fileID: 0}
+    WallMaterial: {fileID: 0}
+    WallScale: {x: 1, y: 3, z: 1}
+    WallOffset: {x: 0, y: 0, z: 0}
+    SeamlessCorners: 1
   VisualOverrides:
   - Coordinate: {x: 4, y: 9}
     Texture: {fileID: 0}
@@ -314,7 +320,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 5, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 5, y: 2}
     Texture: {fileID: 0}
@@ -332,7 +338,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 5, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 5, y: 8}
     Texture: {fileID: 0}
@@ -359,7 +365,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 6, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 6, y: 2}
     Texture: {fileID: 0}
@@ -377,7 +383,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 6, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 6, y: 8}
     Texture: {fileID: 0}
@@ -404,7 +410,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 7, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 7, y: 2}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
@@ -430,7 +436,7 @@ MonoBehaviour:
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 7, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 7, y: 8}
     Texture: {fileID: 0}
@@ -457,7 +463,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 8, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 8, y: 2}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
@@ -479,7 +485,7 @@ MonoBehaviour:
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 8, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 8, y: 8}
     Texture: {fileID: 0}
@@ -506,7 +512,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 0, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 0, y: 4}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
@@ -518,7 +524,7 @@ MonoBehaviour:
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 0, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 0, y: 8}
     Texture: {fileID: 0}
@@ -545,7 +551,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 1, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 1, y: 2}
     Texture: {fileID: 0}
@@ -564,7 +570,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 1, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 1, y: 8}
     Texture: {fileID: 0}
@@ -591,7 +597,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 2, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 2, y: 2}
     Texture: {fileID: 0}
@@ -609,7 +615,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 2, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 2, y: 8}
     Texture: {fileID: 0}
@@ -636,7 +642,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 3, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 3, y: 2}
     Texture: {fileID: 0}
@@ -654,7 +660,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 3, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 3, y: 8}
     Texture: {fileID: 0}
@@ -681,7 +687,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 4, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 4, y: 8}
     Texture: {fileID: 0}
@@ -693,7 +699,7 @@ MonoBehaviour:
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 9, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 9, y: 8}
     Texture: {fileID: 0}
@@ -705,7 +711,7 @@ MonoBehaviour:
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 10, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 10, y: 8}
     Texture: {fileID: 0}
@@ -717,7 +723,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 11, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 11, y: 8}
     Texture: {fileID: 0}
@@ -729,7 +735,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 12, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 12, y: 8}
     Texture: {fileID: 0}
@@ -745,25 +751,25 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 13, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 13, y: 8}
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 14, y: 5}
-    Texture: {fileID: 2800000, guid: e33e6a0c67eb7314a8e48234d84f4300, type: 3}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 14, y: 6}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 14, y: 7}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 14, y: 8}
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 4, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 4, y: 2}
     Texture: {fileID: 0}
@@ -775,7 +781,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 9, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 9, y: 2}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
@@ -787,7 +793,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 10, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 10, y: 2}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
@@ -799,7 +805,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 11, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 11, y: 2}
     Texture: {fileID: 0}
@@ -811,7 +817,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 12, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 12, y: 2}
     Texture: {fileID: 0}
@@ -823,7 +829,7 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 13, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 13, y: 2}
     Texture: {fileID: 0}
@@ -839,13 +845,13 @@ MonoBehaviour:
     Texture: {fileID: 0}
     Decorations: []
   - Coordinate: {x: 14, y: 1}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 14, y: 2}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 14, y: 3}
-    Texture: {fileID: 2800000, guid: e33e6a0c67eb7314a8e48234d84f4300, type: 3}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 4, y: 4}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
@@ -866,7 +872,7 @@ MonoBehaviour:
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 14, y: 4}
-    Texture: {fileID: 0}
+    Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []
   - Coordinate: {x: 0, y: 3}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
@@ -881,22 +887,22 @@ MonoBehaviour:
       Offset: {x: 0, y: 0.5, z: 0}
       Rotation: {x: 0, y: 0, z: 0}
       Scale: {x: 0.5, y: 0.5, z: 0.5}
-  WallCascadeOnHoles: 1
+  WallCascadeOnHoles: 0
   Walls:
-    North: 1
-    South: 1
-    East: 1
-    West: 1
-    NW: 1
-    NE: 1
-    SW: 1
-    SE: 1
+    North: 0
+    South: 0
+    East: 0
+    West: 0
+    NW: 0
+    NE: 0
+    SW: 0
+    SE: 0
   WallVisuals:
     WallPrefab: {fileID: 0}
-    WallMaterial: {fileID: 0}
+    WallMaterial: {fileID: 2100000, guid: c5ce199bd46c65b4e9449c8ec07eb68b, type: 2}
     WallScale: {x: 0.5, y: 3, z: 1}
     WallOffset: {x: 0, y: 0, z: 0}
-    SeamlessCorners: 1
+    SeamlessCorners: 0
   WallOverrides:
   - Side: 0
     Index: 0
@@ -1281,3 +1287,13 @@ MonoBehaviour:
     OverrideLighting: 1
     AmbientColor: {r: 0.25, g: 0.25, b: 0.28, a: 1}
     DirectionalLightPrefab: {fileID: 4809913698286690004, guid: 8ba420ecf9b704741af5399cf0f0f365, type: 3}
+    EnableTopLight: 1
+    TopLightIntensity: 1
+    EnableNorthIsometric: 0
+    NorthIsometricIntensity: 1
+    EnableSouthIsometric: 1
+    SouthIsometricIntensity: 1
+    EnableEastIsometric: 0
+    EastIsometricIntensity: 1
+    EnableWestIsometric: 0
+    WestIsometricIntensity: 1

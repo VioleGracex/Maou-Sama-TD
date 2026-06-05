@@ -420,24 +420,26 @@ def create_center_panel(app, parent):
     right_loc_frame = tk.Frame(app.tab_ui, bg=app.bg_panel, padx=10, pady=10)
     right_loc_frame.pack(fill="both", expand=True)
     
-    tk.Label(right_loc_frame, text="📍 LIVE UNITY UI BUTTON COORDINATES", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(0, 5))
+    tk.Label(right_loc_frame, text="📍 LIVE UNITY UI ELEMENTS INSPECTOR", fg=app.accent_glow, bg=app.bg_panel, font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(0, 5))
     
     live_scroll_y = ttk.Scrollbar(right_loc_frame, orient="vertical")
     live_scroll_y.pack(side="right", fill="y")
     
     app.live_buttons_tree = ttk.Treeview(
-        right_loc_frame, columns=("Name", "Text", "X Coord", "Y Coord", "Width", "Height"), 
+        right_loc_frame, columns=("Name", "Type", "Text", "X Coord", "Y Coord", "Width", "Height"), 
         show="headings", yscrollcommand=live_scroll_y.set
     )
-    app.live_buttons_tree.heading("Name", text="UI Button Name", anchor="w")
-    app.live_buttons_tree.heading("Text", text="Button Text", anchor="w")
+    app.live_buttons_tree.heading("Name", text="UI Element Path/Name", anchor="w")
+    app.live_buttons_tree.heading("Type", text="Type", anchor="w")
+    app.live_buttons_tree.heading("Text", text="Text/Value", anchor="w")
     app.live_buttons_tree.heading("X Coord", text="X", anchor="w")
     app.live_buttons_tree.heading("Y Coord", text="Y", anchor="w")
     app.live_buttons_tree.heading("Width", text="Width", anchor="w")
     app.live_buttons_tree.heading("Height", text="Height", anchor="w")
     
-    app.live_buttons_tree.column("Name", width=140, stretch=True)
-    app.live_buttons_tree.column("Text", width=120, stretch=True)
+    app.live_buttons_tree.column("Name", width=160, stretch=True)
+    app.live_buttons_tree.column("Type", width=70, stretch=True)
+    app.live_buttons_tree.column("Text", width=100, stretch=True)
     app.live_buttons_tree.column("X Coord", width=50, stretch=True)
     app.live_buttons_tree.column("Y Coord", width=50, stretch=True)
     app.live_buttons_tree.column("Width", width=60, stretch=True)

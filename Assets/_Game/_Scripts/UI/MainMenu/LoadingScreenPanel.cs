@@ -193,8 +193,16 @@ namespace MaouSamaTD.UI.MainMenu
                 _settingsButton.onClick.AddListener(OnSettingsClicked);
             }
 
-            if (_confirmYesButton != null) _confirmYesButton.onClick.AddListener(ExecuteClearCache);
-            if (_confirmNoButton != null) _confirmNoButton.onClick.AddListener(() => { if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false); });
+            if (_confirmYesButton != null) 
+            {
+                _confirmYesButton.gameObject.name = "ClearCache_YesButton";
+                _confirmYesButton.onClick.AddListener(ExecuteClearCache);
+            }
+            if (_confirmNoButton != null)
+            {
+                _confirmNoButton.gameObject.name = "ClearCache_NoButton";
+                _confirmNoButton.onClick.AddListener(() => { if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false); });
+            }
             if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false);
 
             if (_progressBar != null)
@@ -375,6 +383,7 @@ namespace MaouSamaTD.UI.MainMenu
         {
             if (_confirmWindowRoot != null)
             {
+                Debug.Log("[LoadingScreenPanel] Cache confirmation dialog opened.");
                 _confirmWindowRoot.SetActive(true);
             }
             else
@@ -405,6 +414,8 @@ namespace MaouSamaTD.UI.MainMenu
 
             // 3. Restart
             if (_confirmWindowRoot != null) _confirmWindowRoot.SetActive(false);
+            
+            Debug.Log("[LoadingScreenPanel] Cache cleared. Restarting scene...");
             
             // Unload all dynamic assets and force garbage collection
             Resources.UnloadUnusedAssets();

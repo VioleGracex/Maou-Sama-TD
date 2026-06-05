@@ -2374,10 +2374,11 @@ class GameSalavanApp:
         try:
             width = self.config.game_width
             height = self.config.game_height
+            automation_key = getattr(self.config, 'automation_key', '')
             if width > 0 and height > 0:
-                cmd = f'"{self.config.game_exe_path}" -screen-width {width} -screen-height {height} -screen-fullscreen 0'
+                cmd = f'"{self.config.game_exe_path}" -screen-width {width} -screen-height {height} -screen-fullscreen 0 -automation-key {automation_key}'
             else:
-                cmd = f'"{self.config.game_exe_path}" -screen-fullscreen 1'
+                cmd = f'"{self.config.game_exe_path}" -screen-fullscreen 1 -automation-key {automation_key}'
                 
             self.game_process = subprocess.Popen(cmd, shell=True)
             self.log_message("BOOT GAME", "INFO", "Process spawned. Aligning interface...")
@@ -2559,26 +2560,28 @@ class GameSalavanApp:
             if os.path.exists(path):
                 import json
                 with open(path, "r", encoding="utf-8") as f:
-                    return json.load(f)
-        except Exception:
-            pass
+                    content = f.read().strip()
+                if not content:
+                    return None
+                
+                # Check for raw json first
+                if content.startswith("{"):
+                    return json.loads(content)
+                
+                # Decrypt
+                from crypto_utils import decrypt_state
+                decrypted = decrypt_state(content, self.config.automation_key)
+                if decrypted:
+                    return json.loads(decrypted)
+        except Exception as e:
+            print(f"Failed to read game state: {e}")
         return None
 
     def find_button_in_state(self, btn_name, buttons_dict):
-        clean_name = btn_name.lower().replace("_", "").replace("-", "").replace(" ", "").replace(".png", "").strip()
-        # First pass: try to match key (GameObject name)
-        for k, v in buttons_dict.items():
-            clean_k = k.lower().replace("_", "").replace("-", "").replace(" ", "").strip()
-            if clean_k == clean_name or clean_name in clean_k or clean_k in clean_name:
-                return v
-        # Second pass: try to match button label text
-        for k, v in buttons_dict.items():
-            text_val = v.get("text", "")
-            if text_val:
-                clean_text = text_val.lower().replace("_", "").replace("-", "").replace(" ", "").strip()
-                if clean_text == clean_name or clean_name in clean_text or clean_text in clean_name:
-                    return v
-        return None
+        # Delegate to find_element_in_state for robust matching
+        dummy_state = {"elements": buttons_dict}
+        from crypto_utils import find_element_in_state
+        return find_element_in_state(btn_name, dummy_state)
 
     def check_and_auto_progress_dialogue(self):
         if not self.config.auto_sync_ui:
@@ -3031,9 +3034,9 @@ class GameSalavanApp:
 
     def refresh_locations_view(self):
         game_state = self.read_game_state()
-        buttons_dict = {}
+        elements_dict = {}
         if game_state:
-            buttons_dict = game_state.get("buttons", {})
+            elements_dict = game_state.get("elements", game_state.get("buttons", {}))
             
         rect = self.get_game_rect() if self.show_screen_coords_var.get() else None
         
@@ -3041,8 +3044,11 @@ class GameSalavanApp:
             selected_items = self.live_buttons_tree.selection()
             selected_name = self.live_buttons_tree.item(selected_items[0])["values"][0] if selected_items else None
             self.live_buttons_tree.delete(*self.live_buttons_tree.get_children())
-            for name, coords in sorted(buttons_dict.items()):
+            for name, coords in sorted(elements_dict.items()):
                 text_val = coords.get("text", "")
+                if not text_val:
+                    text_val = coords.get("value", "")
+                elem_type = coords.get("type", "Button")
                 if rect:
                     cx, cy, gw_w, gw_h = rect
                     x_val = f"{cx + int(coords.get('x', 0.0) * gw_w / 1280):.1f}"
@@ -3056,7 +3062,7 @@ class GameSalavanApp:
                     h_val = f"{coords.get('h', 0.0):.1f}"
                 item_id = self.live_buttons_tree.insert(
                     "", "end", 
-                    values=(name, text_val, x_val, y_val, w_val, h_val)
+                    values=(name, elem_type, text_val, x_val, y_val, w_val, h_val)
                 )
                 if selected_name and name == selected_name:
                     self.live_buttons_tree.selection_set(item_id)
@@ -3258,3 +3264,64 @@ class ToolTip:
         self.tip_window = None
         if tw:
             tw.destroy()
+
+    # Element-identity APIs for Lua Integration
+    def click_element_by_id(self, element_id):
+        if getattr(self, 'current_step_is_skipped', False) or getattr(self, 'skip_current_step', False):
+            return True
+        self.check_paused()
+        state = self.read_game_state()
+        from crypto_utils import find_element_in_state
+        elem = find_element_in_state(element_id, state)
+        if elem:
+            return self.click_game_relative(elem["x"], elem["y"])
+        else:
+            self.log_message("CLICK", "FAIL", f"UI Element '{element_id}' not found.")
+            return False
+
+    def drag_elements(self, source_id, target_id, duration=1.0):
+        if getattr(self, 'current_step_is_skipped', False) or getattr(self, 'skip_current_step', False):
+            return True
+        self.check_paused()
+        state = self.read_game_state()
+        from crypto_utils import find_element_in_state
+        source = find_element_in_state(source_id, state)
+        target = find_element_in_state(target_id, state)
+        if not source:
+            self.log_message("DRAG", "FAIL", f"Source UI Element '{source_id}' not found.")
+            return False
+        if not target:
+            self.log_message("DRAG", "FAIL", f"Target UI Element '{target_id}' not found.")
+            return False
+        return self.drag_game_relative(source["x"], source["y"], target["x"], target["y"], duration)
+
+    def lua_find_element(self, element_id):
+        state = self.read_game_state()
+        from crypto_utils import find_element_in_state
+        elem = find_element_in_state(element_id, state)
+        return elem
+        
+    def lua_wait_for_element(self, element_id, timeout=10.0):
+        start_time = time.time()
+        from crypto_utils import find_element_in_state
+        while time.time() - start_time < timeout:
+            self.check_paused()
+            if self.stop_flag:
+                raise InterruptedError()
+            state = self.read_game_state()
+            elem = find_element_in_state(element_id, state)
+            if elem and elem.get("visible", False):
+                return elem
+            time.sleep(0.2)
+        return None
+
+    def lua_assert_visible(self, element_id, step_name="Assertion"):
+        state = self.read_game_state()
+        from crypto_utils import find_element_in_state
+        elem = find_element_in_state(element_id, state)
+        if elem and elem.get("visible", False):
+            self.log_message(step_name, "PASS", f"UI Element '{element_id}' is visible as expected.")
+            return True
+        else:
+            self.log_message(step_name, "FAIL", f"UI Element '{element_id}' is NOT visible.")
+            raise AssertionError(f"UI Element '{element_id}' is NOT visible.")

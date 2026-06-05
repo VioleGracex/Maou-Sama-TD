@@ -152,13 +152,17 @@ namespace MaouSamaTD.Managers
                 try
                 {
                     File.Delete(SavePath);
-                    Debug.Log("[SaveManager] Save Data Deleted successfully.");
+                    Debug.Log("[AutoDebug] SaveCleared");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    MaouSamaTD.Testing.GameStateExporter.PushEvent("SaveCleared");
+#endif
                 }
                 catch (System.Exception e)
                 {
                     Debug.LogError($"[SaveManager] Failed to delete save data: {e.Message}");
                 }
             }
+            Debug.Log("[SaveManager] Save Data Deleted successfully.");
             CurrentData = null;
             CreateNewSave();
         }

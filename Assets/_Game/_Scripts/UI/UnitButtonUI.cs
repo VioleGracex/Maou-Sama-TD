@@ -48,6 +48,10 @@ namespace MaouSamaTD.UI
         {
             _data = data;
             gameObject.name = $"UnitButton_{data.UnitName}";
+            Debug.Log($"[AutoDebug] UnitButtonSpawned: {data.UnitName}");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            MaouSamaTD.Testing.GameStateExporter.PushEvent($"UnitButtonSpawned:{data.UnitName}");
+#endif
             
             _dragHandler = GetComponent<UnitDragHandler>();
             _button = GetComponent<Button>();

@@ -1,11 +1,12 @@
 {
-    "game_exe_path": "D:/OuikiDev/Builds/Maou-Sama-TD_v0.4.9/MaouSamaTD.exe",
-    "record_test": true,
+    "game_exe_path": "D:/OuikiDev/Builds/Maou-Sama-TD_v0.5.0/MaouSamaTD.exe",
+    "record_test": false,
     "dev_build_mode": false,
     "hook_unity_editor": false,
     "auto_sync_ui": true,
-    "game_width": 960,
-    "game_height": 540,
+    "automation_key": "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=",
+    "game_width": 1920,
+    "game_height": 1080,
     "builds": [],
     "hotkeys": {
         "pause": "<Control-p>",
@@ -28,7 +29,7 @@
                 "%USERPROFILE%/AppData/LocalLow/Ouiki.Dev/Maou-Sama-TD/player_save.json"
             ],
             "log_path": "%USERPROFILE%/AppData/LocalLow/Ouiki.Dev/Maou-Sama-TD/Player.log",
-            "active_exe_path": "D:/OuikiDev/Builds/Maou-Sama-TD_v0.4.9/MaouSamaTD.exe",
+            "active_exe_path": "D:/OuikiDev/Builds/Maou-Sama-TD_v0.5.2/Maou-Sama-TD.exe",
             "ui_mapping_path": "D:/OuikiDev/Maou-Sama-TD/Assets/UIConfig_V0.4.4.json"
         }
     ]

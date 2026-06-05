@@ -22,6 +22,7 @@ class ConfigManager:
         }
         self.games = []
         self.active_game_id = "maou_sama_td"
+        self.automation_key = ""
         self.load()
 
     def get_default_games(self):
@@ -78,6 +79,8 @@ class ConfigManager:
                     self.active_game_id = data.get("active_game_id", "maou_sama_td")
                     self.games = data.get("games", [])
                     
+                    self.automation_key = data.get("automation_key", "")
+                    
                     loaded_hotkeys = data.get("hotkeys", {})
                     for k, v in loaded_hotkeys.items():
                         if k in self.hotkeys:
@@ -105,6 +108,23 @@ class ConfigManager:
                 active_game["active_exe_path"] = self.game_exe_path
             self.game_exe_path = active_game.get("active_exe_path", "")
 
+        # Auto-generate key if empty
+        if not getattr(self, "automation_key", ""):
+            import base64
+            import secrets
+            self.automation_key = base64.b64encode(secrets.token_bytes(32)).decode('utf-8')
+            self.save()
+        else:
+            self.write_key_file()
+
+    def write_key_file(self):
+        try:
+            key_file_path = os.path.join(os.path.dirname(self.config_path), "key.txt")
+            with open(key_file_path, "w", encoding="utf-8") as f:
+                f.write(self.automation_key)
+        except Exception:
+            pass
+
     def save(self):
         try:
             # Sync active_exe_path with game_exe_path on save
@@ -124,8 +144,10 @@ class ConfigManager:
                     "builds": self.builds,
                     "hotkeys": self.hotkeys,
                     "active_game_id": self.active_game_id,
-                    "games": self.games
+                    "games": self.games,
+                    "automation_key": self.automation_key
                 }, f, indent=4)
+            self.write_key_file()
         except Exception:
             pass
 

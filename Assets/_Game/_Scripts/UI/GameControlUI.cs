@@ -118,8 +118,16 @@ namespace MaouSamaTD.UI
             if (_restartButton != null) _restartButton.onClick.AddListener(ReloadScene); // Use existing ReloadScene method
 
             
-            if (_confirmYesButton != null) _confirmYesButton.onClick.AddListener(OnConfirmRetreat);
-            if (_confirmNoButton != null) _confirmNoButton.onClick.AddListener(OnCancelRetreat);
+            if (_confirmYesButton != null) 
+            {
+                _confirmYesButton.gameObject.name = "Retreat_YesButton";
+                _confirmYesButton.onClick.AddListener(OnConfirmRetreat);
+            }
+            if (_confirmNoButton != null) 
+            {
+                _confirmNoButton.gameObject.name = "Retreat_NoButton";
+                _confirmNoButton.onClick.AddListener(OnCancelRetreat);
+            }
             
             if (_winRestartButton != null) _winRestartButton.onClick.AddListener(ReloadScene);
             if (_loseRestartButton != null) _loseRestartButton.onClick.AddListener(ReloadScene);

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="Sylvan Game Salavan Suite" time="88.017">
+  <testsuite name="1_Fresh_Start" tests="11" failures="1" time="88.017">
+    <testcase classname="1_Fresh_Start" name="SYSTEM" time="86.072">
+      <system-out>Killing existing game process before relaunch...
+Game process terminated.
+Launching Game: D:/OuikiDev/Builds/Maou-Sama-TD_v0.5.0/MaouSamaTD.exe
+Sequence execution successfully concluded.</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="HUD" time="68.911">
+      <system-out>Reading scenario: 1_Fresh_Start...
+Found coordinate mapping for 'ClearCacheButton'.
+Found coordinate mapping for 'YesButton'.
+Found coordinate mapping for 'StartButton'.
+Found coordinate mapping for 'DiceButton'.
+Found coordinate mapping for 'AriseButton'.
+Found coordinate mapping for 'YesButton'.</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Launch Game" time="2.701">
+      <system-out>Starting Maou-Sama-TD.exe in windowed mode (960x540)...
+Game process started and window positioned at (0, 0).</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Clear Data" time="6.398">
+      <system-out>Waiting for loading screen to appear...
+Clear Data button clicked — waiting for confirmation dialog...
+Save data cleared via in-game confirmation dialog. (Assertion skipped due to v0.5.0 build bug)
+Save data cleared via in-game confirmation dialog.</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Loading Screen" time="21.914">
+      <system-out>Waiting for boot sequence to finish...
+Clicking 'StartButton' on the loading screen...
+Start Game clicked on loading screen.</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Ascension Panel" time="4.314">
+      <system-out>Waiting for Ascension Panel to appear...
+Dice rolled — character name generated.
+Arise confirmed — entering game world.</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Intro Dialogue" time="16.343">
+      <system-out>Attempting to skip or advance tutorial intro dialogues...
+No Skip button found — advancing dialogues manually.
+Intro dialogues advanced manually.</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Play Tutorial" time="1.385">
+      <system-out>Waiting for 'Play Tutorial' prompt...
+Opted to play the tutorial.</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Placement Dialogue" time="8.067">
+      <system-out>Attempting to skip placement tutorial dialogues...
+Placement dialogue advanced.</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Deploy Ignis" time="0.000">
+      <system-out>Locating Ignis unit card in hand area...</system-out>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Placement" time="0.000">
+      <system-out>Could not place Ignis via game API.</system-out>
+      <failure message="Step Placement failed.">Could not place Ignis via game API.</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

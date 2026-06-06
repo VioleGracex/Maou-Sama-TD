@@ -41,7 +41,15 @@ def main():
     
     app_controller.log_added.connect(log_handler)
     
-    os.environ["LUA_TEST_ARGS"] = "-screen-width 1920 -screen-height 1080 -screen-fullscreen 1"
+    active_game = config.get_active_game()
+    if active_game:
+        app_controller.overlay_service.update_settings(
+            active_game.get("process_name", ""),
+            active_game.get("window_title", ""),
+            False
+        )
+        app_controller.overlay_service.start_polling()
+    
     scenario_name = "1_Fresh_Start"
     from core.paths import get_base_dir
     scenario_path = os.path.join(get_base_dir(), "scenarios", config.get_active_game()["id"], f"{scenario_name}.lua")
@@ -58,14 +66,9 @@ def main():
         
     app_controller.test_finished.connect(finish_handler)
     
-    import time
-    if app_controller.launch_game():
-        time.sleep(3.0)  # Wait for game to initialize
-        app_controller.start_test(scenario_path, scenario_name, logs_dir, capture_dir)
-    else:
-        print("Failed to launch game executable.")
-        QApplication.quit()
-
+    # 1_Fresh_Start.lua handles its own launch_game(true) call
+    app_controller.start_test(scenario_path, scenario_name, logs_dir, capture_dir)
+    
     sys.exit(app.exec())
 
 if __name__ == "__main__":

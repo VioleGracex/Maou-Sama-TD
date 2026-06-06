@@ -351,21 +351,29 @@ class CenterDashboard(QWidget):
             ctrl.addWidget(b)
             
         self.chk_live_preview = QCheckBox("ENABLE LIVE PREVIEW")
-        self.chk_live_preview.setChecked(True)
+        self.chk_live_preview.setChecked(False)
         self.chk_live_preview.setStyleSheet("color: white; font-weight: bold;")
         ctrl.addWidget(self.chk_live_preview)
         
         l.addLayout(ctrl)
         
+        from PySide6.QtWidgets import QSplitter
+        splitter = QSplitter(Qt.Vertical)
+        
         self.preview_lbl = QLabel()
         self.preview_lbl.setStyleSheet("background: #050508; border: 1px solid #3f3f46;")
-        l.addWidget(self.preview_lbl, 1)
         
         self.console = QTextEdit()
         self.console.setStyleSheet("background: #050508; color: white; font-family: Consolas; border: 1px solid #3f3f46;")
         self.console.setReadOnly(True)
-        self.console.setFixedHeight(80)
-        l.addWidget(self.console)
+        self.console.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.TextSelectableByKeyboard)
+        
+        splitter.addWidget(self.preview_lbl)
+        splitter.addWidget(self.console)
+        splitter.setStretchFactor(0, 3)
+        splitter.setStretchFactor(1, 1)
+        
+        l.addWidget(splitter, 1)
         
         return w
 
@@ -430,15 +438,51 @@ class CenterDashboard(QWidget):
     def _create_logs_tab(self):
         w = QWidget()
         l = QVBoxLayout(w)
-        lbl = QLabel("📄 DIAGNOSTIC LOGS READER")
-        lbl.setStyleSheet("color: #eab308; font-weight: bold;")
-        l.addWidget(lbl)
+        
+        log_header = QHBoxLayout()
+        lbl = QLabel("Engine Logs:")
+        lbl.setStyleSheet("color: white; font-weight: bold;")
+        log_header.addWidget(lbl)
+        log_header.addStretch()
+        
+        self.btn_open_log = QPushButton("OPEN LOG")
+        self.btn_open_log.setStyleSheet("background: #27272a; color: white; padding: 4px; border-radius: 3px;")
+        self.btn_open_log.clicked.connect(self._open_log_file)
+        log_header.addWidget(self.btn_open_log)
+        
+        self.btn_copy_log = QPushButton("COPY ALL")
+        self.btn_copy_log.setStyleSheet("background: #27272a; color: white; padding: 4px; border-radius: 3px;")
+        self.btn_copy_log.clicked.connect(self._copy_all_logs)
+        log_header.addWidget(self.btn_copy_log)
+        
+        btn_clear = QPushButton("CLEAR LOGS")
+        btn_clear.setStyleSheet("background: #991b1b; color: white; padding: 4px; border-radius: 3px;")
+        
+        log_header.addWidget(btn_clear)
+        l.addLayout(log_header)
         
         self.full_logs_text = QTextEdit()
+        btn_clear.clicked.connect(self.full_logs_text.clear)
         self.full_logs_text.setStyleSheet("background: #050508; color: white; font-family: Consolas; border: none;")
         self.full_logs_text.setReadOnly(True)
+        self.full_logs_text.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.full_logs_text.customContextMenuRequested.connect(self._show_log_context_menu)
         l.addWidget(self.full_logs_text)
         return w
+
+    def _show_log_context_menu(self, pos):
+        from PySide6.QtWidgets import QMenu
+        menu = QMenu(self.full_logs_text)
+        copy_action = menu.addAction("Copy Selection")
+        copy_all_action = menu.addAction("Copy All Logs")
+        
+        action = menu.exec(self.full_logs_text.mapToGlobal(pos))
+        if action == copy_action:
+            self.full_logs_text.copy()
+        elif action == copy_all_action:
+            from PySide6.QtGui import QGuiApplication
+            clipboard = QGuiApplication.clipboard()
+            clipboard.setText(self.full_logs_text.toPlainText())
 
     def get_system_specs(self):
         specs = {
@@ -461,20 +505,20 @@ class CenterDashboard(QWidget):
 
         try:
             if platform.system() == "Windows":
-                out = subprocess.check_output("wmic computersystem get totalphysicalmemory", shell=True, stderr=subprocess.DEVNULL).decode()
-                lines = [line.strip() for line in out.splitlines() if line.strip()]
-                if len(lines) > 1 and lines[1].isdigit():
-                    ram_bytes = int(lines[1])
+                out = subprocess.check_output('powershell -Command "(Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum"', shell=True, stderr=subprocess.DEVNULL).decode()
+                val = out.strip()
+                if val.isdigit():
+                    ram_bytes = int(val)
                     specs["ram"] = f"{ram_bytes / (1024**3):.1f} GB"
         except Exception:
             pass
 
         try:
             if platform.system() == "Windows":
-                out = subprocess.check_output("wmic path win32_VideoController get name", shell=True, stderr=subprocess.DEVNULL).decode()
+                out = subprocess.check_output('powershell -Command "Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name"', shell=True, stderr=subprocess.DEVNULL).decode()
                 lines = [line.strip() for line in out.splitlines() if line.strip()]
-                if len(lines) > 1:
-                    specs["gpu"] = lines[1]
+                if lines:
+                    specs["gpu"] = ", ".join(lines)
         except Exception:
             pass
         return specs
@@ -675,32 +719,41 @@ class CenterDashboard(QWidget):
             item = QTreeWidgetItem([path, comp_type, x, y])
             self.mappings_tree.addTopLevelItem(item)
 
+    def populate_tabs(self):
+        self.table_stages.setRowCount(0)
+        self.table_stages.setRowCount(len(self.app_controller.config.automation_stages))
+        for i, stg in enumerate(self.app_controller.config.automation_stages):
+            item = QTableWidgetItem(stg.get('name', ''))
+            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            self.table_stages.setItem(i, 0, item)
+
+    def _open_log_file(self):
+        import os
+        from core.paths import get_base_dir
+        log_path = os.path.join(get_base_dir(), "logs", "salavan.log")
+        if os.path.exists(log_path):
+            os.startfile(log_path)
+            
+    def _copy_all_logs(self):
+        from PySide6.QtGui import QGuiApplication
+        QGuiApplication.clipboard().setText(self.full_logs_text.toPlainText())
+
+    def update_logs(self, html):
+        self.full_logs_text.append(html)
+
     def read_game_state(self):
         return self.app_controller.read_game_state()
 
-    def find_button_in_state(self, btn_name, buttons_dict):
-        clean_name = btn_name.lower().replace("_", "").replace("-", "").replace(" ", "").replace(".png", "").strip()
-        for k, v in buttons_dict.items():
-            clean_k = k.lower().replace("_", "").replace("-", "").replace(" ", "").strip()
-            if clean_k == clean_name or clean_name in clean_k or clean_k in clean_name:
-                return v
-        for k, v in buttons_dict.items():
-            text_val = v.get("text", "")
-            if text_val:
-                clean_text = text_val.lower().replace("_", "").replace("-", "").replace(" ", "").strip()
-                if clean_text == clean_name or clean_name in clean_text or clean_text in clean_name:
-                    return v
-        return None
-
-    def try_resolve_variable_button(self, vx, vy, actions, buttons_dict):
+    def try_resolve_variable_button(self, vx, vy, actions, elements_dict):
         var_x = vx.split('.')[0] if '.' in vx else vx
         var_y = vy.split('.')[0] if '.' in vy else vy
-        if var_x == var_y:
+        if var_x == var_y or vy == "0":
             for act in actions:
                 if act["type"] == "wait_template":
                     line = act["line"]
                     if var_x in line:
-                        return self.find_button_in_state(act["target"], buttons_dict)
+                        from crypto_utils import find_element_in_state
+                        return find_element_in_state(act["target"], {"elements": elements_dict})
         return None
 
     def parse_lua_actions(self, file_path):
@@ -727,7 +780,7 @@ class CenterDashboard(QWidget):
                 current_step = {"name": m_stage.group(1), "actions": []}
                 continue
                 
-            m_wait_temp = re.search(r'wait_template\([\'"]([^\'"]+)[\'"]', line_strip)
+            m_wait_temp = re.search(r'(?:wait_template|ui\.wait_for|wait_for)\([\'"]([^\'"]+)[\'"]', line_strip)
             if m_wait_temp:
                 current_step["actions"].append({
                     "type": "wait_template",
@@ -736,12 +789,14 @@ class CenterDashboard(QWidget):
                 })
                 continue
                 
-            m_click = re.search(r'click\(([^,]+),\s*([^)]+)\)', line_strip)
+            m_click = re.search(r'(?:ui\.)?click\(([^,]+)(?:,\s*([^)]+))?\)', line_strip)
             if m_click:
+                x_val = m_click.group(1).strip()
+                y_val = m_click.group(2).strip() if m_click.group(2) else "0"
                 current_step["actions"].append({
                     "type": "click",
-                    "x": m_click.group(1).strip(),
-                    "y": m_click.group(2).strip(),
+                    "x": x_val,
+                    "y": y_val,
                     "line": line_strip
                 })
                 continue
@@ -876,7 +931,8 @@ class CenterDashboard(QWidget):
                 
                 if action_type == "wait_template":
                     action_target = action["target"]
-                    btn_pos = self.find_button_in_state(action_target, elements_dict)
+                    from crypto_utils import find_element_in_state
+                    btn_pos = find_element_in_state(action_target, {"elements": elements_dict})
                     if btn_pos:
                         if rect:
                             cx, cy, gw_w, gw_h = rect
@@ -894,17 +950,17 @@ class CenterDashboard(QWidget):
                 elif action_type == "click":
                     cx_val = action["x"]
                     cy_val = action["y"]
-                    action_target = f"({cx_val}, {cy_val})"
+                    action_target = f"({cx_val}, {cy_val})" if cy_val != "0" else f"{cx_val}"
                     btn_pos = self.try_resolve_variable_button(cx_val, cy_val, step["actions"], elements_dict)
                     if btn_pos:
                         if rect:
                             cx, cy, gw_w, gw_h = rect
                             abs_x = cx + int(btn_pos['x'] * gw_w / 1280)
                             abs_y = cy + int(btn_pos['y'] * gw_h / 720)
-                            action_coords = f"({abs_x:.1f}, {abs_y:.1f}) [Resolved Screen]"
+                            action_coords = f"{cx_val} ➜ ({abs_x:.1f}, {abs_y:.1f}) [Screen Live]"
                         else:
-                            action_coords = f"({btn_pos['x']:.1f}, {btn_pos['y']:.1f}) [Resolved]"
-                        action_text_size = f"'{btn_pos.get('text', '')}' | {btn_pos.get('w', 0.0):.1f}x{btn_pos.get('h', 0.0):.1f}"
+                            action_coords = f"{cx_val} ➜ ({btn_pos['x']:.1f}, {btn_pos['y']:.1f}) [Unity Live]"
+                        action_text_size = f"'{btn_pos.get('text', '')}'"
                     else:
                         try:
                             rx = float(cx_val)

@@ -1,56 +1,218 @@
 <?xml version='1.0' encoding='utf-8'?>
-<testsuites name="Sylvan Game Salavan Suite" time="88.017">
-  <testsuite name="1_Fresh_Start" tests="11" failures="1" time="88.017">
-    <testcase classname="1_Fresh_Start" name="SYSTEM" time="86.072">
-      <system-out>Killing existing game process before relaunch...
-Game process terminated.
-Launching Game: D:/OuikiDev/Builds/Maou-Sama-TD_v0.5.0/MaouSamaTD.exe
+<testsuites name="Sylvan Game Salavan Suite" time="83.065">
+  <testsuite name="1_Fresh_Start" tests="12" failures="2" time="83.065">
+    <testcase classname="1_Fresh_Start" name="SYSTEM" time="82.526">
+      <system-out>Deleted save: C:\Users\Ouikio/Documents/Maou-Sama-TD/player_save.json
+Launching Game: D:/OuikiDev/Builds/MaouSamaTD_v0.6.3/Maou-Sama-TD.exe
+Found matching windows: ['Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) &lt;DX12&gt;'] exact: 0
+Found matching windows: ['Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) &lt;DX12&gt;'] exact: 0
+Found matching windows: ['Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) &lt;DX12&gt;'] exact: 0
+Found matching windows: ['Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) &lt;DX12&gt;'] exact: 0
+Found matching windows: ['Maou-Sama-TD', 'Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) &lt;DX12&gt;'] exact: 1
 Sequence execution successfully concluded.</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="HUD" time="68.911">
-      <system-out>Reading scenario: 1_Fresh_Start...
-Found coordinate mapping for 'ClearCacheButton'.
-Found coordinate mapping for 'YesButton'.
-Found coordinate mapping for 'StartButton'.
-Found coordinate mapping for 'DiceButton'.
-Found coordinate mapping for 'AriseButton'.
-Found coordinate mapping for 'YesButton'.</system-out>
+    <testcase classname="1_Fresh_Start" name="HUD" time="0.000">
+      <system-out>Reading scenario: 1_Fresh_Start...</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="Launch Game" time="2.701">
+    <testcase classname="1_Fresh_Start" name="Launch Game" time="2.028">
       <system-out>Starting Maou-Sama-TD.exe in windowed mode (960x540)...
 Game process started and window positioned at (0, 0).</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="Clear Data" time="6.398">
+    <testcase classname="1_Fresh_Start" name="Clear Data" time="9.224">
       <system-out>Waiting for loading screen to appear...
 Clear Data button clicked — waiting for confirmation dialog...
-Save data cleared via in-game confirmation dialog. (Assertion skipped due to v0.5.0 build bug)
-Save data cleared via in-game confirmation dialog.</system-out>
+Save data cleared successfully.</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="Loading Screen" time="21.914">
+    <testcase classname="1_Fresh_Start" name="UNITY ENGINE" time="32.214">
+      <system-out>&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62</system-out>
+      <failure message="Step UNITY ENGINE failed.">&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+&lt;color=#0099bc&gt;&lt;b&gt;DOTWEEN ► &lt;/b&gt;&lt;/color&gt;Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62</failure>
+    </testcase>
+    <testcase classname="1_Fresh_Start" name="Loading Screen" time="20.768">
       <system-out>Waiting for boot sequence to finish...
 Clicking 'StartButton' on the loading screen...
 Start Game clicked on loading screen.</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="Ascension Panel" time="4.314">
+    <testcase classname="1_Fresh_Start" name="Ascension Panel" time="0.644">
       <system-out>Waiting for Ascension Panel to appear...
 Dice rolled — character name generated.
 Arise confirmed — entering game world.</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="Intro Dialogue" time="16.343">
-      <system-out>Attempting to skip or advance tutorial intro dialogues...
-No Skip button found — advancing dialogues manually.
-Intro dialogues advanced manually.</system-out>
+    <testcase classname="1_Fresh_Start" name="Intro Dialogue" time="7.568">
+      <system-out>Waiting for BattleScene to load before skipping intro dialogue...
+Attempting to skip or advance tutorial intro dialogues...
+DialogueStarted event received.
+Intro Dialogue closed successfully.</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="Play Tutorial" time="1.385">
+    <testcase classname="1_Fresh_Start" name="Play Tutorial" time="0.326">
       <system-out>Waiting for 'Play Tutorial' prompt...
-Opted to play the tutorial.</system-out>
+'Play Tutorial' confirmed.</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="Placement Dialogue" time="8.067">
+    <testcase classname="1_Fresh_Start" name="Placement Dialogue" time="9.164">
       <system-out>Attempting to skip placement tutorial dialogues...
-Placement dialogue advanced.</system-out>
+DialogueStarted event NOT received — continuing anyway.</system-out>
     </testcase>
-    <testcase classname="1_Fresh_Start" name="Deploy Ignis" time="0.000">
-      <system-out>Locating Ignis unit card in hand area...</system-out>
+    <testcase classname="1_Fresh_Start" name="Deploy Ignis" time="0.004">
+      <system-out>Locating Ignis unit card in hand area...
+Waiting for UnitButton_Ignis to spawn (up to 30s)...
+UnitButton_Ignis found — placing on tile (7, 3)...</system-out>
     </testcase>
     <testcase classname="1_Fresh_Start" name="Placement" time="0.000">
       <system-out>Could not place Ignis via game API.</system-out>

@@ -443,11 +443,11 @@ namespace MaouSamaTD.UI.Gacha
         {
             return rarity switch
             {
-                UnitRarity.Legendary => new Color(1f, 0.2f, 0.2f, 0.9f),  // Vibrant Red
-                UnitRarity.Master => new Color(1f, 0.8f, 0f, 0.9f),     // Gold
-                UnitRarity.Elite => new Color(0.6f, 0.2f, 1f, 0.8f),     // Purple
-                UnitRarity.Rare => new Color(0.2f, 0.6f, 1f, 0.8f),      // Blue
-                UnitRarity.Uncommon => new Color(0.2f, 1f, 0.4f, 0.6f),  // Green
+                UnitRarity.Legendary => new Color(1f, 0.85f, 0f, 0.9f),  // Gold
+                UnitRarity.Master => new Color(0.7f, 0.3f, 1f, 0.9f),    // Violet
+                UnitRarity.Elite => new Color(0.2f, 0.6f, 1f, 0.8f),     // Blue
+                UnitRarity.Rare => new Color(0.2f, 1f, 0.4f, 0.8f),      // Green
+                UnitRarity.Uncommon => new Color(0.7f, 0.7f, 0.7f, 0.8f),// Silver
                 _ => new Color(1f, 1f, 1f, 0.4f)                         // White/Common
             };
         }

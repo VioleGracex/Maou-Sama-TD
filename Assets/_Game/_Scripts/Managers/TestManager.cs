@@ -45,7 +45,7 @@ namespace MaouSamaTD.Managers
                 return;
             }
 
-            var levelManager = FindFirstObjectByType<LevelManager>();
+            var levelManager = FindAnyObjectByType<LevelManager>();
             if (levelManager != null)
             {
                 levelManager.LoadLevel(_levelData);
@@ -101,7 +101,7 @@ namespace MaouSamaTD.Managers
                 return;
             }
 
-            var tutorialManager = FindFirstObjectByType<TutorialManager>();
+            var tutorialManager = FindAnyObjectByType<TutorialManager>();
             if (tutorialManager != null)
             {
                 tutorialManager.StartTutorial(_levelData.TutorialData);
@@ -118,7 +118,7 @@ namespace MaouSamaTD.Managers
                 return;
             }
 
-            var tutorialManager = FindFirstObjectByType<TutorialManager>();
+            var tutorialManager = FindAnyObjectByType<TutorialManager>();
             if (tutorialManager != null)
             {
                 tutorialManager.StartTutorial(_testTutorials[_tutorialIndex]);

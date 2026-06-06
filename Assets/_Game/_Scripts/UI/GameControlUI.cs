@@ -120,12 +120,10 @@ namespace MaouSamaTD.UI
             
             if (_confirmYesButton != null) 
             {
-                _confirmYesButton.gameObject.name = "Retreat_YesButton";
                 _confirmYesButton.onClick.AddListener(OnConfirmRetreat);
             }
             if (_confirmNoButton != null) 
             {
-                _confirmNoButton.gameObject.name = "Retreat_NoButton";
                 _confirmNoButton.onClick.AddListener(OnCancelRetreat);
             }
             
@@ -192,7 +190,7 @@ namespace MaouSamaTD.UI
             }
 
             // Auto-hide Top-Middle HP bar if Mini-Dialogue is active (to prevent overlapping)
-            DialogueUI dialogueUI = FindFirstObjectByType<DialogueUI>();
+            DialogueUI dialogueUI = FindAnyObjectByType<DialogueUI>();
             if (_baseHPContainer != null)
             {
                 bool showBaseHP = dialogueUI == null || !dialogueUI.IsShowingMiniDialogue;
@@ -303,17 +301,17 @@ namespace MaouSamaTD.UI
             if (_uiBlocker != null) _uiBlocker.ShowFullBlocker();
 
             // Close active gameplay panels instantly to avoid post-battle overlaps
-            var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+            var skillPanel = FindAnyObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
             if (skillPanel != null && skillPanel.IsVisible)
             {
                 skillPanel.ToggleVisibility();
             }
-            var unitInspector = FindFirstObjectByType<MaouSamaTD.UI.UnitInspectorUI>();
+            var unitInspector = FindAnyObjectByType<MaouSamaTD.UI.UnitInspectorUI>();
             if (unitInspector != null && unitInspector.IsPanelActive)
             {
                 unitInspector.Hide();
             }
-            var fullScreenInspector = FindFirstObjectByType<MaouSamaTD.UI.UnitInspectorFullScreenUI>();
+            var fullScreenInspector = FindAnyObjectByType<MaouSamaTD.UI.UnitInspectorFullScreenUI>();
             if (fullScreenInspector != null && fullScreenInspector.VisualRoot != null && fullScreenInspector.VisualRoot.activeSelf)
             {
                 fullScreenInspector.Close();
@@ -958,7 +956,7 @@ namespace MaouSamaTD.UI
 
             // Find MainCanvas to ensure UI renders correctly
             GameObject canvasGo = GameObject.FindWithTag("MainCanvas");
-            Canvas canvas = canvasGo != null ? canvasGo.GetComponent<Canvas>() : FindFirstObjectByType<Canvas>();
+            Canvas canvas = canvasGo != null ? canvasGo.GetComponent<Canvas>() : FindAnyObjectByType<Canvas>();
             
             Transform parent = canvas != null ? canvas.transform : this.transform;
             GameObject popup = Instantiate(_tutorialSkipPrefab, parent);

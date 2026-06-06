@@ -34,10 +34,18 @@ class GameHooks:
 
         try:
             import win32gui
-            client_w = gw - 16
-            client_h = gh - 39
-            offset_x = 8
-            offset_y = 32
+            
+            # Use actual client rect to avoid guessing window borders
+            client_rect = win32gui.GetClientRect(hwnd)
+            client_w = client_rect[2] - client_rect[0]
+            client_h = client_rect[3] - client_rect[1]
+            
+            # Map client (0,0) to screen coordinates
+            top_left = win32gui.ClientToScreen(hwnd, (0, 0))
+            gx, gy = top_left[0], top_left[1]
+            
+            offset_x = 0
+            offset_y = 0
         except Exception:
             client_w = gw
             client_h = gh
@@ -53,17 +61,49 @@ class GameHooks:
         if coords:
             print(f"[GameHooks] Translating ({rel_x:.1f}, {rel_y:.1f}) -> Abs: ({coords[0]:.1f}, {coords[1]:.1f}) using Rect: {self.game_rect}", flush=True)
             try:
-                import win32gui, win32con
-                hwnd = win32gui.FindWindow(None, "Maou-Sama-TD")
-                if hwnd:
-                    win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-                    win32gui.SetForegroundWindow(hwnd)
-            except Exception:
-                pass
-            pyautogui.moveTo(coords[0], coords[1], 0.1)
-            pyautogui.click()
-            time.sleep(0.05)
-            pyautogui.click()
+                import pygetwindow as gw
+                windows = gw.getWindowsWithTitle("Maou-Sama-TD")
+                if windows:
+                    win = windows[0]
+                    if getattr(win, "isMinimized", False):
+                        win.restore()
+                    if not win.isActive:
+                        win.activate()
+            except Exception as e:
+                print(f"[GameHooks] Warning: Failed to activate window: {e}")
+                
+            for attempt in range(1):
+                pyautogui.moveTo(coords[0], coords[1], 0.1)
+                time.sleep(0.1)
+                
+                pyautogui.click()
+                break
+                
+            return True
+
+    def double_click_relative(self, rel_x, rel_y):
+        coords = self._get_absolute_coords(rel_x, rel_y)
+        if coords:
+            print(f"[GameHooks] Double Translating ({rel_x:.1f}, {rel_y:.1f}) -> Abs: ({coords[0]:.1f}, {coords[1]:.1f}) using Rect: {self.game_rect}", flush=True)
+            try:
+                import pygetwindow as gw
+                windows = gw.getWindowsWithTitle("Maou-Sama-TD")
+                if windows:
+                    win = windows[0]
+                    if getattr(win, "isMinimized", False):
+                        win.restore()
+                    if not win.isActive:
+                        win.activate()
+            except Exception as e:
+                print(f"[GameHooks] Warning: Failed to activate window: {e}")
+                
+            for attempt in range(1):
+                pyautogui.moveTo(coords[0], coords[1], 0.1)
+                time.sleep(0.1)
+                
+                pyautogui.doubleClick()
+                break
+                
             return True
         return False
 
@@ -72,7 +112,13 @@ class GameHooks:
         end = self._get_absolute_coords(end_x, end_y)
         if start and end:
             pyautogui.moveTo(start[0], start[1], 0.35)
-            pyautogui.dragTo(end[0], end[1], duration, button='left')
+            pyautogui.mouseDown(button='left')
+            import time
+            time.sleep(0.05)
+            pyautogui.moveTo(end[0], end[1], duration)
+            time.sleep(0.05)
+            pyautogui.mouseUp(button='left')
+            time.sleep(0.05)
             return True
         return False
 

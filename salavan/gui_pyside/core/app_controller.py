@@ -26,6 +26,10 @@ class AppController(QObject):
     prompt_missing_template_sig = Signal(str) # Prompts Auto-Mapper
     preview_frame = Signal(QImage)
     game_rect_updated = Signal(int, int, int, int)
+    pause_toggled = Signal(bool)
+    wait_started = Signal(str, float)
+    wait_progress = Signal(float)
+    wait_finished = Signal()
     
     def __init__(self, config, logger, parent=None):
         super().__init__(parent)
@@ -67,10 +71,21 @@ class AppController(QObject):
         
         self.lock_overlay = LockOverlay()
         self.steps_updated.connect(self.lock_overlay.update_steps)
+        
+        from ui.windows.log_overlay import LogOverlay
+        self.log_overlay = LogOverlay()
+        
+        from ui.windows.timer_overlay import TimerOverlay
+        self.timer_overlay = TimerOverlay()
+        self.wait_started.connect(lambda title, sec: self.timer_overlay.show_wait(title, sec, self.config.game_width))
+        self.wait_progress.connect(self.timer_overlay.update_progress)
+        self.wait_finished.connect(self.timer_overlay.hide_wait)
+        
         self.hotkey_service = HotkeyService()
         self.hotkey_service.pause_signal.connect(self._hotkey_pause)
         self.hotkey_service.resume_signal.connect(self._hotkey_resume)
         self.hotkey_service.kill_signal.connect(self.abort_test)
+        self.hotkey_service.toggle_logs_signal.connect(self.log_overlay.toggle_visibility)
         
         self.config.config_changed.connect(self._sync_settings)
         self._sync_settings()
@@ -98,6 +113,8 @@ class AppController(QObject):
     def log_message(self, step, status, msg):
         self.logger.log(step, status, msg)
         self.log_added.emit(step, status, msg)
+        if hasattr(self, 'log_overlay'):
+            self.log_overlay.append_log(step, status, msg)
 
     def is_game_running(self):
         """Returns True if a game process is alive and tracked."""
@@ -138,9 +155,14 @@ class AppController(QObject):
             self.log_message("SYSTEM", "INFO", "Hook Unity Editor is True. Not launching standalone exe.")
             return True
 
-        # If game is already alive and no restart forced, reuse it
-        if not force_restart and self.is_game_running():
-            self.log_message("SYSTEM", "INFO", "Game process already running — reusing existing instance.")
+            try:
+                import pygetwindow as gw
+                windows = gw.getWindowsWithTitle(self.config.get_active_game().get("window_title", "Maou-Sama-TD"))
+                if windows:
+                    win = windows[0]
+                    if not win.isActive:
+                        win.activate()
+            except Exception: pass
             return True
 
         # Kill old process if still alive before spawning a new one
@@ -178,6 +200,39 @@ class AppController(QObject):
                 args.extend(["-logfile", log_path])
                 
             self.game_process = subprocess.Popen(args)
+            
+            # Wait for window and verify process stays alive
+            import time
+            import pygetwindow as gw
+            window_found = False
+            for _ in range(40):  # Wait up to 20 seconds
+                if self.game_process.poll() is not None:
+                    self.log_message("SYSTEM", "FAIL", f"Game process exited immediately with code {self.game_process.returncode}")
+                    return False
+                    
+                try:
+                    target_title = active_game.get("window_title", "Maou-Sama-TD")
+                    all_windows = gw.getWindowsWithTitle(target_title)
+                    windows = [w for w in all_windows if w.title == target_title]
+                    self.log_message("SYSTEM", "DEBUG", f"Found matching windows: {[w.title for w in all_windows]} exact: {len(windows)}")
+                    if windows:
+                        win = windows[-1]
+                        window_found = True
+                        try:
+                            if not win.isActive:
+                                win.activate()
+                        except Exception as e:
+                            self.log_message("SYSTEM", "DEBUG", f"Could not activate window: {e}")
+                        break
+                except Exception as ex:
+                    self.log_message("SYSTEM", "DEBUG", f"Window matching error: {ex}")
+                    pass
+                time.sleep(0.5)
+                
+            if not window_found:
+                self.log_message("SYSTEM", "FAIL", "Game process started but window did not appear within timeout.")
+                return False
+                
             return True
         except Exception as e:
             self.log_message("SYSTEM", "FAIL", f"Failed to launch game: {str(e)}")
@@ -337,11 +392,13 @@ class AppController(QObject):
         self.pause_event.clear()
         self.lock_overlay.hide_overlay()
         self.log_message("SYSTEM", "INFO", "Automation Paused via F8.")
+        self.pause_toggled.emit(True)
 
     def _hotkey_resume(self):
         self.pause_event.set()
         self.lock_overlay.show_overlay(self.config.game_width)
         self.log_message("SYSTEM", "INFO", "Automation Resumed via F9.")
+        self.pause_toggled.emit(False)
 
                     
         if getattr(self, 'run_to_next_step', False):
@@ -358,14 +415,18 @@ class AppController(QObject):
     def sleep_wait(self, seconds):
         if getattr(self, 'current_step_is_skipped', False) or getattr(self, 'skip_current_step', False):
             return
+        self.wait_started.emit("Waiting...", float(seconds))
         start_time = time.time()
         while time.time() - start_time < seconds:
             self.check_paused()
             if self.stop_flag:
+                self.wait_finished.emit()
                 raise InterruptedError()
             if getattr(self, 'skip_current_step', False):
                 break
+            self.wait_progress.emit(float(seconds - (time.time() - start_time)))
             time.sleep(0.1)
+        self.wait_finished.emit()
 
     def click_game_relative(self, rx, ry):
         if getattr(self, 'current_step_is_skipped', False) or getattr(self, 'skip_current_step', False):
@@ -383,9 +444,11 @@ class AppController(QObject):
         if self.pause_event.is_set():
             self.pause_event.clear()
             self.log_message("HUD", "INFO", "Sequence execution SUSPENDED.")
+            self.pause_toggled.emit(True)
         else:
             self.pause_event.set()
             self.log_message("HUD", "INFO", "Sequence execution RESUMED.")
+            self.pause_toggled.emit(False)
 
     def toggle_manual_recording(self, codec_val, fps_val_str):
         if self.capture_service.recording_path:
@@ -498,20 +561,25 @@ class AppController(QObject):
                     try:
                         with open(path, "r", encoding="utf-8-sig") as f:
                             content = f.read().strip()
-                        if content:
                             if content.startswith("{"):
                                 state = json.loads(content)
+                                from crypto_utils import merge_map_tiles_into_state
+                                merge_map_tiles_into_state(state, os.path.dirname(path), self.config.automation_key)
                                 self._last_valid_state = state
                                 return state
                             else:
-                                from crypto_utils import decrypt_state
+                                from crypto_utils import decrypt_state, merge_map_tiles_into_state
                                 decrypted = decrypt_state(content, self.config.automation_key)
                                 if decrypted:
                                     state = json.loads(decrypted)
+                                    merge_map_tiles_into_state(state, os.path.dirname(path), self.config.automation_key)
                                     self._last_valid_state = state
                                     return state
-                    except Exception:
-                        pass # Ignore JSON/Decryption errors and retry
+                    except Exception as e:
+                        import traceback
+                        self.log_message("SYSTEM", "DEBUG", f"Error reading game state: {e} \n{traceback.format_exc()}")
+                        pass
+                import time
                 time.sleep(0.05)
         except Exception as e:
             pass
@@ -554,17 +622,24 @@ class AppController(QObject):
         return elem
         
     def lua_wait_for_element(self, element_id, timeout=10.0):
+        self.wait_started.emit(f"Wait Element: {element_id}", float(timeout))
         start_time = time.time()
         from crypto_utils import find_element_in_state
         while time.time() - start_time < timeout:
             self.check_paused()
             if self.stop_flag:
+                self.wait_finished.emit()
                 raise InterruptedError()
             state = self.read_game_state()
             elem = find_element_in_state(element_id, state)
+            if state:
+                self.log_message("SYSTEM", "DEBUG", f"Waiting for {element_id}. Keys in state: {len(state.get('elements', {}))} Elem found: {elem is not None}")
             if elem and elem.get("visible", False) and elem.get("interactable", True):
+                self.wait_finished.emit()
                 return elem
+            self.wait_progress.emit(float(timeout - (time.time() - start_time)))
             time.sleep(0.2)
+        self.wait_finished.emit()
         return None
 
     def lua_assert_visible(self, element_id, step_name="Assertion"):
@@ -579,17 +654,20 @@ class AppController(QObject):
             raise AssertionError(f"UI Element '{element_id}' is NOT visible.")
 
     def lua_assert_log_contains(self, substring, timeout=10.0, step_name="Log Assertion"):
+        self.wait_started.emit(f"Wait Log: {substring}", float(timeout))
         start_time = time.time()
         start_idx = len(self.game_logs)
         # Check existing first
         for i in range(max(0, start_idx - 1000), start_idx):
             if substring.lower() in self.game_logs[i].lower():
                 self.log_message(step_name, "PASS", f"Log contains '{substring}'.")
+                self.wait_finished.emit()
                 return True
                 
         while time.time() - start_time < timeout:
             self.check_paused()
             if self.stop_flag:
+                self.wait_finished.emit()
                 raise InterruptedError()
             
             # Check newly added logs
@@ -597,9 +675,12 @@ class AppController(QObject):
             for i in range(start_idx, current_len):
                 if substring.lower() in self.game_logs[i].lower():
                     self.log_message(step_name, "PASS", f"Log contains '{substring}'.")
+                    self.wait_finished.emit()
                     return True
             start_idx = current_len
+            self.wait_progress.emit(float(timeout - (time.time() - start_time)))
             time.sleep(0.1)
             
+        self.wait_finished.emit()
         self.log_message(step_name, "FAIL", f"Timeout waiting for log '{substring}'.")
         raise AssertionError(f"Log did not contain '{substring}' within {timeout}s.")

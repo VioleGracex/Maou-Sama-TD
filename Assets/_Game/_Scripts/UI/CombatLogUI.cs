@@ -72,7 +72,7 @@ namespace MaouSamaTD.UI
             UpdateText();
 
             // Find and subscribe to UnitInspectorUI events for overlap prevention
-            _inspectorUI = FindFirstObjectByType<UnitInspectorUI>();
+            _inspectorUI = FindAnyObjectByType<UnitInspectorUI>();
             if (_inspectorUI != null)
             {
                 _inspectorUI.OnPanelShown += OnInspectorShown;

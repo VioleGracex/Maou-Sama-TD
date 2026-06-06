@@ -63,7 +63,7 @@ namespace MaouSamaTD.Units
             var target = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && u.name.Contains("Ignis"));
             if (target == null) return;
 
-            GridManager grid = FindFirstObjectByType<GridManager>();
+            GridManager grid = FindAnyObjectByType<GridManager>();
             if (grid == null) return;
 
             Vector2Int targetCoord = grid.WorldToGridCoordinates(target.transform.position);

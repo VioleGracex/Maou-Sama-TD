@@ -59,6 +59,98 @@ function assert_not_template(name, timeout, threshold, step)
         return true
     end
 end
+
+ui = ui or {}
+
+function ui.exists(name)
+    return get_ui_element(name) ~= nil
+end
+
+function ui.wait_for(name, timeout)
+    timeout = timeout or 10
+    local start = os.time()
+    while os.difftime(os.time(), start) < timeout do
+        local e = get_ui_element(name)
+        if e then
+            return e
+        end
+        wait(0.2)
+    end
+    return nil
+end
+
+function ui.click(name_or_element)
+    local e
+    if type(name_or_element) == "string" then
+        e = get_ui_element(name_or_element)
+        if not e then
+            error("ui.click: Element '" .. name_or_element .. "' not found")
+        end
+    else
+        e = name_or_element
+    end
+    
+    local click_x = e.x or e.fx or (e.ScreenPos and e.ScreenPos[1])
+    local click_y = e.y or e.fy or (e.ScreenPos and e.ScreenPos[2])
+    if click_x and click_y then
+        click(click_x, click_y)
+        return true
+    else
+        error("ui.click: Invalid element coordinates")
+    end
+end
+
+function ui.drag(src_name_or_element, dest_name_or_element, duration)
+    duration = duration or 1.0
+    local src
+    if type(src_name_or_element) == "string" then
+        src = get_ui_element(src_name_or_element)
+        if not src then
+            error("ui.drag: Source element '" .. src_name_or_element .. "' not found")
+        end
+    else
+        src = src_name_or_element
+    end
+    
+    local dest
+    if type(dest_name_or_element) == "string" then
+        dest = get_ui_element(dest_name_or_element)
+        if not dest then
+            error("ui.drag: Destination element '" .. dest_name_or_element .. "' not found")
+        end
+    else
+        dest = dest_name_or_element
+    end
+    
+    local sx = src.x or src.fx or (src.ScreenPos and src.ScreenPos[1])
+    local sy = src.y or src.fy or (src.ScreenPos and src.ScreenPos[2])
+    local dx = dest.x or dest.fx or (dest.ScreenPos and dest.ScreenPos[1])
+    local dy = dest.y or dest.fy or (dest.ScreenPos and dest.ScreenPos[2])
+    
+    if sx and sy and dx and dy then
+        drag(sx, sy, dx, dy, duration)
+        return true
+    else
+        error("ui.drag: Missing coordinates for source or destination")
+    end
+end
+
+function ui.click_text(text_val)
+    local state = get_state()
+    if state and state.elements then
+        for path, e in pairs(state.elements) do
+            if e.type == "Button" and e.text == text_val then
+                local click_x = e.x or e.fx
+                local click_y = e.y or e.fy
+                if click_x and click_y then
+                    click(click_x, click_y)
+                    return true
+                end
+            end
+        end
+    end
+    error("ui.click_text: Button with text '" .. tostring(text_val) .. "' not found")
+end
 """
 
 class LuaRunner(QThread):
@@ -80,6 +172,12 @@ class LuaRunner(QThread):
         try:
             lua = LuaRuntime(unpack_returned_tuples=True)
             
+            # Setup package.path to ensure require('lua_api.xxx') works regardless of cwd
+            from core.paths import get_base_dir
+            import os
+            base_dir = get_base_dir().replace('\\', '/')
+            lua.execute(f"package.path = package.path .. ';{base_dir}/?.lua;{base_dir}/?/init.lua'")
+            
             lua.globals().set_stage = self.app_controller.set_stage_lbl
             lua.globals().log_test = lambda step, res, msg: self.log_emitted.emit(step, res, msg)
             lua.globals().wait = self.app_controller.sleep_wait
@@ -94,6 +192,14 @@ class LuaRunner(QThread):
                     return self.app_controller.click_element_by_id(arg1)
             lua.globals().click = click_lua
 
+            def double_click_lua(arg1, arg2=None):
+                try:
+                    rx = float(arg1)
+                    ry = float(arg2)
+                    return self.app_controller.game_hooks.double_click_relative(rx, ry)
+                except (ValueError, TypeError, IndexError, AttributeError):
+                    return False
+            lua.globals().double_click = double_click_lua
             def drag_lua(arg1, arg2, arg3=None, arg4=None, arg5=None):
                 # Check if arg1 is an element ID (string)
                 if isinstance(arg1, str) and not arg1.replace('.','',1).isdigit():
@@ -173,7 +279,7 @@ class LuaRunner(QThread):
 
 
             def get_state_lua():
-                state = self.app_controller.overlay_service.current_state
+                state = self.app_controller.read_game_state()
                 if state:
                     # Convert python dict to lua table
                     import json
@@ -184,19 +290,91 @@ class LuaRunner(QThread):
             
             # Since dkjson might not be available, let's just return a simpler wrapper or manually convert.
             def get_state_lua_simple():
-                state = self.app_controller.overlay_service.current_state
+                state = self.app_controller.read_game_state()
                 if state:
                     lua_state = lua.table()
+                    lua_state.current_scene = state.get("current_scene", "")
+                    lua_state.is_dialogue_active = state.get("is_dialogue_active", False)
+                    
+                    lua_state.debug_events = lua.table()
+                    for idx, ev in enumerate(state.get("debug_events", [])):
+                        lua_state.debug_events[idx+1] = ev
+
+                    lua_state.unit_button_names = lua.table()
+                    for idx, name in enumerate(state.get("unit_button_names", [])):
+                        lua_state.unit_button_names[idx+1] = name
+
                     lua_state.occupied_tiles = lua.table()
                     for idx, t in enumerate(state.get("occupied_tiles", [])):
                         lua_state.occupied_tiles[idx+1] = lua.table(id=t.get("id"), occupant=t.get("occupant"))
+                    
+                    lua_state.elements = lua.table()
+                    elements = state.get("elements", {})
+                    for path, elem in elements.items():
+                        lua_state.elements[path] = lua.table(
+                            id=elem.get("id", ""),
+                            type=elem.get("type", ""),
+                            x=elem.get("x", 0.0),
+                            y=elem.get("y", 0.0),
+                            fx=elem.get("fx", 0.0),
+                            fy=elem.get("fy", 0.0),
+                            width=elem.get("w", 0.0),
+                            height=elem.get("h", 0.0),
+                            fw=elem.get("fw", 0.0),
+                            fh=elem.get("fh", 0.0),
+                            w=elem.get("w", 0.0),
+                            h=elem.get("h", 0.0),
+                            text=elem.get("text", ""),
+                            visible=elem.get("visible", False),
+                            interactable=elem.get("interactable", False)
+                        )
                     return lua_state
                 return None
             lua.globals().get_state = get_state_lua_simple
             
+            def get_ui_element_lua(name):
+                state = self.app_controller.read_game_state()
+                if state:
+                    from crypto_utils import find_element_in_state
+                    elem = find_element_in_state(name, state)
+                    if elem:
+                        return lua.table(
+                            path=elem.get("path", ""),
+                            id=elem.get("id", ""),
+                            type=elem.get("type", ""),
+                            x=elem.get("x", 0.0),
+                            y=elem.get("y", 0.0),
+                            fx=elem.get("fx", 0.0),
+                            fy=elem.get("fy", 0.0),
+                            width=elem.get("w", 0.0),
+                            height=elem.get("h", 0.0),
+                            fw=elem.get("fw", 0.0),
+                            fh=elem.get("fh", 0.0),
+                            w=elem.get("w", 0.0),
+                            h=elem.get("h", 0.0),
+                            text=elem.get("text", ""),
+                            visible=elem.get("visible", False),
+                            interactable=elem.get("interactable", False)
+                        )
+                return None
+            lua.globals().get_ui_element = get_ui_element_lua
+            
             def wait_template_lua(name, timeout=10, threshold=0.8):
-                # 1. Try to fetch from UIConfig_V0.4.4.json
                 import os, json, time
+
+                # 1. First, try to fetch dynamically from live Game State JSON (100% accurate runtime coords)
+                try:
+                    elem = get_ui_element_lua(name)
+                    if elem:
+                        self.app_controller.log_message("HUD", "INFO", f"Found dynamic live coordinate mapping for '{name}'.")
+                        time.sleep(1.0) # simulate loading screen delay
+                        
+                        # Return the exact fullscreen scaled coordinates provided by GameStateExporter.cs
+                        return lua.table(x=elem.x, y=elem.y)
+                except Exception as e:
+                    self.app_controller.log_message("SYSTEM", "WARNING", f"Live state check failed: {str(e)}")
+
+                # 2. Fallback: Try to fetch from static UIConfig JSON
                 active_game = self.app_controller.config.get_active_game()
                 ui_config_path = active_game.get("ui_mapping_path", "") if active_game else ""
                 if ui_config_path and not os.path.isabs(ui_config_path):
@@ -214,12 +392,11 @@ class LuaRunner(QThread):
                                 data = json.load(f)
                                 entries = data.get("entries", data) if isinstance(data, dict) else data
                                 for entry in entries:
-                                    # Example: "Path": "ClearCacheButton" or "UI_Root/ClearCacheButton"
                                     if entry.get("Path", "") == name or entry.get("Path", "").endswith("/" + name):
                                         coords = entry.get("Coordinates", {})
                                         if "x" in coords and "y" in coords:
-                                            self.app_controller.log_message("HUD", "INFO", f"Found coordinate mapping for '{name}'.")
-                                            time.sleep(1.0) # simulate loading screen delay
+                                            self.app_controller.log_message("HUD", "INFO", f"Found static coordinate mapping for '{name}'.")
+                                            time.sleep(1.0)
                                             x = coords["x"] * (1280.0 / 1920.0)
                                             y = (1080.0 - coords["y"]) * (720.0 / 1080.0)
                                             return lua.table(x=x, y=y)
@@ -228,17 +405,23 @@ class LuaRunner(QThread):
 
                 # 2. Try visual template search
                 res = None
+                self.app_controller.wait_started.emit(f"Wait Template: {name}", float(timeout))
                 start_time = time.time()
                 while (time.time() - start_time) < timeout:
                     self.app_controller.check_paused()
                     if self.app_controller.stop_flag:
+                        self.app_controller.wait_finished.emit()
                         raise InterruptedError()
                     if getattr(self.app_controller, 'current_step_is_skipped', False) or getattr(self.app_controller, 'skip_current_step', False):
+                        self.app_controller.wait_finished.emit()
                         return lua.table(x=0, y=0)
                     
                     res = self.game_hooks.wait_for_template(name, timeout=0.5, threshold=threshold)
                     if res:
                         break
+                    self.app_controller.wait_progress.emit(float(timeout - (time.time() - start_time)))
+                
+                self.app_controller.wait_finished.emit()
                 
                 if res:
                     return lua.table(x=res[0], y=res[1])

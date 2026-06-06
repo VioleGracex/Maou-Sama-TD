@@ -1,35 +1,115 @@
 === Sylvan-HUD Test Report: 1_Fresh_Start ===
-Started At: 2026-06-05 07:59:11
+Started At: 2026-06-06 17:56:33
 
-[2026-06-05 07:59:13] [SYSTEM] [INFO] Killing existing game process before relaunch...
-[2026-06-05 07:59:13] [HUD] [INFO] Reading scenario: 1_Fresh_Start...
-[2026-06-05 07:59:13] [Launch Game] [STARTING] Starting Maou-Sama-TD.exe in windowed mode (960x540)...
-[2026-06-05 07:59:13] [SYSTEM] [INFO] Game process terminated.
-[2026-06-05 07:59:15] [SYSTEM] [INFO] Launching Game: D:/OuikiDev/Builds/Maou-Sama-TD_v0.5.0/MaouSamaTD.exe
-[2026-06-05 07:59:15] [Launch Game] [PASS] Game process started and window positioned at (0, 0).
-[2026-06-05 07:59:21] [HUD] [INFO] Found coordinate mapping for 'ClearCacheButton'.
-[2026-06-05 07:59:21] [Clear Data] [STARTING] Waiting for loading screen to appear...
-[2026-06-05 07:59:22] [Clear Data] [INFO] Clear Data button clicked — waiting for confirmation dialog...
-[2026-06-05 07:59:23] [HUD] [INFO] Found coordinate mapping for 'YesButton'.
-[2026-06-05 07:59:27] [Clear Data] [PASS] Save data cleared via in-game confirmation dialog. (Assertion skipped due to v0.5.0 build bug)
-[2026-06-05 07:59:27] [Clear Data] [PASS] Save data cleared via in-game confirmation dialog.
-[2026-06-05 07:59:29] [Loading Screen] [STARTING] Waiting for boot sequence to finish...
-[2026-06-05 07:59:47] [Loading Screen] [STARTING] Clicking 'StartButton' on the loading screen...
-[2026-06-05 07:59:47] [HUD] [INFO] Found coordinate mapping for 'StartButton'.
-[2026-06-05 07:59:51] [Loading Screen] [PASS] Start Game clicked on loading screen.
-[2026-06-05 07:59:54] [HUD] [INFO] Found coordinate mapping for 'DiceButton'.
-[2026-06-05 07:59:54] [Ascension Panel] [STARTING] Waiting for Ascension Panel to appear...
-[2026-06-05 07:59:57] [Ascension Panel] [INFO] Dice rolled — character name generated.
-[2026-06-05 07:59:57] [HUD] [INFO] Found coordinate mapping for 'AriseButton'.
-[2026-06-05 07:59:58] [Ascension Panel] [PASS] Arise confirmed — entering game world.
-[2026-06-05 08:00:05] [Intro Dialogue] [STARTING] Attempting to skip or advance tutorial intro dialogues...
-[2026-06-05 08:00:14] [Intro Dialogue] [INFO] No Skip button found — advancing dialogues manually.
-[2026-06-05 08:00:22] [HUD] [INFO] Found coordinate mapping for 'YesButton'.
-[2026-06-05 08:00:22] [Intro Dialogue] [PASS] Intro dialogues advanced manually.
-[2026-06-05 08:00:22] [Play Tutorial] [STARTING] Waiting for 'Play Tutorial' prompt...
-[2026-06-05 08:00:23] [Play Tutorial] [PASS] Opted to play the tutorial.
-[2026-06-05 08:00:26] [Placement Dialogue] [STARTING] Attempting to skip placement tutorial dialogues...
-[2026-06-05 08:00:34] [Placement Dialogue] [PASS] Placement dialogue advanced.
-[2026-06-05 08:00:34] [Deploy Ignis] [STARTING] Locating Ignis unit card in hand area...
-[2026-06-05 08:00:39] [Placement] [FAIL] Could not place Ignis via game API.
-[2026-06-05 08:00:39] [SYSTEM] [INFO] Sequence execution successfully concluded.
+[2026-06-06 17:56:34] [SYSTEM] [INFO] Deleted save: C:\Users\Ouikio/Documents/Maou-Sama-TD/player_save.json
+[2026-06-06 17:56:34] [SYSTEM] [INFO] Launching Game: D:/OuikiDev/Builds/MaouSamaTD_v0.6.3/Maou-Sama-TD.exe
+[2026-06-06 17:56:34] [HUD] [INFO] Reading scenario: 1_Fresh_Start...
+[2026-06-06 17:56:34] [Launch Game] [STARTING] Starting Maou-Sama-TD.exe in windowed mode (960x540)...
+[2026-06-06 17:56:34] [SYSTEM] [DEBUG] Found matching windows: ['Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) <DX12>'] exact: 0
+[2026-06-06 17:56:34] [SYSTEM] [DEBUG] Found matching windows: ['Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) <DX12>'] exact: 0
+[2026-06-06 17:56:35] [SYSTEM] [DEBUG] Found matching windows: ['Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) <DX12>'] exact: 0
+[2026-06-06 17:56:35] [SYSTEM] [DEBUG] Found matching windows: ['Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) <DX12>'] exact: 0
+[2026-06-06 17:56:36] [SYSTEM] [DEBUG] Found matching windows: ['Maou-Sama-TD', 'Maou-Sama-TD - Antigravity IDE - BuildScript.cs', 'Maou-Sama-TD - BattleScene - Windows, Mac, Linux - Unity 6.4 (6000.4.5f1) <DX12>'] exact: 1
+[2026-06-06 17:56:36] [Launch Game] [PASS] Game process started and window positioned at (0, 0).
+[2026-06-06 17:56:41] [Clear Data] [STARTING] Waiting for loading screen to appear...
+[2026-06-06 17:56:41] [Clear Data] [INFO] Clear Data button clicked — waiting for confirmation dialog...
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:56:45] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:56:50] [Clear Data] [PASS] Save data cleared successfully.
+[2026-06-06 17:56:52] [Loading Screen] [STARTING] Waiting for boot sequence to finish...
+[2026-06-06 17:57:10] [Loading Screen] [STARTING] Clicking 'StartButton' on the loading screen...
+[2026-06-06 17:57:13] [Loading Screen] [PASS] Start Game clicked on loading screen.
+[2026-06-06 17:57:16] [Ascension Panel] [STARTING] Waiting for Ascension Panel to appear...
+[2026-06-06 17:57:16] [Ascension Panel] [INFO] Dice rolled — character name generated.
+[2026-06-06 17:57:16] [Ascension Panel] [PASS] Arise confirmed — entering game world.
+[2026-06-06 17:57:16] [Intro Dialogue] [INFO] Waiting for BattleScene to load before skipping intro dialogue...
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] <color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowNullReferenceException(System.Object)) ► Object reference not set to an instance of an object.
+[2026-06-06 17:57:17] [UNITY ENGINE] [FAIL] at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00011] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62
+[2026-06-06 17:57:17] [Intro Dialogue] [STARTING] Attempting to skip or advance tutorial intro dialogues...
+[2026-06-06 17:57:17] [Intro Dialogue] [INFO] DialogueStarted event received.
+[2026-06-06 17:57:24] [Intro Dialogue] [PASS] Intro Dialogue closed successfully.
+[2026-06-06 17:57:24] [Play Tutorial] [STARTING] Waiting for 'Play Tutorial' prompt...
+[2026-06-06 17:57:24] [Play Tutorial] [PASS] 'Play Tutorial' confirmed.
+[2026-06-06 17:57:26] [Placement Dialogue] [STARTING] Attempting to skip placement tutorial dialogues...
+[2026-06-06 17:57:36] [Placement Dialogue] [INFO] DialogueStarted event NOT received — continuing anyway.
+[2026-06-06 17:57:40] [Deploy Ignis] [STARTING] Locating Ignis unit card in hand area...
+[2026-06-06 17:57:40] [Deploy Ignis] [INFO] Waiting for UnitButton_Ignis to spawn (up to 30s)...
+[2026-06-06 17:57:40] [Deploy Ignis] [INFO] UnitButton_Ignis found — placing on tile (7, 3)...
+[2026-06-06 17:57:56] [Placement] [FAIL] Could not place Ignis via game API.
+[2026-06-06 17:57:56] [SYSTEM] [INFO] Sequence execution successfully concluded.

@@ -211,7 +211,7 @@ namespace MaouSamaTD.Managers
             // Level 1 Start Logic: Ensure Sovereign Rite Panel is strictly hidden
             if (CurrentLevelIndex == 1)
             {
-                var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                var skillPanel = FindAnyObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
                 if (skillPanel != null)
                 {
                     skillPanel.gameObject.SetActive(false);
@@ -802,7 +802,7 @@ namespace MaouSamaTD.Managers
                             // Auto-skip "Open Rite Menu" if it's already open
                             if (step.ActionKey == "RiteMenuOpened")
                             {
-                                var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                                var skillPanel = FindAnyObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
                                 if (skillPanel != null && skillPanel.IsVisible)
                                 {
                                     if (_showDebugLogs) Debug.Log("[tutorial] Rite Menu already open, auto-completing step.");
@@ -1192,6 +1192,10 @@ namespace MaouSamaTD.Managers
 
                 if (_showDebugLogs) Debug.Log($"[tutorial] <<< Finished Step [{_currentStepIndex}]: {step.StepName}");
                 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                MaouSamaTD.Testing.GameStateExporter.PushEvent($"TutorialStepPassed:{step.StepName}");
+#endif
+                
                 // Redirection Engine
                 if (_nextStepIndexOverride >= 0)
                 {
@@ -1357,7 +1361,7 @@ namespace MaouSamaTD.Managers
                         // If it's a skill button, check if the panel is actually visible (not slid off-screen)
                         if (isSkillButton)
                         {
-                            var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                            var skillPanel = FindAnyObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
                             if (skillPanel != null && !skillPanel.IsVisible)
                             {
                                 isMenuVisible = false;
@@ -1588,7 +1592,7 @@ private RectTransform FindTargetRect(string name)
             if (go == null)
             {
                 // Targeted search is much faster than Resources.FindObjectsOfTypeAll
-                var canvas = FindFirstObjectByType<Canvas>();
+                var canvas = FindAnyObjectByType<Canvas>();
                 if (canvas != null)
                 {
                     var all = canvas.GetComponentsInChildren<RectTransform>(true);
@@ -1660,7 +1664,7 @@ private RectTransform FindTargetRect(string name)
             }
 
             // Fallback to Canvas search (still faster than Resources.FindObjectsOfTypeAll)
-            var canvas = FindFirstObjectByType<Canvas>();
+            var canvas = FindAnyObjectByType<Canvas>();
             if (canvas != null)
             {
                 var all = canvas.GetComponentsInChildren<RectTransform>(true);
@@ -2295,7 +2299,7 @@ private RectTransform FindTargetRect(string name)
                     var ignis = PlayerUnit.ActiveUnits.FirstOrDefault(u => u != null && u.name.Contains("Ignis"));
                     if (ignis != null)
                     {
-                        if (_gridManager == null) _gridManager = FindFirstObjectByType<Grid.GridManager>();
+                        if (_gridManager == null) _gridManager = FindAnyObjectByType<Grid.GridManager>();
                         if (_gridManager != null)
                         {
                             bool exitIsLeft = _gridManager.exitIsLeft;
@@ -2333,7 +2337,7 @@ private RectTransform FindTargetRect(string name)
                 // Special case for RiteMenuOpened: if skill panel is already open, skip step entirely
                 if (step.ActionKey == "RiteMenuOpened")
                 {
-                    var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
+                    var skillPanel = FindAnyObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>();
                     if (skillPanel != null && skillPanel.IsVisible)
                     {
                         return true;

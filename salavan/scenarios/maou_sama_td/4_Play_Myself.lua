@@ -31,15 +31,15 @@ local function run_tests()
     if clear_data_btn then
         click(clear_data_btn.x, clear_data_btn.y)
         log_test("Clear Cache", "INFO", "Clear Cache button clicked — waiting for confirmation dialog...")
-        wait(1.5)
+        -- wait(1.5)
 
         -- Confirm deletion
-        local confirm_btn = wait_template("YesButton", 10)
+        local confirm_btn = wait_template("ClearCache_YesButton", 10)
         if confirm_btn then
             click(confirm_btn.x, confirm_btn.y)
             log_test("Clear Cache", "PASS", "Save data cleared via in-game confirmation dialog.")
         else
-            local ok_btn = wait_template("yes", 6)
+            local ok_btn = wait_template("ClearCache_YesButton", 6)
             if ok_btn then
                 click(ok_btn.x, ok_btn.y)
                 log_test("Clear Cache", "PASS", "Save data cleared via OK button (fallback template).")

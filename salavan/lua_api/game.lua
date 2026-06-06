@@ -9,33 +9,33 @@ game = game or {}
 -- grid_y: The Y coordinate of the tile
 function game.place_unit(unit_name, grid_x, grid_y, timeout)
     timeout = timeout or 15.0
-    local card_id = "UnitButton_" .. unit_name
+    local card_id = "UnitCard_" .. unit_name
     local tile_id = "Tile_" .. grid_x .. "_" .. grid_y
     
     print("[API] Attempting to place " .. unit_name .. " at (" .. grid_x .. ", " .. grid_y .. ")")
     
     local start_time = os.time()
-    
     while os.difftime(os.time(), start_time) < timeout do
-        local card = wait_for(card_id, 1.0)
-        local tile = wait_for(tile_id, 1.0)
+        local card = ui.wait_for(card_id, 1.0)
+        if not card then
+            card = ui.wait_for("UnitButton_" .. unit_name, 1.0)
+        end
+        local tile = ui.wait_for(tile_id, 1.0)
         
         if card and tile then
-            -- Try to place
-            click(card.x, card.y)
-            wait(0.2)
-            click(card.x, card.y)
-            wait(0.5)
-            click(tile.x, tile.y)
+            -- Drag the card to the tile
+            ui.drag(card, tile, 1.0)
             
             -- Wait a moment to see if it took
-            wait(1.0)
+            wait(1.5)
             
-            -- Check if occupied (assuming we have game.wait_for_occupant or similar check)
+            -- Check if occupied
             local state = get_state()
             local placed = false
             if state and state.occupied_tiles then
+                print("[API] DEBUG occupied_tiles count: " .. #state.occupied_tiles)
                 for i, t in ipairs(state.occupied_tiles) do
+                    print("[API] DEBUG tile occupied: " .. t.id)
                     if t.id == tile_id then
                         placed = true
                         break
@@ -50,7 +50,7 @@ function game.place_unit(unit_name, grid_x, grid_y, timeout)
                 print("[API] Placement failed, retrying...")
             end
         else
-            sleep(0.5)
+            wait(0.5)
         end
     end
 
@@ -73,7 +73,7 @@ function game.wait_for_occupant(grid_x, grid_y, timeout)
                 end
             end
         end
-        sleep(0.5)
+        wait(0.5)
     end
     
     return false
@@ -97,10 +97,27 @@ function game.wait_for_scene(scene_name, timeout)
             print("[API] Scene reached: " .. scene_name)
             return true
         end
-        sleep(0.5)
+        wait(0.5)
     end
     print("[API] Timed out waiting for scene: " .. scene_name)
     return false
+end
+
+game.last_event_id = 0
+
+function game.clear_events()
+    local state = get_state()
+    if state and state.debug_events then
+        for _, ev in ipairs(state.debug_events) do
+            local id_str = string.match(ev, "^%[(%d+)%]")
+            if id_str then
+                local id = tonumber(id_str)
+                if id > game.last_event_id then
+                    game.last_event_id = id
+                end
+            end
+        end
+    end
 end
 
 -- Wait until debug_events contains a string matching event_name
@@ -112,13 +129,17 @@ function game.wait_for_event(event_name, timeout)
         local state = get_state()
         if state and state.debug_events then
             for _, ev in ipairs(state.debug_events) do
-                if string.find(ev, event_name, 1, true) then
+                local id_str = string.match(ev, "^%[(%d+)%]")
+                local id = id_str and tonumber(id_str) or (game.last_event_id + 1)
+                
+                if id > game.last_event_id and string.find(ev, event_name, 1, true) then
+                    game.last_event_id = id
                     print("[API] Event received: " .. ev)
                     return true
                 end
             end
         end
-        sleep(0.3)
+        wait(0.3)
     end
     print("[API] Timed out waiting for event: " .. event_name)
     return false
@@ -140,13 +161,13 @@ function game.wait_for_unit(unit_name, timeout)
                 end
             end
         end
-        -- Also check via wait_for as fallback
-        local elem = wait_for(button_name, 0.1)
+        -- Also check via ui.wait_for as fallback
+        local elem = ui.wait_for(button_name, 0.1)
         if elem then
             print("[API] Unit button found via element: " .. button_name)
             return true
         end
-        sleep(0.5)
+        wait(0.5)
     end
     print("[API] Timed out waiting for unit: " .. unit_name)
     return false

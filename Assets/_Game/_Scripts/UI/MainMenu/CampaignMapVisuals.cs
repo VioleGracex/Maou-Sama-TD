@@ -231,6 +231,7 @@ namespace MaouSamaTD.UI.MainMenu
                 newlyAddedIndex++;
 
                 var btn = UnityEngine.Object.Instantiate(_levelButtonPrefab, _levelContainer);
+                btn.gameObject.name = "node_level_" + data.Level.LevelIndex;
                 var rect = btn.GetComponent<RectTransform>();
                 if (rect != null)
                 {

@@ -2006,43 +2006,8 @@ class GameSalavanApp:
 
 
     def get_system_specs(self):
-        import platform
-        import subprocess
-        specs = {
-            "os": f"{platform.system()} {platform.release()}",
-            "cpu": "Unknown Processor",
-            "ram": "Unknown Memory",
-            "gpu": "Unknown GPU"
-        }
-        try:
-            if platform.system() == "Windows":
-                import winreg
-                key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"HARDWARE\DESCRIPTION\System\CentralProcessor\0")
-                cpu_name, _ = winreg.QueryValueEx(key, "ProcessorNameString")
-                if cpu_name:
-                    specs["cpu"] = cpu_name.strip()
-            else:
-                specs["cpu"] = platform.processor()
-        except Exception:
-            specs["cpu"] = platform.processor()
-        try:
-            if platform.system() == "Windows":
-                out = subprocess.check_output("wmic computersystem get totalphysicalmemory", shell=True).decode()
-                lines = [line.strip() for line in out.splitlines() if line.strip()]
-                if len(lines) > 1 and lines[1].isdigit():
-                    ram_bytes = int(lines[1])
-                    specs["ram"] = f"{ram_bytes / (1024**3):.1f} GB"
-        except Exception:
-            pass
-        try:
-            if platform.system() == "Windows":
-                out = subprocess.check_output("wmic path win32_VideoController get name", shell=True).decode()
-                lines = [line.strip() for line in out.splitlines() if line.strip()]
-                if len(lines) > 1:
-                    specs["gpu"] = lines[1]
-        except Exception:
-            pass
-        return specs
+        from crypto_utils import get_system_specs
+        return get_system_specs()
 
     def toggle_hud_mode(self):
         if self.hud_mode == "ANALYZE":
@@ -2566,13 +2531,18 @@ class GameSalavanApp:
                 
                 # Check for raw json first
                 if content.startswith("{"):
-                    return json.loads(content)
+                    state = json.loads(content)
+                    from crypto_utils import merge_map_tiles_into_state
+                    merge_map_tiles_into_state(state, os.path.dirname(path), self.config.automation_key)
+                    return state
                 
                 # Decrypt
-                from crypto_utils import decrypt_state
+                from crypto_utils import decrypt_state, merge_map_tiles_into_state
                 decrypted = decrypt_state(content, self.config.automation_key)
                 if decrypted:
-                    return json.loads(decrypted)
+                    state = json.loads(decrypted)
+                    merge_map_tiles_into_state(state, os.path.dirname(path), self.config.automation_key)
+                    return state
         except Exception as e:
             print(f"Failed to read game state: {e}")
         return None
@@ -2641,9 +2611,10 @@ class GameSalavanApp:
                     
             state = self.read_game_state()
             if state:
-                btn_pos = self.find_button_in_state(name, state.get("buttons", {}))
+                from crypto_utils import find_element_in_state
+                btn_pos = find_element_in_state(name, state)
                 if btn_pos:
-                    self.log_message("SYNC UI", "INFO", f"Successfully synced button '{name}' to coordinate ({btn_pos['x']}, {btn_pos['y']})")
+                    self.log_message("SYNC UI", "INFO", f"Successfully synced button/element '{name}' to coordinate ({btn_pos['x']}, {btn_pos['y']})")
                     return (btn_pos["x"], btn_pos["y"])
                     
             # 2. Fall back to template match if JSON state does not contain the button,

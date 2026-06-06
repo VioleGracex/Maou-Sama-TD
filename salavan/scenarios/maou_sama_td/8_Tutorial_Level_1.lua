@@ -30,15 +30,15 @@ local function run_tests()
     if clear_data_btn then
         click(clear_data_btn.x, clear_data_btn.y)
         log_test("Clear Cache", "INFO", "Clear Cache button clicked — waiting for confirmation dialog...")
-        wait(1.5)
+        -- wait(1.5)
 
         -- Confirm deletion
-        local confirm_btn = wait_template("YesButton", 10)
+        local confirm_btn = wait_template("ClearCache_YesButton", 10)
         if confirm_btn then
             click(confirm_btn.x, confirm_btn.y)
             log_test("Clear Cache", "PASS", "Save data cleared via in-game confirmation dialog.")
         else
-            local ok_btn = wait_template("yes", 6)
+            local ok_btn = wait_template("ClearCache_YesButton", 6)
             if ok_btn then
                 click(ok_btn.x, ok_btn.y)
                 log_test("Clear Cache", "PASS", "Save data cleared via OK button (fallback template).")
@@ -153,7 +153,7 @@ local function run_tests()
 
     -- Dialogue advance post placement
     click(850, 490)
-    wait(1.5)
+    -- wait(1.5)
 
     -- Speed up
     local spd_btn = wait_template("SpeedButton", 4)
@@ -163,10 +163,10 @@ local function run_tests()
     end
 
     log_test("Tutorial Level 1", "INFO", "Waiting for ultimate charge tutorial pause...")
-    wait(12)
+    -- wait(12)
 
     -- Dismiss ultimate dialogue
-    local ult_dialogue = wait_template("ult_tutorial_dialogue", 15)
+    local ult_dialogue = wait_template("FullSkipButton", 15)
     if ult_dialogue then
         click(ult_dialogue.x, ult_dialogue.y)
         wait(1.5)
@@ -177,7 +177,7 @@ local function run_tests()
 
     -- Trigger Ultimate
     click(555, 240)
-    wait(2.0)
+    -- wait(2.0)
     local ult_btn = wait_template("Ult_Btn", 8)
     if ult_btn then
         click(ult_btn.x, ult_btn.y)
@@ -187,7 +187,7 @@ local function run_tests()
         log_test("Tutorial Level 1", "INFO", "Activated ultimate (fallback coordinate).")
     end
 
-    wait(2)
+    -- wait(2)
 
     -- Wait for victory screen
     local next_lvl_btn = wait_template("NextLevelButton", 60)

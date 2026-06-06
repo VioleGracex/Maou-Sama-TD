@@ -100,11 +100,16 @@ class ScenariosSidebar(QWidget):
         row1 = QHBoxLayout()
         self.btn_pause = QPushButton("PAUSE")
         self.btn_pause.setStyleSheet(self.btn_run.styleSheet())
+        self.btn_pause.clicked.connect(self.app_controller.toggle_pause)
+        
         self.btn_stop = QPushButton("ABORT")
         self.btn_stop.setStyleSheet(self.btn_run.styleSheet())
         row1.addWidget(self.btn_pause)
         row1.addWidget(self.btn_stop)
         ctrl_layout.addLayout(row1)
+        
+        # Connect the new signal
+        self.app_controller.pause_toggled.connect(self._update_pause_btn)
         
         row2 = QHBoxLayout()
         self.btn_prev = QPushButton("⏮ PREV")
@@ -119,6 +124,14 @@ class ScenariosSidebar(QWidget):
         ctrl_layout.addLayout(row2)
         
         main_layout.addWidget(ctrl_frame)
+
+    def _update_pause_btn(self, is_paused):
+        if is_paused:
+            self.btn_pause.setText("RESUME")
+            self.btn_pause.setStyleSheet("QPushButton { background: #eab308; color: black; padding: 6px; border-radius: 3px; font-weight: bold; } QPushButton:hover { background: #fef08a; }")
+        else:
+            self.btn_pause.setText("PAUSE")
+            self.btn_pause.setStyleSheet("QPushButton { background: #27272a; color: white; padding: 6px; border-radius: 3px; font-weight: bold; } QPushButton:hover { background: #3f3f46; }")
 
     def populate_scenarios(self):
         # Update active game and scenarios directory target dynamically

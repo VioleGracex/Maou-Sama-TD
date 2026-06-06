@@ -2741,6 +2741,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -37.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1158872445217363486, guid: d73d7afbcbed6494284698bcc78db67f, type: 3}
+      propertyPath: m_Name
+      value: engage_btn
+      objectReference: {fileID: 0}
     - target: {fileID: 1210119916382408453, guid: d73d7afbcbed6494284698bcc78db67f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -21653,7 +21657,7 @@ GameObject:
   - component: {fileID: 609400971}
   - component: {fileID: 609400970}
   m_Layer: 0
-  m_Name: NavBtn_Campaign
+  m_Name: conquest_nav_btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55297,6 +55301,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1684419504612642742, guid: 2a051160c538a7c458b7fb3f4b1a0075, type: 3}
+      propertyPath: m_Name
+      value: ClearCache_YesButton
+      objectReference: {fileID: 0}
     - target: {fileID: 1779430202889118452, guid: 2a051160c538a7c458b7fb3f4b1a0075, type: 3}
       propertyPath: m_Name
       value: LoadingScreen_Root
@@ -55392,6 +55400,10 @@ PrefabInstance:
     - target: {fileID: 5908476120595663143, guid: 2a051160c538a7c458b7fb3f4b1a0075, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6572816640754020946, guid: 2a051160c538a7c458b7fb3f4b1a0075, type: 3}
+      propertyPath: m_Name
+      value: ClearCache_NoButton
       objectReference: {fileID: 0}
     - target: {fileID: 8651010561844877462, guid: 2a051160c538a7c458b7fb3f4b1a0075, type: 3}
       propertyPath: m_SizeDelta.x
@@ -88672,7 +88684,7 @@ GameObject:
   - component: {fileID: 6034856527068705170}
   - component: {fileID: 6034856527068705171}
   m_Layer: 5
-  m_Name: Briefing_Engage_Button
+  m_Name: engage_btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91843,7 +91855,7 @@ GameObject:
   - component: {fileID: 4635757447987561323}
   - component: {fileID: 1791760380686796593}
   m_Layer: 0
-  m_Name: Btn_Single_Summon
+  m_Name: PullOne_Btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108308,7 +108320,7 @@ GameObject:
   - component: {fileID: 5135536167251178719}
   - component: {fileID: 3246624835363185103}
   m_Layer: 5
-  m_Name: Conquest_Btn
+  m_Name: conquest_nav_btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111073,7 +111085,7 @@ GameObject:
   - component: {fileID: 5987523922294174361}
   - component: {fileID: 12865853911266542}
   m_Layer: 0
-  m_Name: Btn_Multi_Summon
+  m_Name: Summon10_Btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113645,7 +113657,7 @@ GameObject:
   - component: {fileID: 8300986612219085639}
   - component: {fileID: 8300986612219085640}
   m_Layer: 0
-  m_Name: Action_Btn
+  m_Name: start_mission_btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

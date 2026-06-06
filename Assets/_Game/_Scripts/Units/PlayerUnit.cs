@@ -59,7 +59,7 @@ namespace MaouSamaTD.Units
             
             ReachCount++;
             if (_showDebugLogs) Debug.Log($"[Ultimate] {gameObject.name} encountered {enemy?.gameObject.name}. Blocking: {_currentlyBlockedEnemies.Count}/{BlockCount}");
-            Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+            Managers.TutorialManager tm = FindAnyObjectByType<Managers.TutorialManager>();
             if (tm != null) tm.OnActionTriggered("UnitReach");
         }
 
@@ -75,7 +75,7 @@ namespace MaouSamaTD.Units
         {
             KillCount++;
             if (_showDebugLogs) Debug.Log($"[Ultimate] {Data?.UnitName} now has {KillCount} kills.");
-            Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+            Managers.TutorialManager tm = FindAnyObjectByType<Managers.TutorialManager>();
             if (tm != null) tm.OnActionTriggered("UnitKill"); 
         }
 
@@ -91,7 +91,7 @@ namespace MaouSamaTD.Units
                     _currentCharge -= cost;
                     StartCoroutine(ExecuteUltimateRoutine());
                     
-                    Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+                    Managers.TutorialManager tm = FindAnyObjectByType<Managers.TutorialManager>();
                     if (tm != null) tm.OnActionTriggered("SkillUsed");
                 }
                 else
@@ -293,7 +293,7 @@ namespace MaouSamaTD.Units
             // 2. Fallback to nearest spawn point
             if (!targetFound)
             {
-                if (_gridManager == null) _gridManager = FindFirstObjectByType<Grid.GridManager>();
+                if (_gridManager == null) _gridManager = FindAnyObjectByType<Grid.GridManager>();
                 if (_gridManager != null && _gridManager.SpawnPoints != null && _gridManager.SpawnPoints.Count > 0)
                 {
                     var closestSpawnCoord = _gridManager.SpawnPoints[0].Coordinate;
@@ -359,7 +359,8 @@ namespace MaouSamaTD.Units
                  if (_currentCharge > MaxCharge) _currentCharge = MaxCharge;
              }
 
-             if (Time.time >= _lastAttackTime + _attackInterval)
+             _attackTimer -= Time.deltaTime;
+             if (_attackTimer <= 0f)
              {
                  Attack();
              }
@@ -367,7 +368,7 @@ namespace MaouSamaTD.Units
 
         private void Attack()
         {
-            if (_gridManager == null) _gridManager = FindFirstObjectByType<Grid.GridManager>();
+            if (_gridManager == null) _gridManager = FindAnyObjectByType<Grid.GridManager>();
             if (_gridManager == null) return;
 
             Vector2Int myPos;
@@ -455,7 +456,8 @@ namespace MaouSamaTD.Units
 
             if (attacked)
             {
-                _lastAttackTime = Time.time;
+                if (_attackTimer < -Time.deltaTime) _attackTimer = -Time.deltaTime;
+                _attackTimer += AttackInterval;
             }
             else
             {
@@ -497,7 +499,7 @@ namespace MaouSamaTD.Units
             // Disallow retreat during tutorial, unless forced
             if (!force)
             {
-                Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+                Managers.TutorialManager tm = FindAnyObjectByType<Managers.TutorialManager>();
                 if (tm != null && tm.IsInTutorial)
                 {
                     if (_showDebugLogs) Debug.Log("[Retreat] Retreat is disabled during tutorial.");
@@ -516,7 +518,7 @@ namespace MaouSamaTD.Units
             OnRetreat?.Invoke(this);
             if (_interactionManager != null) _interactionManager.NotifyUnitRemoved(this);
             
-            var gm = FindFirstObjectByType<Managers.GameManager>();
+            var gm = FindAnyObjectByType<Managers.GameManager>();
             if (gm != null) gm.ReportUnitLost();
 
             Destroy(gameObject);
@@ -649,11 +651,11 @@ namespace MaouSamaTD.Units
 
             if (_interactionManager != null) _interactionManager.NotifyUnitRemoved(this);
             
-            var gm = FindFirstObjectByType<Managers.GameManager>();
+            var gm = FindAnyObjectByType<Managers.GameManager>();
 
             if (Data != null)
             {
-                var saveManager = FindFirstObjectByType<MaouSamaTD.Managers.SaveManager>();
+                var saveManager = FindAnyObjectByType<MaouSamaTD.Managers.SaveManager>();
                 if (saveManager != null && saveManager.CurrentData != null)
                 {
                     string unitId = Data.name;
@@ -689,7 +691,7 @@ namespace MaouSamaTD.Units
                 else gm.ReportUnitLost();
             }
 
-            var tm = FindFirstObjectByType<Managers.TutorialManager>();
+            var tm = FindAnyObjectByType<Managers.TutorialManager>();
             if (tm != null && Data != null) tm.OnActionTriggered("UnitDied_" + Data.UnitName);
 
             base.Die();

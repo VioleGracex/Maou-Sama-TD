@@ -29,7 +29,7 @@ class LockOverlay(QWidget):
         layout.setSpacing(6)
 
         # ── Header Banner ──────────────────────────────────────────────
-        self._header = QLabel("⚙ AUTOMATION RUNNING\nF8 Pause  ·  F9 Resume  ·  Ctrl+Shift+F12 Kill")
+        self._header = QLabel("⚙ AUTOMATION RUNNING\nF8 Pause  ·  F9 Resume\nCtrl+Shift+F12 Kill")
         self._header.setAlignment(Qt.AlignCenter)
         self._header.setFont(QFont("Arial", 11, QFont.Bold))
         self._header.setStyleSheet("""

@@ -15,7 +15,7 @@ local function run_tests()
         return
     end
 
-    wait(3)
+    -- wait(3)
 
     -- If the game is at the loading screen, click Start Game
     local start_btn = wait_template("StartButton", 5)
@@ -57,7 +57,7 @@ local function run_tests()
         log_test("Select Node", "INFO", "Clicked node 1 coordinates (fallback).")
     end
 
-    wait(2)
+    -- wait(2)
 
     -- Click Engage to open cohort setup
     local engage_btn = wait_template("engage_btn", 8)
@@ -69,7 +69,7 @@ local function run_tests()
         log_test("Engage", "INFO", "Clicked engage area (fallback).")
     end
 
-    wait(2.5)
+    -- wait(2.5)
 
     -- Click Start Mission
     local start_mission = wait_template("start_mission_btn", 8)
@@ -122,7 +122,7 @@ local function run_tests()
 
     -- Trigger Ultimate
     click(555, 240)
-    wait(1.5)
+    -- wait(1.5)
     local ult_btn = wait_template("Ult_Btn", 8)
     if ult_btn then
         click(ult_btn.x, ult_btn.y)

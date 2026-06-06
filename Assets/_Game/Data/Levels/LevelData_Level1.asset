@@ -48,7 +48,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a9a829afd63fe2b4093fd25db7d8bd99, type: 2}
   IsRitesLocked: 1
   MapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
-  CampaignMapPosition: {x: 961, y: 689}
+  CampaignMapPosition: {x: 975, y: 696}
   ConnectedLevels:
   - {fileID: 11400000, guid: e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6, type: 2}
   MissionXP: 100
@@ -66,6 +66,7 @@ MonoBehaviour:
     WaveMessage: 'Wave 1: Shadows approaching!'
     PreWaveStory: {fileID: 0}
     PostWaveStory: {fileID: 0}
+    TileAlterations: []
   - Groups:
     - EnemyType: {fileID: 11400000, guid: 74d59ed9162064c40978f4b5f2f3b696, type: 2}
       Count: 5
@@ -76,6 +77,7 @@ MonoBehaviour:
     WaveMessage: 'Final Wave: Darkness erupts!'
     PreWaveStory: {fileID: 0}
     PostWaveStory: {fileID: 0}
+    TileAlterations: []
   HasTutorial: 1
   TutorialData: {fileID: 11400000, guid: 82c6c0a664a64034e81cbd9127cb1407, type: 2}
   HasStory: 1

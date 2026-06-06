@@ -539,6 +539,7 @@ namespace MaouSamaTD.Editor
                             GUIStyle nameStyle = new GUIStyle(EditorStyles.miniLabel);
                             nameStyle.fontSize = (int)(10 * _listZoom);
                             nameStyle.alignment = TextAnchor.MiddleCenter;
+                            nameStyle.wordWrap = true;
                             
                             EditorGUILayout.LabelField(unit.UnitName, nameStyle, GUILayout.Width(cellWidth - 10));
                             
@@ -556,12 +557,16 @@ namespace MaouSamaTD.Editor
                                 GUIStyle titleStyle = new GUIStyle(EditorStyles.miniLabel);
                                 titleStyle.fontSize = (int)(9 * _listZoom);
                                 titleStyle.alignment = TextAnchor.MiddleCenter;
+                                titleStyle.wordWrap = true;
                                 titleStyle.normal.textColor = new Color(0.6f, 0.6f, 0.6f);
                                 EditorGUILayout.LabelField(unit.UnitTitle, titleStyle, GUILayout.Width(cellWidth - 10));
                             }
                             
-                            GUILayout.Space(10 * _listZoom); 
-
+                            // Push everything to the top
+                            GUILayout.FlexibleSpace();
+                            
+                            EditorGUILayout.EndVertical();
+                            
                         // Overlay button for selection
                         if (GUI.Button(cardRect, "", GUIStyle.none))
                         {

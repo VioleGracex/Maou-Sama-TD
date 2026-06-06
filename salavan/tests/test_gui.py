@@ -110,8 +110,8 @@ class TestGUIDashboard(unittest.TestCase):
         self.window.show_details_page(active_game)
         dashboard = self.window.page_details.center_dashboard
 
-        # Switch to each of the 8 tabs and check stack index
-        for i in range(8):
+        # Switch to each of the 6 tabs and check stack index
+        for i in range(6):
             QTest.mouseClick(dashboard.tab_btns[i], Qt.LeftButton)
             self.assertEqual(dashboard.stack.currentIndex(), i)
 

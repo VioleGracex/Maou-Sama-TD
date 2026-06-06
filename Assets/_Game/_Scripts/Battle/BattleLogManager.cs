@@ -45,7 +45,7 @@ namespace MaouSamaTD.Battle
 
                 if (_instance == null)
                 {
-                    _instance = FindFirstObjectByType<BattleLogManager>();
+                    _instance = FindAnyObjectByType<BattleLogManager>();
                     if (_instance == null)
                     {
                         var go = new GameObject("BattleLogManager");

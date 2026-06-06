@@ -521,7 +521,7 @@ namespace MaouSamaTD.Editor.Story
             // Scene Integration Section
             EditorGUILayout.BeginVertical("helpBox");
             EditorGUILayout.LabelField("Scene Integration (Live Preview)", EditorStyles.boldLabel);
-            var sceneUI = (MaouSamaTD.UI.Tutorial.DialogueUI)EditorGUILayout.ObjectField("Scene Dialogue UI", FindFirstObjectByType<MaouSamaTD.UI.Tutorial.DialogueUI>(), typeof(MaouSamaTD.UI.Tutorial.DialogueUI), true);
+            var sceneUI = (MaouSamaTD.UI.Tutorial.DialogueUI)EditorGUILayout.ObjectField("Scene Dialogue UI", FindAnyObjectByType<MaouSamaTD.UI.Tutorial.DialogueUI>(), typeof(MaouSamaTD.UI.Tutorial.DialogueUI), true);
             
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Auto-Assign UI Fields"))

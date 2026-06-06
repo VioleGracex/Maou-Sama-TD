@@ -40,7 +40,7 @@ local function run_tests()
         log_test("Select Node", "INFO", "Clicked node 3 coordinate (fallback).")
     end
 
-    wait(1.5)
+    -- wait(1.5)
 
     -- Click Engage to open briefing / cohort UI
     local engage_btn = wait_template("engage_btn", 8)
@@ -61,7 +61,7 @@ local function run_tests()
     local empty_unit = wait_template("empty_unit_slot", 8)
     if empty_unit then
         click(empty_unit.x, empty_unit.y)
-        wait(1.5)
+        -- wait(1.5)
         -- Select Ignis card from roster
         local ignis_card = wait_template("ignis_roster_card", 8)
         if ignis_card then
@@ -74,13 +74,13 @@ local function run_tests()
         log_test("Cohort Setup", "INFO", "No empty unit slots found.")
     end
 
-    wait(1.5)
+    -- wait(1.5)
 
     -- Select empty rite slot
     local empty_rite = wait_template("empty_rite_slot", 8)
     if empty_rite then
         click(empty_rite.x, empty_rite.y)
-        wait(1.5)
+        -- wait(1.5)
         -- Select first available Rite card
         local rite_card = wait_template("rite_roster_card", 8)
         if rite_card then
@@ -93,7 +93,7 @@ local function run_tests()
         log_test("Cohort Setup", "INFO", "No empty rite slots found.")
     end
 
-    wait(1.5)
+    -- wait(1.5)
 
     -- Click Start Mission
     local start_mission = wait_template("start_mission_btn", 8)

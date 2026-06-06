@@ -40,7 +40,7 @@ class ConfigManager:
                     "%USERPROFILE%/AppData/LocalLow/Ouiki.Dev/Maou-Sama-TD/player_save.json"
                 ],
                 "log_path": "%USERPROFILE%/AppData/LocalLow/Ouiki.Dev/Maou-Sama-TD/Player.log",
-                "active_exe_path": "",
+                "active_exe_path": "D:/OuikiDev/Builds/MaouSamaTD_v0.6.2/Maou-Sama-TD.exe",
                 "ui_mapping_path": default_mapping
             }
         ]

@@ -87,7 +87,7 @@ class CaptureWizardDialog(QDialog):
         self.hide()
         
         name, ok = QInputDialog.getText(
-            None, 
+            self, 
             "Save Coordinate Mapping", 
             "Enter the Object Path / Key Name for this Button:"
         )

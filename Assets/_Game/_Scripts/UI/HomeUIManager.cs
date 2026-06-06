@@ -143,7 +143,7 @@ namespace MaouSamaTD.UI.MainMenu
                 _btnManifest.onClick.AddListener(OnManifestClicked);
             }
 
-            var gachaPanel = Object.FindFirstObjectByType<MaouSamaTD.UI.Gacha.GachaPanel>(FindObjectsInactive.Include);
+            var gachaPanel = Object.FindAnyObjectByType<MaouSamaTD.UI.Gacha.GachaPanel>(FindObjectsInactive.Include);
             if (gachaPanel == null)
             {
                 Debug.LogWarning("[HomeUIManager] GachaPanel not found for tutorial!");
@@ -211,7 +211,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnConquestClicked()
         {
-            var panel = Object.FindFirstObjectByType<CampaignPage>(FindObjectsInactive.Include);
+            var panel = Object.FindAnyObjectByType<CampaignPage>(FindObjectsInactive.Include);
             if (panel != null)
             {
                 UIFlowManager.Instance.OpenPanel(panel);
@@ -309,7 +309,7 @@ namespace MaouSamaTD.UI.MainMenu
             var panel = SettingsPanel.Instance;
             if (panel == null)
             {
-                panel = Object.FindFirstObjectByType<SettingsPanel>(FindObjectsInactive.Include);
+                panel = Object.FindAnyObjectByType<SettingsPanel>(FindObjectsInactive.Include);
             }
 
             if (panel != null)
@@ -320,7 +320,7 @@ namespace MaouSamaTD.UI.MainMenu
 
         private void OnManifestClicked()
         {
-            var panel = Object.FindFirstObjectByType<MaouSamaTD.UI.Gacha.GachaPanel>(FindObjectsInactive.Include);
+            var panel = Object.FindAnyObjectByType<MaouSamaTD.UI.Gacha.GachaPanel>(FindObjectsInactive.Include);
             if (panel != null)
             {
                 UIFlowManager.Instance.OpenPanel(panel);
@@ -397,10 +397,10 @@ namespace MaouSamaTD.UI.MainMenu
             if (_saveManager == null || _saveManager.CurrentData == null) return;
 
             // 1. Mandates notification: Unclaimed completed mandates
-            var mandateManager = Object.FindFirstObjectByType<MandatesPanel>(FindObjectsInactive.Include)?.MandateManager;
+            var mandateManager = Object.FindAnyObjectByType<MandatesPanel>(FindObjectsInactive.Include)?.MandateManager;
             if (mandateManager == null)
             {
-                mandateManager = Object.FindFirstObjectByType<MandateManager>(FindObjectsInactive.Include);
+                mandateManager = Object.FindAnyObjectByType<MandateManager>(FindObjectsInactive.Include);
             }
 
             bool hasMandateNotif = false;

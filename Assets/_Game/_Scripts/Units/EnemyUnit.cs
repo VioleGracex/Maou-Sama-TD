@@ -220,7 +220,7 @@ namespace MaouSamaTD.Units
             // ── Loot Drop Engine ─────────────────────────────────────────────
             if (_enemyData != null)
             {
-                var saveManager = FindFirstObjectByType<SaveManager>();
+                var saveManager = FindAnyObjectByType<SaveManager>();
                 if (saveManager != null)
                     RollLootDrops(saveManager);
             }
@@ -366,7 +366,7 @@ namespace MaouSamaTD.Units
 
         private void AwardLoot(SaveManager saveManager, string itemID, int quantity)
         {
-            var gameManager = FindFirstObjectByType<MaouSamaTD.Managers.GameManager>();
+            var gameManager = FindAnyObjectByType<MaouSamaTD.Managers.GameManager>();
             if (gameManager != null)
             {
                 gameManager.RegisterLoot(itemID, quantity);
@@ -377,14 +377,14 @@ namespace MaouSamaTD.Units
             }
 
             // Spawn visual procedural flying loot animation on HUD
-            var gameControlUI = FindFirstObjectByType<MaouSamaTD.UI.GameControlUI>();
+            var gameControlUI = FindAnyObjectByType<MaouSamaTD.UI.GameControlUI>();
             if (gameControlUI != null)
             {
                 gameControlUI.SpawnLootFlyEffect(itemID, quantity, transform.position);
             }
 
             // Spawn World Drop Animation
-            var settings = FindFirstObjectByType<SettingsManager>();
+            var settings = FindAnyObjectByType<SettingsManager>();
             if (settings == null || !settings.DisableLootAnimation)
             {
                 // We'll spawn the prefab so size is controlled
@@ -425,7 +425,7 @@ namespace MaouSamaTD.Units
 
         public void RecalculatePath(bool forceIgnore = false)
         {
-            var gridMgr = FindFirstObjectByType<GridManager>();
+            var gridMgr = FindAnyObjectByType<GridManager>();
             if (gridMgr == null || _enemyData == null) return;
 
             Vector2Int startValues = gridMgr.WorldToGridCoordinates(transform.position);
@@ -452,6 +452,8 @@ namespace MaouSamaTD.Units
         {
             if (_isDead) return;
             base.UpdateInternal();
+            
+            _attackTimer -= Time.deltaTime;
 
             foreach (var ability in _runtimeAbilities)
             {
@@ -592,7 +594,7 @@ namespace MaouSamaTD.Units
         private bool ScanForTarget(out PlayerUnit target)
         {
             target = null;
-            if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
+            if (_gridManager == null) _gridManager = FindAnyObjectByType<GridManager>();
             if (_gridManager == null) return false;
 
             PlayerUnit bestTarget = null;
@@ -684,7 +686,7 @@ namespace MaouSamaTD.Units
         {
             if (attacker is PlayerUnit player && player.CurrentHp > 0)
             {
-                if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
+                if (_gridManager == null) _gridManager = FindAnyObjectByType<GridManager>();
 
                 // Aggro logic: if we don't have a target, or if the current target isn't on high ground but the attacker is
                 if (_attackTarget == null && _blockedBy == null)
@@ -794,9 +796,11 @@ namespace MaouSamaTD.Units
         {
             if (target == null) return;
             if (Time.deltaTime <= 0f) return; // Don't attack while time is paused
-            if (Time.time >= _lastAttackTime + _attackInterval)
+            
+            if (_attackTimer <= 0f)
             {
-                _lastAttackTime = Time.time;
+                if (_attackTimer < -Time.deltaTime) _attackTimer = -Time.deltaTime;
+                _attackTimer += AttackInterval;
                 
                 if (_enemyData != null && _enemyData.IsBoss && _gridManager != null)
                 {
@@ -1050,7 +1054,7 @@ namespace MaouSamaTD.Units
 
         private void InitiateCentering()
         {
-            if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
+            if (_gridManager == null) _gridManager = FindAnyObjectByType<GridManager>();
             if (_gridManager != null)
             {
                 Vector2Int coord = _gridManager.WorldToGridCoordinates(transform.position);
@@ -1068,13 +1072,13 @@ namespace MaouSamaTD.Units
             _isMoving = false;
             if (_showDebugLogs) Debug.Log($"Enemy reached exit! Dealing {(int)_enemyData.ExitDamage} damage.");
             
-            var gm = FindFirstObjectByType<MaouSamaTD.Managers.GameManager>();
+            var gm = FindAnyObjectByType<MaouSamaTD.Managers.GameManager>();
             if (gm != null)
             {
                 gm.EnemyEscaped(this);
             }
 
-            GridManager gridMgr = FindFirstObjectByType<GridManager>(); 
+            GridManager gridMgr = FindAnyObjectByType<GridManager>(); 
             if (gridMgr != null && _targetTile != null)
             {
                 TileType currentType = _targetTile.Type;
@@ -1084,7 +1088,7 @@ namespace MaouSamaTD.Units
                 }
             } 
             
-            var tm = FindFirstObjectByType<MaouSamaTD.Managers.TutorialManager>();
+            var tm = FindAnyObjectByType<MaouSamaTD.Managers.TutorialManager>();
             if (tm != null && _enemyData != null)
             {
                 tm.OnActionTriggered("EnemyReachedExit_" + _enemyData.EnemyName);
@@ -1122,7 +1126,7 @@ namespace MaouSamaTD.Units
             _spriteRenderer.color = new Color(1f, 0.5f, 0.8f, 1f); // Pinkish tint
 
             // Calculate retreat path (reverse of current position to start/spawn)
-            if (_gridManager == null) _gridManager = FindFirstObjectByType<GridManager>();
+            if (_gridManager == null) _gridManager = FindAnyObjectByType<GridManager>();
             if (_gridManager != null)
             {
                 Vector2Int currentCoord = _gridManager.WorldToGridCoordinates(transform.position);

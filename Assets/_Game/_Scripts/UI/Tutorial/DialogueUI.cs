@@ -192,6 +192,11 @@ namespace MaouSamaTD.UI.Tutorial
                 return;
             }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            int count = data != null && data.Lines != null ? data.Lines.Count : 0;
+            MaouSamaTD.Testing.GameStateExporter.PushEvent($"DialogueStarted:{count}");
+#endif
+
             _onComplete = onComplete;
             _currentLines = data.Lines;
             _currentStoryLines = null;
@@ -230,6 +235,11 @@ namespace MaouSamaTD.UI.Tutorial
                 onComplete?.Invoke();
                 return;
             }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            int count = data != null && data.Lines != null ? data.Lines.Count : 0;
+            MaouSamaTD.Testing.GameStateExporter.PushEvent($"DialogueStarted:{count}");
+#endif
 
             _onComplete = onComplete;
             _currentLines = null;
@@ -518,6 +528,10 @@ namespace MaouSamaTD.UI.Tutorial
             this.gameObject.SetActive(false);
             _lastAppliedBG = (DialogueBackground)(-1);
             _lastAppliedStyle = (DialogueStyle)(-1);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            MaouSamaTD.Testing.GameStateExporter.PushEvent("DialogueEnded");
+#endif
 
             // Safe callback invocation
             var callback = _onComplete;

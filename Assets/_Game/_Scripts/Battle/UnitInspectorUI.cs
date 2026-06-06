@@ -107,7 +107,7 @@ namespace MaouSamaTD.UI
                     _panel.SetActive(true);
                     _panel.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.OutBack).SetUpdate(true); // Faster Animation In
                     
-                    Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+                    Managers.TutorialManager tm = FindAnyObjectByType<Managers.TutorialManager>();
                     if (tm != null) tm.OnActionTriggered("UnitStatsOpened");
                 }
             }
@@ -243,7 +243,7 @@ namespace MaouSamaTD.UI
         {
             if (_selectedUnit is PlayerUnit playerUnit)
             {
-                Managers.TutorialManager tm = FindFirstObjectByType<Managers.TutorialManager>();
+                Managers.TutorialManager tm = FindAnyObjectByType<Managers.TutorialManager>();
                 if (tm != null && tm.IsInTutorial)
                 {
                     Debug.Log("[UnitInspector] Retreat is disabled during tutorial.");

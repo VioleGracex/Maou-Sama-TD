@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 1923690125254939172}
   - component: {fileID: 97533722373297653}
   m_Layer: 0
-  m_Name: YesButton
+  m_Name: ClearCache_YesButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1482,7 +1482,7 @@ GameObject:
   - component: {fileID: 2555520259898161156}
   - component: {fileID: 1027409576694949280}
   m_Layer: 0
-  m_Name: NoButton
+  m_Name: ClearCache_NoButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

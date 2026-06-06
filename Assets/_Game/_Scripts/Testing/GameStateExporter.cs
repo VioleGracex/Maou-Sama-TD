@@ -38,6 +38,11 @@ namespace MaouSamaTD.Testing
             {
                 PushEvent($"SceneLoaded:{scene.name}");
                 Debug.Log($"[AutoDebug] SceneLoaded: {scene.name}");
+                var instance = FindAnyObjectByType<GameStateExporter>();
+                if (instance != null)
+                {
+                    instance._mapExported = false;
+                }
             };
         }
 
@@ -53,12 +58,15 @@ namespace MaouSamaTD.Testing
             new System.Collections.Generic.List<string>();
         private static readonly object _eventLock = new object();
 
+        private static int _eventCounter = 0;
+
         /// <summary>Push a timestamped debug event visible to Lua via game_state.json debug_events.</summary>
         public static void PushEvent(string eventName)
         {
             lock (_eventLock)
             {
-                string stamped = $"{System.DateTime.UtcNow:HH:mm:ss} {eventName}";
+                _eventCounter++;
+                string stamped = $"[{_eventCounter}] {System.DateTime.UtcNow:HH:mm:ss} {eventName}";
                 _eventQueue.Add(stamped);
                 if (_eventQueue.Count > 30) _eventQueue.RemoveAt(0); // keep last 30
             }
@@ -97,6 +105,8 @@ namespace MaouSamaTD.Testing
         private void Update()
         {
             if (string.IsNullOrEmpty(_jsonPath)) return;
+            if (!SceneManager.GetActiveScene().isLoaded) return;
+            
 
             if (!_mapExported)
             {
@@ -108,7 +118,7 @@ namespace MaouSamaTD.Testing
                 }
             }
 
-            _timer += Time.deltaTime;
+            _timer += Time.unscaledDeltaTime;
             if (_timer >= _exportInterval)
             {
                 _timer = 0f;
@@ -126,14 +136,14 @@ namespace MaouSamaTD.Testing
 
                 // Check dialogue status
                 bool isDialogueActive = false;
-                var dialogueMgr = FindFirstObjectByType<DialogueManager>();
+                var dialogueMgr = FindAnyObjectByType<DialogueManager>();
                 if (dialogueMgr != null)
                 {
                     isDialogueActive = dialogueMgr.IsDialogueActive;
                 }
                 else
                 {
-                    var dialogueUI = FindFirstObjectByType<DialogueUI>();
+                    var dialogueUI = FindAnyObjectByType<DialogueUI>();
                     if (dialogueUI != null)
                     {
                         isDialogueActive = dialogueUI.IsShowingDialogue;
@@ -174,7 +184,7 @@ namespace MaouSamaTD.Testing
                     if (data != null)
                     {
                         elementsData[path] = data;
-                        legacyButtonsData[btn.gameObject.name] = data;
+                        legacyButtonsData[path] = data;
                     }
                 }
 
@@ -334,7 +344,19 @@ namespace MaouSamaTD.Testing
                     sb.Append($"\"worldY\":{pos.y.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)},");
                     sb.Append($"\"worldZ\":{pos.z.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)},");
                     sb.Append($"\"screenX\":{screenX.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)},");
-                    sb.Append($"\"screenY\":{screenY.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)}");
+                    sb.Append($"\"screenY\":{screenY.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)},");
+
+                    float rx = (screenX / Screen.width) * 1280f;
+                    float ry = (screenY / Screen.height) * 720f;
+                    float fsw = Screen.currentResolution.width;
+                    float fsh = Screen.currentResolution.height;
+                    float fx = (rx / 1280f) * fsw;
+                    float fy = (ry / 720f) * fsh;
+
+                    sb.Append($"\"x\":{rx.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)},");
+                    sb.Append($"\"y\":{ry.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)},");
+                    sb.Append($"\"fx\":{fx.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)},");
+                    sb.Append($"\"fy\":{fy.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)}");
                     sb.Append("}");
                 }
                 sb.Append("]}");
@@ -394,6 +416,23 @@ namespace MaouSamaTD.Testing
                     return null;
                 }
             }
+
+            try
+            {
+                var parentTransforms = go.GetComponentsInParent<Transform>();
+                foreach (var pt in parentTransforms)
+                {
+                    if (pt == null) continue;
+                    // if (DG.Tweening.DOTween.IsTweening(pt)) return null;
+                    
+                    var pcg = pt.GetComponent<CanvasGroup>();
+                    // if (pcg != null && DG.Tweening.DOTween.IsTweening(pcg)) return null;
+
+                    var prt = pt.GetComponent<RectTransform>();
+                    // if (prt != null && prt != pt && DG.Tweening.DOTween.IsTweening(prt)) return null;
+                }
+            }
+            catch { }
 
             Vector3[] corners = new Vector3[4];
             rt.GetWorldCorners(corners);
@@ -604,7 +643,32 @@ namespace MaouSamaTD.Testing
                 string cleanKey = kvp.Key.Replace("\"", "\\\"");
                 sb.Append(SerializeElementData(cleanKey, (Dictionary<string, object>)kvp.Value));
             }
-            sb.Append("}");
+            sb.Append("},");
+
+            // Serialize unit_button_names
+            sb.Append("\"unit_button_names\":[");
+            var unitNames = (System.Collections.Generic.List<string>)state["unit_button_names"];
+            first = true;
+            foreach (var name in unitNames)
+            {
+                if (!first) sb.Append(",");
+                first = false;
+                sb.Append($"\"{name.Replace("\"", "\\\"")}\"");
+            }
+            sb.Append("],");
+
+            // Serialize debug_events
+            sb.Append("\"debug_events\":[");
+            var dbgEvents = (System.Collections.Generic.List<string>)state["debug_events"];
+            first = true;
+            foreach (var evt in dbgEvents)
+            {
+                if (!first) sb.Append(",");
+                first = false;
+                string cleanEvt = evt.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r");
+                sb.Append($"\"{cleanEvt}\"");
+            }
+            sb.Append("]");
             
             sb.Append("}");
             return sb.ToString();

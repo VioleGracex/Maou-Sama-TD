@@ -20655,7 +20655,7 @@ GameObject:
   - component: {fileID: 7954831705730656239}
   - component: {fileID: 4339014635213855287}
   m_Layer: 0
-  m_Name: NoButton
+  m_Name: Retreat_NoButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22869,8 +22869,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -38.547337, y: -40.906044}
-  m_SizeDelta: {x: -118.24683, y: 28.069515}
+  m_AnchoredPosition: {x: -57.0529, y: -40.906044}
+  m_SizeDelta: {x: -155.2579, y: 28.0695}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3672599713622339627
 GameObject:
@@ -25717,7 +25717,7 @@ GameObject:
   - component: {fileID: 1243403779492426484}
   - component: {fileID: 1009461005679896977}
   m_Layer: 0
-  m_Name: YesButton
+  m_Name: Retreat_YesButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

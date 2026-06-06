@@ -32,7 +32,7 @@ namespace MaouSamaTD.Grid
             get
             {
                 if (_gridGenerator != null) return _gridGenerator;
-                _gridGenerator = FindFirstObjectByType<GridGenerator>();
+                _gridGenerator = FindAnyObjectByType<GridGenerator>();
                 return _gridGenerator;
             }
         }
@@ -42,7 +42,7 @@ namespace MaouSamaTD.Grid
             get
             {
                 if (_gridManager != null) return _gridManager;
-                _gridManager = FindFirstObjectByType<GridManager>();
+                _gridManager = FindAnyObjectByType<GridManager>();
                 return _gridManager;
             }
         }

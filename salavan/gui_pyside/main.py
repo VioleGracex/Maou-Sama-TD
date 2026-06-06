@@ -24,6 +24,12 @@ def main():
 
     app = QApplication(sys.argv)
     
+    from core.paths import get_base_dir
+    icon_path = os.path.join(get_base_dir(), "icon.ico")
+    if os.path.exists(icon_path):
+        from PySide6.QtGui import QIcon
+        app.setWindowIcon(QIcon(icon_path))
+    
     shared_mem = QSharedMemory("SylvanHUDSalavanPanelSingleInstanceMutex")
     if not shared_mem.create(1):
         QMessageBox.critical(None, "Sylvan-HUD Game Salavan Panel", "Another instance of Sylvan-HUD Salavan Panel is already running.")

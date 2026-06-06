@@ -77,7 +77,7 @@ namespace MaouSamaTD.Managers
             if (hasTutorial)
             {
                 // We show the choice popup from GameControlUI!
-                MaouSamaTD.UI.GameControlUI ui = FindFirstObjectByType<MaouSamaTD.UI.GameControlUI>();
+                MaouSamaTD.UI.GameControlUI ui = FindAnyObjectByType<MaouSamaTD.UI.GameControlUI>();
                 Debug.Log($"[LevelManager] Searching for GameControlUI... Found: {(ui != null ? "YES" : "NO")}");
                 
                 if (ui != null)
@@ -136,7 +136,7 @@ namespace MaouSamaTD.Managers
 
                 // Show Sovereign Rite panel — tutorials may have hidden it for Level 1.
                 // In free-play / solo mode it must always be accessible.
-                var skillPanel = FindFirstObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>(FindObjectsInactive.Include);
+                var skillPanel = FindAnyObjectByType<MaouSamaTD.UI.Skills.SkillPanelUI>(FindObjectsInactive.Include);
                 if (skillPanel != null)
                 {
                     skillPanel.gameObject.SetActive(true);

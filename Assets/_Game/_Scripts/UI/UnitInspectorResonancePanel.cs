@@ -725,7 +725,7 @@ namespace MaouSamaTD.UI
         {
             if (_storyPopupModal != null) Destroy(_storyPopupModal);
 
-            var canvas = FindFirstObjectByType<Canvas>();
+            var canvas = FindAnyObjectByType<Canvas>();
             if (canvas == null) return;
 
             _storyPopupModal = new GameObject("StoryPopupModal", typeof(RectTransform), typeof(Image));

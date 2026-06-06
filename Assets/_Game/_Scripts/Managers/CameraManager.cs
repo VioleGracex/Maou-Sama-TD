@@ -518,7 +518,7 @@ namespace MaouSamaTD.Managers
             if (_cameraAnchor == null)
             {
                 // Fallback for editor if Zenject hasn't run
-                var gm = FindFirstObjectByType<Grid.GridManager>();
+                var gm = FindAnyObjectByType<Grid.GridManager>();
                 if (gm != null)
                 {
                     gm.EnsureCameraAnchor();
@@ -538,7 +538,7 @@ namespace MaouSamaTD.Managers
             
             if (_cameraAnchor == null)
             {
-                var gm = FindFirstObjectByType<Grid.GridManager>();
+                var gm = FindAnyObjectByType<Grid.GridManager>();
                 if (gm != null)
                 {
                     gm.EnsureCameraAnchor();

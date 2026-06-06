@@ -82,7 +82,7 @@ class LibraryPage(QWidget):
         
         col = 0
         row = 0
-        max_cols = 4
+        max_cols = 5
         
         for game in games:
             card = self._create_game_card(game)
@@ -98,7 +98,8 @@ class LibraryPage(QWidget):
 
     def _create_game_card(self, game_data):
         card = QFrame()
-        card.setFixedSize(260, 240)
+        card.setFixedSize(180, 260)
+        card.setCursor(Qt.PointingHandCursor)
         card.setStyleSheet("""
             QFrame {
                 background-color: #18181c;
@@ -107,8 +108,12 @@ class LibraryPage(QWidget):
             }
             QFrame:hover {
                 border: 1px solid #a855f7;
+                background-color: #202025;
             }
         """)
+        
+        # Make the entire card clickable
+        card.mousePressEvent = lambda event, g=game_data: self.main_window.show_details_page(g)
         
         layout = QVBoxLayout(card)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -116,7 +121,7 @@ class LibraryPage(QWidget):
         
         # Cover Image
         cover_label = QLabel()
-        cover_label.setFixedHeight(130)
+        cover_label.setFixedHeight(180)
         cover_label.setStyleSheet("border-bottom: 1px solid #27272a; border-radius: 8px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; background-color: #0d0d11;")
         
         from core.paths import get_base_dir
@@ -126,50 +131,56 @@ class LibraryPage(QWidget):
             img_path = os.path.join(base_dir, "assets", f"{game_data['id']}_cover.png")
             
         if os.path.exists(img_path):
-            pixmap = QPixmap(img_path).scaled(260, 130, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            pixmap = QPixmap(img_path).scaled(180, 180, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
             cover_label.setPixmap(pixmap)
         else:
-            # Placeholder text if no image
-            cover_label.setText("🎮")
-            cover_label.setAlignment(Qt.AlignCenter)
-            cover_label.setStyleSheet("font-size: 48px; border-bottom: 1px solid #27272a; background-color: #0d0d11;")
+            # Try to get the icon of the game executable
+            from PySide6.QtWidgets import QFileIconProvider
+            from PySide6.QtCore import QFileInfo
+            
+            exe_path = game_data.get("active_exe_path", "")
+            icon_found = False
+            if exe_path:
+                exe_path = os.path.expandvars(exe_path)
+                if not os.path.isabs(exe_path):
+                    exe_path = os.path.join(base_dir, exe_path)
+                if os.path.exists(exe_path):
+                    try:
+                        icon_provider = QFileIconProvider()
+                        icon = icon_provider.icon(QFileInfo(exe_path))
+                        if not icon.isNull():
+                            pixmap = icon.pixmap(96, 96)
+                            cover_label.setPixmap(pixmap)
+                            cover_label.setAlignment(Qt.AlignCenter)
+                            icon_found = True
+                    except Exception:
+                        pass
+                        
+            if not icon_found:
+                # Placeholder text if no image and no icon found
+                cover_label.setText("🎮")
+                cover_label.setAlignment(Qt.AlignCenter)
+                cover_label.setStyleSheet("font-size: 48px; border-bottom: 1px solid #27272a; background-color: #0d0d11;")
             
         layout.addWidget(cover_label)
         
         # Info Area
         info_widget = QWidget()
+        info_widget.setAttribute(Qt.WA_TransparentForMouseEvents)  # Let clicks pass through to parent card
         info_layout = QVBoxLayout(info_widget)
-        info_layout.setContentsMargins(15, 10, 15, 15)
-        info_layout.setSpacing(5)
+        info_layout.setContentsMargins(12, 10, 12, 12)
+        info_layout.setSpacing(4)
         
         title_label = QLabel(game_data.get("title", "Unknown Game"))
-        title_label.setStyleSheet("color: white; font-size: 14px; font-weight: bold; border: none;")
+        title_label.setStyleSheet("color: white; font-size: 13px; font-weight: bold; border: none; background: transparent;")
+        title_label.setWordWrap(True)
         
         proc_label = QLabel(f"Target: {game_data.get('process_name', 'None')}")
-        proc_label.setStyleSheet("color: #71717a; font-size: 11px; border: none;")
-        
-        play_btn = QPushButton("Play / Test")
-        play_btn.setCursor(Qt.PointingHandCursor)
-        play_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #9333ea;
-                color: white;
-                border-radius: 4px;
-                padding: 6px 0px;
-                font-weight: bold;
-                margin-top: 5px;
-            }
-            QPushButton:hover {
-                background-color: #a855f7;
-            }
-        """)
-        
-        # Fix lambda to accept signal's 'checked' parameter and capture game_data
-        play_btn.clicked.connect(lambda checked=False, g=game_data: self.main_window.show_details_page(g))
+        proc_label.setStyleSheet("color: #71717a; font-size: 10px; border: none; background: transparent;")
         
         info_layout.addWidget(title_label)
         info_layout.addWidget(proc_label)
-        info_layout.addWidget(play_btn)
+        info_layout.addStretch()
         
         layout.addWidget(info_widget)
         return card

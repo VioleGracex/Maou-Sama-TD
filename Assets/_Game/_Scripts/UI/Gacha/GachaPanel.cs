@@ -190,7 +190,7 @@ namespace MaouSamaTD.UI.Gacha
             {
                 if (_isTutorialMode)
                 {
-                    var blocker = Object.FindFirstObjectByType<UIPopupBlocker>(FindObjectsInactive.Include);
+                    var blocker = Object.FindAnyObjectByType<UIPopupBlocker>(FindObjectsInactive.Include);
                     if (blocker != null) blocker.HideBlocker();
 
                     if (_saveManager != null && _saveManager.CurrentData != null)

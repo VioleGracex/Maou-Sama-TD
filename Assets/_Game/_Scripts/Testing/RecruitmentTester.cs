@@ -1,3 +1,4 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 using UnityEngine;
 using MaouSamaTD.Managers;
 using MaouSamaTD.Data;
@@ -120,3 +121,4 @@ namespace MaouSamaTD.Testing
         }
     }
 }
+#endif

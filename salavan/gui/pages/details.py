@@ -38,9 +38,22 @@ class DetailsPage(tk.Frame):
         self.right_sidebar_div = tk.Frame(self.top_content_container, bg=self.app.accent_dim, width=1)
         self.right_sidebar_div.pack(side="right", fill="y")
         
+        # Right Handle Button (styled to look like a subtle divider with an arrow)
+        self.btn_right_handle = tk.Button(
+            self.top_content_container, text="▶", command=self.app.toggle_builds_panel,
+            bg="#141416", fg="#6b7280", activebackground="#141416",
+            activeforeground=self.app.accent_glow, bd=0, relief="flat",
+            font=("Segoe UI", 7, "bold"), width=1, padx=1, cursor="hand2"
+        )
+        self.btn_right_handle.pack(side="right", fill="y")
+        self.app.btn_right_handle = self.btn_right_handle
         
-        # Right Handle Button removed (caused buggy navigation to game page)
-        self.app.btn_right_handle = None
+        # Hover binding for right handle (highlights only the arrow text color)
+        def make_r_hover(b):
+            b.bind("<Enter>", lambda e: b.config(fg=self.app.accent_glow))
+            b.bind("<Leave>", lambda e: b.config(fg="#6b7280"))
+        make_r_hover(self.btn_right_handle)
+        self.app.add_tooltip(self.btn_right_handle, "Toggle Builds & Reports Sidebar")
 
         from gui.widgets.builds_sidebar import create_builds_sidebar
         create_builds_sidebar(self.app, self.right_sidebar_pane)

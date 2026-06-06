@@ -82,7 +82,7 @@ namespace MaouSamaTD.Managers
                 _loadingScreen = MaouSamaTD.UI.MainMenu.LoadingScreenPanel.Instance;
                 if (_loadingScreen == null)
                 {
-                    _loadingScreen = FindFirstObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
+                    _loadingScreen = FindAnyObjectByType<MaouSamaTD.UI.MainMenu.LoadingScreenPanel>(FindObjectsInactive.Include);
                 }
             }
 

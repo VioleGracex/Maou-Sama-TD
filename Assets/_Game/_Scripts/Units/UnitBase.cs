@@ -109,7 +109,7 @@ namespace MaouSamaTD.Units
         public event Action OnDeath;
         public event Action<float> OnHealthChanged;
 
-        protected float _lastAttackTime;
+        protected float _attackTimer;
         public float TotalDamageDealt { get; protected set; } = 0f;
         private Transform _camTransform;
         protected Vector3 _originalSpriteScale = Vector3.one;
@@ -796,7 +796,7 @@ namespace MaouSamaTD.Units
             TotalDamageDealt += amount;
             if (this is PlayerUnit player && player.Data != null)
             {
-                var gm = UnityEngine.Object.FindFirstObjectByType<MaouSamaTD.Managers.GameManager>();
+                var gm = UnityEngine.Object.FindAnyObjectByType<MaouSamaTD.Managers.GameManager>();
                 if (gm != null) gm.RegisterDamageDealt(player.Data, amount);
             }
         }

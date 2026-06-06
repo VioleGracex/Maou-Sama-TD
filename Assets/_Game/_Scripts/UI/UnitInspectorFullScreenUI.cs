@@ -93,7 +93,7 @@ namespace MaouSamaTD.UI
             // 1. Clear UIFlowManager history completely to close both this inspector and the underlying VassalManager list.
             UIFlowManager.Instance.ClearHistory(true, true);
             
-            var chambersPage = Object.FindFirstObjectByType<MaouSamaTD.UI.Vassals.ChambersPageUI>(FindObjectsInactive.Include);
+            var chambersPage = Object.FindAnyObjectByType<MaouSamaTD.UI.Vassals.ChambersPageUI>(FindObjectsInactive.Include);
             if (chambersPage != null)
             {
                 UIFlowManager.Instance.OpenPanel(chambersPage);

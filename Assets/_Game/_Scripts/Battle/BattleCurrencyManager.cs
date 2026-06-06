@@ -64,7 +64,7 @@ namespace MaouSamaTD.Managers
             }
 
             // Only apply persistent bonuses if not in a forced-economy tutorial
-            SaveManager save = FindFirstObjectByType<SaveManager>();
+            SaveManager save = FindAnyObjectByType<SaveManager>();
             bool isTutorial = levelData != null && levelData.HasTutorial;
 
             if (save != null && save.CurrentData != null && !isTutorial)

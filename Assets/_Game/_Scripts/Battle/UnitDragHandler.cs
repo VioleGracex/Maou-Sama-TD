@@ -35,11 +35,13 @@ namespace MaouSamaTD.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            UnityEngine.Debug.Log($"[UnitDragHandler] OnPointerClick CALLED on {gameObject.name}. Interactable: {_isInteractable}, DataNull: {_data == null}, ClickCount: {eventData.clickCount}");
             if (!_isInteractable || _data == null) return;
 
             // Enter placement mode only on Double Click
             if (eventData.clickCount >= 2)
             {
+                UnityEngine.Debug.Log($"[UnitDragHandler] Double Click detected! Selecting unit {_data.UnitName}");
                 // Ensure any active drag visuals are cleared if they haven't been
                 _interactionManager?.EndDrag(false, eventData.position);
 

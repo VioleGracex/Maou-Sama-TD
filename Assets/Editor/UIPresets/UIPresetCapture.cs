@@ -196,7 +196,7 @@ namespace UIPresetManager
             var deduped = new List<GameObject>(result.Count);
             foreach (var go in result)
             {
-                if (seen.Add(go.GetInstanceID()))
+                if (seen.Add(go.GetEntityId()))
                     deduped.Add(go);
             }
             return deduped;

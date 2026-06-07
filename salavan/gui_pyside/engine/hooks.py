@@ -60,6 +60,7 @@ class GameHooks:
         coords = self._get_absolute_coords(rel_x, rel_y)
         if coords:
             print(f"[GameHooks] Translating ({rel_x:.1f}, {rel_y:.1f}) -> Abs: ({coords[0]:.1f}, {coords[1]:.1f}) using Rect: {self.game_rect}", flush=True)
+            was_inactive = False
             try:
                 import pygetwindow as gw
                 windows = gw.getWindowsWithTitle("Maou-Sama-TD")
@@ -68,16 +69,21 @@ class GameHooks:
                     if getattr(win, "isMinimized", False):
                         win.restore()
                     if not win.isActive:
+                        was_inactive = True
                         win.activate()
+                        time.sleep(0.25)  # let focus settle
             except Exception as e:
                 print(f"[GameHooks] Warning: Failed to activate window: {e}")
                 
-            for attempt in range(1):
-                pyautogui.moveTo(coords[0], coords[1], 0.1)
-                time.sleep(0.1)
-                
+            pyautogui.moveTo(coords[0], coords[1], 0.1)
+            time.sleep(0.1)
+            pyautogui.click()
+            
+            # If window was inactive, the first click only focuses it; send a second click
+            # so the button actually registers in Unity fullscreen mode
+            if was_inactive:
+                time.sleep(0.15)
                 pyautogui.click()
-                break
                 
             return True
 

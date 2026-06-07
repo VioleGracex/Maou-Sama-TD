@@ -17,6 +17,7 @@ MonoBehaviour:
   SkillName: Grand Cross
   Description: Pillars of crimson fire erupt from the ground in a massive cross formation.
   Icon: {fileID: 21300000, guid: 1c3d158ecaa657941bf58fc822a9bc02, type: 3}
+  Properties: []
   BaseVisuals:
     UltimatePrefab: {fileID: 0}
     CastVFX: {fileID: 0}
@@ -59,4 +60,4 @@ MonoBehaviour:
   Persistence: 0
   Value: 500
   Duration: 2
-  BuffVFXPrefab: {fileID: 0}
+  BuffVFXPrefab: {fileID: 5549772189391940097, guid: 64fc1fc7e1d732d46b9be31ddc8ee1c8, type: 3}

@@ -126,6 +126,9 @@ namespace MaouSamaTD.Managers
 
             _saveManager.Save();
             LastSummonResults = results;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            MaouSamaTD.Testing.GameStateExporter.PushEvent($"GachaSummoned:{count}");
+#endif
             OnSummonCompleted?.Invoke(results);
         }
 

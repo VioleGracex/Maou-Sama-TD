@@ -186,51 +186,123 @@ class SettingsPage(QWidget):
         layout = QVBoxLayout(group)
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(15)
-        
-        lbl = QLabel("Launch Resolution")
+
+        lbl = QLabel("Game Resolution")
         lbl.setStyleSheet("color: white; font-size: 14px; font-weight: bold; border: none;")
         layout.addWidget(lbl)
-        
-        row = QHBoxLayout()
-        row.setSpacing(20)
-        
-        combo_style = """
+
+        hint = QLabel("Sets the resolution Salavan requests when launching the game executable.")
+        hint.setStyleSheet("color: #52525b; font-size: 11px; border: none;")
+        hint.setWordWrap(True)
+        layout.addWidget(hint)
+
+        # ── Resolution combo ──────────────────────────────────────────
+        res_row = QHBoxLayout()
+        res_lbl = QLabel("Resolution:")
+        res_lbl.setStyleSheet("color: #a1a1aa; border: none;")
+        res_lbl.setFixedWidth(100)
+
+        self.combo_resolution = QComboBox()
+        self.combo_resolution.setMinimumWidth(160)
+        self.combo_resolution.setStyleSheet("""
             QComboBox {
                 background-color: #0d0d11;
                 color: white;
                 border: 1px solid #3f3f46;
-                border-radius: 4px;
-                padding: 5px;
+                border-radius: 6px;
+                padding: 6px 12px;
+                font-size: 13px;
             }
-            QComboBox::drop-down { border: none; }
-        """
-        
-        # Width
-        w_layout = QHBoxLayout()
-        w_lbl = QLabel("Width:")
-        w_lbl.setStyleSheet("color: #a1a1aa; border: none;")
-        self.combo_w = QComboBox()
-        self.combo_w.setStyleSheet(combo_style)
-        self.combo_w.addItems(["960", "1280", "1920", "2560"])
-        w_layout.addWidget(w_lbl)
-        w_layout.addWidget(self.combo_w)
-        
-        # Height
-        h_layout = QHBoxLayout()
-        h_lbl = QLabel("Height:")
-        h_lbl.setStyleSheet("color: #a1a1aa; border: none;")
-        self.combo_h = QComboBox()
-        self.combo_h.setStyleSheet(combo_style)
-        self.combo_h.addItems(["540", "720", "1080", "1440"])
-        h_layout.addWidget(h_lbl)
-        h_layout.addWidget(self.combo_h)
-        
-        row.addLayout(w_layout)
-        row.addLayout(h_layout)
-        row.addStretch()
-        
-        layout.addLayout(row)
+            QComboBox:focus { border: 1px solid #9333ea; }
+            QComboBox::drop-down { border: none; width: 24px; }
+            QComboBox::down-arrow {
+                image: none;
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-top: 6px solid #a1a1aa;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #18181c;
+                color: white;
+                border: 1px solid #3f3f46;
+                selection-background-color: #7e22ce;
+            }
+        """)
+        self._populate_resolutions()
+
+        res_row.addWidget(res_lbl)
+        res_row.addWidget(self.combo_resolution)
+        res_row.addStretch()
+        layout.addLayout(res_row)
+
+        # ── Fullscreen toggle ─────────────────────────────────────────
+        fs_row = QHBoxLayout()
+        fs_lbl = QLabel("Fullscreen:")
+        fs_lbl.setStyleSheet("color: #a1a1aa; border: none;")
+        fs_lbl.setFixedWidth(100)
+
+        self.cb_fullscreen = QCheckBox("Launch in fullscreen mode")
+        self.cb_fullscreen.setStyleSheet("""
+            QCheckBox {
+                color: #a1a1aa;
+                font-size: 12px;
+                border: none;
+                spacing: 8px;
+            }
+            QCheckBox::indicator {
+                width: 40px;
+                height: 22px;
+                border-radius: 11px;
+                border: 2px solid #3f3f46;
+                background: #27272a;
+            }
+            QCheckBox::indicator:checked {
+                background: #9333ea;
+                border: 2px solid #7e22ce;
+                image: none;
+            }
+            QCheckBox::indicator:unchecked:hover { border: 2px solid #52525b; }
+            QCheckBox::indicator:checked:hover { background: #a855f7; }
+        """)
+        self.cb_fullscreen.setCursor(Qt.PointingHandCursor)
+
+        fs_row.addWidget(fs_lbl)
+        fs_row.addWidget(self.cb_fullscreen)
+        fs_row.addStretch()
+        layout.addLayout(fs_row)
+
         self.content_layout.addWidget(group)
+
+    def _populate_resolutions(self):
+        """Build resolution list from monitor capabilities + safe presets."""
+        # Preset list (all common aspect-correct resolutions)
+        presets = [
+            (640, 360), (960, 540), (1280, 720),
+            (1366, 768), (1600, 900), (1920, 1080),
+            (2560, 1440), (3840, 2160),
+        ]
+
+        # Query the primary monitor for supported sizes
+        try:
+            from PySide6.QtWidgets import QApplication
+            screen = QApplication.primaryScreen()
+            for mode in screen.availableSizes() if hasattr(screen, "availableSizes") else []:
+                presets.append((mode.width(), mode.height()))
+        except Exception:
+            pass
+
+        # Deduplicate and sort by pixel count
+        seen = set()
+        unique = []
+        for w, h in sorted(presets, key=lambda r: r[0] * r[1]):
+            key = (w, h)
+            if key not in seen:
+                seen.add(key)
+                unique.append((w, h))
+
+        self.combo_resolution.clear()
+        for w, h in unique:
+            self.combo_resolution.addItem(f"{w} × {h}", userData=(w, h))
 
     def _browse_exe(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select Game EXE", "", "Executable Files (*.exe);;All Files (*.*)")
@@ -244,8 +316,24 @@ class SettingsPage(QWidget):
         self.cb_dev_mode.setChecked(config.dev_build_mode)
         self.cb_editor_hook.setChecked(config.hook_unity_editor)
         self.cb_auto_sync.setChecked(config.auto_sync_ui)
-        self.combo_w.setCurrentText(str(config.game_width))
-        self.combo_h.setCurrentText(str(config.game_height))
+
+        # Select matching resolution in the single combo
+        target_w = config.game_width
+        target_h = config.game_height
+        matched = False
+        for i in range(self.combo_resolution.count()):
+            data = self.combo_resolution.itemData(i)
+            if data and data[0] == target_w and data[1] == target_h:
+                self.combo_resolution.setCurrentIndex(i)
+                matched = True
+                break
+        if not matched:
+            # Insert and select the custom resolution at the top
+            label = f"{target_w} × {target_h}"
+            self.combo_resolution.insertItem(0, label, userData=(target_w, target_h))
+            self.combo_resolution.setCurrentIndex(0)
+
+        self.cb_fullscreen.setChecked(getattr(config, 'fullscreen', False))
 
     def _save_settings(self):
         config = self.app_controller.config
@@ -254,13 +342,16 @@ class SettingsPage(QWidget):
         config.dev_build_mode = self.cb_dev_mode.isChecked()
         config.hook_unity_editor = self.cb_editor_hook.isChecked()
         config.auto_sync_ui = self.cb_auto_sync.isChecked()
-        
-        try:
-            config.game_width = int(self.combo_w.currentText())
-            config.game_height = int(self.combo_h.currentText())
-        except ValueError:
-            pass
-            
+
+        # Save resolution from the single combo
+        res_data = self.combo_resolution.currentData()
+        if res_data:
+            config.game_width  = res_data[0]
+            config.game_height = res_data[1]
+
+        # Save fullscreen toggle
+        config.fullscreen = self.cb_fullscreen.isChecked()
+
         config.save()
         
         # Show brief save confirmation by changing button text

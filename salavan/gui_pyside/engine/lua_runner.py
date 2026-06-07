@@ -250,6 +250,10 @@ class LuaRunner(QThread):
                 return self.app_controller.lua_assert_log_contains(substring, timeout, step_name)
             lua.globals().assert_log_contains = assert_log_contains_lua
 
+            def wait_event_lua(event_name, timeout=15.0):
+                return self.app_controller.wait_for_salavan_event(event_name, timeout)
+            lua.globals().wait_event = wait_event_lua
+
             def wait_for_lua(element_id, timeout=10.0):
                 elem = self.app_controller.lua_wait_for_element(element_id, timeout)
                 if elem:
@@ -397,8 +401,10 @@ class LuaRunner(QThread):
                                         if "x" in coords and "y" in coords:
                                             self.app_controller.log_message("HUD", "INFO", f"Found static coordinate mapping for '{name}'.")
                                             time.sleep(1.0)
-                                            x = coords["x"] * (1280.0 / 1920.0)
-                                            y = (1080.0 - coords["y"]) * (720.0 / 1080.0)
+                                            gw = self.app_controller.config.game_width or 1280
+                                            gh = self.app_controller.config.game_height or 720
+                                            x = coords["x"] * (gw / 1920.0)
+                                            y = (1080.0 - coords["y"]) * (gh / 1080.0)
                                             return lua.table(x=x, y=y)
                         except Exception:
                             pass

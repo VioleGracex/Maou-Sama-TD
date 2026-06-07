@@ -1,9 +1,13 @@
 -- Scenario 1: Fresh Start & Level 1 Tutorial
-local game = require("lua_api.game")
 -- Full flow: boot → loading screen Clear Data → confirm deletion → Start Game →
 -- ascension → play tutorial → advance/skip dialogue → drag Ignis → speed up x2 →
 -- wait for ultimate charge → dismiss dialogue → click Ignis (inspector) →
 -- click ultimate btn → win Level 1 → 2 loot clicks to finish sequence.
+--
+-- VERIFICATION POLICY: every meaningful action must be confirmed by a UDP event
+-- from the game before marking the step as PASS. Pure click-and-pass is forbidden.
+
+local game = require("lua_api.game")
 
 local function run_tests()
 
@@ -32,7 +36,6 @@ local function run_tests()
     log_test("Clear Data", "STARTING", "Waiting for loading screen to appear...")
 
     -- Wait for the loading screen Clear Data button
-    -- Unity GameObject name: ClearCacheButton  →  template key: "ClearCacheButton"
     local clear_data_btn = ui.wait_for("ClearCacheButton", 45)
     if clear_data_btn then
         ui.click(clear_data_btn)
@@ -42,22 +45,26 @@ local function run_tests()
         local confirm_btn = ui.wait_for("ClearCache_YesButton", 3)
         if confirm_btn then
             ui.click(confirm_btn)
-            wait(1.5) -- reduced wait for scene reload
-            log_test("Clear Data", "PASS", "Save data cleared successfully.")
+            -- VERIFY: game must fire SaveCleared event to confirm deletion completed
+            if game.wait_for_event("SaveCleared", 8.0) then
+                log_test("Clear Data", "PASS", "Save data cleared — 'SaveCleared' event received.")
+            else
+                log_test("Clear Data", "FAIL", "'SaveCleared' event NOT received after confirm click — data may not have been wiped.")
+                return
+            end
         else
-            -- Fallback: try "YES" text-based button matching
+            -- Fallback: try generic YES button
             local ok_btn = ui.wait_for("YES", 5)
             if ok_btn then
-                wait(0.5)
                 ui.click(ok_btn)
-                if game.wait_for_event("SaveCleared", 3) then
+                if game.wait_for_event("SaveCleared", 8.0) then
                     log_test("Clear Data", "PASS", "Save data cleared via OK button (event received).")
                 else
-                    log_test("Clear Data", "FAIL", "OK clicked, but 'SaveCleared' event was not received. Save data may still exist.")
+                    log_test("Clear Data", "FAIL", "OK clicked, but 'SaveCleared' event NOT received.")
                     return
                 end
             else
-                log_test("Clear Data", "FAIL", "Confirmation dialog not found — save data may not have been cleared.")
+                log_test("Clear Data", "FAIL", "Confirmation dialog not found.")
                 return
             end
         end
@@ -69,14 +76,19 @@ local function run_tests()
 
     log_test("Loading Screen", "STARTING", "Waiting for boot sequence to finish...")
     wait(18)
-    
+
     log_test("Loading Screen", "STARTING", "Clicking 'StartButton' on the loading screen...")
     local start_game_btn = ui.wait_for("StartButton", 5)
     if start_game_btn then
         ui.click(start_game_btn)
         wait(2.0)
         ui.click(start_game_btn)
-        log_test("Loading Screen", "PASS", "Start Game clicked on loading screen.")
+        -- VERIFY: scene must load after Start is clicked
+        if game.wait_for_event("SceneLoaded:BattleScene", 30.0) or game.wait_for_event("AscensionPanelOpened", 20.0) then
+            log_test("Loading Screen", "PASS", "Start Game confirmed — scene change detected.")
+        else
+            log_test("Loading Screen", "INFO", "No immediate scene event — continuing (boot may not emit SceneLoaded).")
+        end
         wait(3)
     else
         log_test("Loading Screen", "INFO", "No Start Game button found — continuing.")
@@ -86,9 +98,17 @@ local function run_tests()
     -- STAGE 3: Character Ascension
     -- ============================================================
     set_stage("3. Character Ascension")
-    log_test("Ascension Panel", "STARTING", "Waiting for Ascension Panel to appear...")
+    log_test("Ascension Panel", "STARTING", "Waiting for AscensionPanelOpened event...")
 
-    -- Roll a character name with the dice button
+    -- VERIFY: must receive panel-open event before interacting
+    if game.wait_for_event("AscensionPanelOpened", 20.0) then
+        log_test("Ascension Panel", "INFO", "AscensionPanelOpened event received — panel is up.")
+        wait(1.0) -- allow InputRoot DOTween fade to complete
+    else
+        log_test("Ascension Panel", "FAIL", "AscensionPanelOpened event NOT received within timeout.")
+        return
+    end
+
     -- Roll a character name with the dice button
     local dice = ui.wait_for("DiceButton", 20)
     if dice then
@@ -99,7 +119,13 @@ local function run_tests()
         local arise = ui.wait_for("AriseButton", 5)
         if arise then
             ui.click(arise)
-            log_test("Ascension Panel", "PASS", "Arise confirmed — entering game world.")
+            -- VERIFY: scene must transition after Arise (BattleScene loads)
+            if game.wait_for_event("SceneLoaded:BattleScene", 20.0) then
+                log_test("Ascension Panel", "PASS", "Arise confirmed — BattleScene loaded.")
+            else
+                log_test("Ascension Panel", "FAIL", "Arise clicked but SceneLoaded:BattleScene NOT received.")
+                return
+            end
         else
             log_test("Ascension Panel", "FAIL", "Arise button not found after rolling dice.")
             return
@@ -109,46 +135,46 @@ local function run_tests()
         return
     end
 
-    -- The tutorial automatically transitions to BattleScene
-    log_test("Intro Dialogue", "INFO", "Waiting for BattleScene to load before skipping intro dialogue...")
-    
-    game.wait_for_scene("BattleScene", 5)
     -- ============================================================
     -- STAGE 5: Intro Dialogue — Advance or Skip
     -- ============================================================
     set_stage("5. Intro Dialogue")
-    log_test("Intro Dialogue", "STARTING", "Attempting to skip or advance tutorial intro dialogues...")
+    log_test("Intro Dialogue", "STARTING", "Waiting for DialogueStarted event...")
+
+    -- VERIFY: must receive dialogue event — not just click blindly
     if game.wait_for_event("DialogueStarted", 15.0) then
         log_test("Intro Dialogue", "INFO", "DialogueStarted event received.")
         wait(1.0)
-        
+
         local success = false
         for i = 1, 5 do
             local skip_btn = ui.wait_for("FullSkipButton", 3)
             if not skip_btn then skip_btn = ui.wait_for("SkipButton", 2) end
             if not skip_btn then skip_btn = ui.wait_for("skip", 2) end
-            
+
             if skip_btn then
                 ui.click(skip_btn)
             else
                 log_test("Intro Dialogue", "INFO", "No skip button found, clicking screen...")
                 ui.click_relative(0.5, 0.5)
             end
-            
+
+            -- VERIFY: each skip attempt must end with DialogueEnded
             if game.wait_for_event("DialogueEnded", 5.0) then
                 success = true
                 break
             end
         end
-        
+
         if success then
-            log_test("Intro Dialogue", "PASS", "Intro Dialogue closed successfully.")
+            log_test("Intro Dialogue", "PASS", "Intro Dialogue closed — DialogueEnded event received.")
         else
-            log_test("Intro Dialogue", "FAIL", "Dialogue did not close after multiple skip attempts.")
+            log_test("Intro Dialogue", "FAIL", "Dialogue did not close — DialogueEnded NOT received after attempts.")
         end
     else
-        log_test("Intro Dialogue", "FAIL", "DialogueStarted event NOT received.")
+        log_test("Intro Dialogue", "FAIL", "DialogueStarted event NOT received within timeout.")
     end
+
     -- ============================================================
     -- STAGE 6: Tutorial Choice — Play Tutorial
     -- ============================================================
@@ -157,15 +183,16 @@ local function run_tests()
 
     local play_tut_btn = ui.wait_for("PlayTutorial_Btn", 25)
     if not play_tut_btn then play_tut_btn = ui.wait_for("play", 2) end
-    
+
     if play_tut_btn then
         ui.click(play_tut_btn)
-        wait(1.0)
-        -- Fallback double-click if button is still present
-        if ui.find("PlayTutorial_Btn") or ui.find("play") then
-            ui.click(play_tut_btn)
+        -- VERIFY: game must confirm tutorial was chosen via event
+        if game.wait_for_event("TutorialChosen:tutorial", 8.0) then
+            log_test("Play Tutorial", "PASS", "'TutorialChosen:tutorial' event received — tutorial is starting.")
+        else
+            log_test("Play Tutorial", "FAIL", "'Play Tutorial' clicked but 'TutorialChosen:tutorial' NOT received.")
+            return
         end
-        log_test("Play Tutorial", "PASS", "'Play Tutorial' confirmed.")
     else
         log_test("Play Tutorial", "FAIL", "'Play Tutorial' button did not appear.")
         return
@@ -180,7 +207,7 @@ local function run_tests()
     if game.wait_for_event("DialogueStarted", 10.0) then
         log_test("Placement Dialogue", "INFO", "DialogueStarted event received.")
         wait(1.0)
-        
+
         local success = false
         local i = 0
         while i < 20 do
@@ -188,22 +215,22 @@ local function run_tests()
             local skip_placement = ui.wait_for("FullSkipButton", 3)
             if not skip_placement then skip_placement = ui.wait_for("SkipButton", 2) end
             if not skip_placement then skip_placement = ui.wait_for("skip", 2) end
-            
+
             if skip_placement then
                 ui.click(skip_placement)
             else
                 log_test("Placement Dialogue", "INFO", "No skip found — advancing manually.")
                 ui.click_relative(0.5, 0.5)
             end
-            
+
             if game.wait_for_event("DialogueEnded", 3.0) then
                 success = true
                 break
             end
         end
-        
+
         if success then
-            log_test("Placement Dialogue", "PASS", "Placement dialogue closed successfully.")
+            log_test("Placement Dialogue", "PASS", "Placement dialogue closed — DialogueEnded received.")
         else
             log_test("Placement Dialogue", "FAIL", "Placement dialogue did not close after multiple attempts.")
         end
@@ -211,7 +238,6 @@ local function run_tests()
         log_test("Placement Dialogue", "INFO", "DialogueStarted event NOT received — continuing anyway.")
     end
 
-    -- Extra wait to ensure hand UI has fully spawned before trying to click unit card
     wait(4)
 
     -- ============================================================
@@ -220,8 +246,6 @@ local function run_tests()
     set_stage("8. Deploy Ignis")
     log_test("Deploy Ignis", "STARTING", "Locating Ignis unit card in hand area...")
 
-    -- Use the new game API to place Ignis
-    -- First wait for the unit button to actually spawn (tutorial scene takes time)
     log_test("Deploy Ignis", "INFO", "Waiting for UnitButton_Ignis to spawn (up to 30s)...")
     local ignis_ready = game.wait_for_unit("Ignis", 30)
     if not ignis_ready then
@@ -231,10 +255,16 @@ local function run_tests()
     log_test("Deploy Ignis", "INFO", "UnitButton_Ignis found — placing on tile (7, 3)...")
 
     local place_success = game.place_unit("Ignis", 7, 3)
-    
+
     if place_success then
-        assert_log_contains("DeployUnit: Ignis", 15.0, "Assert Deploy Ignis")
-        log_test("Placement", "PASS", "Ignis successfully deployed at (4, 5).")
+        -- VERIFY: game must confirm deployment via TutorialStepPassed
+        if assert_log_contains("DeployUnit: Ignis", 15.0, "Assert Deploy Ignis") or
+           game.wait_for_event("TutorialStepPassed:Deploy Ignis", 8.0) then
+            log_test("Placement", "PASS", "Ignis successfully deployed — game confirmed via event.")
+        else
+            log_test("Placement", "FAIL", "Ignis placement: no confirmation event received.")
+            return
+        end
     else
         log_test("Placement", "FAIL", "Could not place Ignis via game API.")
         return
@@ -242,52 +272,54 @@ local function run_tests()
 
     -- Post-placement dialogue dismiss
     wait(1.0)
-    click(1133, 653)   -- (scaled to 1280x720 coords)
+    ui.click_relative(0.885, 0.906)   -- scaled relative click (replaces hardcoded 1133,653)
     wait(2.0)
 
     -- ============================================================
     -- STAGE 9: Speed Up Game (× 2 presses)
     -- ============================================================
     set_stage("9. Speed Up Game")
-    log_test("Speed Up", "STARTING", "Pressing speed-up button twice to increase game speed...")
+    log_test("Speed Up", "STARTING", "Pressing speed-up button twice...")
 
-    -- Try template-based detection first
-    -- Unity GO: SpeedButton (BattleScene HUD)
-    local spd_btn = wait_for("SpeedButton", 5)
+    local spd_btn = ui.wait_for("SpeedButton", 5)
     if spd_btn then
-        click("SpeedButton")
+        ui.click(spd_btn)
+        -- VERIFY: SpeedChanged event must be received for each press
+        if game.wait_for_event("SpeedChanged:2x", 3.0) then
+            log_test("Speed Up", "INFO", "Speed changed to 2x — event confirmed.")
+        else
+            log_test("Speed Up", "INFO", "SpeedChanged:2x not received — may already be at 2x.")
+        end
         wait(0.8)
-        click("SpeedButton")
-        wait(0.5)
-        log_test("Speed Up", "PASS", "Speed-up button pressed twice (template match).")
+        ui.click(spd_btn)
+        if game.wait_for_event("SpeedChanged:4x", 3.0) then
+            log_test("Speed Up", "PASS", "Speed changed to 4x — event confirmed.")
+        else
+            log_test("Speed Up", "INFO", "SpeedChanged:4x not received — continuing.")
+        end
     else
-        -- Fallback: top-right HUD area where the speed button typically sits
-        click(1213, 40)   -- (scaled to 1280x720 coords)
+        -- Fallback coordinate
+        ui.click_relative(0.948, 0.056)
         wait(0.8)
-        click(1213, 40)   -- (scaled to 1280x720 coords)
-        wait(0.5)
-        log_test("Speed Up", "PASS", "Speed-up button pressed twice (fallback coordinate).")
+        ui.click_relative(0.948, 0.056)
+        log_test("Speed Up", "INFO", "Speed-up button pressed via fallback coordinate.")
     end
 
     -- ============================================================
     -- STAGE 10: Wave Combat — Wait for Ultimate Charge
     -- ============================================================
     set_stage("10. Wave 1 — Ultimate Charging")
-    log_test("Wave 1", "STARTING", "Waiting for Ignis to charge her ultimate (game pauses automatically)...")
+    log_test("Wave 1", "STARTING", "Waiting for Ignis to charge her ultimate...")
 
-    -- Game is at 2x/4x speed so this is shorter than the original ~18s
-    -- Wait up to 30s for the game to auto-pause for the ultimate tutorial
     wait(12)
 
-    -- Dismiss the ultimate-tutorial dialogue that appears when Ignis is fully charged
-    local ult_dialogue = wait_for("ult_tutorial_dialogue", 15)
+    local ult_dialogue = ui.wait_for("ult_tutorial_dialogue", 15)
     if ult_dialogue then
-        click("ult_tutorial_dialogue")
+        ui.click(ult_dialogue)
         wait(1.5)
-        log_test("Wave 1", "INFO", "Ultimate charge dialogue dismissed via template.")
+        log_test("Wave 1", "INFO", "Ultimate charge dialogue dismissed via UI element.")
     else
-        -- Fallback: click dialogue area
-        click(1133, 653)   -- (scaled to 1280x720 coords)
+        ui.click_relative(0.885, 0.906)
         wait(1.5)
         log_test("Wave 1", "INFO", "Ultimate charge dialogue dismissed (fallback click).")
     end
@@ -298,50 +330,65 @@ local function run_tests()
     set_stage("11. Inspector — Select Ignis")
     log_test("Inspector", "STARTING", "Clicking Ignis on the grid to open the inspector panel...")
 
-    -- Click Ignis grid position to open inspector
-    click(740, 320)   -- Ignis deployed tile (scaled to 1280x720 coords)
+    ui.click_relative(0.578, 0.444)   -- Ignis deployed tile (replaces 740,320)
     wait(2.0)
 
-    -- Verify inspector opened (optional — continue even if template not found)
-    local inspector = wait_for("inspector_window", 6)
+    local inspector = ui.wait_for("inspector_window", 6)
     if inspector then
         log_test("Inspector", "PASS", "Inspector panel opened for Ignis.")
     else
-        log_test("Inspector", "INFO", "Inspector template not matched — proceeding to ultimate activation.")
+        log_test("Inspector", "INFO", "Inspector panel not found — proceeding to ultimate activation.")
     end
 
     -- ============================================================
     -- STAGE 12: Activate Ignis Ultimate Skill
     -- ============================================================
     set_stage("12. Activate Ultimate")
-    log_test("Ultimate", "STARTING", "Clicking Ignis ultimate button in the inspector / HUD...")
+    log_test("Ultimate", "STARTING", "Clicking Ignis ultimate button...")
 
-    -- Unity GO: Ult_Btn (BattleScene — unit inspector / HUD)
-    local ult_btn = wait_for("Ult_Btn", 8)
+    local ult_btn = ui.wait_for("Ult_Btn", 8)
     if ult_btn then
-        click("Ult_Btn")
+        ui.click(ult_btn)
+        -- VERIFY: UltimateActivated event must arrive
+        if game.wait_for_event("UltimateActivated:Ignis", 5.0) then
+            log_test("Ultimate", "PASS", "Ignis ultimate activated — 'UltimateActivated:Ignis' event received.")
+        else
+            log_test("Ultimate", "FAIL", "Ult_Btn clicked but 'UltimateActivated:Ignis' NOT received.")
+        end
         wait(2.0)
-        log_test("Ultimate", "PASS", "Ignis ultimate activated via template.")
     else
-        -- Fallback: bottom-right HUD area where the ultimate portrait button sits
-        click(1160, 600)   -- (scaled to 1280x720 coords)
+        -- Fallback coordinate
+        ui.click_relative(0.906, 0.833)
+        if game.wait_for_event("UltimateActivated:Ignis", 5.0) then
+            log_test("Ultimate", "PASS", "Ignis ultimate activated (fallback) — event received.")
+        else
+            log_test("Ultimate", "FAIL", "Ultimate fallback click: 'UltimateActivated:Ignis' NOT received.")
+        end
         wait(2.0)
-        log_test("Ultimate", "PASS", "Ignis ultimate activated (fallback coordinate).")
     end
 
     -- ============================================================
     -- STAGE 13: Victory Screen
     -- ============================================================
     set_stage("13. Level 1 Victory")
+    log_test("Victory Event", "STARTING", "Waiting for Victory event from game UDP socket...")
+
+    -- VERIFY: Victory event is the definitive pass condition
+    local victory_event = wait_event("Victory", 60.0)
+    if victory_event then
+        log_test("Victory Event", "PASS", "Victory event received successfully via UDP!")
+    else
+        log_test("Victory Event", "FAIL", "Failed to receive Victory event via UDP.")
+    end
+
     log_test("Victory", "STARTING", "Waiting for Level 1 victory screen (up to 60s)...")
 
-    -- Unity GO: NextLevelButton (VictoryPanel in BattleScene)
-    local next_lvl_btn = wait_for("NextLevelButton", 60)
+    local next_lvl_btn = ui.wait_for("NextLevelButton", 60)
     if not next_lvl_btn then
-        log_test("Victory", "INFO", "wait_for timed out. Attempting UIConfig fallback for NextLevelButton...")
+        log_test("Victory", "INFO", "ui.wait_for timed out. Trying wait_template fallback...")
         next_lvl_btn = wait_template("NextLevelButton", 5)
     end
-    
+
     if next_lvl_btn then
         click(next_lvl_btn.x, next_lvl_btn.y)
         log_test("Victory", "PASS", "Level 1 cleared! Victory confirmed.")
@@ -352,11 +399,11 @@ local function run_tests()
 
     -- Two clicks in the centre of the screen to dismiss loot/reward panels
     wait(1.5)
-    click(480, 270)
+    ui.click_relative(0.5, 0.5)
     wait(1.0)
-    click(480, 270)
+    ui.click_relative(0.5, 0.5)
     wait(1.0)
-    log_test("Loot Sequence", "PASS", "Loot/reward panels dismissed (2 centre clicks).")
+    log_test("Loot Sequence", "PASS", "Loot/reward panels dismissed.")
 
     -- ============================================================
     -- DONE

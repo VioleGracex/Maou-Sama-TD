@@ -49,7 +49,7 @@ class AboutPage(QWidget):
         app_title.setStyleSheet("color: white; font-size: 18px; font-weight: bold; border: none;")
         app_title.setAlignment(Qt.AlignCenter)
         
-        version = QLabel("Version 3.2.0 (PySide6 Edition)")
+        version = QLabel("Version 3.2.5 (PySide6 Edition)")
         version.setStyleSheet("color: #a855f7; font-size: 14px; border: none;")
         version.setAlignment(Qt.AlignCenter)
         

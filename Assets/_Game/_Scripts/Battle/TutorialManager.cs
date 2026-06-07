@@ -439,6 +439,17 @@ namespace MaouSamaTD.Managers
 
                 if (_showDebugLogs) Debug.Log($"[tutorial] >>> Executing Step [{_currentStepIndex}]: {step.StepName} ({step.Type})");
                 
+#if DEVELOPMENT_BUILD && !UNITY_EDITOR
+                if (step.ActionKey == "UnitPlaced")
+                {
+                    var tiles = GetRequiredPlacementTiles();
+                    if (tiles.Count > 0)
+                    {
+                        Debug.Log($"[Salavan] AllowedPlacementTile: {tiles[0].x},{tiles[0].y}");
+                    }
+                }
+#endif
+
                 ClearAllTileHighlights();
 
                 // Hardening: Clear triggered action buffer for WaitForAction steps to prevent stale triggers from previous steps skipping them

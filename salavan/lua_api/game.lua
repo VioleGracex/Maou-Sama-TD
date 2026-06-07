@@ -173,4 +173,23 @@ function game.wait_for_unit(unit_name, timeout)
     return false
 end
 
+-- Wait for a dynamic placement tile from UDP logs
+function game.wait_for_tile(event_name, timeout)
+    timeout = timeout or 15.0
+    print("[API] Waiting for dynamic tile event: " .. event_name)
+    local data = wait_event(event_name, timeout)
+    if not data then
+        print("[API] Timed out waiting for event: " .. event_name)
+        return nil
+    end
+    -- parse "x,y"
+    local x, y = string.match(data, "^%s*(%d+)%s*,%s*(%d+)%s*$")
+    if x and y then
+        print("[API] Received dynamic tile coordinates: " .. x .. ", " .. y)
+        return tonumber(x), tonumber(y)
+    end
+    print("[API] Invalid tile coordinate format: " .. tostring(data))
+    return nil
+end
+
 return game

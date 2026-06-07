@@ -18,6 +18,7 @@ MonoBehaviour:
   Description: A focused, high-speed execution strike that deals massive burst Magic
     Damage to a single point.
   Icon: {fileID: 21300000, guid: 8e6133a3dfd1bfa43a8c71b312cd2803, type: 3}
+  Properties: []
   BaseVisuals:
     UltimatePrefab: {fileID: 0}
     CastVFX: {fileID: 0}
@@ -47,4 +48,4 @@ MonoBehaviour:
   Persistence: 0
   Value: 2500
   Duration: 1
-  BuffVFXPrefab: {fileID: 0}
+  BuffVFXPrefab: {fileID: 5549772189391940097, guid: 64fc1fc7e1d732d46b9be31ddc8ee1c8, type: 3}

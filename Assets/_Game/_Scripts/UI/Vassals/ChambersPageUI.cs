@@ -135,6 +135,11 @@ namespace MaouSamaTD.UI.Vassals
                 var sprite = unit.GetCurrentVisualArt();
                 waistUpImage.sprite = sprite;
                 waistUpImage.color = sprite != null ? Color.white : new Color(1, 1, 1, 0f);
+                
+                if (bgNameText != null)
+                {
+                    bgNameText.gameObject.SetActive(sprite == null);
+                }
             }
 
             if (privateAudienceBtn != null)

@@ -261,7 +261,10 @@ namespace MaouSamaTD.UI
             if (_selectedUnit is PlayerUnit playerUnit)
             {
                 playerUnit.UseSkill();
-                // Add Cooldown/Feedback later
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                string unitName = playerUnit.Data != null ? playerUnit.Data.UnitName : "Unknown";
+                MaouSamaTD.Testing.GameStateExporter.PushEvent($"UltimateActivated:{unitName}");
+#endif
             }
         }
     }

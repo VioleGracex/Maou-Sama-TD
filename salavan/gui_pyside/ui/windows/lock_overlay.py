@@ -1,20 +1,17 @@
 import sys
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QFrame
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QFont, QColor, QPainter, QLinearGradient
+from PySide6.QtCore import Qt, QTimer, QPoint
+from PySide6.QtGui import QFont, QColor, QPainter, QLinearGradient, QCursor
 
 class LockOverlay(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowFlags(
-            Qt.WindowStaysOnTopHint |
-            Qt.FramelessWindowHint |
-            Qt.WindowTransparentForInput |
-            Qt.Tool
-        )
+        self._drag_mode = False
+        self._drag_offset = QPoint()
+
+        self._set_window_flags(interactive=False)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setAttribute(Qt.WA_TransparentForMouseEvents)
 
         self._steps = []
         self._active_idx = -1
@@ -42,6 +39,21 @@ class LockOverlay(QWidget):
         """)
         layout.addWidget(self._header)
 
+        # ── Drag Hint (shown only in drag mode) ───────────────────────
+        self._drag_hint = QLabel("↕ DRAG MODE — release Alt to lock")
+        self._drag_hint.setAlignment(Qt.AlignCenter)
+        self._drag_hint.setFont(QFont("Arial", 8, QFont.Bold))
+        self._drag_hint.setStyleSheet("""
+            QLabel {
+                background-color: rgba(80, 180, 80, 200);
+                color: white;
+                border-radius: 6px;
+                padding: 4px 8px;
+            }
+        """)
+        self._drag_hint.setVisible(False)
+        layout.addWidget(self._drag_hint)
+
         # ── Step List Panel ────────────────────────────────────────────
         self._step_container = QFrame()
         self._step_container.setStyleSheet("""
@@ -64,6 +76,60 @@ class LockOverlay(QWidget):
         layout.addStretch()
 
         self.setGeometry(0, 0, 340, 900)
+
+    # ── Window flag helpers ────────────────────────────────────────────
+
+    def _set_window_flags(self, interactive: bool):
+        flags = Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool
+        if not interactive:
+            flags |= Qt.WindowTransparentForInput
+            self.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        else:
+            self.setAttribute(Qt.WA_TransparentForMouseEvents, False)
+        self.setWindowFlags(flags)
+
+    # ── Drag mode API (called from HotkeyService / app_controller) ────
+
+    def enable_drag_mode(self):
+        """Called when Alt is pressed. Makes overlay grabbable by mouse."""
+        if self._drag_mode:
+            return
+        self._drag_mode = True
+        self._set_window_flags(interactive=True)
+        self._drag_hint.setVisible(True)
+        self.setCursor(QCursor(Qt.OpenHandCursor))
+        self.show()
+        self.raise_()
+
+    def disable_drag_mode(self):
+        """Called when Alt is released. Restores click-through transparency."""
+        self._drag_mode = False
+        self._set_window_flags(interactive=False)
+        self._drag_hint.setVisible(False)
+        self.setCursor(QCursor(Qt.ArrowCursor))
+        self.show()
+        self.raise_()
+
+    # ── Mouse drag events ─────────────────────────────────────────────
+
+    def mousePressEvent(self, event):
+        if self._drag_mode and event.button() == Qt.LeftButton:
+            self._drag_offset = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            self.setCursor(QCursor(Qt.ClosedHandCursor))
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if self._drag_mode and event.buttons() & Qt.LeftButton:
+            new_pos = event.globalPosition().toPoint() - self._drag_offset
+            self.move(new_pos)
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        if self._drag_mode:
+            self.setCursor(QCursor(Qt.OpenHandCursor))
+        super().mouseReleaseEvent(event)
+
+    # ── Content updates ───────────────────────────────────────────────
 
     def update_steps(self, steps, active_idx):
         self._steps = steps
@@ -116,8 +182,14 @@ class LockOverlay(QWidget):
         self.setFixedHeight(panel_h)
 
     def show_overlay(self, screen_width=1920):
-        # Position on top-right corner
-        x = screen_width - 360
+        # Always use the real monitor width so the overlay sits on the right
+        # edge of the physical screen — not the (smaller) game window width.
+        try:
+            from PySide6.QtWidgets import QApplication
+            monitor_w = QApplication.primaryScreen().geometry().width()
+        except Exception:
+            monitor_w = screen_width  # safe fallback
+        x = monitor_w - 360
         self.setGeometry(x, 20, 340, self.height() or 900)
         self._root.setGeometry(0, 0, 340, self.height())
         self.show()

@@ -128,6 +128,11 @@ namespace MaouSamaTD.UI.MainMenu
 
             // Select Male (Tyrant) by default
             OnClassSelected(MaouGender.Male, "Sovereign of Force");
+            
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            MaouSamaTD.Testing.GameStateExporter.PushEvent("AscensionPanelOpened");
+            Debug.Log("[AscensionPanel] Opened - DiceButton should appear after InputRoot fade-in.");
+#endif
         }
         #endregion
 

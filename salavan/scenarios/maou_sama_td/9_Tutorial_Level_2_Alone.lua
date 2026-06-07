@@ -105,11 +105,23 @@ local function run_tests()
         click(start_battle.x, start_battle.y)
     end
 
-    -- Deploy Ignis if not already on the board
-    local ignis_card = wait_template("ignis_card", 10)
-    if ignis_card then
-        drag(ignis_card.x, ignis_card.y, 555, 240, 1.0)
-        wait(2)
+    -- Wait for the AllowedPlacementTile event over UDP logs
+    local tile_x, tile_y = game.wait_for_tile("AllowedPlacementTile", 15)
+    if tile_x and tile_y then
+        log_test("Battle Combat", "INFO", "Dynamic placement tile found: " .. tile_x .. ", " .. tile_y)
+        local ignis_card = wait_template("ignis_card", 10)
+        local tile = ui.wait_for("Tile_" .. tile_x .. "_" .. tile_y, 10)
+        if ignis_card and tile then
+            ui.drag(ignis_card, tile, 1.0)
+            wait(2)
+            log_test("Battle Combat", "PASS", "Ignis deployed dynamically to Tile_" .. tile_x .. "_" .. tile_y)
+        else
+            log_test("Battle Combat", "FAIL", "Card or Tile UI element not found.")
+            return
+        end
+    else
+        log_test("Battle Combat", "FAIL", "No placement tile received from game.")
+        return
     end
 
     -- Speed up
@@ -122,7 +134,12 @@ local function run_tests()
     wait(15)
 
     -- Trigger Ultimate
-    click(555, 240)
+    local target_tile = ui.wait_for("Tile_" .. tile_x .. "_" .. tile_y, 5)
+    if target_tile then
+        ui.click(target_tile)
+    else
+        click(555, 240)
+    end
     -- wait(1.5)
     local ult_btn = wait_template("Ult_Btn", 8)
     if ult_btn then

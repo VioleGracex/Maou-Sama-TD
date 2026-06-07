@@ -18,6 +18,7 @@ MonoBehaviour:
   Description: Infuse a vassal with your demonic Authority, greatly increasing their
     combat prowess.
   Icon: {fileID: 21300000, guid: 8c15469b668c19b4b9da5aefd66c196c, type: 3}
+  Properties: []
   BaseVisuals:
     UltimatePrefab: {fileID: 0}
     CastVFX: {fileID: 0}
@@ -51,4 +52,4 @@ MonoBehaviour:
   Persistence: 0
   Value: 1.5
   Duration: 20
-  BuffVFXPrefab: {fileID: 0}
+  BuffVFXPrefab: {fileID: 5129502114244995669, guid: 1d45d1fa81e55b9489c40682f53f5bbd, type: 3}

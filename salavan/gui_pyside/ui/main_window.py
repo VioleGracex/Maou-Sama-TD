@@ -11,7 +11,7 @@ class MainWindow(QMainWindow):
     def __init__(self, app_controller, parent=None):
         super().__init__(parent)
         self.app_controller = app_controller
-        self.setWindowTitle("SALAVAN-HUD GAME SALAVAN PANEL v3.2.4")
+        self.setWindowTitle("SALAVAN-HUD GAME SALAVAN PANEL v3.2.7")
         self.setMinimumSize(800, 500)
         self.resize(1200, 800)
         self.setStyleSheet("background-color: #0d0d11; color: white;")
@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         self.btn_nav_toggle.clicked.connect(self.toggle_sidebar)
         header_layout.addWidget(self.btn_nav_toggle)
         
-        self.title_lbl = QLabel(" 🛡️  SALAVAN-HUD GAME SALAVAN PANEL v3.2.4")
+        self.title_lbl = QLabel(" 🛡️  SALAVAN-HUD GAME SALAVAN PANEL v3.2.6")
         self.title_lbl.setStyleSheet("color: #a855f7; font-weight: bold; font-family: 'Segoe UI'; font-size: 13px; border: none;")
         header_layout.addWidget(self.title_lbl)
         header_layout.addStretch()

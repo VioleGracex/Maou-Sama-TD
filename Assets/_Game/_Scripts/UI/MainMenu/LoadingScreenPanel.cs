@@ -65,7 +65,6 @@ namespace MaouSamaTD.UI.MainMenu
             Debug.Log("[LoadingScreenPanel] Resetting and starting Boot Sequence on reload.");
             _isTransitioning = false;
             _isLevelReady = false;
-            _hasFinishedFirstBoot = false;
 
             CanvasGroup cg = gameObject.GetComponent<CanvasGroup>();
             if (cg != null) cg.alpha = 1f;
@@ -90,6 +89,10 @@ namespace MaouSamaTD.UI.MainMenu
             if (_clearCacheButton != null)
             {
                 _clearCacheButton.gameObject.SetActive(_appEntryPoint != null);
+            }
+            if (_versionText != null)
+            {
+                _versionText.text = $"Ver: {Application.version}";
             }
 
             // Start Boot Sequence

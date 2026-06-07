@@ -27,9 +27,66 @@ namespace MaouSamaTD.Testing
         private string _mapJsonPath;
         private bool _mapExported = false;
 
+#if DEVELOPMENT_BUILD && !UNITY_EDITOR
+        private static System.Net.Sockets.UdpClient _udpClient;
+        private const int SalavanPort = 9090;
+        private const int SalavanFallbackPort = 9091;
+
+        private static void SetupUdpClient()
+        {
+            try
+            {
+                if (_udpClient == null)
+                {
+                    _udpClient = new System.Net.Sockets.UdpClient();
+                    Application.logMessageReceivedThreaded += OnLogReceived;
+                    Debug.Log($"[GameStateExporter] UDP socket log exporter initialized on ports {SalavanPort} and {SalavanFallbackPort}");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[GameStateExporter] Failed to initialize UDP client: {ex.Message}");
+            }
+        }
+
+        private static void OnLogReceived(string condition, string stackTrace, LogType type)
+        {
+            if (condition != null && condition.StartsWith("[Salavan]"))
+            {
+                try
+                {
+                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(condition);
+                    _udpClient.Send(bytes, bytes.Length, "127.0.0.1", SalavanPort);
+                    _udpClient.Send(bytes, bytes.Length, "127.0.0.1", SalavanFallbackPort);
+                }
+                catch
+                {
+                    // Silent catch to prevent recursion or lockups
+                }
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            if (_udpClient != null)
+            {
+                try
+                {
+                    Application.logMessageReceivedThreaded -= OnLogReceived;
+                    _udpClient.Close();
+                }
+                catch {}
+                _udpClient = null;
+            }
+        }
+#endif
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
+#if DEVELOPMENT_BUILD && !UNITY_EDITOR
+            SetupUdpClient();
+#endif
             GameObject go = new GameObject("GameStateExporter");
             go.AddComponent<GameStateExporter>();
             DontDestroyOnLoad(go);
@@ -70,6 +127,9 @@ namespace MaouSamaTD.Testing
                 _eventQueue.Add(stamped);
                 if (_eventQueue.Count > 30) _eventQueue.RemoveAt(0); // keep last 30
             }
+#if DEVELOPMENT_BUILD && !UNITY_EDITOR
+            Debug.Log($"[Salavan] {eventName}");
+#endif
         }
 
         private string FindTesterPath(string filename)
@@ -295,13 +355,10 @@ namespace MaouSamaTD.Testing
                     string tempPath = _jsonPath + ".tmp";
                     File.WriteAllText(tempPath, encrypted);
 
-                    // Check if the target file exists and delete it to mimic 'overwrite = true'
-                    if (File.Exists(_jsonPath))
-                    {
-                        File.Delete(_jsonPath);
-                    }
-
-                    File.Move(tempPath, _jsonPath);
+                    // Use File.Copy with overwrite=true instead of Delete+Move
+                    // This avoids a race window where game_state.json briefly doesn't exist
+                    File.Copy(tempPath, _jsonPath, overwrite: true);
+                    try { File.Delete(tempPath); } catch { }
                 }
             }
             catch (System.Exception)

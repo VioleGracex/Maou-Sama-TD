@@ -868,6 +868,9 @@ namespace MaouSamaTD.UI
             else newSpeed = 1f;
 
             _gameManager.SetSpeed(newSpeed);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            MaouSamaTD.Testing.GameStateExporter.PushEvent($"SpeedChanged:{newSpeed}x");
+#endif
             UpdateUI();
         }
 
@@ -1018,6 +1021,9 @@ namespace MaouSamaTD.UI
                 yesBtn.onClick.AddListener(() =>
                 {
                     if (_showDebugLogs) Debug.Log("[GameControlUI] User chose: Play Tutorial");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    MaouSamaTD.Testing.GameStateExporter.PushEvent("TutorialChosen:tutorial");
+#endif
                     closePopup(onYes);
                 });
             }
@@ -1027,6 +1033,9 @@ namespace MaouSamaTD.UI
                 noBtn.onClick.AddListener(() =>
                 {
                     if (_showDebugLogs) Debug.Log("[GameControlUI] User chose: Skip Tutorial");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    MaouSamaTD.Testing.GameStateExporter.PushEvent("TutorialChosen:free");
+#endif
                     closePopup(onNo);
                 });
             }

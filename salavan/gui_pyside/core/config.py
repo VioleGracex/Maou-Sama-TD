@@ -17,6 +17,7 @@ class ConfigManager(QObject):
         self.automation_key = ""
         self.game_width = 960
         self.game_height = 540
+        self.fullscreen = False
         self.builds = []
         self.hotkeys = {
             "pause": "<Control-p>",
@@ -89,6 +90,7 @@ class ConfigManager(QObject):
                     self.automation_key = data.get("automation_key", "")
                     self.game_width = data.get("game_width", 960)
                     self.game_height = data.get("game_height", 540)
+                    self.fullscreen = data.get("fullscreen", False)
                     self.builds = data.get("builds", [])
                     self.active_game_id = data.get("active_game_id", "maou_sama_td")
                     self.games = data.get("games", [])
@@ -137,6 +139,7 @@ class ConfigManager(QObject):
                     "automation_key": self.automation_key,
                     "game_width": self.game_width,
                     "game_height": self.game_height,
+                    "fullscreen": self.fullscreen,
                     "builds": self.builds,
                     "hotkeys": self.hotkeys,
                     "active_game_id": self.active_game_id,

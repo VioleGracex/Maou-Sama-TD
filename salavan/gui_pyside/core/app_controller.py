@@ -12,6 +12,7 @@ from engine.monitor_runner import UnityLogMonitor
 from engine.hooks import GameHooks
 from ui.windows.lock_overlay import LockOverlay
 from services.hotkey_service import HotkeyService
+from engine.event_server import SalavanEventServer
 
 class AppController(QObject):
     """
@@ -86,9 +87,20 @@ class AppController(QObject):
         self.hotkey_service.resume_signal.connect(self._hotkey_resume)
         self.hotkey_service.kill_signal.connect(self.abort_test)
         self.hotkey_service.toggle_logs_signal.connect(self.log_overlay.toggle_visibility)
+        # Alt key → drag overlays with mouse
+        self.hotkey_service.overlay_drag_start.connect(self.lock_overlay.enable_drag_mode)
+        self.hotkey_service.overlay_drag_start.connect(self.timer_overlay.enable_drag_mode)
+        self.hotkey_service.overlay_drag_stop.connect(self.lock_overlay.disable_drag_mode)
+        self.hotkey_service.overlay_drag_stop.connect(self.timer_overlay.disable_drag_mode)
         
         self.config.config_changed.connect(self._sync_settings)
         self._sync_settings()
+        
+        self.received_salavan_events = []
+        self.salavan_events_lock = threading.Lock()
+        self.event_server = SalavanEventServer(port=9090)
+        self.event_server.event_received.connect(self._on_salavan_event)
+        self.event_server.start()
 
     def _sync_settings(self):
         active_game = self.config.get_active_game()
@@ -189,7 +201,7 @@ class AppController(QObject):
                 args.extend(env_args.split())
             else:
                 args.extend([
-                    "-screen-fullscreen", "1",
+                    "-screen-fullscreen", "1" if self.config.fullscreen else "0",
                     "-screen-width", str(self.config.game_width),
                     "-screen-height", str(self.config.game_height)
                 ])
@@ -261,6 +273,13 @@ class AppController(QObject):
         self.pause_event.set()
         self.current_scenario_name = scenario_name
         self.test_started.emit()
+        
+        # Record the wall-clock time this test session started so that the
+        # event fallback can filter the persistent log to only this run.
+        self._test_session_start = time.time()
+        
+        with self.salavan_events_lock:
+            self.received_salavan_events.clear()
         
         log_file = os.path.join(logs_dir, f"{scenario_name}_report.txt")
         self.logger.initialize(log_file, scenario_name)
@@ -548,6 +567,9 @@ class AppController(QObject):
         self.overlay_service.stop_polling()
         if self.log_monitor:
             self.log_monitor.stop()
+        if hasattr(self, 'event_server') and self.event_server:
+            self.event_server.stop()
+            self.event_server = None
         self.abort_test()
 
     def read_game_state(self):
@@ -555,7 +577,7 @@ class AppController(QObject):
             from core.paths import get_base_dir
             path = os.path.join(get_base_dir(), "game_state.json")
             
-            for _ in range(10): # increased retries
+            for _ in range(50): # 50 retries × 50ms = 2.5s total
                 if os.path.exists(path):
                     import json
                     try:
@@ -684,3 +706,61 @@ class AppController(QObject):
         self.wait_finished.emit()
         self.log_message(step_name, "FAIL", f"Timeout waiting for log '{substring}'.")
         raise AssertionError(f"Log did not contain '{substring}' within {timeout}s.")
+
+    def _on_salavan_event(self, event_name, event_data):
+        timestamp = time.time()
+        with self.salavan_events_lock:
+            self.received_salavan_events.append((timestamp, event_name, event_data))
+        self.log_message("SALAVAN_EVENT", "INFO", f"Event: '{event_name}' Data: '{event_data}'")
+
+    def wait_for_salavan_event(self, event_name, timeout=15.0):
+        self.log_message("SALAVAN_EVENT", "INFO", f"Waiting for event '{event_name}' (timeout: {timeout}s)...")
+        start_time = time.time()
+        # Record when we started waiting so the fallback can ignore events
+        # that arrived before this call (unless they're in the session log).
+        wait_start = time.time()
+        
+        self.wait_started.emit(f"Wait Event: {event_name}", float(timeout))
+        
+        while time.time() - start_time < timeout:
+            self.check_paused()
+            if self.stop_flag:
+                self.wait_finished.emit()
+                raise InterruptedError("Test aborted while waiting for event.")
+                
+            with self.salavan_events_lock:
+                for ts, name, data in self.received_salavan_events:
+                    if ts >= wait_start and name.strip() == event_name.strip():
+                        self.wait_finished.emit()
+                        return data
+                        
+            self.wait_progress.emit(float(timeout - (time.time() - start_time)))
+            time.sleep(0.05)
+        
+        self.wait_finished.emit()
+        
+        # ── Fallback: scan the persistent event log ──────────────────────────
+        # The event may have been pushed by the game BEFORE this Lua call was
+        # reached (e.g. rapid scene transitions).  The in-memory window
+        # (received_salavan_events) is cleared on each test run but the
+        # event_server keeps the full session log.  We search it for any entry
+        # matching event_name that arrived after this test session started.
+        try:
+            session_start = getattr(self, '_test_session_start', 0.0)
+            if hasattr(self, 'event_server') and self.event_server:
+                for entry in reversed(self.event_server.event_log):
+                    if (entry.get('event_name', '').strip() == event_name.strip()
+                            and entry.get('ts', 0) >= session_start):
+                        recovered_data = entry.get('event_data', '')
+                        self.log_message(
+                            "SALAVAN_EVENT", "INFO",
+                            f"Recovered missed event '{event_name}' from session log "
+                            f"(seq #{entry.get('seq')}, sent at {entry.get('time')}). "
+                            f"Data: '{recovered_data}'"
+                        )
+                        return recovered_data
+        except Exception as e:
+            self.log_message("SALAVAN_EVENT", "DEBUG", f"Fallback log scan failed: {e}")
+        
+        self.log_message("SALAVAN_EVENT", "FAIL", f"Timed out waiting for event '{event_name}' (not found in session log either)")
+        return None

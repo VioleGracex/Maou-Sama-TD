@@ -405,6 +405,9 @@ namespace MaouSamaTD.Managers
             Debug.Log($"[GameManager] Victory() called. IsGameEnded: {IsGameEnded}, HasStory: {_currentLevelData?.HasStory}, OutroStory: {_currentLevelData?.OutroStory != null}");
             if (IsGameEnded) return;
             IsGameEnded = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            MaouSamaTD.Testing.GameStateExporter.PushEvent("Victory");
+#endif
 
             // Trigger Cinematic Kill Effects
             if (_cameraManager != null)
@@ -578,6 +581,9 @@ namespace MaouSamaTD.Managers
             Debug.Log($"[GameManager] GameOver() called. IsGameEnded: {IsGameEnded}");
             if (IsGameEnded) return;
             IsGameEnded = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            MaouSamaTD.Testing.GameStateExporter.PushEvent("GameOver");
+#endif
             Time.timeScale = 0f; // Freeze game timescale immediately upon defeat
             MaouSamaTD.Battle.BattleLogManager.Instance.LogEvent(MaouSamaTD.Battle.BattleLogType.System, "Game", "", "Game Over - Defeat", 0);
             OnGameFinished?.Invoke();

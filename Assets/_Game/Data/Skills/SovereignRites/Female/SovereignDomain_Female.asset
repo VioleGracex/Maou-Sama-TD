@@ -18,6 +18,7 @@ MonoBehaviour:
   Description: A majestic aura that empowers all vassals within the domain, significantly
     increasing their combat effectiveness.
   Icon: {fileID: 21300000, guid: 17e07ad0b515f7a4aaeb1fcf37acc00f, type: 3}
+  Properties: []
   BaseVisuals:
     UltimatePrefab: {fileID: 0}
     CastVFX: {fileID: 0}
@@ -51,4 +52,4 @@ MonoBehaviour:
   Persistence: 1
   Value: 1.2
   Duration: 15
-  BuffVFXPrefab: {fileID: 0}
+  BuffVFXPrefab: {fileID: 5129502114244995669, guid: 1d45d1fa81e55b9489c40682f53f5bbd, type: 3}

@@ -141,13 +141,22 @@ local function run_tests()
     set_stage("6. Tutorial Level 1")
     log_test("Tutorial Level 1", "STARTING", "Deploying Ignis on grid...")
 
-    local ignis_card = wait_template("ignis_card", 12)
-    if ignis_card then
-        drag(ignis_card.x, ignis_card.y, 555, 240, 1.0)
-        wait(2.5)
-        log_test("Tutorial Level 1", "PASS", "Ignis deployed to grid.")
+    -- Wait for the AllowedPlacementTile event over UDP logs
+    local tile_x, tile_y = game.wait_for_tile("AllowedPlacementTile", 15)
+    if tile_x and tile_y then
+        log_test("Tutorial Level 1", "INFO", "Dynamic placement tile found: " .. tile_x .. ", " .. tile_y)
+        local ignis_card = wait_template("ignis_card", 12)
+        local tile = ui.wait_for("Tile_" .. tile_x .. "_" .. tile_y, 10)
+        if ignis_card and tile then
+            ui.drag(ignis_card, tile, 1.0)
+            wait(2.5)
+            log_test("Tutorial Level 1", "PASS", "Ignis deployed dynamically to Tile_" .. tile_x .. "_" .. tile_y)
+        else
+            log_test("Tutorial Level 1", "FAIL", "Card or Tile UI element not found.")
+            return
+        end
     else
-        log_test("Tutorial Level 1", "FAIL", "Ignis card not found.")
+        log_test("Tutorial Level 1", "FAIL", "No placement tile received from game.")
         return
     end
 
@@ -176,7 +185,12 @@ local function run_tests()
     end
 
     -- Trigger Ultimate
-    click(555, 240)
+    local target_tile = ui.wait_for("Tile_" .. tile_x .. "_" .. tile_y, 5)
+    if target_tile then
+        ui.click(target_tile)
+    else
+        click(555, 240)
+    end
     -- wait(2.0)
     local ult_btn = wait_template("Ult_Btn", 8)
     if ult_btn then

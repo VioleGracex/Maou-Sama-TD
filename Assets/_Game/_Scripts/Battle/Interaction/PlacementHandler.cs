@@ -117,7 +117,7 @@ namespace MaouSamaTD.Managers.Interaction
             bool canAfford = _currencyManager != null ? _currencyManager.CanAfford(unitData.DeploymentCost) : true;
             bool validTile = IsTileValidForUnit(tile, unitData);
 
-            UnityEngine.Debug.Log($"[PlacementHandler] TryPlaceUnit: {unitData.UnitName} on {tile.GridPos}. Afford: {canAfford}, ValidTile: {validTile}, Occupied: {tile.IsOccupied}");
+            UnityEngine.Debug.Log($"[PlacementHandler] TryPlaceUnit: {unitData.UnitName} on {tile.Coordinate}. Afford: {canAfford}, ValidTile: {validTile}, Occupied: {tile.IsOccupied}");
 
             if (canAfford && validTile && !tile.IsOccupied)
             {

@@ -552,6 +552,25 @@ namespace MaouSamaTD.Managers
                 bool isExit = alt.PointType == TilePointType.ExitGround || alt.PointType == TilePointType.ExitHigh;
                 bool isHigh = alt.PointType == TilePointType.SpawnHigh || alt.PointType == TilePointType.ExitHigh || alt.PointType == TilePointType.HighGround;
 
+                if (alt.PointType == TilePointType.Decoration)
+                {
+                    if (alt.Action == TileAlterationAction.Subtract)
+                    {
+                        Tile tile = _gridManager.GetTileAt(alt.Coordinate);
+                        if (tile != null)
+                        {
+                            foreach (Transform child in tile.transform)
+                            {
+                                if (child.name.StartsWith("Decoration"))
+                                {
+                                    child.gameObject.SetActive(false);
+                                }
+                            }
+                        }
+                    }
+                    continue; // Skip the rest of the tile alteration logic since this is just a decoration
+                }
+
                 // Retreat occupied vassal for free with no cooldown if the tile is becoming a spawn or exit point
                 if (alt.Action == TileAlterationAction.Add || alt.Action == TileAlterationAction.Override)
                 {

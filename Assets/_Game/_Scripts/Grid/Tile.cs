@@ -367,7 +367,7 @@ namespace MaouSamaTD.Grid
                     obj.transform.localPosition = deco.Offset;
                     obj.transform.localRotation = Quaternion.Euler(deco.Rotation);
                     obj.transform.localScale = deco.Scale;
-                    obj.name = "Decoration";
+                    obj.name = "Decoration_" + deco.Prefab.name;
                     _decorationObjects.Add(obj);
 
                     // Add glow controller if it's using the glow material

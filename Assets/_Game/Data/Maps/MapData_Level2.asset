@@ -483,6 +483,7 @@ MonoBehaviour:
   ShowPathing: 1
   DefaultTileMaterial: {fileID: 0}
   DefaultTileTexture: {fileID: 0}
+  BaseTileTextures: []
   TileWallVisuals:
     WallPrefab: {fileID: 0}
     WallMaterial: {fileID: 0}
@@ -1029,7 +1030,11 @@ MonoBehaviour:
     Decorations: []
   - Coordinate: {x: 7, y: 6}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
-    Decorations: []
+    Decorations:
+    - Prefab: {fileID: 7347321305655150062, guid: bd3f485c21aac5b44aa664856559c3f1, type: 3}
+      Offset: {x: 0, y: 1, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Scale: {x: 1, y: 1, z: 1}
   - Coordinate: {x: 7, y: 7}
     Texture: {fileID: 2800000, guid: 8e10f9eb50bb4634dbfc82075d1f2712, type: 3}
     Decorations: []

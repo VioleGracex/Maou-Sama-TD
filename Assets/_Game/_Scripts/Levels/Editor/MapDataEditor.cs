@@ -1355,6 +1355,13 @@ namespace MaouSamaTD.Editor
                     int ovIdx = data.VisualOverrides.FindIndex(o => o.Coordinate == coord);
                     string mark = "";
                     Texture2D tex = data.DefaultTileTexture; // Base map texture
+                    if (data.BaseTileTextures != null && data.BaseTileTextures.Count > 0)
+                    {
+                        Random.State tempState = Random.state;
+                        Random.InitState(data.MapSeed + x * 1000 + y);
+                        tex = data.BaseTileTextures[Random.Range(0, data.BaseTileTextures.Count)];
+                        Random.state = tempState;
+                    }
                     if (ovIdx != -1) {
                         var o = data.VisualOverrides[ovIdx];
                         bool hasTex = o.Texture != null;

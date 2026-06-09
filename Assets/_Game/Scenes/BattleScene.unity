@@ -167,8 +167,6 @@ MonoBehaviour:
   _unitWorldHoleSizeDefault: {x: 1, y: 1}
   _unitWorldHoleYOffset: 0
   _showDebugLogs: 1
-  _lilithSealedSprite: {fileID: 0}
-  _lilithSealedCoordinate: {x: 9, y: 11}
 --- !u!1 &29599577
 GameObject:
   m_ObjectHideFlags: 0
@@ -5299,7 +5297,7 @@ Camera:
   m_GameObject: {fileID: 644362009}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.29411766, g: 0.16078432, b: 0.058823533, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -12600,38 +12598,34 @@ MonoBehaviour:
   _showMapDataSettings: 1
   _showProceduralSettings: 0
   _gridManager: {fileID: 1567414775}
-  _mapData: {fileID: 11400000, guid: d92f88ece5bd3c44e847a460f6169a1a, type: 2}
+  _mapData: {fileID: 11400000, guid: a6a378b73dbf1414db88aa314ae437a9, type: 2}
   _extractPath: Assets/_Game/ScriptableObjects/Maps/
   _extractFileName: NewMapData
   _useSeed: 1
-  _seed: 54321
-  _highGroundChance: 0.2
+  _seed: 10004
+  _highGroundChance: 0.3
   _lanesPerConnection: 1
   _spawnPoints:
-  - Coordinate: {x: 7, y: 0}
+  - Coordinate: {x: 0, y: 3}
     TargetExitIndex: 0
-  - Coordinate: {x: 0, y: 7}
-    TargetExitIndex: 0
-  - Coordinate: {x: 7, y: 14}
-    TargetExitIndex: 0
-  - Coordinate: {x: 14, y: 7}
+  - Coordinate: {x: 0, y: 11}
     TargetExitIndex: 0
   _exitPoints:
-  - {x: 7, y: 7}
+  - {x: 14, y: 7}
   _startPrefab: {fileID: 0}
   _endPrefab: {fileID: 0}
   _wallPrefab: {fileID: 0}
   _wallMaterial: {fileID: 2100000, guid: 8a024d6ce31594f4ab7f08a2d889baaf, type: 2}
   _generateMapOnStart: 1
   _generateWalls: 1
-  _wallNorth: 0
-  _wallSouth: 0
-  _wallEast: 0
-  _wallWest: 0
-  _wallNW: 0
-  _wallNE: 0
-  _wallSW: 0
-  _wallSE: 0
+  _wallNorth: 1
+  _wallSouth: 1
+  _wallEast: 1
+  _wallWest: 1
+  _wallNW: 1
+  _wallNE: 1
+  _wallSW: 1
+  _wallSE: 1
   _wallScale: {x: 1, y: 1, z: 1}
 --- !u!114 &1567414775
 MonoBehaviour:
@@ -12697,7 +12691,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0becde9f03fa53d40ba8df82dd8ac1d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.LevelManager
-  _levelData: {fileID: 11400000, guid: fdd6f9b681771a540983b7b3131aecef, type: 2}
+  _levelData: {fileID: 11400000, guid: e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6, type: 2}
 --- !u!1 &1634765511
 GameObject:
   m_ObjectHideFlags: 0

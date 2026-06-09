@@ -1,6 +1,5 @@
 ﻿<Solution>
   <Project Path="NaughtyAttributes.Test.csproj" />
-  <Project Path="GameAssembly.Editor.csproj" />
   <Project Path="Zenject.csproj" />
   <Project Path="NaughtyAttributes.Core.csproj" />
   <Project Path="Zenject-IntegrationTests-Editor.csproj" />
@@ -16,6 +15,7 @@
   <Project Path="Assets.SimpleLocalization.Scripts.Editor.csproj" />
   <Project Path="Zenject-TestFramework.csproj" />
   <Project Path="DOTween.Modules.csproj" />
+  <Project Path="GameAssembly.Editor.csproj" />
   <Project Path="Assets.SimpleLocalization.Scripts.csproj" />
   <Project Path="Zenject-PoolMonitor-Editor.csproj" />
   <Project Path="GameAssembly.Tests.csproj" />

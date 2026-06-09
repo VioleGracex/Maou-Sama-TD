@@ -68,7 +68,9 @@ namespace MaouSamaTD.Levels
         [Header("Visuals")]
         public bool ShowPathing = false;
         public Material DefaultTileMaterial;
-        public Texture2D DefaultTileTexture;
+        public Texture2D DefaultTileTexture; // Deprecated, use BaseTileTextures instead
+        [Tooltip("List of base textures. A random one is chosen for each tile based on coordinates.")]
+        public List<Texture2D> BaseTileTextures = new List<Texture2D>();
         [Header("Tile Wall Configuration (TileType.Wall)")]
         public WallVisualSettings TileWallVisuals = WallVisualSettings.Default;
         public List<TileVisualOverride> VisualOverrides = new List<TileVisualOverride>();

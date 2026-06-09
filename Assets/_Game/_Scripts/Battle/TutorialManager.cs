@@ -43,8 +43,7 @@ namespace MaouSamaTD.Managers
         [SerializeField] private bool _showDebugLogs = true;
 
         [Header("Level 2 Lilith Sealed Settings")]
-        [SerializeField] private Sprite _lilithSealedSprite;
-        [SerializeField] private Vector2Int _lilithSealedCoordinate = new Vector2Int(9, 11);
+        // Now using MapData Decoration instead of hardcoded sprite
         #endregion
         
         #region State
@@ -62,7 +61,6 @@ namespace MaouSamaTD.Managers
         private int _currentStepMissCount = 0;
         private int _nextStepIndexOverride = -1;
         private Dictionary<string, RectTransform> _uiTargetCache = new Dictionary<string, RectTransform>();
-        private GameObject _lilithSealedInstance;
 
         public int CurrentLevelIndex
         {
@@ -205,7 +203,7 @@ namespace MaouSamaTD.Managers
                     _currencyManager.SetSeals(50);
                     if (_showDebugLogs) Debug.Log("[tutorial] Level 2 Initialized: Seals set to 50.");
                 }
-                SpawnLilithSealedVisual();
+                // SpawnLilithSealedVisual removed, handled by MapData Decoration
             }
 
             // Level 1 Start Logic: Ensure Sovereign Rite Panel is strictly hidden
@@ -1048,10 +1046,19 @@ namespace MaouSamaTD.Managers
                             }
                             else if (step.ActionKey == "AwakenLilith")
                             {
-                                if (_lilithSealedInstance != null)
+                                // Find the decoration on the tile (7, 6) or wherever Lilith is sealed
+                                if (_gridManager != null)
                                 {
-                                    _lilithSealedInstance.SetActive(false);
-                                    if (_showDebugLogs) Debug.Log("[tutorial] Lilith unsealed: Hiding sealed visual.");
+                                    var lilithTile = _gridManager.GetTileAt(new Vector2Int(7, 6));
+                                    if (lilithTile != null)
+                                    {
+                                        Transform deco = lilithTile.transform.Find("Decoration_Lilith_Sealed");
+                                        if (deco != null) 
+                                        {
+                                            deco.gameObject.SetActive(false);
+                                            if (_showDebugLogs) Debug.Log("[tutorial] Lilith unsealed: Hiding MapData Decoration_Lilith_Sealed.");
+                                        }
+                                    }
                                 }
                                 if (_saveManager != null)
                                 {
@@ -2545,37 +2552,6 @@ private RectTransform FindTargetRect(string name)
             return 0;
         }
 
-        private void SpawnLilithSealedVisual()
-        {
-            if (_lilithSealedSprite == null)
-            {
-                if (_showDebugLogs) Debug.LogWarning("[tutorial] _lilithSealedSprite is null! Lilith sealed visual will not be spawned.");
-                return;
-            }
-
-            if (_gridManager == null)
-            {
-                Debug.LogError("[tutorial] Cannot spawn Lilith sealed visual because GridManager is missing.");
-                return;
-            }
-
-            MaouSamaTD.Grid.Tile tile = _gridManager.GetTileAt(_lilithSealedCoordinate);
-            if (tile == null)
-            {
-                Debug.LogError($"[tutorial] Cannot spawn Lilith sealed visual: Tile at coordinate {_lilithSealedCoordinate} is null.");
-                return;
-            }
-
-            if (_showDebugLogs) Debug.Log($"[tutorial] Spawning Lilith sealed visual at {_lilithSealedCoordinate}");
-
-            _lilithSealedInstance = new GameObject("Lilith_Sealed_Visual");
-            _lilithSealedInstance.transform.position = tile.transform.position + new Vector3(0, 0.5f, 0);
-
-            SpriteRenderer sr = _lilithSealedInstance.AddComponent<SpriteRenderer>();
-            sr.sprite = _lilithSealedSprite;
-            sr.sortingOrder = 100;
-
-            _lilithSealedInstance.AddComponent<MaouSamaTD.Utils.Billboard>();
-        }
+        // SpawnLilithSealedVisual removed, now using MapData Decoration.
     }
 }

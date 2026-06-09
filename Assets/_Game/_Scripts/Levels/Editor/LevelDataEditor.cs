@@ -517,11 +517,14 @@ namespace MaouSamaTD.Levels.Editor
                     TilePointType pointType = (TilePointType)altProp.FindPropertyRelative("PointType").enumValueIndex;
                     Vector2Int coord = altProp.FindPropertyRelative("Coordinate").vector2IntValue;
 
-                    // Bounds check
                     if (coord.x < 0 || coord.x >= mapData.Width || coord.y < 0 || coord.y >= mapData.Height)
                     {
                         EditorGUILayout.HelpBox($"Alteration {a} coordinate ({coord.x}, {coord.y}) is OUT OF MAP BOUNDS (Map: {mapData.Width}x{mapData.Height})!", MessageType.Error);
                         hasIssues = true;
+                    }
+                    else if (pointType == TilePointType.Decoration)
+                    {
+                        // Decorations can be subtracted anywhere
                     }
                     else if (action != TileAlterationAction.Subtract) // Tile type mismatch is only relevant for Add/Override
                     {

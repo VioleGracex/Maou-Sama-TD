@@ -42,7 +42,8 @@ namespace MaouSamaTD.Levels
         ExitGround,
         ExitHigh,
         Walkable,
-        HighGround
+        HighGround,
+        Decoration
     }
 
     [Serializable]

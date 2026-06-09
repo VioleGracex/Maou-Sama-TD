@@ -146,6 +146,18 @@ namespace MaouSamaTD.Managers
                 if (dataToLoad != null && (dataToLoad.LevelID == "1-2" || dataToLoad.LevelName.Contains("Level 2") || dataToLoad.LevelName.Contains("Lilith")))
                 {
                     StartCoroutine(LoadAndAddLilithSkippedTutorial());
+                    
+                    // Also hide the sealed Lilith decoration if they play manually without tutorial
+                    var gridManager = Object.FindAnyObjectByType<MaouSamaTD.Grid.GridManager>();
+                    if (gridManager != null)
+                    {
+                        var lilithTile = gridManager.GetTileAt(new UnityEngine.Vector2Int(7, 6));
+                        if (lilithTile != null)
+                        {
+                            UnityEngine.Transform deco = lilithTile.transform.Find("Decoration_Lilith_Sealed");
+                            if (deco != null) deco.gameObject.SetActive(false);
+                        }
+                    }
                 }
             }
         }

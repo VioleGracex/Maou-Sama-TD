@@ -199,7 +199,19 @@ namespace MaouSamaTD.Grid
                         else
                         {
                             if (_mapData.DefaultTileMaterial != null) tile.SetMaterial(_mapData.DefaultTileMaterial);
-                            if (_mapData.DefaultTileTexture != null) tile.ApplyVisualOverride(_mapData.DefaultTileTexture, null);
+                            
+                            if (_mapData.BaseTileTextures != null && _mapData.BaseTileTextures.Count > 0)
+                            {
+                                Random.State oldState = Random.state;
+                                Random.InitState(_mapData.MapSeed + x * 1000 + y);
+                                Texture2D tex = _mapData.BaseTileTextures[Random.Range(0, _mapData.BaseTileTextures.Count)];
+                                tile.ApplyVisualOverride(tex, null);
+                                Random.state = oldState;
+                            }
+                            else if (_mapData.DefaultTileTexture != null)
+                            {
+                                tile.ApplyVisualOverride(_mapData.DefaultTileTexture, null);
+                            }
                         }
                     }
 

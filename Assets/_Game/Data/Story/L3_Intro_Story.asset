@@ -19,7 +19,7 @@ MonoBehaviour:
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 0}
+    Background: {fileID: 21300000, guid: 52e7fd9bb9b790a4ea410564c801cafd, type: 3}
     Focus: 0
     BackgroundOverlay: 0
     EventID: 

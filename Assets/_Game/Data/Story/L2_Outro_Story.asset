@@ -13,14 +13,25 @@ MonoBehaviour:
   m_Name: L2_Outro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Tina
-    DialogueText: Excellent work, Maou-Sama. The dungeon's power is returning. Soon,
-      the world will remember the name of the true ruler.
+  - SpeakerName: Lilith
+    DialogueText: My power is yours to command once again, Maou-Sama. It has been
+      far too long.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
-    PortraitRight: {fileID: 21300000, guid: 8a35e15dd2c916d4c83e422cbda88c76, type: 3}
-    Background: {fileID: 21300000, guid: ff2375fe1f96fa34892a15306e730c68, type: 3}
-    Focus: 3
-    BackgroundOverlay: 1
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Lilith
+    DialogueText: I suggest we head towards the Drakmora Kingdom. The humans have
+      grown bold in your absence, and our domain must be retaken.
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

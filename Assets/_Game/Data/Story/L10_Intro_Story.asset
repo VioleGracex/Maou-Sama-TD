@@ -14,34 +14,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
   - SpeakerName: Tina
-    DialogueText: The Throne Room... and the Saintess of Light is already there,
-      leading the ultimate Crusade!
+    DialogueText: There it is! The fortified Adventurer's Guild Outpost. It's heavily
+      guarded.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: 6b45886695c32fc448610c78bd86ebcb, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Guild Captain
+    DialogueText: Brace yourselves! The Demon Lord approaches! Do not let them breach
+      the gates!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Lilith
-    DialogueText: Look at her shining light. It is... offensive to my skin. Let's
-      snuff it out, My Sovereign.
+    DialogueText: Gates? They think wood and stone can stop the Master of Gehenna?
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: 6b45886695c32fc448610c78bd86ebcb, type: 3}
-    Focus: 3
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: For Gehenna! For the Demon Lord!
+  - SpeakerName: Drakmora Commander
+    DialogueText: All units, prepare to charge!
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: 6b45886695c32fc448610c78bd86ebcb, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

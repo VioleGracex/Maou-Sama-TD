@@ -532,11 +532,15 @@ namespace MaouSamaTD.Editor.Story
             {
                 if (sceneUI != null) ApplyToScene(sceneUI);
             }
-            if (Application.isPlaying && selectedAsset is DialogueData playAsset)
+            if (Application.isPlaying)
             {
                 if (GUILayout.Button("PLAY IN GAME", GUILayout.Height(25)))
                 {
-                    if (sceneUI != null) sceneUI.ShowDialogue(playAsset);
+                    if (sceneUI != null)
+                    {
+                        if (selectedAsset is DialogueData playAsset) sceneUI.ShowDialogue(playAsset);
+                        else if (selectedAsset is StoryDataSO playStoryAsset) sceneUI.ShowStory(playStoryAsset);
+                    }
                 }
             }
             EditorGUILayout.EndHorizontal();
@@ -625,6 +629,7 @@ namespace MaouSamaTD.Editor.Story
             AssignIfMatch("_fullSpeakerText", "SpeakerText", texts);
             AssignIfMatch("_fullContentText", "ContentText", texts);
             AssignIfMatch("_fullScreenPanel", "FullScreenPanel", images.Select(i => i.transform).ToArray()); 
+            AssignIfMatch("_backgroundImage", "StoryBackground", images);
 
             so.ApplyModifiedProperties();
             EditorUtility.SetDirty(ui);
@@ -667,6 +672,7 @@ namespace MaouSamaTD.Editor.Story
                 SetImage("_leftPortrait", line.PortraitLeft, line.Focus == MaouSamaTD.Story.PortraitFocus.Left || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
                 SetImage("_middlePortrait", line.PortraitMiddle, line.Focus == MaouSamaTD.Story.PortraitFocus.Middle || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
                 SetImage("_rightPortrait", line.PortraitRight, line.Focus == MaouSamaTD.Story.PortraitFocus.Right || line.Focus == MaouSamaTD.Story.PortraitFocus.All);
+                SetImage("_backgroundImage", line.Background, line.Background != null);
 
                 SetText("_fullSpeakerText", line.SpeakerName);
                 SetText("_fullContentText", line.DialogueText);

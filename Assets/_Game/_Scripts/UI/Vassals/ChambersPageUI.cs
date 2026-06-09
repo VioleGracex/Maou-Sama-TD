@@ -18,8 +18,11 @@ namespace MaouSamaTD.UI.Vassals
         public MaouSamaTD.UI.NavigationFeatures ConfiguredNavFeatures => _navFeatures;
 
         [Header("Left Panel - List/Grid")]
-        public Transform characterListContent;
+        public Transform listContent;
+        public Transform gridContent;
+        public ScrollRect scrollView;
         public GameObject characterListItemPrefab;
+        public GameObject characterGridItemPrefab;
         public TMP_InputField searchInputField;
         public Button btnSortLevel;
         public Button btnSortRarity;
@@ -150,9 +153,16 @@ namespace MaouSamaTD.UI.Vassals
         
         private void RefreshList()
         {
-            if (characterListContent != null)
+            if (listContent != null)
             {
-                foreach (UnityEngine.Transform child in characterListContent)
+                foreach (UnityEngine.Transform child in listContent)
+                {
+                    UnityEngine.Object.Destroy(child.gameObject);
+                }
+            }
+            if (gridContent != null)
+            {
+                foreach (UnityEngine.Transform child in gridContent)
                 {
                     UnityEngine.Object.Destroy(child.gameObject);
                 }
@@ -163,14 +173,13 @@ namespace MaouSamaTD.UI.Vassals
                 return;
             }
 
-            // Handle Grid/List View Toggles
-            if (characterListContent != null)
+            // Handle Grid/List View Toggles by activating the correct container
+            if (listContent != null) listContent.gameObject.SetActive(!_isGridMode);
+            if (gridContent != null) gridContent.gameObject.SetActive(_isGridMode);
+            
+            if (scrollView != null) 
             {
-                var vLayout = characterListContent.GetComponent<VerticalLayoutGroup>();
-                var gLayout = characterListContent.GetComponent<GridLayoutGroup>();
-                
-                if (vLayout != null) vLayout.enabled = !_isGridMode;
-                if (gLayout != null) gLayout.enabled = _isGridMode;
+                scrollView.content = _isGridMode ? gridContent.GetComponent<RectTransform>() : listContent.GetComponent<RectTransform>();
             }
 
             List<UnitData> unlockedUnits = new List<UnitData>();
@@ -193,99 +202,113 @@ namespace MaouSamaTD.UI.Vassals
             int count = 0;
             foreach (var unit in unlockedUnits)
             {
-                if (characterListItemPrefab != null && characterListContent != null)
-                {
-                    var itemObj = Instantiate(characterListItemPrefab, characterListContent);
-                    itemObj.SetActive(true);
-                    
-                    // Fix the scaling bug that breaks layout spacing in play mode
-                    var rect = itemObj.GetComponent<RectTransform>();
-                    if (rect != null)
+                    if (listContent != null && characterListItemPrefab != null)
                     {
-                        rect.localScale = Vector3.one;
-                        rect.anchoredPosition3D = new Vector3(rect.anchoredPosition.x, rect.anchoredPosition.y, 0);
+                        var itemObjList = Instantiate(characterListItemPrefab, listContent);
+                        SetupItem(itemObjList, unit);
                     }
                     
-                    // Try to get TextMeshProUGUI / Text using robust matching with fallbacks
-                        var tmpTexts = itemObj.GetComponentsInChildren<TMPro.TMP_Text>(true);
-                        TMPro.TMP_Text nameTmp = null;
-                        TMPro.TMP_Text bondTmp = null;
-
-                        foreach (var t in tmpTexts)
-                        {
-                            string tName = t.gameObject.name.ToLowerInvariant();
-                            if (tName.Contains("name") || tName.Contains("title") || tName.Contains("char")) nameTmp = t;
-                            else if (tName.Contains("bond") || tName.Contains("lvl") || tName.Contains("level") || tName.Contains("desc")) bondTmp = t;
-                        }
-
-                        // Fallback to index if no name matched
-                        if (nameTmp == null && tmpTexts.Length > 0) nameTmp = tmpTexts[0];
-                        if (bondTmp == null && tmpTexts.Length > 1) bondTmp = tmpTexts[1];
-
-                        string displayName = string.IsNullOrEmpty(unit.UnitTitle) ? unit.UnitName.ToUpper() : $"{unit.UnitTitle.ToUpper()} {unit.UnitName.ToUpper()}";
-                        if (nameTmp != null) nameTmp.text = displayName;
-                        if (bondTmp != null) bondTmp.text = "BOND LV." + (Mathf.FloorToInt(unit.Amity / 10f));
-
-                        // Same for standard UI Text
-                        var legacyTexts = itemObj.GetComponentsInChildren<UnityEngine.UI.Text>(true);
-                        UnityEngine.UI.Text nameLeg = null;
-                        UnityEngine.UI.Text bondLeg = null;
-
-                        foreach (var t in legacyTexts)
-                        {
-                            string tName = t.gameObject.name.ToLowerInvariant();
-                            if (tName.Contains("name") || tName.Contains("title") || tName.Contains("char")) nameLeg = t;
-                            else if (tName.Contains("bond") || tName.Contains("lvl") || tName.Contains("level") || tName.Contains("desc")) bondLeg = t;
-                        }
-
-                        if (nameLeg == null && legacyTexts.Length > 0) nameLeg = legacyTexts[0];
-                        if (bondLeg == null && legacyTexts.Length > 1) bondLeg = legacyTexts[1];
-
-                        if (nameLeg != null) nameLeg.text = displayName;
-                        if (bondLeg != null) bondLeg.text = "BOND LV." + (Mathf.FloorToInt(unit.Amity / 10f));
-
-                        // Try to get Image for avatar using robust matching
-                        var images = itemObj.GetComponentsInChildren<Image>(true);
-                        foreach (var img in images)
-                        {
-                            string iName = img.gameObject.name.ToLowerInvariant();
-                            if (iName.Contains("avatar") || iName.Contains("icon") || iName.Contains("portrait")) 
-                            {
-                                var sprite = unit.GetSprite(UnitData.UnitImageType.Avatar);
-                                if (sprite != null) 
-                                {
-                                    img.sprite = sprite;
-                                    img.color = Color.white;
-                                }
-                            }
-                            // Populate Amity/Bond slider if it's a Filled Image
-                            else if (iName.Contains("fill") && img.type == Image.Type.Filled)
-                            {
-                                img.fillAmount = (unit.Amity % 10f) / 10f;
-                            }
-                        }
-
-                        // Setup all sliders inside the item
-                        var sliders = itemObj.GetComponentsInChildren<Slider>(true);
-                        foreach (var slider in sliders)
-                        {
-                            if (slider != null)
-                            {
-                                slider.value = (unit.Amity % 10f) / 10f;
-                            }
-                        }
-
-                        // Setup button click
-                        var btn = itemObj.GetComponent<Button>();
-                        if (btn == null) btn = itemObj.AddComponent<Button>();
-                        
-                        btn.onClick.AddListener(() => { SelectUnit(unit); });
-                        
-                        count++;
+                    if (gridContent != null && characterGridItemPrefab != null)
+                    {
+                        var itemObjGrid = Instantiate(characterGridItemPrefab, gridContent);
+                        SetupItem(itemObjGrid, unit);
                     }
-                }
+                    count++;
+            }
 
             Debug.Log($"[chambers] spawned for count unit lists: {count}");
         }
+
+        private void SetupItem(GameObject itemObj, UnitData unit)
+        {
+            itemObj.name = $"VassalItem_{unit.name}";
+            itemObj.SetActive(true);
+            
+            // Fix the scaling bug that breaks layout spacing in play mode
+            var rect = itemObj.GetComponent<RectTransform>();
+            if (rect != null)
+            {
+                rect.localScale = Vector3.one;
+                rect.anchoredPosition3D = new Vector3(rect.anchoredPosition.x, rect.anchoredPosition.y, 0);
+            }
+            
+            // Try to get TextMeshProUGUI / Text using robust matching with fallbacks
+            var tmpTexts = itemObj.GetComponentsInChildren<TMPro.TMP_Text>(true);
+            TMPro.TMP_Text nameTmp = null;
+            TMPro.TMP_Text bondTmp = null;
+
+            foreach (var t in tmpTexts)
+            {
+                string tName = t.gameObject.name.ToLowerInvariant();
+                if (tName.Contains("name") || tName.Contains("title") || tName.Contains("char")) nameTmp = t;
+                else if (tName.Contains("bond") || tName.Contains("lvl") || tName.Contains("level") || tName.Contains("desc")) bondTmp = t;
+            }
+
+            // Fallback to index if no name matched
+            if (nameTmp == null && tmpTexts.Length > 0) nameTmp = tmpTexts[0];
+            if (bondTmp == null && tmpTexts.Length > 1) bondTmp = tmpTexts[1];
+
+            string displayName = unit.UnitName.ToUpper();
+            if (nameTmp != null) nameTmp.text = displayName;
+            if (bondTmp != null) bondTmp.text = "BOND LV." + (Mathf.FloorToInt(unit.Amity / 10f));
+
+            // Same for standard UI Text
+            var legacyTexts = itemObj.GetComponentsInChildren<UnityEngine.UI.Text>(true);
+            UnityEngine.UI.Text nameLeg = null;
+            UnityEngine.UI.Text bondLeg = null;
+
+            foreach (var t in legacyTexts)
+            {
+                string tName = t.gameObject.name.ToLowerInvariant();
+                if (tName.Contains("name") || tName.Contains("title") || tName.Contains("char")) nameLeg = t;
+                else if (tName.Contains("bond") || tName.Contains("lvl") || tName.Contains("level") || tName.Contains("desc")) bondLeg = t;
+            }
+
+            if (nameLeg == null && legacyTexts.Length > 0) nameLeg = legacyTexts[0];
+            if (bondLeg == null && legacyTexts.Length > 1) bondLeg = legacyTexts[1];
+
+            if (nameLeg != null) nameLeg.text = displayName;
+            if (bondLeg != null) bondLeg.text = "BOND LV." + (Mathf.FloorToInt(unit.Amity / 10f));
+
+            // Try to get Image for avatar using robust matching
+            var images = itemObj.GetComponentsInChildren<Image>(true);
+            foreach (var img in images)
+            {
+                string iName = img.gameObject.name.ToLowerInvariant();
+                if (iName.Contains("avatar") || iName.Contains("icon") || iName.Contains("portrait")) 
+                {
+                    var sprite = unit.GetSprite(UnitData.UnitImageType.Avatar);
+                    if (sprite != null) 
+                    {
+                        img.sprite = sprite;
+                        img.color = Color.white;
+                    }
+                }
+                // Populate Amity/Bond slider if it's a Filled Image
+                else if (iName.Contains("fill") && img.type == Image.Type.Filled)
+                {
+                    img.fillAmount = (unit.Amity % 10f) / 10f;
+                }
+            }
+
+            // Setup all sliders inside the item
+            var sliders = itemObj.GetComponentsInChildren<Slider>(true);
+            foreach (var slider in sliders)
+            {
+                if (slider != null)
+                {
+                    slider.gameObject.name = $"Slider_{unit.name}";
+                    slider.value = (unit.Amity % 10f) / 10f;
+                    slider.interactable = false;
+                }
+            }
+
+            // Setup button click
+            var btn = itemObj.GetComponent<Button>();
+            if (btn == null) btn = itemObj.AddComponent<Button>();
+            
+            btn.onClick.AddListener(() => { SelectUnit(unit); });
+        }
+
     }
 }

@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30a132a6de54d4145a7d433b58a593e4, type: 3}
+  m_Name: L13_Intro_Story
+  m_EditorClassIdentifier: GameAssembly::MaouSamaTD.Story.StoryDataSO
+  Lines:
+  - SpeakerName: Crusader General
+    DialogueText: Demon! You have butchered my men and halted the holy purification!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Lilith
+    DialogueText: Your "purification" is nothing but mindless slaughter. How hypocritical
+      of the Church.
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Crusader General
+    DialogueText: Silence, fiend! By the divine mandate of the Saintess of Light,
+      I shall smite you back to the abyss!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Drakmora Commander
+    DialogueText: Prepare yourselves! He radiates immense power!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}

@@ -296,6 +296,7 @@ namespace MaouSamaTD.UI.Tutorial
         private void ShowStoryLine(MaouSamaTD.Story.StoryLine line)
         {
             Debug.Log($"[story] ShowLine: {line.SpeakerName}");
+            if (_canvasGroup != null) _canvasGroup.alpha = 1f;
             var speakerText = ActiveSpeakerText;
             var contentText = ActiveContentText;
 

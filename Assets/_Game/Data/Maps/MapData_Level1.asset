@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.MapData
   useDefaultInspector: 0
   UniqueID: 7eabd718-69cc-4b62-8da4-1a6416732e57
+  Category: 0
   MapSeed: 1
   Width: 15
   Height: 9
@@ -1073,8 +1074,8 @@ MonoBehaviour:
     OverrideLighting: 1
     AmbientColor: {r: 0.25, g: 0.25, b: 0.28, a: 1}
     DirectionalLightPrefab: {fileID: 4809913698286690004, guid: 8ba420ecf9b704741af5399cf0f0f365, type: 3}
-    EnableTopLight: 1
-    TopLightIntensity: 0.5
+    EnableTopLight: 0
+    TopLightIntensity: 0.2
     EnableNorthIsometric: 0
     NorthIsometricIntensity: 1
     EnableSouthIsometric: 1

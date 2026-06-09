@@ -13,25 +13,48 @@ MonoBehaviour:
   m_Name: L6_Intro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Tina
-    DialogueText: This is the outer bastion of the fortress. The Guild's Heavy Vanguard
-      is attempting to dismantle our gate towers!
+  - SpeakerName: Drakmora Commander
+    DialogueText: 'Sovereign, we have arrived at Fort Vanguard [X: 45, Y: 50]. The
+      remaining Loyalist Generals have fortified this position since your slumber.'
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: The Heavy Vanguard... they are famous for their defensive line.
-      But my shield is absolute!
+  - SpeakerName: Loyalist General
+    DialogueText: Halt! Who dares approach the Vanguard? The Drakmora Commander?
+      And... no. It cannot be.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Lilith
+    DialogueText: How quickly mortals forget the aura of their true master. Kneel
+      before the Sovereign.
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Loyalist General
+    DialogueText: It's a trick! The Sovereign has been asleep for fifty years! You
+      must prove your identity in a tactical mock battle. Show us the strategic genius
+      of the true Maou!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

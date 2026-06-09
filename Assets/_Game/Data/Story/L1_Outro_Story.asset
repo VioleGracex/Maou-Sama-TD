@@ -14,12 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
   - SpeakerName: Tina
-    DialogueText: The first wave is repelled. But do not be complacent, Maou-Sama.
-      This was merely a scout party. The true test is yet to come.
+    DialogueText: The Shadows are purged. You haven't lost your touch, Maou-Sama!
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: c6a3c3b0d52a2d44d826a79c4ac3f6e9, type: 3}
-    Focus: 3
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Tina
+    DialogueText: However, the lower tombs are still sealed. We must secure the Tomb
+      of Lilith next to fully restore your authority.
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

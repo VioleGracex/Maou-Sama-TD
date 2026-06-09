@@ -13,34 +13,25 @@ MonoBehaviour:
   m_Name: L4_Outro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Ignis
-    DialogueText: The siege perimeter is broken! The mercenary captain has fallen.
+  - SpeakerName: Mercenary
+    DialogueText: The camp is decimated. We've secured a massive haul of their stolen
+      wealth.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
-    EventID: 
-    VoiceClip: {fileID: 0}
-  - SpeakerName: Tina
-    DialogueText: Excellent. Let us move quickly into the Crimson Quarter before
-      their main forces regroup.
-    PortraitLeft: {fileID: 0}
-    PortraitMiddle: {fileID: 0}
-    PortraitRight: {fileID: 0}
-    Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Lilith
-    DialogueText: How delightful. More souls for the harvest.
+    DialogueText: Excellent. This loot will fund our campaign towards Drakmora. Let
+      the remnants of this camp serve as a warning to those who oppose our march.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 3
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

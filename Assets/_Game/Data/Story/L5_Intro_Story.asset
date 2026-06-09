@@ -14,35 +14,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
   - SpeakerName: Tina
-    DialogueText: The barracks and defensive quarter... the humans have turned our
-      military hubs into a staging ground.
+    DialogueText: We've reached the Drakmora border! But... the Drakmora Vanguard
+      is already engaged in combat. They look battered.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Drakmora Commander
+    DialogueText: Hold the line! For the glory of the old kingdom!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Lilith
-    DialogueText: Look at these narrow streets, perfect for setting an ambush. Or
-      being ambushed.
+    DialogueText: They still fight in your name, Sovereign, even after your slumber.
+      Let us show them what true power looks like.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 3
-    BackgroundOverlay: 2
-    EventID: 
-    VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: We hold the high ground here. Stand firm, and we will purge them
-      street by street.
-    PortraitLeft: {fileID: 0}
-    PortraitMiddle: {fileID: 0}
-    PortraitRight: {fileID: 0}
-    Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

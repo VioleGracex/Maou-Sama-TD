@@ -35,6 +35,9 @@ namespace MaouSamaTD.Levels
     [CreateAssetMenu(fileName = "NewMapData", menuName = "MaouSamaTD/Map Data")]
     public class MapData : MaouSamaTD.Core.GameDataSO
     {
+        [Header("Classification")]
+        public LevelCategory Category = LevelCategory.MainStory;
+
         [Header("Map Settings")]
         [Tooltip("Seed for procedural generation")]
         public int MapSeed = 12345;

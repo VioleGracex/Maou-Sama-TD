@@ -13,23 +13,35 @@ MonoBehaviour:
   m_Name: L7_Outro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Tina
-    DialogueText: The foundries are ours again. The flame is contained.
+  - SpeakerName: Dwarf Forge-Master
+    DialogueText: By the forge's fire... you wiped them out completely! You have
+      our gratitude, Sovereign. Our forges burn for you now.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: We have secured the resources. The inner keep is now within reach.
+  - SpeakerName: Mercenary
+    DialogueText: The smiths are already working. Our troops will be heavily armed.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Lilith
+    DialogueText: The mountain is ours to command. But I hear sounds of conflict
+      higher up the peaks...
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

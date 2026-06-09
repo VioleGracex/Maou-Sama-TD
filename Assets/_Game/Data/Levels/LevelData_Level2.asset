@@ -116,7 +116,7 @@ MonoBehaviour:
   HasTutorial: 1
   TutorialData: {fileID: 11400000, guid: f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5, type: 2}
   HasStory: 1
-  IntroStory: {fileID: 0}
+  IntroStory: {fileID: 11400000, guid: 02f76905f679c2645a91438714698681, type: 2}
   OutroStory: {fileID: 11400000, guid: 18ef61157b0f00448ab1aae4dec040e2, type: 2}
   StarConditions:
   - Description: Complete the battle

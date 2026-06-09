@@ -52,15 +52,39 @@ namespace MaouSamaTD.Managers
                 Debug.Log($"[LevelManager] Loading LevelData: {dataToLoad.LevelName}");
                 _gameManager.LoadLevelData(dataToLoad);
                 
-                // Story Intro Check
-                if (dataToLoad.HasStory && dataToLoad.IntroStory != null)
+                bool hasTutorial = dataToLoad.HasTutorial && dataToLoad.TutorialData != null;
+                Debug.Log($"[LevelManager] Checking for tutorial prompt. HasTutorial: {dataToLoad.HasTutorial}, Final hasTutorial: {hasTutorial}");
+
+                if (hasTutorial)
                 {
-                    Debug.Log($"[LevelManager] Level has intro story: {dataToLoad.IntroStory.name}. Starting...");
-                    _storyManager.PlayStory(dataToLoad.IntroStory, () => OnIntroFinished(dataToLoad));
+                    MaouSamaTD.UI.GameControlUI ui = FindAnyObjectByType<MaouSamaTD.UI.GameControlUI>();
+                    Debug.Log($"[LevelManager] Searching for GameControlUI... Found: {(ui != null ? "YES" : "NO")}");
+                    
+                    if (ui != null)
+                    {
+                        // STOP TIME while we ask the player!
+                        _gameManager.SetSpeed(0, true);
+
+                        ui.ShowTutorialPrompt(
+                            () => // Play Tutorial
+                            {
+                                PlayIntroStory(dataToLoad, true);
+                            },
+                            () => // Skip Tutorial
+                            {
+                                PlayIntroStory(dataToLoad, false);
+                            }
+                        );
+                    }
+                    else
+                    {
+                        // Fallback if UI is missing
+                        PlayIntroStory(dataToLoad, true);
+                    }
                 }
                 else
                 {
-                    OnIntroFinished(dataToLoad);
+                    PlayIntroStory(dataToLoad, false);
                 }
             }
             else
@@ -69,42 +93,16 @@ namespace MaouSamaTD.Managers
             }
         }
 
-        private void OnIntroFinished(LevelData dataToLoad)
+        private void PlayIntroStory(LevelData dataToLoad, bool playTutorial)
         {
-            bool hasTutorial = dataToLoad.HasTutorial && dataToLoad.TutorialData != null;
-            Debug.Log($"[LevelManager] OnIntroFinished triggered. HasTutorial: {dataToLoad.HasTutorial}, TutorialData: {(dataToLoad.TutorialData != null ? dataToLoad.TutorialData.name : "NULL")}, Final hasTutorial: {hasTutorial}");
-
-            if (hasTutorial)
+            if (dataToLoad.HasStory && dataToLoad.IntroStory != null)
             {
-                // We show the choice popup from GameControlUI!
-                MaouSamaTD.UI.GameControlUI ui = FindAnyObjectByType<MaouSamaTD.UI.GameControlUI>();
-                Debug.Log($"[LevelManager] Searching for GameControlUI... Found: {(ui != null ? "YES" : "NO")}");
-                
-                if (ui != null)
-                {
-                    // STOP TIME while we ask the player!
-                    _gameManager.SetSpeed(0, true);
-
-                    ui.ShowTutorialPrompt(
-                        () => // Play Tutorial
-                        {
-                            InitializeLevel(dataToLoad, true);
-                        },
-                        () => // Skip Tutorial
-                        {
-                            InitializeLevel(dataToLoad, false);
-                        }
-                    );
-                }
-                else
-                {
-                    // Fallback if UI is missing
-                    InitializeLevel(dataToLoad, true);
-                }
+                Debug.Log($"[LevelManager] Level has intro story: {dataToLoad.IntroStory.name}. Starting...");
+                _storyManager.PlayStory(dataToLoad.IntroStory, () => InitializeLevel(dataToLoad, playTutorial));
             }
             else
             {
-                InitializeLevel(dataToLoad, false);
+                InitializeLevel(dataToLoad, playTutorial);
             }
         }
 

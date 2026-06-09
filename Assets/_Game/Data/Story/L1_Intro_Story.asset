@@ -19,7 +19,19 @@ MonoBehaviour:
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: 6b45886695c32fc448610c78bd86ebcb, type: 3}
+    Background: {fileID: 0}
     Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Tina
+    DialogueText: My Lord! Formless Shadows have breached the awakening chamber!
+      They sense your weakened state. Let me handle this!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

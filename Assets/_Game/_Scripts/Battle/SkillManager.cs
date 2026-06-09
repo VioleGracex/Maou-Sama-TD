@@ -22,6 +22,12 @@ namespace MaouSamaTD.Skills
 
         [Header("Debug")]
         [SerializeField] private bool _showDebugLogs = true;
+
+        [Header("VFX Fallbacks")]
+        [SerializeField] private GameObject _fallbackDamageVFX;
+        [SerializeField] private GameObject _fallbackBuffVFX;
+        [SerializeField] private GameObject _fallbackDebuffVFX;
+        [SerializeField] private GameObject _fallbackZoneVFX;
         #endregion
 
         #region Public API
@@ -175,6 +181,63 @@ namespace MaouSamaTD.Skills
 
         private void ApplySkillEffect(SovereignRiteData skill, Vector3 pos, UnitBase unit)
         {
+            // AOE path: Tile-targeted, non-zero radius, or no specific unit targeted
+            bool isPositionalCast = skill.TargetType == SkillTargetType.Tile || skill.Radius > 0 || unit == null;
+
+            // Determine VFX to spawn
+            GameObject vfxToSpawn = skill.BaseVisuals.HitVFX;
+            bool isFallback = false;
+            
+            if (vfxToSpawn == null)
+            {
+                isFallback = true;
+                switch (skill.EffectType)
+                {
+                    case SkillEffectType.Damage: vfxToSpawn = _fallbackDamageVFX; break;
+                    case SkillEffectType.Buff: vfxToSpawn = _fallbackBuffVFX; break;
+                    case SkillEffectType.Debuff: vfxToSpawn = _fallbackDebuffVFX; break;
+                    case SkillEffectType.Zone: vfxToSpawn = _fallbackZoneVFX; break;
+                }
+            }
+
+            if (vfxToSpawn != null)
+            {
+                if (_showDebugLogs) Debug.Log($"[SkillManager] Spawning {(isFallback ? "Fallback" : "Custom")} VFX '{vfxToSpawn.name}' for {skill.SkillName} at {pos}");
+                
+                if (isPositionalCast && skill.Radius > 0 && _gridManager != null)
+                {
+                    // Spawn on each affected tile
+                    int iRadius = Mathf.CeilToInt(skill.Radius);
+                    var centerCoord = _gridManager.WorldToGridCoordinates(pos);
+                    float checkRadius = skill.Radius + 0.1f;
+
+                    for (int x = -iRadius; x <= iRadius; x++)
+                    {
+                        for (int y = -iRadius; y <= iRadius; y++)
+                        {
+                            var coord = centerCoord + new Vector2Int(x, y);
+                            var tile = _gridManager.GetTileAt(coord);
+                            if (tile != null)
+                            {
+                                if (IsInShape(skill, pos, tile.transform.position, checkRadius))
+                                {
+                                    Instantiate(vfxToSpawn, tile.transform.position, Quaternion.identity);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Single target, radius 0, or no grid
+                    Instantiate(vfxToSpawn, pos, Quaternion.identity);
+                }
+            }
+            else
+            {
+                if (_showDebugLogs) Debug.LogWarning($"[SkillManager] WARNING: No VFX found or configured for {skill.SkillName} (EffectType: {skill.EffectType})!");
+            }
+
             // Persistence Logic: If persistent, we apply to tiles
             if (skill.Persistence == SkillPersistenceType.Persistent)
             {
@@ -182,18 +245,6 @@ namespace MaouSamaTD.Skills
                 if (_showDebugLogs) Debug.Log($"[SkillManager] Executed Persistent Rite: {skill.SkillName} at {pos}");
                 return;
             }
-
-            // Spawn VFX (Instant)
-            if (skill.BaseVisuals.HitVFX != null)
-            {
-                Instantiate(skill.BaseVisuals.HitVFX, pos, Quaternion.identity);
-            }
-
-            // AOE path: Tile-targeted, non-zero radius, or no specific unit targeted
-            // (TargetType=None with null unit = player clicked on a tile = positional AOE)
-            bool isPositionalCast = skill.TargetType == SkillTargetType.Tile ||
-                                    skill.Radius > 0 ||
-                                    unit == null;
 
             if (isPositionalCast)
             {

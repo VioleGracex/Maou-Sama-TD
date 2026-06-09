@@ -13,25 +13,25 @@ MonoBehaviour:
   m_Name: L5_Outro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Tina
-    DialogueText: The Crimson Quarter is secure. Our military hubs are returning
-      to our control.
+  - SpeakerName: Drakmora Commander
+    DialogueText: The threat is eradicated... By the abyss, that dark aura. Could
+      it truly be...?
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: The outer walls are clear. We must press on to the Obsidian Bastion
-      to secure our defenses.
+  - SpeakerName: Drakmora Commander
+    DialogueText: The Sovereign! The true master of Gehenna has returned! My squad
+      and I swear fealty to you. We are ready to march under your banner once more.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

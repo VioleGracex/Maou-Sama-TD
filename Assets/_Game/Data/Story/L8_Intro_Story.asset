@@ -14,23 +14,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
   - SpeakerName: Tina
-    DialogueText: We have entered the deep treasury vaults. But wait... the shadows
-      are whispering. Assassins have infiltrated the labyrinth!
+    DialogueText: 'Maou-Sama, look! At Highwind Peak [X: 70, Y: 85], the local Beastman
+      Tribe is being attacked!'
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: fab1817aceed21e44925a95f492d271d, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Guild Scout
+    DialogueText: Kill the beasts! The Adventurer's Guild claims this mountain!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Beastman Chieftain
+    DialogueText: Defend the village! We will not fall to human greed!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Lilith
-    DialogueText: Sneaking in the dark? My favorite kind of game.
+    DialogueText: The Guild expands too far. Sovereign, if we save the tribe, they
+      will owe us a blood debt. Let us slaughter the intruders.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: fab1817aceed21e44925a95f492d271d, type: 3}
-    Focus: 3
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

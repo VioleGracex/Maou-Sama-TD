@@ -61,6 +61,8 @@ namespace MaouSamaTD.Editor
         private SelectionItem _lastSelectedItem = new SelectionItem { Type = (SelectionType)(-1) };
         private enum SelectionType { Tile, Wall }
 
+        private static bool s_RenderTexturesInPreview = true;
+
         private Dictionary<string, bool> _decoFoldouts = new Dictionary<string, bool>();
 
         public override void OnInspectorGUI()
@@ -1107,6 +1109,11 @@ namespace MaouSamaTD.Editor
 
         private void DrawMapPreview(MapData data, bool isVisualMode)
         {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            s_RenderTexturesInPreview = EditorGUILayout.ToggleLeft("Render Textures in Preview", s_RenderTexturesInPreview, GUILayout.Width(200));
+            EditorGUILayout.EndHorizontal();
+
             float availableWidth = EditorGUIUtility.currentViewWidth - 60 - LabelSpace;
             // Map boundaries are Width x Height. We draw walls at -1 and data.Width/Height.
             // So total grid drawn is (Width + 2) high and (Height + 2) wide in terms of cells.
@@ -1164,7 +1171,7 @@ namespace MaouSamaTD.Editor
             Random.InitState(data.MapSeed);
 
             // Closure for drawing selectable items (tiles or walls)
-            void DrawItem(int gridX, int gridY, Color baseColor, string label, SelectionType type, WallSide side = WallSide.North, int index = 0)
+            void DrawItem(int gridX, int gridY, Color baseColor, string label, SelectionType type, WallSide side = WallSide.North, int index = 0, Texture2D tex = null)
             {
                 // Standard: X is horizontal, Y is vertical (0,0 at bottom-left)
                 Rect rect = new Rect(
@@ -1184,13 +1191,26 @@ namespace MaouSamaTD.Editor
                 if (isSelected && isVisualMode) {
                     Rect inner = new Rect(rect.x+2, rect.y+2, rect.width-4, rect.height-4);
                     EditorGUI.DrawRect(inner, baseColor);
+                    if (tex != null) GUI.DrawTexture(inner, tex, ScaleMode.StretchToFill);
+                } else {
+                    if (tex != null) {
+                        Color oldColor = GUI.color;
+                        GUI.color = new Color(1f, 1f, 1f, 0.85f);
+                        GUI.DrawTexture(rect, tex, ScaleMode.StretchToFill);
+                        GUI.color = oldColor;
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(label))
                 {
-                    EditorGUI.LabelField(rect, label, new GUIStyle(EditorStyles.boldLabel) { 
-                        alignment = TextAnchor.UpperRight, normal = { textColor = Color.yellow } 
-                    });
+                    GUIStyle centeredStyle = new GUIStyle(EditorStyles.boldLabel) {
+                        alignment = TextAnchor.MiddleCenter,
+                        normal = { textColor = Color.yellow },
+                        fontSize = 14
+                    };
+                    GUIStyle shadowStyle = new GUIStyle(centeredStyle) { normal = { textColor = Color.black } };
+                    EditorGUI.LabelField(new Rect(rect.x+1, rect.y+1, rect.width, rect.height), label, shadowStyle);
+                    EditorGUI.LabelField(rect, label, centeredStyle);
                 }
 
                 if (e.type == EventType.MouseDown && rect.Contains(e.mousePosition))
@@ -1264,29 +1284,35 @@ namespace MaouSamaTD.Editor
             for (int y = 0; y < data.Height; y++) {
                 int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.East && o.Index == y);
                 bool hasOverride = false;
+                Texture2D tex = null;
                 if (ovIdx != -1) {
                     var o = data.WallOverrides[ovIdx];
                     hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
+                    if (o.TextureOverride != null) tex = o.TextureOverride;
                 }
                 
                 bool isEnabled = data.Walls.East;
                 bool isCascaded = !toggleCascade && IsTileTypeHole(data, data.Width - 1, y);
                 Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
-                DrawItem(data.Width, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.East, y);
+                if (!s_RenderTexturesInPreview) tex = null;
+                DrawItem(data.Width, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.East, y, tex);
             }
             // West = Left side (x = -1), runs along Y, index = y
             for (int y = 0; y < data.Height; y++) {
                 int ovIdx = data.WallOverrides.FindIndex(o => o.Side == WallSide.West && o.Index == y);
                 bool hasOverride = false;
+                Texture2D tex = null;
                 if (ovIdx != -1) {
                     var o = data.WallOverrides[ovIdx];
                     hasOverride = o.TextureOverride != null || o.OverrideScale || o.OverrideOffset || (o.Decorations != null && o.Decorations.Count > 0);
+                    if (o.TextureOverride != null) tex = o.TextureOverride;
                 }
 
                 bool isEnabled = data.Walls.West;
                 bool isCascaded = !toggleCascade && IsTileTypeHole(data, 0, y);
                 Color wallColor = (!isEnabled || isCascaded) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.2f, 0.2f, 0.3f);
-                DrawItem(-1, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.West, y);
+                if (!s_RenderTexturesInPreview) tex = null;
+                DrawItem(-1, y, wallColor, hasOverride ? "*" : "", SelectionType.Wall, WallSide.West, y, tex);
             }
             // North/South segments
             for (int x = 0; x < data.Width; x++) {
@@ -1294,20 +1320,26 @@ namespace MaouSamaTD.Editor
                 int ovIdxN = data.WallOverrides.FindIndex(o => o.Side == WallSide.North && o.Index == x);
                 bool hasOverrideN = ovIdxN != -1 && (data.WallOverrides[ovIdxN].TextureOverride != null || data.WallOverrides[ovIdxN].Decorations.Count > 0);
                 bool isCascadedN = !toggleCascade && IsTileTypeHole(data, x, data.Height - 1);
-                DrawItem(x, data.Height, (!data.Walls.North || isCascadedN) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f), hasOverrideN ? "*" : "", SelectionType.Wall, WallSide.North, x);
+                Texture2D texN = ovIdxN != -1 ? data.WallOverrides[ovIdxN].TextureOverride : null;
+                if (!s_RenderTexturesInPreview) texN = null;
+                DrawItem(x, data.Height, (!data.Walls.North || isCascadedN) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f), hasOverrideN ? "*" : "", SelectionType.Wall, WallSide.North, x, texN);
 
                 // South
                 int ovIdxS = data.WallOverrides.FindIndex(o => o.Side == WallSide.South && o.Index == x);
                 bool hasOverrideS = ovIdxS != -1 && (data.WallOverrides[ovIdxS].TextureOverride != null || data.WallOverrides[ovIdxS].Decorations.Count > 0);
                 bool isCascadedS = !toggleCascade && IsTileTypeHole(data, x, 0);
-                DrawItem(x, -1, (!data.Walls.South || isCascadedS) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f), hasOverrideS ? "*" : "", SelectionType.Wall, WallSide.South, x);
+                Texture2D texS = ovIdxS != -1 ? data.WallOverrides[ovIdxS].TextureOverride : null;
+                if (!s_RenderTexturesInPreview) texS = null;
+                DrawItem(x, -1, (!data.Walls.South || isCascadedS) ? new Color(0.1f, 0.1f, 0.1f) : new Color(0.25f, 0.2f, 0.35f), hasOverrideS ? "*" : "", SelectionType.Wall, WallSide.South, x, texS);
             }
 
             // Corners
             void DrawCorner(int x, int y, WallSide side, bool enabled) {
                 int ovIdx = data.WallOverrides.FindIndex(o => o.Side == side && o.Index == 0);
                 bool hasOverride = ovIdx != -1 && (data.WallOverrides[ovIdx].TextureOverride != null || data.WallOverrides[ovIdx].Decorations.Count > 0);
-                DrawItem(x, y, enabled ? new Color(0.3f, 0.3f, 0.3f) : new Color(0.1f, 0.1f, 0.1f), hasOverride ? "*" : "", SelectionType.Wall, side, 0);
+                Texture2D texC = ovIdx != -1 ? data.WallOverrides[ovIdx].TextureOverride : null;
+                if (!s_RenderTexturesInPreview) texC = null;
+                DrawItem(x, y, enabled ? new Color(0.3f, 0.3f, 0.3f) : new Color(0.1f, 0.1f, 0.1f), hasOverride ? "*" : "", SelectionType.Wall, side, 0, texC);
             }
             DrawCorner(-1, data.Height, WallSide.NorthWest, data.Walls.NW);
             DrawCorner(data.Width, data.Height, WallSide.NorthEast, data.Walls.NE);
@@ -1322,16 +1354,30 @@ namespace MaouSamaTD.Editor
                     Vector2Int coord = new Vector2Int(x, y);
                     int ovIdx = data.VisualOverrides.FindIndex(o => o.Coordinate == coord);
                     string mark = "";
+                    Texture2D tex = data.DefaultTileTexture; // Base map texture
                     if (ovIdx != -1) {
                         var o = data.VisualOverrides[ovIdx];
                         bool hasTex = o.Texture != null;
                         bool hasDeco = o.Decorations != null && o.Decorations.Count > 0;
                         
-                        if (hasTex && hasDeco) mark = "*+D";
-                        else if (hasTex) mark = "*";
-                        else if (hasDeco) mark = "D";
+                        if (hasTex) tex = o.Texture;
+
+                        if (s_RenderTexturesInPreview)
+                        {
+                            if (hasTex && hasDeco) mark = "+D";
+                            else if (hasTex) mark = "";
+                            else if (hasDeco) mark = "D";
+                        }
+                        else
+                        {
+                            if (hasTex && hasDeco) mark = "*+D";
+                            else if (hasTex) mark = "*";
+                            else if (hasDeco) mark = "D";
+                        }
                     }
-                    DrawItem(x, y, GetTileColor(data, coord), mark, SelectionType.Tile);
+
+                    if (!s_RenderTexturesInPreview) tex = null;
+                    DrawItem(x, y, GetTileColor(data, coord), mark, SelectionType.Tile, WallSide.North, 0, tex);
                 }
             }
 

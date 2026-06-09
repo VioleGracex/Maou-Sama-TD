@@ -13,23 +13,35 @@ MonoBehaviour:
   m_Name: L6_Outro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Ignis
-    DialogueText: The Bastion gate holds. The Iron Star has been shattered.
+  - SpeakerName: Loyalist General
+    DialogueText: Such overwhelming tactical prowess... the sheer presence... Forgive
+      my insolence! The Sovereign has truly returned!
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Mercenary
+    DialogueText: That was a brilliant display of command. We've secured their trust.
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Lilith
-    DialogueText: His heavy armor only made his soul slower to escape. Delicious.
+    DialogueText: Excellent. With the Generals on our side, our army grows. But we
+      need better arms before we march on the capital. To the Ironpeak Mountains!
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 3
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

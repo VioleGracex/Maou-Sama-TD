@@ -13,24 +13,35 @@ MonoBehaviour:
   m_Name: L9_Outro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Ignis
-    DialogueText: He was... a worthy foe. His blade has finally found peace.
+  - SpeakerName: Beastman Chieftain
+    DialogueText: The reinforcements are crushed! Their bodies litter the pass.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: ff2375fe1f96fa34892a15306e730c68, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Tina
-    DialogueText: The keep is ours! Only the Throne Room remains. We are at the climax
-      of the campaign!
+  - SpeakerName: Mercenary
+    DialogueText: They won't recover from a blow like that. Their main outpost is
+      completely exposed now.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: ff2375fe1f96fa34892a15306e730c68, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Lilith
+    DialogueText: Then let us descend and finish what they started. Leave no stone
+      standing.
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

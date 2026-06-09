@@ -13,34 +13,35 @@ MonoBehaviour:
   m_Name: L10_Outro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Tina
-    DialogueText: It is finished... the Saintess is defeated, and the Crusade is
-      shattered!
+  - SpeakerName: Guild Captain
+    DialogueText: The outpost... is gone... How could we lose so badly...?
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: ff2375fe1f96fa34892a15306e730c68, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: The throne is yours once more, Maou-Sama. Long live the Sovereign!
+  - SpeakerName: Mercenary
+    DialogueText: The Guild's presence in the Ironpeak Mountains has been completely
+      eradicated.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: ff2375fe1f96fa34892a15306e730c68, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Lilith
-    DialogueText: And now... let the world tremble before the 13th Demon Lord!
+    DialogueText: We've secured their hoard, Sovereign. The Guildmaster's Ring is
+      yours. Next, we march east, towards the Sunken Valley.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: ff2375fe1f96fa34892a15306e730c68, type: 3}
-    Focus: 3
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

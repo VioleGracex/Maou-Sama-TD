@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Levels.MapData
   useDefaultInspector: 0
   UniqueID: cd4b4d2b-8f5c-4a6e-9f93-d1f8e089977f
+  Category: 0
   MapSeed: 12345
   Width: 15
   Height: 10
@@ -1186,7 +1187,7 @@ MonoBehaviour:
     UseGlobalBackground: 0
     GlobalBackgroundPrefab: {fileID: 0}
     GlobalBackgroundHeightOffset: -1
-    FillVoidWithFog: 1
+    FillVoidWithFog: 0
     TileFogPrefab: {fileID: 8868440218785152674, guid: 6c6e858834563f64e98f50787da555b2, type: 3}
     TileFogHeightOffset: -0.5
     CameraBackground: 1
@@ -1199,8 +1200,8 @@ MonoBehaviour:
     EnableTopLight: 0
     TopLightIntensity: 0.2
     EnableNorthIsometric: 1
-    NorthIsometricIntensity: 0.1
-    EnableSouthIsometric: 1
+    NorthIsometricIntensity: 0.01
+    EnableSouthIsometric: 0
     SouthIsometricIntensity: 0.2
     EnableEastIsometric: 0
     EastIsometricIntensity: 1

@@ -23,7 +23,7 @@ This file serves as the single source of truth for all names in the game. **Edit
 
 | Name | Role | Personality Trait |
 | :--- | :--- | :--- |
-| **Demon Lord (Maou)** | The Player / 13th Maou | Stoic, Authoritative |
+| **Demon Lord (Maou) Sovereign** | The Player / 13th Maou | Stoic, Authoritative |
 | **Tina** | The Shadow Guide | Devoted, Obsessive |
 | **Ignis** | Vanguard General | Stoic, Betrayed Heroine |
 | **Lilith** | Warlock / Scholar | Ara-Ara, Historical teaser |

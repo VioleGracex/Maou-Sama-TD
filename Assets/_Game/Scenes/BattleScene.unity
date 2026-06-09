@@ -5300,7 +5300,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BackGroundColor: {r: 0.29411766, g: 0.16078432, b: 0.058823533, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -9181,6 +9181,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Skills.SkillManager
   _showDebugLogs: 1
+  _fallbackDamageVFX: {fileID: 5549772189391940097, guid: 64fc1fc7e1d732d46b9be31ddc8ee1c8, type: 3}
+  _fallbackBuffVFX: {fileID: 5129502114244995669, guid: 1d45d1fa81e55b9489c40682f53f5bbd, type: 3}
+  _fallbackDebuffVFX: {fileID: 368817124460337616, guid: cc8ed72ecc778e84cad43d21c99a50f7, type: 3}
+  _fallbackZoneVFX: {fileID: 2249578570696020080, guid: 2be398c434511cc40a53de187091c5b2, type: 3}
 --- !u!114 &1000020735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12596,18 +12600,24 @@ MonoBehaviour:
   _showMapDataSettings: 1
   _showProceduralSettings: 0
   _gridManager: {fileID: 1567414775}
-  _mapData: {fileID: 11400000, guid: 92c6c0a664a64034e81cbd9127cb1407, type: 2}
+  _mapData: {fileID: 11400000, guid: d92f88ece5bd3c44e847a460f6169a1a, type: 2}
   _extractPath: Assets/_Game/ScriptableObjects/Maps/
   _extractFileName: NewMapData
   _useSeed: 1
-  _seed: 1
-  _highGroundChance: 0.1
+  _seed: 54321
+  _highGroundChance: 0.2
   _lanesPerConnection: 1
   _spawnPoints:
-  - Coordinate: {x: 13, y: 3}
+  - Coordinate: {x: 7, y: 0}
+    TargetExitIndex: 0
+  - Coordinate: {x: 0, y: 7}
+    TargetExitIndex: 0
+  - Coordinate: {x: 7, y: 14}
+    TargetExitIndex: 0
+  - Coordinate: {x: 14, y: 7}
     TargetExitIndex: 0
   _exitPoints:
-  - {x: 1, y: 3}
+  - {x: 7, y: 7}
   _startPrefab: {fileID: 0}
   _endPrefab: {fileID: 0}
   _wallPrefab: {fileID: 0}
@@ -12615,7 +12625,7 @@ MonoBehaviour:
   _generateMapOnStart: 1
   _generateWalls: 1
   _wallNorth: 0
-  _wallSouth: 1
+  _wallSouth: 0
   _wallEast: 0
   _wallWest: 0
   _wallNW: 0
@@ -12636,7 +12646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Grid.GridManager
   _width: 15
-  _height: 9
+  _height: 15
   _cellSize: 1
   _tilePrefab: {fileID: 961863415363111276, guid: 361ae00729f0efc479b1baad89574779, type: 3}
   _gridContainer: {fileID: 212953964}
@@ -12687,7 +12697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0becde9f03fa53d40ba8df82dd8ac1d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Managers.LevelManager
-  _levelData: {fileID: 11400000, guid: a2c6c0a664a64034e81cbd9127cb1407, type: 2}
+  _levelData: {fileID: 11400000, guid: fdd6f9b681771a540983b7b3131aecef, type: 2}
 --- !u!1 &1634765511
 GameObject:
   m_ObjectHideFlags: 0

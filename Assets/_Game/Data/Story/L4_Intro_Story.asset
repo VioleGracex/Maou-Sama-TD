@@ -13,36 +13,25 @@ MonoBehaviour:
   m_Name: L4_Intro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Tina
-    DialogueText: Maou-Sama, we have reached the outer perimeter of the Capital.
-      The human mercenary siege camps block our path!
+  - SpeakerName: Mercenary
+    DialogueText: My Lord, the bandits who attacked us operate from a stronghold
+      just ahead in the forest.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
-    EventID: 
-    VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: That standard... it is Gilder's Mercenary vanguard. They are looting
-      our ancestral home!
-    PortraitLeft: {fileID: 0}
-    PortraitMiddle: {fileID: 0}
-    PortraitRight: {fileID: 0}
-    Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Lilith
-    DialogueText: Oh, are we playing exterminators today? Let's paint these black
-      walls crimson, My Lord.
+    DialogueText: A den of thieves? How quaint. We shall make an example of them.
+      Leave none standing, and claim everything they have hoarded.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 3
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

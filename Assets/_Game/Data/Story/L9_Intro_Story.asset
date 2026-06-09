@@ -13,35 +13,35 @@ MonoBehaviour:
   m_Name: L9_Intro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Tina
-    DialogueText: The keep gates... but someone stands at the center of the bridge.
-      The blind Sword Saint himself!
+  - SpeakerName: Beastman Chieftain
+    DialogueText: Sovereign, the Guild is sending reinforcements up the mountain
+      path! They intend to wipe us out.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: 727040039e044b14ebd3ae20b995c711, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: The Sword Saint... I remember him from fifty years ago. His blade
-      is silent but lethal.
+  - SpeakerName: Drakmora Commander
+    DialogueText: A foolish tactical blunder. They are funneling into a narrow pass.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: 727040039e044b14ebd3ae20b995c711, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: My Lord, let me face his blade. I will not fail you.
+  - SpeakerName: Lilith
+    DialogueText: Let us rain destruction down upon them. Show them the fury of your
+      new army, Sovereign.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: 727040039e044b14ebd3ae20b995c711, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

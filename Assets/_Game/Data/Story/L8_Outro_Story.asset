@@ -13,23 +13,45 @@ MonoBehaviour:
   m_Name: L8_Outro_Story
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
-  - SpeakerName: Lilith
-    DialogueText: A shadow that tried to hide in my darkness... how foolish.
+  - SpeakerName: Guild Scout
+    DialogueText: Fall back! They have monsters on their side!
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: ff2375fe1f96fa34892a15306e730c68, type: 3}
-    Focus: 3
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
-  - SpeakerName: Ignis
-    DialogueText: The vaults are clear. The path to the Sovereign Keep is open.
+  - SpeakerName: Beastman Chieftain
+    DialogueText: You saved our kin... Such dark, immense power. We are in your debt,
+      Great One.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
-    Background: {fileID: 21300000, guid: ff2375fe1f96fa34892a15306e730c68, type: 3}
-    Focus: 1
-    BackgroundOverlay: 2
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Tina
+    DialogueText: The Sovereign of Gehenna demands your loyalty!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Beastman Chieftain
+    DialogueText: Our finest scouts and archers are yours. We will help you hunt
+      down these Guild invaders!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

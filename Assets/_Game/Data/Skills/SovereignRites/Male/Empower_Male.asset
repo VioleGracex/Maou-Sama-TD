@@ -21,7 +21,7 @@ MonoBehaviour:
   Properties: []
   BaseVisuals:
     UltimatePrefab: {fileID: 0}
-    CastVFX: {fileID: 0}
+    CastVFX: {fileID: 5129502114244995669, guid: 1d45d1fa81e55b9489c40682f53f5bbd, type: 3}
     HitVFX: {fileID: 0}
     CastSFX: {fileID: 0}
     HitSFX: {fileID: 0}

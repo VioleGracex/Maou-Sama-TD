@@ -14,23 +14,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MaouSamaTD.Story.StoryDataSO
   Lines:
   - SpeakerName: Tina
-    DialogueText: The central foundry. The Guild is trying to seize the molten reservoirs
-      to forge anti-demon artillery!
+    DialogueText: 'We''ve reached the dwarven caves of Khazad-Grom [X: 60, Y: 75],
+      high in the Ironpeak Mountains!'
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 1
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
+    EventID: 
+    VoiceClip: {fileID: 0}
+  - SpeakerName: Dwarf Forge-Master
+    DialogueText: Halt! Who goes... by the ancestors, the Demon Lord! We want no
+      trouble. But we can't forge weapons for you right now anyway. Our deep mines
+      are infested with Rock Golems and Giant Spiders!
+    PortraitLeft: {fileID: 0}
+    PortraitMiddle: {fileID: 0}
+    PortraitRight: {fileID: 0}
+    Background: {fileID: 0}
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Lilith
-    DialogueText: So hot... but the fire of Gehenna is ours to control, is it not?
+    DialogueText: Such pathetic excuses. Sovereign, let us clear their mines. We
+      require their finest steel.
     PortraitLeft: {fileID: 0}
     PortraitMiddle: {fileID: 0}
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
-    Focus: 3
-    BackgroundOverlay: 2
+    Focus: 0
+    BackgroundOverlay: 0
     EventID: 
     VoiceClip: {fileID: 0}

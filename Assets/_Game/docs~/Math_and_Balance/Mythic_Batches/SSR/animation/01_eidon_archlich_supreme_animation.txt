@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Eidon_Archlich_Supreme_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Eidon floats imperiously, holding an ornate staff made of crystallized souls.
+- Greenish soul-fire burns inside his ribcage and eye sockets.
+- Spectral skulls orbit him slowly, whispering to the dead.
+
+[ Attack Animation ]
+Name: Eidon_Archlich_Supreme_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Sweeps his staff forward elegantly.
+- A torrent of screeching soul-fire erupts and strikes the target.
+- He lowers the staff slowly, exuding immense power.
+
+[ Ultimate Animation ]
+Name: Eidon_Archlich_Supreme_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Eidon raises both hands, laughing a bone-chilling laugh.
+- A massive graveyard of corrupted obelisks erupts from the ground across the battlefield.
+- The obelisks continuously drain enemy health while simultaneously resurrecting fallen allies as skeleton warriors.

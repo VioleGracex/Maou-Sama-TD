@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Exiled_Cleric_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Exiled Cleric stands solemnly, holding a heavy iron mace.
+- Reads silently from a corrupted, tattered holy book.
+- A mix of golden light and dark shadows swirls around their feet.
+
+[ Attack Animation ]
+Name: Exiled_Cleric_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Swings the heavy iron mace in a powerful, measured arc.
+- The mace glows with corrupted holy energy upon impact.
+- Recovers slowly due to the weight of the weapon.
+
+[ Ultimate Animation ]
+Name: Exiled_Cleric_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Raises the corrupted book high, chanting loudly.
+- Summons a massive beam of twilight energy from the sky.
+- The beam heals allies while simultaneously burning enemies with divine shadow.

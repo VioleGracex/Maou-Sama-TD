@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Nightmare_Weaver_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Nightmare Weaver floats ethereally, spinning glowing purple threads between its long, spindly fingers.
+- Multiple spectral eyes open and close seemingly at random on its dark cloak.
+- It tilts its head at unnatural, jagged angles.
+
+[ Attack Animation ]
+Name: Nightmare_Weaver_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Flicks its fingers, sending a sharp, razor-thin purple thread toward the enemy.
+- The thread slices through the target's mind rather than their body.
+- It pulls the thread back, leaving the enemy momentarily disoriented.
+
+[ Ultimate Animation ]
+Name: Nightmare_Weaver_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Weaver rapidly spins a massive web of dark purple nightmares over the entire area.
+- Enemies caught in the web are plunged into a deep sleep and take continuous psychic damage.
+- When they wake, their attack speed and damage are severely reduced by lingering terror.

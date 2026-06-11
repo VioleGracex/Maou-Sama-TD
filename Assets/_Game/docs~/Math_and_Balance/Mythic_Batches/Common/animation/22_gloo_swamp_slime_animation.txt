@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Gloo_Swamp_Slime_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Gloo bubbles and percolates gently.
+- Its gelatinous body jiggles as small bones and debris float within it.
+- It slowly sloshes back and forth in place.
+
+[ Attack Animation ]
+Name: Gloo_Swamp_Slime_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lurches forward, extending a pseudopod of acidic slime.
+- Slaps the enemy with the corrosive appendage.
+- Retracts the slime back into its main body, sizzling slightly.
+
+[ Ultimate Animation ]
+Name: Gloo_Swamp_Slime_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Gloo expands to twice its normal size.
+- Violently bursts, showering the entire area in highly corrosive acid.
+- Rapidly reforms itself from the puddles left behind.

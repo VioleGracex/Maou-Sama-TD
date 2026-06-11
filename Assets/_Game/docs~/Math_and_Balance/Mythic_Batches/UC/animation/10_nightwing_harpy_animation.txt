@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Nightwing_Harpy_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Nightwing Harpy hovers ominously, her black-feathered wings flapping slowly.
+- She shrieks softly, displaying sharp, venomous fangs.
+- Her sharp talons flex continuously as if itching to strike.
+
+[ Attack Animation ]
+Name: Nightwing_Harpy_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dives sharply from the air.
+- Rakes the enemy with her toxic talons in a rapid swipe.
+- Uses the momentum to pull back up into the air.
+
+[ Ultimate Animation ]
+Name: Nightwing_Harpy_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Unleashes a deafening, sonic screech that visibly distorts the air.
+- The screech stuns enemies in a wide cone in front of her.
+- She follows up by flapping her wings violently, sending a wave of dark, bladed feathers forward.

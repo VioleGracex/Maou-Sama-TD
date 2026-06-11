@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Mordred_Drakmora_Crossbowman_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Mordred stands with his crossbow lowered.
+- He keeps a sharp eye on the battlefield.
+- Carefully loads a fresh bolt into the weapon's groove.
+
+[ Attack Animation ]
+Name: Mordred_Drakmora_Crossbowman_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Quickly raises the crossbow to his shoulder.
+- Takes aim for a split second.
+- Fires a heavy bolt directly at the target before beginning to reload.
+
+[ Ultimate Animation ]
+Name: Mordred_Drakmora_Crossbowman_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Mordred rapidly loads and fires a volley of three explosive bolts in quick succession.
+- Each bolt arcs through the air.
+- They detonate upon impact to deal massive area damage.

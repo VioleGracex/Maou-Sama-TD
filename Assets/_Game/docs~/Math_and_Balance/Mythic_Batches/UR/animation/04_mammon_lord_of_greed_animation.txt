@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Mammon_Lord_Of_Greed_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Mammon sits atop a massive, overflowing chest of cursed gold coins.
+- He frantically counts and polishes a giant golden coin in his hand.
+- His eyes dart around suspiciously, trusting no one.
+
+[ Attack Animation ]
+Name: Mammon_Lord_Of_Greed_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws a handful of sharp, cursed golden coins at the enemy like shurikens.
+- The coins embed themselves deeply, glowing with a sickly yellow light.
+- He grumbles as if he is pained to part with the wealth.
+
+[ Ultimate Animation ]
+Name: Mammon_Lord_Of_Greed_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Mammon opens his massive chest entirely, revealing a portal to a dimension of infinite cursed wealth.
+- A literal tsunami of molten gold and giant coins floods the battlefield.
+- The wave crushes enemies under immense weight and permanently reduces their stats by "stealing" their strength.

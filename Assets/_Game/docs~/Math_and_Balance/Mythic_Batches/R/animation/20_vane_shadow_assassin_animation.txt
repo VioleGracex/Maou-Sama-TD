@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Vane_Shadow_Assassin_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vane stands perfectly still, cloaked in complete darkness.
+- Only the faint glint of his twin hidden blades is visible.
+- He appears to phase slightly in and out of reality.
+
+[ Attack Animation ]
+Name: Vane_Shadow_Assassin_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Melts into the shadows and instantly reappears behind the target.
+- Delivers a lethal, cross-slice with his hidden blades.
+- Fades back into the shadows before the enemy can even react.
+
+[ Ultimate Animation ]
+Name: Vane_Shadow_Assassin_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vane completely dissolves into a massive pool of darkness that covers the area.
+- Dozens of shadow-clones erupt from the pool, striking every enemy simultaneously.
+- The clones converge back into Vane, who sheathes his blades, causing all enemies to take delayed burst damage.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Fenris_Alpha_Of_The_North_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Fenris, a colossal armored wolfman, crouches low in the snow.
+- Wields two gigantic, frost-covered battleaxes.
+- Breathes out heavy clouds of freezing mist.
+
+[ Attack Animation ]
+Name: Fenris_Alpha_Of_The_North_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Leaps powerfully at the enemy frontline.
+- Slams both battleaxes down simultaneously, shattering the frozen ground.
+- Recovers with a deep, rumbling snarl.
+
+[ Ultimate Animation ]
+Name: Fenris_Alpha_Of_The_North_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Fenris unleashes an earth-shaking howl that summons a devastating blizzard.
+- The blizzard freezes all enemies to the bone, halting their movement completely.
+- He spins with both battleaxes like a frozen tornado, shattering the frozen enemies into icy fragments.

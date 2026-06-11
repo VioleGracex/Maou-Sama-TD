@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Dusk_Skeleton_Bowman_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dusk stands completely still, bones rattling faintly in the wind.
+- A bone arrow rests lightly on his ancient wooden bow.
+- An eerie blue light glows from his empty eye sockets.
+
+[ Attack Animation ]
+Name: Dusk_Skeleton_Bowman_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Mechanically pulls back the bowstring.
+- Fires a jagged bone arrow.
+- The string produces a haunting, hollow twang as the projectile flies.
+
+[ Ultimate Animation ]
+Name: Dusk_Skeleton_Bowman_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Pulls back the bowstring until it physically snaps.
+- Fires an enormous, terrifying spectral arrow.
+- The spectral arrow passes through all enemies in a straight line, dealing heavy damage.

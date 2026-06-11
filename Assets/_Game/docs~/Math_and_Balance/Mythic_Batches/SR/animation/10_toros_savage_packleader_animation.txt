@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Toros_Savage_Packleader_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Toros, a massive minotaur-like beast, hefts a giant stone pillar as a club.
+- He snorts angrily, scraping a heavy hoof against the ground.
+- Muscles bulge as he prepares to charge.
+
+[ Attack Animation ]
+Name: Toros_Savage_Packleader_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Charges forward headfirst to gore the enemy with his horns.
+- Follows up with a brutal, one-handed smash of his stone pillar.
+- Grunts loudly as he pulls the pillar back up.
+
+[ Ultimate Animation ]
+Name: Toros_Savage_Packleader_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Toros roars, summoning his spirit pack.
+- Throws his stone pillar into the center of the enemy line, creating a massive crater.
+- The spirit pack stampedes over the crater, dealing huge area damage, while Toros retrieves his weapon.

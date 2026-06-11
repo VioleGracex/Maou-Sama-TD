@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Vesta_Corrupt_Acolyte_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vesta stands tall, shrouded in a dark aura.
+- Her hands glow with faint, dark purple magic.
+- She silently mouths a forbidden incantation.
+
+[ Attack Animation ]
+Name: Vesta_Corrupt_Acolyte_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Thrusts her hand forward.
+- Fires a small, concentrated bolt of dark energy.
+- The bolt crackles through the air to strike the target.
+
+[ Ultimate Animation ]
+Name: Vesta_Corrupt_Acolyte_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Raises both hands to the sky.
+- Summons a pool of corruption beneath the enemies.
+- The pool erupts into a massive, damaging pillar of dark fire.

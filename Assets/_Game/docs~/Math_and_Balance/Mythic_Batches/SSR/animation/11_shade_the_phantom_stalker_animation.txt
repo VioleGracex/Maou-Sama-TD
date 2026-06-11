@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Shade_The_Phantom_Stalker_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Shade melts into the background, leaving only two glowing purple eyes visible.
+- The faint silhouette of two curved daggers can be seen.
+- Complete silence surrounds the entity.
+
+[ Attack Animation ]
+Name: Shade_The_Phantom_Stalker_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lunges from the darkness with blinding speed.
+- Delivers a rapid 'X' slash with both curved daggers.
+- Fades back into complete invisibility.
+
+[ Ultimate Animation ]
+Name: Shade_The_Phantom_Stalker_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Plunges the entire battlefield into absolute darkness.
+- The sound of dozens of blades slicing through the air echoes loudly.
+- When light returns, all enemies are marked with deep phantom wounds that bleed purple energy over time.

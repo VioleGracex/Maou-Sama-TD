@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Nyx_Phantom_Beastkin_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Nyx crouches on all fours, her body fading in and out of the spiritual plane.
+- Wields two ethereal, glowing blue kama (sickles).
+- Her beast-like ears twitch constantly, listening to the spirit realm.
+
+[ Attack Animation ]
+Name: Nyx_Phantom_Beastkin_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Phases through the ground, instantly appearing in front of the enemy.
+- Delivers a rapid, spinning double-slash with her ethereal kama.
+- Phases back to her original position before the enemy can react.
+
+[ Ultimate Animation ]
+Name: Nyx_Phantom_Beastkin_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Nyx howls, fully stepping into the phantom realm.
+- Summons a stampede of massive, spectral beasts that run roughshod over the entire battlefield.
+- The beasts ignore all armor and leave enemies paralyzed with phantom fear.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Cinder_Undead_Guard_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Cinder stands tall, his heavy halberd planted firmly on the ground.
+- Dark flames lick at the edges of his rusted armor.
+- He breathes out small puffs of black smoke.
+
+[ Attack Animation ]
+Name: Cinder_Undead_Guard_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lifts his heavy halberd with both hands.
+- Delivers a sweeping, fiery cleave in front of him.
+- The attack leaves a momentary trail of dark ash.
+
+[ Ultimate Animation ]
+Name: Cinder_Undead_Guard_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Slams the butt of his halberd violently into the ground.
+- Summons a ring of dark fire that expands outward.
+- The fire burns enemies and pushes them back significantly.

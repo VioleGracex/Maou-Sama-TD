@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Morde_The_Obsidian_Bastion_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Morde stands like an immovable mountain of black obsidian.
+- He holds a tower shield that is literally a slab of reinforced volcanic rock.
+- Magma glows faintly in the cracks of his armor.
+
+[ Attack Animation ]
+Name: Morde_The_Obsidian_Bastion_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Bashes forward slowly with the massive obsidian slab.
+- The sheer weight of the strike causes the ground to shake.
+- He resets his impenetrable stance.
+
+[ Ultimate Animation ]
+Name: Morde_The_Obsidian_Bastion_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Morde slams his shield into the ground and drops to one knee.
+- Erupts into a massive, immovable volcanic fortress.
+- He taunts all enemies globally to attack him, absorbing near-infinite damage while his armor actively melts melee attackers.

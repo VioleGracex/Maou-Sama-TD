@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Skye_Lesser_Harpy_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Skye perches lightly on her talons.
+- Her wings are partially extended.
+- She stays balanced and ready to take flight at a moment's notice.
+
+[ Attack Animation ]
+Name: Skye_Lesser_Harpy_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Takes to the air with a powerful flap of her wings.
+- Swoops down rapidly to slash the enemy with her sharp talons.
+- Returns to her perch with a swift upward glide.
+
+[ Ultimate Animation ]
+Name: Skye_Lesser_Harpy_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Flaps her wings furiously in place.
+- Creates a violent, swirling gust of wind.
+- The wind is filled with razor-sharp feathers that tear into enemies in a wide area.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Blood_Drinker_Demon_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Blood Drinker Demon stands hunched, its terrifying maw dripping with fresh blood.
+- It breathes heavily, its massive chest heaving.
+- It flexes two massive, clawed hands hungrily.
+
+[ Attack Animation ]
+Name: Blood_Drinker_Demon_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Leaps wildly at the enemy.
+- Slashes aggressively with its massive claws and takes a deep bite.
+- Swallows the blood, causing a faint red healing aura to pulse around its body.
+
+[ Ultimate Animation ]
+Name: Blood_Drinker_Demon_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Demon roars, its body expanding to twice its normal size as it goes into a blood frenzy.
+- It charges forward like a battering ram, ripping and tearing through the entire enemy formation.
+- Every enemy hit is afflicted with severe hemorrhage, and the Demon heals for a massive portion of the damage dealt.

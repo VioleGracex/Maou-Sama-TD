@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Zephyr_Wind_Rider_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Zephyr hovers effortlessly, supported by a gentle, swirling updraft.
+- Two sharp, bladed chakrams spin slowly around his hands.
+- His hair and loose clothing constantly billow in the wind.
+
+[ Attack Animation ]
+Name: Zephyr_Wind_Rider_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws one of his bladed chakrams with a flick of his wrist.
+- The chakram curves through the air, slicing the enemy, and boomerangs back.
+- He catches it smoothly without breaking his hovering stance.
+
+[ Ultimate Animation ]
+Name: Zephyr_Wind_Rider_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Zephyr throws both chakrams into the air and channels a massive gale.
+- Summons a towering, destructive tornado that pulls enemies toward its center.
+- The chakrams spin violently within the tornado, shredding anyone caught inside before returning to him.

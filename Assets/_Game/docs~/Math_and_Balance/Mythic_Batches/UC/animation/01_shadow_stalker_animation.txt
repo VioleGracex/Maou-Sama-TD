@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Shadow_Stalker_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Shadow Stalker crouches low, shrouded in dark mist.
+- Twirls a dark steel dagger in one hand.
+- Eyes glow faintly from the shadows of their hood.
+
+[ Attack Animation ]
+Name: Shadow_Stalker_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lunges forward in a blur of motion.
+- Slashes quickly with their dark steel dagger.
+- Fades slightly out of existence while returning to their stance.
+
+[ Ultimate Animation ]
+Name: Shadow_Stalker_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws down a smoke bomb, disappearing entirely.
+- Dashes rapidly between multiple enemies, leaving a trail of shadows.
+- Reappears in a dramatic pose as shadowy slash marks erupt on all targets.

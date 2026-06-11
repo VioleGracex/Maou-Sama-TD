@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Morrigan_Banefire_Enchantress_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Morrigan floats gracefully, conjuring green banefire in her open palms.
+- Her dark robes billow upward slightly.
+- She smirks, highly confident in her destructive magic.
+
+[ Attack Animation ]
+Name: Morrigan_Banefire_Enchantress_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Thrusts both hands forward, launching a torrent of green flames.
+- The fire splashes against the enemy, leaving a lingering burn.
+- She elegantly pulls her hands back to her chest.
+
+[ Ultimate Animation ]
+Name: Morrigan_Banefire_Enchantress_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Morrigan raises her arms, summoning a colossal meteor made entirely of banefire.
+- The meteor crashes into the center of the enemy formation.
+- It explodes, reducing enemy magic resistance and burning them aggressively over time.

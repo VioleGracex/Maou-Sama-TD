@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Asmodeus_Lord_Of_Lust_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Asmodeus stands perfectly poised, radiating an intoxicating, hypnotic pink aura.
+- He wields a beautiful, razor-sharp rose-thorn whip.
+- He runs a hand through his perfect hair, eyes glowing with dangerous allure.
+
+[ Attack Animation ]
+Name: Asmodeus_Lord_Of_Lust_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Cracks his rose-thorn whip with an elegant, flourishing motion.
+- The whip leaves a trail of glowing pink petals that inflict agonizing ecstasy on the target.
+- He smiles seductively as the enemy staggers.
+
+[ Ultimate Animation ]
+Name: Asmodeus_Lord_Of_Lust_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Asmodeus snaps his fingers, plunging the battlefield into a deep, hypnotic pink twilight.
+- Enemies are overwhelmed by pure desire, causing them to completely abandon their weapons and walk toward him.
+- He finishes by detonating the hypnotic aura, dealing massive psychological and magical damage to all charmed foes.

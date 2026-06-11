@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Lilith_Duchess_Of_Crimson_Allure_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lilith reclines seductively on a floating chaise lounge made of hardened blood.
+- She files her nails, paying no attention to the battle.
+- A mesmerized, mindless thrall stands guard behind her.
+
+[ Attack Animation ]
+Name: Lilith_Duchess_Of_Crimson_Allure_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lilith points lazily with one finger.
+- Her mindless thrall leaps forward, viciously attacking the target with its claws.
+- The thrall returns to her side obediently.
+
+[ Ultimate Animation ]
+Name: Lilith_Duchess_Of_Crimson_Allure_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lilith stands from her lounge and blows a massive, glowing red kiss into the air.
+- The kiss explodes into a shower of crimson hearts over the enemy lines.
+- All enemies hit by the hearts are charmed, turning their weapons on each other while taking severe damage over time.

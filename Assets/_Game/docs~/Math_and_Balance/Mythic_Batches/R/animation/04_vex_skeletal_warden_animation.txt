@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Vex_Skeletal_Warden_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vex stands at rigid attention, clutching a heavy iron halberd.
+- Magical chains wrap around his skeletal frame, clinking softly.
+- His jawbone chatters silently.
+
+[ Attack Animation ]
+Name: Vex_Skeletal_Warden_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Takes a wide step forward.
+- Swings his halberd in a wide, sweeping arc to cleave enemies.
+- Snaps back to attention with military precision.
+
+[ Ultimate Animation ]
+Name: Vex_Skeletal_Warden_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws his magical chains out in all directions.
+- The chains hook onto multiple enemies, dragging them violently toward him.
+- Finishes with a devastating spinning slash of his halberd that strikes all pulled targets.

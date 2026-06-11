@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Talon_Sky_Piercer_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Talon, a powerful aviary warrior, hovers effortlessly using massive metallic wings.
+- He hefts a glowing blue javelin in his right hand.
+- His eagle-like eyes track every movement on the battlefield.
+
+[ Attack Animation ]
+Name: Talon_Sky_Piercer_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Pulls his arm back and hurls his glowing javelin.
+- The javelin strikes like a lightning bolt before magically reappearing in his hand.
+- He flaps his wings once to stabilize.
+
+[ Ultimate Animation ]
+Name: Talon_Sky_Piercer_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Talon ascends rapidly into the stratosphere, disappearing from view.
+- Plummets down like a meteor, his metallic wings glowing white hot.
+- Crashes into the center of the enemy line in a devastating dive-bomb that obliterates foes and creates a massive crater.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Belphegor_Lord_Of_Gluttony_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Belphegor, a massive, grotesque monstrosity, constantly shoves food and debris into his giant maw.
+- His stomach rumbles so loudly it causes the ground to vibrate slightly.
+- He drools corrosive acid onto the floor.
+
+[ Attack Animation ]
+Name: Belphegor_Lord_Of_Gluttony_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Reaches out with a massive, fleshy hand to grab an enemy or the ground.
+- Bites down viciously, tearing away chunks of armor and health.
+- Chews loudly, healing himself significantly with every strike.
+
+[ Ultimate Animation ]
+Name: Belphegor_Lord_Of_Gluttony_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Belphegor unhinges his jaw to an impossible, terrifying width.
+- Inhales with hurricane-force suction, pulling all enemies into a massive, acidic vortex in his mouth.
+- He swallows the energy, dealing catastrophic damage, and burps out a massive cloud of toxic gas that lingers on the field.

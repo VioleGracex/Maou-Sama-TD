@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Varkas_Drakmora_Lancer_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Varkas holds his heavy lance steadily with both hands.
+- He crouches slightly in anticipation.
+- His armor glints in the light as he breathes steadily.
+
+[ Attack Animation ]
+Name: Varkas_Drakmora_Lancer_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lunges forward with surprising speed.
+- Thrusts his lance forward in a piercing strike that extends his full reach.
+- Pulls back rapidly to prepare for the next strike.
+
+[ Ultimate Animation ]
+Name: Varkas_Drakmora_Lancer_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Varkas charges forward in a relentless dash.
+- Holds his lance outward like a battering ram.
+- Pierces through multiple enemies in his path with unstoppable momentum.

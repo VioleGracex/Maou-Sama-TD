@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Thresh_Wraith_Executioner_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Thresh floats ominously, an ethereal specter.
+- Rests a massive, ghostly executioner's axe on his shoulder.
+- Green soul-fire burns in his hollow eyes.
+
+[ Attack Animation ]
+Name: Thresh_Wraith_Executioner_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Hefts his massive axe high.
+- Brings it down in a brutal, spectral overhead chop.
+- The blade passes slightly through the ground, leaving a ghostly scar.
+
+[ Ultimate Animation ]
+Name: Thresh_Wraith_Executioner_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Thresh grows in size, his soul-fire blazing brightly.
+- Summons a spectral guillotine over the target area.
+- The massive blade drops, dealing critical damage and instantly executing enemies below a certain health threshold.

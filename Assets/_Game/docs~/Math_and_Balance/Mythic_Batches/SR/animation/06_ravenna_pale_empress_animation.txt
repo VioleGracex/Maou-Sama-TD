@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Ravenna_Pale_Empress_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Ravenna sits elegantly upon a floating throne of bone and ice.
+- She sips from an ornate silver chalice.
+- A freezing, pale aura radiates from her very presence.
+
+[ Attack Animation ]
+Name: Ravenna_Pale_Empress_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Barely moves from her throne, merely gesturing with one finger.
+- Several razor-sharp icicles materialize and shoot toward the enemy.
+- They shatter on impact, slowing the target's movements.
+
+[ Ultimate Animation ]
+Name: Ravenna_Pale_Empress_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Ravenna stands slowly from her throne, dropping her chalice.
+- The temperature drops instantly as she unleashes a wave of absolute zero magic.
+- The wave freezes all enemies solid, dealing massive damage and shattering weaker foes into ice dust.

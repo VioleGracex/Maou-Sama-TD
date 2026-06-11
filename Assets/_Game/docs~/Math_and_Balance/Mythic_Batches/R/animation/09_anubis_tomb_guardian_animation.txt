@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Anubis_Tomb_Guardian_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Anubis stands as rigid as a statue.
+- Holds a golden, curved khopesh blade and a tall staff.
+- Sand continuously trickles from his ornate armor.
+
+[ Attack Animation ]
+Name: Anubis_Tomb_Guardian_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Steps forward and sweeps his khopesh in a wide, golden arc.
+- The blade kicks up a trail of stinging sand.
+- He stamps his staff on the ground to reset his stance.
+
+[ Ultimate Animation ]
+Name: Anubis_Tomb_Guardian_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Anubis raises his staff high, eyes glowing with ancient power.
+- Summons a massive, swirling sandstorm that obscures the screen.
+- Giant spectral jackals run through the storm, tearing into the blinded enemies.

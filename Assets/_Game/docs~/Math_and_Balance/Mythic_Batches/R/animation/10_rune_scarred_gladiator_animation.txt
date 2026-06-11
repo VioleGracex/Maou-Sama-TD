@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Rune_Scarred_Gladiator_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Gladiator stands with a wide, aggressive stance.
+- Holds two heavy gladius swords.
+- Glowing blue runes carved into his bare skin pulse with energy.
+
+[ Attack Animation ]
+Name: Rune_Scarred_Gladiator_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lunges with terrifying speed.
+- Delivers a brutal flurry of dual-sword slashes.
+- Roars loudly, spittle flying, before stepping back.
+
+[ Ultimate Animation ]
+Name: Rune_Scarred_Gladiator_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- The runes on his body flare blindingly bright.
+- He leaps high into the air and slams both swords into the earth.
+- Erupting runic spikes pierce the ground in a massive radius around him, impaling foes.

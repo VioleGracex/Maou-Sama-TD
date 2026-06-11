@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Malina_Infernal_Countess_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Malina floats elegantly, surrounded by several floating, burning mirrors.
+- She inspects her sharp, obsidian fingernails calmly.
+- Her dress is made of literal, flowing hellfire.
+
+[ Attack Animation ]
+Name: Malina_Infernal_Countess_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Points a sharp fingernail at an enemy.
+- The floating mirrors focus a highly concentrated beam of hellfire onto the target.
+- The mirrors quickly return to orbiting her.
+
+[ Ultimate Animation ]
+Name: Malina_Infernal_Countess_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Malina shatters all her burning mirrors with a flick of her wrist.
+- The shards fly into the sky, creating a dome of fractured reality over the enemies.
+- The dome reflects their own attacks back at them tenfold, while simultaneously cooking them in intense, inescapable heat.

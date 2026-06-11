@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Drakmora_Infantry_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The infantryman stands in a disciplined stance.
+- Their heavy shield is raised slightly.
+- The broadsword rests at the ready, eyes focused on the enemy line.
+
+[ Attack Animation ]
+Name: Drakmora_Infantry_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Steps forward with heavy armor clanking.
+- Swings their broadsword in a wide, sweeping horizontal slash.
+- Quickly raises the shield back into a defensive posture after the strike.
+
+[ Ultimate Animation ]
+Name: Drakmora_Infantry_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Rallies their energy, letting out a war cry.
+- Performs a devastating overhead strike with their sword.
+- Slams the blade into the ground to create a shockwave that knocks back foes.

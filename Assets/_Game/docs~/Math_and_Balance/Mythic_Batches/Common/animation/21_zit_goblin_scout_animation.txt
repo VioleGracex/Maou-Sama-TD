@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Zit_Goblin_Scout_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Zit shifts from foot to foot nervously.
+- He holds a shortbow in one hand and shades his eyes with the other, looking for danger.
+- His long ears twitch constantly.
+
+[ Attack Animation ]
+Name: Zit_Goblin_Scout_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Quickly nocks a crude arrow into his shortbow.
+- Fires a rapid but poorly-aimed shot at the enemy.
+- Ducks immediately after firing to avoid return fire.
+
+[ Ultimate Animation ]
+Name: Zit_Goblin_Scout_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Zit pulls out a large, smoking bomb from his pouch.
+- He lights the fuse in a panic and throws it haphazardly.
+- The bomb explodes violently, dealing massive area damage but knocking Zit backward.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Scorned_Adept_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Scorned Adept floats slightly above the ground.
+- Holds a twisted, dark-wood staff that crackles with purple energy.
+- Reads silently from a floating, spectral tome.
+
+[ Attack Animation ]
+Name: Scorned_Adept_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Points the twisted staff toward the enemy.
+- Fires a sharp, spiraling blast of purple arcane energy.
+- The recoil pushes the Adept back slightly in the air.
+
+[ Ultimate Animation ]
+Name: Scorned_Adept_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Raises the staff high, summoning dark clouds above.
+- Unleashes a torrential rain of jagged arcane crystals over a large area.
+- The crystals explode on impact, leaving scorched magic marks on the ground.

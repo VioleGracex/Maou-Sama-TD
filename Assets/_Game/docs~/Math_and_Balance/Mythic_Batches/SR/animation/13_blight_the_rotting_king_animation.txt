@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Blight_The_Rotting_King_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Blight sits heavily on a rusted throne of twisted roots.
+- Greenish toxic fumes constantly emit from his festering crown.
+- He lazily waves a hand to swat away spectral flies.
+
+[ Attack Animation ]
+Name: Blight_The_Rotting_King_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Blight stands up slightly and points his diseased scepter.
+- Fires a glob of highly corrosive sludge.
+- Sits back down heavily onto his rusted throne.
+
+[ Ultimate Animation ]
+Name: Blight_The_Rotting_King_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Blight stands fully, his eyes glowing bright sickly green.
+- He slams his scepter into the ground, causing the earth to decay rapidly.
+- A massive pool of rot expands outward, constantly poisoning and slowing any enemies trapped within it.

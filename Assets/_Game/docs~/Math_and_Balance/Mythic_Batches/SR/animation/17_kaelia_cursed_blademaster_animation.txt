@@ -1,0 +1,24 @@
+[ Idle Idle ]
+Name: Kaelia_Cursed_Blademaster_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Kaelia rests her hand on the hilt of a cursed, vibrating katana.
+- Dark, blood-red energy constantly leaks from the scabbard.
+- Her eyes are closed, listening intently to the battlefield.
+
+[ Attack Animation ]
+Name: Kaelia_Cursed_Blademaster_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Draws her katana with blinding speed in an Iaijutsu strike.
+- A red crescent of energy slices through the enemy.
+- She sheathes the blade with a sharp click before the enemy even realizes they've been hit.
+
+[ Ultimate Animation ]
+Name: Kaelia_Cursed_Blademaster_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Kaelia opens her glowing red eyes and fully draws the cursed katana.
+- The entire screen briefly turns black and red.
+- She performs thousands of invisible slashes in a split second.
+- Appears behind the enemy line as the foes simultaneously collapse from massive critical damage.

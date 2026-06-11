@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Gnaw_Feral_Ghoul_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Gnaw crouches low to the ground on all fours.
+- He sniffs the air hungrily, saliva dripping from his jagged teeth.
+- His limbs twitch erratically.
+
+[ Attack Animation ]
+Name: Gnaw_Feral_Ghoul_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lunges forward recklessly.
+- Bites the enemy deeply while tearing with his filthy claws.
+- Rips away a chunk of flesh, restoring a small amount of his own health.
+
+[ Ultimate Animation ]
+Name: Gnaw_Feral_Ghoul_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Gnaw unleashes a horrifying, bloodcurdling shriek.
+- Enters a frenzied state, his eyes glowing red.
+- He dashes between multiple enemies, biting and slashing them at blinding speed.

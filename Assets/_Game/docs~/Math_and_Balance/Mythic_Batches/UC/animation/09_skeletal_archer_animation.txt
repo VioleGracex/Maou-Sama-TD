@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Skeletal_Archer_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Skeletal Archer stands rigidly, holding a longbow made of fused bone.
+- Its skull slowly pans back and forth.
+- Ghostly green flames flicker inside its ribcage.
+
+[ Attack Animation ]
+Name: Skeletal_Archer_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Draws back a glowing green spectral arrow.
+- Fires it with a sharp, ethereal whistling sound.
+- The arrow pierces the target, briefly illuminating them in green light.
+
+[ Ultimate Animation ]
+Name: Skeletal_Archer_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- The archer pulls back the bowstring, aiming directly upward.
+- Fires a massive volley of spectral arrows into the sky.
+- A rain of glowing green arrows descends over the battlefield, sticking into the ground and enemies.

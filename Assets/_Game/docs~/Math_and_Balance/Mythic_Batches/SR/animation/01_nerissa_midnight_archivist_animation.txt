@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Nerissa_Midnight_Archivist_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Nerissa floats calmly, reading from a glowing, spectral tome.
+- Holds a ghost-cyan blood vial and a jagged quill made of petrified wood.
+- Ancient runes occasionally circle her slowly.
+
+[ Attack Animation ]
+Name: Nerissa_Midnight_Archivist_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dips her quill into the blood vial.
+- Flicks her wrist to hurl a sharp, glowing cyan rune at the enemy.
+- The rune slices through the air with a whispering sound.
+
+[ Ultimate Animation ]
+Name: Nerissa_Midnight_Archivist_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws her tome open wide, pages fluttering wildly.
+- Draws an enormous, complex magic circle in the air with her quill.
+- The circle unleashes a massive beam of true-born demonic energy that obliterates enemies in a straight line.

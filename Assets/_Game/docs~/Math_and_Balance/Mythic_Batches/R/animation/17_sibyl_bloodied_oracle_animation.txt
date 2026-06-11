@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Sibyl_Bloodied_Oracle_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Sibyl hovers cross-legged, gazing deeply into a floating crystal ball.
+- Blood slowly drips from a cloth blindfold covering her eyes.
+- The crystal ball pulses with a deep, crimson light.
+
+[ Attack Animation ]
+Name: Sibyl_Bloodied_Oracle_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Projects a sharp, concentrated beam of crimson energy from her crystal ball.
+- The beam sears the enemy before fading away.
+- She tilts her head, as if listening to whispers from the blood magic.
+
+[ Ultimate Animation ]
+Name: Sibyl_Bloodied_Oracle_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Sibyl shatters her crystal ball, releasing a torrent of forbidden blood magic.
+- A massive eye made of pure crimson energy opens above the battlefield.
+- It unleashes a devastating wave of psychic and magical damage, severely weakening all enemies' resistances.

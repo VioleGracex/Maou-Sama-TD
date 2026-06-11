@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Satan_Lord_Of_Wrath_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Satan stands as a towering, hulking mass of pure muscle, brimstone, and unyielding rage.
+- He wields no weapons, his bare fists glowing white-hot with pure anger.
+- The ground literally scorches and cracks beneath his feet from his sheer presence.
+
+[ Attack Animation ]
+Name: Satan_Lord_Of_Wrath_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Charges forward with blinding, terrifying speed.
+- Delivers a single, devastating punch that breaks the sound barrier.
+- The punch creates a cone of fiery destruction behind the initial target.
+
+[ Ultimate Animation ]
+Name: Satan_Lord_Of_Wrath_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Satan roars into the sky, his wrath physically manifesting as a nuclear-level inferno.
+- He leaps high and crashes down directly into the center of the enemy army.
+- The impact triggers an apocalyptic eruption of hellfire and brimstone, completely annihilating the battlefield landscape and dealing overwhelming true damage to everything.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Astaroth_Queen_of_Pain_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Astaroth stands confidently, resting a spiked whip on her hip.
+- A dark, sultry aura surrounds her form.
+- She taps her thigh rhythmically, waiting for prey.
+
+[ Attack Animation ]
+Name: Astaroth_Queen_of_Pain_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Steps forward and cracks her spiked whip with terrifying speed.
+- The whip wraps around the enemy briefly before she yanks it back.
+- Leaves a glowing, agonizing mark on the target.
+
+[ Ultimate Animation ]
+Name: Astaroth_Queen_of_Pain_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Astaroth laughs darkly as massive, thorny vines erupt from the earth beneath the enemies.
+- The vines constrict and bind all foes in a wide area.
+- She delivers a devastating, charged whip-crack that shatters the vines and deals massive burst damage.

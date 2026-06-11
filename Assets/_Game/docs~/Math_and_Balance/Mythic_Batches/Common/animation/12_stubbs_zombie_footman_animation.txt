@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Stubbs_Zombie_Footman_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Stubbs sways back and forth unsteadily.
+- One arm dangles uselessly by his side.
+- The other hand firmly clutches a rusted iron club.
+
+[ Attack Animation ]
+Name: Stubbs_Zombie_Footman_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Drags himself forward sluggishly.
+- Swings his iron club in a heavy, unbalanced smash.
+- The attack lacks technique but carries immense, dead weight.
+
+[ Ultimate Animation ]
+Name: Stubbs_Zombie_Footman_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- In a sudden burst of unnatural strength, Stubbs spins rapidly.
+- His club is extended outward, acting like a destructive top.
+- Moves forward through the enemy line before falling over dizzy.

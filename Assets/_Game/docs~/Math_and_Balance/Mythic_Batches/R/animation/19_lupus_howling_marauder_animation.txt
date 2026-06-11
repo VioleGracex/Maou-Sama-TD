@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Lupus_Howling_Marauder_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lupus paces back and forth restlessly, gripping two jagged handaxes.
+- His wolf-like features snarl at the enemies.
+- He occasionally sniffs the air, tracking a scent.
+
+[ Attack Animation ]
+Name: Lupus_Howling_Marauder_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lunges forward with feral intensity.
+- Chops wildly with both handaxes in a crossed, downward strike.
+- Howls shortly before retreating back to his pacing.
+
+[ Ultimate Animation ]
+Name: Lupus_Howling_Marauder_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lupus lets out an elongated, blood-chilling howl that buffs his attack speed.
+- Enters a berserk rage, rushing the enemy line.
+- Unleashes a relentless, spinning flurry of axe strikes that tears through multiple foes and ignores armor.

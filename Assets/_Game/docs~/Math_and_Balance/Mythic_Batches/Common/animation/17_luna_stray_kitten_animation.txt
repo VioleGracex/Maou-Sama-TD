@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Luna_Stray_Kitten_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Luna sits playfully, batting at a floating speck of dust.
+- Her ears twitch back and forth as she listens.
+- Her tail flicks from side to side in a relaxed manner.
+
+[ Attack Animation ]
+Name: Luna_Stray_Kitten_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Leaps forward with surprising agility.
+- Unleashes a furious flurry of tiny, rapid scratches.
+- Hisses loudly before jumping back to safety.
+
+[ Ultimate Animation ]
+Name: Luna_Stray_Kitten_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Luna meows loudly, her eyes glowing with ancient feline magic.
+- Summons a giant, spectral cat paw from the sky.
+- The paw smashes down on the enemy line with devastating force.

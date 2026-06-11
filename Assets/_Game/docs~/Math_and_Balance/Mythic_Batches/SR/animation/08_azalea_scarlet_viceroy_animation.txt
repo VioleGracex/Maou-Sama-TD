@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Azalea_Scarlet_Viceroy_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Azalea stands with military precision, holding a crimson-bladed rapier and a heavy ornate pistol.
+- Her scarlet uniform is spotless and imposing.
+- She inspects the pistol's chamber calmly.
+
+[ Attack Animation ]
+Name: Azalea_Scarlet_Viceroy_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Fires a shot from her heavy pistol, staggering the target.
+- Instantly follows up by dashing forward for a deep, piercing rapier thrust.
+- Steps back elegantly, readying another round.
+
+[ Ultimate Animation ]
+Name: Azalea_Scarlet_Viceroy_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Azalea raises her rapier to the sky, calling down a scarlet artillery strike from her unseen battalion.
+- Dozens of crimson explosions erupt across the enemy line.
+- She finishes by fanning the hammer of her pistol to execute any remaining survivors in front of her.

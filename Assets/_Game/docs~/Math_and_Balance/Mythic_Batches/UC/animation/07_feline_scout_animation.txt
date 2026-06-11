@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Feline_Scout_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Feline Scout perches stealthily on a low branch or rock.
+- Her long tail swishes fluidly behind her.
+- She nervously cleans one of her dual curved daggers.
+
+[ Attack Animation ]
+Name: Feline_Scout_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Flips forward acrobatically.
+- Delivers a rapid, spinning cross-slash with both curved daggers.
+- Lands gracefully on her feet and immediately bounds back.
+
+[ Ultimate Animation ]
+Name: Feline_Scout_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- She drops to all fours and dashes at blinding speed, becoming a blur.
+- Zig-zags through the entire enemy formation, slashing everyone in her path.
+- Appears behind the last enemy and sheathes her daggers with a sharp click, triggering secondary bleed damage.

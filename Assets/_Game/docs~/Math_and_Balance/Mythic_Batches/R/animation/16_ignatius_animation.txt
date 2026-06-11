@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Ignatius_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Ignatius juggles a small fireball between his hands playfully.
+- His robes are singed, and smoke constantly rises from his shoulders.
+- He grins maniacally, eager to unleash destruction.
+
+[ Attack Animation ]
+Name: Ignatius_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Winds back and hurls a concentrated fireball like a baseball.
+- The fireball explodes upon impact, dealing splash damage.
+- He shakes out his hand, as if it were slightly too hot.
+
+[ Ultimate Animation ]
+Name: Ignatius_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Ignatius raises both hands to the sky, laughing wildly.
+- Calls down a massive, searing meteor from the heavens.
+- The meteor crushes the enemy line, leaving a giant pool of molten lava that burns anyone standing in it.

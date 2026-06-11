@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Isolde_Dusk_Bound_Reaver_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Isolde hefts a massive, glowing purple greatsword effortlessly over one shoulder.
+- Twilight energy bleeds continuously from the blade's edge.
+- She shifts her weight aggressively, waiting to strike.
+
+[ Attack Animation ]
+Name: Isolde_Dusk_Bound_Reaver_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Charges forward and delivers a brutal, two-handed diagonal slash.
+- The greatsword leaves a wide trail of dusk energy in the air.
+- She recovers her stance smoothly despite the heavy weapon.
+
+[ Ultimate Animation ]
+Name: Isolde_Dusk_Bound_Reaver_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Isolde channels the full power of twilight into her greatsword, making it triple in size.
+- Leaps into the sky and crashes down on the enemy frontline.
+- The impact unleashes a shockwave of dusk energy that heavily damages and knocks down all nearby enemies.

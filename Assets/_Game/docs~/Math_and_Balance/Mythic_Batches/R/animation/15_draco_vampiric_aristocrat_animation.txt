@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Draco_Vampiric_Aristocrat_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Draco stands elegantly, one hand resting on the hilt of a fine rapier.
+- He gently swirls a goblet of dark red liquid in his other hand.
+- His crimson cape flutters softly, unbothered by the chaos around him.
+
+[ Attack Animation ]
+Name: Draco_Vampiric_Aristocrat_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dashes forward instantaneously, leaving a red blur.
+- Delivers a series of blindingly fast, precise thrusts with his rapier.
+- Steps back elegantly, not a single hair out of place.
+
+[ Ultimate Animation ]
+Name: Draco_Vampiric_Aristocrat_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Draco tosses his goblet aside, revealing his true vampiric nature.
+- Summons a massive vortex of crimson blood magic beneath the enemies.
+- The vortex drains their life force rapidly and transfers it in a glowing stream to Draco, fully healing him.

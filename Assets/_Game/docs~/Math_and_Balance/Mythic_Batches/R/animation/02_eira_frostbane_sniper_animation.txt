@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Eira_Frostbane_Sniper_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Eira kneels, resting her glowing frost-sniper rifle on a small ice block.
+- Cold breath escapes her lips.
+- She adjusts her scope, maintaining intense focus on the distance.
+
+[ Attack Animation ]
+Name: Eira_Frostbane_Sniper_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Looks down the scope and pulls the trigger.
+- Fires a high-velocity shard of pure ice.
+- The recoil pushes her shoulder back slightly, causing frost to puff from the barrel.
+
+[ Ultimate Animation ]
+Name: Eira_Frostbane_Sniper_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Eira infuses her rifle with absolute zero magic.
+- Fires a massive, supercooled blast that freezes the very air it passes through.
+- The target and surrounding enemies are encased in solid ice blocks upon impact.

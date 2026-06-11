@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Aquila_The_Harpy_Queen_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Aquila perches regally, her magnificent, golden-tipped wings folded elegantly.
+- She wields a deadly, aerodynamic spear crackling with wind magic.
+- She occasionally clicks her talons together impatiently.
+
+[ Attack Animation ]
+Name: Aquila_The_Harpy_Queen_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Launches into the air with a single, powerful wingbeat.
+- Throws her wind-infused spear at lightning speed, piercing the enemy.
+- Lands and catches the spear as it magically returns to her.
+
+[ Ultimate Animation ]
+Name: Aquila_The_Harpy_Queen_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Aquila takes flight, ascending high above the battlefield.
+- Summons a massive, destructive cyclone that tears through the entire enemy line.
+- Dozens of harpy illusions dive-bomb from within the cyclone, tearing enemies apart with razor-sharp talons.

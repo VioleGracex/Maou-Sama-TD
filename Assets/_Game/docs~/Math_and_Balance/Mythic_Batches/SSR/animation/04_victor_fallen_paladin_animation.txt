@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Victor_Fallen_Paladin_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Victor rests his heavy, corrupted greatsword on his armored shoulder.
+- Holy light fights against dark abyssal energy across his armor plates.
+- He glares downward, burdened by his betrayal.
+
+[ Attack Animation ]
+Name: Victor_Fallen_Paladin_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Heaves the corrupted greatsword off his shoulder.
+- Delivers a devastating overhead cleave filled with dark holy energy.
+- Pulls the heavy blade back with practiced ease.
+
+[ Ultimate Animation ]
+Name: Victor_Fallen_Paladin_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Victor raises his greatsword, tearing open a rift between the heavens and the abyss.
+- Plunges the sword into the earth, causing massive pillars of corrupted light to erupt from the ground.
+- The pillars heavily damage all enemies while providing a massive, dark energy shield to all allies.

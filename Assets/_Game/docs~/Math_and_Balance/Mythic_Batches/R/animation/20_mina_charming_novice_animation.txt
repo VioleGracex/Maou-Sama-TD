@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Mina_Charming_Novice_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Mina holds a glowing, oversized magical staff defensively.
+- She looks a bit nervous, tapping her foot and looking around.
+- A soft, pink healing aura pulses gently around her.
+
+[ Attack Animation ]
+Name: Mina_Charming_Novice_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Closes her eyes and swings her staff clumsily, firing a jagged bolt of pink energy.
+- The bolt hits the enemy with a surprisingly loud pop.
+- She opens her eyes and breathes a sigh of relief.
+
+[ Ultimate Animation ]
+Name: Mina_Charming_Novice_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Mina raises her staff high and accidentally channels too much magic.
+- Summons a massive, glowing pink fairy that explodes in a shower of sparkles.
+- The sparkles fully heal all allies and charm enemies, causing them to wander aimlessly for a few seconds.

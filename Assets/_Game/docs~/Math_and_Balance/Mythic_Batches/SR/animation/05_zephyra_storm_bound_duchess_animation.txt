@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Zephyra_Storm_Bound_Duchess_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Zephyra floats high above the ground, surrounded by a miniature thunderstorm.
+- Tiny lightning bolts arc between her fingertips.
+- Her expression is haughty and commanding.
+
+[ Attack Animation ]
+Name: Zephyra_Storm_Bound_Duchess_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Points sharply at the enemy.
+- Calls down a swift, jagged bolt of lightning that strikes instantly from above.
+- Thunder rolls loudly in the aftermath of the strike.
+
+[ Ultimate Animation ]
+Name: Zephyra_Storm_Bound_Duchess_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Zephyra ascends even higher, her eyes glowing with blinding white light.
+- Summons a massive supercell storm that covers the entire enemy area.
+- Unleashes a continuous, devastating barrage of chain lightning that bounces between all targets.

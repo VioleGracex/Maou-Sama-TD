@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Vladislav_Crimson_Duke_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vladislav stands with aristocratic poise, swirling blood inside a massive obsidian chalice.
+- A fine crimson rapier is sheathed at his hip.
+- A swarm of small, red-eyed bats hangs upside down from his dark cloak.
+
+[ Attack Animation ]
+Name: Vladislav_Crimson_Duke_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Draws his rapier and steps forward with blinding speed.
+- Delivers a flawless, multi-thrust combo.
+- Flicks the blood off his blade and sheathes it smoothly.
+
+[ Ultimate Animation ]
+Name: Vladislav_Crimson_Duke_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vladislav shatters his chalice, transforming himself into a terrifying, giant crimson bat demon.
+- He flies over the enemy line, creating a sonic boom of blood magic.
+- Siphons massive amounts of health from all enemies, transferring it globally to all his allies before reverting back to his aristocratic form.

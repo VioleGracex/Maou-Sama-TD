@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Fang_Wolf_Pup_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Fang sits on his hind legs.
+- His ears are perked up and his tail wags slightly.
+- Lets out a low, playful but menacing growl.
+
+[ Attack Animation ]
+Name: Fang_Wolf_Pup_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Pounces forward with unexpected speed.
+- Bites the enemy's ankle and scratches with his tiny claws.
+- Hops backward playfully to avoid retaliation.
+
+[ Ultimate Animation ]
+Name: Fang_Wolf_Pup_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Howls loudly toward the moon.
+- Summons a momentary spectral wolf pack.
+- The pack charges through the enemy lines, dealing heavy damage while Fang cheers them on.

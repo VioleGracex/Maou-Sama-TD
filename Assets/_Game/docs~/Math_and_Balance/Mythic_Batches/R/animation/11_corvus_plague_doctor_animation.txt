@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Corvus_Plague_Doctor_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Corvus stands hunched, wearing his iconic beaked mask.
+- A smoking plague censer swings gently from his hand.
+- He sharpens a massive, menacing syringe against his boot.
+
+[ Attack Animation ]
+Name: Corvus_Plague_Doctor_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dashes forward in an erratic, jerky movement.
+- Jabs the enemy with his oversized syringe, injecting a glowing green toxin.
+- Steps back, throwing a small vial of smoke to obscure his retreat.
+
+[ Ultimate Animation ]
+Name: Corvus_Plague_Doctor_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Corvus swings his censer violently in a circle above his head.
+- Unleashes a massive, creeping cloud of toxic miasma.
+- The miasma slowly rots enemy armor and deals stacking poison damage to all within it.

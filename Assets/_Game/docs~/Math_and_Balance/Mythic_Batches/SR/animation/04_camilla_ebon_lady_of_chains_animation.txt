@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Camilla_Ebon_Lady_of_Chains_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Camilla stands perfectly still, wrapped in heavy, dark iron chains.
+- The chains move slightly on their own, as if alive.
+- She glares coldly from beneath a dark iron visor.
+
+[ Attack Animation ]
+Name: Camilla_Ebon_Lady_of_Chains_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws her arm forward, commanding a thick chain to strike like a snake.
+- The heavy chain bludgeons the target violently.
+- It slithers back rapidly to coil around her arm.
+
+[ Ultimate Animation ]
+Name: Camilla_Ebon_Lady_of_Chains_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Camilla raises both arms, summoning an iron maiden made of pure dark magic.
+- Chains shoot out to drag a high-priority enemy into the maiden.
+- The doors slam shut, dealing massive execution damage, before the maiden sinks back into the shadows.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Lucien_Phantom_Operative_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lucien crouches in the shadows, his form wavering between reality and the phantom realm.
+- Two spectral daggers glow softly in his hands.
+- He is completely silent, making no ambient noise.
+
+[ Attack Animation ]
+Name: Lucien_Phantom_Operative_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Teleports behind the target instantly.
+- Performs a scissor-like slice to the enemy's neck with both daggers.
+- Phantoms out of existence before the enemy can turn around.
+
+[ Ultimate Animation ]
+Name: Lucien_Phantom_Operative_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lucien drops a phantom smoke bomb that covers the entire battlefield.
+- He strikes every enemy from the shadows simultaneously using afterimages.
+- When the smoke clears, all enemies suffer massive bleed damage while Lucien cleans his blades.

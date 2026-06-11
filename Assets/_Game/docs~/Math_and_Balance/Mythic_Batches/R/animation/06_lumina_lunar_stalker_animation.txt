@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Lumina_Lunar_Stalker_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lumina stands gracefully, twirling two glowing crescent moon blades.
+- A faint silver aura outlines her silhouette.
+- She moves with a slow, dancer-like rhythm.
+
+[ Attack Animation ]
+Name: Lumina_Lunar_Stalker_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dashes forward like a beam of moonlight.
+- Slashes fluidly with both crescent blades in an 'X' pattern.
+- Glides backward smoothly, leaving a faint afterimage.
+
+[ Ultimate Animation ]
+Name: Lumina_Lunar_Stalker_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lumina leaps into the air, illuminated by a spotlight of lunar energy.
+- Throws her blades, which multiply into dozens of glowing crescents.
+- The crescents rain down like shooting stars, slicing through the entire enemy line.

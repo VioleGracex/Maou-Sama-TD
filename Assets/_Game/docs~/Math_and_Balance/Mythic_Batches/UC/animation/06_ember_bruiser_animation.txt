@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Ember_Bruiser_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Ember Bruiser cracks their knuckles, sparks flying from the friction.
+- Their arms are engulfed in slow-burning magical flames.
+- They bounce lightly on their toes, eager for a fight.
+
+[ Attack Animation ]
+Name: Ember_Bruiser_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dashes forward and throws a heavy, flaming right hook.
+- The punch leaves a trail of fire in the air.
+- They exhale a small puff of smoke after the strike.
+
+[ Ultimate Animation ]
+Name: Ember_Bruiser_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Bruiser's flames erupt intensely, engulfing their whole upper body.
+- They leap into the air and deliver a devastating flaming dive-bomb punch to the ground.
+- The impact creates a massive fiery crater that burns enemies over time.

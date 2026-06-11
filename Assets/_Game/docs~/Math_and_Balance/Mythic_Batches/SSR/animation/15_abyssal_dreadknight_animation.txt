@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Abyssal_Dreadknight_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Abyssal Dreadknight stands menacingly, holding a massive, rusted anchor as a weapon.
+- Barnacles and dark sea-weed cling to its heavy, water-logged armor.
+- It breathes heavily, sounding like crashing waves in a deep cavern.
+
+[ Attack Animation ]
+Name: Abyssal_Dreadknight_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Swings the heavy anchor in a brutal, sweeping arc.
+- The impact splashes dark, crushing abyssal water over the target.
+- Drags the heavy anchor back to a ready position.
+
+[ Ultimate Animation ]
+Name: Abyssal_Dreadknight_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws the massive anchor high into the air.
+- It crashes down in the center of the enemy line, creating a localized whirlpool.
+- The whirlpool aggressively pulls all enemies to the center, crushing them under immense deep-sea pressure.

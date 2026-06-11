@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Lila_Fledgling_Succubus_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lila hovers slightly above the ground.
+- Her bat-like wings flap gently.
+- She playfully twirls a small, magical whip of dark energy in her hands.
+
+[ Attack Animation ]
+Name: Lila_Fledgling_Succubus_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Flies forward a short distance.
+- Cracks her dark energy whip, striking the enemy with a sharp snap.
+- Gracefully retreats back to her original position.
+
+[ Ultimate Animation ]
+Name: Lila_Fledgling_Succubus_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lila blows a magical kiss that manifests as a giant, dark-pink heart.
+- The heart travels toward the enemy.
+- It explodes into a burst of charming, chaotic energy that affects multiple foes.

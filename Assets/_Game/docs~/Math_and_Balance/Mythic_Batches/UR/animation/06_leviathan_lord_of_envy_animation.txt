@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Leviathan_Lord_Of_Envy_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Leviathan, a towering serpent-like demon, slithers restlessly in a pool of dark water.
+- His eyes glow with a sickly green, covetous light.
+- He constantly shifts his shape slightly, mimicking features of his allies.
+
+[ Attack Animation ]
+Name: Leviathan_Lord_Of_Envy_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lunges forward like a striking cobra.
+- Bites the target, injecting a venom that explicitly drains the enemy's highest stat.
+- Retreats back into his watery coil, glowing brighter with the stolen energy.
+
+[ Ultimate Animation ]
+Name: Leviathan_Lord_Of_Envy_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Leviathan dives into the ground, turning the entire battlefield into a dark, swirling ocean of envy.
+- He emerges as massive, multi-headed sea serpent and devours the enemy's buffs entirely.
+- He then unleashes a devastating tidal wave that deals massive damage, scaling based on the amount of power he just stole.

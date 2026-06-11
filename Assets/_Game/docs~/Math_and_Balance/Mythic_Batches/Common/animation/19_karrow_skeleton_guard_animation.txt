@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Karrow_Skeleton_Guard_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Karrow stands rigid, holding a large tower shield defensively.
+- His bony hand grips a short, serrated sword behind the shield.
+- He occasionally taps the sword against the metal shield.
+
+[ Attack Animation ]
+Name: Karrow_Skeleton_Guard_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Bashes the enemy violently with his heavy shield.
+- Follows up quickly with a sharp thrust of his serrated sword.
+- Returns immediately to his highly defensive posture.
+
+[ Ultimate Animation ]
+Name: Karrow_Skeleton_Guard_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Plants his tower shield firmly into the earth.
+- A glowing spectral wall extends from the shield.
+- It provides a massive defensive barrier that blocks all incoming projectiles for a short time.

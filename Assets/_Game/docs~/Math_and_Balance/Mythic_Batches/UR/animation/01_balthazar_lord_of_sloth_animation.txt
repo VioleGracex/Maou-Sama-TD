@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Balthazar_Lord_Of_Sloth_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Balthazar half-sleeps on a massive, floating, luxurious cushion.
+- He barely keeps his eyes open, yawning widely.
+- A massive, ghostly pillow floats nearby, acting as his weapon and shield.
+
+[ Attack Animation ]
+Name: Balthazar_Lord_Of_Sloth_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Flicks a lazy finger toward the enemy.
+- The ghostly pillow flies forward sluggishly but hits with the force of a truck.
+- Balthazar immediately goes back to resting his chin on his hand.
+
+[ Ultimate Animation ]
+Name: Balthazar_Lord_Of_Sloth_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Balthazar lets out a massive, contagious yawn that echoes across the battlefield.
+- Time itself seems to slow down.
+- All enemies are forced into a deep magical slumber, taking immense 'waking' damage when they finally rouse.

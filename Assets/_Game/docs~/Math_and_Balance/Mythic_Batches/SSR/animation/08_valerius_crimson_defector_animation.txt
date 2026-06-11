@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Valerius_Crimson_Defector_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Valerius stands in heavily dented, blood-red platemail.
+- Holds a massive, double-edged greatsword with one hand.
+- A dark, blood-magic shield orbits his free arm.
+
+[ Attack Animation ]
+Name: Valerius_Crimson_Defector_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Bashes the enemy heavily with his blood-magic shield to stun them.
+- Follows through with a brutal, two-handed vertical strike from his greatsword.
+- Recovers his defensive stance seamlessly.
+
+[ Ultimate Animation ]
+Name: Valerius_Crimson_Defector_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Valerius plunges his greatsword into his own chest, absorbing the blood magic.
+- Explodes outward in a massive shockwave of pure crimson energy.
+- The explosion heavily damages all enemies while granting his entire team an impenetrable blood-shield.

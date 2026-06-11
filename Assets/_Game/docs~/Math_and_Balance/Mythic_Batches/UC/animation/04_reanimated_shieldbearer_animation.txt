@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Reanimated_Shieldbearer_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Reanimated Shieldbearer stands stoically, bones creaking.
+- Rests a massive, scarred iron tower shield on the ground.
+- Emits a faint blue aura from beneath its rusted helmet.
+
+[ Attack Animation ]
+Name: Reanimated_Shieldbearer_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Takes a heavy step forward.
+- Swings its massive iron shield like a blunt weapon to bash the enemy.
+- The impact produces a loud, resonant clang.
+
+[ Ultimate Animation ]
+Name: Reanimated_Shieldbearer_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Slams the heavy tower shield deep into the earth.
+- Forms an impassable, glowing barrier of bone and spectral energy.
+- Stands firmly behind the barrier, absorbing all incoming attacks for its allies.

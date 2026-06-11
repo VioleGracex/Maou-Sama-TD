@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Jax_Cursed_Bandit_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Jax tosses a dagger into the air and catches it repeatedly.
+- He sports a wicked grin.
+- Keeps a low, evasive profile, ready to dodge at any moment.
+
+[ Attack Animation ]
+Name: Jax_Cursed_Bandit_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dashes forward in a blur.
+- Delivers a swift, cross-slash with his dual daggers.
+- Moves nimbly backward to avoid any immediate retaliation.
+
+[ Ultimate Animation ]
+Name: Jax_Cursed_Bandit_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws a flurry of cursed, glowing daggers in a wide arc.
+- The daggers pin multiple enemies to the ground.
+- Inflicts a dark poison effect that continuously drains health.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Lyra_Blood_Moon_Sentinel_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lyra stands vigilant, holding a heavy halberd bathed in red moonlight.
+- Her crimson armor glints sharply.
+- A faint, blood-red moon emblem pulses behind her head.
+
+[ Attack Animation ]
+Name: Lyra_Blood_Moon_Sentinel_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Takes a swift, powerful step forward.
+- Thrusts her halberd violently into the enemy.
+- Pulls back smoothly, recovering her defensive posture.
+
+[ Ultimate Animation ]
+Name: Lyra_Blood_Moon_Sentinel_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lyra raises her halberd high, calling down the power of the blood moon.
+- Bathes the entire battlefield in a blinding red light.
+- Unleashes a massive, spinning slash that leaves deep, glowing red lacerations on all enemies, causing intense bleed over time.

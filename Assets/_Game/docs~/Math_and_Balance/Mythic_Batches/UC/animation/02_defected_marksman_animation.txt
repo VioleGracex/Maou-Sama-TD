@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Defected_Marksman_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Defected Marksman kneels with a heavy repeating crossbow.
+- Scans the horizon methodically.
+- Adjusts the scope on the weapon, making metallic clicking sounds.
+
+[ Attack Animation ]
+Name: Defected_Marksman_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Raises the repeating crossbow and tracks the target.
+- Fires a high-velocity bolt with a loud snap.
+- Quickly cranks the lever to load the next bolt.
+
+[ Ultimate Animation ]
+Name: Defected_Marksman_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Plants a bipod into the ground for stability.
+- Unleashes a continuous, rapid-fire barrage of bolts.
+- The sheer volume of fire suppresses the enemy, creating dust and sparks on impact.

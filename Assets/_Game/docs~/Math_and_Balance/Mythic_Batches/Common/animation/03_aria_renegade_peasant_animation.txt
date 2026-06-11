@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Aria_Renegade_Peasant_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Aria stands ready, breathing rhythmically.
+- Her mechanical pitchfork is held diagonally in front of her in a defensive guard.
+- Her rose pink hair sways slightly in the wind.
+
+[ Attack Animation ]
+Name: Aria_Renegade_Peasant_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Aria steps forward aggressively from her idle stance.
+- She performs a quick, sharp stab with her pitchfork.
+- Thrusts the polished silver tines toward the enemy before returning to her guard.
+
+[ Ultimate Animation ]
+Name: Aria_Renegade_Peasant_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Aria leaps into the air and throws her pitchfork with incredible force.
+- The weapon creates a spinning fury of silver and brass as it flies.
+- It generates a massive energy aura upon impact before magically returning to her hand.

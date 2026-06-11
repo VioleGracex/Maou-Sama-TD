@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Malphas_Abyssal_Tactician_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Malphas floats a few inches off the ground, arms crossed.
+- A massive, glowing abyssal tome hovers open in front of him.
+- He observes the battlefield with a look of supreme calculation.
+
+[ Attack Animation ]
+Name: Malphas_Abyssal_Tactician_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Points a commanding finger forward.
+- A shadowy tentacle erupts from the ground beneath the enemy to strike them.
+- Returns to his observant pose, nodding slightly.
+
+[ Ultimate Animation ]
+Name: Malphas_Abyssal_Tactician_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Malphas snaps the abyssal tome shut with a loud crack.
+- Rips open a massive tear in the fabric of space.
+- A swarm of minor abyssal fiends pours out, overwhelming the enemies before the tear seals shut.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Val_Lesser_Vampire_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Val stands elegantly, wiping a drop of blood from her lip.
+- Her sharp claws are extended and glint in the light.
+- Her crimson eyes glow as she surveys the battlefield.
+
+[ Attack Animation ]
+Name: Val_Lesser_Vampire_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dashes forward at unnatural speeds.
+- Performs a rapid, cross-slashing motion with her sharp claws.
+- Heals slightly from the blood drawn from the enemy.
+
+[ Ultimate Animation ]
+Name: Val_Lesser_Vampire_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Val transforms into a swarm of vicious bats.
+- The swarm envelopes the target, draining their life force rapidly.
+- She reformats back into her humanoid shape, fully rejuvenated.

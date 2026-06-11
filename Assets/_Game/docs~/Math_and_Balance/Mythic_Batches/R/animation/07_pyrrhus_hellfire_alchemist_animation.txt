@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Pyrrhus_Hellfire_Alchemist_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Pyrrhus nervously mixes glowing orange and red liquids in two vials.
+- His goggles are pushed up on his forehead.
+- Small puffs of smoke rise from his charred coat.
+
+[ Attack Animation ]
+Name: Pyrrhus_Hellfire_Alchemist_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Chucks a small, volatile vial at the enemy.
+- The vial shatters, causing a sharp burst of hellfire.
+- He jots something down quickly on a notepad.
+
+[ Ultimate Animation ]
+Name: Pyrrhus_Hellfire_Alchemist_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Pyrrhus mixes several vials together in a panic into a massive jug.
+- Hurls the giant jug toward the enemy center.
+- It detonates in a colossal inferno, engulfing the area in lingering hellfire that melts armor.

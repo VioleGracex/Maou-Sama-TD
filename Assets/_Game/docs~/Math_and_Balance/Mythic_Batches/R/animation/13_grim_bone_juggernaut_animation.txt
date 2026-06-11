@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Grim_Bone_Juggernaut_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The massive Grim Bone Juggernaut rests a colossal bone club on its shoulder.
+- Heavy spectral breath exhales from its giant ribcage.
+- Its heavy, armored boots sink slightly into the earth.
+
+[ Attack Animation ]
+Name: Grim_Bone_Juggernaut_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Takes a slow, thundering step forward.
+- Swings the massive bone club in a wide, sweeping horizontal arc.
+- The sheer weight of the attack knocks back smaller enemies.
+
+[ Ultimate Animation ]
+Name: Grim_Bone_Juggernaut_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Raises the colossal bone club high above its skull with both hands.
+- Slams it into the earth with apocalyptic force.
+- Creates a massive shockwave that shatters the ground, stunning and heavily damaging all nearby foes.

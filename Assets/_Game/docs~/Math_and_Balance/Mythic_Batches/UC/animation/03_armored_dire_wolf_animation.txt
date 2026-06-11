@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Armored_Dire_Wolf_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Armored Dire Wolf stands proudly, its steel plating reflecting light.
+- Pants heavily, letting out a deep, rumbling growl.
+- Scrapes its heavy, clawed paws against the dirt.
+
+[ Attack Animation ]
+Name: Armored_Dire_Wolf_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Charges forward with heavy, thudding steps.
+- Bashes the enemy with its armored shoulder and bites viciously.
+- Leaps backward into a defensive stance.
+
+[ Ultimate Animation ]
+Name: Armored_Dire_Wolf_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Howls fiercely, causing its armor to glow with magical reinforcement.
+- Charges in a straight line, trampling and knocking up all enemies in its path.
+- The heavy armor causes the ground to shake upon impact.

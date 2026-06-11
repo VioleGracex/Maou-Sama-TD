@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Drusilla_Seductive_Spy_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Drusilla stands alluringly, playing with a poisoned throwing knife.
+- She blows a kiss to the air.
+- Her long, flowing dress conceals dozens of hidden weapons.
+
+[ Attack Animation ]
+Name: Drusilla_Seductive_Spy_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Spins gracefully, as if dancing.
+- Unleashes three poisoned throwing knives simultaneously.
+- Strikes a pose, winking as the knives hit their marks.
+
+[ Ultimate Animation ]
+Name: Drusilla_Seductive_Spy_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Drusilla drops a smoke bomb filled with hallucinogenic pink gas.
+- As the enemies cough and stagger, she dances through them.
+- Slices every enemy with hidden, poisoned blades, leaving them charmed and dying from heavy toxins.

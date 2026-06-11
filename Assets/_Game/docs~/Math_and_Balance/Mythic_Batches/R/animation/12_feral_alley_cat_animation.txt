@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Feral_Alley_Cat_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- The Feral Alley Cat arches its back, fur standing on end.
+- Hisses menacingly at the enemy.
+- Swipes a paw lazily at the ground.
+
+[ Attack Animation ]
+Name: Feral_Alley_Cat_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Leaps with feral agility.
+- Unleashes a blindingly fast flurry of scratches to the target's face.
+- Kicks off the enemy's chest to land safely out of reach.
+
+[ Ultimate Animation ]
+Name: Feral_Alley_Cat_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Let out an earsplitting caterwaul that summons a chaotic clowder of spectral street cats.
+- The swarm stampedes over the enemies, causing widespread confusion and minor bleeding damage.
+- The feral cat licks its paw smugly as the swarm dissipates.

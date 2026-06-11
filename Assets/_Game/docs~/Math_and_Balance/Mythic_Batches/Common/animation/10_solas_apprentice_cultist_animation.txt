@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Solas_Apprentice_Cultist_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Solas flips through a small, worn spellbook.
+- His finger traces glowing runes on the pages.
+- A weak but chaotic magical aura surrounds him.
+
+[ Attack Animation ]
+Name: Solas_Apprentice_Cultist_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Chants a quick spell and flicks his wrist.
+- Launches a chaotic, unstable orb of magical fire.
+- The orb streaks toward the enemy before exploding in a small pop.
+
+[ Ultimate Animation ]
+Name: Solas_Apprentice_Cultist_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Opens his spellbook completely, eyes glowing.
+- Unleashes a chaotic swarm of arcane energy.
+- The energy zigzags randomly across the field, hitting multiple targets.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Grog_Demonized_Thug_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Grog flexes his unnaturally huge, demonized muscles.
+- He slams his massive fists together menacingly.
+- Lets out a low, rumbling chuckle.
+
+[ Attack Animation ]
+Name: Grog_Demonized_Thug_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Steps heavily into the strike.
+- Throws a brutal, wide haymaker punch.
+- The sheer force of the punch creates a small shockwave in the air.
+
+[ Ultimate Animation ]
+Name: Grog_Demonized_Thug_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Grog roars, his muscles expanding further with demonic energy.
+- Leaps into the air and comes down with a double-fisted ground slam.
+- The impact shatters the earth, stunning and damaging all nearby enemies.

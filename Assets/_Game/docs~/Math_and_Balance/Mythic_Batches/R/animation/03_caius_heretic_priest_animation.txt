@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Caius_Heretic_Priest_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Caius stands tall, holding a twisted staff adorned with corrupted holy symbols.
+- A faint aura of both golden light and dark shadow swirls around him.
+- He reads quietly from a blasphemous scripture.
+
+[ Attack Animation ]
+Name: Caius_Heretic_Priest_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Points his staff at the enemy.
+- Fires a combined bolt of healing light and destructive shadow.
+- Returns to his reading posture immediately.
+
+[ Ultimate Animation ]
+Name: Caius_Heretic_Priest_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Caius slams his staff into the ground, causing the sky to darken.
+- Summons a massive circle of heretical magic beneath the battlefield.
+- The magic simultaneously heals all allies and severely burns all enemies with twilight fire.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Alaric_Dusk_Knight_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Alaric stands proudly in dark, heavy plate armor.
+- His longsword rests casually, point down, next to a heavily scarred shield.
+- A dark, dusky aura radiates from the gaps in his armor.
+
+[ Attack Animation ]
+Name: Alaric_Dusk_Knight_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Bashes forward aggressively with his scarred shield.
+- Follows up with a heavy, precise thrust of his longsword.
+- Recovers back into an impenetrable defensive stance.
+
+[ Ultimate Animation ]
+Name: Alaric_Dusk_Knight_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Alaric channels dusk energy into his sword, extending its blade spectrally.
+- Performs a massive, spinning cross-slash that sends a wave of dark energy forward.
+- The wave cleaves through multiple enemies, applying a severe armor debuff.

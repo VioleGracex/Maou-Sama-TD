@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Vaelin_The_Phantom_Stalker_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vaelin crouches on an invisible spiritual precipice, holding a glowing phantom longbow.
+- She fades completely into the background, reappearing momentarily only when drawing breath.
+- A ghostly breeze rustles her dark cloak.
+
+[ Attack Animation ]
+Name: Vaelin_The_Phantom_Stalker_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Materializes for a split second to fire a high-velocity phantom arrow.
+- The arrow pierces the target silently, bypassing physical armor.
+- She vanishes before the arrow even hits.
+
+[ Ultimate Animation ]
+Name: Vaelin_The_Phantom_Stalker_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vaelin fully materializes in the sky, her bow glowing blindingly bright.
+- She fires a single, massive arrow that splinters into a thousand spectral tracking projectiles.
+- The projectiles seek out every enemy on the field, pinning their shadows to the ground and stunning them.

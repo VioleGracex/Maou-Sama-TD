@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Vesper_Void_Caller_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vesper hovers inside a small distortion of gravity, holding a dark orb.
+- His eyes are pure black, staring into nothingness.
+- Tiny rocks and debris orbit him slowly.
+
+[ Attack Animation ]
+Name: Vesper_Void_Caller_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Pushes his hand forward, collapsing gravity around the target.
+- The enemy is momentarily crushed by unseen forces.
+- He pulls his hand back, and gravity returns to normal.
+
+[ Ultimate Animation ]
+Name: Vesper_Void_Caller_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Vesper raises the dark orb, expanding it into a miniature black hole.
+- The black hole pulls all enemies violently toward its center.
+- It collapses in a massive implosion, dealing immense void damage and stunning survivors.

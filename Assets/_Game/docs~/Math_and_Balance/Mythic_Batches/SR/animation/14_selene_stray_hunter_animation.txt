@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Selene_Stray_Hunter_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Selene crouches low, examining tracks on the ground.
+- A large, mechanical compound bow is strapped to her back.
+- She nervously checks her quiver full of glowing arrows.
+
+[ Attack Animation ]
+Name: Selene_Stray_Hunter_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Flips backwards acrobatically to gain distance.
+- Draws her mechanical bow in mid-air and fires a glowing arrow.
+- Lands gracefully on her feet, ready to move again.
+
+[ Ultimate Animation ]
+Name: Selene_Stray_Hunter_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Selene whistles sharply, tossing a handful of glowing trackers into the air.
+- The trackers stick to every enemy on the field.
+- She unleashes a barrage of homing arrows that aggressively curve and strike every single marked target.

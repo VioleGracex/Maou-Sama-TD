@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Azazel_Ruined_Choirboy_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Azazel hovers slightly, his white robes stained with dark soot.
+- He hums a haunting, discordant melody.
+- Small black feathers fall continuously from his corrupted wings.
+
+[ Attack Animation ]
+Name: Azazel_Ruined_Choirboy_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Sings a high-pitched, corrupted note.
+- Fires a sharp, sonic projectile shaped like a dark musical note.
+- The note explodes with a dissonant screech upon impact.
+
+[ Ultimate Animation ]
+Name: Azazel_Ruined_Choirboy_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Azazel begins a terrifying, operatic aria.
+- Summons a massive choir of spectral, weeping figures behind him.
+- Their collective scream releases a devastating sonic wave that shatters enemy armor and silences them.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Lucifer_Lord_Of_Pride_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lucifer stands tall and arrogant, possessing six glorious, blindingly bright wings.
+- He wields a perfectly pristine, golden greatsword that touches the ground.
+- He looks down upon the enemies with utter, absolute contempt.
+
+[ Attack Animation ]
+Name: Lucifer_Lord_Of_Pride_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Swings his golden greatsword with only one hand, completely effortlessly.
+- Unleashes a wide arc of holy fire that scorches the earth.
+- He doesn't even bother looking at the target after the strike.
+
+[ Ultimate Animation ]
+Name: Lucifer_Lord_Of_Pride_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Lucifer ascends to the heavens, his six wings glowing like a second sun.
+- He pronounces a single word of absolute divine judgment.
+- A colossal pillar of pure, annihilating light strikes the battlefield, obliterating enemies and rendering allies completely immune to damage through sheer awe.

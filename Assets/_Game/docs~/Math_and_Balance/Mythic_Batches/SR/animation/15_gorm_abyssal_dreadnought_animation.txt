@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Gorm_Abyssal_Dreadnought_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Gorm stands like an impenetrable mountain of abyssal armor.
+- Thick, dark seawater drips constantly from his plating.
+- He breathes heavily, a low rumbling sound echoing from within.
+
+[ Attack Animation ]
+Name: Gorm_Abyssal_Dreadnought_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Throws a slow, impossibly heavy punch.
+- The sheer pressure of the punch creates a shockwave in the air.
+- He pulls his massive arm back slowly.
+
+[ Ultimate Animation ]
+Name: Gorm_Abyssal_Dreadnought_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Gorm slams his fists together, causing his armor to glow with deep ocean energy.
+- Stomps the ground violently, summoning a massive geyser of abyssal water.
+- The geyser erupts beneath the enemies, launching them into the air and crushing them under intense pressure.

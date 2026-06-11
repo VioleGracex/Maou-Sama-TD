@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Verm_Plague_Rat_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Verm scurries slightly in place.
+- He grooms his whiskers while dark, noxious fumes emanate from his fur.
+- His red eyes gleam malevolently.
+
+[ Attack Animation ]
+Name: Verm_Plague_Rat_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Leaps onto the enemy's leg.
+- Delivers a venomous bite with his sharp incisors.
+- Scurries away quickly, leaving a lingering poison effect on the target.
+
+[ Ultimate Animation ]
+Name: Verm_Plague_Rat_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Verm squeaks loudly, unleashing a cloud of pure plague gas.
+- The gas quickly expands to cover a wide area.
+- Enemies caught in the cloud suffer massive continuous damage and are weakened.

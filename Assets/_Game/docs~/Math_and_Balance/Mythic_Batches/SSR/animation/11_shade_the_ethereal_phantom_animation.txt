@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Shade_The_Ethereal_Phantom_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Shade is barely visible, a shimmering distortion in the air.
+- Wields two completely invisible, spectral daggers.
+- Leaves faint, shadowy footprints that vanish instantly.
+
+[ Attack Animation ]
+Name: Shade_The_Ethereal_Phantom_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dashes through the target in an instant.
+- Delivers dozens of micro-slashes with the invisible daggers.
+- Stops behind the target, watching them stagger before fading back to the front.
+
+[ Ultimate Animation ]
+Name: Shade_The_Ethereal_Phantom_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Shade shatters reality around himself like broken glass.
+- Dozens of mirrored shards float in the air, each projecting a copy of Shade.
+- All copies attack simultaneously, obliterating the enemies in a storm of spectral blades before reality stitches itself back together.

@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Noire_Outcast_Archer_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Noire stands perfectly still with an arrow nocked.
+- Her bow is held parallel to the ground.
+- Her eyes are narrowed as she expertly tracks enemy movements.
+
+[ Attack Animation ]
+Name: Noire_Outcast_Archer_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Smoothly draws her bowstring back to her cheek.
+- Releases the string with a sharp twang.
+- Sends a precise, high-velocity arrow flying toward the target's chest.
+
+[ Ultimate Animation ]
+Name: Noire_Outcast_Archer_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Noire fires a single, glowing arrow high into the sky.
+- The arrow bursts at the apex of its flight.
+- A rain of smaller, piercing arrows showers down over a wide area.

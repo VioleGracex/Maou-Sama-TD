@@ -1,0 +1,23 @@
+[ Idle Animation ]
+Name: Celia_Sanctus_Traitor_Idle
+Facing: Left side looking slightly (default side profile)
+Action:
+- Celia holds a divine longsword that is slowly being corrupted by dark matter.
+- Her angelic wings are half-white, half-black.
+- She stares coldly at the enemies, completely devoid of empathy.
+
+[ Attack Animation ]
+Name: Celia_Sanctus_Traitor_Attack
+Facing: Left side looking slightly (default side profile)
+Action:
+- Dashes forward, leaving a trail of both holy light and dark smoke.
+- Slashes diagonally with her longsword, unleashing a wave of mixed energy.
+- Returns to her cold, stoic stance.
+
+[ Ultimate Animation ]
+Name: Celia_Sanctus_Traitor_Ultimate
+Facing: Left side looking slightly (default side profile)
+Action:
+- Celia ascends into the air, her wings fully extending.
+- Summons dozens of spectral swords of pure holy light.
+- As they rain down, they turn pitch black and explode on impact, dealing massive hybrid holy/dark damage to all enemies.

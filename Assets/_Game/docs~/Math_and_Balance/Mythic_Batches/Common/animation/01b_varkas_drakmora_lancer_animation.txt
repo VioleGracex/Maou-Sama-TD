@@ -2,22 +2,22 @@
 Name: Varkas_Drakmora_Lancer_Idle
 Facing: Left side looking slightly (default side profile)
 Action:
-- Varkas holds his heavy lance steadily with both hands.
-- He crouches slightly in anticipation.
-- His armor glints in the light as he breathes steadily.
+- Varkas stands tall, his imposing polearm held diagonally across his body.
+- He shifts his weight slightly, armor plates grinding.
+- His gaze tracks distant targets, looking for an opening to charge.
 
 [ Attack Animation ]
 Name: Varkas_Drakmora_Lancer_Attack
 Facing: Left side looking slightly (default side profile)
 Action:
-- Lunges forward with surprising speed.
-- Thrusts his lance forward in a piercing strike that extends his full reach.
-- Pulls back rapidly to prepare for the next strike.
+- Lunges forward with surprising speed for heavily armored infantry.
+- Delivers a precise, piercing thrust with his dark iron lance.
+- Swiftly pulls the polearm back, maintaining a safe distance from the enemy.
 
 [ Ultimate Animation ]
 Name: Varkas_Drakmora_Lancer_Ultimate
 Facing: Left side looking slightly (default side profile)
 Action:
-- Varkas charges forward in a relentless dash.
-- Holds his lance outward like a battering ram.
-- Pierces through multiple enemies in his path with unstoppable momentum.
+- Lowers his lance completely parallel to the ground and leans into a full sprint.
+- Surges forward in a furious charge, impaling multiple enemies in a straight line.
+- Halts abruptly, creating a burst of physical force that slightly pushes surviving targets back.

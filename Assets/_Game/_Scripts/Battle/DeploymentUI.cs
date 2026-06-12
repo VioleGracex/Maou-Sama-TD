@@ -466,18 +466,18 @@ namespace MaouSamaTD.UI
             if (_panelRect == null) return;
             
             _isVisible = !_isVisible;
-            // Assuming docked on the left, so hide offset should move it left (negative X)
-            float targetX = _isVisible ? _visiblePos.x : _visiblePos.x - _hideOffset;
+            // Docked at the bottom, so hide offset should move it down (negative Y)
+            float targetY = _isVisible ? _visiblePos.y : _visiblePos.y - _hideOffset;
             
-            _panelRect.DOAnchorPosX(targetX, _entranceDuration).SetEase(Ease.OutQuint);
+            _panelRect.DOAnchorPosY(targetY, _entranceDuration).SetEase(Ease.OutQuint);
             
-            // Optional: Flip an arrow icon on the button (Horizontal flip)
+            // Optional: Flip an arrow icon on the button (Vertical flip)
             if (_toggleButton != null)
             {
                 var rect = _toggleButton.GetComponent<RectTransform>();
                 if (rect != null)
                 {
-                    rect.DOScaleX(_isVisible ? 1f : -1f, _entranceDuration);
+                    rect.DOScaleY(_isVisible ? 1f : -1f, _entranceDuration);
                 }
             }
         }

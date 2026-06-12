@@ -885,7 +885,7 @@ namespace MaouSamaTD.UI.Cohorts
             if (_playerData == null) return;
 
             // 1. Refresh active slots
-            List<string> activeRiteIDs = new List<string>(new string[3] { "", "", "" });
+            List<string> activeRiteIDs = new List<string>(new string[10] { "", "", "", "", "", "", "", "", "", "" });
             
             if (_isRitesLocked && _currentLevel != null)
             {
@@ -895,7 +895,7 @@ namespace MaouSamaTD.UI.Cohorts
 
                 if (defaults != null)
                 {
-                    for (int i = 0; i < Mathf.Min(3, defaults.Count); i++)
+                    for (int i = 0; i < Mathf.Min(10, defaults.Count); i++)
                     {
                         if (defaults[i] != null) activeRiteIDs[i] = defaults[i].name;
                     }
@@ -906,15 +906,15 @@ namespace MaouSamaTD.UI.Cohorts
                 var cohort = _playerData.Cohorts[_viewingCohortIndex];
                 if (cohort.SelectedRiteIDs == null)
                 {
-                    cohort.SelectedRiteIDs = new List<string>(new string[3] { "", "", "" });
+                    cohort.SelectedRiteIDs = new List<string>(new string[10] { "", "", "", "", "", "", "", "", "", "" });
                 }
-                while (cohort.SelectedRiteIDs.Count < 3) cohort.SelectedRiteIDs.Add("");
+                while (cohort.SelectedRiteIDs.Count < 10) cohort.SelectedRiteIDs.Add("");
                 activeRiteIDs = cohort.SelectedRiteIDs;
             }
 
             for (int i = 0; i < _riteSlots.Count; i++)
             {
-                if (i >= 3) break;
+                if (i >= 10) break;
                 var slot = _riteSlots[i];
                 if (slot == null) continue;
 
@@ -1042,9 +1042,9 @@ namespace MaouSamaTD.UI.Cohorts
             var cohort = _playerData.Cohorts[_viewingCohortIndex];
             if (cohort.SelectedRiteIDs == null)
             {
-                cohort.SelectedRiteIDs = new List<string>(new string[3] { "", "", "" });
+                cohort.SelectedRiteIDs = new List<string>(new string[10] { "", "", "", "", "", "", "", "", "", "" });
             }
-            while (cohort.SelectedRiteIDs.Count < 3) cohort.SelectedRiteIDs.Add("");
+            while (cohort.SelectedRiteIDs.Count < 10) cohort.SelectedRiteIDs.Add("");
 
             string riteID = riteData.name;
             int existingSlot = cohort.SelectedRiteIDs.IndexOf(riteID);

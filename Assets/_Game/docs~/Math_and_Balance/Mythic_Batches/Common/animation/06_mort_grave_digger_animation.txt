@@ -2,22 +2,22 @@
 Name: Mort_Grave_Digger_Idle
 Facing: Left side looking slightly (default side profile)
 Action:
-- Mort leans on his muddy shovel.
-- He is hunched over with a tired, slouching posture.
-- Occasionally wipes sweat and grime from his brow.
+- Mort leans heavily on his large demonic purple shovel.
+- His rotting, ashen flesh sags as he stands perfectly still.
+- He occasionally shakes off grave dirt that clings to his bone-carved armor.
 
 [ Attack Animation ]
 Name: Mort_Grave_Digger_Attack
 Facing: Left side looking slightly (default side profile)
 Action:
-- Swings his heavy shovel in a downward arc.
-- Attempts to bludgeon the enemy with the flat, muddy side of the blade.
-- Heaves the heavy tool back up slowly.
+- Heaves the heavy shovel backward.
+- Delivers a blunt, heavy swing at the enemy's knees.
+- Slowly recovers the heavy weapon, bracing it against the ground.
 
 [ Ultimate Animation ]
 Name: Mort_Grave_Digger_Ultimate
 Facing: Left side looking slightly (default side profile)
 Action:
-- Shovels a massive mound of cursed grave dirt directly into the air.
-- The dirt rains down on enemies in a large area.
-- Slows their movement and blinds them temporarily with dark magic.
+- Plunges the shovel deep into the earth.
+- Chants a brief, guttural incantation.
+- Rips the shovel upward, unearthing a wave of jagged, sharp bones that deals physical damage in a line.

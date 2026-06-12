@@ -2,22 +2,22 @@
 Name: Skeleton_Militia_Idle
 Facing: Left side looking slightly (default side profile)
 Action:
-- The skeleton militia stands in a jittery, unnatural posture.
-- Its rusted sword trembles slightly in its bony grip.
-- The empty eye sockets stare blankly ahead.
+- The skeleton stands hunched, its bare bones clicking together softly.
+- It holds a chipped, rusty sword loosely at its side.
+- The faint pinpricks of light in its eye sockets flicker erratically.
 
 [ Attack Animation ]
 Name: Skeleton_Militia_Attack
 Facing: Left side looking slightly (default side profile)
 Action:
-- Lunges forward clumsily.
-- Swings its rusted sword in a wild, downward chop.
-- Bone joints click and clatter during the movement.
+- Shambles forward clumsily.
+- Delivers a jagged, unrefined downward chop with the rusty sword.
+- Recovers slowly, swaying back into position.
 
 [ Ultimate Animation ]
 Name: Skeleton_Militia_Ultimate
 Facing: Left side looking slightly (default side profile)
 Action:
-- The skeleton momentarily falls apart into a pile of bones.
-- Rapidly reassembles while spinning.
-- Unleashes a whirlwind of bone fragments and sword slashes in all directions.
+- The skeleton flies into a mindless, rattling frenzy.
+- It swings its sword wildly in a flurry of reckless slashes.
+- Finishes with a spinning strike that hits all immediately surrounding enemies, chipping its own blade.

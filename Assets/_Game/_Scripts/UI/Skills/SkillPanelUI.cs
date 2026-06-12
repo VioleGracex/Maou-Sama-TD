@@ -142,7 +142,7 @@ namespace MaouSamaTD.UI.Skills
             if (middleArea == null) return;
 
             // 1. Get container references
-            Transform sbc = middleArea.Find("SkillButtons_Container");
+            Transform sbc = middleArea.Find("SkillButtons_ScrollView") ?? middleArea.Find("SkillButtons_Container");
             if (sbc != null) _buttonsContainerRect = sbc.GetComponent<RectTransform>();
 
             Transform sdc = middleArea.Find("SkillDescription_Container");
@@ -371,7 +371,15 @@ namespace MaouSamaTD.UI.Skills
             {
                 if (skill == null) continue;
                 
-                var btn = Instantiate(_buttonPrefab, _buttonContainer);
+                // Fallback: If _buttonContainer wasn't updated in the inspector, find it dynamically
+                Transform targetContainer = _buttonContainer;
+                if (targetContainer != null && targetContainer.name == "SkillButtons_ScrollView")
+                {
+                    Transform content = targetContainer.Find("Viewport/SkillButtons_Container");
+                    if (content != null) targetContainer = content;
+                }
+
+                var btn = Instantiate(_buttonPrefab, targetContainer);
                 btn.Initialize(skill, _skillManager, _interactionManager, _currencyManager, this);
                 
                 // Name the button based on skill asset name for Tutorial Targeting

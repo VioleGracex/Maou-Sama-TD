@@ -2,22 +2,22 @@
 Name: Skye_Lesser_Harpy_Idle
 Facing: Left side looking slightly (default side profile)
 Action:
-- Skye perches lightly on her talons.
-- Her wings are partially extended.
-- She stays balanced and ready to take flight at a moment's notice.
+- Skye perches low, stretching her feathered wings occasionally.
+- She tests the tension of her deadwood slingshot.
+- Her talon legs scratch restlessly at the ground.
 
 [ Attack Animation ]
 Name: Skye_Lesser_Harpy_Attack
 Facing: Left side looking slightly (default side profile)
 Action:
-- Takes to the air with a powerful flap of her wings.
-- Swoops down rapidly to slash the enemy with her sharp talons.
-- Returns to her perch with a swift upward glide.
+- Leaps slightly into the air to gain an angle.
+- Pulls back the slingshot and fires a small gemstone.
+- Lands nimbly back on her talons.
 
 [ Ultimate Animation ]
 Name: Skye_Lesser_Harpy_Ultimate
 Facing: Left side looking slightly (default side profile)
 Action:
-- Flaps her wings furiously in place.
-- Creates a violent, swirling gust of wind.
-- The wind is filled with razor-sharp feathers that tear into enemies in a wide area.
+- Flaps her wings furiously to ascend several feet into the air.
+- Unleashes a rapid barrage of three heavy gemstones from her slingshot.
+- The force of her wings kicks up a cloud of dust that slightly obscures allied units.

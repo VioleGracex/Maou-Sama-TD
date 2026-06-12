@@ -2,22 +2,22 @@
 Name: Vesta_Corrupt_Acolyte_Idle
 Facing: Left side looking slightly (default side profile)
 Action:
-- Vesta stands tall, shrouded in a dark aura.
-- Her hands glow with faint, dark purple magic.
-- She silently mouths a forbidden incantation.
+- Vesta holds his wooden wand upright, reading silently from an invisible text.
+- His solid gold eyes dart back and forth in thought.
+- A very faint, corrupted purple spark occasionally arcs across the tip of the wand.
 
 [ Attack Animation ]
 Name: Vesta_Corrupt_Acolyte_Attack
 Facing: Left side looking slightly (default side profile)
 Action:
-- Thrusts her hand forward.
-- Fires a small, concentrated bolt of dark energy.
-- The bolt crackles through the air to strike the target.
+- Swishes the wand in a quick, practiced motion.
+- Fires a small, unstable bolt of dark energy.
+- The energy fizzles upon hitting the target, dealing minor magic damage.
 
 [ Ultimate Animation ]
 Name: Vesta_Corrupt_Acolyte_Ultimate
 Facing: Left side looking slightly (default side profile)
 Action:
-- Raises both hands to the sky.
-- Summons a pool of corruption beneath the enemies.
-- The pool erupts into a massive, damaging pillar of dark fire.
+- Raises his wand with both hands, his demon horns glowing faintly.
+- Summons a concentrated pool of corrupted acid underneath the nearest enemy.
+- The acid pool lingers briefly, applying a minor defense debuff to enemies standing in it.

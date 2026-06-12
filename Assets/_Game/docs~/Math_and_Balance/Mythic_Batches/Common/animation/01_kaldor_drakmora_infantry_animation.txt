@@ -18,6 +18,6 @@ Action:
 Name: Drakmora_Infantry_Ultimate
 Facing: Left side looking slightly (default side profile)
 Action:
-- Rallies their energy, letting out a war cry.
+- Rallies their energy, letting out a war cry while planting their heavy shield firmly into the ground.
 - Performs a devastating overhead strike with their sword.
-- Slams the blade into the ground to create a shockwave that knocks back foes.
+- Slams the blade into the ground to create a shockwave that knocks back foes, remaining protected behind the shield.

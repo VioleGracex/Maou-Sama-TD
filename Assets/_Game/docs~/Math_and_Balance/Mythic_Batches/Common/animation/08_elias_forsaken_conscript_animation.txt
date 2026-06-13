@@ -2,7 +2,7 @@
 Name: Elias_Forsaken_Conscript_Idle
 Facing: Left side looking slightly (default side profile)
 Action:
-- Elias holds his simple spear nervously.
+- Elias holds his dented sword nervously.
 - He glances from side to side, visibly shaking.
 - Maintains a desperate but proper defensive stance.
 
@@ -11,7 +11,7 @@ Name: Elias_Forsaken_Conscript_Attack
 Facing: Left side looking slightly (default side profile)
 Action:
 - Steps forward awkwardly.
-- Thrusts his spear in a simple but panicked stab.
+- Swings his sword in a simple but panicked slash.
 - Pulls back quickly right after the strike to protect himself.
 
 [ Ultimate Animation ]
@@ -19,5 +19,5 @@ Name: Elias_Forsaken_Conscript_Ultimate
 Facing: Left side looking slightly (default side profile)
 Action:
 - Overcome by panic, Elias charges forward blindly.
-- Rapidly stabs with his spear in a frenzied, wild flurry.
+- Rapidly slashes with his sword in a frenzied, wild flurry.
 - Deals multiple chaotic hits to any enemies in his path.

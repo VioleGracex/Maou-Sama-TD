@@ -27,7 +27,7 @@ Shader "Custom/TileGlow"
             // Defines for Shadows and Lighting
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
-            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
             #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile_fragment _ _SHADOWS_SOFT
             #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
@@ -101,13 +101,17 @@ Shader "Custom/TileGlow"
                 float3 lighting = mainLight.color * directLight;
                 
                 // Additional Lights (Point Lights)
-                #if defined(_ADDITIONAL_LIGHTS) || defined(_FORWARD_PLUS)
+                #if defined(_ADDITIONAL_LIGHTS) || defined(_ADDITIONAL_LIGHTS_VERTEX) || defined(_FORWARD_PLUS)
                 uint pixelLightCount = GetAdditionalLightsCount();
                 for (uint i = 0u; i < pixelLightCount; ++i)
                 {
                     // Pass 1.0 for shadowMask to avoid breaking point light attenuation with the main light's shadowCoord
                     Light light = GetAdditionalLight(i, input.positionWS, half4(1,1,1,1));
-                    lighting += light.color * (saturate(dot(normalWS, light.direction)) * light.distanceAttenuation * light.shadowAttenuation);
+                    
+                    float addNdotL = dot(normalWS, light.direction);
+                    float addWrapped = saturate((addNdotL * 0.5) + 0.5);
+                    
+                    lighting += light.color * (addWrapped * light.distanceAttenuation * light.shadowAttenuation);
                 }
                 #endif
 

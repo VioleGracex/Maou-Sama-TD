@@ -20,7 +20,7 @@ MonoBehaviour:
     PortraitRight: {fileID: 0}
     Background: {fileID: 0}
     Focus: 0
-    BackgroundOverlay: 0
+    BackgroundOverlay: 1
     EventID: 
     VoiceClip: {fileID: 0}
   - SpeakerName: Tina
@@ -31,6 +31,6 @@ MonoBehaviour:
     PortraitRight: {fileID: 0}
     Background: {fileID: 21300000, guid: 727040039e044b14ebd3ae20b995c711, type: 3}
     Focus: 0
-    BackgroundOverlay: 0
+    BackgroundOverlay: 1
     EventID: 
     VoiceClip: {fileID: 0}

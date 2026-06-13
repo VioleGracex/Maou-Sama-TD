@@ -35,15 +35,26 @@ namespace MaouSamaTD.UI.Skills
         // Container references for the swipe animation
         private RectTransform _buttonsContainerRect;
         private RectTransform _descriptionContainerRect;
+
+        // Alternative UI Containers
+        private RectTransform _altButtonsContainerRect;
+        private RectTransform _altDescriptionContainerRect;
         
-        // References to description UI elements
-        private TMPro.TextMeshProUGUI _skillNameTxt;
-        private TMPro.TextMeshProUGUI _skillCostTxt;
-        private UnityEngine.UI.Image _skillIconImg;
-        private TMPro.TextMeshProUGUI _skillInfoTxt;   // lore / flavour text
-        private TMPro.TextMeshProUGUI _skillStatsTxt;  // colored stats block
-        private RangePatternUI _rangePatternUI;
-        private TMPro.TextMeshProUGUI _rangeStatsTxt;
+        [System.Serializable]
+        private class DescriptionElements
+        {
+            public TMPro.TextMeshProUGUI NameTxt;
+            public TMPro.TextMeshProUGUI CostTxt;
+            public UnityEngine.UI.Image IconImg;
+            public TMPro.TextMeshProUGUI InfoTxt;
+            public TMPro.TextMeshProUGUI StatsTxt;
+            public RangePatternUI RangePattern;
+            public TMPro.TextMeshProUGUI RangeStatsTxt;
+            public UnityEngine.UI.Image GlowImg;
+        }
+        
+        private DescriptionElements _primaryDesc = new DescriptionElements();
+        private DescriptionElements _altDesc = new DescriptionElements();
 
         [Header("Glow Settings")]
         [SerializeField] private Material _skillGlowMat;
@@ -55,9 +66,12 @@ namespace MaouSamaTD.UI.Skills
         private void Update()
         {
             // Animate glow shader if active
-            if (_descriptionGlowInstance != null && _descriptionGlowImg != null && _descriptionGlowImg.gameObject.activeSelf)
+            if (_descriptionGlowInstance != null)
             {
-                _descriptionGlowInstance.SetFloat(CustomTimeProp, Time.unscaledTime);
+                if (_primaryDesc.GlowImg != null && _primaryDesc.GlowImg.gameObject.activeSelf)
+                    _descriptionGlowInstance.SetFloat(CustomTimeProp, Time.unscaledTime);
+                if (_altDesc.GlowImg != null && _altDesc.GlowImg.gameObject.activeSelf)
+                    _descriptionGlowInstance.SetFloat(CustomTimeProp, Time.unscaledTime);
             }
 
             // Real-time glow & cost update (for cooldowns and dynamic seal changes)
@@ -136,6 +150,28 @@ namespace MaouSamaTD.UI.Skills
 
         private void SetupUiReferences()
         {
+            // Alternative UI lookups
+            GameObject altBtnsGo = GameObject.Find("SkillsBar");
+            if (altBtnsGo != null) _altButtonsContainerRect = altBtnsGo.GetComponent<RectTransform>();
+
+            GameObject altDescGo = GameObject.Find("SkillDescriptionBar");
+            if (altDescGo != null) 
+            {
+                _altDescriptionContainerRect = altDescGo.GetComponent<RectTransform>();
+                PopulateDescriptionElements(altDescGo.transform, _altDesc);
+                
+                // Add Close logic for alt
+                Transform altClose = altDescGo.transform.Find("CloseButton");
+                if (altClose != null)
+                {
+                    var btn = altClose.GetComponent<UnityEngine.UI.Button>();
+                    if (btn == null) btn = altClose.gameObject.AddComponent<UnityEngine.UI.Button>();
+                    btn.onClick.RemoveAllListeners();
+                    btn.onClick.AddListener(() => { _interactionManager?.DeselectSkill(); });
+                }
+                _altDescriptionContainerRect.gameObject.SetActive(false);
+            }
+
             if (_panelRect == null) return;
 
             Transform middleArea = _panelRect.transform.Find("MiddleArea");
@@ -184,16 +220,19 @@ namespace MaouSamaTD.UI.Skills
                     grt.sizeDelta = new Vector2(25, 25); // Slightly larger than container for the outer glow effect
                 }
 
-                _descriptionGlowImg = glowTrans.GetComponent<Image>();
-                if (_descriptionGlowImg != null)
+                _primaryDesc.GlowImg = glowTrans.GetComponent<Image>();
+                if (_primaryDesc.GlowImg != null)
                 {
-                    _descriptionGlowImg.raycastTarget = false;
-                    if (_skillGlowMat != null)
+                    _primaryDesc.GlowImg.raycastTarget = false;
+                    if (_skillGlowMat != null && _descriptionGlowInstance == null)
                     {
                         _descriptionGlowInstance = new Material(_skillGlowMat);
-                        _descriptionGlowImg.material = _descriptionGlowInstance;
                     }
-                    _descriptionGlowImg.gameObject.SetActive(false);
+                    if (_descriptionGlowInstance != null)
+                    {
+                        _primaryDesc.GlowImg.material = _descriptionGlowInstance;
+                    }
+                    _primaryDesc.GlowImg.gameObject.SetActive(false);
                 }
 
                 // Find close button
@@ -210,85 +249,7 @@ namespace MaouSamaTD.UI.Skills
                     }
                 }
 
-                // 2. Get Title components
-                Transform skillTitle = sdc.Find("Skill_Title");
-                if (skillTitle != null)
-                {
-                    Transform iconTrans = skillTitle.Find("Skill_Icon");
-                    if (iconTrans != null) _skillIconImg = iconTrans.GetComponent<UnityEngine.UI.Image>();
-
-                    Transform nameTrans = skillTitle.Find("SkillName_Txt");
-                    if (nameTrans != null) _skillNameTxt = nameTrans.GetComponent<TMPro.TextMeshProUGUI>();
-
-                    Transform costTrans = skillTitle.Find("SkillCost_Txt");
-                    if (costTrans != null) _skillCostTxt = costTrans.GetComponent<TMPro.TextMeshProUGUI>();
-                }
-
-                // 3a. Lore description text
-                Transform descTrans = sdc.Find("MiddleSplit/Description_BG/Skill_Info_Txt")
-                                   ?? sdc.Find("MiddleSplit/Skill_Info_Txt")
-                                   ?? sdc.Find("Skill_Info_Txt");
-                if (descTrans != null)
-                {
-                    _skillInfoTxt = descTrans.GetComponent<TMPro.TextMeshProUGUI>();
-                    if (_skillInfoTxt != null)
-                    {
-                        _skillInfoTxt.enableAutoSizing = true;
-                        _skillInfoTxt.fontSizeMin = 8f;
-                        _skillInfoTxt.fontSizeMax = 13f;
-                        _skillInfoTxt.enableWordWrapping = true;
-                        _skillInfoTxt.fontStyle = TMPro.FontStyles.Italic;
-                        _skillInfoTxt.color = new Color(0.88f, 0.88f, 0.95f, 1f);
-                    }
-                }
-
-                // 3b. Stats block text (new, lives beside lore inside Description_BG)
-                Transform statsTrans2 = sdc.Find("MiddleSplit/Description_BG/Skill_Stats_Txt");
-                if (statsTrans2 != null)
-                {
-                    _skillStatsTxt = statsTrans2.GetComponent<TMPro.TextMeshProUGUI>();
-                    if (_skillStatsTxt != null)
-                    {
-                        _skillStatsTxt.enableAutoSizing = true;
-                        _skillStatsTxt.fontSizeMin = 7f;
-                        _skillStatsTxt.fontSizeMax = 12f;
-                        _skillStatsTxt.enableWordWrapping = true;
-                        _skillStatsTxt.fontStyle = TMPro.FontStyles.Normal;
-                    }
-                }
-
-                // 4. Get RangeGrid
-                Transform gridTrans = sdc.Find("MiddleSplit/Range_Container/RangeGrid") ?? sdc.Find("RangeGrid");
-                if (gridTrans != null)
-                {
-                    _rangePatternUI = gridTrans.GetComponent<RangePatternUI>();
-
-                    // RangeGrid_StatsTxt lives directly under Range_Container (not under RangeGrid)
-                    Transform rangeContainer = gridTrans.parent;
-                    Transform statsTrans = rangeContainer?.Find("RangeGrid_StatsTxt")
-                                       ?? sdc.Find("RangeGrid_StatsTxt");
-                    if (statsTrans == null)
-                    {
-                        var statsGo = new GameObject("RangeGrid_StatsTxt", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
-                        statsGo.transform.SetParent(rangeContainer != null ? rangeContainer : sdc, false);
-                        statsTrans = statsGo.transform;
-                        var srt = statsTrans.GetComponent<RectTransform>();
-                        srt.anchorMin = new Vector2(0f, 0f);
-                        srt.anchorMax = new Vector2(1f, 0f);
-                        srt.pivot     = new Vector2(0.5f, 0f);
-                        srt.anchoredPosition = new Vector2(0f, 4f);
-                        srt.sizeDelta = new Vector2(0f, 28f);
-                    }
-                    _rangeStatsTxt = statsTrans.GetComponent<TMPro.TextMeshProUGUI>();
-                    if (_rangeStatsTxt != null)
-                    {
-                        _rangeStatsTxt.fontSize        = 10f;
-                        _rangeStatsTxt.alignment       = TMPro.TextAlignmentOptions.Center;
-                        _rangeStatsTxt.fontStyle       = TMPro.FontStyles.Bold;
-                        _rangeStatsTxt.enableWordWrapping = true;
-                        _rangeStatsTxt.color           = new Color(0.85f, 0.75f, 0.50f, 0.9f);
-                    }
-                }
+                PopulateDescriptionElements(sdc, _primaryDesc);
             }
 
             // Lock initial states of both containers
@@ -300,6 +261,83 @@ namespace MaouSamaTD.UI.Skills
             {
                 _descriptionContainerRect.anchoredPosition = new Vector2(360f, _descriptionContainerRect.anchoredPosition.y);
                 _descriptionContainerRect.gameObject.SetActive(false);
+            }
+        }
+
+        private void PopulateDescriptionElements(Transform container, DescriptionElements elements)
+        {
+            Transform skillTitle = container.Find("Skill_Title");
+            if (skillTitle != null)
+            {
+                Transform iconTrans = skillTitle.Find("Skill_Icon");
+                if (iconTrans != null) elements.IconImg = iconTrans.GetComponent<UnityEngine.UI.Image>();
+
+                Transform nameTrans = skillTitle.Find("SkillName_Txt");
+                if (nameTrans != null) elements.NameTxt = nameTrans.GetComponent<TMPro.TextMeshProUGUI>();
+
+                Transform costTrans = skillTitle.Find("SkillCost_Txt");
+                if (costTrans != null) elements.CostTxt = costTrans.GetComponent<TMPro.TextMeshProUGUI>();
+            }
+
+            Transform descTrans = container.Find("MiddleSplit/Description_BG/Skill_Info_Txt")
+                               ?? container.Find("MiddleSplit/Skill_Info_Txt")
+                               ?? container.Find("Skill_Info_Txt");
+            if (descTrans != null)
+            {
+                elements.InfoTxt = descTrans.GetComponent<TMPro.TextMeshProUGUI>();
+                if (elements.InfoTxt != null)
+                {
+                    elements.InfoTxt.enableAutoSizing = true;
+                    elements.InfoTxt.fontSizeMin = 8f;
+                    elements.InfoTxt.fontSizeMax = 13f;
+                    elements.InfoTxt.enableWordWrapping = true;
+                    elements.InfoTxt.fontStyle = TMPro.FontStyles.Italic;
+                    elements.InfoTxt.color = new Color(0.88f, 0.88f, 0.95f, 1f);
+                }
+            }
+
+            Transform statsTrans2 = container.Find("MiddleSplit/Description_BG/Skill_Stats_Txt");
+            if (statsTrans2 != null)
+            {
+                elements.StatsTxt = statsTrans2.GetComponent<TMPro.TextMeshProUGUI>();
+                if (elements.StatsTxt != null)
+                {
+                    elements.StatsTxt.enableAutoSizing = true;
+                    elements.StatsTxt.fontSizeMin = 7f;
+                    elements.StatsTxt.fontSizeMax = 12f;
+                    elements.StatsTxt.enableWordWrapping = true;
+                    elements.StatsTxt.fontStyle = TMPro.FontStyles.Normal;
+                }
+            }
+
+            Transform gridTrans = container.Find("MiddleSplit/Range_Container/RangeGrid") ?? container.Find("RangeGrid");
+            if (gridTrans != null)
+            {
+                elements.RangePattern = gridTrans.GetComponent<RangePatternUI>();
+
+                Transform rangeContainer = gridTrans.parent;
+                Transform statsTrans = rangeContainer?.Find("RangeGrid_StatsTxt") ?? container.Find("RangeGrid_StatsTxt");
+                if (statsTrans == null)
+                {
+                    var statsGo = new GameObject("RangeGrid_StatsTxt", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
+                    statsGo.transform.SetParent(rangeContainer != null ? rangeContainer : container, false);
+                    statsTrans = statsGo.transform;
+                    var srt = statsTrans.GetComponent<RectTransform>();
+                    srt.anchorMin = new Vector2(0f, 0f);
+                    srt.anchorMax = new Vector2(1f, 0f);
+                    srt.pivot     = new Vector2(0.5f, 0f);
+                    srt.anchoredPosition = new Vector2(0f, 4f);
+                    srt.sizeDelta = new Vector2(0f, 28f);
+                }
+                elements.RangeStatsTxt = statsTrans.GetComponent<TMPro.TextMeshProUGUI>();
+                if (elements.RangeStatsTxt != null)
+                {
+                    elements.RangeStatsTxt.fontSize        = 10f;
+                    elements.RangeStatsTxt.alignment       = TMPro.TextAlignmentOptions.Center;
+                    elements.RangeStatsTxt.fontStyle       = TMPro.FontStyles.Bold;
+                    elements.RangeStatsTxt.enableWordWrapping = true;
+                    elements.RangeStatsTxt.color           = new Color(0.85f, 0.75f, 0.50f, 0.9f);
+                }
             }
         }
 
@@ -362,31 +400,56 @@ namespace MaouSamaTD.UI.Skills
 
         public void Refresh()
         {
-            // Clear old
-            foreach (var btn in _spawnedButtons) Destroy(btn.gameObject);
+            // Clear old tracked buttons
+            foreach (var btn in _spawnedButtons) if (btn != null) Destroy(btn.gameObject);
             _spawnedButtons.Clear();
+
+            // Fallback: If _buttonContainer wasn't updated in the inspector, find it dynamically
+            Transform targetContainer = _buttonContainer;
+            if (targetContainer != null && targetContainer.name == "SkillButtons_ScrollView")
+            {
+                Transform content = targetContainer.Find("Viewport/SkillButtons_Container");
+                if (content != null) targetContainer = content;
+            }
+
+            // Destroy any existing placeholders in the containers
+            if (targetContainer != null)
+            {
+                for (int i = targetContainer.childCount - 1; i >= 0; i--)
+                {
+                    Destroy(targetContainer.GetChild(i).gameObject);
+                }
+            }
+            if (_altButtonsContainerRect != null)
+            {
+                for (int i = _altButtonsContainerRect.childCount - 1; i >= 0; i--)
+                {
+                    Destroy(_altButtonsContainerRect.GetChild(i).gameObject);
+                }
+            }
 
             // Spawn new
             foreach (var skill in _skillsToDisplay)
             {
                 if (skill == null) continue;
-                
-                // Fallback: If _buttonContainer wasn't updated in the inspector, find it dynamically
-                Transform targetContainer = _buttonContainer;
-                if (targetContainer != null && targetContainer.name == "SkillButtons_ScrollView")
+
+                // Spawn in Primary
+                if (targetContainer != null)
                 {
-                    Transform content = targetContainer.Find("Viewport/SkillButtons_Container");
-                    if (content != null) targetContainer = content;
+                    var btn = Instantiate(_buttonPrefab, targetContainer);
+                    btn.Initialize(skill, _skillManager, _interactionManager, _currencyManager, this);
+                    btn.gameObject.name = "SkillButton_" + skill.name.Replace(" ", "");
+                    _spawnedButtons.Add(btn);
                 }
-
-                var btn = Instantiate(_buttonPrefab, targetContainer);
-                btn.Initialize(skill, _skillManager, _interactionManager, _currencyManager, this);
                 
-                // Name the button based on skill asset name for Tutorial Targeting
-                string btnName = "SkillButton_" + skill.name.Replace(" ", "");
-                btn.gameObject.name = btnName;
-
-                _spawnedButtons.Add(btn);
+                // Spawn in Alternative
+                if (_altButtonsContainerRect != null)
+                {
+                    var btnAlt = Instantiate(_buttonPrefab, _altButtonsContainerRect);
+                    btnAlt.Initialize(skill, _skillManager, _interactionManager, _currencyManager, this);
+                    btnAlt.gameObject.name = "SkillButton_Alt_" + skill.name.Replace(" ", "");
+                    _spawnedButtons.Add(btnAlt);
+                }
             }
         }
 
@@ -482,19 +545,18 @@ namespace MaouSamaTD.UI.Skills
                     _descriptionContainerRect.DOAnchorPosX(0f, 0.25f).SetEase(Ease.OutQuad).SetUpdate(true);
                 }
 
-                // Handle Description Glow
-                if (_descriptionGlowImg != null)
+                if (_altDescriptionContainerRect != null)
                 {
-                    if (_descriptionGlowInstance != null)
-                    {
-                        // Always use Gold for the description glow
-                        Color glowColor = new Color(1f, 0.8f, 0.1f, 1f);
-                        _descriptionGlowInstance.SetColor(GlowColorProp, glowColor);
-                    }
-                    
-                    // Refresh visibility based on affordability
-                    RefreshDescriptionAffordability();
+                    _altDescriptionContainerRect.gameObject.SetActive(true);
                 }
+
+                // Handle Description Glow
+                if (_descriptionGlowInstance != null)
+                {
+                    Color glowColor = new Color(1f, 0.8f, 0.1f, 1f);
+                    _descriptionGlowInstance.SetColor(GlowColorProp, glowColor);
+                }
+                RefreshDescriptionAffordability();
             }
             else
             {
@@ -513,9 +575,14 @@ namespace MaouSamaTD.UI.Skills
                         if (_interactionManager == null || _interactionManager.SelectedSkill == null)
                         {
                             if (_descriptionContainerRect != null) _descriptionContainerRect.gameObject.SetActive(false);
-                            if (_descriptionGlowImg != null) _descriptionGlowImg.gameObject.SetActive(false);
+                            if (_primaryDesc.GlowImg != null) _primaryDesc.GlowImg.gameObject.SetActive(false);
                         }
                     });
+                }
+
+                if (_altDescriptionContainerRect != null)
+                {
+                    _altDescriptionContainerRect.gameObject.SetActive(false);
                 }
             }
         }
@@ -530,102 +597,93 @@ namespace MaouSamaTD.UI.Skills
             bool isReady = canAfford && !isOnCooldown;
 
             // Update Cost Text Color: Red if cannot afford
-            if (_skillCostTxt != null)
-            {
-                string colorHex = canAfford ? "#CC88FF" : "#FF4444";
-                // Show cooldown in cost text if active? For now just color logic
-                _skillCostTxt.text = $"<color={colorHex}><b>{skill.SealCost} SP</b></color>";
-            }
+            string colorHex = canAfford ? "#CC88FF" : "#FF4444";
+            string costTextStr = $"<color={colorHex}><b>{skill.SealCost} SP</b></color>";
+            if (_primaryDesc.CostTxt != null) _primaryDesc.CostTxt.text = costTextStr;
+            if (_altDesc.CostTxt != null) _altDesc.CostTxt.text = costTextStr;
 
             // Update Glow Visibility: Off if not ready
-            if (_descriptionGlowImg != null)
-            {
-                _descriptionGlowImg.gameObject.SetActive(isReady);
-            }
+            if (_primaryDesc.GlowImg != null) _primaryDesc.GlowImg.gameObject.SetActive(isReady);
+            if (_altDesc.GlowImg != null) _altDesc.GlowImg.gameObject.SetActive(isReady);
         }
 
         private void UpdateSkillDescriptionUI(SovereignRiteData skill)
         {
             if (skill == null) return;
 
-            // 1. Skill name — no wrap, ellipsis
-            if (_skillNameTxt != null)
-            {
-                _skillNameTxt.text = skill.SkillName;
-                _skillNameTxt.enableWordWrapping = false;
-                _skillNameTxt.overflowMode = TMPro.TextOverflowModes.Ellipsis;
-                EnsureRectHealthy(_skillNameTxt.rectTransform);
-            }
+            UpdateElementsWithSkill(_primaryDesc, skill);
+            UpdateElementsWithSkill(_altDesc, skill);
 
             // 2. SP cost & Glow — color based on affordability
             RefreshDescriptionAffordability();
+        }
 
-            // 3. Icon
-            if (_skillIconImg != null)
+        private void UpdateElementsWithSkill(DescriptionElements elements, SovereignRiteData skill)
+        {
+            if (elements.NameTxt != null)
             {
-                _skillIconImg.sprite = skill.Icon;
-                _skillIconImg.gameObject.SetActive(skill.Icon != null);
+                elements.NameTxt.text = skill.SkillName;
+                elements.NameTxt.enableWordWrapping = false;
+                elements.NameTxt.overflowMode = TMPro.TextOverflowModes.Ellipsis;
+                EnsureRectHealthy(elements.NameTxt.rectTransform);
             }
 
-            // 4. LORE — plain narrative text from SO (italic, soft blue-white, auto-size)
-            if (_skillInfoTxt != null)
-                _skillInfoTxt.text = skill.Description;
+            if (elements.IconImg != null)
+            {
+                elements.IconImg.sprite = skill.Icon;
+                elements.IconImg.gameObject.SetActive(skill.Icon != null);
+            }
 
-            // 5. STATS — generated from SO data with unified color tokens (auto-size)
-            if (_skillStatsTxt != null)
+            if (elements.InfoTxt != null)
+                elements.InfoTxt.text = skill.Description;
+
+            if (elements.StatsTxt != null)
             {
                 var sb = new System.Text.StringBuilder();
 
-                // Target
                 string targetLabel = skill.TargetType == SkillTargetType.Tile ? "Tile" : "Unit";
                 sb.AppendLine($"<color=#AAAAAA>Target</color>  <color=#44CCFF><b>{targetLabel}</b></color>");
 
-                // Damage
                 if (skill.EffectType == SkillEffectType.Damage)
                     sb.AppendLine($"<color=#AAAAAA>Damage</color>  <color=#FF4444><b>{skill.Value:N0} Magic DMG</b></color>");
 
-                // Buff modifiers
                 if (skill.EffectType == SkillEffectType.Buff && skill.Modifiers != null)
                 {
                     foreach (var mod in skill.Modifiers)
                         sb.AppendLine($"<color=#AAAAAA>{mod.Stat}</color>  <color=#44FF88><b>+{mod.Value}%</b></color>");
                 }
 
-                // Duration
                 if (skill.Duration > 0)
                     sb.AppendLine($"<color=#AAAAAA>Duration</color>  <color=#44CCFF><b>{skill.Duration:F0}s</b></color>");
 
-                // Area
                 if (skill.Radius > 0)
                     sb.AppendLine($"<color=#AAAAAA>Area</color>  <color=#FFDD44><b>{skill.AoeShape} r{skill.Radius:F0}</b></color>");
                 else
                     sb.AppendLine($"<color=#AAAAAA>Area</color>  <color=#FFDD44><b>Single Point</b></color>");
 
-                _skillStatsTxt.text = sb.ToString().TrimEnd();
-                EnsureRectHealthy(_skillStatsTxt.rectTransform);
+                elements.StatsTxt.text = sb.ToString().TrimEnd();
+                EnsureRectHealthy(elements.StatsTxt.rectTransform);
             }
 
-            // 6. Range grid pattern
-            if (_rangePatternUI != null)
+            if (elements.RangePattern != null)
             {
                 AttackPattern pattern = AttackPattern.All;
                 if (skill.AoeShape == AoeShape.Cross)      pattern = AttackPattern.Cross;
                 else if (skill.AoeShape == AoeShape.DiagonalX) pattern = AttackPattern.Diagonal;
 
                 int range = Mathf.RoundToInt(skill.Radius);
-                _rangePatternUI.SetPattern(pattern, range);
+                elements.RangePattern.SetPattern(pattern, range);
             }
 
-            // 7. Range stats label below grid
-            if (_rangeStatsTxt != null)
+            if (elements.RangeStatsTxt != null)
             {
                 string shape    = skill.Radius > 0 ? skill.AoeShape.ToString() : "Point";
                 string sizeDesc = skill.Radius > 0 ? $"{skill.Radius:F0}x{skill.Radius:F0}" : "1 Tile";
-                _rangeStatsTxt.text =
+                elements.RangeStatsTxt.text =
                     $"<b><color=#FFDD44>{shape}</color>  <color=#44CCFF>{sizeDesc}</color></b>";
-                _rangeStatsTxt.enableAutoSizing = true;
-                _rangeStatsTxt.fontSizeMin = 7f;
-                _rangeStatsTxt.fontSizeMax = 11f;
+                elements.RangeStatsTxt.enableAutoSizing = true;
+                elements.RangeStatsTxt.fontSizeMin = 7f;
+                elements.RangeStatsTxt.fontSizeMax = 11f;
             }
         }
 
@@ -685,11 +743,16 @@ namespace MaouSamaTD.UI.Skills
         private void EnsureRectHealthy(RectTransform rt)
         {
             if (rt == null) return;
-            Vector2 size = rt.sizeDelta;
-            bool changed = false;
-            if (size.x <= 0.01f) { size.x = 200f; changed = true; }
-            if (size.y <= 0.01f) { size.y = 50f; changed = true; }
-            if (changed) rt.sizeDelta = size;
+            
+            // Only force size if the rect is not stretched horizontally/vertically
+            if (rt.anchorMin == rt.anchorMax)
+            {
+                Vector2 size = rt.sizeDelta;
+                bool changed = false;
+                if (size.x <= 0.01f) { size.x = 200f; changed = true; }
+                if (size.y <= 0.01f) { size.y = 50f; changed = true; }
+                if (changed) rt.sizeDelta = size;
+            }
             
             if (rt.localScale.x < 0.1f) rt.localScale = Vector3.one;
         }

@@ -31,6 +31,7 @@ namespace MaouSamaTD.UI
         [Header("Animation")]
         [SerializeField] private RectTransform _panelRect; 
         [SerializeField] private Button _toggleButton;
+        [SerializeField] private TextMeshProUGUI _toggleButtonText;
         [SerializeField] private float _hideOffset = 400f; 
         [SerializeField] private bool _enableButtonEntranceAnimation = true;
         [SerializeField] private float _staggerDelay = 0.08f;
@@ -466,19 +467,13 @@ namespace MaouSamaTD.UI
             if (_panelRect == null) return;
             
             _isVisible = !_isVisible;
-            // Docked at the bottom, so hide offset should move it down (negative Y)
             float targetY = _isVisible ? _visiblePos.y : _visiblePos.y - _hideOffset;
             
             _panelRect.DOAnchorPosY(targetY, _entranceDuration).SetEase(Ease.OutQuint);
             
-            // Optional: Flip an arrow icon on the button (Vertical flip)
-            if (_toggleButton != null)
+            if (_toggleButtonText != null)
             {
-                var rect = _toggleButton.GetComponent<RectTransform>();
-                if (rect != null)
-                {
-                    rect.DOScaleY(_isVisible ? 1f : -1f, _entranceDuration);
-                }
+                _toggleButtonText.text = _isVisible ? "Hide Vassals" : "Show Vassals";
             }
         }
 

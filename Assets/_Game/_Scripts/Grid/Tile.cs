@@ -202,15 +202,81 @@ namespace MaouSamaTD.Grid
             }
         }
 
-        [Header("Materials")]
-        [SerializeField] private Material _defaultMaterial;
-        [SerializeField] private Material _glowMaterial;
+        // New Overlay Visuals
+        private GameObject _highlightObj;
+        private MeshRenderer _highlightRenderer;
+        private Material _highlightMat;
+        private static Texture2D _borderTexture;
+        private static Texture2D _fillTexture;
+
+        private void SetupHighlightOverlay()
+        {
+            if (_highlightObj != null) return;
+
+            if (_fillTexture == null)
+            {
+                _fillTexture = new Texture2D(2, 2);
+                _fillTexture.SetPixels(new Color[] { Color.white, Color.white, Color.white, Color.white });
+                _fillTexture.Apply();
+            }
+            if (_borderTexture == null)
+            {
+                _borderTexture = new Texture2D(64, 64);
+                Color[] pixels = new Color[64 * 64];
+                int border = 6; // Thicker border
+                for (int y = 0; y < 64; y++)
+                {
+                    for (int x = 0; x < 64; x++)
+                    {
+                        if (x < border || x >= 64 - border || y < border || y >= 64 - border)
+                            pixels[y * 64 + x] = Color.white;
+                        else
+                            pixels[y * 64 + x] = new Color(1, 1, 1, 0);
+                    }
+                }
+                _borderTexture.SetPixels(pixels);
+                _borderTexture.filterMode = FilterMode.Point;
+                _borderTexture.Apply();
+            }
+
+            _highlightObj = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            _highlightObj.name = "HighlightOverlay";
+            _highlightObj.transform.SetParent(transform);
+            
+            float topY = 0.51f;
+            if (_renderer != null)
+            {
+                topY = transform.InverseTransformPoint(_renderer.bounds.max).y + 0.01f;
+            }
+            
+            _highlightObj.transform.localPosition = new Vector3(0, topY, 0);
+            _highlightObj.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            _highlightObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            
+            if (Application.isPlaying) Destroy(_highlightObj.GetComponent<Collider>());
+            else DestroyImmediate(_highlightObj.GetComponent<Collider>());
+            
+            _highlightRenderer = _highlightObj.GetComponent<MeshRenderer>();
+            _highlightRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            _highlightRenderer.receiveShadows = false;
+            
+            _highlightMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+            _highlightMat.SetInt("_Surface", 1); // Transparent
+            _highlightMat.SetInt("_Blend", 0); // Alpha
+            
+            // Use Additive blending for a glowing effect instead of opaque Alpha blending
+            _highlightMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            _highlightMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One); // Additive
+            _highlightMat.SetInt("_ZWrite", 0);
+            _highlightMat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+            _highlightMat.renderQueue = 3000;
+            
+            _highlightRenderer.sharedMaterial = _highlightMat;
+            _highlightObj.SetActive(false);
+        }
 
         public void SetHighlight(bool active, Color color, bool useFullFill = false)
         {
-            if (_renderer == null) return;
-
-            // Dirty check to avoid redundant and taxing SetPropertyBlock calls
             if (_isHighlightRequested == active && _lastColor == color && _lastUseFullFill == useFullFill)
                 return;
 
@@ -218,33 +284,30 @@ namespace MaouSamaTD.Grid
             _lastColor = color;
             _lastUseFullFill = useFullFill;
 
-            // Material Swap Logic
-            if (active && _glowMaterial != null && _renderer.sharedMaterial != _glowMaterial)
-            {
-                _renderer.sharedMaterial = _glowMaterial;
-            }
-            else if (!active && _defaultMaterial != null && _renderer.sharedMaterial != _defaultMaterial)
-            {
-                _renderer.sharedMaterial = _defaultMaterial;
-            }
-
-            _renderer.GetPropertyBlock(_propBlock);
-            
             if (active)
             {
-                _propBlock.SetColor(GlowColorId, color);
-                _propBlock.SetFloat(GlowIntensityId, 30f); 
-                _propBlock.SetFloat(BorderWidthId, useFullFill ? 0.5f : 0.1f);
-                _propBlock.SetFloat(UseFullFillId, useFullFill ? 1f : 0f);
+                SetupHighlightOverlay();
+                _highlightObj.SetActive(true);
+                
+                // Adjust opacity: Full fills are softer, borders are bright
+                Color finalColor = color;
+                if (useFullFill)
+                {
+                    finalColor.a = 0.25f; // Soft opacity for the fill
+                }
+                else
+                {
+                    finalColor.a = 0.9f;  // Bright opacity for borders
+                }
+                
+                _highlightMat.SetColor("_BaseColor", finalColor);
+                _highlightMat.SetColor("_Color", finalColor); // Just in case it uses _Color
+                _highlightMat.SetTexture("_BaseMap", useFullFill ? _fillTexture : _borderTexture);
             }
             else
             {
-                _propBlock.SetColor(GlowColorId, Color.black);
-                _propBlock.SetFloat(GlowIntensityId, 0f);
-                _propBlock.SetFloat(BorderWidthId, 0.0f);
-                _propBlock.SetFloat(UseFullFillId, 0f);
+                if (_highlightObj != null) _highlightObj.SetActive(false);
             }
-            _renderer.SetPropertyBlock(_propBlock);
 
             // Update decoration glows
             foreach (var glow in _decorationGlows)

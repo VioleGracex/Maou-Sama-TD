@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73136369cd15dfb418701e320cfd0df5, type: 3}
+  m_Name: VoidShackles_Male
+  m_EditorClassIdentifier: GameAssembly::MaouSamaTD.Skills.SovereignRiteData
+  useDefaultInspector: 0
+  UniqueID: 4a4fd693-dd72-42fa-a04a-6305024d45a4
+  SkillName: VoidShackles
+  Description: Disarms enemies, preventing them from attacking
+  Icon: {fileID: 21300000, guid: b3fc8f65b391e3e4cb080fe85ca9cce8, type: 3}
+  Properties: []
+  BaseVisuals:
+    UltimatePrefab: {fileID: 0}
+    CastVFX: {fileID: 0}
+    HitVFX: {fileID: 0}
+    CastSFX: {fileID: 0}
+    HitSFX: {fileID: 0}
+    UltimateColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleBgColor: {r: 0, g: 0, b: 0, a: 0}
+    TitleTextColor: {r: 0, g: 0, b: 0, a: 0}
+    NameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    NameTextColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameBgColor: {r: 0, g: 0, b: 0, a: 0}
+    SkillNameTextColor: {r: 0, g: 0, b: 0, a: 0}
+    RangeIndicatorColor: {r: 0.6, g: 0.2, b: 0.8, a: 0.4}
+    AnimationTriggerName: 
+  Archetype: 0
+  Tag: MaleRite
+  SealCost: 50
+  Cooldown: 30
+  TargetType: 0
+  Range: 100
+  Radius: 0
+  AoeShape: 0
+  CustomShapeOffsets: []
+  EffectType: 0
+  Modifiers: []
+  Persistence: 0
+  Value: 0
+  Duration: 0
+  BuffVFXPrefab: {fileID: 0}

@@ -24,6 +24,7 @@ namespace MaouSamaTD.UI.Cohorts
 
         [Header("Empty State UI")]
         [SerializeField] private GameObject _emptyContainer;
+        [SerializeField] private TextMeshProUGUI _emptySlotText;
 
         [Header("Actions")]
         [SerializeField] private Button _clearButton;
@@ -39,6 +40,11 @@ namespace MaouSamaTD.UI.Cohorts
         {
             SlotIndex = slotIndex;
             _isLocked = isLocked;
+
+            if (_emptySlotText != null)
+            {
+                _emptySlotText.text = $"+ Empty Sovereign Rite Slot {slotIndex + 1}";
+            }
 
             if (_clearButton != null)
             {

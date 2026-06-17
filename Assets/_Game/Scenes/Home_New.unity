@@ -9151,6 +9151,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 1623790087}
   _filledContainer: {fileID: 130176558}
   _emptyContainer: {fileID: 2067230221}
+  _emptySlotText: {fileID: 713267315}
   _clearButton: {fileID: 1705999277}
 --- !u!114 &163535066
 MonoBehaviour:
@@ -10459,6 +10460,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 1013143200}
   _filledContainer: {fileID: 1391155334}
   _emptyContainer: {fileID: 35434229}
+  _emptySlotText: {fileID: 650903622}
   _clearButton: {fileID: 1579142201}
 --- !u!114 &185747369
 MonoBehaviour:
@@ -11203,14 +11205,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -22894,6 +22896,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 541622604}
   _filledContainer: {fileID: 842486760}
   _emptyContainer: {fileID: 299057669}
+  _emptySlotText: {fileID: 1902811485}
   _clearButton: {fileID: 663033848}
 --- !u!114 &563550476
 MonoBehaviour:
@@ -25265,14 +25268,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -26126,14 +26129,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -28042,14 +28045,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -33836,6 +33839,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 269514687}
   _filledContainer: {fileID: 1723992964}
   _emptyContainer: {fileID: 1972786524}
+  _emptySlotText: {fileID: 1397287541}
   _clearButton: {fileID: 1293119414}
 --- !u!114 &824673593
 MonoBehaviour:
@@ -42766,14 +42770,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -46498,14 +46502,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -48629,6 +48633,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 1644069252}
   _filledContainer: {fileID: 1613717245}
   _emptyContainer: {fileID: 974651021}
+  _emptySlotText: {fileID: 1724524996}
   _clearButton: {fileID: 1295241770}
 --- !u!114 &1214163782
 MonoBehaviour:
@@ -50727,6 +50732,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 492288487}
   _filledContainer: {fileID: 1335002282}
   _emptyContainer: {fileID: 1880025220}
+  _emptySlotText: {fileID: 749962791}
   _clearButton: {fileID: 622383130}
 --- !u!114 &1281049457
 MonoBehaviour:
@@ -50934,14 +50940,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -51282,14 +51288,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -52007,6 +52013,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 582064750}
   _filledContainer: {fileID: 294086351}
   _emptyContainer: {fileID: 1291584439}
+  _emptySlotText: {fileID: 82161461}
   _clearButton: {fileID: 1161690938}
 --- !u!114 &1318966193
 MonoBehaviour:
@@ -56794,6 +56801,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 1789397838}
   _filledContainer: {fileID: 985782263}
   _emptyContainer: {fileID: 1386348532}
+  _emptySlotText: {fileID: 888333073}
   _clearButton: {fileID: 707743492}
 --- !u!114 &1511000372
 MonoBehaviour:
@@ -60192,14 +60200,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -63850,14 +63858,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3, g: 0.1, b: 0.1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: ec259eb0e619ddd409cc48cd6a8cd9c2, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -74526,6 +74534,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 1934955237}
   _filledContainer: {fileID: 1174038418}
   _emptyContainer: {fileID: 1327871861}
+  _emptySlotText: {fileID: 1631299644}
   _clearButton: {fileID: 1083421324}
 --- !u!114 &1946807773
 MonoBehaviour:
@@ -80538,6 +80547,7 @@ MonoBehaviour:
   _cooldownText: {fileID: 133884439}
   _filledContainer: {fileID: 1023953174}
   _emptyContainer: {fileID: 2076278878}
+  _emptySlotText: {fileID: 2103525230}
   _clearButton: {fileID: 213013230}
 --- !u!114 &2060108098
 MonoBehaviour:

@@ -23,6 +23,7 @@ namespace MaouSamaTD.Installers
         [SerializeField] private CameraManager _cameraManager;
         [SerializeField] private SkillManager _skillManager;
         [SerializeField] private EnemyManager _enemyManager;
+        [SerializeField] private MaouSamaTD.Data.RiteProgressionConfig _riteProgressionConfig;
 
         [Header("Tutorial & Dialogue")]
         [SerializeField] private DialogueUI _dialogueUI;
@@ -52,6 +53,7 @@ namespace MaouSamaTD.Installers
             if (_cameraManager) Container.Bind<CameraManager>().FromInstance(_cameraManager).AsSingle();
             if (_enemyManager) Container.Bind<EnemyManager>().FromInstance(_enemyManager).AsSingle();
             if (_cameraControlUI) Container.Bind<CameraControlUI>().FromInstance(_cameraControlUI).AsSingle();
+            if (_riteProgressionConfig) Container.Bind<MaouSamaTD.Data.RiteProgressionConfig>().FromInstance(_riteProgressionConfig).AsSingle();
 
             // Tutorial & Dialogue
             if (_uiPopupBlocker) Container.Bind<UIPopupBlocker>().FromInstance(_uiPopupBlocker).AsSingle();

@@ -108,3 +108,361 @@ A command that resonates with the Maou's authority, empowering all nearby vassal
 ---
 
 *Last updated: 2026-05-13 — Keep in sync with `SovereignRiteData` assets whenever balancing changes.*
+
+---
+## 📜 New Archetype: Female Rites (To Be Configured)
+
+### ChronoShift (`ChronoShift_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for ChronoShift...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### AbyssalRift (`AbyssalRift_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for AbyssalRift...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### CelestialWard (`CelestialWard_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for CelestialWard...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### LunarEclipse (`LunarEclipse_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for LunarEclipse...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### SoulTether (`SoulTether_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for SoulTether...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### AstralProjection (`AstralProjection_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for AstralProjection...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### GravityWell (`GravityWell_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for GravityWell...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### NebulaBurst (`NebulaBurst_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for NebulaBurst...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### VoidMirror (`VoidMirror_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for VoidMirror...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### TimeDilation (`TimeDilation_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for TimeDilation...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### EtherealChains (`EtherealChains_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for EtherealChains...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### MeteorShower (`MeteorShower_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for MeteorShower...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### EclipseBeam (`EclipseBeam_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for EclipseBeam...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### DimensionalTear (`DimensionalTear_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for DimensionalTear...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### StardustBlessing (`StardustBlessing_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for StardustBlessing...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### SingularityCollapse (`SingularityCollapse_Female`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for SingularityCollapse...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+---
+## 📜 New Archetype: Male Rites (To Be Configured)
+
+### BloodTithe (`BloodTithe_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for BloodTithe...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### HellfireSurge (`HellfireSurge_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for HellfireSurge...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### DemonicEdict (`DemonicEdict_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for DemonicEdict...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### IronMaiden (`IronMaiden_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for IronMaiden...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### WarlordsCommand (`WarlordsCommand_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for WarlordsCommand...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### ShadowStep (`ShadowStep_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for ShadowStep...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### DoomGaze (`DoomGaze_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for DoomGaze...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### Earthquake (`Earthquake_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for Earthquake...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### InfernalSpire (`InfernalSpire_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for InfernalSpire...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### CarnageAura (`CarnageAura_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for CarnageAura...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### SoulHarvest (`SoulHarvest_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for SoulHarvest...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### RuinStrike (`RuinStrike_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for RuinStrike...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### BerserkersRage (`BerserkersRage_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for BerserkersRage...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### VoidShackles (`VoidShackles_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for VoidShackles...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### DarkAegis (`DarkAegis_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for DarkAegis...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```
+
+### OblivionWave (`OblivionWave_Male`)
+- **Cost:** 50 SP | **Cooldown:** 30s | **Effect:** [TBD] | **Target:** [TBD]
+
+```
+Description for OblivionWave...
+
+<color=#AAAAAA>Target:</color> <color=#FFDD44><b>TBD</b></color>
+<color=#FF4444><b>Damage / Effect TBD</b></color>
+<color=#AAAAAA>Cooldown:</color> <color=#44CCFF><b>30s</b></color>
+```

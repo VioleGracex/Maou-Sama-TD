@@ -14,6 +14,8 @@ namespace MaouSamaTD.Managers
         private const string SaveFileName = "player_save.json";
         private const string HashKey = "MaouSamaTD_Sylvan_Secret"; 
 
+        [InjectOptional] private RiteProgressionConfig _riteProgressionConfig;
+
         public PlayerData CurrentData { get; private set; }
         
         private string SaveFolder => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), "Maou-Sama-TD");
@@ -262,6 +264,26 @@ namespace MaouSamaTD.Managers
             }
         }
 
+        public void UnlockRite(string riteID, MaouSamaTD.Data.MaouGender gender)
+        {
+            if (CurrentData == null) return;
+            
+            var targetList = gender == MaouSamaTD.Data.MaouGender.Female ? CurrentData.UnlockedFemaleRites : CurrentData.UnlockedMaleRites;
+            
+            if (!targetList.Contains(riteID))
+            {
+                targetList.Add(riteID);
+                Save();
+            }
+        }
+
+        public bool IsRiteUnlocked(string riteID, MaouSamaTD.Data.MaouGender gender)
+        {
+            if (CurrentData == null) return false;
+            var targetList = gender == MaouSamaTD.Data.MaouGender.Female ? CurrentData.UnlockedFemaleRites : CurrentData.UnlockedMaleRites;
+            return targetList.Contains(riteID);
+        }
+
         public bool IsLevelCompleted(string levelID)
         {
             return CurrentData != null && CurrentData.CompletedLevels.Contains(levelID);
@@ -366,6 +388,41 @@ namespace MaouSamaTD.Managers
             CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_bandit_insignia", 12));
             CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_animal_fang", 18));
             CurrentData.ItemInventory.Add(new ItemInventoryEntry("mat_golem_core", 5));
+            
+            if (_riteProgressionConfig == null)
+            {
+                try
+                {
+                    var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<MaouSamaTD.Data.RiteProgressionConfig>("RiteProgressionConfig");
+                    _riteProgressionConfig = handle.WaitForCompletion();
+                    Debug.Log("[SaveManager] Loaded RiteProgressionConfig via Addressables fallback.");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning($"[SaveManager] Failed to load RiteProgressionConfig via Addressables: {e.Message}");
+                }
+            }
+
+            if (_riteProgressionConfig != null)
+            {
+                if (_riteProgressionConfig.DefaultFemaleRites != null)
+                {
+                    foreach(var rite in _riteProgressionConfig.DefaultFemaleRites)
+                    {
+                        if (rite != null && !CurrentData.UnlockedFemaleRites.Contains(rite.name))
+                            CurrentData.UnlockedFemaleRites.Add(rite.name);
+                    }
+                }
+                
+                if (_riteProgressionConfig.DefaultMaleRites != null)
+                {
+                    foreach(var rite in _riteProgressionConfig.DefaultMaleRites)
+                    {
+                        if (rite != null && !CurrentData.UnlockedMaleRites.Contains(rite.name))
+                            CurrentData.UnlockedMaleRites.Add(rite.name);
+                    }
+                }
+            }
             
             Debug.Log($"[SaveManager] Created New Save Data. Granted Default Units: {string.Join(", ", CurrentData.UnlockedUnits)}");
             Save();

@@ -12,6 +12,8 @@ namespace MaouSamaTD.Data
         // Using List of structs for JsonUtility compatibility instead of Dictionary
         public List<LevelStarData> LevelStars = new List<LevelStarData>();
         public List<string> UnlockedUnits = new List<string>(); // Legacy / Discovery list
+        public List<string> UnlockedFemaleRites = new List<string>(); // Default + Dungeon unlocked female rites
+        public List<string> UnlockedMaleRites = new List<string>(); // Default + Dungeon unlocked male rites
         public List<UnitInventoryEntry> UnitInventory = new List<UnitInventoryEntry>();
         public List<ItemInventoryEntry> ItemInventory = new List<ItemInventoryEntry>();
 

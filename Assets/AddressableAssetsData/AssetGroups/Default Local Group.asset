@@ -36,6 +36,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d1148af895088c428cdb65d04dfc4c3
+    m_Address: RiteProgressionConfig
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6a374755fa0ea984891c45a2a76a7271
     m_Address: LevelDatabase
     m_ReadOnly: 0

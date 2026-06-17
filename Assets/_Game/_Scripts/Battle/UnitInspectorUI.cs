@@ -36,12 +36,14 @@ namespace MaouSamaTD.UI
         [SerializeField] private Button _ultButton; // Ult_Btn
         [SerializeField] private Button _retreatButton; // Keeps existing functionality
         [SerializeField] private Button _closeButton;
+        [SerializeField] private Button _moveButton; // Move_Btn
         
         // Helper to access skill icon if it's on the button
         private Image _skillIcon;
         private UnitBase _selectedUnit;
         public event System.Action OnPanelHidden;
         public event System.Action<UnitBase> OnPanelShown;
+        public event System.Action<PlayerUnit> OnMoveClickedEvent;
         public bool IsLocked { get; set; } = false;
 
         public bool IsPanelActive => _panel != null && _panel.activeInHierarchy;
@@ -81,6 +83,7 @@ namespace MaouSamaTD.UI
                 _ultButton.onClick.AddListener(OnSkillClicked);
             }
             if (_closeButton) _closeButton.onClick.AddListener(Hide);
+            if (_moveButton) _moveButton.onClick.AddListener(OnMoveBtnClicked);
         }
 
         private void OnDestroy()
@@ -88,6 +91,7 @@ namespace MaouSamaTD.UI
             if (_retreatButton) _retreatButton.onClick.RemoveListener(OnRetreatClicked);
             if (_ultButton) _ultButton.onClick.RemoveListener(OnSkillClicked);
             if (_closeButton) _closeButton.onClick.RemoveListener(Hide);
+            if (_moveButton) _moveButton.onClick.RemoveListener(OnMoveBtnClicked);
         }
 
         public void Show(UnitBase unit)
@@ -98,6 +102,25 @@ namespace MaouSamaTD.UI
             if (_selectedUnit != null)
             {
                 if (_retreatButton != null) _retreatButton.gameObject.SetActive(_selectedUnit is PlayerUnit);
+                
+                if (_moveButton != null) 
+                {
+                    bool canMove = _selectedUnit is PlayerUnit;
+                    if (canMove)
+                    {
+                        var gm = FindAnyObjectByType<Managers.GameManager>();
+                        var tm = FindAnyObjectByType<Managers.TutorialManager>();
+                        if (gm != null && gm.CurrentLevelData != null && tm != null)
+                        {
+                            var lvl = gm.CurrentLevelData;
+                            if (tm.IsInTutorial && (lvl.LevelIndex == 1 || lvl.LevelIndex == 2 || lvl.LevelID == "1-1" || lvl.LevelID == "1-2"))
+                            {
+                                canMove = false;
+                            }
+                        }
+                    }
+                    _moveButton.gameObject.SetActive(canMove);
+                }
                 _selectedUnit.SetHighlight(true, Color.yellow); // Highlight new
                 UpdateVisuals();
                 OnPanelShown?.Invoke(_selectedUnit);
@@ -265,6 +288,14 @@ namespace MaouSamaTD.UI
                 string unitName = playerUnit.Data != null ? playerUnit.Data.UnitName : "Unknown";
                 MaouSamaTD.Testing.GameStateExporter.PushEvent($"UltimateActivated:{unitName}");
 #endif
+            }
+        }
+
+        private void OnMoveBtnClicked()
+        {
+            if (_selectedUnit is PlayerUnit playerUnit)
+            {
+                OnMoveClickedEvent?.Invoke(playerUnit);
             }
         }
     }

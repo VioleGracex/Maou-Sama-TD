@@ -41,14 +41,30 @@ namespace MaouSamaTD.Units
         
         public Grid.Tile CurrentTile { get; set; }
 
+        [Header("Context Menu UI")]
+        [SerializeField] private UnityEngine.UI.Button _contextMoveButton;
+        [SerializeField] private TMPro.TextMeshProUGUI _contextMoveText;
+        [SerializeField] private Sprite _moveIconSprite;
+        [SerializeField] private Sprite _cancelIconSprite;
+        [SerializeField] private UnityEngine.UI.Image _contextMoveIconImage;
+        [SerializeField] private UnityEngine.UI.Button _contextConfirmButton;
+        [SerializeField] private TMPro.TextMeshProUGUI _contextTargetPreviewText;
+        [SerializeField] private GameObject _movingStatusRoot;
+        [SerializeField] private TMPro.TextMeshProUGUI _movingTimerText;
+
+        public event System.Action<PlayerUnit> OnContextMoveClicked;
+        public event System.Action<PlayerUnit> OnContextConfirmClicked;
+
         private float _currentCharge;
         public float CurrentCharge => _currentCharge;
         public float MaxCharge => Data != null ? Data.MaxCharge : 100f;
         public int KillCount { get; private set; }
         public int ReachCount { get; private set; }
 
+        public bool IsMoving { get; private set; }
+
         private System.Collections.Generic.List<EnemyUnit> _currentlyBlockedEnemies = new System.Collections.Generic.List<EnemyUnit>();
-        public bool CanBlock() => true;
+        public bool CanBlock() => !IsMoving;
 
         public void NotifyEncounter(EnemyUnit enemy)
         {
@@ -103,6 +119,20 @@ namespace MaouSamaTD.Units
             {
                  if (_showDebugLogs) Debug.LogWarning("[Ultimate] Cannot use skill: No UnitData or SkillData assigned.");
             }
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            
+            // Hide Context UI initially
+            if (_contextMoveButton != null) _contextMoveButton.gameObject.SetActive(false);
+            if (_contextConfirmButton != null) _contextConfirmButton.gameObject.SetActive(false);
+            if (_contextTargetPreviewText != null) _contextTargetPreviewText.transform.parent.gameObject.SetActive(false);
+            if (_movingStatusRoot != null) _movingStatusRoot.SetActive(false);
+
+            if (_contextMoveButton != null) _contextMoveButton.onClick.AddListener(() => OnContextMoveClicked?.Invoke(this));
+            if (_contextConfirmButton != null) _contextConfirmButton.onClick.AddListener(() => OnContextConfirmClicked?.Invoke(this));
         }
 
         private IEnumerator ExecuteUltimateRoutine()
@@ -359,10 +389,13 @@ namespace MaouSamaTD.Units
                  if (_currentCharge > MaxCharge) _currentCharge = MaxCharge;
              }
 
-             _attackTimer -= Time.deltaTime;
-             if (_attackTimer <= 0f)
+             if (!IsMoving)
              {
-                 Attack();
+                 _attackTimer -= Time.deltaTime;
+                 if (_attackTimer <= 0f)
+                 {
+                     Attack();
+                 }
              }
         }
 
@@ -496,6 +529,12 @@ namespace MaouSamaTD.Units
 
         public void Retreat(bool force = false)
         {
+            if (IsMoving)
+            {
+                if (_showDebugLogs) Debug.Log("[Retreat] Cannot retreat while moving.");
+                return;
+            }
+
             // Disallow retreat during tutorial, unless forced
             if (!force)
             {
@@ -695,6 +734,106 @@ namespace MaouSamaTD.Units
             if (tm != null && Data != null) tm.OnActionTriggered("UnitDied_" + Data.UnitName);
 
             base.Die();
+        }
+
+        public void MoveAlongPath(System.Collections.Generic.Queue<Grid.Tile> path)
+        {
+            if (IsMoving || path == null || path.Count == 0) return;
+            StartCoroutine(MoveRoutine(path));
+        }
+
+        private System.Collections.IEnumerator MoveRoutine(System.Collections.Generic.Queue<Grid.Tile> path)
+        {
+            IsMoving = true;
+            if (CurrentTile != null)
+            {
+                CurrentTile.SetOccupant(null);
+            }
+            if (_movingStatusRoot != null) _movingStatusRoot.SetActive(true);
+
+            if (_animator != null && !_isDead)
+            {
+                _animator.Play("Walk", 0, 0f);
+            }
+
+            Grid.Tile targetTile = null;
+            float moveSpeed = 2f;
+            
+            var pathArray = path.ToArray();
+            Vector3 lastPos = transform.position;
+
+            while (path.Count > 0)
+            {
+                targetTile = path.Dequeue();
+                Vector3 targetPos = targetTile.transform.position;
+                FaceTarget(targetPos);
+                
+                while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+                    float remainingDist = Vector3.Distance(transform.position, pathArray[pathArray.Length - 1].transform.position);
+                    if (_movingTimerText != null) _movingTimerText.text = $"{remainingDist / moveSpeed:F1}s";
+                    yield return null;
+                }
+                transform.position = targetPos;
+            }
+
+            if (targetTile != null)
+            {
+                CurrentTile = targetTile;
+                CurrentTile.SetOccupant(this);
+            }
+
+            IsMoving = false;
+            if (_movingStatusRoot != null) _movingStatusRoot.SetActive(false);
+            if (_animator != null && !_isDead)
+            {
+                _animator.Play("Idle", 0, 0f);
+            }
+        }
+
+        public void ShowContextMoveButton(bool show)
+        {
+            if (_contextMoveButton != null) _contextMoveButton.gameObject.SetActive(show);
+        }
+
+        public void ToggleContextMoveCancelState(bool isCancel)
+        {
+            if (_contextMoveText != null) _contextMoveText.text = ""; // clear text, we use icon now
+            if (_contextMoveIconImage != null)
+            {
+                _contextMoveIconImage.sprite = isCancel ? _cancelIconSprite : _moveIconSprite;
+            }
+            else if (_contextMoveButton != null && _contextMoveButton.image != null)
+            {
+                _contextMoveButton.image.sprite = isCancel ? _cancelIconSprite : _moveIconSprite;
+            }
+        }
+
+        public void ShowContextConfirmButton(bool show, string previewText = "")
+        {
+            if (_contextConfirmButton != null) _contextConfirmButton.gameObject.SetActive(show);
+            if (_contextTargetPreviewText != null) 
+            {
+                if (show) 
+                {
+                    _contextTargetPreviewText.transform.parent.gameObject.SetActive(true);
+                    _contextTargetPreviewText.text = previewText;
+                }
+                else
+                {
+                    _contextTargetPreviewText.transform.parent.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        public void ShowContextPreviewText(bool show, string text = "")
+        {
+            if (_contextTargetPreviewText != null)
+            {
+                _contextTargetPreviewText.transform.parent.gameObject.SetActive(show);
+                if (show) _contextTargetPreviewText.text = text;
+            }
         }
     }
 }

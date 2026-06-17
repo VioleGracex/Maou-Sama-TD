@@ -44,6 +44,11 @@ namespace MaouSamaTD.Managers
         private SovereignRiteData _selectedSkill;
         private bool _isSkillTargeting;
         private bool _isSkillDragActive;
+        private bool _isMoveTargeting;
+        private PlayerUnit _movingUnitTarget;
+        private Queue<Tile> _pendingPath;
+        private LineRenderer _pathLineRenderer;
+
         public bool IsSkillTargeting => _isSkillTargeting;
         public SovereignRiteData SelectedSkill => _selectedSkill;
         
@@ -75,6 +80,8 @@ namespace MaouSamaTD.Managers
         [Inject] private SkillManager _skillManager;
         [Inject(Optional = true)] private TutorialManager _tutorialManager;
         [Inject] private UIPopupBlocker _uiBlocker;
+        [SerializeField] private MaouSamaTD.Utils.PathVisualizer _pathVisualizer;
+
         #endregion
 
         #region Lifecycle
@@ -94,8 +101,11 @@ namespace MaouSamaTD.Managers
                 {
                     _inspectedPlayerUnit = null;
                     _inspectedEnemyUnit = null;
+                    _isMoveTargeting = false;
+                    _movingUnitTarget = null;
                     UpdateTileVisuals();
                 };
+                _unitInspectorUI.OnMoveClickedEvent += StartMoveTargeting;
             }
             if (_enemyInspectorUI != null)
             {
@@ -112,7 +122,40 @@ namespace MaouSamaTD.Managers
                 _currencyManager.OnSealsChanged -= HandleSealsChanged;
                 _currencyManager.OnSealsChanged += HandleSealsChanged;
             }
-            Debug.Log("[InteractionManager] Initialized.");
+            
+            // Clean up old LineRenderer on InteractionManager to avoid confusion
+            var oldLr = GetComponent<LineRenderer>();
+            if (oldLr != null) Destroy(oldLr);
+
+            if (_pathLineRenderer == null)
+            {
+                GameObject lineObj = GameObject.Find("PlayerMovePathPreview");
+                if (lineObj == null)
+                {
+                    lineObj = new GameObject("PlayerMovePathPreview");
+                    if (_pathVisualizer != null)
+                    {
+                        lineObj.transform.SetParent(_pathVisualizer.transform);
+                    }
+                    else
+                    {
+                        lineObj.transform.SetParent(this.transform);
+                    }
+                }
+                _pathLineRenderer = lineObj.GetComponent<LineRenderer>();
+                if (_pathLineRenderer == null) _pathLineRenderer = lineObj.AddComponent<LineRenderer>();
+            }
+            
+            _pathLineRenderer.useWorldSpace = true;
+            _pathLineRenderer.startWidth = 0.15f;
+            _pathLineRenderer.endWidth = 0.15f;
+            _pathLineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            _pathLineRenderer.startColor = new Color(1, 1, 0, 0.5f);
+            _pathLineRenderer.endColor = new Color(1, 1, 0, 0.8f);
+            _pathLineRenderer.textureMode = LineTextureMode.Tile;
+            _pathLineRenderer.sortingLayerName = "Default";
+            _pathLineRenderer.sortingOrder = 0;
+            _pathLineRenderer.enabled = true;
         }
 
         private void OnEnable()
@@ -154,7 +197,7 @@ namespace MaouSamaTD.Managers
                                    currentAction == "UnitStatsOpened";
             }
 
-            bool isSelectionBlocked = _isSelectionLocked && !IsDragging && _activeUnitData == null && !_isSkillTargeting && !selectionAllowed;
+            bool isSelectionBlocked = _isSelectionLocked && !IsDragging && _activeUnitData == null && !_isSkillTargeting && !_isMoveTargeting && !selectionAllowed;
             if (isSelectionBlocked)
             {
                 if (_currentHoverUnit != null)
@@ -278,7 +321,7 @@ namespace MaouSamaTD.Managers
                         ProcessAction(hitTile, _inputHandler.GetRayFromScreenPos(screenPos), isReleased);
                     }
                 }
-                else if ((IsDragging || _isSkillTargeting) && !shouldBlockInput)
+                else if ((IsDragging || _isSkillTargeting || _isMoveTargeting) && !shouldBlockInput)
                 {
                     // Update preview while dragging/hovering with unit or skill active
                     ProcessAction(hitTile, _inputHandler.GetRayFromScreenPos(screenPos), false);
@@ -392,14 +435,147 @@ namespace MaouSamaTD.Managers
             OnSkillSelectedChanged?.Invoke(null);
         }
 
+        public void StartMoveTargeting(PlayerUnit unit)
+        {
+            if (unit == null || unit.IsMoving) return;
+            
+            if (_isMoveTargeting && _movingUnitTarget == unit)
+            {
+                CancelAllActions();
+                return;
+            }
+            
+            CancelAllActions(); // Closes inspector, clears selection
+            _isMoveTargeting = true;
+            _movingUnitTarget = unit;
+            
+            unit.ShowContextMoveButton(true);
+            unit.ToggleContextMoveCancelState(true);
+            unit.ShowContextConfirmButton(false);
+            unit.ShowContextPreviewText(false);
+            
+            UpdateTileVisuals();
+        }
+
+        public void ConfirmMoveCommand(PlayerUnit unit)
+        {
+            if (_isMoveTargeting && _movingUnitTarget == unit && _pendingPath != null && _pendingPath.Count > 0)
+            {
+                unit.MoveAlongPath(_pendingPath);
+                CancelAllActions();
+            }
+        }
+
         public void UpdateTileVisuals()
         {
             SyncVisualSettings();
-            if (_tileVisualsHandler != null && _placementHandler != null)
+            if (_tileVisualsHandler != null)
             {
-                 _tileVisualsHandler.AllowedTiles = _placementHandler.AllowedTiles;
+                if (_isMoveTargeting && _movingUnitTarget != null)
+                {
+                    var allowed = GetReachableTiles(_movingUnitTarget);
+                    _tileVisualsHandler.AllowedTiles = allowed;
+                }
+                else if (_placementHandler != null)
+                {
+                    _tileVisualsHandler.AllowedTiles = _placementHandler.AllowedTiles;
+                }
             }
             _tileVisualsHandler.UpdateVisuals(_activeUnitData, IsDragging, _isSkillTargeting, _selectedSkill, _currentHoverTile, _inspectedPlayerUnit, _inspectedEnemyUnit);
+            
+            // Draw hover path if move targeting
+            if (_isMoveTargeting && _movingUnitTarget != null && _movingUnitTarget.CurrentTile != null)
+            {
+                if (_pendingPath != null && _pendingPath.Count > 0)
+                {
+                    DrawPathLine(_movingUnitTarget.transform.position, _pendingPath);
+                    var pathArray = System.Linq.Enumerable.ToArray(_pendingPath);
+                    var targetTile = pathArray[pathArray.Length - 1];
+                    targetTile.SetHighlight(true, new Color(1f, 0.8f, 0f, 0.5f), true); // distinct yellow highlight
+                }
+                else if (_currentHoverTile != null)
+                {
+                    var path = _gridManager.GetPath(_movingUnitTarget.CurrentTile.Coordinate, _currentHoverTile.Coordinate, EnemyMovementType.Ground, true);
+                    if (path != null && path.Count > 0)
+                    {
+                        DrawPathLine(_movingUnitTarget.transform.position, path);
+                        
+                        float totalDist = 0f;
+                        Vector3 lastPos = _movingUnitTarget.transform.position;
+                        foreach(var t in path) {
+                            totalDist += Vector3.Distance(lastPos, t.transform.position);
+                            lastPos = t.transform.position;
+                        }
+                        float estTime = totalDist / 2f;
+                        _movingUnitTarget.ShowContextPreviewText(true, $"{_movingUnitTarget.CurrentTile.Coordinate} -> {_currentHoverTile.Coordinate}\n{estTime:F1}s");
+                    }
+                    else
+                    {
+                        if (_pathLineRenderer != null) _pathLineRenderer.positionCount = 0;
+                        _movingUnitTarget.ShowContextPreviewText(false);
+                    }
+                }
+                else
+                {
+                    if (_pathLineRenderer != null) _pathLineRenderer.positionCount = 0;
+                    _movingUnitTarget.ShowContextPreviewText(false);
+                }
+            }
+            else if (!_isMoveTargeting)
+            {
+                if (_pathLineRenderer != null) _pathLineRenderer.positionCount = 0;
+            }
+        }
+
+        private System.Collections.Generic.List<UnityEngine.Vector2Int> GetReachableTiles(PlayerUnit unit)
+        {
+            var reachable = new System.Collections.Generic.List<UnityEngine.Vector2Int>();
+            if (unit == null || unit.CurrentTile == null || _gridManager == null) return reachable;
+
+            var start = unit.CurrentTile.Coordinate;
+            bool isHighGround = unit.CurrentTile.IsHighGround;
+            
+            var frontier = new System.Collections.Generic.Queue<UnityEngine.Vector2Int>();
+            var visited = new System.Collections.Generic.HashSet<UnityEngine.Vector2Int>();
+            
+            frontier.Enqueue(start);
+            visited.Add(start);
+            
+            UnityEngine.Vector2Int[] dirs = { UnityEngine.Vector2Int.up, UnityEngine.Vector2Int.right, UnityEngine.Vector2Int.down, UnityEngine.Vector2Int.left };
+            
+            while (frontier.Count > 0)
+            {
+                var current = frontier.Dequeue();
+                var currentTile = _gridManager.GetTileAt(current);
+                
+                if (currentTile.Occupant == null || currentTile.Occupant == unit)
+                {
+                    reachable.Add(current);
+                }
+                
+                foreach (var dir in dirs)
+                {
+                    var next = current + dir;
+                    if (!visited.Contains(next))
+                    {
+                        var nextTile = _gridManager.GetTileAt(next);
+                        if (nextTile != null)
+                        {
+                            var type = nextTile.Type;
+                            if (type != MaouSamaTD.Levels.TileType.None && type != MaouSamaTD.Levels.TileType.Wall && 
+                                type != MaouSamaTD.Levels.TileType.NonWalkableDecor && type != MaouSamaTD.Levels.TileType.DecoHighGround)
+                            {
+                                if (nextTile.IsHighGround == isHighGround)
+                                {
+                                    visited.Add(next);
+                                    frontier.Enqueue(next);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return reachable;
         }
 
         public void SetPlacementRestriction(System.Collections.Generic.List<Vector2Int> allowedTiles)
@@ -480,6 +656,42 @@ namespace MaouSamaTD.Managers
                 }
             }
             
+            if (_isMoveTargeting)
+            {
+                if (isReleased)
+                {
+                    if (hitTile != null && _movingUnitTarget != null && _movingUnitTarget.CurrentTile != null)
+                    {
+                        var path = _gridManager.GetPath(_movingUnitTarget.CurrentTile.Coordinate, hitTile.Coordinate, EnemyMovementType.Ground, true);
+                        if (path != null && path.Count > 0)
+                        {
+                            _pendingPath = new Queue<Tile>(path);
+                            
+                            float totalDist = 0f;
+                            Vector3 lastPos = _movingUnitTarget.transform.position;
+                            foreach(var t in path) {
+                                totalDist += Vector3.Distance(lastPos, t.transform.position);
+                                lastPos = t.transform.position;
+                            }
+                            float estTime = totalDist / 2f; // Assuming speed = 2f
+                            string previewText = $"{_movingUnitTarget.CurrentTile.Coordinate} -> {hitTile.Coordinate}\n{estTime:F1}s";
+                            
+                            _movingUnitTarget.ShowContextConfirmButton(true, previewText);
+                            // We can snap the confirm button to the hitTile if we want, but it says "appears beside unit"
+                            return; // Wait for confirm
+                        }
+                    }
+                    _pendingPath = null;
+                    _movingUnitTarget?.ShowContextConfirmButton(false);
+                    if (_movingUnitTarget != null && _movingUnitTarget.CurrentTile != null)
+                    {
+                        _movingUnitTarget.ShowContextPreviewText(true, $"{_movingUnitTarget.CurrentTile.Coordinate} ->");
+                    }
+                    if (_pathLineRenderer != null) _pathLineRenderer.positionCount = 0;
+                }
+                return;
+            }
+            
             // Placement and Selection happen on PRESS DOWN
             if (isReleased) return;
 
@@ -523,6 +735,27 @@ namespace MaouSamaTD.Managers
                     _inspectedEnemyUnit = null;
                     _tutorialManager?.OnActionTriggered("UnitSelected");
                     _unitInspectorUI.Show(target);
+                    
+                    _inspectedPlayerUnit.OnContextMoveClicked -= StartMoveTargeting;
+                    _inspectedPlayerUnit.OnContextMoveClicked += StartMoveTargeting;
+                    _inspectedPlayerUnit.OnContextConfirmClicked -= ConfirmMoveCommand;
+                    _inspectedPlayerUnit.OnContextConfirmClicked += ConfirmMoveCommand;
+
+                    bool canMove = true;
+                    var gm = FindAnyObjectByType<GameManager>();
+                    var tm = FindAnyObjectByType<TutorialManager>();
+                    if (gm != null && gm.CurrentLevelData != null && tm != null)
+                    {
+                        var lvl = gm.CurrentLevelData;
+                        if (tm.IsInTutorial && (lvl.LevelIndex == 1 || lvl.LevelIndex == 2 || lvl.LevelID == "1-1" || lvl.LevelID == "1-2"))
+                        {
+                            canMove = false;
+                        }
+                    }
+
+                    _inspectedPlayerUnit.ShowContextMoveButton(canMove);
+                    _inspectedPlayerUnit.ToggleContextMoveCancelState(false);
+                    _inspectedPlayerUnit.ShowContextConfirmButton(false);
                 }
                 else
                 {
@@ -721,9 +954,46 @@ namespace MaouSamaTD.Managers
         {
             DeselectUnit();
             DeselectSkill();
+            if (_movingUnitTarget != null)
+            {
+                _movingUnitTarget.ToggleContextMoveCancelState(false);
+                _movingUnitTarget.ShowContextConfirmButton(false);
+                _movingUnitTarget.ShowContextMoveButton(false);
+            }
+            if (_inspectedPlayerUnit != null)
+            {
+                _inspectedPlayerUnit.ShowContextMoveButton(false);
+                _inspectedPlayerUnit.ShowContextConfirmButton(false);
+            }
+            _isMoveTargeting = false;
+            _movingUnitTarget = null;
+            _pendingPath = null;
+            if (_pathLineRenderer != null) _pathLineRenderer.positionCount = 0;
             _inspectedPlayerUnit = null;
             _unitInspectorUI?.Hide();
             UpdateTileVisuals();
+        }
+
+        private void DrawPathLine(Vector3 startPos, System.Collections.Generic.IEnumerable<Tile> path)
+        {
+            if (_pathLineRenderer == null) return;
+            var pathArray = System.Linq.Enumerable.ToArray(path);
+            _pathLineRenderer.positionCount = pathArray.Length + 1;
+            
+            float visualHeight = 0.7f;
+            _pathLineRenderer.SetPosition(0, startPos + Vector3.up * visualHeight);
+            for (int i = 0; i < pathArray.Length; i++)
+            {
+                _pathLineRenderer.SetPosition(i + 1, pathArray[i].transform.position + Vector3.up * visualHeight);
+            }
+
+            // Arrow shape
+            _pathLineRenderer.widthCurve = new AnimationCurve(
+                new Keyframe(0f, 0.15f),
+                new Keyframe(0.85f, 0.15f),
+                new Keyframe(0.85f, 0.4f),
+                new Keyframe(1f, 0f)
+            );
         }
 
         private void SyncVisualSettings()

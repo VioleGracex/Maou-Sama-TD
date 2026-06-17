@@ -10812,6 +10812,7 @@ MonoBehaviour:
   _ultButton: {fileID: 127066369149686411}
   _retreatButton: {fileID: 6791290840235705677}
   _closeButton: {fileID: 1052150672490020124}
+  _moveButton: {fileID: 0}
 --- !u!1 &959374328
 GameObject:
   m_ObjectHideFlags: 0
@@ -11599,9 +11600,9 @@ MonoBehaviour:
   _ritesTabBtn: {fileID: 282782514}
   _vassalsContainer: {fileID: 5854351178078485378}
   _ritesContainer: {fileID: 677754241}
-  _vassalsActiveColor: {r: 0, g: 0.5058824, b: 0.5921569, a: 1}
+  _vassalsActiveColor: {r: 0, g: 0.84624505, b: 0.990566, a: 1}
   _vassalsInactiveColor: {r: 0, g: 0.5176471, b: 0.48627454, a: 1}
-  _ritesActiveColor: {r: 0.8196079, g: 0.72156864, b: 0.20000002, a: 1}
+  _ritesActiveColor: {r: 1, g: 0.84177214, b: 0, a: 1}
   _ritesInactiveColor: {r: 0.69411767, g: 0.59607846, b: 0.14509805, a: 1}
 --- !u!1 &1073138004
 GameObject:
@@ -13025,6 +13026,7 @@ MonoBehaviour:
   _useFullFillForRange: 1
   _useFullFillForSkills: 0
   _showPlacementDebug: 0
+  _pathVisualizer: {fileID: 582518230}
 --- !u!4 &1321145781
 Transform:
   m_ObjectHideFlags: 0

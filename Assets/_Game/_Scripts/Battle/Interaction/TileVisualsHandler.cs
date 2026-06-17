@@ -86,7 +86,21 @@ namespace MaouSamaTD.Managers.Interaction
                         useFullFill = UseFullFillPlacement;
                     }
                 }
-                else if (inspectedUnit != null)
+                else if (!isUnitActive && AllowedTiles != null && AllowedTiles.Count > 0)
+                {
+                    if (AllowedTiles.Contains(tile.Coordinate))
+                    {
+                        shouldHighlight = true;
+                        highlightColor = ValidColor * 0.5f;
+                        useFullFill = UseFullFillPlacement;
+
+                        if (tile == hoverTile)
+                        {
+                            highlightColor = ValidColor;
+                        }
+                    }
+                }
+                else if (inspectedUnit != null && AllowedTiles != null && AllowedTiles.Count == 0)
                 {
                     if (inspectedUnit.IsTargetInPattern(inspectedUnit.CurrentTile.Coordinate, tile.Coordinate, inspectedUnit.Data.AttackPattern, inspectedUnit.Range))
                     {
